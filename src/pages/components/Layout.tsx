@@ -2,24 +2,30 @@
 import { ReactNode } from "react";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
-import { SidebarProvider } from "@/context/SidebarContext";
+import { SidebarProvider, useSidebar } from "@/context/SidebarContext";
+import { cn } from "@/lib/utils";
 
 type LayoutProps = {
   children: ReactNode;
 };
 
 export default function Layout({ children }: LayoutProps) {
+  const { collapsed, isMobile } = useSidebar();
+
   return (
-    <SidebarProvider>
-      <div className="flex h-screen">
-        <Sidebar />
-        <div className="flex flex-col flex-1">
-          <Header />
-          <main className="bg-gray-50 p-6 h-[calc(100vh-60px)] overflow-auto">
-            {children}
-          </main>
-        </div>
+    <div className="flex h-screen">
+      <Sidebar />
+      <div className="flex flex-col flex-1">
+        <Header />
+        <main
+          className={cn(
+            "bg-gray-50 p-6 h-[calc(100vh-60px)] overflow-auto",
+            !isMobile && !collapsed && " pl-[240px]"
+          )}
+        >
+          {children}
+        </main>
       </div>
-    </SidebarProvider>
+    </div>
   );
 }
