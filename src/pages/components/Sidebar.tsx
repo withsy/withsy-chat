@@ -3,21 +3,10 @@ import { Button } from "@/components/ui/button";
 import { useSidebar } from "@/context/SidebarContext";
 import { cn } from "@/lib/utils";
 import SidebarChatList from "./SidebarChatList";
-import { useEffect, useState } from "react";
 import { SidebarLinkGroup } from "./SidebarLink";
 
 export default function Sidebar() {
-  const { collapsed, toggle } = useSidebar();
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  const { isMobile, collapsed, toggle } = useSidebar();
 
   return (
     <>

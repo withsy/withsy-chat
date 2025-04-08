@@ -8,25 +8,57 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { useSidebar } from "@/context/SidebarContext";
 
 import { Tag, MessageSquare, Cpu, Settings, LucideIcon } from "lucide-react";
-import { useState } from "react";
+
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface ToggleMenuItemProps {
   id: string;
   label: string;
   checked: boolean;
   onChange: (checked: boolean) => void;
+  disabled?: boolean;
+  tooltip?: string;
 }
 
-function ToggleMenuItem({ id, label, checked, onChange }: ToggleMenuItemProps) {
-  return (
-    <div className="flex items-center justify-between px-2 py-1.5">
-      <Label htmlFor={id} className="text-sm">
+export function ToggleMenuItem({
+  id,
+  label,
+  checked,
+  onChange,
+  disabled = false,
+  tooltip,
+}: ToggleMenuItemProps) {
+  const content = (
+    <div className="flex items-center justify-between px-2 py-1.5 opacity-100">
+      <Label htmlFor={id} className="text-sm text-muted-foreground">
         {label}
       </Label>
-      <Switch id={id} checked={checked} onCheckedChange={onChange} />
+      <Switch
+        id={id}
+        checked={checked}
+        onCheckedChange={onChange}
+        disabled={disabled}
+      />
     </div>
+  );
+
+  return tooltip && disabled ? (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>{content}</TooltipTrigger>
+        <TooltipContent side="left">{tooltip}</TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  ) : (
+    content
   );
 }
 
@@ -46,8 +78,9 @@ function UserMenuItem({ icon: Icon, label, onClick }: UserMenuItemProps) {
 }
 
 export default function Header() {
-  const [tabEnabled, setTabEnabled] = useState(true);
-  const [indexVisible, setIndexVisible] = useState(true);
+  const { isMobile, tabEnabled, setTabEnabled, indexVisible, setIndexVisible } =
+    useSidebar();
+
   return (
     <header className="h-[60px] flex items-center bg-white border-b justify-between px-4">
       <div />
@@ -66,15 +99,17 @@ export default function Header() {
             label="Enable Tabs"
             checked={tabEnabled}
             onChange={setTabEnabled}
+            disabled={isMobile}
+            tooltip="Tabs are not supported on mobile"
           />
-
           <ToggleMenuItem
             id="index-toggle"
             label="Show Index"
             checked={indexVisible}
             onChange={setIndexVisible}
+            disabled={isMobile}
+            tooltip="Index is not supported on mobile"
           />
-
           <DropdownMenuSeparator />
           <UserMenuItem icon={Tag} label="Tags" />
           <UserMenuItem icon={MessageSquare} label="Prompts" />
