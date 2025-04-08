@@ -1,6 +1,27 @@
 import Link from "next/link";
 import { Bookmark, LucideIcon, Search, NotebookPen } from "lucide-react";
 
+const sidebarLinks = [
+  {
+    href: "/search",
+    icon: Search,
+    label: "Search",
+    fill: false,
+  },
+  {
+    href: "/new-chat",
+    icon: NotebookPen,
+    label: "New Chat",
+    fill: false,
+  },
+  {
+    href: "/bookmarks",
+    icon: Bookmark,
+    label: "Bookmarks",
+    fill: true,
+  },
+];
+
 interface SidebarLinkProps {
   href: string;
   icon: LucideIcon;
@@ -38,39 +59,6 @@ function SidebarLink({
   );
 }
 
-function SidebarBookmark({ collapsed = false }: Props) {
-  return (
-    <SidebarLink
-      href="/bookmarks"
-      icon={Bookmark}
-      label="Bookmarks"
-      fill={true}
-      collapsed={collapsed}
-    />
-  );
-}
-
-function SidebarNewChat({ collapsed = false }: Props) {
-  return (
-    <SidebarLink
-      href="/new-chat"
-      icon={NotebookPen}
-      label="New Chat"
-      collapsed={collapsed}
-    />
-  );
-}
-function SidebarSearch({ collapsed = false }: Props) {
-  return (
-    <SidebarLink
-      href="/search"
-      icon={Search}
-      label="Search"
-      collapsed={collapsed}
-    />
-  );
-}
-
 interface Props {
   collapsed?: boolean;
 }
@@ -78,9 +66,16 @@ interface Props {
 export function SidebarLinkGroup({ collapsed = false }: Props) {
   return (
     <>
-      <SidebarSearch collapsed={collapsed} />
-      <SidebarNewChat collapsed={collapsed} />
-      <SidebarBookmark collapsed={collapsed} />
+      {sidebarLinks.map((link) => (
+        <SidebarLink
+          key={link.href}
+          href={link.href}
+          icon={link.icon}
+          label={link.label}
+          fill={link.fill}
+          collapsed={collapsed}
+        />
+      ))}
     </>
   );
 }
