@@ -55,7 +55,7 @@ export default function HomeDashboard({ name = "Yejin" }: { name?: string }) {
       </h1>
 
       <div className="p-4">
-        <div className="grid grid-cols-2 gap-3 max-w-sm">
+        <div className="grid grid-cols-2 gap-3 max-w-lg">
           {cards.map((card) => (
             <DashboardCard key={card.title} {...card} />
           ))}

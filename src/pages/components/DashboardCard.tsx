@@ -19,7 +19,7 @@ export function DashboardCard({
   return (
     <Card
       onClick={onClick}
-      className="aspect-square p-3 bg-muted border border-muted-foreground/10 hover:shadow-sm transition-shadow relative cursor-pointer group"
+      className="p-3 bg-muted border border-muted-foreground/10 hover:shadow-sm transition-shadow relative cursor-pointer group"
     >
       {isExternal && (
         <ExternalLink className="absolute top-2 right-2 w-4 h-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
@@ -29,7 +29,9 @@ export function DashboardCard({
         <div className="text-muted-foreground">{icon}</div>
         <div>
           <h3 className="text-sm font-medium">{title}</h3>
-          <p className="text-xs text-muted-foreground">{description}</p>
+          <p className="text-xs text-muted-foreground overflow-hidden text-ellipsis whitespace-nowrap">
+            {description}
+          </p>
         </div>
       </div>
     </Card>
