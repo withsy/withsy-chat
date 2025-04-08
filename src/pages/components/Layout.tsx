@@ -15,7 +15,7 @@ export default function Layout({ children }: LayoutProps) {
         <Sidebar />
         <div className="flex flex-col flex-1">
           <Header />
-          <main className="flex-1 overflow-y-auto bg-gray-50 p-6">
+          <main className="bg-gray-50 p-6 h-[calc(100vh-60px)] overflow-hidden">
             {children}
           </main>
         </div>
