@@ -1,123 +1,27 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-} from "@/components/ui/dropdown-menu";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import { useSidebar } from "@/context/SidebarContext";
+import UserDropdownMenu from "./UserDropdownMenu";
+import { Button } from "@/components/ui/button";
+import { Archive } from "lucide-react";
 
-import { Tag, MessageSquare, Cpu, Settings, LucideIcon } from "lucide-react";
-
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-
-interface ToggleMenuItemProps {
-  id: string;
-  label: string;
-  checked: boolean;
-  onChange: (checked: boolean) => void;
-  disabled?: boolean;
-  tooltip?: string;
-}
-
-export function ToggleMenuItem({
-  id,
-  label,
-  checked,
-  onChange,
-  disabled = false,
-  tooltip,
-}: ToggleMenuItemProps) {
-  const content = (
-    <div className="flex items-center justify-between px-2 py-1.5 opacity-100">
-      <Label htmlFor={id} className="text-sm text-muted-foreground">
-        {label}
-      </Label>
-      <Switch
-        id={id}
-        checked={checked}
-        onCheckedChange={onChange}
-        disabled={disabled}
-      />
-    </div>
-  );
-
-  return tooltip && disabled ? (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger asChild>{content}</TooltipTrigger>
-        <TooltipContent side="left">{tooltip}</TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
-  ) : (
-    content
-  );
-}
-
-interface UserMenuItemProps {
-  icon: LucideIcon;
-  label: string;
-  onClick?: () => void;
-}
-
-function UserMenuItem({ icon: Icon, label, onClick }: UserMenuItemProps) {
+function ArchiveButton({ onClick }: { onClick?: () => void }) {
   return (
-    <DropdownMenuItem onSelect={onClick}>
-      <Icon className="mr-2 h-4 w-4 text-black" />
-      {label}
-    </DropdownMenuItem>
+    <Button
+      variant="ghost"
+      size="icon"
+      onClick={onClick}
+      className="foreground hover:text-blue-500"
+    >
+      <Archive className="w-4 h-4" />
+    </Button>
   );
 }
-
 export default function Header() {
-  const { isMobile, tabEnabled, setTabEnabled, indexVisible, setIndexVisible } =
-    useSidebar();
-
   return (
     <header className="h-[60px] flex items-center bg-white border-b justify-between px-4">
       <div />
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Avatar className="cursor-pointer">
-            <AvatarImage
-              src={`https://api.dicebear.com/7.x/thumbs/svg?seed=Yejin`}
-            />
-            <AvatarFallback>YJ</AvatarFallback>
-          </Avatar>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-48 mt-2">
-          <ToggleMenuItem
-            id="tab-toggle"
-            label="Enable Tabs"
-            checked={tabEnabled}
-            onChange={setTabEnabled}
-            disabled={isMobile}
-            tooltip="Tabs are not supported on mobile"
-          />
-          <ToggleMenuItem
-            id="index-toggle"
-            label="Show Index"
-            checked={indexVisible}
-            onChange={setIndexVisible}
-            disabled={isMobile}
-            tooltip="Index is not supported on mobile"
-          />
-          <DropdownMenuSeparator />
-          <UserMenuItem icon={Tag} label="Tags" />
-          <UserMenuItem icon={MessageSquare} label="Prompts" />
-          <UserMenuItem icon={Cpu} label="Models" />
-          <DropdownMenuSeparator />
-          <UserMenuItem icon={Settings} label="Settings" />
-        </DropdownMenuContent>
-      </DropdownMenu>
+      <div className="flex items-center gap-4">
+        <ArchiveButton />
+        <UserDropdownMenu />
+      </div>
     </header>
   );
 }
