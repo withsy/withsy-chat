@@ -1,10 +1,4 @@
 import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -21,16 +15,15 @@ import {
 } from "lucide-react";
 import { formatDateLabel } from "@/lib/date-utils";
 import { useState } from "react";
-import SidebarBookmark from "./SidebarBookmark";
-
+import { SidebarBookmark, SidebarNewChat, SidebarSearch } from "./SidebarLink";
 export default function SidebarChatList() {
   const [starred, setStarred] = useState(["Chat A", "Chat C"]);
   const chats = {
     "2025-04-07": ["Chat A", "Chat B"],
     "2025-04-06": ["Chat C"],
     "2025-04-05": ["Chat D", "Chat E"],
-    "2025-04-04": ["Chat D", "Chat E"],
-    "2025-04-03": ["Chat D", "Chat E"],
+    "2025-04-04": ["Chat da", "Chat E"],
+    "2025-04-03": ["Chat dafsw", "Chat sad"],
   };
 
   const toggleStar = (chat: string) => {
@@ -40,18 +33,17 @@ export default function SidebarChatList() {
   };
 
   return (
-    <Accordion
-      type="multiple"
-      defaultValue={["Starred", "Chats"]}
-      className="mt-4 space-y-6"
-    >
+    <div className="mt-4 space-y-2">
+      <SidebarSearch />
+      <SidebarNewChat />
       <SidebarBookmark />
+
       {starred.length > 0 && (
-        <AccordionItem value="Starred" className="border-none">
-          <AccordionTrigger className="text-m font-semibold no-underline hover:bg-gray-300 hover:no-underline px-2 py-2 rounded-md transition-colors">
+        <div>
+          <h3 className="text-sm font-semibold px-2 py-2 rounded-md">
             Starred
-          </AccordionTrigger>
-          <AccordionContent className="space-y-1">
+          </h3>
+          <div className="space-y-1 mt-1">
             {starred.map((chat) => (
               <SidebarChatItem
                 key={`starred-${chat}`}
@@ -60,14 +52,13 @@ export default function SidebarChatList() {
                 onToggleStar={toggleStar}
               />
             ))}
-          </AccordionContent>
-        </AccordionItem>
+          </div>
+        </div>
       )}
-      <AccordionItem value="Chats" className="border-none">
-        <AccordionTrigger className="text-m font-semibold no-underline hover:bg-gray-300 hover:no-underline px-2 py-2 rounded-md transition-colors">
-          Chats
-        </AccordionTrigger>
-        <AccordionContent className="space-y-4">
+
+      <div>
+        <h3 className="text-sm font-semibold px-2 py-2 rounded-md">Chats</h3>
+        <div className="space-y-4 mt-1">
           {Object.entries(chats).map(([date, chats]) => {
             const filteredChats = chats.filter(
               (chat) => !starred.includes(chat)
@@ -90,9 +81,9 @@ export default function SidebarChatList() {
               </div>
             );
           })}
-        </AccordionContent>
-      </AccordionItem>
-    </Accordion>
+        </div>
+      </div>
+    </div>
   );
 }
 
