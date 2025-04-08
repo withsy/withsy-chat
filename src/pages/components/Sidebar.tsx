@@ -29,7 +29,11 @@ function SidebarIconButton({
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <Button size="icon" variant="ghost" className="rounded-md">
+        <Button
+          size="icon"
+          variant="ghost"
+          className="rounded-md hover:bg-gray-300"
+        >
           {icon}
         </Button>
       </TooltipTrigger>
@@ -58,18 +62,17 @@ export default function Sidebar() {
   return (
     <>
       <div className="fixed top-4 left-0 w-[60px] z-50 flex flex-col items-center">
-        <Button variant="ghost" size="icon" onClick={toggle}>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={toggle}
+          className="rounded-md hover:bg-gray-300"
+        >
           {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
         </Button>
         {collapsed && !isMobile && (
           <TooltipProvider>
-            <div
-              className={cn(
-                "flex flex-col items-center gap-2 mt-4",
-                "transition-all ease-in-out duration-500 delay-500 ",
-                "opacity-100 translate-y-0"
-              )}
-            >
+            <div className={cn("flex flex-col items-center gap-2 mt-4")}>
               <SidebarIconButton icon={<Search size={16} />} label="Search" />
               <SidebarIconButton icon={<Plus size={16} />} label="New Chat" />
               <Link href="/bookmarks">
