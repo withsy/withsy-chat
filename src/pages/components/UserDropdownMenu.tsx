@@ -76,8 +76,17 @@ function UserMenuItem({ icon: Icon, label, onClick }: UserMenuItemProps) {
 }
 
 export default function UserDropdownMenu() {
-  const { isMobile, tabEnabled, setTabEnabled, indexVisible, setIndexVisible } =
-    useSidebar();
+  const {
+    isMobile,
+    tabEnabled,
+    setTabEnabled,
+    indexVisible,
+    setIndexVisible,
+    wideView,
+    setWideView,
+    largeText,
+    setLargeText,
+  } = useSidebar();
 
   return (
     <DropdownMenu>
@@ -92,6 +101,18 @@ export default function UserDropdownMenu() {
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="end" className="w-48 mt-2">
+        <ToggleMenuItem
+          id="tab-toggle"
+          label="Wide View"
+          checked={wideView}
+          onChange={setWideView}
+        />
+        <ToggleMenuItem
+          id="tab-toggle"
+          label="Large Text"
+          checked={largeText}
+          onChange={setLargeText}
+        />
         <ToggleMenuItem
           id="tab-toggle"
           label="Enable Tabs"

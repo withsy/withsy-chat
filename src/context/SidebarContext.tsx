@@ -5,11 +5,18 @@ type SidebarContextType = {
   toggle: () => void;
   setCollapsed: (value: boolean) => void;
   hydrated: boolean;
+
   isMobile: boolean;
+
   tabEnabled: boolean;
   setTabEnabled: (value: boolean) => void;
   indexVisible: boolean;
   setIndexVisible: (value: boolean) => void;
+
+  wideView: boolean;
+  setWideView: (value: boolean) => void;
+  largeText: boolean;
+  setLargeText: (value: boolean) => void;
 };
 
 const SidebarContext = createContext<SidebarContextType | undefined>(undefined);
@@ -19,8 +26,12 @@ export function SidebarProvider({ children }: { children: React.ReactNode }) {
   const [hydrated, setHydrated] = useState(false);
 
   const [isMobile, setIsMobile] = useState(false);
+
   const [tabEnabled, setTabEnabled] = useState(true);
   const [indexVisible, setIndexVisible] = useState(true);
+
+  const [wideView, setWideView] = useState(false);
+  const [largeText, setLargeText] = useState(false);
 
   useEffect(() => {
     const saved = localStorage.getItem("sidebarCollapsed");
@@ -59,6 +70,10 @@ export function SidebarProvider({ children }: { children: React.ReactNode }) {
         setTabEnabled,
         indexVisible,
         setIndexVisible,
+        wideView,
+        setWideView,
+        largeText,
+        setLargeText,
       }}
     >
       {children}
