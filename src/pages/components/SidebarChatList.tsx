@@ -97,7 +97,7 @@ function SidebarChatItem({
       <div className="relative w-5 h-5 mr-2">
         <AlignJustify
           size={16}
-          className="absolute top-0 left-0 text-muted-foreground opacity-100 group-hover:opacity-0 transition-opacity"
+          className="absolute top-0 left-0  opacity-100 group-hover:opacity-0 transition-opacity"
         />
         <button
           onClick={() => onToggleStar(chat)}
@@ -105,9 +105,7 @@ function SidebarChatItem({
         >
           <Star
             size={16}
-            className={
-              isStarred ? "text-black fill-black" : "text-muted-foreground"
-            }
+            className={`text-black${isStarred ? " fill-black" : ""}`}
           />
         </button>
       </div>
