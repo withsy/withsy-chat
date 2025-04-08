@@ -15,7 +15,10 @@ export default function Sidebar() {
           variant="ghost"
           size="icon"
           onClick={toggle}
-          className="rounded-md hover:bg-gray-300"
+          className={cn(
+            "rounded-md",
+            collapsed ? "hover:bg-gray-100" : "hover:bg-gray-300"
+          )}
         >
           {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
         </Button>
@@ -24,14 +27,14 @@ export default function Sidebar() {
             <Button
               variant="ghost"
               size="icon"
-              className="rounded-md hover:bg-gray-300"
+              className="rounded-md hover:bg-gray-100"
             >
               <Search size={16} />
             </Button>
             <Button
               variant="ghost"
               size="icon"
-              className="rounded-md hover:bg-gray-300"
+              className="rounded-md hover:text-orange-500 hover:bg-orange-50"
             >
               <NotebookPen size={16} />
             </Button>

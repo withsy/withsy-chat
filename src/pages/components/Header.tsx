@@ -8,7 +8,7 @@ function ArchiveButton({ onClick }: { onClick?: () => void }) {
       variant="ghost"
       size="icon"
       onClick={onClick}
-      className="foreground hover:text-blue-500"
+      className="foreground hover:text-blue-500 hover:bg-blue-50 rounded-md "
     >
       <Archive className="w-4 h-4" />
     </Button>
