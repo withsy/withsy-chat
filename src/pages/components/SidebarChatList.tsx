@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button";
 import {
   MoreHorizontal,
   Star,
-  MessageSquare,
+  AlignJustify,
   StarOff,
   Pencil,
   Trash2,
@@ -108,7 +108,7 @@ function SidebarChatItem({
   return (
     <div className="group flex items-center px-2 py-2 rounded-md hover:bg-gray-300 transition-colors">
       <div className="relative w-5 h-5 mr-2">
-        <MessageSquare
+        <AlignJustify
           size={16}
           className="absolute top-0 left-0 text-muted-foreground opacity-100 group-hover:opacity-0 transition-opacity"
         />
