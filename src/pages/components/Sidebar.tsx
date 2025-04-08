@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronRight, NotebookPen } from "lucide-react";
+import { ChevronLeft, ChevronRight, NotebookPen, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSidebar } from "@/context/SidebarContext";
 import { cn } from "@/lib/utils";
@@ -20,13 +20,22 @@ export default function Sidebar() {
           {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
         </Button>
         {collapsed && (
-          <Button
-            variant="ghost"
-            size="icon"
-            className="rounded-md hover:bg-gray-300"
-          >
-            <NotebookPen size={16} />
-          </Button>
+          <>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="rounded-md hover:bg-gray-300"
+            >
+              <Search size={16} />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="rounded-md hover:bg-gray-300"
+            >
+              <NotebookPen size={16} />
+            </Button>
+          </>
         )}
       </div>
 
