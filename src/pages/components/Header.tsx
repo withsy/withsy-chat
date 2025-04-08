@@ -3,11 +3,32 @@ import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
-  DropdownMenuLabel,
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+
 import { Tag, MessageSquare, Cpu, Settings, LucideIcon } from "lucide-react";
+import { useState } from "react";
+
+interface ToggleMenuItemProps {
+  id: string;
+  label: string;
+  checked: boolean;
+  onChange: (checked: boolean) => void;
+}
+
+function ToggleMenuItem({ id, label, checked, onChange }: ToggleMenuItemProps) {
+  return (
+    <div className="flex items-center justify-between px-2 py-1.5">
+      <Label htmlFor={id} className="text-sm">
+        {label}
+      </Label>
+      <Switch id={id} checked={checked} onCheckedChange={onChange} />
+    </div>
+  );
+}
 
 interface UserMenuItemProps {
   icon: LucideIcon;
@@ -25,6 +46,8 @@ function UserMenuItem({ icon: Icon, label, onClick }: UserMenuItemProps) {
 }
 
 export default function Header() {
+  const [tabEnabled, setTabEnabled] = useState(true);
+  const [indexVisible, setIndexVisible] = useState(true);
   return (
     <header className="h-[60px] flex items-center bg-white border-b justify-between px-4">
       <div />
@@ -38,6 +61,21 @@ export default function Header() {
           </Avatar>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-48 mt-2">
+          <ToggleMenuItem
+            id="tab-toggle"
+            label="Enable Tabs"
+            checked={tabEnabled}
+            onChange={setTabEnabled}
+          />
+
+          <ToggleMenuItem
+            id="index-toggle"
+            label="Show Index"
+            checked={indexVisible}
+            onChange={setIndexVisible}
+          />
+
+          <DropdownMenuSeparator />
           <UserMenuItem icon={Tag} label="Tags" />
           <UserMenuItem icon={MessageSquare} label="Prompts" />
           <UserMenuItem icon={Cpu} label="Models" />
