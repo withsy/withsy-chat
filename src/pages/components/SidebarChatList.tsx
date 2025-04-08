@@ -15,10 +15,10 @@ import {
 } from "lucide-react";
 import { formatDateLabel } from "@/lib/date-utils";
 import { useState } from "react";
-import { SidebarBookmark, SidebarNewChat, SidebarSearch } from "./SidebarLink";
 export default function SidebarChatList() {
   const [starred, setStarred] = useState(["Chat A", "Chat C"]);
   const chats = {
+    "2025-04-08": ["Chat 123123", "Chat afds"],
     "2025-04-07": ["Chat A", "Chat B"],
     "2025-04-06": ["Chat C"],
     "2025-04-05": ["Chat D", "Chat E"],
@@ -33,11 +33,7 @@ export default function SidebarChatList() {
   };
 
   return (
-    <div className="mt-4 space-y-2">
-      <SidebarSearch />
-      <SidebarNewChat />
-      <SidebarBookmark />
-
+    <div className="mt-4 space-y-2 ">
       {starred.length > 0 && (
         <div>
           <h3 className="text-sm font-semibold px-2 py-2 rounded-md">

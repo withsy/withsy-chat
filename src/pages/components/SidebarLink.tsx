@@ -31,7 +31,7 @@ function SidebarLink({ href, icon: Icon, label, fill }: SidebarLinkProps) {
   );
 }
 
-export function SidebarBookmark() {
+function SidebarBookmark() {
   return (
     <SidebarLink
       href="/bookmarks"
@@ -42,11 +42,21 @@ export function SidebarBookmark() {
   );
 }
 
-export function SidebarNewChat() {
+function SidebarNewChat() {
   return (
     <SidebarLink href="/new-chat" icon={MessageSquarePlus} label="New Chat" />
   );
 }
-export function SidebarSearch() {
+function SidebarSearch() {
   return <SidebarLink href="/search" icon={Search} label="Search" />;
+}
+
+export function SidebarLinkGroup() {
+  return (
+    <>
+      <SidebarSearch />
+      <SidebarNewChat />
+      <SidebarBookmark />
+    </>
+  );
 }
