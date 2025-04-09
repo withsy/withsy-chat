@@ -1,8 +1,7 @@
-import { useState } from "react";
 import { FilterSelect } from "@/components/FilterSelect";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button";
 
-// --- Filter option data ---
 const sortByOptions = [
   { label: "Conversation Time", value: "chattedAt" },
   { label: "Bookmarked On", value: "bookmarkedAt" },
@@ -23,38 +22,51 @@ const modelOptions = [
   { label: "GPT-3.5", value: "gpt-3.5" },
 ];
 
-// --- Helper to toggle checkbox selection ---
-const toggleSelection = (
-  value: string,
-  selected: string[],
-  setSelected: (v: string[]) => void
-) => {
-  if (selected.includes(value)) {
-    setSelected(selected.filter((v) => v !== value));
-  } else {
-    setSelected([...selected, value]);
-  }
+const defaultTypes = typeOptions.map((t) => t.value);
+const defaultModels = modelOptions.map((m) => m.value);
+
+type Props = {
+  sortBy: string;
+  setSortBy: (val: any) => void;
+  sortOrder: string;
+  setSortOrder: (val: any) => void;
+  selectedTypes: string[];
+  setSelectedTypes: (val: string[]) => void;
+  selectedModels: string[];
+  setSelectedModels: (val: string[]) => void;
 };
 
-// --- Main Filter UI ---
-export function BookmarkFilters() {
-  const [sortBy, setSortBy] = useState<"chattedAt" | "bookmarkedAt">(
-    "bookmarkedAt"
-  );
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
-  const [selectedTypes, setSelectedTypes] = useState<string[]>([
-    "chat",
-    "thread",
-  ]);
-  const [selectedModels, setSelectedModels] = useState<string[]>([
-    "gpt-4",
-    "gpt-3.5",
-  ]);
+export function BookmarkFilters({
+  sortBy,
+  setSortBy,
+  sortOrder,
+  setSortOrder,
+  selectedTypes,
+  setSelectedTypes,
+  selectedModels,
+  setSelectedModels,
+}: Props) {
+  const reset = () => {
+    setSortBy("bookmarkedAt");
+    setSortOrder("desc");
+    setSelectedTypes(defaultTypes);
+    setSelectedModels(defaultModels);
+  };
+
+  const toggle = (
+    val: string,
+    list: string[],
+    setList: (v: string[]) => void
+  ) => {
+    setList(
+      list.includes(val) ? list.filter((v) => v !== val) : [...list, val]
+    );
+  };
 
   return (
     <div className="flex flex-col gap-4 md:flex-row md:justify-between md:items-end border-b pb-4">
-      {/* Sort section */}
-      <div className="flex flex-wrap gap-4 items-center">
+      {/* Sort */}
+      <div className="flex gap-4 items-center">
         <FilterSelect
           value={sortBy}
           onChange={setSortBy}
@@ -71,46 +83,46 @@ export function BookmarkFilters() {
         />
       </div>
 
-      {/* Filter section */}
-      <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-        {/* Type Filter */}
-        <div className="flex items-center gap-3">
+      {/* Filter */}
+      <div className="flex flex gap-3">
+        {/* Type */}
+        <div className="flex items-center gap-2">
           <span className="text-sm font-bold">Type</span>
-          {typeOptions.map((type) => (
-            <label key={type.value} className="flex items-center gap-1 text-sm">
+          {typeOptions.map((t) => (
+            <label key={t.value} className="flex items-center gap-1 text-sm">
               <Checkbox
-                checked={selectedTypes.includes(type.value)}
+                checked={selectedTypes.includes(t.value)}
                 onCheckedChange={() =>
-                  toggleSelection(type.value, selectedTypes, setSelectedTypes)
+                  toggle(t.value, selectedTypes, setSelectedTypes)
                 }
               />
-              {type.label}
+              {t.label}
             </label>
           ))}
         </div>
 
-        {/* Model Filter */}
-        <div className="flex items-center gap-3">
+        {/* Model */}
+        <div className="flex items-center gap-2">
           <span className="text-sm font-bold">Model</span>
-          {modelOptions.map((model) => (
-            <label
-              key={model.value}
-              className="flex items-center gap-1 text-sm"
-            >
+          {modelOptions.map((m) => (
+            <label key={m.value} className="flex items-center gap-1 text-sm">
               <Checkbox
-                checked={selectedModels.includes(model.value)}
+                checked={selectedModels.includes(m.value)}
                 onCheckedChange={() =>
-                  toggleSelection(
-                    model.value,
-                    selectedModels,
-                    setSelectedModels
-                  )
+                  toggle(m.value, selectedModels, setSelectedModels)
                 }
               />
-              {model.label}
+              {m.label}
             </label>
           ))}
         </div>
+      </div>
+
+      {/* Reset */}
+      <div className="self-end">
+        <Button size="sm" variant="outline" onClick={reset}>
+          Reset Filters
+        </Button>
       </div>
     </div>
   );
