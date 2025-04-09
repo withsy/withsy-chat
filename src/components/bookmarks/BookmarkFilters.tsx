@@ -1,6 +1,8 @@
 import { FilterSelect } from "@/components/FilterSelect";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 
 const sortByOptions = [
   { label: "Conversation Time", value: "chattedAt" },
@@ -34,6 +36,8 @@ type Props = {
   setSelectedTypes: (val: string[]) => void;
   selectedModels: string[];
   setSelectedModels: (val: string[]) => void;
+  searchText: string;
+  setSearchText: (val: string) => void;
 };
 
 export function BookmarkFilters({
@@ -45,12 +49,16 @@ export function BookmarkFilters({
   setSelectedTypes,
   selectedModels,
   setSelectedModels,
+  searchText,
+  setSearchText,
 }: Props) {
   const reset = () => {
     setSortBy("bookmarkedAt");
     setSortOrder("desc");
     setSelectedTypes(defaultTypes);
     setSelectedModels(defaultModels);
+    setSearchText("");
+    toast.success("Filters reset");
   };
 
   const toggle = (
@@ -64,65 +72,81 @@ export function BookmarkFilters({
   };
 
   return (
-    <div className="flex flex-col gap-4 md:flex-row md:justify-between md:items-end border-b pb-4">
-      {/* Sort */}
-      <div className="flex gap-4 items-center">
-        <FilterSelect
-          value={sortBy}
-          onChange={setSortBy}
-          options={sortByOptions}
-          placeholder="Sort by"
-          className="w-[180px]"
-        />
-        <FilterSelect
-          value={sortOrder}
-          onChange={setSortOrder}
-          options={sortOrderOptions}
-          placeholder="Order"
-          className="w-[160px]"
-        />
-      </div>
-
-      {/* Filter */}
-      <div className="flex flex gap-3">
-        {/* Type */}
-        <div className="flex items-center gap-2">
-          <span className="text-sm font-bold">Type</span>
-          {typeOptions.map((t) => (
-            <label key={t.value} className="flex items-center gap-1 text-sm">
-              <Checkbox
-                checked={selectedTypes.includes(t.value)}
-                onCheckedChange={() =>
-                  toggle(t.value, selectedTypes, setSelectedTypes)
-                }
-              />
-              {t.label}
-            </label>
-          ))}
+    <div className="flex flex-col gap-4 border-b pb-4">
+      {/* Top: Sort + Search */}
+      <div className="flex flex-wrap gap-4 items-end">
+        {/* Sort */}
+        <div className="flex gap-2 shrink-0">
+          <FilterSelect
+            value={sortBy}
+            onChange={setSortBy}
+            options={sortByOptions}
+            placeholder="Sort by"
+            className="w-[180px]"
+          />
+          <FilterSelect
+            value={sortOrder}
+            onChange={setSortOrder}
+            options={sortOrderOptions}
+            placeholder="Order"
+            className="w-[160px]"
+          />
         </div>
 
-        {/* Model */}
-        <div className="flex items-center gap-2">
-          <span className="text-sm font-bold">Model</span>
-          {modelOptions.map((m) => (
-            <label key={m.value} className="flex items-center gap-1 text-sm">
-              <Checkbox
-                checked={selectedModels.includes(m.value)}
-                onCheckedChange={() =>
-                  toggle(m.value, selectedModels, setSelectedModels)
-                }
-              />
-              {m.label}
-            </label>
-          ))}
+        {/* Search */}
+        <div className="flex-1 min-w-[200px]">
+          <Input
+            type="text"
+            placeholder="Search title or content..."
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
+            className="w-full"
+          />
         </div>
       </div>
 
-      {/* Reset */}
-      <div className="self-end">
-        <Button size="sm" variant="ghost" onClick={reset}>
-          Reset Filters
-        </Button>
+      {/* Bottom: Filters + Reset */}
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div className="flex flex-wrap items-center gap-4">
+          {/* Type */}
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-bold">Type</span>
+            {typeOptions.map((t) => (
+              <label key={t.value} className="flex items-center gap-1 text-sm">
+                <Checkbox
+                  checked={selectedTypes.includes(t.value)}
+                  onCheckedChange={() =>
+                    toggle(t.value, selectedTypes, setSelectedTypes)
+                  }
+                />
+                {t.label}
+              </label>
+            ))}
+          </div>
+
+          {/* Model */}
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-bold">Model</span>
+            {modelOptions.map((m) => (
+              <label key={m.value} className="flex items-center gap-1 text-sm">
+                <Checkbox
+                  checked={selectedModels.includes(m.value)}
+                  onCheckedChange={() =>
+                    toggle(m.value, selectedModels, setSelectedModels)
+                  }
+                />
+                {m.label}
+              </label>
+            ))}
+          </div>
+        </div>
+
+        {/* Reset Button */}
+        <div>
+          <Button size="sm" variant="ghost" onClick={reset}>
+            Reset
+          </Button>
+        </div>
       </div>
     </div>
   );

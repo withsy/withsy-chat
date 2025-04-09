@@ -7,6 +7,8 @@ import { getFilteredBookmarks } from "@/lib/filter-utils";
 import { BookmarkHeader } from "@/components/bookmarks/BookmarkHeader";
 
 export default function BookmarkPage() {
+  const [searchText, setSearchText] = useState("");
+
   const [sortBy, setSortBy] = useState<"chattedAt" | "bookmarkedAt">(
     "bookmarkedAt"
   );
@@ -21,14 +23,21 @@ export default function BookmarkPage() {
   ]);
 
   const filteredBookmarks = useMemo(() => {
+    const keyword = searchText.toLowerCase().trim();
+
     return getFilteredBookmarks({
       bookmarks: data,
       selectedTypes,
       selectedModels,
       sortBy,
       sortOrder,
+    }).filter((b) => {
+      return (
+        b.title.toLowerCase().includes(keyword) ||
+        b.content.toLowerCase().includes(keyword)
+      );
     });
-  }, [selectedTypes, selectedModels, sortBy, sortOrder]);
+  }, [selectedTypes, selectedModels, sortBy, sortOrder, searchText]);
 
   return (
     <div>
@@ -42,6 +51,8 @@ export default function BookmarkPage() {
         setSelectedTypes={setSelectedTypes}
         selectedModels={selectedModels}
         setSelectedModels={setSelectedModels}
+        searchText={searchText}
+        setSearchText={setSearchText}
       />
       <div className="mt-4 space-y-4">
         {filteredBookmarks.map((bookmark) => (
