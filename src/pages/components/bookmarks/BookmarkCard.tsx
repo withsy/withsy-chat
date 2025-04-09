@@ -1,8 +1,5 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { BookmarkCheck, MessageSquareText } from "lucide-react";
-import { ContextItem } from "../ContextItem";
 import { BookmarkCardHeader } from "./BookmarkCardHeader";
 
 interface BookmarkCardProps {
@@ -34,7 +31,7 @@ export function BookmarkCard({
         title={title}
         bookmarkedAt={bookmarkedAt}
         chattedAt={chattedAt}
-        link={`/chat/${chatId}`} // 링크에 맞게 경로 지정
+        link={`/chat/${chatId}`}
       />
       <Separator />
       <CardContent className="space-y-3 mt-2">

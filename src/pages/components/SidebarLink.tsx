@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Bookmark, Search, NotebookPen } from "lucide-react";
+import { Bookmark, Search, NotebookPen, type LucideIcon } from "lucide-react";
 
 const sidebarLinks = [
   {
