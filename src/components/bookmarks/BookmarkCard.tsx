@@ -1,6 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { BookmarkCardHeader } from "./BookmarkCardHeader";
+import { MarkdownBox } from "../MarkdownBox";
 
 interface BookmarkCardProps {
   type: string;
@@ -33,7 +34,9 @@ export function BookmarkCard({
       />
       <Separator />
       <CardContent className="space-y-3 mt-2">
-        <div className="text-sm whitespace-pre-wrap">{content}</div>
+        <div className="text-sm whitespace-pre-wrap">
+          <MarkdownBox content={content} />
+        </div>
       </CardContent>
     </Card>
   );

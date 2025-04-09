@@ -85,6 +85,42 @@
   }
 }
 
+/* #######################################  custom start  ####################################### */
+
+.prose pre {
+  @apply bg-[#f7f7f8] dark:bg-[#2d2d2d] text-sm text-gray-800 dark:text-gray-100 p-4 rounded-md overflow-x-auto;
+  line-height: 1.6;
+}
+
+.prose pre code {
+  @apply bg-transparent text-inherit font-mono text-sm p-0;
+}
+
+.prose table {
+  @apply w-full border-collapse text-sm mt-6 mb-6;
+}
+
+.prose thead {
+  @apply bg-[#f7f7f8] dark:bg-[#1e1e1e] border-b;
+}
+
+.prose thead th {
+  @apply text-left font-semibold p-3 text-gray-700 dark:text-gray-300;
+}
+
+.prose tbody tr {
+  @apply border-b border-gray-200 dark:border-gray-700;
+}
+
+.prose tbody tr:nth-child(even) {
+  @apply bg-gray-50 dark:bg-[#1f1f1f];
+}
+
+.prose tbody td {
+  @apply p-3 align-top text-gray-800 dark:text-gray-200;
+}
+/* #######################################  custom start  ####################################### */
+
 body {
   background: var(--background);
   color: var(--foreground);
