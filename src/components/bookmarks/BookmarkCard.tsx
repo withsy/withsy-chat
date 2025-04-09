@@ -1,4 +1,3 @@
-import { Copy, Bookmark as BookmarkIcon } from "lucide-react";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -7,6 +6,7 @@ import { Separator } from "@/components/ui/separator";
 import { MarkdownBox } from "@/components/MarkdownBox";
 import { BookmarkCardHeader } from "@/components/bookmarks/BookmarkCardHeader";
 import { toast } from "sonner";
+import { BookmarkCardActions } from "./BookmarkCardActions";
 
 interface BookmarkCardProps {
   type: string;
@@ -28,15 +28,9 @@ export function BookmarkCard({
   const chatId = chattedAt;
   const [expanded, setExpanded] = useState(false);
   const [bookmarked, setBookmarked] = useState(true);
+  const [titleState, setTitleState] = useState(title);
 
   const shouldCollapse = content.length > 300;
-
-  const handleCopy = async () => {
-    await navigator.clipboard.writeText(content);
-    toast.success("Copied!", {
-      description: "Chat content copied to clipboard.",
-    });
-  };
 
   const handleToggleBookmark = () => {
     setBookmarked(false);
@@ -49,24 +43,11 @@ export function BookmarkCard({
 
   return (
     <div className="relative group">
-      <div className="absolute top-2 right-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity flex gap-2 bg-white rounded-md p-1 border">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={handleCopy}
-          className="bg-white hover:bg-gray-100"
-        >
-          <Copy className="w-4 h-4 text-black" />
-        </Button>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={handleToggleBookmark}
-          className="bg-white hover:bg-gray-100"
-        >
-          <BookmarkIcon className="w-4 h-4" fill="black" stroke="white" />
-        </Button>
-      </div>
+      <BookmarkCardActions
+        content={content}
+        onUnbookmark={handleToggleBookmark}
+        onTitleChange={setTitleState}
+      />
 
       <Card>
         <BookmarkCardHeader
