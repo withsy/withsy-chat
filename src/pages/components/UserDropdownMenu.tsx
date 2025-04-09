@@ -1,27 +1,27 @@
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
-  DropdownMenuTrigger,
   DropdownMenuContent,
-  DropdownMenuSeparator,
   DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useSidebar } from "@/context/SidebarContext";
-import {
-  Archive,
-  MessageSquare,
-  Cpu,
-  Settings,
-  LucideIcon,
-} from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useSidebar } from "@/context/SidebarContext";
+import {
+  Archive,
+  Cpu,
+  MessageSquare,
+  Settings,
+  type LucideIcon,
+} from "lucide-react";
 
 interface ToggleMenuItemProps {
   id: string;
@@ -82,17 +82,8 @@ function UserMenuItem({ icon: Icon, label, onClick }: UserMenuItemProps) {
 }
 
 export default function UserDropdownMenu() {
-  const {
-    isMobile,
-    tabEnabled,
-    setTabEnabled,
-    indexVisible,
-    setIndexVisible,
-    wideView,
-    setWideView,
-    largeText,
-    setLargeText,
-  } = useSidebar();
+  const { isMobile, userPrefs, setUserPrefAndSave, userPrefLoadings } =
+    useSidebar();
 
   return (
     <DropdownMenu>
@@ -110,29 +101,31 @@ export default function UserDropdownMenu() {
         <ToggleMenuItem
           id="tab-toggle"
           label="Wide View"
-          checked={wideView}
-          onChange={setWideView}
+          checked={userPrefs["wideView"]}
+          onChange={(v) => setUserPrefAndSave("wideView", v)}
+          disabled={userPrefLoadings["wideView"]}
         />
         <ToggleMenuItem
           id="tab-toggle"
           label="Large Text"
-          checked={largeText}
-          onChange={setLargeText}
+          checked={userPrefs["largeText"]}
+          onChange={(v) => setUserPrefAndSave("largeText", v)}
+          disabled={userPrefLoadings["largeText"]}
         />
         <ToggleMenuItem
           id="tab-toggle"
           label="Enable Tabs"
-          checked={tabEnabled}
-          onChange={setTabEnabled}
-          disabled={isMobile}
+          checked={userPrefs["enableTabs"]}
+          onChange={(v) => setUserPrefAndSave("enableTabs", v)}
+          disabled={userPrefLoadings["enableTabs"] || isMobile}
           tooltip="Tabs are not supported on mobile"
         />
         <ToggleMenuItem
           id="index-toggle"
           label="Show Index"
-          checked={indexVisible}
-          onChange={setIndexVisible}
-          disabled={isMobile}
+          checked={userPrefs["showIndex"]}
+          onChange={(v) => setUserPrefAndSave("showIndex", v)}
+          disabled={userPrefLoadings["showIndex"] || isMobile}
           tooltip="Index is not supported on mobile"
         />
         <DropdownMenuSeparator />

@@ -1,4 +1,16 @@
+import {
+  trpc,
+  type UserMe,
+  type UserPrefs,
+  type UserUpdatePrefs,
+} from "@/utils/trpc";
 import { createContext, useContext, useEffect, useState } from "react";
+
+type UserPrefLoadings = Partial<Record<keyof UserUpdatePrefs, boolean>>;
+type SetUserPrefAndSave = <K extends keyof UserUpdatePrefs>(
+  key: K,
+  value: UserUpdatePrefs[K]
+) => void;
 
 type SidebarContextType = {
   collapsed: boolean;
@@ -8,30 +20,51 @@ type SidebarContextType = {
 
   isMobile: boolean;
 
-  tabEnabled: boolean;
-  setTabEnabled: (value: boolean) => void;
-  indexVisible: boolean;
-  setIndexVisible: (value: boolean) => void;
-
-  wideView: boolean;
-  setWideView: (value: boolean) => void;
-  largeText: boolean;
-  setLargeText: (value: boolean) => void;
+  userPrefs: UserPrefs;
+  setUserPrefAndSave: SetUserPrefAndSave;
+  userPrefLoadings: UserPrefLoadings;
 };
 
 const SidebarContext = createContext<SidebarContextType | undefined>(undefined);
 
-export function SidebarProvider({ children }: { children: React.ReactNode }) {
+export function SidebarProvider({
+  userMe,
+  children,
+}: {
+  userMe: UserMe;
+  children: React.ReactNode;
+}) {
   const [collapsed, setCollapsed] = useState(false);
   const [hydrated, setHydrated] = useState(false);
 
   const [isMobile, setIsMobile] = useState(false);
 
-  const [tabEnabled, setTabEnabled] = useState(true);
-  const [indexVisible, setIndexVisible] = useState(true);
+  const [userPrefs, setUserPrefs] = useState(userMe.preferences);
+  const userPrefsMut = trpc.user.updatePrefs.useMutation();
+  const [userPrefLoadings, setUserPrefLoadings] = useState<UserPrefLoadings>(
+    {}
+  );
 
-  const [wideView, setWideView] = useState(false);
-  const [largeText, setLargeText] = useState(false);
+  const setUserPrefAndSave: SetUserPrefAndSave = <
+    K extends keyof UserUpdatePrefs
+  >(
+    key: K,
+    value: UserUpdatePrefs[K]
+  ) => {
+    const prevValue = userPrefs[key];
+
+    setUserPrefs((prev) => ({ ...prev, [key]: value }));
+    setUserPrefLoadings((prev) => ({ ...prev, [key]: true }));
+
+    userPrefsMut.mutate(
+      { [key]: value },
+      {
+        onSettled: () =>
+          setUserPrefLoadings((prev) => ({ ...prev, [key]: false })),
+        onError: () => setUserPrefs((prev) => ({ ...prev, [key]: prevValue })),
+      }
+    );
+  };
 
   useEffect(() => {
     const saved = localStorage.getItem("sidebarCollapsed");
@@ -66,14 +99,9 @@ export function SidebarProvider({ children }: { children: React.ReactNode }) {
         setCollapsed,
         hydrated,
         isMobile,
-        tabEnabled,
-        setTabEnabled,
-        indexVisible,
-        setIndexVisible,
-        wideView,
-        setWideView,
-        largeText,
-        setLargeText,
+        userPrefs,
+        setUserPrefAndSave,
+        userPrefLoadings,
       }}
     >
       {children}

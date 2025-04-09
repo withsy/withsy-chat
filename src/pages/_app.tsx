@@ -5,8 +5,14 @@ import { trpc } from "../utils/trpc";
 import Layout from "./components/Layout";
 
 const App: AppType = ({ Component, pageProps }: AppProps) => {
+  const userMe = trpc.user.me.useQuery();
+
+  // TODO: Add loading and error page.
+  if (userMe.isLoading) return <div>Loading...</div>;
+  if (userMe.isError || !userMe.data) return <div>Error loading user</div>;
+
   return (
-    <SidebarProvider>
+    <SidebarProvider userMe={userMe.data}>
       <Layout>
         <Component {...pageProps} />
       </Layout>

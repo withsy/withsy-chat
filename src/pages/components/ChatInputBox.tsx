@@ -1,16 +1,20 @@
-import { useState } from "react";
-import { Send } from "lucide-react";
-import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import { useSidebar } from "@/context/SidebarContext";
-import TextareaAutosize from "react-textarea-autosize";
 import { cn } from "@/lib/utils";
+import { Send } from "lucide-react";
+import { useState } from "react";
+import TextareaAutosize from "react-textarea-autosize";
 
 export function ChatInputBox() {
-  const { isMobile, collapsed } = useSidebar();
+  const {
+    isMobile,
+    collapsed,
+    userPrefs,
+    setUserPrefAndSave,
+    userPrefLoadings,
+  } = useSidebar();
 
-  // user preference for enter to send
-  const [enterToSend, setEnterToSend] = useState(true);
   const [message, setMessage] = useState("");
 
   const inputBoxClass = cn(
@@ -30,8 +34,9 @@ export function ChatInputBox() {
         <div className="flex items-center gap-2">
           <Switch
             id="enter-toggle"
-            checked={enterToSend}
-            onCheckedChange={setEnterToSend}
+            checked={userPrefs["enterToSend"]}
+            onCheckedChange={(v) => setUserPrefAndSave("enterToSend", v)}
+            disabled={userPrefLoadings["enterToSend"]} // TODO: Fix the text sparkle.
           />
           <Label
             htmlFor="enter-toggle"
