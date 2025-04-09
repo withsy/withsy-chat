@@ -46,8 +46,8 @@ export default function Sidebar() {
         className={cn(
           "transition-all duration-300 ease-in-out bg-gray-100 border-r h-screen pt-16 fixed top-0 left-0 z-40 flex flex-col",
           collapsed && "w-0 overflow-hidden",
-          !collapsed && isMobile && "w-[100vw]  px-4",
-          !collapsed && !isMobile && "w-[240px] px-4"
+          !collapsed && isMobile && "z-10 w-[100vw]  px-4",
+          !collapsed && !isMobile && "z-10 w-[240px] px-4"
         )}
       >
         <div

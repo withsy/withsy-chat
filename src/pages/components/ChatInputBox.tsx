@@ -1,16 +1,17 @@
 import { useState } from "react";
-import { Mic, Send } from "lucide-react";
+import { Send } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 
 import TextareaAutosize from "react-textarea-autosize";
 
 export function ChatInputBox() {
+  // user preference for enter to send
   const [enterToSend, setEnterToSend] = useState(true);
   const [message, setMessage] = useState("");
 
   return (
-    <div className="fixed bottom-[5vh] left-1/2 -translate-x-1/2 w-full max-w-[80vw] md:max-w-2xl px-4 py-3 shadow-md rounded-xl bg-white z-50">
+    <div className="fixed bottom-[5vh] left-1/2 -translate-x-1/2 w-full max-w-[80vw] md:max-w-2xl px-4 py-3 shadow-md rounded-xl bg-white z-5">
       <TextareaAutosize
         value={message}
         onChange={(e) => setMessage(e.target.value)}
@@ -33,14 +34,9 @@ export function ChatInputBox() {
           </Label>
         </div>
 
-        <div className="flex items-center gap-2">
-          <button className="p-2 rounded-md hover:bg-gray-100">
-            <Send className="w-4 h-4 text-muted-foreground" />
-          </button>
-          <button className="p-2 rounded-md hover:bg-gray-100">
-            <Mic className="w-4 h-4 text-muted-foreground" />
-          </button>
-        </div>
+        <button className="p-2 rounded-md hover:bg-gray-100">
+          <Send className="w-4 h-4 text-muted-foreground" />
+        </button>
       </div>
     </div>
   );
