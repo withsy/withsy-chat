@@ -50,7 +50,7 @@ export default function HomeDashboard({ name = "Yejin" }: { name?: string }) {
   ];
 
   return (
-    <div className="p-6 overflow-auto flex flex-col items-center">
+    <div className="overflow-auto flex flex-col items-center">
       <div className="flex flex-col items-center justify-center min-h-[70vh]">
         <h1 className="text-2xl font-semibold mb-6">
           {greeting}, {name}

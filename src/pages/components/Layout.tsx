@@ -20,7 +20,7 @@ export default function Layout({ children }: LayoutProps) {
         <main
           className={cn(
             "bg-gray-50 p-6 h-[calc(100vh-60px)] overflow-auto",
-            !isMobile && !collapsed && " pl-[240px]"
+            !isMobile && !collapsed && " pl-[240px] ml-6"
           )}
         >
           {children}
