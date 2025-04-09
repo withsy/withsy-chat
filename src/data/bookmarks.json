@@ -1,0 +1,52 @@
+[
+  {
+    "bookmarkedAt": "2025-03-21T09:15:00Z",
+    "chattedAt": "2025-03-20T14:30:00Z",
+    "content": "I want to plan a 5-day trip to Paris. What are the must-see places?",
+    "id": "1",
+    "model": "gpt-4",
+    "note": "",
+    "title": "Trip planning to Paris",
+    "type": "chat"
+  },
+  {
+    "bookmarkedAt": "2025-03-18T10:05:00Z",
+    "chattedAt": "2025-03-18T10:00:00Z",
+    "content": "How can I optimize performance in a large React app with many components?",
+    "id": "2",
+    "model": "gpt-3.5",
+    "note": "Helpful for our dashboard performance task.",
+    "title": "React performance tips",
+    "type": "thread"
+  },
+  {
+    "bookmarkedAt": "2025-03-15T12:20:00Z",
+    "chattedAt": "2025-03-10T08:45:00Z",
+    "content": "Here's my resume. Can you help me improve it for frontend jobs in Canada?",
+    "id": "3",
+    "model": "gpt-4",
+    "note": "Use for all future job applications.",
+    "title": "Resume review",
+    "type": "chat"
+  },
+  {
+    "bookmarkedAt": "2025-03-01T18:30:00Z",
+    "chattedAt": "2025-02-28T16:10:00Z",
+    "content": "How can we ensure safety when AI becomes more intelligent than humans?",
+    "id": "4",
+    "model": "claude-3",
+    "note": "Interesting point about trust and emotional understanding.",
+    "title": "AI ethics discussion",
+    "type": "thread"
+  },
+  {
+    "bookmarkedAt": "2025-01-13T08:25:00Z",
+    "chattedAt": "2025-01-12T11:00:00Z",
+    "content": "What's the difference between Docker and Podman, and which is better for Kubernetes?",
+    "id": "5",
+    "model": "gpt-3.5",
+    "note": "",
+    "title": "Docker vs Podman",
+    "type": "chat"
+  }
+]

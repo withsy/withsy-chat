@@ -1,4 +1,4 @@
-import { Tag, MessageSquare, Cpu, Book, Archive } from "lucide-react";
+import { MessageSquare, Cpu, Book, Archive } from "lucide-react";
 import { useEffect, useState } from "react";
 import { DashboardCard } from "./DashboardCard";
 import ChatInterface from "./ChatInterface";
