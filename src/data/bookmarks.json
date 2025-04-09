@@ -5,7 +5,6 @@
     "content": "I want to plan a 5-day trip to Paris. What are the must-see places?",
     "id": "1",
     "model": "gpt-4",
-    "note": "",
     "title": "Trip planning to Paris",
     "type": "chat"
   },
@@ -15,7 +14,6 @@
     "content": "Sure! Here's a basic **Node.js + Express server setup**:\n\n```js\nconst express = require('express');\nconst app = express();\n\napp.get('/', (req, res) => {\n  res.send('Hello, world!');\n});\n\napp.listen(3000, () => {\n  console.log('Server is running on port 3000');\n});\n```\n\nLet me know if you want to add routes, middleware, or connect to MongoDB.",
     "id": "2",
     "model": "gpt-3.5",
-    "note": "",
     "title": "Node.js server setup",
     "type": "chat"
   },
@@ -25,7 +23,6 @@
     "content": "Here's a comparison between **Kubernetes and Docker Swarm**:\n\n| Feature              | Kubernetes      | Docker Swarm     |\n|----------------------|------------------|------------------|\n| Setup Complexity     | High             | Low              |\n| Scalability          | Excellent        | Good             |\n| Community Support    | Very Active      | Limited          |\n| Networking           | Advanced         | Basic            |\n| Learning Curve       | Steep            | Gentle           |\n\nLet me know if you'd like a recommendation based on your use case!",
     "id": "3",
     "model": "gpt-4",
-    "note": "",
     "title": "Kubernetes vs Docker Swarm",
     "type": "thread"
   },
@@ -35,7 +32,6 @@
     "content": "I want to plan a 5-day trip to Paris. What are the must-see places?",
     "id": "4",
     "model": "gpt-4",
-    "note": "",
     "title": "Trip planning to Paris",
     "type": "chat"
   },
@@ -45,7 +41,6 @@
     "content": "How can I optimize performance in a large React app with many components?",
     "id": "5",
     "model": "gpt-3.5",
-    "note": "Helpful for our dashboard performance task.",
     "title": "React performance tips",
     "type": "thread"
   },
@@ -55,7 +50,6 @@
     "content": "Here's my resume. Can you help me improve it for frontend jobs in Canada?",
     "id": "6",
     "model": "gpt-4",
-    "note": "Use for all future job applications.",
     "title": "Resume review",
     "type": "chat"
   },
@@ -65,7 +59,6 @@
     "content": "How can we ensure safety when AI becomes more intelligent than humans?",
     "id": "7",
     "model": "claude-3",
-    "note": "Interesting point about trust and emotional understanding.",
     "title": "AI ethics discussion",
     "type": "thread"
   },
@@ -75,7 +68,6 @@
     "content": "What's the difference between Docker and Podman, and which is better for Kubernetes?",
     "id": "8",
     "model": "gpt-3.5",
-    "note": "",
     "title": "Docker vs Podman",
     "type": "chat"
   }
