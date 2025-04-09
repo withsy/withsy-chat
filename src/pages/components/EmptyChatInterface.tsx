@@ -1,4 +1,4 @@
-import { Tag, MessageSquare, Cpu, Book } from "lucide-react";
+import { Tag, MessageSquare, Cpu, Book, Archive } from "lucide-react";
 import { useEffect, useState } from "react";
 import { DashboardCard } from "./DashboardCard";
 import ChatInterface from "./ChatInterface";
@@ -23,19 +23,19 @@ export default function EmptyChatInterface({ name = "" }: { name?: string }) {
 
   const cards = [
     {
-      title: "Tags",
-      description: "Manage auto prompts by tag",
-      icon: <Tag className="w-6 h-6 text-blue-500" />,
+      title: "Archive",
+      description: "Archive & manage your chats",
+      icon: <Archive className="w-6 h-6 text-blue-500" />,
       onClick: () => console.log("Open Tag Modal"),
     },
     {
-      title: "Prompts",
+      title: "Prompt",
       description: "Manage auto & saved prompts",
       icon: <MessageSquare className="w-6 h-6 text-green-500" />,
       onClick: () => console.log("Open Prompt Modal"),
     },
     {
-      title: "Models",
+      title: "Model",
       description: "Change default model & manage keys",
       icon: <Cpu className="w-6 h-6 text-purple-500" />,
       onClick: () => console.log("Open Model Modal"),

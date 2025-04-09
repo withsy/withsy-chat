@@ -9,7 +9,13 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useSidebar } from "@/context/SidebarContext";
-import { Tag, MessageSquare, Cpu, Settings, LucideIcon } from "lucide-react";
+import {
+  Archive,
+  MessageSquare,
+  Cpu,
+  Settings,
+  LucideIcon,
+} from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -130,7 +136,7 @@ export default function UserDropdownMenu() {
           tooltip="Index is not supported on mobile"
         />
         <DropdownMenuSeparator />
-        <UserMenuItem icon={Tag} label="Tags" />
+        <UserMenuItem icon={Archive} label="Archive" />
         <UserMenuItem icon={MessageSquare} label="Prompts" />
         <UserMenuItem icon={Cpu} label="Models" />
         <DropdownMenuSeparator />
