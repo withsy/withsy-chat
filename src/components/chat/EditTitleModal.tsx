@@ -10,13 +10,14 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 
 type Props = {
+  title: string;
   open: boolean;
   setOpen: (v: boolean) => void;
   onSubmit: (title: string) => void;
 };
 
-export function EditTitleModal({ open, setOpen, onSubmit }: Props) {
-  const [value, setValue] = useState("");
+export function EditTitleModal({ title, open, setOpen, onSubmit }: Props) {
+  const [value, setValue] = useState(title);
 
   const handleSubmit = () => {
     if (value.trim()) {

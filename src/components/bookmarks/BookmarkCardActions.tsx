@@ -5,12 +5,14 @@ import { useState } from "react";
 import { EditTitleModal } from "@/components/chat/EditTitleModal";
 
 type Props = {
+  title: string;
   content: string;
   onUnbookmark: () => void;
   onTitleChange: (newTitle: string) => void;
 };
 
 export function BookmarkCardActions({
+  title,
   content,
   onUnbookmark,
   onTitleChange,
@@ -41,6 +43,7 @@ export function BookmarkCardActions({
       </div>
 
       <EditTitleModal
+        title={title}
         open={open}
         setOpen={setOpen}
         onSubmit={(title) => {

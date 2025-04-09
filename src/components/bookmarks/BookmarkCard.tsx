@@ -44,6 +44,7 @@ export function BookmarkCard({
   return (
     <div className="relative group">
       <BookmarkCardActions
+        title={titleState}
         content={content}
         onUnbookmark={handleToggleBookmark}
         onTitleChange={setTitleState}
