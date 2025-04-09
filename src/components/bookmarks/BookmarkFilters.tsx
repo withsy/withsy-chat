@@ -124,7 +124,7 @@ export function BookmarkFilters({
         {/* Reset Button */}
         <div>
           <Button size="sm" variant="ghost" onClick={reset}>
-            Reset
+            Reset Filters
           </Button>
         </div>
       </div>
