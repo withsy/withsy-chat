@@ -1,10 +1,10 @@
 import { SidebarProvider } from "@/context/SidebarContext";
-
 import "@/styles/globals.css";
-import type { AppProps } from "next/app";
+import type { AppProps, AppType } from "next/app";
+import { trpc } from "../utils/trpc";
 import Layout from "./components/Layout";
 
-export default function App({ Component, pageProps }: AppProps) {
+const App: AppType = ({ Component, pageProps }: AppProps) => {
   return (
     <SidebarProvider>
       <Layout>
@@ -12,4 +12,6 @@ export default function App({ Component, pageProps }: AppProps) {
       </Layout>
     </SidebarProvider>
   );
-}
+};
+
+export default trpc.withTRPC(App);
