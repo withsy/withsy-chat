@@ -5,6 +5,7 @@ import rehypeHighlight from "rehype-highlight";
 import "highlight.js/styles/github.css";
 import { ClipboardCopy } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { IconButtonWithTooltip } from "./IconButtonWithTooltip";
 
 function CodeBlock({ node, inline, className, children, ...props }: any) {
   const [copied, setCopied] = useState(false);
