@@ -32,8 +32,6 @@ type Props = {
   setSortBy: (val: any) => void;
   sortOrder: string;
   setSortOrder: (val: any) => void;
-  selectedTypes: string[];
-  setSelectedTypes: (val: string[]) => void;
   selectedModels: string[];
   setSelectedModels: (val: string[]) => void;
   searchText: string;
@@ -45,8 +43,6 @@ export function BookmarkFilters({
   setSortBy,
   sortOrder,
   setSortOrder,
-  selectedTypes,
-  setSelectedTypes,
   selectedModels,
   setSelectedModels,
   searchText,
@@ -55,7 +51,6 @@ export function BookmarkFilters({
   const reset = () => {
     setSortBy("bookmarkedAt");
     setSortOrder("desc");
-    setSelectedTypes(defaultTypes);
     setSelectedModels(defaultModels);
     setSearchText("");
     toast.success("Filters reset");
@@ -108,22 +103,6 @@ export function BookmarkFilters({
       {/* Bottom: Filters + Reset */}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex flex-wrap items-center gap-4">
-          {/* Type */}
-          <div className="flex items-center gap-2">
-            <span className="text-sm font-bold">Type</span>
-            {typeOptions.map((t) => (
-              <label key={t.value} className="flex items-center gap-1 text-sm">
-                <Checkbox
-                  checked={selectedTypes.includes(t.value)}
-                  onCheckedChange={() =>
-                    toggle(t.value, selectedTypes, setSelectedTypes)
-                  }
-                />
-                {t.label}
-              </label>
-            ))}
-          </div>
-
           {/* Model */}
           <div className="flex items-center gap-2">
             <span className="text-sm font-bold">Model</span>

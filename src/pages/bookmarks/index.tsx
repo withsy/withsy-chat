@@ -47,8 +47,6 @@ export default function BookmarkPage() {
         setSortBy={setSortBy}
         sortOrder={sortOrder}
         setSortOrder={setSortOrder}
-        selectedTypes={selectedTypes}
-        setSelectedTypes={setSelectedTypes}
         selectedModels={selectedModels}
         setSelectedModels={setSelectedModels}
         searchText={searchText}
