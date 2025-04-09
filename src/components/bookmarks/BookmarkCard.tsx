@@ -52,7 +52,6 @@ export function BookmarkCard({
 
       <Card>
         <BookmarkCardHeader
-          type={type}
           model={model}
           title={title}
           bookmarkedAt={bookmarkedAt}

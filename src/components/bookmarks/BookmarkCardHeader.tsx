@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { BookmarkCardHeaderContext } from "./BookmarkCardHeaderContext";
 
 type Props = {
-  type: string;
   model: string;
   title: string;
   bookmarkedAt: string;
@@ -14,7 +13,6 @@ type Props = {
 };
 
 export function BookmarkCardHeader({
-  type,
   model,
   title,
   bookmarkedAt,
@@ -30,9 +28,6 @@ export function BookmarkCardHeader({
     >
       <div className="flex justify-between items-center gap-2">
         <div className="flex items-center gap-2">
-          <Badge variant="outline" className="capitalize">
-            {type}
-          </Badge>
           <Badge>{model}</Badge>
         </div>
         <div className="flex gap-x-3 mt-1 overflow-hidden">
