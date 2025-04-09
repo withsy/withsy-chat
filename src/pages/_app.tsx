@@ -3,6 +3,7 @@ import "@/styles/globals.css";
 import type { AppProps, AppType } from "next/app";
 import { trpc } from "@/utils/trpc";
 import Layout from "@/components/layout/Layout";
+import { Toaster as Sonner } from "sonner";
 
 const App: AppType = ({ Component, pageProps }: AppProps) => {
   const userMe = trpc.user.me.useQuery();
@@ -16,6 +17,7 @@ const App: AppType = ({ Component, pageProps }: AppProps) => {
       <Layout>
         <Component {...pageProps} />
       </Layout>
+      <Sonner position="bottom-right" />
     </SidebarProvider>
   );
 };

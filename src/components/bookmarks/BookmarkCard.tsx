@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { MarkdownBox } from "@/components/MarkdownBox";
 import { BookmarkCardHeader } from "@/components/bookmarks/BookmarkCardHeader";
+import { toast } from "sonner";
 
 interface BookmarkCardProps {
   type: string;
@@ -26,16 +27,22 @@ export function BookmarkCard({
 }: BookmarkCardProps) {
   const chatId = chattedAt;
   const [expanded, setExpanded] = useState(false);
-  const [bookmarked, setBookmarked] = useState(true); // ✅ 기본 북마크 상태
+  const [bookmarked, setBookmarked] = useState(true);
 
   const shouldCollapse = content.length > 300;
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(content);
+    toast.success("Copied!", {
+      description: "Chat content copied to clipboard.",
+    });
   };
 
   const handleToggleBookmark = () => {
     setBookmarked(false);
+    toast.info("Bookmark removed", {
+      description: "This chat has been removed from bookmarks.",
+    });
   };
 
   if (!bookmarked) return null;
