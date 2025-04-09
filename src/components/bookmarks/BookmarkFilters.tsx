@@ -25,7 +25,6 @@ const modelOptions = [
   { label: "Claude-3", value: "claude-3" },
 ];
 
-const defaultTypes = typeOptions.map((t) => t.value);
 const defaultModels = modelOptions.map((m) => m.value);
 
 type Props = {
