@@ -1,48 +1,92 @@
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
+import { formatDateLabel } from "@/lib/date-utils";
+import type { Chat } from "@/server/db/chats";
+import { toLatest, toLocaleDateString } from "@/utils/date";
+import { trpc } from "@/utils/trpc";
 import {
-  MoreHorizontal,
-  Star,
   AlignJustify,
-  StarOff,
+  MoreHorizontal,
   Pencil,
+  Star,
+  StarOff,
   Trash2,
 } from "lucide-react";
-import { formatDateLabel } from "@/lib/date-utils";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 export default function SidebarChatList() {
-  const [starred, setStarred] = useState(["Chat A", "Chat C"]);
-  const chats = {
-    "2025-04-08": ["Chat 123123", "Chat afds"],
-    "2025-04-07": ["Chat A", "Chat B"],
-    "2025-04-06": ["Chat C"],
-    "2025-04-05": ["Chat D", "Chat E"],
-    "2025-04-04": ["Chat da", "Chat E"],
-    "2025-04-03": ["Chat dafsw", "Chat sad"],
-  };
+  const utils = trpc.useUtils();
+  const chatsRes = trpc.chat.list.useQuery();
+  const updateChatMut = trpc.chat.update.useMutation();
+  const [chats, setChats] = useState<Chat[]>([]);
 
-  const toggleStar = (chat: string) => {
-    setStarred((prev) =>
-      prev.includes(chat) ? prev.filter((c) => c !== chat) : [...prev, chat]
+  useEffect(() => {
+    if (chatsRes.data) setChats(chatsRes.data);
+  }, [chatsRes]);
+
+  const updateChat = <K extends keyof Chat>(
+    chatId: string,
+    key: K,
+    value: Chat[K]
+  ) => {
+    const prev = chats;
+
+    setChats((prev) =>
+      prev.map((chat) =>
+        chat.id === chatId ? { ...chat, [key]: value } : chat
+      )
+    );
+
+    updateChatMut.mutate(
+      { chatId, [key]: value },
+      {
+        onError: () => setChats(prev),
+        onSuccess: () => utils.chat.list.invalidate(),
+      }
     );
   };
 
+  const toggleStar = (chat: Chat) => {
+    updateChat(chat.id, "isStarred", !chat.isStarred);
+  };
+
+  // TODO: Add loading and error page.
+  if (chatsRes.isLoading) return <div>Loading...</div>;
+  if (chatsRes.isError || !chatsRes.data) return <div>Error loading chats</div>;
+
+  const starreds: Chat[] = [];
+  const nonStarredMap: Map<string, Chat[]> = new Map();
+  chatsRes.data.forEach((chat) => {
+    if (chat.isStarred) {
+      starreds.push(chat);
+    } else {
+      const localeDateString = toLocaleDateString(chat.updatedAt);
+      if (!nonStarredMap.has(localeDateString)) {
+        nonStarredMap.set(localeDateString, []);
+      }
+      nonStarredMap.get(localeDateString)?.push(chat);
+    }
+  });
+  starreds.sort((a, b) => toLatest(a.updatedAt, b.updatedAt));
+  nonStarredMap.forEach((chats) =>
+    chats.sort((a, b) => toLatest(a.updatedAt, b.updatedAt))
+  );
+
   return (
     <div className="mt-4 space-y-2 ">
-      {starred.length > 0 && (
+      {starreds.length > 0 && (
         <div>
           <h3 className="text-sm font-semibold px-2 py-2 rounded-md">
             Starred
           </h3>
           <div className="space-y-1 mt-1">
-            {starred.map((chat) => (
+            {starreds.map((chat) => (
               <SidebarChatItem
-                key={`starred-${chat}`}
+                key={chat.id}
                 chat={chat}
                 isStarred
                 onToggleStar={toggleStar}
@@ -55,20 +99,17 @@ export default function SidebarChatList() {
       <div>
         <h3 className="text-sm font-semibold px-2 py-2 rounded-md">Chats</h3>
         <div className="space-y-4 mt-1">
-          {Object.entries(chats).map(([date, chats]) => {
-            const filteredChats = chats.filter(
-              (chat) => !starred.includes(chat)
-            );
-            if (filteredChats.length === 0) return null;
+          {nonStarredMap.entries().map(([date, chats]) => {
+            if (chats.length === 0) return null;
 
             return (
               <div key={date}>
                 <div className="text-xs text-muted-foreground py-1 px-2 mb-1">
                   {formatDateLabel(date)}
                 </div>
-                {filteredChats.map((chat, idx) => (
+                {chats.map((chat) => (
                   <SidebarChatItem
-                    key={`${date}-${idx}`}
+                    key={chat.id}
                     chat={chat}
                     isStarred={false}
                     onToggleStar={toggleStar}
@@ -88,9 +129,9 @@ function SidebarChatItem({
   isStarred,
   onToggleStar,
 }: {
-  chat: string;
+  chat: Chat;
   isStarred: boolean;
-  onToggleStar: (chat: string) => void;
+  onToggleStar: (chat: Chat) => void;
 }) {
   return (
     <div className="group flex items-center px-2 py-2 rounded-md hover:bg-gray-300 transition-colors">
@@ -111,7 +152,9 @@ function SidebarChatItem({
       </div>
 
       <div className="flex justify-between items-center flex-1 pr-2">
-        <span className="text-sm font-medium text-foreground">{chat}</span>
+        <span className="text-sm font-medium text-foreground">
+          {chat.title}
+        </span>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button

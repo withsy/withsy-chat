@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
 import isToday from "dayjs/plugin/isToday";
 import isYesterday from "dayjs/plugin/isYesterday";
+import relativeTime from "dayjs/plugin/relativeTime";
 
 dayjs.extend(relativeTime);
 dayjs.extend(isToday);
@@ -19,4 +19,20 @@ export function formatSmartDate(dateString: string) {
   }
 
   return `${date.fromNow()}`;
+}
+
+/**
+ * "sv-SE" format is "YYYY-MM-DD".
+ * The time zone reflects the local system time.
+ */
+export function toLocaleDateString(date: Date) {
+  return date.toLocaleDateString("sv-SE");
+}
+
+export function toLatest(lhs: Date, rhs: Date) {
+  return rhs.getTime() - lhs.getTime();
+}
+
+export function toOldest(lhs: Date, rhs: Date) {
+  return -toLatest(lhs, rhs);
 }
