@@ -2,8 +2,8 @@ import { ChevronLeft, ChevronRight, NotebookPen, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSidebar } from "@/context/SidebarContext";
 import { cn } from "@/lib/utils";
-import SidebarChatList from "./SidebarChatList";
-import { SidebarLinkGroup } from "./SidebarLink";
+import SidebarChatList from "@/components/sidebar/SidebarChatList";
+import { SidebarLinkGroup } from "@/components/sidebar/SidebarLink";
 
 export default function Sidebar() {
   const { isMobile, collapsed, toggle } = useSidebar();

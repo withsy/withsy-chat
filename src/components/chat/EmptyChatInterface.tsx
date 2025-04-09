@@ -1,6 +1,6 @@
 import { MessageSquare, Cpu, Book, Archive } from "lucide-react";
 import { useEffect, useState } from "react";
-import { DashboardCard } from "./DashboardCard";
+import { InformationCard } from "@/components/chat/InformationCard";
 import ChatInterface from "./ChatInterface";
 
 function getGreeting() {
@@ -59,7 +59,7 @@ export default function EmptyChatInterface({ name = "" }: { name?: string }) {
         <div className="p-4">
           <div className="grid grid-cols-2 gap-3 max-w-lg">
             {cards.map((card) => (
-              <DashboardCard key={card.title} {...card} />
+              <InformationCard key={card.title} {...card} />
             ))}
           </div>
         </div>

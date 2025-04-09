@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { FilterSelect } from "../FilterSelect";
+import { FilterSelect } from "@/components/FilterSelect";
 import { filterOptions } from "@/config/bookmark-filters";
+
 export function BookmarkFilters() {
   const [sort, setSort] = useState("latest");
   const [type, setType] = useState("all");

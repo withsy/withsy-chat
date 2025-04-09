@@ -1,7 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { ExternalLink } from "lucide-react";
 
-interface DashboardCardProps {
+interface InformationCarddProps {
   title: string;
   description: string;
   icon: React.ReactNode;
@@ -9,13 +9,13 @@ interface DashboardCardProps {
   isExternal?: boolean;
 }
 
-export function DashboardCard({
+export function InformationCard({
   title,
   description,
   icon,
   onClick,
   isExternal = false,
-}: DashboardCardProps) {
+}: InformationCarddProps) {
   return (
     <Card
       onClick={onClick}

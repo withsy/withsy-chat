@@ -1,4 +1,4 @@
-import UserDropdownMenu from "./UserDropdownMenu";
+import UserDropdownMenu from "../UserDropdownMenu";
 import { Button } from "@/components/ui/button";
 import { Archive } from "lucide-react";
 

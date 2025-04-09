@@ -1,5 +1,5 @@
-import { BookmarkCard } from "../components/bookmarks/BookmarkCard";
-import { BookmarkFilters } from "../components/bookmarks/BookmarkFilters";
+import { BookmarkCard } from "@/components/bookmarks/BookmarkCard";
+import { BookmarkFilters } from "@/components/bookmarks/BookmarkFilters";
 import { Bookmark } from "lucide-react";
 import data from "@/data/bookmarks.json";
 

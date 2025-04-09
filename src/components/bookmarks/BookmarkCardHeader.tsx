@@ -1,7 +1,7 @@
 import { CardTitle, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { BookmarkCheck, MessageSquareText, ArrowRight } from "lucide-react";
-import { ContextItem } from "../ContextItem";
+import { ContextItem } from "@/components/ContextItem";
 import { useRouter } from "next/navigation";
 
 type Props = {
