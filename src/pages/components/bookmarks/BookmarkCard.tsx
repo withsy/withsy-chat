@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { BookmarkCheck, MessageSquareText } from "lucide-react";
 import { ContextItem } from "../ContextItem";
+import { BookmarkCardHeader } from "./BookmarkCardHeader";
 
 interface BookmarkCardProps {
   type: string;
@@ -24,29 +25,17 @@ export function BookmarkCard({
   content,
   note,
 }: BookmarkCardProps) {
+  const chatId = "12345"; // Replace with actual chat ID or logic to retrieve it
   return (
     <Card>
-      <CardHeader>
-        <div className="flex justify-between items-center">
-          <div className="flex items-center gap-2">
-            <Badge variant="outline" className="capitalize">
-              {type}
-            </Badge>
-            <Badge>{model}</Badge>
-          </div>
-        </div>
-        <CardTitle className="text-lg">{title}</CardTitle>
-        <div className="flex gap-x-3 mt-1">
-          <ContextItem
-            icon={<BookmarkCheck className="w-4 h-4" />}
-            date={bookmarkedAt}
-          />
-          <ContextItem
-            icon={<MessageSquareText className="w-4 h-4" />}
-            date={chattedAt}
-          />
-        </div>
-      </CardHeader>
+      <BookmarkCardHeader
+        type={type}
+        model={model}
+        title={title}
+        bookmarkedAt={bookmarkedAt}
+        chattedAt={chattedAt}
+        link={`/chat/${chatId}`} // 링크에 맞게 경로 지정
+      />
       <Separator />
       <CardContent className="space-y-3 mt-2">
         <div className="text-sm whitespace-pre-wrap">{content}</div>
