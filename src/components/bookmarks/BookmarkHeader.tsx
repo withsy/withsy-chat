@@ -2,7 +2,7 @@ import { Bookmark } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 type Props = {
-  count: number;
+  count: string;
 };
 
 export function BookmarkHeader({ count }: Props) {

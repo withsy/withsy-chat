@@ -16,6 +16,7 @@ export default function BookmarkPage() {
   const [selectedModels, setSelectedModels] = useState<string[]>([
     "gpt-4",
     "gpt-3.5",
+    "claude-3",
   ]);
 
   const filteredBookmarks = useMemo(() => {
@@ -36,7 +37,7 @@ export default function BookmarkPage() {
 
   return (
     <div>
-      <BookmarkHeader count={data.length} />
+      <BookmarkHeader count={`${filteredBookmarks.length}/${data.length}`} />
       <BookmarkFilters
         sortBy={sortBy}
         setSortBy={setSortBy}
