@@ -1,8 +1,8 @@
 import { CardTitle, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { BookmarkCheck, MessageSquareText, ArrowRight } from "lucide-react";
-import { ContextItem } from "@/components/ContextItem";
 import { useRouter } from "next/navigation";
+import { BookmarkCardHeaderContext } from "./BookmarkCardHeaderContext";
 
 type Props = {
   type: string;
@@ -28,21 +28,21 @@ export function BookmarkCardHeader({
       onClick={() => router.push(link)}
       className="cursor-pointer transition-colors rounded-md group"
     >
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center gap-2">
         <div className="flex items-center gap-2">
           <Badge variant="outline" className="capitalize">
             {type}
           </Badge>
           <Badge>{model}</Badge>
         </div>
-        <div className="flex gap-x-3 mt-1">
-          <ContextItem
-            icon={<BookmarkCheck className="w-4 h-4" />}
-            date={bookmarkedAt}
-          />
-          <ContextItem
+        <div className="flex gap-x-3 mt-1 overflow-hidden">
+          <BookmarkCardHeaderContext
             icon={<MessageSquareText className="w-4 h-4" />}
             date={chattedAt}
+          />
+          <BookmarkCardHeaderContext
+            icon={<BookmarkCheck className="w-4 h-4" />}
+            date={bookmarkedAt}
           />
         </div>
       </div>

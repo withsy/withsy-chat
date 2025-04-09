@@ -10,6 +10,36 @@
     "type": "chat"
   },
   {
+    "bookmarkedAt": "2025-04-09T16:42:00Z",
+    "chattedAt": "2025-04-08T16:38:00Z",
+    "content": "Sure! Here's a basic **Node.js + Express server setup**:\n\n```js\nconst express = require('express');\nconst app = express();\n\napp.get('/', (req, res) => {\n  res.send('Hello, world!');\n});\n\napp.listen(3000, () => {\n  console.log('Server is running on port 3000');\n});\n```\n\nLet me know if you want to add routes, middleware, or connect to MongoDB.",
+    "id": "2",
+    "model": "gpt-3.5",
+    "note": "",
+    "title": "Node.js server setup",
+    "type": "chat"
+  },
+  {
+    "bookmarkedAt": "2025-04-07T08:03:00Z",
+    "chattedAt": "2025-04-07T08:00:00Z",
+    "content": "Here's a comparison between **Kubernetes and Docker Swarm**:\n\n| Feature              | Kubernetes      | Docker Swarm     |\n|----------------------|------------------|------------------|\n| Setup Complexity     | High             | Low              |\n| Scalability          | Excellent        | Good             |\n| Community Support    | Very Active      | Limited          |\n| Networking           | Advanced         | Basic            |\n| Learning Curve       | Steep            | Gentle           |\n\nLet me know if you'd like a recommendation based on your use case!",
+    "id": "3",
+    "model": "gpt-4",
+    "note": "",
+    "title": "Kubernetes vs Docker Swarm",
+    "type": "thread"
+  },
+  {
+    "bookmarkedAt": "2025-03-21T09:15:00Z",
+    "chattedAt": "2025-03-20T14:30:00Z",
+    "content": "I want to plan a 5-day trip to Paris. What are the must-see places?",
+    "id": "1",
+    "model": "gpt-4",
+    "note": "",
+    "title": "Trip planning to Paris",
+    "type": "chat"
+  },
+  {
     "bookmarkedAt": "2025-03-18T10:05:00Z",
     "chattedAt": "2025-03-18T10:00:00Z",
     "content": "How can I optimize performance in a large React app with many components?",
@@ -40,7 +70,7 @@
     "type": "thread"
   },
   {
-    "bookmarkedAt": "2025-01-13T08:25:00Z",
+    "bookmarkedAt": "2023-01-13T08:25:00Z",
     "chattedAt": "2025-01-12T11:00:00Z",
     "content": "What's the difference between Docker and Podman, and which is better for Kubernetes?",
     "id": "5",
