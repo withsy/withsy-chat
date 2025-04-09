@@ -29,10 +29,10 @@ export function toLocaleDateString(date: Date) {
   return date.toLocaleDateString("sv-SE");
 }
 
-export function toLatest(lhs: Date, rhs: Date) {
+export function toNewest(lhs: Date, rhs: Date) {
   return rhs.getTime() - lhs.getTime();
 }
 
 export function toOldest(lhs: Date, rhs: Date) {
-  return -toLatest(lhs, rhs);
+  return -toNewest(lhs, rhs);
 }

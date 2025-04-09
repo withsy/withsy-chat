@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { formatDateLabel } from "@/lib/date-utils";
 import type { Chat } from "@/server/db/chats";
-import { toLatest, toLocaleDateString } from "@/utils/date";
+import { toLocaleDateString, toNewest } from "@/utils/date";
 import { trpc } from "@/utils/trpc";
 import {
   AlignJustify,
@@ -71,9 +71,9 @@ export default function SidebarChatList() {
       nonStarredMap.get(localeDateString)?.push(chat);
     }
   });
-  starreds.sort((a, b) => toLatest(a.updatedAt, b.updatedAt));
+  starreds.sort((a, b) => toNewest(a.updatedAt, b.updatedAt));
   nonStarredMap.forEach((chats) =>
-    chats.sort((a, b) => toLatest(a.updatedAt, b.updatedAt))
+    chats.sort((a, b) => toNewest(a.updatedAt, b.updatedAt))
   );
 
   return (
