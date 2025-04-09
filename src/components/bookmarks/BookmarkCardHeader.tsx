@@ -47,7 +47,7 @@ export function BookmarkCardHeader({
         </div>
       </div>
       <div className="flex items-center gap-1 mt-1">
-        <CardTitle className="text-lg relative group-hover:after:absolute group-hover:after:left-0 group-hover:after:bottom-0 group-hover:after:w-full group-hover:after:h-[1px] group-hover:after:bg-foreground">
+        <CardTitle className="text-ms relative group-hover:after:absolute group-hover:after:left-0 group-hover:after:bottom-0 group-hover:after:w-full group-hover:after:h-[1px] group-hover:after:bg-foreground">
           {title}
         </CardTitle>
         <ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
