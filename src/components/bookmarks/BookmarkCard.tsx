@@ -22,7 +22,7 @@ export function BookmarkCard({
   content,
   note,
 }: BookmarkCardProps) {
-  const chatId = "12345"; // Replace with actual chat ID or logic to retrieve it
+  const chatId = chattedAt; // Replace with actual chat ID or logic to retrieve it
   return (
     <Card>
       <BookmarkCardHeader
