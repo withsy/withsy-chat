@@ -1,6 +1,7 @@
 import { Tag, MessageSquare, Cpu, Book } from "lucide-react";
 import { useEffect, useState } from "react";
 import { DashboardCard } from "./components/DashboardCard";
+import { ChatInputBox } from "./components/ChatInputBox";
 
 function getGreeting() {
   const hour = new Date().getHours();
@@ -61,6 +62,7 @@ export default function HomeDashboard({ name = "Yejin" }: { name?: string }) {
           ))}
         </div>
       </div>
+      <ChatInputBox />
     </div>
   );
 }
