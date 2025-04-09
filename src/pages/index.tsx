@@ -51,15 +51,17 @@ export default function HomeDashboard({ name = "Yejin" }: { name?: string }) {
 
   return (
     <div className="p-6 overflow-auto flex flex-col items-center">
-      <h1 className="text-2xl font-semibold mb-6">
-        {greeting}, {name}
-      </h1>
+      <div className="flex flex-col items-center justify-center min-h-[70vh]">
+        <h1 className="text-2xl font-semibold mb-6">
+          {greeting}, {name}
+        </h1>
 
-      <div className="p-4">
-        <div className="grid grid-cols-2 gap-3 max-w-lg">
-          {cards.map((card) => (
-            <DashboardCard key={card.title} {...card} />
-          ))}
+        <div className="p-4">
+          <div className="grid grid-cols-2 gap-3 max-w-lg">
+            {cards.map((card) => (
+              <DashboardCard key={card.title} {...card} />
+            ))}
+          </div>
         </div>
       </div>
       <ChatInputBox />

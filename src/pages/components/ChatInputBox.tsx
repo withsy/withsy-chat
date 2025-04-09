@@ -10,7 +10,7 @@ export function ChatInputBox() {
   const [message, setMessage] = useState("");
 
   return (
-    <div className="w-full max-w-4xl px-4 py-3 shadow-md rounded-xl bg-white relative">
+    <div className="fixed bottom-[5vh] left-1/2 -translate-x-1/2 w-full max-w-[80vw] md:max-w-2xl px-4 py-3 shadow-md rounded-xl bg-white z-50">
       <TextareaAutosize
         value={message}
         onChange={(e) => setMessage(e.target.value)}
