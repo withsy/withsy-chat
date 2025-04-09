@@ -13,10 +13,6 @@ export default function BookmarkPage() {
     "bookmarkedAt"
   );
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
-  const [selectedTypes, setSelectedTypes] = useState<string[]>([
-    "chat",
-    "thread",
-  ]);
   const [selectedModels, setSelectedModels] = useState<string[]>([
     "gpt-4",
     "gpt-3.5",
@@ -27,7 +23,6 @@ export default function BookmarkPage() {
 
     return getFilteredBookmarks({
       bookmarks: data,
-      selectedTypes,
       selectedModels,
       sortBy,
       sortOrder,
@@ -37,7 +32,7 @@ export default function BookmarkPage() {
         b.content.toLowerCase().includes(keyword)
       );
     });
-  }, [selectedTypes, selectedModels, sortBy, sortOrder, searchText]);
+  }, [selectedModels, sortBy, sortOrder, searchText]);
 
   return (
     <div>
