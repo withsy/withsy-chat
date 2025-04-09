@@ -2,7 +2,7 @@
 import { ReactNode } from "react";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
-import { SidebarProvider, useSidebar } from "@/context/SidebarContext";
+import { useSidebar } from "@/context/SidebarContext";
 import { cn } from "@/lib/utils";
 
 type LayoutProps = {
