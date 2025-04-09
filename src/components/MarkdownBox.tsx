@@ -3,11 +3,19 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeHighlight from "rehype-highlight";
 import "highlight.js/styles/github.css";
-import { ClipboardCopy } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { IconButtonWithTooltip } from "./IconButtonWithTooltip";
+import { Copy } from "lucide-react";
+import { Button } from "./ui/button";
 
-function CodeBlock({ node, inline, className, children, ...props }: any) {
+function CodeBlock({
+  inline,
+  className,
+  children,
+  ...props
+}: {
+  inline?: boolean;
+  className?: string;
+  children: React.ReactNode;
+}) {
   const [copied, setCopied] = useState(false);
 
   const rawCode =
@@ -17,6 +25,12 @@ function CodeBlock({ node, inline, className, children, ...props }: any) {
       ? children.filter((c) => typeof c === "string").join("")
       : "";
 
+  const handleCopy = async () => {
+    await navigator.clipboard.writeText(rawCode.trim());
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1500);
+  };
+
   if (inline) {
     return (
       <code className={className} {...props}>
@@ -25,24 +39,18 @@ function CodeBlock({ node, inline, className, children, ...props }: any) {
     );
   }
 
-  const handleCopy = async () => {
-    await navigator.clipboard.writeText(rawCode.trim());
-    setCopied(true);
-    setTimeout(() => setCopied(false), 1500);
-  };
-
   return (
-    <div className="relative group">
-      <Button
-        size="icon"
-        variant="ghost"
-        onClick={handleCopy}
-        className="absolute top-2 right-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity"
-      >
-        <ClipboardCopy className="w-4 h-4" />
-      </Button>
-
-      <pre className={className} {...props}>
+    <div className="relative">
+      <pre className={`relative ${className}`} {...props}>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={handleCopy}
+          className="absolute top-2 right-3 h-auto px-1 py-0 text-muted-foreground text-xs flex items-center gap-1"
+        >
+          <Copy className="w-4 h-4" />
+          {copied ? "Copied!" : "Copy"}
+        </Button>
         <code>{children}</code>
       </pre>
     </div>

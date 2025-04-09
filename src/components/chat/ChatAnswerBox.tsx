@@ -1,4 +1,4 @@
-import { ClipboardCopy, ThumbsUp, ThumbsDown, Settings } from "lucide-react";
+import { Copy, ThumbsUp, ThumbsDown, Settings } from "lucide-react";
 import { IconButtonWithTooltip } from "@/components/IconButtonWithTooltip";
 import { MarkdownBox } from "@/components/MarkdownBox";
 
@@ -13,7 +13,7 @@ export function ChatAnswerBox({ content }: Props) {
 
       <div className="flex gap-2 justify-end pt-2 border-t mt-2">
         <IconButtonWithTooltip
-          icon={<ClipboardCopy className="w-4 h-4" />}
+          icon={<Copy className="w-4 h-4" />}
           label="Copy"
           onClick={() => navigator.clipboard.writeText(content)}
         />
