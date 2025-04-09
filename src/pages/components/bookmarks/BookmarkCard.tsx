@@ -1,9 +1,19 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { BookmarkCardProps } from "@/pages/model/bookmarks";
 import { BookmarkCheck, MessageSquareText } from "lucide-react";
 import { ContextItem } from "../ContextItem";
+
+interface BookmarkCardProps {
+  type: string;
+  //   type: "chat" | "thread";
+  model: string;
+  title: string;
+  chattedAt: string;
+  bookmarkedAt: string;
+  content: string;
+  note: string;
+}
 
 export function BookmarkCard({
   type,

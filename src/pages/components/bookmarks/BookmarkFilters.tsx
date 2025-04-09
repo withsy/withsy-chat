@@ -1,23 +1,45 @@
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
+
 export function BookmarkFilters() {
   return (
     <div className="flex flex-wrap gap-3 items-center">
-      <select className="border p-2 rounded">
-        <option value="latest">Latest</option>
-        <option value="oldest">Oldest</option>
-      </select>
+      <Select>
+        <SelectTrigger className="w-[160px]">
+          <SelectValue placeholder="Sort By" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="latest">Latest</SelectItem>
+          <SelectItem value="oldest">Oldest</SelectItem>
+        </SelectContent>
+      </Select>
 
-      <select className="border p-2 rounded">
-        <option value="all">Chats + Threads</option>
-        <option value="chat">Chat</option>
-        <option value="thread">Thread</option>
-      </select>
+      <Select>
+        <SelectTrigger className="w-[180px]">
+          <SelectValue placeholder="Type" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="all">Chats + Threads</SelectItem>
+          <SelectItem value="chat">Chat</SelectItem>
+          <SelectItem value="thread">Thread</SelectItem>
+        </SelectContent>
+      </Select>
 
-      <select className="border p-2 rounded">
-        <option value="all">All Models</option>
-        <option value="gpt-4">GPT-4</option>
-        <option value="gpt-3.5">GPT-3.5</option>
-        {/* etc... */}
-      </select>
+      <Select>
+        <SelectTrigger className="w-[160px]">
+          <SelectValue placeholder="Model" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="all">All Models</SelectItem>
+          <SelectItem value="gpt-4">GPT-4</SelectItem>
+          <SelectItem value="gpt-3.5">GPT-3.5</SelectItem>
+        </SelectContent>
+      </Select>
     </div>
   );
 }
