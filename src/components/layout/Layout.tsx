@@ -9,7 +9,8 @@ type LayoutProps = {
 };
 
 export default function Layout({ children }: LayoutProps) {
-  const { collapsed, isMobile } = useSidebar();
+  const { collapsed, isMobile, userPrefs } = useSidebar();
+  const { wideView, largeText } = userPrefs;
 
   const sidebarWidth = !collapsed && !isMobile ? 240 : 0;
 
@@ -21,7 +22,15 @@ export default function Layout({ children }: LayoutProps) {
         style={{ marginLeft: sidebarWidth }}
       >
         <Header />
-        <div className="flex-1 overflow-y-auto">{children}</div>
+        <div
+          className={cn(
+            "flex-1 overflow-y-auto px-4 py-6 transition-all",
+            wideView ? "w-full" : "w-[80%] mx-auto",
+            largeText ? "text-lg" : "text-base"
+          )}
+        >
+          {children}
+        </div>
       </div>
     </div>
   );
