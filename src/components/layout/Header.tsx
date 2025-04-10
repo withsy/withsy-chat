@@ -16,7 +16,7 @@ function ArchiveButton({ onClick }: { onClick?: () => void }) {
 }
 export default function Header() {
   return (
-    <header className="h-[60px] flex items-center bg-white border-b justify-between px-4">
+    <header className="h-[60px] flex items-center justify-between px-4">
       <div />
       <div className="flex items-center gap-4">
         <ArchiveButton />

@@ -18,7 +18,7 @@ export default function Layout({ children }: LayoutProps) {
         <Header />
         <main
           className={cn(
-            "bg-gray-50 p-6 h-[calc(100vh-60px)] overflow-auto",
+            " p-6 h-[calc(100vh-60px)] overflow-auto",
             !isMobile && !collapsed && " pl-[240px] ml-6"
           )}
         >
