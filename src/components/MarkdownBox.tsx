@@ -1,9 +1,7 @@
-import React from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeHighlight from "rehype-highlight";
 import "highlight.js/styles/github.css";
-
 import { CodeBlock } from "./CodeBlock";
 
 export function MarkdownBox({ content }: { content: string }) {
@@ -13,7 +11,19 @@ export function MarkdownBox({ content }: { content: string }) {
         remarkPlugins={[remarkGfm]}
         rehypePlugins={[rehypeHighlight]}
         components={{
-          code: CodeBlock,
+          pre: ({ node, children, ...props }) => {
+            return <CodeBlock {...props}>{children}</CodeBlock>;
+          },
+          code({ inline, className, children, ...props }) {
+            if (inline) {
+              return (
+                <code className={className} {...props}>
+                  {children}
+                </code>
+              );
+            }
+            return <>{children}</>;
+          },
         }}
       >
         {content}
