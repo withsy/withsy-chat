@@ -18,7 +18,6 @@ interface BookmarkCardProps {
 }
 
 export function BookmarkCard({
-  type,
   model,
   title,
   chattedAt,

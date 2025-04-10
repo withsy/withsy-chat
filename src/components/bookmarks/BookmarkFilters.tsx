@@ -14,11 +14,6 @@ const sortOrderOptions = [
   { label: "Oldest First", value: "asc" },
 ];
 
-const typeOptions = [
-  { label: "Chat", value: "chat" },
-  { label: "Thread", value: "thread" },
-];
-
 const modelOptions = [
   { label: "GPT-4", value: "gpt-4" },
   { label: "GPT-3.5", value: "gpt-3.5" },

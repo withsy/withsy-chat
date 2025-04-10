@@ -1,6 +1,6 @@
-import type { ChatMessage } from "@/\btypes/chat";
+import type { ChatMessage } from "@/types/chat";
 
-export const chat001: ChatMessage[] = [
+export const mockChatMessages: ChatMessage[] = [
   {
     id: "msg1",
     chatId: "chat-001",

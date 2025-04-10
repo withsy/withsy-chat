@@ -6,21 +6,25 @@ import { Send } from "lucide-react";
 import { useState } from "react";
 import TextareaAutosize from "react-textarea-autosize";
 
-export function ChatInputBox() {
-  const {
-    isMobile,
-    collapsed,
-    userPrefs,
-    setUserPrefAndSave,
-    userPrefLoadings,
-  } = useSidebar();
+type Props = {
+  chatId: string;
+};
+
+export function ChatInputBox({ chatId }: Props) {
+  const { userPrefs, setUserPrefAndSave, userPrefLoadings } = useSidebar();
 
   const [message, setMessage] = useState("");
 
   const inputBoxClass = cn(
-    "fixed bottom-[5vh] w-full px-4 py-3 shadow-md rounded-xl bg-white z-5  md:max-w-[calc((100vw-240px)*0.8)]",
-    !collapsed && !isMobile ? "" : "max-w-[80vw] left-1/2 -translate-x-1/2"
+    "relative w-full px-4 py-3 border rounded-xl bg-white",
+    "transition-all"
   );
+
+  const handleSend = () => {
+    if (!message.trim()) return;
+    console.log("🔼 Send message to", chatId, "→", message);
+    setMessage("");
+  };
   return (
     <div className={inputBoxClass}>
       <TextareaAutosize
@@ -36,7 +40,7 @@ export function ChatInputBox() {
             id="enter-toggle"
             checked={userPrefs["enterToSend"]}
             onCheckedChange={(v) => setUserPrefAndSave("enterToSend", v)}
-            disabled={userPrefLoadings["enterToSend"]} // TODO: Fix the text sparkle.
+            disabled={userPrefLoadings["enterToSend"]}
           />
           <Label
             htmlFor="enter-toggle"
@@ -45,8 +49,10 @@ export function ChatInputBox() {
             Enter to send
           </Label>
         </div>
-
-        <button className="p-2 rounded-md hover:bg-gray-100">
+        <button
+          onClick={handleSend}
+          className="p-2 rounded-md hover:bg-gray-100"
+        >
           <Send className="w-4 h-4 text-muted-foreground" />
         </button>
       </div>
