@@ -6,7 +6,7 @@ import { CodeBlock } from "./CodeBlock";
 
 export function MarkdownBox({ content }: { content: string }) {
   return (
-    <div className="prose prose-sm dark:prose-invert max-w-none p-4 rounded-md">
+    <div className="prose prose-sm dark:prose-invert rounded-md">
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         rehypePlugins={[rehypeHighlight]}
@@ -15,8 +15,13 @@ export function MarkdownBox({ content }: { content: string }) {
             return <CodeBlock {...props}>{children}</CodeBlock>;
           },
           code: ({ className, children, ...props }) => {
-            return <>{children}</>; // block은 pre에서 처리함
+            return <>{children}</>;
           },
+          table: ({ children, ...props }) => (
+            <div className="overflow-x-auto">
+              <table {...props}>{children}</table>
+            </div>
+          ),
         }}
       >
         {content}

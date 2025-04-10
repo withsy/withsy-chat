@@ -87,7 +87,7 @@ export function BookmarkFilters({
             placeholder="Search title or content..."
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
-            className="w-full"
+            className="w-full "
           />
         </div>
       </div>

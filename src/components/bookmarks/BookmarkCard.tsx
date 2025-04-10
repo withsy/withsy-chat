@@ -58,7 +58,7 @@ export function BookmarkCard({
           link={`/chat/${chatId}`}
         />
         <Separator />
-        <CardContent className="mt-2 space-y-3">
+        <CardContent className="mt-2 space-y-3 overflow-x-auto">
           <div
             className={`transition-all overflow-hidden relative ${
               expanded
