@@ -69,6 +69,7 @@
     "sort-package-json": "^3.0.0",
     "tailwindcss": "^4",
     "trpc-ui": "^1.0.15",
+    "tsx": "^4.19.3",
     "type-fest": "^4.39.1",
     "typescript": "^5"
   },
