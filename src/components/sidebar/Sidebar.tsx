@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { useSidebar } from "@/context/SidebarContext";
 import { cn } from "@/lib/utils";
 import SidebarChatList from "@/components/sidebar/SidebarChatList";
-import { SidebarLinkGroup } from "@/components/sidebar/SidebarLink";
+import { SidebarTooltipGroup } from "@/components/sidebar/SidebarTooltip";
 
 export default function Sidebar() {
   const { isMobile, collapsed, toggle } = useSidebar();
@@ -22,7 +22,7 @@ export default function Sidebar() {
         >
           {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
         </Button>
-        {collapsed && <SidebarLinkGroup collapsed={collapsed} />}
+        {collapsed && <SidebarTooltipGroup collapsed={collapsed} />}
       </div>
 
       <div
@@ -41,7 +41,7 @@ export default function Sidebar() {
         >
           {!collapsed && (
             <>
-              <SidebarLinkGroup />
+              <SidebarTooltipGroup />
               <div className="flex-1 overflow-y-auto">
                 <SidebarChatList />
               </div>

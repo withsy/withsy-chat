@@ -1,28 +1,28 @@
 import Link from "next/link";
 import { Bookmark, Search, NotebookPen, type LucideIcon } from "lucide-react";
 
-const sidebarLinks = [
+const datas = [
   {
-    href: "/search",
+    id: "search",
     icon: Search,
     label: "Search",
     fill: false,
   },
   {
-    href: "/chat",
+    id: "chat",
     icon: NotebookPen,
     label: "New Chat",
     fill: false,
   },
   {
-    href: "/bookmarks",
+    id: "bookmarks",
     icon: Bookmark,
     label: "Bookmarks",
     fill: true,
   },
 ];
 
-interface SidebarLinkProps {
+interface SidebarTooltipProps {
   href: string;
   icon: LucideIcon;
   label: string;
@@ -30,13 +30,13 @@ interface SidebarLinkProps {
   fill?: boolean;
 }
 
-function SidebarLink({
+function SidebarTooltip({
   href,
   icon: Icon,
   label,
   collapsed,
   fill,
-}: SidebarLinkProps) {
+}: SidebarTooltipProps) {
   return (
     <Link
       href={href}
@@ -63,16 +63,16 @@ interface Props {
   collapsed?: boolean;
 }
 
-export function SidebarLinkGroup({ collapsed = false }: Props) {
+export function SidebarTooltipGroup({ collapsed = false }: Props) {
   return (
     <>
-      {sidebarLinks.map((link) => (
-        <SidebarLink
-          key={link.href}
-          href={link.href}
-          icon={link.icon}
-          label={link.label}
-          fill={link.fill}
+      {datas.map((data) => (
+        <SidebarTooltip
+          key={data.id}
+          href={data.id}
+          icon={data.icon}
+          label={data.label}
+          fill={data.fill}
           collapsed={collapsed}
         />
       ))}
