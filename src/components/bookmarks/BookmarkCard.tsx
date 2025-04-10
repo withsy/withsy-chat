@@ -1,10 +1,10 @@
 import { useState } from "react";
 
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
 import { MarkdownBox } from "@/components/MarkdownBox";
 import { BookmarkCardHeader } from "@/components/bookmarks/BookmarkCardHeader";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
 import { BookmarkCardActions } from "./BookmarkCardActions";
 
@@ -42,17 +42,10 @@ export function BookmarkCard({
 
   return (
     <div className="relative group">
-      <BookmarkCardActions
-        title={titleState}
-        content={content}
-        onUnbookmark={handleToggleBookmark}
-        onTitleChange={setTitleState}
-      />
-
       <Card>
         <BookmarkCardHeader
           model={model}
-          title={title}
+          title={titleState}
           bookmarkedAt={bookmarkedAt}
           chattedAt={chattedAt}
           link={`/chat/${chatId}`}
@@ -85,6 +78,13 @@ export function BookmarkCard({
             </div>
           )}
         </CardContent>
+
+        <CardFooter className="flex justify-end gap-2">
+          <BookmarkCardActions
+            content={content}
+            onUnbookmark={handleToggleBookmark}
+          />
+        </CardFooter>
       </Card>
     </div>
   );

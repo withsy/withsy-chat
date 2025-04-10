@@ -1,24 +1,19 @@
-import { Copy, Bookmark as BookmarkIcon, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { Bookmark as BookmarkIcon, Copy } from "lucide-react";
 import { toast } from "sonner";
-import { useState } from "react";
-import { EditTitleModal } from "@/components/chat/EditTitleModal";
 
 type Props = {
-  title: string;
   content: string;
   onUnbookmark: () => void;
-  onTitleChange: (newTitle: string) => void;
 };
 
-export function BookmarkCardActions({
-  title,
-  content,
-  onUnbookmark,
-  onTitleChange,
-}: Props) {
-  const [open, setOpen] = useState(false);
-
+export function BookmarkCardActions({ content, onUnbookmark }: Props) {
   const handleCopy = async () => {
     await navigator.clipboard.writeText(content);
     toast.success("Copied!", {
@@ -27,32 +22,26 @@ export function BookmarkCardActions({
   };
 
   return (
-    <>
-      <div className="absolute top-2 right-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity flex gap-2 bg-white rounded-md p-1 border">
-        <Button variant="ghost" size="icon" onClick={handleCopy}>
-          <Copy className="w-4 h-4 text-muted-foreground" />
-        </Button>
+    <TooltipProvider>
+      <div className="absolute right-2 z-10 transition-opacity flex gap-2 bg-white rounded-md p-1">
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button variant="ghost" size="icon" onClick={handleCopy}>
+              <Copy className="w-4 h-4 text-muted-foreground" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent side="top">Copy</TooltipContent>
+        </Tooltip>
 
-        <Button variant="ghost" size="icon" onClick={onUnbookmark}>
-          <BookmarkIcon className="w-4 h-4" fill="black" stroke="white" />
-        </Button>
-
-        <Button variant="ghost" size="icon" onClick={() => setOpen(true)}>
-          <Pencil className="w-4 h-4 text-muted-foreground" />
-        </Button>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button variant="ghost" size="icon" onClick={onUnbookmark}>
+              <BookmarkIcon className="w-4 h-4" fill="black" stroke="black" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent side="top">Remove bookmark</TooltipContent>
+        </Tooltip>
       </div>
-
-      <EditTitleModal
-        title={title}
-        open={open}
-        setOpen={setOpen}
-        onSubmit={(title) => {
-          onTitleChange(title);
-          toast("Title updated", {
-            description: "Bookmark title has been changed.",
-          });
-        }}
-      />
-    </>
+    </TooltipProvider>
   );
 }
