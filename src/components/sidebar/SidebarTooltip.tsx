@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Bookmark, Search, NotebookPen, type LucideIcon } from "lucide-react";
 import { useState } from "react";
+import { SearchModal } from "../search/SearchModal";
 
 const datas = [
   {
@@ -102,19 +103,11 @@ export function SidebarTooltipGroup({ collapsed = false }: Props) {
         />
       ))}
       {isSearchModalOpen && (
-        <SearchModal onClose={() => setSearchModalOpen(false)} />
+        <SearchModal
+          open={isSearchModalOpen}
+          onClose={() => setSearchModalOpen(false)}
+        />
       )}
     </>
-  );
-}
-
-function SearchModal({ onClose }: { onClose: () => void }) {
-  return (
-    <div className="fixed inset-0 flex justify-center items-center">
-      <div className="bg-white p-4 rounded">
-        <h2>Search</h2>
-        <button onClick={onClose}>Close</button>
-      </div>
-    </div>
   );
 }
