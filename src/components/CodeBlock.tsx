@@ -43,7 +43,7 @@ export function CodeBlock({
   }
 
   return (
-    <div className="relative rounded-md overflow-hidden border">
+    <div className="relative rounded-md overflow-hidden border bg-gray-100 mt-4 mb-4">
       <div className="flex justify-between items-center px-3 py-2 text-xs bg-gray-200 text-muted-foreground">
         <span className="capitalize font-medium select-none">
           {language || "code"}
