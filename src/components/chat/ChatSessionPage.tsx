@@ -9,8 +9,7 @@ type Props = {
 export function ChatSessionPage({ chatId, messages }: Props) {
   return (
     <div className="flex flex-col h-full bg-background relative">
-      <div className="flex-1 overflow-y-auto px-4 py-2 pb-[120px]">
-        {" "}
+      <div className="flex-1 overflow-y-auto px-4 py-2 mb-[120px]">
         <div className="mx-auto w-full max-w-3xl">
           <ChatMessageList messages={messages} />
         </div>
