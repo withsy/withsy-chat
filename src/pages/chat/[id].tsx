@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { mockChatMessages } from "@/data/chat/chat-001";
+import { chat001 } from "@/data/chat/chat-001";
 import { ChatSessionPage } from "@/components/chat/ChatSessionPage";
 
 export default function ChatPage() {
@@ -8,7 +8,7 @@ export default function ChatPage() {
 
   if (!id || typeof id !== "string") return null;
 
-  const messages = mockChatMessages.filter((m) => m.chatId === id);
+  const messages = chat001.filter((m) => m.chatId === id);
 
   return <ChatSessionPage chatId={id} messages={messages} />;
 }
