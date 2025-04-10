@@ -13,15 +13,15 @@ export function SearchModal({ open, onClose }: SearchModalProps) {
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="w-full max-w-xl p-0 rounded-xl overflow-hidden">
-        <DialogHeader className="px-4 pt-4 pb-2">
+        <DialogHeader className="px-4 pt-4">
           <div className="flex justify-center">
             <Input
               placeholder="Search chats..."
-              className="w-[90%] border-0 border-b border-gray-300 rounded-none shadow-none focus:outline-none focus:ring-0 focus:border-transparent"
+              className="w-[90%] border-0 border-b  rounded-none shadow-none focus:outline-none focus-visible:ring-[0pt] focus:border-transparent"
             />
           </div>
         </DialogHeader>
-        <ScrollArea className="h-[400px] px-4 py-2">
+        <ScrollArea className="h-[400px] px-4 py-4">
           <div className="flex items-center gap-2 px-2 py-2 hover:bg-gray-100 rounded-md cursor-pointer">
             <MessageSquarePlus size={16} />
             <span className="text-sm font-medium">New chat</span>
