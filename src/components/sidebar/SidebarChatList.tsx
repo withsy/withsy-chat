@@ -99,7 +99,7 @@ export default function SidebarChatList() {
       <div>
         <h3 className="text-sm font-semibold px-2 py-2 rounded-md">Chats</h3>
         <div className="space-y-4 mt-1">
-          {nonStarredMap.entries().map(([date, chats]) => {
+          {[...nonStarredMap.entries()].map(([date, chats]) => {
             if (chats.length === 0) return null;
 
             return (
