@@ -1,8 +1,8 @@
-import Link from "next/link";
 import { Bookmark, Search, SquarePen, type LucideIcon } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
-import { SearchModal } from "../search/SearchModal";
 import { IconWithLabel } from "../IconWithLabel";
+import { SearchModal } from "../search/SearchModal";
 
 const datas = [
   {
@@ -43,7 +43,7 @@ function SidebarTooltip({
   onClick,
 }: SidebarTooltipProps) {
   const hoverClass = collapsed ? "hover:bg-gray-100" : "hover:bg-gray-300";
-  const className = `group relative flex items-center gap-2 text-sm font-medium no-underline ${hoverClass} px-2.5 py-2.5 rounded-md transition-colors`;
+  const className = `group relative flex items-center gap-2 font-medium no-underline ${hoverClass} px-2.5 py-2.5 rounded-md transition-colors`;
 
   if (id == "search" && onClick) {
     return (

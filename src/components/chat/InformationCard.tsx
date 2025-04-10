@@ -28,8 +28,8 @@ export function InformationCard({
       <div className="flex flex-col h-full justify-between">
         <div className="text-muted-foreground">{icon}</div>
         <div>
-          <h3 className="text-sm font-medium">{title}</h3>
-          <p className="text-xs text-muted-foreground overflow-hidden text-ellipsis whitespace-nowrap">
+          <h3 className="font-medium">{title}</h3>
+          <p className="text-muted-foreground overflow-hidden text-ellipsis whitespace-nowrap">
             {description}
           </p>
         </div>

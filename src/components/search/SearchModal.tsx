@@ -1,7 +1,7 @@
+import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { SquarePen, SquareMenu } from "lucide-react";
+import { SquareMenu, SquarePen } from "lucide-react";
 import Link from "next/link";
 import type { ReactNode } from "react";
 
@@ -68,7 +68,7 @@ function Section({
 }) {
   return (
     <div className="mt-4">
-      <Badge variant="outline" className="text-xs mb-2">
+      <Badge variant="outline" className="mb-2">
         {label}
       </Badge>
       <div className="flex flex-col gap-1">{children}</div>
@@ -89,7 +89,7 @@ function ChatItem({
     <Link href={href}>
       <div className="flex items-center gap-2 px-2 py-2 hover:bg-gray-100 rounded-md cursor-pointer">
         {icon}
-        <span className="text-sm">{title}</span>
+        <span>{title}</span>
       </div>
     </Link>
   );

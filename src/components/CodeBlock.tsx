@@ -1,7 +1,7 @@
-import { useState } from "react";
-import { Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import clsx from "clsx";
+import { Copy } from "lucide-react";
+import { useState } from "react";
 
 function extractTextFromElement(node: any): string {
   if (typeof node === "string") return node;
@@ -32,7 +32,7 @@ export function CodeBlock({ children, ...props }: CodeBlockProps) {
 
   return (
     <div className="relative rounded-md border bg-gray-100 mt-4 mb-4">
-      <div className="flex justify-between items-center px-3 py-2 text-xs bg-gray-200 text-muted-foreground">
+      <div className="flex justify-between items-center px-3 py-2 bg-gray-200 text-muted-foreground">
         <span className="capitalize font-medium select-none">
           {language || "code"}
         </span>
@@ -40,7 +40,7 @@ export function CodeBlock({ children, ...props }: CodeBlockProps) {
           variant="ghost"
           size="sm"
           onClick={handleCopy}
-          className="h-auto px-1 py-0 text-xs text-muted-foreground hover:bg-gray-200"
+          className="h-auto px-1 py-0 text-muted-foreground hover:bg-gray-200"
         >
           <Copy className="w-4 h-4" />
           {copied ? "Copied!" : "Copy"}

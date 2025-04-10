@@ -43,7 +43,7 @@ export function ToggleMenuItem({
 }: ToggleMenuItemProps) {
   const content = (
     <div className="flex items-center justify-between px-2 py-1.5 opacity-100">
-      <Label htmlFor={id} className="text-sm text-muted-foreground">
+      <Label htmlFor={id} className="text-muted-foreground">
         {label}
       </Label>
       <Switch

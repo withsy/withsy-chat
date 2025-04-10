@@ -32,7 +32,7 @@ export function ChatInputBox({ onSendMessage }: Props) {
         value={message}
         onChange={(e) => setMessage(e.target.value)}
         placeholder="Type a message..."
-        className="w-full resize-none focus:outline-none bg-transparent pb-10 text-sm max-h-[40vh]"
+        className="w-full resize-none focus:outline-none bg-transparent pb-10 max-h-[40vh]"
       />
 
       <div className="absolute bottom-2 left-4 right-4 flex items-center justify-between">
@@ -43,10 +43,7 @@ export function ChatInputBox({ onSendMessage }: Props) {
             onCheckedChange={(v) => setUserPrefAndSave("enterToSend", v)}
             disabled={userPrefLoadings["enterToSend"]}
           />
-          <Label
-            htmlFor="enter-toggle"
-            className="text-xs text-muted-foreground"
-          >
+          <Label htmlFor="enter-toggle" className="text-muted-foreground">
             Enter to send
           </Label>
         </div>

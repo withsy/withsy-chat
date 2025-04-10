@@ -13,9 +13,7 @@ export function ChatBubble({ message }: Props) {
   if (model === "system") {
     return (
       <div className="flex justify-center my-4 py-4">
-        <span className="text-xs text-muted-foreground italic">
-          {message.content}
-        </span>
+        <span className="text-muted-foreground italic">{message.content}</span>
       </div>
     );
   }
@@ -27,11 +25,11 @@ export function ChatBubble({ message }: Props) {
       <ModelAvatar name={fallbackName} />
 
       <div className="max-w-[70%]">
-        <div className="text-sm text-muted-foreground mb-1">
+        <div className="text-muted-foreground mb-1">
           {isAI ? message.model?.toUpperCase() : "You"} ·{" "}
           {new Date(message.createdAt).toLocaleTimeString()}
         </div>
-        <div className="bg-muted rounded-md px-4 py-2 whitespace-pre-wrap text-sm">
+        <div className="bg-muted rounded-md px-4 py-2 whitespace-pre-wrap">
           <MarkdownBox content={message.content} />
         </div>
       </div>

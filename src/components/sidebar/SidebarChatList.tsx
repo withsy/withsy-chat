@@ -13,9 +13,9 @@ import {
 import { trpc } from "@/lib/trpc";
 import type { Chat } from "@/types/chat";
 import {
-  SquareMenu,
   MoreHorizontal,
   Pencil,
+  SquareMenu,
   Star,
   StarOff,
   Trash2,
@@ -83,9 +83,7 @@ export default function SidebarChatList() {
     <div className="mt-4 space-y-2 ">
       {starreds.length > 0 && (
         <div>
-          <h3 className="text-sm font-semibold px-2 py-2 rounded-md">
-            Starred
-          </h3>
+          <h3 className="font-semibold px-2 py-2 rounded-md">Starred</h3>
           <div className="space-y-1 mt-1">
             {starreds.map((chat) => (
               <SidebarChatItem
@@ -100,14 +98,14 @@ export default function SidebarChatList() {
       )}
 
       <div>
-        <h3 className="text-sm font-semibold px-2 py-2 rounded-md">Chats</h3>
+        <h3 className="font-semibold px-2 py-2 rounded-md">Chats</h3>
         <div className="space-y-4 mt-1">
           {[...nonStarredMap.entries()].map(([date, chats]) => {
             if (chats.length === 0) return null;
 
             return (
               <div key={date}>
-                <div className="text-xs text-muted-foreground py-1 px-2 mb-1">
+                <div className="text-muted-foreground py-1 px-2 mb-1">
                   {formatDateLabel(date)}
                 </div>
                 {chats.map((chat) => (
@@ -155,9 +153,7 @@ function SidebarChatItem({
       </div>
 
       <div className="flex justify-between items-center flex-1 pr-2">
-        <span className="text-sm font-medium text-foreground">
-          {chat.title}
-        </span>
+        <span className="font-medium text-foreground">{chat.title}</span>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
