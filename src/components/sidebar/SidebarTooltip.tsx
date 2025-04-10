@@ -29,6 +29,7 @@ interface SidebarTooltipProps {
   label: string;
   collapsed?: boolean;
   fill?: boolean;
+  onClick?: (id: string) => void;
 }
 
 function SidebarTooltip({
@@ -37,6 +38,7 @@ function SidebarTooltip({
   label,
   collapsed,
   fill,
+  onClick,
 }: SidebarTooltipProps) {
   const className =
     "group relative flex items-center gap-2 text-sm font-medium no-underline hover:bg-gray-300 px-2.5 py-2.5 rounded-md transition-colors";
@@ -57,8 +59,13 @@ function SidebarTooltip({
       {!collapsed && <span className="relative z-10">{label}</span>}
     </>
   );
-  if (id == "search") {
-    return <div className={className}>{IconComponenet}</div>;
+
+  if (id == "search" && onClick) {
+    return (
+      <button className={className} onClick={() => onClick?.(id)}>
+        {IconComponenet}
+      </button>
+    );
   }
 
   const href = `/${id}`;
@@ -103,7 +110,7 @@ export function SidebarTooltipGroup({ collapsed = false }: Props) {
 
 function SearchModal({ onClose }: { onClose: () => void }) {
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+    <div className="fixed inset-0 flex justify-center items-center">
       <div className="bg-white p-4 rounded">
         <h2>Search</h2>
         <button onClick={onClose}>Close</button>
