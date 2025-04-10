@@ -1,0 +1,16 @@
+{
+  "enabledFileTypes": {
+    "json": true,
+    "jsonc": true,
+    "typescript": true,
+    "yaml": true
+  },
+  "ignorePaths": [
+    "dist/",
+    "node_modules/",
+    ".devcontainer/",
+    "package.json",
+    ".next/"
+  ],
+  "words": ["safeql"]
+}
