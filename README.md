@@ -16,3 +16,8 @@ This project aims to bridge that gap — combining the intelligence of top AI mo
   - Get recommended prompts based on tags and chat history.
 - Flexible Chat Titles
   - Edit chat titles anytime to keep things clear and contextual.
+
+## Avatar Images
+
+Avatar illustrations are generated using [DiceBear Avatars](https://www.dicebear.com),  
+using the `Thumbs` style, licensed under [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/).
