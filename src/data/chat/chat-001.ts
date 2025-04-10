@@ -1,6 +1,6 @@
 import type { ChatMessage } from "@/types/chat";
 
-export const mockChatMessages: ChatMessage[] = [
+export const chat001: ChatMessage[] = [
   {
     id: "msg1",
     chatId: "chat-001",
