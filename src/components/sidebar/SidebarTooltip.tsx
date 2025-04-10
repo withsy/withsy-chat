@@ -1,7 +1,8 @@
 import Link from "next/link";
-import { Bookmark, Search, NotebookPen, type LucideIcon } from "lucide-react";
+import { Bookmark, Search, SquarePen, type LucideIcon } from "lucide-react";
 import { useState } from "react";
 import { SearchModal } from "../search/SearchModal";
+import { IconWithLabel } from "../IconWithLabel";
 
 const datas = [
   {
@@ -12,7 +13,7 @@ const datas = [
   },
   {
     id: "chat",
-    icon: NotebookPen,
+    icon: SquarePen,
     label: "New Chat",
     fill: false,
   },
@@ -41,30 +42,19 @@ function SidebarTooltip({
   fill,
   onClick,
 }: SidebarTooltipProps) {
-  const className =
-    "group relative flex items-center gap-2 text-sm font-medium no-underline hover:bg-gray-300 px-2.5 py-2.5 rounded-md transition-colors";
-  const IconComponenet = (
-    <>
-      <Icon
-        size={16}
-        className="group-hover:text-primary transition-colors "
-        fill="none"
-      />
-      {fill && (
-        <Icon
-          size={16}
-          className="absolute opacity-0 group-hover:opacity-100 text-primary transition-all "
-          fill="currentColor"
-        />
-      )}
-      {!collapsed && <span className="relative z-10">{label}</span>}
-    </>
-  );
+  const hoverClass = collapsed ? "hover:bg-gray-100" : "hover:bg-gray-300";
+  const className = `group relative flex items-center gap-2 text-sm font-medium no-underline ${hoverClass} px-2.5 py-2.5 rounded-md transition-colors`;
 
   if (id == "search" && onClick) {
     return (
       <button className={className} onClick={() => onClick?.(id)}>
-        {IconComponenet}
+        <IconWithLabel
+          icon={Icon}
+          label={label}
+          collapsed={collapsed}
+          fill={fill}
+          size={16}
+        />
       </button>
     );
   }
@@ -72,7 +62,13 @@ function SidebarTooltip({
   const href = `/${id}`;
   return (
     <Link href={href} className={className}>
-      {IconComponenet}
+      <IconWithLabel
+        icon={Icon}
+        label={label}
+        collapsed={collapsed}
+        fill={fill}
+        size={16}
+      />
     </Link>
   );
 }

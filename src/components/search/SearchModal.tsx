@@ -1,8 +1,9 @@
 import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { MessageSquarePlus, MessagesSquare } from "lucide-react";
-import { useSidebar } from "@/context/SidebarContext";
+import { SquarePen, SquareMenu } from "lucide-react";
+import Link from "next/link";
+import type { ReactNode } from "react";
 
 interface SearchModalProps {
   open: boolean;
@@ -10,49 +11,47 @@ interface SearchModalProps {
 }
 
 export function SearchModal({ open, onClose }: SearchModalProps) {
-  const { isMobile } = useSidebar();
-  const mobile = isMobile ? "h-full" : "h-[50vh]";
-  const className = `w-full max-w-xl p-2 rounded-xl overflow-hidden ${mobile}`;
-
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className={className}>
-        <DialogHeader className="px-4 pt-8 border-b">
-          <div className="flex justify-center ">
-            <Input
-              placeholder="Search chats..."
-              className="w-full border-0 ounded-none shadow-none focus:outline-none focus-visible:ring-[0pt] focus:border-transparent"
-            />
-          </div>
+      <DialogContent className="max-w-xl w-full h-[80vh] flex flex-col p-0">
+        <DialogHeader className="p-4 border-b">
+          <Input
+            placeholder="Search chats..."
+            className="w-full border-none shadow-none focus:outline-none focus-visible:ring-0 focus:border-transparent"
+          />
         </DialogHeader>
-        <div className="px-4   overflow-y-auto flex-1">
-          <div className="flex items-center gap-2 px-2 py-2 hover:bg-gray-100 rounded-md cursor-pointer">
-            <MessageSquarePlus size={16} />
-            <span className="text-sm font-medium">New chat</span>
-          </div>
+
+        <div className="flex-1 h-0 overflow-y-auto px-4 pb-4 mb-2">
+          <ChatItem
+            href="/chat"
+            title="Start a new chat"
+            icon={<SquarePen size={16} />}
+          />
 
           <Section label="Yesterday">
-            <ChatItem title="전자레인지 파스타 삶기" />
-            <ChatItem title="컴포넌트 분리 1" />
-            <ChatItem title="컴포넌트 분리 2" />
-            <ChatItem title="컴포넌트 분리 3" />
-            <ChatItem title="컴포넌트 분리 4" />
+            <ChatItem
+              href="/chat/chat-002"
+              title="How are you?"
+              icon={<SquareMenu size={16} />}
+            />
+            <ChatItem
+              href="/chat/chat-001"
+              title="Hello"
+              icon={<SquareMenu size={16} />}
+            />
           </Section>
 
           <Section label="Previous 7 Days">
-            <ChatItem title="동남아식 고등어 요리" />
-            <ChatItem title="SidebarLinkGroup collapsed 처리" />
-            <ChatItem title="사이드바 커밋 메시지" />
-            <ChatItem title="전자레인지 파스타 삶기" />
-            <ChatItem title="컴포넌트 분리 1" />
-            <ChatItem title="컴포넌트 분리 2" />
-            <ChatItem title="컴포넌트 분리 3" />
-            <ChatItem title="컴포넌트 분리 4" />
-            <ChatItem title="전자레인지 파스타 삶기" />
-            <ChatItem title="컴포넌트 분리 1" />
-            <ChatItem title="컴포넌트 분리 2" />
-            <ChatItem title="컴포넌트 분리 3" />
-            <ChatItem title="컴포넌트 분리 4" />
+            {Array(15)
+              .fill(0)
+              .map((_, i) => (
+                <ChatItem
+                  key={i}
+                  href={`/chat/chat-${i}`}
+                  title="Test?"
+                  icon={<SquareMenu size={16} />}
+                />
+              ))}
           </Section>
         </div>
       </DialogContent>
@@ -77,11 +76,21 @@ function Section({
   );
 }
 
-function ChatItem({ title }: { title: string }) {
+function ChatItem({
+  icon,
+  title,
+  href,
+}: {
+  icon: ReactNode;
+  title: string;
+  href: string;
+}) {
   return (
-    <div className="flex items-center gap-2 px-2 py-2 hover:bg-gray-100 rounded-md cursor-pointer">
-      <MessagesSquare size={16} />
-      <span className="text-sm">{title}</span>
-    </div>
+    <Link href={href}>
+      <div className="flex items-center gap-2 px-2 py-2 hover:bg-gray-100 rounded-md cursor-pointer">
+        {icon}
+        <span className="text-sm">{title}</span>
+      </div>
+    </Link>
   );
 }

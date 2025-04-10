@@ -13,7 +13,7 @@ import {
 import { trpc } from "@/lib/trpc";
 import type { Chat } from "@/types/chat";
 import {
-  AlignJustify,
+  SquareMenu,
   MoreHorizontal,
   Pencil,
   Star,
@@ -139,7 +139,7 @@ function SidebarChatItem({
   return (
     <div className="group flex items-center px-2 py-2 rounded-md hover:bg-gray-300 transition-colors">
       <div className="relative w-5 h-5 mr-2">
-        <AlignJustify
+        <SquareMenu
           size={16}
           className="absolute top-0 left-0  opacity-100 group-hover:opacity-0 transition-opacity"
         />

@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronRight, NotebookPen, Search } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSidebar } from "@/context/SidebarContext";
 import { cn } from "@/lib/utils";
