@@ -7,23 +7,22 @@ import { cn } from "@/lib/utils";
 type LayoutProps = {
   children: ReactNode;
 };
-
 export default function Layout({ children }: LayoutProps) {
   const { collapsed, isMobile } = useSidebar();
 
   return (
-    <div className="flex h-screen">
+    <div className="flex h-screen overflow-hidden">
       <Sidebar />
-      <div className="flex flex-col flex-1">
+      <div className="flex flex-col flex-1 max-h-screen">
         <Header />
-        <main
+        <div
           className={cn(
-            " p-6 h-[calc(100vh-60px)] overflow-auto",
-            !isMobile && !collapsed && " pl-[240px] ml-6"
+            "flex-1 overflow-y-auto",
+            !isMobile && !collapsed && "pl-[240px] ml-6"
           )}
         >
           {children}
-        </main>
+        </div>
       </div>
     </div>
   );

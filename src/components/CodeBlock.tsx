@@ -10,18 +10,12 @@ function extractTextFromElement(node: any): string {
   return "";
 }
 
-type Props = {
-  inline?: boolean;
-  className?: string;
+type CodeBlockProps = {
   children: React.ReactNode;
+  className?: string;
 };
 
-export function CodeBlock({
-  children,
-  ...props
-}: {
-  children: React.ReactNode;
-}) {
+export function CodeBlock({ children, ...props }: CodeBlockProps) {
   const [copied, setCopied] = useState(false);
 
   const codeElement = Array.isArray(children) ? children[0] : children;
@@ -37,7 +31,7 @@ export function CodeBlock({
   };
 
   return (
-    <div className="relative rounded-md overflow-hidden border bg-gray-100 mt-4 mb-4">
+    <div className="relative rounded-md border bg-gray-100 mt-4 mb-4">
       <div className="flex justify-between items-center px-3 py-2 text-xs bg-gray-200 text-muted-foreground">
         <span className="capitalize font-medium select-none">
           {language || "code"}
@@ -53,7 +47,7 @@ export function CodeBlock({
         </Button>
       </div>
 
-      <pre className={clsx("overflow-x-auto px-4 py-0 ", className)} {...props}>
+      <pre className={clsx("overflow-x-auto px-4 py-3", className)} {...props}>
         <code>{(codeElement as any)?.props?.children}</code>
       </pre>
     </div>

@@ -63,28 +63,25 @@ export function BookmarkFilters({
 
   return (
     <div className="flex flex-col gap-4 border-b pb-4">
-      {/* Top: Sort + Search */}
       <div className="flex flex-wrap gap-4 items-end">
-        {/* Sort */}
-        <div className="flex gap-2 shrink-0">
+        <div className="flex gap-2">
           <FilterSelect
             value={sortBy}
             onChange={setSortBy}
             options={sortByOptions}
             placeholder="Sort by"
-            className="w-[180px]"
+            className="w-full sm:w-[180px]"
           />
           <FilterSelect
             value={sortOrder}
             onChange={setSortOrder}
             options={sortOrderOptions}
             placeholder="Order"
-            className="w-[160px]"
+            className="w-full sm:w-[160px]"
           />
         </div>
 
-        {/* Search */}
-        <div className="flex-1 min-w-[200px]">
+        <div className="flex-1 ">
           <Input
             type="text"
             placeholder="Search title or content..."
@@ -95,10 +92,8 @@ export function BookmarkFilters({
         </div>
       </div>
 
-      {/* Bottom: Filters + Reset */}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex flex-wrap items-center gap-4">
-          {/* Model */}
           <div className="flex items-center gap-2">
             <span className="text-sm font-bold">Model</span>
             {modelOptions.map((m) => (
@@ -115,7 +110,6 @@ export function BookmarkFilters({
           </div>
         </div>
 
-        {/* Reset Button */}
         <div>
           <Button size="sm" variant="ghost" onClick={reset}>
             Reset Filters

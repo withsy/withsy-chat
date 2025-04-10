@@ -5,10 +5,8 @@ import data from "@/data/bookmarks.json";
 import { useMemo, useState } from "react";
 import { getFilteredBookmarks } from "@/lib/filter-utils";
 import { BookmarkHeader } from "@/components/bookmarks/BookmarkHeader";
-
 export default function BookmarkPage() {
   const [searchText, setSearchText] = useState("");
-
   const [sortBy, setSortBy] = useState<"chattedAt" | "bookmarkedAt">(
     "bookmarkedAt"
   );
@@ -36,7 +34,7 @@ export default function BookmarkPage() {
   }, [selectedModels, sortBy, sortOrder, searchText]);
 
   return (
-    <div>
+    <div className="h-full w-full flex flex-col p-6">
       <BookmarkHeader count={`${filteredBookmarks.length}/${data.length}`} />
       <BookmarkFilters
         sortBy={sortBy}
@@ -48,7 +46,7 @@ export default function BookmarkPage() {
         searchText={searchText}
         setSearchText={setSearchText}
       />
-      <div className="mt-4 space-y-4">
+      <div className="mt-4 flex-1 overflow-y-auto space-y-4">
         {filteredBookmarks.map((bookmark) => (
           <BookmarkCard key={bookmark.id} {...bookmark} />
         ))}
