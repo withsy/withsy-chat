@@ -25,7 +25,8 @@ export default function Layout({ children }: LayoutProps) {
         <div
           className={cn(
             "flex-1 overflow-y-auto px-4 py-6 transition-all",
-            wideView ? "w-full" : "w-[80%] mx-auto",
+            "w-full",
+            !wideView && "md:w-[80%] md:mx-auto",
             largeText ? "text-lg" : "text-base"
           )}
         >
