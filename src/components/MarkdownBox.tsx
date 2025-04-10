@@ -11,18 +11,11 @@ export function MarkdownBox({ content }: { content: string }) {
         remarkPlugins={[remarkGfm]}
         rehypePlugins={[rehypeHighlight]}
         components={{
-          pre: ({ node, children, ...props }) => {
+          pre: ({ children, ...props }) => {
             return <CodeBlock {...props}>{children}</CodeBlock>;
           },
-          code({ className, children, ...props }) {
-            // if (inline) {
-            //   return (
-            //     <code className={className} {...props}>
-            //       {children}
-            //     </code>
-            //   );
-            // }
-            return <>{children}</>;
+          code: ({ className, children, ...props }) => {
+            return <>{children}</>; // block은 pre에서 처리함
           },
         }}
       >

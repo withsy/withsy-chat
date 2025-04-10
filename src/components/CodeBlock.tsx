@@ -17,30 +17,24 @@ type Props = {
 };
 
 export function CodeBlock({
-  inline,
-  className = "",
   children,
   ...props
-}: Props) {
+}: {
+  children: React.ReactNode;
+}) {
   const [copied, setCopied] = useState(false);
-  const rawCode = extractTextFromElement(children);
 
-  const language = className?.match(/language-(\w+)/)?.[1];
+  const codeElement = Array.isArray(children) ? children[0] : children;
+  const className = (codeElement as any)?.props?.className ?? "";
+  const language = className.match(/language-(\w+)/)?.[1];
+
+  const rawCode = extractTextFromElement(codeElement);
 
   const handleCopy = async () => {
-    console.log(rawCode);
     await navigator.clipboard.writeText(rawCode.trim());
     setCopied(true);
     setTimeout(() => setCopied(false), 1500);
   };
-
-  if (inline) {
-    return (
-      <code className={className} {...props}>
-        {children}
-      </code>
-    );
-  }
 
   return (
     <div className="relative rounded-md overflow-hidden border bg-gray-100 mt-4 mb-4">
@@ -59,8 +53,8 @@ export function CodeBlock({
         </Button>
       </div>
 
-      <pre className={clsx("overflow-x-auto px-4 py-0", className)} {...props}>
-        <code>{children}</code>
+      <pre className={clsx("overflow-x-auto px-4 py-0 ", className)} {...props}>
+        <code>{(codeElement as any)?.props?.children}</code>
       </pre>
     </div>
   );
