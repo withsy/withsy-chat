@@ -22,6 +22,7 @@ import {
   Settings,
   type LucideIcon,
 } from "lucide-react";
+import { ModelAvatar } from "./ModelAvatar";
 
 interface ToggleMenuItemProps {
   id: string;
@@ -82,19 +83,14 @@ function UserMenuItem({ icon: Icon, label, onClick }: UserMenuItemProps) {
 }
 
 export default function UserDropdownMenu() {
+  const username = "Jenn";
   const { isMobile, userPrefs, setUserPrefAndSave, userPrefLoadings } =
     useSidebar();
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Avatar className="cursor-pointer select-none">
-          <AvatarImage
-            src={`https://api.dicebear.com/7.x/thumbs/svg?seed=Yejin`}
-            draggable={false}
-          />
-          <AvatarFallback>YJ</AvatarFallback>
-        </Avatar>
+        <ModelAvatar name={username} />
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="end" className="w-48 mt-2">
