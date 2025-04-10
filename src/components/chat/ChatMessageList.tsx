@@ -13,7 +13,6 @@ export function ChatMessageList({ messages }: Props) {
     bottomRef.current?.scrollIntoView({ behavior: "auto" });
   }, [messages]);
 
-  console.log("ChatMessageList", messages);
   return (
     <div className="space-y-4">
       {messages.map((msg) => (

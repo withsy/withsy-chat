@@ -1,6 +1,7 @@
 import type { ChatMessage } from "@/types/chat";
 import { cn } from "@/lib/utils";
 import { ModelAvatar } from "../ModelAvatar";
+import { MarkdownBox } from "../MarkdownBox";
 
 type Props = {
   message: ChatMessage;
@@ -31,7 +32,7 @@ export function ChatBubble({ message }: Props) {
           {new Date(message.createdAt).toLocaleTimeString()}
         </div>
         <div className="bg-muted rounded-md px-4 py-2 whitespace-pre-wrap text-sm">
-          {message.content}
+          <MarkdownBox content={message.content} />
         </div>
       </div>
     </div>
