@@ -1,7 +1,5 @@
 import type { ChatMessage } from "@/types/chat";
-import { cn } from "@/lib/utils"; // optional: classnames helper
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"; // or just use lucide icon
-import { modelAvatarMap } from "@/lib/avatar-utils";
+import { cn } from "@/lib/utils";
 import { ModelAvatar } from "../ModelAvatar";
 
 type Props = {
@@ -10,8 +8,19 @@ type Props = {
 
 export function ChatBubble({ message }: Props) {
   const isAI = message.isAI;
+  const model = message.model;
+  if (model === "system") {
+    return (
+      <div className="flex justify-center my-4 py-4">
+        <span className="text-xs text-muted-foreground italic">
+          {message.content}
+        </span>
+      </div>
+    );
+  }
+
   const username = "Jenn";
-  const fallbackName = isAI ? message.model ?? "AI" : username ?? "You";
+  const fallbackName = isAI ? model ?? "AI" : username ?? "You";
   return (
     <div className={cn("flex gap-3", isAI ? "flex-row" : "flex-row-reverse")}>
       <ModelAvatar name={fallbackName} />

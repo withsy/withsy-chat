@@ -52,7 +52,7 @@ export const mockChatMessages: ChatMessage[] = [
     chatId: "chat-001",
     isAI: true,
     model: "system",
-    content: "_You switched to GPT-4 for this conversation._",
+    content: "You switched to GPT-4 for this conversation.",
     createdAt: "2025-04-09T09:01:20Z",
   },
 
