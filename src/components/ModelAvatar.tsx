@@ -16,8 +16,10 @@ export function ModelAvatar({ name, size = "md" }: Props) {
     lg: "w-10 h-10 text-base",
   }[size];
 
+  const className = `${sizeClass} select-none`;
+
   return (
-    <Avatar className={sizeClass}>
+    <Avatar className={className}>
       <AvatarImage src={src} alt={name} draggable={false} />
       <AvatarFallback>{name.slice(0, 2).toUpperCase()}</AvatarFallback>
     </Avatar>

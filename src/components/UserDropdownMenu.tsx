@@ -90,7 +90,9 @@ export default function UserDropdownMenu() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <ModelAvatar name={username} />
+        <button type="button" className="cursor-pointer">
+          <ModelAvatar name={username} />
+        </button>
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="end" className="w-48 mt-2">
