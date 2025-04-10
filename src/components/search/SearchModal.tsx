@@ -1,8 +1,8 @@
 import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 import { MessageSquarePlus, MessagesSquare } from "lucide-react";
+import { useSidebar } from "@/context/SidebarContext";
 
 interface SearchModalProps {
   open: boolean;
@@ -10,18 +10,22 @@ interface SearchModalProps {
 }
 
 export function SearchModal({ open, onClose }: SearchModalProps) {
+  const { isMobile } = useSidebar();
+  const mobile = isMobile ? "h-full" : "h-[50vh]";
+  const className = `w-full max-w-xl p-2 rounded-xl overflow-hidden ${mobile}`;
+
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="w-full max-w-xl p-0 rounded-xl overflow-hidden">
-        <DialogHeader className="px-4 pt-4">
-          <div className="flex justify-center">
+      <DialogContent className={className}>
+        <DialogHeader className="px-4 pt-8 border-b">
+          <div className="flex justify-center ">
             <Input
               placeholder="Search chats..."
-              className="w-[90%] border-0 border-b  rounded-none shadow-none focus:outline-none focus-visible:ring-[0pt] focus:border-transparent"
+              className="w-full border-0 ounded-none shadow-none focus:outline-none focus-visible:ring-[0pt] focus:border-transparent"
             />
           </div>
         </DialogHeader>
-        <ScrollArea className="h-[400px] px-4 py-4">
+        <div className="px-4   overflow-y-auto flex-1">
           <div className="flex items-center gap-2 px-2 py-2 hover:bg-gray-100 rounded-md cursor-pointer">
             <MessageSquarePlus size={16} />
             <span className="text-sm font-medium">New chat</span>
@@ -39,8 +43,18 @@ export function SearchModal({ open, onClose }: SearchModalProps) {
             <ChatItem title="동남아식 고등어 요리" />
             <ChatItem title="SidebarLinkGroup collapsed 처리" />
             <ChatItem title="사이드바 커밋 메시지" />
+            <ChatItem title="전자레인지 파스타 삶기" />
+            <ChatItem title="컴포넌트 분리 1" />
+            <ChatItem title="컴포넌트 분리 2" />
+            <ChatItem title="컴포넌트 분리 3" />
+            <ChatItem title="컴포넌트 분리 4" />
+            <ChatItem title="전자레인지 파스타 삶기" />
+            <ChatItem title="컴포넌트 분리 1" />
+            <ChatItem title="컴포넌트 분리 2" />
+            <ChatItem title="컴포넌트 분리 3" />
+            <ChatItem title="컴포넌트 분리 4" />
           </Section>
-        </ScrollArea>
+        </div>
       </DialogContent>
     </Dialog>
   );
