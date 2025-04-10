@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
-import { useRouter } from "next/router";
 import { ChatSessionPage } from "@/components/chat/ChatSessionPage";
 import type { ChatMessage } from "@/types/chat";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 
 export default function ChatPage() {
   const router = useRouter();
@@ -14,6 +14,7 @@ export default function ChatPage() {
 
     const loadMessages = async () => {
       try {
+        // eslint-disable-next-line @next/next/no-assign-module-variable
         const module = await import(`@/data/chat/${id}`);
         const data =
           module[`mockChatMessages_${id}`] || module.default || module.chat001;

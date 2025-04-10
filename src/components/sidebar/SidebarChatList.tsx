@@ -5,10 +5,13 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { formatDateLabel } from "@/lib/date-utils";
-import type { Chat } from "@/server/db/chats";
-import { toLocaleDateString, toNewest } from "@/utils/date";
-import { trpc } from "@/utils/trpc";
+import {
+  formatDateLabel,
+  toLocaleDateString,
+  toNewest,
+} from "@/lib/date-utils";
+import { trpc } from "@/lib/trpc";
+import type { Chat } from "@/types/chat";
 import {
   AlignJustify,
   MoreHorizontal,

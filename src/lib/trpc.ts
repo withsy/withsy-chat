@@ -1,4 +1,9 @@
-import { httpBatchLink } from "@trpc/client";
+import {
+  httpBatchLink,
+  httpSubscriptionLink,
+  loggerLink,
+  splitLink,
+} from "@trpc/client";
 import { createTRPCNext } from "@trpc/next";
 import type { inferRouterInputs, inferRouterOutputs } from "@trpc/server";
 import superjson from "superjson";
@@ -14,6 +19,10 @@ export type UserUpdatePrefs = Simplify<
   Required<RouterInput["user"]["updatePrefs"]>
 >;
 
+/**
+ * If you want to use SSR, you need to use the server's full URL
+ * @see https://trpc.io/docs/v11/ssr
+ **/
 function getBaseUrl() {
   if (typeof window !== "undefined")
     // browser should use relative path
@@ -28,30 +37,29 @@ function getBaseUrl() {
   return `http://localhost:${process.env.PORT ?? 3000}`;
 }
 
+function getUrl() {
+  return `${getBaseUrl()}/api/trpc`;
+}
+
 export const trpc = createTRPCNext<AppRouter>({
   transformer: superjson,
   config() {
     return {
       links: [
-        httpBatchLink({
-          transformer: superjson,
-          /**
-           * If you want to use SSR, you need to use the server's full URL
-           * @see https://trpc.io/docs/v11/ssr
-           **/
-          url: `${getBaseUrl()}/api/trpc`,
-          // You can pass any HTTP headers you wish here
-          async headers() {
-            return {
-              // authorization: getAuthCookie(),
-            };
-          },
+        loggerLink(),
+        splitLink({
+          condition: (op) => op.type === "subscription",
+          true: httpSubscriptionLink({
+            transformer: superjson,
+            url: getUrl(),
+          }),
+          false: httpBatchLink({
+            transformer: superjson,
+            url: getUrl(),
+          }),
         }),
       ],
     };
   },
-  /**
-   * @see https://trpc.io/docs/v11/ssr
-   **/
   ssr: false,
 });

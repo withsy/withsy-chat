@@ -1,6 +1,12 @@
+import {
+  ListChatMessages,
+  ReceiveChatMessage,
+  SendChatMessage,
+  StartChat,
+  UpdateChat,
+} from "@/types/chat";
+import { UpdateUserPrefs } from "@/types/user";
 import { db } from "../db";
-import { UpdateChat } from "../db/chats";
-import { UpdateUserPrefs } from "../db/users";
 import { procedure, router } from "../trpc";
 
 export const appRouter = router({
@@ -16,6 +22,23 @@ export const appRouter = router({
     update: procedure
       .input(UpdateChat)
       .mutation((opts) => db.chat.updateChat(opts.ctx.userId, opts.input)),
+    start: procedure
+      .input(StartChat)
+      .mutation((opts) => db.chat.startChat(opts.ctx.userId, opts.input)),
+  }),
+  chatMessage: router({
+    // TODO: pagenation
+    list: procedure
+      .input(ListChatMessages)
+      .query((opts) => db.chat.listMessages(opts.input)),
+    send: procedure
+      .input(SendChatMessage)
+      .mutation((opts) => db.chat.sendMessage(opts.input)),
+    receive: procedure
+      .input(ReceiveChatMessage)
+      .subscription(async function* (opts) {
+        yield* db.chat.receiveChatMessage(opts.input);
+      }),
   }),
 });
 

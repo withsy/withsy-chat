@@ -1,5 +1,4 @@
 import type { ReactNode } from "react";
-import { ChatInputBox } from "./ChatInputBox";
 
 interface ChatInterfaceProps {
   children: ReactNode;
@@ -11,7 +10,7 @@ export default function ChatInterface({ children }: ChatInterfaceProps) {
       <div className="flex flex-col items-center justify-center min-h-[70vh]">
         {children}
       </div>
-      <ChatInputBox />
+      {/* <ChatInputBox /> */}
     </div>
   );
 }

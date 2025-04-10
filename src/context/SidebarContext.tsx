@@ -3,7 +3,7 @@ import {
   type UserMe,
   type UserPrefs,
   type UserUpdatePrefs,
-} from "@/utils/trpc";
+} from "@/lib/trpc";
 import { createContext, useContext, useEffect, useState } from "react";
 
 type UserPrefLoadings = Partial<Record<keyof UserUpdatePrefs, boolean>>;

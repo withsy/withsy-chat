@@ -1,14 +1,14 @@
-import type { ChatMessage } from "@/types/chat";
 import { cn } from "@/lib/utils";
-import { ModelAvatar } from "../ModelAvatar";
+import type { ChatMessage } from "@/types/chat";
 import { MarkdownBox } from "../MarkdownBox";
+import { ModelAvatar } from "../ModelAvatar";
 
 type Props = {
   message: ChatMessage;
 };
 
 export function ChatBubble({ message }: Props) {
-  const isAI = message.isAI;
+  const isAI = message.isAi;
   const model = message.model;
   if (model === "system") {
     return (

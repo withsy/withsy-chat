@@ -4,7 +4,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { formatSmartDate } from "@/utils/date";
+import { formatSmartDate } from "@/lib/date-utils";
 import type { ReactNode } from "react";
 
 type Props = {
