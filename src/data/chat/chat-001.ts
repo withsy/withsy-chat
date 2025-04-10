@@ -1,6 +1,6 @@
 import type { ChatMessage } from "@/types/chat";
 
-export const chat001: ChatMessage[] = [
+const messages: ChatMessage[] = [
   {
     id: "msg1",
     chatId: "chat-001",
@@ -99,3 +99,5 @@ export const chat001: ChatMessage[] = [
     createdAt: "2025-04-09T09:03:04Z",
   },
 ];
+
+export default messages;

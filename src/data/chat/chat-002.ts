@@ -1,6 +1,6 @@
 import type { ChatMessage } from "@/types/chat";
 
-export const chat002: ChatMessage[] = [
+const messages: ChatMessage[] = [
   {
     id: "msg1",
     chatId: "chat-002",
@@ -144,3 +144,5 @@ This will provision an external IP (depending on your cloud provider) and route 
     createdAt: "2025-04-09T10:03:00Z",
   },
 ];
+
+export default messages;
