@@ -5,13 +5,15 @@ import { ChatInputBox } from "./ChatInputBox";
 type Props = {
   chatId: string;
   messages: ChatMessage[];
+  children?: React.ReactNode;
 };
-export function ChatSessionPage({ chatId, messages }: Props) {
+export function ChatSessionPage({ chatId, messages, children }: Props) {
   return (
     <div className="flex flex-col h-full bg-background relative">
       <div className="flex-1 overflow-y-auto px-4 py-2 mb-[120px]">
         <div className="mx-auto w-full max-w-3xl">
           <ChatMessageList messages={messages} />
+          {children}
         </div>
       </div>
 

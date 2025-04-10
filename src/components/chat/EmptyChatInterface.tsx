@@ -1,7 +1,7 @@
 import { MessageSquare, Cpu, Book, Archive } from "lucide-react";
 import { useEffect, useState } from "react";
 import { InformationCard } from "@/components/chat/InformationCard";
-import ChatInterface from "./ChatInterface";
+import { ChatSessionPage } from "./ChatSessionPage";
 
 function getGreeting() {
   const hour = new Date().getHours();
@@ -50,8 +50,8 @@ export default function EmptyChatInterface({ name = "" }: { name?: string }) {
   ];
 
   return (
-    <ChatInterface>
-      <>
+    <ChatSessionPage chatId="new" messages={[]}>
+      <div className="flex flex-col items-center justify-center w-full px-4">
         <h1 className="text-2xl font-semibold mb-6">
           {greeting}
           {name && `, ${name}`}
@@ -63,7 +63,7 @@ export default function EmptyChatInterface({ name = "" }: { name?: string }) {
             ))}
           </div>
         </div>
-      </>
-    </ChatInterface>
+      </div>
+    </ChatSessionPage>
   );
 }

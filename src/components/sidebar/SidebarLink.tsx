@@ -9,7 +9,7 @@ const sidebarLinks = [
     fill: false,
   },
   {
-    href: "/new-chat",
+    href: "/chat",
     icon: NotebookPen,
     label: "New Chat",
     fill: false,
