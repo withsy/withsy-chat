@@ -7,12 +7,11 @@ import { useState } from "react";
 import TextareaAutosize from "react-textarea-autosize";
 
 type Props = {
-  chatId: string;
+  onSendMessage: (message: string) => void;
 };
 
-export function ChatInputBox({ chatId }: Props) {
+export function ChatInputBox({ onSendMessage }: Props) {
   const { userPrefs, setUserPrefAndSave, userPrefLoadings } = useSidebar();
-
   const [message, setMessage] = useState("");
 
   const inputBoxClass = cn(
@@ -20,11 +19,13 @@ export function ChatInputBox({ chatId }: Props) {
     "transition-all"
   );
 
-  const handleSend = () => {
+  const onClick = () => {
     if (!message.trim()) return;
-    console.log("🔼 Send message to", chatId, "→", message);
+
+    onSendMessage(message);
     setMessage("");
   };
+
   return (
     <div className={inputBoxClass}>
       <TextareaAutosize
@@ -49,10 +50,7 @@ export function ChatInputBox({ chatId }: Props) {
             Enter to send
           </Label>
         </div>
-        <button
-          onClick={handleSend}
-          className="p-2 rounded-md hover:bg-gray-100"
-        >
+        <button onClick={onClick} className="p-2 rounded-md hover:bg-gray-100">
           <Send className="w-4 h-4 text-muted-foreground" />
         </button>
       </div>

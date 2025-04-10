@@ -62,12 +62,12 @@ export class Chats {
   }
 
   startChat(userId: string, input: StartChat) {
-    const { content, model } = input;
+    const { message, model } = input;
     const chat: Chat = {
       id: randomUUID(),
       createdAt: new Date(),
       userId,
-      title: [...content].slice(0, 10).join(""),
+      title: [...message].slice(0, 10).join(""),
       isStarred: false,
       updatedAt: new Date(),
     };
@@ -77,7 +77,7 @@ export class Chats {
       id: randomUUID(),
       chatId: chat.id,
       isAi: false,
-      content,
+      content: message,
       model,
       parentId: null,
       usage: null,
@@ -92,14 +92,14 @@ export class Chats {
   }
 
   sendMessage(input: SendChatMessage) {
-    const { chatId, content, model } = input;
+    const { chatId, message, model } = input;
     const chat = this.#chats.find((v) => v.id === chatId);
     if (!chat)
       throw new TRPCError({ code: "NOT_FOUND", message: "Chat not found." });
 
     const chatMessage: ChatMessage = {
       id: randomUUID(),
-      content,
+      content: message,
       createdAt: new Date(),
       chatId,
       isAi: false,
@@ -118,15 +118,48 @@ export class Chats {
   }
 
   async *receiveChatMessage(input: ReceiveChatMessage) {
-    const contents = [
+    const { chatMessageId } = input;
+    const origin = this.#chatMessages.find((v) => v.id === chatMessageId);
+    if (!origin)
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "Chat message not found.",
+      });
+
+    const chunks = [
       "Hello!\nHow can I help you today?\n",
       "I'm an AI assistant.",
       "Feel free to ask me anything.\nNyang.",
     ];
 
-    for (const content of contents) {
+    for (const chunk of chunks) {
       await new Promise((resolve) => setTimeout(resolve, 500));
-      yield { content };
+      yield { kind: "chunk", chunk };
     }
+
+    const chatMessage: ChatMessage = {
+      id: randomUUID(),
+      content: chunks.join(""),
+      createdAt: new Date(),
+      chatId: origin.chatId,
+      isAi: true,
+      model: "gpt",
+      parentId: null,
+      usage: null,
+    };
+    this.#chatMessages.push(chatMessage);
+
+    yield {
+      kind: "metadata",
+      metadata: {
+        id: chatMessage.id,
+        createdAt: chatMessage.createdAt,
+        chatId: chatMessage.chatId,
+        isAi: chatMessage.isAi,
+        model: chatMessage.model,
+        parentId: chatMessage.parentId,
+        usage: chatMessage.usage,
+      },
+    };
   }
 }

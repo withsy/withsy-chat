@@ -18,7 +18,7 @@ export const UpdateChat = z.object({
 export type UpdateChat = z.infer<typeof UpdateChat>;
 
 export const StartChat = z.object({
-  content: z.string(),
+  message: z.string(),
   model: z.string(),
 });
 export type StartChat = z.infer<typeof StartChat>;
@@ -48,7 +48,7 @@ export type ListChatMessages = z.infer<typeof ListChatMessages>;
 
 export const SendChatMessage = z.object({
   chatId: z.string(),
-  content: z.string(),
+  message: z.string(),
   model: z.string(),
 });
 export type SendChatMessage = z.infer<typeof SendChatMessage>;

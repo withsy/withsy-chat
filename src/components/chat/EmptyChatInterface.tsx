@@ -1,6 +1,6 @@
-import { MessageSquare, Cpu, Book, Archive } from "lucide-react";
-import { useEffect, useState } from "react";
 import { InformationCard } from "@/components/chat/InformationCard";
+import { Archive, Book, Cpu, MessageSquare } from "lucide-react";
+import { useEffect, useState } from "react";
 import { ChatSessionPage } from "./ChatSessionPage";
 
 function getGreeting() {
@@ -50,7 +50,7 @@ export default function EmptyChatInterface({ name = "" }: { name?: string }) {
   ];
 
   return (
-    <ChatSessionPage chatId="" messages={[]}>
+    <ChatSessionPage chatId={undefined} initialMessages={[]}>
       <div className="flex flex-col items-center justify-center w-full px-4">
         <h1 className="text-2xl font-semibold mb-6">
           {greeting}
