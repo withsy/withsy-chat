@@ -22,24 +22,7 @@ export default function Sidebar() {
         >
           {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
         </Button>
-        {collapsed && (
-          <>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="rounded-md hover:bg-gray-100"
-            >
-              <Search size={16} />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="rounded-md hover:text-orange-500 hover:bg-orange-50"
-            >
-              <NotebookPen size={16} />
-            </Button>
-          </>
-        )}
+        {collapsed && <SidebarLinkGroup collapsed={collapsed} />}
       </div>
 
       <div
