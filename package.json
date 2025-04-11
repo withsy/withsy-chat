@@ -68,8 +68,9 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@types/react-syntax-highlighter": "^15.5.13",
-    "eslint": "^9",
+    "eslint": "^9.24.0",
     "eslint-config-next": "15.2.4",
+    "jiti": "^2.4.2",
     "libpg-query": "^16.3.0",
     "node-pg-migrate": "^7.9.1",
     "sort-package-json": "^3.0.0",
@@ -77,7 +78,8 @@
     "trpc-ui": "^1.0.15",
     "tsx": "^4.19.3",
     "type-fest": "^4.39.1",
-    "typescript": "^5"
+    "typescript": "^5",
+    "typescript-eslint": "^8.29.1"
   },
   "engines": {
     "node": "22.x"
