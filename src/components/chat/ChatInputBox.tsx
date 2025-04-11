@@ -1,5 +1,11 @@
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useSidebar } from "@/context/SidebarContext";
 import { cn } from "@/lib/utils";
 import { Send } from "lucide-react";
@@ -57,23 +63,34 @@ export function ChatInputBox({ onSendMessage }: Props) {
             onCheckedChange={(v) => setUserPrefAndSave("enterToSend", v)}
             disabled={isLoading}
           />
-          <Label htmlFor="enter-toggle">
-            {enterToSend ? (
-              <>
-                <KeyCap>↩︎</KeyCap>
-                <span className="text-xs text-gray-500">send</span>
-                <KeyCap>⇧↩︎</KeyCap>
-                <span className="text-xs text-gray-500">new line</span>
-              </>
-            ) : (
-              <>
-                <KeyCap>⇧↩︎</KeyCap>
-                <span className="text-xs text-gray-500">send</span>
-                <KeyCap>↩︎</KeyCap>
-                <span className="text-xs text-gray-500">new line</span>
-              </>
-            )}
-          </Label>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Label htmlFor="enter-toggle" className="cursor-help">
+                  {enterToSend ? (
+                    <>
+                      <KeyCap>↩︎</KeyCap>
+                      <span className="text-xs text-gray-500">send</span>
+                      <KeyCap>⇧↩︎</KeyCap>
+                      <span className="text-xs text-gray-500">new line</span>
+                    </>
+                  ) : (
+                    <>
+                      <KeyCap>⇧↩︎</KeyCap>
+                      <span className="text-xs text-gray-500">send</span>
+                      <KeyCap>↩︎</KeyCap>
+                      <span className="text-xs text-gray-500">new line</span>
+                    </>
+                  )}
+                </Label>
+              </TooltipTrigger>
+              <TooltipContent side="top">
+                {enterToSend
+                  ? "Press Enter to send message, Shift + Enter for a new line"
+                  : "Press Shift + Enter to send message, Enter for a new line"}
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
         <button
           onClick={handleSend}
