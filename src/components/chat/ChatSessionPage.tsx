@@ -98,7 +98,7 @@ export function ChatSessionPage({
 
   return (
     <div className="flex flex-col h-full bg-background relative">
-      <div className="flex-1 overflow-y-auto px-4 py-2 mb-[120px]">
+      <div className="flex-1 overflow-y-auto px-4 py-2 mt-4 mb-[120px]">
         <div className="mx-auto w-full">
           <ChatMessageList messages={messages} />
           {children}
@@ -106,7 +106,7 @@ export function ChatSessionPage({
       </div>
 
       <div className="absolute bottom-[2vh] left-0 right-0 flex justify-center px-4">
-        <div className="w-full">
+        <div className="w-full ">
           <ChatInputBox onSendMessage={onSendMessage} />
         </div>
       </div>
