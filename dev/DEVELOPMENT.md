@@ -2,9 +2,24 @@
 
 This project uses **Dev Containers** for local development.
 
----
+## Table of Contents
 
-## 1. Open the project in Dev Container
+<!-- toc -->
+
+- [Install Docker](#install-docker)
+- [Open the project in Dev Container](#open-the-project-in-dev-container)
+- [Install dependencies](#install-dependencies)
+- [Create a `.env` file](#create-a-env-file)
+- [Run database setup](#run-database-setup)
+- [(Optional) Enable SQL linting with DB context](#optional-enable-sql-linting-with-db-context)
+
+<!-- tocstop -->
+
+## Install Docker
+
+Please follow the official Docker documentation to install it.
+
+## Open the project in Dev Container
 
 In VS Code:
 
@@ -15,16 +30,14 @@ In VS Code:
 
 This will build the container and set up everything automatically.
 
-### `.devcontainer/` includes:
+> `.devcontainer/` includes:
+>
+> - `Dockerfile` - defines the development environment
+> - `compose.yaml` - sets up services like PostgreSQL
+> - `devcontainer.json` - VS Code settings and extensions
+> - `post_create.sh` - runs setup scripts after the container is created
 
-- `Dockerfile` - defines the development environment
-- `compose.yaml` - sets up services like PostgreSQL
-- `devcontainer.json` - VS Code settings and extensions
-- `post_create.sh` - runs setup scripts after the container is created
-
----
-
-## 2. Install dependencies
+## Install dependencies
 
 Inside the container, run:
 
@@ -32,9 +45,7 @@ Inside the container, run:
 npm i
 ```
 
----
-
-## 3. Create a `.env` file
+## Create a `.env` file
 
 Copy the example file:
 
@@ -44,9 +55,7 @@ cp .env.example .env
 
 Update values if needed.
 
----
-
-## 4. Run database setup
+## Run database setup
 
 This will **reset** the database (drop all tables), **run migrations**, and **seed** initial data:
 
@@ -56,7 +65,17 @@ npm run db:setup
 
 > ⚠️ **Warning:** This will erase all existing data.
 
----
+## (Optional) Enable SQL linting with DB context
+
+To enable SQL linting in templates using your database schema, add the following to your `.vscode/settings.json`:
+
+```json
+{
+  "eslint.options": {
+    "overrideConfigFile": "eslint.sql.config.ts"
+  }
+}
+```
 
 ✅ Done! You’re ready to start developing.
 Happy coding! 🚀
