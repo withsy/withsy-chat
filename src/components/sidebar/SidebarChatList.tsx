@@ -20,6 +20,7 @@ import {
   StarOff,
   Trash2,
 } from "lucide-react";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 export default function SidebarChatList() {
   const utils = trpc.useUtils();
@@ -136,61 +137,63 @@ function SidebarChatItem({
 }) {
   return (
     <div className="group flex items-center px-2 py-2 rounded-md hover:bg-gray-300 transition-colors">
-      <div className="relative w-5 h-5 mr-2">
-        <SquareMenu
-          size={16}
-          className="absolute top-0 left-0  opacity-100 group-hover:opacity-0 transition-opacity"
-        />
-        <button
-          onClick={() => onToggleStar(chat)}
-          className="absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition-opacity"
-        >
-          <Star
+      <Link href={`/chat/${chat.id}`} className="flex items-center w-full">
+        <div className="relative w-5 h-5 mr-2">
+          <SquareMenu
             size={16}
-            className={`text-black${isStarred ? " fill-black" : ""}`}
+            className="absolute top-0 left-0  opacity-100 group-hover:opacity-0 transition-opacity"
           />
-        </button>
-      </div>
+          <button
+            onClick={() => onToggleStar(chat)}
+            className="absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition-opacity"
+          >
+            <Star
+              size={16}
+              className={`text-black${isStarred ? " fill-black" : ""}`}
+            />
+          </button>
+        </div>
 
-      <div className="flex justify-between items-center flex-1 pr-2">
-        <span className="font-medium text-foreground">{chat.title}</span>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-5 w-5 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
-            >
-              <MoreHorizontal size={14} />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent side="right" align="start">
-            <DropdownMenuItem onClick={() => onToggleStar(chat)}>
-              {isStarred ? (
-                <>
-                  <StarOff size={14} className="mr-2" />
-                  Unstar
-                </>
-              ) : (
-                <>
-                  <Star size={14} className="mr-2" />
-                  Star
-                </>
-              )}
-            </DropdownMenuItem>
+        <div className="flex justify-between items-center flex-1 pr-2">
+          <span className="font-medium text-foreground">{chat.title}</span>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-5 w-5 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
+              >
+                <MoreHorizontal size={14} />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent side="right" align="start">
+              <DropdownMenuItem onClick={() => onToggleStar(chat)}>
+                {isStarred ? (
+                  <>
+                    <StarOff size={14} className="mr-2" />
+                    Unstar
+                  </>
+                ) : (
+                  <>
+                    <Star size={14} className="mr-2" />
+                    Star
+                  </>
+                )}
+              </DropdownMenuItem>
 
-            <DropdownMenuItem>
-              <Pencil size={14} className="mr-2" />
-              Rename
-            </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Pencil size={14} className="mr-2" />
+                Rename
+              </DropdownMenuItem>
 
-            <DropdownMenuItem className="text-red-500">
-              <Trash2 size={14} className="mr-2 text-red-500" />
-              Delete
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
+              <DropdownMenuItem className="text-red-500">
+                <Trash2 size={14} className="mr-2 text-red-500" />
+                Delete
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </Link>
     </div>
   );
 }
