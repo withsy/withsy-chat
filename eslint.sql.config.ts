@@ -5,7 +5,7 @@ import eslintConfig from "./eslint.config";
 export default tseslint.config(
   ...eslintConfig,
   safeql.configs.connections({
-    databaseUrl: "postgres://postgres:postgres@localhost:5432/postgres",
+    migrationsDir: "migrations",
     targets: [
       {
         wrapper: { regex: "(.+queryable|qr).query" },

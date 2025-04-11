@@ -9,7 +9,7 @@ services:
       - ../:/work
 
   db:
-    image: postgres:17.4-alpine3.21
+    image: postgres:15-alpine3.21
     restart: 'no'
     network_mode: 'host'
     environment:

@@ -1,4 +1,3 @@
--- Up Migration
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 CREATE FUNCTION fn_update_updated_at()
@@ -70,23 +69,4 @@ CREATE TRIGGER tr_chat_chunks_update_updated_at
   BEFORE UPDATE ON chat_chunks
   FOR EACH ROW
   EXECUTE PROCEDURE fn_update_updated_at();
-
--- Down Migration
-DROP TRIGGER IF EXISTS tr_chat_chunks_update_updated_at ON chat_chunks;
-
-DROP TABLE IF EXISTS chat_chunks;
-
-DROP TRIGGER IF EXISTS tr_chat_messages_update_updated_at ON chat_messages;
-
-DROP TABLE IF EXISTS chat_messages;
-
-DROP TRIGGER IF EXISTS tr_chats_update_updated_at ON chats;
-
-DROP TABLE IF EXISTS chats;
-
-DROP TRIGGER IF EXISTS tr_users_update_updated_at ON users;
-
-DROP TABLE IF EXISTS users;
-
-DROP FUNCTION IF EXISTS fn_update_updated_at;
 
