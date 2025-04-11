@@ -43,7 +43,7 @@ function SidebarTooltip({
   onClick,
 }: SidebarTooltipProps) {
   const hoverClass = collapsed ? "hover:bg-gray-100" : "hover:bg-gray-300";
-  const className = `group relative flex items-center gap-2 font-medium no-underline ${hoverClass} px-2.5 py-2.5 rounded-md transition-colors`;
+  const className = `group relative flex items-center gap-2 no-underline ${hoverClass} px-2.5 py-2.5 rounded-md transition-colors`;
 
   if (id == "search" && onClick) {
     return (
@@ -53,7 +53,7 @@ function SidebarTooltip({
           label={label}
           collapsed={collapsed}
           fill={fill}
-          size={16}
+          // size={16}
         />
       </button>
     );
