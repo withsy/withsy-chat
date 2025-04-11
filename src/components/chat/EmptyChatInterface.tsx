@@ -55,7 +55,7 @@ export default function EmptyChatInterface({ name = "" }: { name?: string }) {
       initialMessages={[]}
       initialAiChatMessageId={0}
     >
-      <div className="flex flex-col items-center justify-center w-full px-4">
+      <div className="flex flex-col items-center justify-center w-full px-4 py-8">
         <h1 className="text-2xl font-semibold mb-6">
           {greeting}
           {name && `, ${name}`}
