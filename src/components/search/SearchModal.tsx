@@ -1,6 +1,12 @@
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { SquareMenu, SquarePen } from "lucide-react";
 import Link from "next/link";
 import type { ReactNode } from "react";
@@ -15,6 +21,9 @@ export function SearchModal({ open, onClose }: SearchModalProps) {
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="max-w-xl w-full h-[80vh] flex flex-col p-0">
         <DialogHeader className="p-4 border-b">
+          <VisuallyHidden>
+            <DialogTitle>Search Chats</DialogTitle>
+          </VisuallyHidden>
           <Input
             placeholder="Search chats..."
             className="w-full border-none shadow-none focus:outline-none focus-visible:ring-0 focus:border-transparent"
