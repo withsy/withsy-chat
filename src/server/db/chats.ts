@@ -1,7 +1,6 @@
 import {
   Chat,
   ChatMessageData,
-  ChatMessageId,
   type ListChatMessages,
   type ReceiveChatMessageStream,
   type SendChatMessage,

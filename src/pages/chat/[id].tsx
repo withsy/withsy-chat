@@ -2,9 +2,7 @@ import { ChatSessionPage } from "@/components/chat/ChatSessionPage";
 import { trpc } from "@/lib/trpc";
 import { skipToken } from "@tanstack/react-query";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
 
-// chatMessageId
 export default function ChatPage() {
   const router = useRouter();
   const { id } = router.query;
