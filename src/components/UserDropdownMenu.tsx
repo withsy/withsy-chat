@@ -1,4 +1,3 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,6 +14,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useSidebar } from "@/context/SidebarContext";
+import { cn } from "@/lib/utils";
 import {
   Archive,
   Cpu,
@@ -31,6 +31,7 @@ interface ToggleMenuItemProps {
   onChange: (checked: boolean) => void;
   disabled?: boolean;
   tooltip?: string;
+  largeText?: boolean;
 }
 
 export function ToggleMenuItem({
@@ -40,10 +41,11 @@ export function ToggleMenuItem({
   onChange,
   disabled = false,
   tooltip,
+  largeText = false,
 }: ToggleMenuItemProps) {
   const content = (
     <div className="flex items-center justify-between px-2 py-1.5 opacity-100">
-      <Label htmlFor={id} className="text-muted-foreground">
+      <Label htmlFor={id} className={cn(largeText && "text-lg")}>
         {label}
       </Label>
       <Switch
@@ -70,14 +72,20 @@ export function ToggleMenuItem({
 interface UserMenuItemProps {
   icon: LucideIcon;
   label: string;
+  largeText?: boolean;
   onClick?: () => void;
 }
 
-function UserMenuItem({ icon: Icon, label, onClick }: UserMenuItemProps) {
+function UserMenuItem({
+  icon: Icon,
+  label,
+  largeText = false,
+  onClick,
+}: UserMenuItemProps) {
   return (
     <DropdownMenuItem onSelect={onClick}>
       <Icon className="mr-2 h-4 w-4 text-black" />
-      {label}
+      <Label className={cn(largeText && "text-lg")}>{label}</Label>
     </DropdownMenuItem>
   );
 }
@@ -85,6 +93,35 @@ function UserMenuItem({ icon: Icon, label, onClick }: UserMenuItemProps) {
 export default function UserDropdownMenu() {
   const username = "Jenn";
   const { userPrefs, setUserPrefAndSave, userPrefLoadings } = useSidebar();
+  const largeText = userPrefs["largeText"];
+
+  const toggleItems = [
+    {
+      id: "wideView",
+      label: "Wide View",
+    },
+    {
+      id: "largeText",
+      label: "Large Text",
+    },
+    {
+      id: "enableTabs",
+      label: "Enable Tabs",
+    },
+    {
+      id: "showIndex",
+      label: "Show Index",
+    },
+  ] as const;
+
+  const userMenuItems = [
+    "separator",
+    { icon: Archive, label: "Archive" },
+    { icon: MessageSquare, label: "Prompts" },
+    { icon: Cpu, label: "Models" },
+    "separator",
+    { icon: Settings, label: "Settings" },
+  ] as const;
 
   return (
     <DropdownMenu>
@@ -94,39 +131,33 @@ export default function UserDropdownMenu() {
         </button>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent align="end" className="w-48 mt-2">
-        <ToggleMenuItem
-          id="tab-toggle"
-          label="Wide View"
-          checked={userPrefs["wideView"] ?? false}
-          onChange={(v) => setUserPrefAndSave("wideView", v)}
-          disabled={userPrefLoadings["wideView"]}
-        />
-        <ToggleMenuItem
-          id="tab-toggle"
-          label="Large Text"
-          checked={userPrefs["largeText"] ?? false}
-          onChange={(v) => setUserPrefAndSave("largeText", v)}
-          disabled={userPrefLoadings["largeText"]}
-        />
-        <ToggleMenuItem
-          id="tab-toggle"
-          label="Enable Tabs"
-          checked={userPrefs["enableTabs"] ?? false}
-          onChange={(v) => setUserPrefAndSave("enableTabs", v)}
-        />
-        <ToggleMenuItem
-          id="index-toggle"
-          label="Show Index"
-          checked={userPrefs["showIndex"] ?? false}
-          onChange={(v) => setUserPrefAndSave("showIndex", v)}
-        />
-        <DropdownMenuSeparator />
-        <UserMenuItem icon={Archive} label="Archive" />
-        <UserMenuItem icon={MessageSquare} label="Prompts" />
-        <UserMenuItem icon={Cpu} label="Models" />
-        <DropdownMenuSeparator />
-        <UserMenuItem icon={Settings} label="Settings" />
+      <DropdownMenuContent
+        align="end"
+        className={cn("w-48 mt-2", largeText ? "text-lg" : "text-base")}
+      >
+        {toggleItems.map(({ id, label }) => (
+          <ToggleMenuItem
+            key={id}
+            id={`${id}-toggle`}
+            label={label}
+            checked={userPrefs[id] ?? false}
+            onChange={(v) => setUserPrefAndSave(id, v)}
+            disabled={userPrefLoadings[id]}
+            largeText={userPrefs["largeText"] ?? false}
+          />
+        ))}
+        {userMenuItems.map((item, idx) =>
+          item === "separator" ? (
+            <DropdownMenuSeparator key={`sep-${idx}`} />
+          ) : (
+            <UserMenuItem
+              key={item.label}
+              icon={item.icon}
+              label={item.label}
+              largeText={userPrefs["largeText"] ?? false}
+            />
+          )
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );

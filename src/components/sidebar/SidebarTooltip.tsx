@@ -53,7 +53,6 @@ function SidebarTooltip({
           label={label}
           collapsed={collapsed}
           fill={fill}
-          // size={16}
         />
       </button>
     );
@@ -67,7 +66,6 @@ function SidebarTooltip({
         label={label}
         collapsed={collapsed}
         fill={fill}
-        size={16}
       />
     </Link>
   );
