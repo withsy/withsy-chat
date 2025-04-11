@@ -1,5 +1,6 @@
 import { useSidebar } from "@/context/SidebarContext";
 import { trpc } from "@/lib/trpc";
+import { cn } from "@/lib/utils";
 import type { ChatMessage } from "@/types/chat";
 import { skipToken } from "@tanstack/react-query";
 import { useRouter } from "next/router";
@@ -21,11 +22,12 @@ export function ChatSessionPage({
   children,
 }: Props) {
   const router = useRouter();
-  const { addChat } = useSidebar();
+  const { addChat, userPrefs, isMobile } = useSidebar();
   const [aiChatMessageId, setAiChatMessageId] = useState(
     initialAiChatMessageId
   );
   const [messages, setMessages] = useState(initialMessages);
+  const wideView = userPrefs["wideView"] ?? false;
 
   useEffect(() => {
     setMessages(initialMessages);
@@ -99,14 +101,24 @@ export function ChatSessionPage({
   return (
     <div className="flex flex-col h-full bg-background relative">
       <div className="flex-1 overflow-y-auto px-4 py-2 mt-4 mb-[120px]">
-        <div className="mx-auto w-full">
+        <div
+          className={cn(
+            "mx-auto w-full",
+            !isMobile && (wideView ? "max-w-[90%]" : "max-w-[80%]")
+          )}
+        >
           <ChatMessageList messages={messages} />
           {children}
         </div>
       </div>
 
       <div className="absolute bottom-[2vh] left-0 right-0 flex justify-center px-4">
-        <div className="w-full ">
+        <div
+          className={cn(
+            "w-full",
+            !isMobile && (wideView ? "max-w-[90%]" : "max-w-[80%]")
+          )}
+        >
           <ChatInputBox onSendMessage={onSendMessage} />
         </div>
       </div>
