@@ -18,12 +18,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
-    "eslint.config.mjs",
-    "migrations/**/*.js"
-  ],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "eslint.config.mjs"],
   "exclude": ["node_modules"]
 }
