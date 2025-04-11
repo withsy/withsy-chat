@@ -4,6 +4,8 @@ import {
   type UserPrefs,
   type UserUpdatePrefs,
 } from "@/lib/trpc";
+import type { Chat } from "@/types/chat";
+import type { ReactNode } from "react";
 import { createContext, useContext, useEffect, useState } from "react";
 
 type UserPrefLoadings = Partial<Record<keyof UserUpdatePrefs, boolean>>;
@@ -17,12 +19,15 @@ type SidebarContextType = {
   toggle: () => void;
   setCollapsed: (value: boolean) => void;
   hydrated: boolean;
-
   isMobile: boolean;
 
   userPrefs: UserPrefs;
   setUserPrefAndSave: SetUserPrefAndSave;
   userPrefLoadings: UserPrefLoadings;
+
+  chatList: Chat[];
+  setChatList: (list: Chat[]) => void;
+  addChat: (chat: Chat) => void;
 };
 
 const SidebarContext = createContext<SidebarContextType | undefined>(undefined);
@@ -32,11 +37,10 @@ export function SidebarProvider({
   children,
 }: {
   userMe: UserMe;
-  children: React.ReactNode;
+  children: ReactNode;
 }) {
   const [collapsed, setCollapsed] = useState(false);
   const [hydrated, setHydrated] = useState(false);
-
   const [isMobile, setIsMobile] = useState(false);
 
   const [userPrefs, setUserPrefs] = useState(userMe.preferences);
@@ -45,12 +49,7 @@ export function SidebarProvider({
     {}
   );
 
-  const setUserPrefAndSave: SetUserPrefAndSave = <
-    K extends keyof UserUpdatePrefs
-  >(
-    key: K,
-    value: UserUpdatePrefs[K]
-  ) => {
+  const setUserPrefAndSave: SetUserPrefAndSave = (key, value) => {
     const prevValue = userPrefs[key];
 
     setUserPrefs((prev) => ({ ...prev, [key]: value }));
@@ -59,9 +58,12 @@ export function SidebarProvider({
     userPrefsMut.mutate(
       { [key]: value },
       {
-        onSettled: () =>
-          setUserPrefLoadings((prev) => ({ ...prev, [key]: false })),
-        onError: () => setUserPrefs((prev) => ({ ...prev, [key]: prevValue })),
+        onSettled: () => {
+          setUserPrefLoadings((prev) => ({ ...prev, [key]: false }));
+        },
+        onError: () => {
+          setUserPrefs((prev) => ({ ...prev, [key]: prevValue }));
+        },
       }
     );
   };
@@ -91,6 +93,12 @@ export function SidebarProvider({
 
   const toggle = () => setCollapsed((prev) => !prev);
 
+  const [chatList, setChatList] = useState<Chat[]>([]);
+
+  const addChat = (chat: Chat) => {
+    setChatList((prev) => [chat, ...prev]);
+  };
+
   return (
     <SidebarContext.Provider
       value={{
@@ -102,6 +110,9 @@ export function SidebarProvider({
         userPrefs,
         setUserPrefAndSave,
         userPrefLoadings,
+        chatList,
+        setChatList,
+        addChat,
       }}
     >
       {children}

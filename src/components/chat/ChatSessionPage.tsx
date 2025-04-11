@@ -1,3 +1,4 @@
+import { useSidebar } from "@/context/SidebarContext";
 import { trpc } from "@/lib/trpc";
 import type { ChatMessage } from "@/types/chat";
 import { skipToken } from "@tanstack/react-query";
@@ -6,7 +7,6 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { ChatInputBox } from "./ChatInputBox";
 import { ChatMessageList } from "./ChatMessageList";
-
 type Props = {
   chatId?: string;
   initialMessages: ChatMessage[];
@@ -14,6 +14,8 @@ type Props = {
 };
 
 export function ChatSessionPage({ chatId, initialMessages, children }: Props) {
+  const router = useRouter();
+  const { addChat } = useSidebar();
   const [chatMessageId, setChatMessageId] = useState("");
   const [messages, setMessages] = useState(initialMessages);
 
@@ -21,7 +23,7 @@ export function ChatSessionPage({ chatId, initialMessages, children }: Props) {
     setMessages(initialMessages);
   }, [chatId, initialMessages]);
 
-  const router = useRouter();
+  const utils = trpc.useUtils();
   const startChat = trpc.chat.start.useMutation();
   const sendChatMessage = trpc.chatMessage.send.useMutation();
   const receiveChatMessage = trpc.chatMessage.receive.useSubscription(
@@ -58,10 +60,9 @@ export function ChatSessionPage({ chatId, initialMessages, children }: Props) {
       startChat.mutate(
         { message, model: "" },
         {
-          onError(error) {
-            toast.error(`Start chat failed. error: ${error}`);
-          },
           onSuccess(data) {
+            addChat(data.chat);
+            utils.chat.list.invalidate();
             router.push(`/chat/${data.chat.id}`);
           },
         }
