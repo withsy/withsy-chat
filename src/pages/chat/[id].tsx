@@ -10,13 +10,13 @@ export default function ChatPage() {
   const chatMessageId =
     typeof router.query.chatMessageId === "string"
       ? Number(router.query.chatMessageId)
-      : null;
+      : 0;
 
   const listChatMessages = trpc.chat.listMessages.useQuery(
     chatId ? { chatId } : skipToken
   );
 
-  if (chatId == null || chatMessageId == null) {
+  if (chatId == null) {
     return <div>Loading or Invalid params...</div>;
   }
 
