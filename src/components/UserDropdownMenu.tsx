@@ -84,8 +84,7 @@ function UserMenuItem({ icon: Icon, label, onClick }: UserMenuItemProps) {
 
 export default function UserDropdownMenu() {
   const username = "Jenn";
-  const { isMobile, userPrefs, setUserPrefAndSave, userPrefLoadings } =
-    useSidebar();
+  const { userPrefs, setUserPrefAndSave, userPrefLoadings } = useSidebar();
 
   return (
     <DropdownMenu>
@@ -115,16 +114,12 @@ export default function UserDropdownMenu() {
           label="Enable Tabs"
           checked={userPrefs["enableTabs"] ?? false}
           onChange={(v) => setUserPrefAndSave("enableTabs", v)}
-          disabled={userPrefLoadings["enableTabs"] || isMobile}
-          tooltip="Tabs are not supported on mobile"
         />
         <ToggleMenuItem
           id="index-toggle"
           label="Show Index"
           checked={userPrefs["showIndex"] ?? false}
           onChange={(v) => setUserPrefAndSave("showIndex", v)}
-          disabled={userPrefLoadings["showIndex"] || isMobile}
-          tooltip="Index is not supported on mobile"
         />
         <DropdownMenuSeparator />
         <UserMenuItem icon={Archive} label="Archive" />
