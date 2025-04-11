@@ -2,7 +2,7 @@ import { trpc } from "@/lib/trpc";
 import type { ChatMessage } from "@/types/chat";
 import { skipToken } from "@tanstack/react-query";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { ChatInputBox } from "./ChatInputBox";
 import { ChatMessageList } from "./ChatMessageList";
@@ -16,6 +16,10 @@ type Props = {
 export function ChatSessionPage({ chatId, initialMessages, children }: Props) {
   const [chatMessageId, setChatMessageId] = useState("");
   const [messages, setMessages] = useState(initialMessages);
+
+  useEffect(() => {
+    setMessages(initialMessages);
+  }, [chatId, initialMessages]);
 
   const router = useRouter();
   const startChat = trpc.chat.start.useMutation();
