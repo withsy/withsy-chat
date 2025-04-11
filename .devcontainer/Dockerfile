@@ -10,6 +10,7 @@ RUN apt update && \
     wget \
     unzip \
     git \
+    postgresql-client \
     # To open in a browser on the host
     xdg-utils \
     # For SafeQL

@@ -59,7 +59,7 @@ export function ChatInputBox({ onSendMessage }: Props) {
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <Switch
             id="enter-toggle"
-            checked={enterToSend}
+            checked={enterToSend ?? false}
             onCheckedChange={(v) => setUserPrefAndSave("enterToSend", v)}
             disabled={isLoading}
           />

@@ -50,7 +50,11 @@ export default function EmptyChatInterface({ name = "" }: { name?: string }) {
   ];
 
   return (
-    <ChatSessionPage chatId={undefined} initialMessages={[]}>
+    <ChatSessionPage
+      chatId={undefined}
+      initialMessages={[]}
+      initialAiChatMessageId={0}
+    >
       <div className="flex flex-col items-center justify-center w-full px-4">
         <h1 className="text-2xl font-semibold mb-6">
           {greeting}

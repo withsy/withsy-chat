@@ -99,21 +99,21 @@ export default function UserDropdownMenu() {
         <ToggleMenuItem
           id="tab-toggle"
           label="Wide View"
-          checked={userPrefs["wideView"]}
+          checked={userPrefs["wideView"] ?? false}
           onChange={(v) => setUserPrefAndSave("wideView", v)}
           disabled={userPrefLoadings["wideView"]}
         />
         <ToggleMenuItem
           id="tab-toggle"
           label="Large Text"
-          checked={userPrefs["largeText"]}
+          checked={userPrefs["largeText"] ?? false}
           onChange={(v) => setUserPrefAndSave("largeText", v)}
           disabled={userPrefLoadings["largeText"]}
         />
         <ToggleMenuItem
           id="tab-toggle"
           label="Enable Tabs"
-          checked={userPrefs["enableTabs"]}
+          checked={userPrefs["enableTabs"] ?? false}
           onChange={(v) => setUserPrefAndSave("enableTabs", v)}
           disabled={userPrefLoadings["enableTabs"] || isMobile}
           tooltip="Tabs are not supported on mobile"
@@ -121,7 +121,7 @@ export default function UserDropdownMenu() {
         <ToggleMenuItem
           id="index-toggle"
           label="Show Index"
-          checked={userPrefs["showIndex"]}
+          checked={userPrefs["showIndex"] ?? false}
           onChange={(v) => setUserPrefAndSave("showIndex", v)}
           disabled={userPrefLoadings["showIndex"] || isMobile}
           tooltip="Index is not supported on mobile"

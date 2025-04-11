@@ -9,14 +9,22 @@ import { ChatInputBox } from "./ChatInputBox";
 import { ChatMessageList } from "./ChatMessageList";
 type Props = {
   chatId?: string;
+  initialAiChatMessageId: number;
   initialMessages: ChatMessage[];
   children?: React.ReactNode;
 };
 
-export function ChatSessionPage({ chatId, initialMessages, children }: Props) {
+export function ChatSessionPage({
+  chatId,
+  initialMessages,
+  initialAiChatMessageId,
+  children,
+}: Props) {
   const router = useRouter();
   const { addChat } = useSidebar();
-  const [chatMessageId, setChatMessageId] = useState("");
+  const [aiChatMessageId, setAiChatMessageId] = useState(
+    initialAiChatMessageId
+  );
   const [messages, setMessages] = useState(initialMessages);
 
   useEffect(() => {
@@ -25,11 +33,11 @@ export function ChatSessionPage({ chatId, initialMessages, children }: Props) {
 
   const utils = trpc.useUtils();
   const startChat = trpc.chat.start.useMutation();
-  const sendChatMessage = trpc.chatMessage.send.useMutation();
-  const receiveChatMessage = trpc.chatMessage.receive.useSubscription(
-    !!chatMessageId
+  const sendChatMessage = trpc.chat.sendMessage.useMutation();
+  const receiveChatMessage = trpc.chat.receiveMessageStream.useSubscription(
+    chatId && aiChatMessageId !== 0
       ? {
-          chatMessageId,
+          chatMessageId: aiChatMessageId,
         }
       : skipToken,
     {
@@ -37,33 +45,51 @@ export function ChatSessionPage({ chatId, initialMessages, children }: Props) {
         toast.error(`Receive chat message failed. error: ${error}`);
       },
       onData(data) {
-        console.log(data);
+        // TODO: refactor
+        if (data.text) {
+          setMessages((prev) => [
+            ...prev,
+            {
+              id: Math.floor(Math.random() * 100000) + 1,
+              chatId: chatId!,
+              text: data.text,
+              model: "gemini-2.0-flash",
+              data: { role: "model" },
+              isAi: true,
+              createdAt: new Date(),
+              updatedAt: new Date(),
+            },
+          ]);
+        }
       },
     }
   );
 
   const onSendMessage = (message: string) => {
     if (chatId) {
-      setChatMessageId("");
+      setAiChatMessageId(0);
       sendChatMessage.mutate(
-        { chatId, message, model: "" },
+        { chatId, text: message, model: "gemini-2.0-flash" },
         {
           onError(error) {
             toast.error(`Send message failed. error: ${error}`);
           },
           onSuccess(data) {
-            setChatMessageId(data.id);
+            setMessages((prev) => [...prev, data.userChatMessage]);
+            setAiChatMessageId(data.aiChatMessageId);
           },
         }
       );
     } else {
       startChat.mutate(
-        { message, model: "" },
+        { text: message, model: "gemini-2.0-flash" },
         {
           onSuccess(data) {
             addChat(data.chat);
             utils.chat.list.invalidate();
-            router.push(`/chat/${data.chat.id}`);
+            router.push(
+              `/chat/${data.chat.id}?chatMessageId=${data.aiChatMessageId}`
+            );
           },
         }
       );

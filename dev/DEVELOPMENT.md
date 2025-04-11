@@ -46,13 +46,15 @@ Update values if needed.
 
 ---
 
-## 4. Run database migrations
+## 4. Run database setup
 
-This will create tables in the local PostgreSQL database:
+This will **reset** the database (drop all tables), **run migrations**, and **seed** initial data:
 
 ```bash
-npm run migrate
+npm run db:setup
 ```
+
+> ⚠️ **Warning:** This will erase all existing data.
 
 ---
 

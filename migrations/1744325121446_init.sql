@@ -13,6 +13,7 @@ LANGUAGE plpgsql;
 
 CREATE TABLE users(
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+  preferences jsonb NOT NULL DEFAULT '{}' ::jsonb,
   created_at timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
@@ -25,7 +26,7 @@ CREATE TRIGGER tr_users_update_updated_at
 CREATE TABLE chats(
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
   user_id uuid NOT NULL,
-  title text NOT NULL,
+  title text NOT NULL DEFAULT '',
   is_starred boolean NOT NULL DEFAULT FALSE,
   created_at timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -40,7 +41,11 @@ CREATE TRIGGER tr_chats_update_updated_at
 CREATE TABLE chat_messages(
   id integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   chat_id uuid NOT NULL,
-  raw_data jsonb NOT NULL,
+  -- TODO: refactor
+  is_ai boolean NOT NULL,
+  model text NOT NULL,
+  text text NOT NULL,
+  data jsonb NOT NULL DEFAULT '{}' ::jsonb,
   created_at timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT fk_chat_messages_chat FOREIGN KEY (chat_id) REFERENCES chats(id) ON DELETE CASCADE
@@ -54,7 +59,7 @@ CREATE TRIGGER tr_chat_messages_update_updated_at
 CREATE TABLE chat_chunks(
   chat_message_id integer NOT NULL,
   chunk_index integer NOT NULL,
-  raw_data jsonb NOT NULL,
+  data jsonb NOT NULL DEFAULT '{}' ::jsonb,
   created_at timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (chat_message_id, chunk_index),

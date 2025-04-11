@@ -12,5 +12,5 @@
     "package.json",
     ".next/"
   ],
-  "words": ["safeql", "plpgsql", "ossp"]
+  "words": ["safeql", "plpgsql", "ossp", "prefs", "genai"]
 }

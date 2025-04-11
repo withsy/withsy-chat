@@ -13,7 +13,7 @@ export function ChatBubble({ message }: Props) {
   if (model === "system") {
     return (
       <div className="flex justify-center my-4 py-4">
-        <span className="text-muted-foreground italic">{message.content}</span>
+        <span className="text-muted-foreground italic">{message.text}</span>
       </div>
     );
   }
@@ -30,7 +30,7 @@ export function ChatBubble({ message }: Props) {
           {new Date(message.createdAt).toLocaleTimeString()}
         </div>
         <div className="bg-muted rounded-md px-4 py-2 whitespace-pre-wrap">
-          <MarkdownBox content={message.content} />
+          <MarkdownBox content={message.text} />
         </div>
       </div>
     </div>

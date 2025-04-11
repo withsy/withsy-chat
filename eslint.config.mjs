@@ -14,8 +14,20 @@ const eslintConfig = [
   ...compat.extends("next/core-web-vitals", "next/typescript"),
   safeql.configs.connections({
     databaseUrl: "postgres://postgres:postgres@localhost:5432/postgres",
-    targets: [{ wrapper: "client.query" }, { wrapper: "tx.query" }],
-    overrides: { types: { jsonb: "unknown" } },
+    targets: [
+      {
+        wrapper: { regex: "(.+queryable|qr).query" },
+        transform: "{type}[]",
+        fieldTransform: "camel",
+      },
+    ],
+    overrides: {
+      types: { jsonb: "unknown" },
+      columns: {
+        "users.preferences": "UserPreferences",
+        "chat_messages.data": "ChatMessageData",
+      },
+    },
   }),
   {
     rules: {

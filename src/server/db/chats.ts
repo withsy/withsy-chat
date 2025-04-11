@@ -1,165 +1,245 @@
-import type {
+import {
   Chat,
-  ChatMessage,
-  ListChatMessages,
-  ReceiveChatMessage,
-  SendChatMessage,
-  StartChat,
-  UpdateChat,
+  ChatMessageData,
+  ChatMessageId,
+  type ListChatMessages,
+  type ReceiveChatMessageStream,
+  type SendChatMessage,
+  type StartChat,
+  type UpdateChat,
 } from "@/types/chat";
+import type { UserId } from "@/types/user";
 import { TRPCError } from "@trpc/server";
-import { randomUUID } from "node:crypto";
+import { sql } from "@ts-safeql/sql-tag";
+import { ee, ext } from "../global";
+import type { Pool, Queryable } from "./core";
 
 export class Chats {
-  #chats: Chat[] = [];
-  #chatMessages: ChatMessage[] = [];
+  #pool: Pool;
 
-  constructor() {
-    this.#chats.push(
-      {
-        id: randomUUID(),
-        userId: "1",
-        title: "Nyang-nyang-e",
-        isStarred: true,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-      {
-        id: randomUUID(),
-        userId: "1",
-        title: "Kyak-kyak-e",
-        isStarred: true,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      }
-    );
+  constructor(pool: Pool) {
+    this.#pool = pool;
   }
 
-  listChats(userId: string): Chat[] {
-    return this.#chats.filter((v) => v.userId === userId);
+  async listChats(userId: UserId): Promise<Chat[]> {
+    const rs = await this.#pool.queryable.query<
+      {
+        id: string;
+        userId: string;
+        title: string;
+        isStarred: boolean;
+        createdAt: Date;
+        updatedAt: Date;
+      }[]
+    >(sql`
+      SELECT * FROM chats WHERE user_id = ${userId} ::uuid;
+    `);
+    const chats = await Promise.all(rs.map((v) => Chat.parseAsync(v)));
+    return chats;
   }
 
-  updateChat(userId: string, input: UpdateChat): Chat {
+  async updateChat(input: UpdateChat): Promise<Chat> {
     const { chatId, title, isStarred } = input;
-    const chat = this.#chats.find(
-      (v) => v.userId === userId && v.id === chatId
-    );
-    if (!chat)
+    const rs = await this.#pool.queryable.query<
+      {
+        id: string;
+        userId: string;
+        title: string;
+        isStarred: boolean;
+        createdAt: Date;
+        updatedAt: Date;
+      }[]
+    >(sql`
+      UPDATE chats
+      SET
+        title = COALESCE(${title ?? null}, title),
+        is_starred = COALESCE(${isStarred ?? null}, is_starred)
+      WHERE id = ${chatId} ::uuid
+      RETURNING *;
+    `);
+    if (rs.length === 0)
       throw new TRPCError({ code: "NOT_FOUND", message: "Chat not found." });
 
-    let isUpdated = false;
-    if (title != null) {
-      chat.title = title;
-      isUpdated = true;
-    }
-    if (isStarred != null) {
-      chat.isStarred = isStarred;
-      isUpdated = true;
-    }
-    if (isUpdated) chat.updatedAt = new Date();
-
-    return chat;
+    return rs[0];
   }
 
-  startChat(userId: string, input: StartChat) {
-    const { message, model } = input;
-    const chat: Chat = {
-      id: randomUUID(),
-      createdAt: new Date(),
-      userId,
-      title: [...message].slice(0, 10).join(""),
-      isStarred: false,
-      updatedAt: new Date(),
-    };
-    this.#chats.push(chat);
+  async startChat(userId: UserId, input: StartChat) {
+    const { text, model } = input;
+    const title = [...text].slice(0, 10).join("");
+    const res = await this.#pool.transaction(async (qr) => {
+      let chat;
+      try {
+        const rs = await qr.query<
+          {
+            id: string;
+            userId: string;
+            title: string;
+            isStarred: boolean;
+            createdAt: Date;
+            updatedAt: Date;
+          }[]
+        >(sql`
+          INSERT INTO chats
+            (user_id, title)
+          VALUES
+            (${userId} ::uuid, ${title})
+          RETURNING *;
+        `);
+        chat = rs[0];
+      } catch (e) {
+        console.error("Start chat failed. error:", e);
+        throw new TRPCError({ code: "NOT_FOUND", message: "User not found." });
+      }
 
-    const chatMessage: ChatMessage = {
-      id: randomUUID(),
-      chatId: chat.id,
-      isAi: false,
-      content: message,
-      model,
-      parentId: null,
-      usage: null,
-      createdAt: new Date(),
-    };
-    this.#chatMessages.push(chatMessage);
-
-    return {
-      chat,
-      chatMessage,
-    };
-  }
-
-  sendMessage(input: SendChatMessage) {
-    const { chatId, message, model } = input;
-    const chat = this.#chats.find((v) => v.id === chatId);
-    if (!chat)
-      throw new TRPCError({ code: "NOT_FOUND", message: "Chat not found." });
-
-    const chatMessage: ChatMessage = {
-      id: randomUUID(),
-      content: message,
-      createdAt: new Date(),
-      chatId,
-      isAi: false,
-      model,
-      parentId: null,
-      usage: null,
-    };
-    this.#chatMessages.push(chatMessage);
-
-    return chatMessage;
-  }
-
-  listMessages(input: ListChatMessages) {
-    const { chatId } = input;
-    return this.#chatMessages.filter((v) => v.chatId === chatId);
-  }
-
-  async *receiveChatMessage(input: ReceiveChatMessage) {
-    const { chatMessageId } = input;
-    const origin = this.#chatMessages.find((v) => v.id === chatMessageId);
-    if (!origin)
-      throw new TRPCError({
-        code: "NOT_FOUND",
-        message: "Chat message not found.",
+      const res = await createChatMessages(qr, {
+        chatId: chat.id,
+        text,
+        model,
       });
+      return { chat, ...res };
+    });
 
-    const chunks = [
-      "Hello!\nHow can I help you today?\n",
-      "I'm an AI assistant.",
-      "Feel free to ask me anything.\nNyang.",
-    ];
-
-    for (const chunk of chunks) {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      yield { kind: "chunk", chunk };
-    }
-
-    const chatMessage: ChatMessage = {
-      id: randomUUID(),
-      content: chunks.join(""),
-      createdAt: new Date(),
-      chatId: origin.chatId,
-      isAi: true,
-      model: "gpt",
-      parentId: null,
-      usage: null,
-    };
-    this.#chatMessages.push(chatMessage);
-
-    yield {
-      kind: "metadata",
-      metadata: {
-        id: chatMessage.id,
-        createdAt: chatMessage.createdAt,
-        chatId: chatMessage.chatId,
-        isAi: chatMessage.isAi,
-        model: chatMessage.model,
-        parentId: chatMessage.parentId,
-        usage: chatMessage.usage,
-      },
-    };
+    // TODO: refactor to ChatService.
+    const { chat, aiChatMessageId } = res;
+    ext.gemini.sendChatMessage(chat.id, aiChatMessageId, model, text);
+    return res;
   }
+
+  async sendChatMessage(input: SendChatMessage) {
+    const res = await createChatMessages(this.#pool.queryable, input);
+
+    // TODO: refactor to ChatService.
+    const { chatId, model, text } = input;
+    const { aiChatMessageId } = res;
+    ext.gemini.sendChatMessage(chatId, aiChatMessageId, model, text);
+    return res;
+  }
+
+  async listChatMessages(input: ListChatMessages) {
+    const { chatId } = input;
+    const chatMessages = await this.#pool.queryable.query<
+      {
+        id: number;
+        chatId: string;
+        isAi: boolean;
+        model: string;
+        text: string;
+        data: ChatMessageData;
+        createdAt: Date;
+        updatedAt: Date;
+      }[]
+    >(sql`
+      SELECT * FROM chat_messages WHERE chat_id = ${chatId} ::uuid;
+    `);
+    return chatMessages;
+  }
+
+  // TODO: refactor to ChatService.
+  async *receiveChatMessageStream(input: ReceiveChatMessageStream) {
+    const { chatMessageId } = input;
+
+    const queue: unknown[] = [];
+    let resolveQueue: (() => void) | null = null;
+
+    const onMessage = (ev: unknown) => {
+      queue.push(ev);
+      if (resolveQueue) {
+        resolveQueue();
+        resolveQueue = null;
+      }
+    };
+
+    ee.addListener(`chatMessage:${chatMessageId}`, onMessage);
+
+    try {
+      while (true) {
+        while (queue.length > 0) {
+          const event = queue.shift() as
+            | {
+                kind: "data";
+                data: {
+                  candidates?: {
+                    content?: {
+                      parts?: {
+                        text?: string;
+                      }[];
+                    };
+                    finishReason?: string;
+                  }[];
+                };
+              }
+            | { kind: "error"; error: unknown };
+
+          if (event.kind === "error") {
+            throw event.error;
+          }
+
+          if (event.kind === "data") {
+            const candidates = event.data.candidates ?? [];
+            for (const c of candidates) {
+              const parts = c.content?.parts ?? [];
+              for (const p of parts) {
+                if (p.text) {
+                  yield { text: p.text };
+                }
+              }
+              if (c.finishReason) {
+                yield { finishReason: c.finishReason };
+                return;
+              }
+            }
+          }
+        }
+
+        await new Promise<void>((resolve) => {
+          resolveQueue = resolve;
+        });
+      }
+    } finally {
+      ee.removeListener(`chatMessage:${chatMessageId}`, onMessage);
+    }
+  }
+}
+
+async function createChatMessages(qr: Queryable, input: SendChatMessage) {
+  const { chatId, text, model } = input;
+  let userChatMessage;
+  {
+    const data: ChatMessageData = {
+      role: "user",
+      text,
+      model,
+    };
+    const rs = await qr.query<
+      {
+        id: number;
+        chatId: string;
+        isAi: boolean;
+        model: string;
+        text: string;
+        data: ChatMessageData;
+        createdAt: Date;
+        updatedAt: Date;
+      }[]
+    >(sql`
+      INSERT INTO chat_messages
+        (chat_id, data, is_ai, model, text)
+      VALUES
+        (${chatId} ::uuid, ${data as unknown} ::jsonb, false, ${model}, ${text})
+      RETURNING *;
+    `);
+    userChatMessage = rs[0];
+  }
+  const data: ChatMessageData = {
+    role: "model",
+  };
+  const rs = await qr.query<{ id: number }[]>(sql`
+    INSERT INTO chat_messages
+      (chat_id, data, is_ai, model, text)
+    VALUES
+      (${chatId} ::uuid, ${data as unknown} ::jsonb, true, ${model}, '')
+    RETURNING id;
+  `);
+  const aiChatMessageId = rs[0].id;
+  return { userChatMessage, aiChatMessageId };
 }

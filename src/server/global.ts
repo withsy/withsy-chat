@@ -1,6 +1,17 @@
+import "dotenv/config";
+
 import { initTRPC } from "@trpc/server";
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
+import { EventEmitter } from "node:stream";
 import superjson from "superjson";
+import { Db } from "./db/core";
+import { External } from "./external/core";
+
+export const db = new Db();
+export const ext = new External();
+
+// TODO: move to pg or redis.
+export const ee = new EventEmitter();
 
 const t = initTRPC.context<Context>().create({
   transformer: superjson,
@@ -21,8 +32,9 @@ export const procedure = t.procedure;
 
 export async function createContext({}: CreateNextContextOptions) {
   // TODO: Parse auth header.
+  const { userId } = await db.users.getSeedUserId_DEV();
   return {
-    userId: "1",
+    userId,
   };
 }
 
