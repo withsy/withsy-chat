@@ -6,6 +6,7 @@
     "build": "next build",
     "dev": "next dev --turbopack",
     "lint": "next lint",
+    "migrate": "node-pg-migrate up",
     "start": "next start"
   },
   "dependencies": {
