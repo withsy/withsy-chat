@@ -23,7 +23,7 @@ export default function Sidebar() {
         >
           {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
         </Button>
-        {collapsed && <SidebarTooltipGroup collapsed={collapsed} />}
+        {/* {collapsed && <SidebarTooltipGroup collapsed={collapsed} />} */}
       </div>
 
       <div
