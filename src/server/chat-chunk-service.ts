@@ -65,7 +65,7 @@ export class ChatChunkService {
         .selectFrom("chatChunks")
         .where("chatMessageId", "=", chatMessageId)
         .where("chunkIndex", ">", lastChunkIndex)
-        .orderBy("chunkIndex")
+        .orderBy("chunkIndex", "asc")
         .selectAll()
         .execute();
       for (const chatChunk of chatChunks) {
