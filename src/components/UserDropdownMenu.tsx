@@ -125,7 +125,7 @@ export default function UserDropdownMenu() {
     { icon: Cpu, label: "Models" },
     {
       icon: Palette,
-      label: "Theme Settings",
+      label: "Theme",
       onClick: () => setThemeModalOpen(true),
     },
     "separator",
