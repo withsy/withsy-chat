@@ -19,10 +19,21 @@ import {
   Archive,
   Cpu,
   MessageSquare,
+  Palette,
   Settings,
   type LucideIcon,
 } from "lucide-react";
+import { useState } from "react";
 import { ModelAvatar } from "./ModelAvatar";
+import { ThemeSettingsModal } from "./modal/ThemeSettingsModal";
+
+interface MenuActionItem {
+  icon: LucideIcon;
+  label: string;
+  onClick?: () => void;
+}
+
+type MenuItem = "separator" | MenuActionItem;
 
 interface ToggleMenuItemProps {
   id: string;
@@ -94,6 +105,7 @@ export default function UserDropdownMenu() {
   const username = "Jenn";
   const { userPrefs, setUserPrefAndSave, userPrefLoadings } = useSidebar();
   const largeText = userPrefs["largeText"];
+  const [themeModalOpen, setThemeModalOpen] = useState(false);
 
   const toggleItems = [
     {
@@ -106,51 +118,63 @@ export default function UserDropdownMenu() {
     },
   ] as const;
 
-  const userMenuItems = [
+  const userMenuItems: MenuItem[] = [
     "separator",
     { icon: Archive, label: "Archive" },
     { icon: MessageSquare, label: "Prompts" },
     { icon: Cpu, label: "Models" },
+    {
+      icon: Palette,
+      label: "Theme Settings",
+      onClick: () => setThemeModalOpen(true),
+    },
     "separator",
     { icon: Settings, label: "Settings" },
-  ] as const;
+  ];
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <button type="button" className="cursor-pointer">
-          <ModelAvatar name={username} />
-        </button>
-      </DropdownMenuTrigger>
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <button type="button" className="cursor-pointer">
+            <ModelAvatar name={username} />
+          </button>
+        </DropdownMenuTrigger>
 
-      <DropdownMenuContent
-        align="end"
-        className={cn("w-48 mt-2", largeText ? "text-lg" : "text-base")}
-      >
-        {toggleItems.map(({ id, label }) => (
-          <ToggleMenuItem
-            key={id}
-            id={`${id}-toggle`}
-            label={label}
-            checked={userPrefs[id] ?? false}
-            onChange={(v) => setUserPrefAndSave(id, v)}
-            disabled={userPrefLoadings[id]}
-            largeText={userPrefs["largeText"] ?? false}
-          />
-        ))}
-        {userMenuItems.map((item, idx) =>
-          item === "separator" ? (
-            <DropdownMenuSeparator key={`sep-${idx}`} />
-          ) : (
-            <UserMenuItem
-              key={item.label}
-              icon={item.icon}
-              label={item.label}
+        <DropdownMenuContent
+          align="end"
+          className={cn("w-48 mt-2", largeText ? "text-lg" : "text-base")}
+        >
+          {toggleItems.map(({ id, label }) => (
+            <ToggleMenuItem
+              key={id}
+              id={`${id}-toggle`}
+              label={label}
+              checked={userPrefs[id] ?? false}
+              onChange={(v) => setUserPrefAndSave(id, v)}
+              disabled={userPrefLoadings[id]}
               largeText={userPrefs["largeText"] ?? false}
             />
-          )
-        )}
-      </DropdownMenuContent>
-    </DropdownMenu>
+          ))}
+          {userMenuItems.map((item, idx) =>
+            item === "separator" ? (
+              <DropdownMenuSeparator key={`sep-${idx}`} />
+            ) : (
+              <UserMenuItem
+                key={item.label}
+                icon={item.icon}
+                label={item.label}
+                largeText={userPrefs["largeText"] ?? false}
+                onClick={item.onClick}
+              />
+            )
+          )}
+        </DropdownMenuContent>
+      </DropdownMenu>
+      <ThemeSettingsModal
+        open={themeModalOpen}
+        onClose={() => setThemeModalOpen(false)}
+      />
+    </>
   );
 }

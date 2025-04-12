@@ -34,7 +34,8 @@ export class Users {
   }
 
   async updateUserPrefs(userId: UserId, input: UpdateUserPrefs): Promise<User> {
-    const { wideView, largeText, enableTabs, showIndex, enterToSend } = input;
+    const { wideView, largeText, enterToSend, themeColor, themeOpacity } =
+      input;
     return await this.#pool.transaction(async (qr) => {
       const rs = await qr.query<
         { id: string; preferences: UserPreferences }[]
@@ -50,8 +51,8 @@ export class Users {
       const partial = rs[0];
       if (wideView != null) partial.preferences.wideView = wideView;
       if (largeText != null) partial.preferences.largeText = largeText;
-      if (enableTabs != null) partial.preferences.enableTabs = enableTabs;
-      if (showIndex != null) partial.preferences.showIndex = showIndex;
+      if (themeColor != null) partial.preferences.themeColor = themeColor;
+      if (themeOpacity != null) partial.preferences.themeOpacity = themeOpacity;
       if (enterToSend != null) partial.preferences.enterToSend = enterToSend;
 
       const updated = await qr.query<
