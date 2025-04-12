@@ -24,16 +24,17 @@ export function ChatBubble({ message }: Props) {
   return (
     <div
       className={cn(
-        "flex w-full gap-3 items-start",
-        role === "model" ? "flex-row" : "flex-row-reverse"
+        "flex w-full gap-3 items-start px-4",
+        role === "model" ? "items-start" : "items-end",
+        "flex-col gap-2"
       )}
     >
-      {/* <ModelAvatar name={fallbackName} /> */}
+      <ModelAvatar name={fallbackName} />
 
       <div className="flex flex-col items-start flex-1">
         <div
           className={cn(
-            "text-muted-foreground text-sm mb-1 px-4",
+            "text-muted-foreground text-sm mb-1",
             role === "model" ? "text-left" : "text-right",
             role === "user" && "self-end"
           )}
@@ -44,8 +45,8 @@ export function ChatBubble({ message }: Props) {
 
         <div
           className={cn(
-            "inline-block rounded-md mx-4 px-4 py-2 whitespace-pre-wrap break-words",
-            role === "user" ? "self-end bg-muted max-w-[80%]" : "self-start"
+            "inline-block rounded-md mx-4 py-2 px-2 whitespace-pre-wrap break-words",
+            role === "user" ? "self-end bg-muted " : "self-start"
           )}
         >
           <MarkdownBox content={message.text ? message.text : ""} />
