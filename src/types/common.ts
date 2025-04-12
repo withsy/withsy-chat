@@ -1,7 +1,9 @@
 import type { Simplify } from "type-fest";
-import { z } from "zod";
+import { z, ZodType } from "zod";
 
 export type MaybePromise<T> = Promise<T> | T;
+
+export type zInfer<T extends ZodType> = Simplify<z.infer<T>>;
 
 export const JsonValue: z.ZodType<unknown> = z.lazy(() =>
   z.union([
@@ -13,4 +15,4 @@ export const JsonValue: z.ZodType<unknown> = z.lazy(() =>
     z.record(JsonValue),
   ])
 );
-export type JsonValue = Simplify<z.infer<typeof JsonValue>>;
+export type JsonValue = zInfer<typeof JsonValue>;

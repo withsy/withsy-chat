@@ -1,30 +1,18 @@
 import { ChatSession } from "@/components/chat/ChatSession";
 import { trpc } from "@/lib/trpc";
-import { skipToken } from "@tanstack/react-query";
 
 type Props = {
   chatId: string;
-  chatMessageId?: number;
 };
 
-export default function ChatView({ chatId, chatMessageId = 0 }: Props) {
-  const listChatMessages = trpc.chat.listMessages.useQuery(
-    chatId ? { chatId } : skipToken
-  );
-
-  if (!chatId) {
-    return <div>Loading or Invalid params...</div>;
-  }
+export default function ChatView({ chatId }: Props) {
+  const listChatMessages = trpc.chatMessage.list.useQuery({ chatId });
 
   if (listChatMessages.isLoading) return <div>Loading...</div>;
   if (listChatMessages.isError || !listChatMessages.data)
     return <div>Error loading chat</div>;
 
   return (
-    <ChatSession
-      chatId={chatId}
-      initialMessages={listChatMessages.data}
-      initialAiChatMessageId={chatMessageId}
-    />
+    <ChatSession chatId={chatId} initialMessages={listChatMessages.data} />
   );
 }

@@ -2,3 +2,5 @@ DROP SCHEMA public CASCADE;
 
 CREATE SCHEMA public;
 
+DROP SCHEMA graphile_worker CASCADE;
+

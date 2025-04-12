@@ -14,7 +14,7 @@ export function MarkdownBox({ content }: { content: string }) {
           pre: ({ children, ...props }) => {
             return <CodeBlock {...props}>{children}</CodeBlock>;
           },
-          code: ({ className, children, ...props }) => {
+          code: ({ children }) => {
             return <>{children}</>;
           },
           table: ({ children, ...props }) => (

@@ -1,17 +1,13 @@
-import {
-  trpc,
-  type UserMe,
-  type UserPrefs,
-  type UserUpdatePrefs,
-} from "@/lib/trpc";
+import { trpc } from "@/lib/trpc";
 import type { Chat } from "@/types/chat";
+import type { UpdateUserPrefs, User, UserPreferences } from "@/types/user";
 import type { ReactNode } from "react";
 import { createContext, useContext, useEffect, useState } from "react";
 
-type UserPrefLoadings = Partial<Record<keyof UserUpdatePrefs, boolean>>;
-type SetUserPrefAndSave = <K extends keyof UserUpdatePrefs>(
+type UserPrefLoadings = Partial<Record<keyof UpdateUserPrefs, boolean>>;
+type SetUserPrefAndSave = <K extends keyof UpdateUserPrefs>(
   key: K,
-  value: UserUpdatePrefs[K]
+  value: UpdateUserPrefs[K]
 ) => void;
 
 type SidebarContextType = {
@@ -21,7 +17,7 @@ type SidebarContextType = {
   hydrated: boolean;
   isMobile: boolean;
 
-  userPrefs: UserPrefs;
+  userPrefs: UserPreferences;
   setUserPrefAndSave: SetUserPrefAndSave;
   userPrefLoadings: UserPrefLoadings;
 
@@ -36,7 +32,7 @@ export function SidebarProvider({
   userMe,
   children,
 }: {
-  userMe: UserMe;
+  userMe: User;
   children: ReactNode;
 }) {
   const [collapsed, setCollapsed] = useState(false);
@@ -44,7 +40,7 @@ export function SidebarProvider({
   const [isMobile, setIsMobile] = useState(false);
 
   const [userPrefs, setUserPrefs] = useState(userMe.preferences);
-  const userPrefsMut = trpc.user.updatePrefs.useMutation();
+  const updateUserPrefs = trpc.user.updatePrefs.useMutation();
   const [userPrefLoadings, setUserPrefLoadings] = useState<UserPrefLoadings>(
     {}
   );
@@ -55,7 +51,7 @@ export function SidebarProvider({
     setUserPrefs((prev) => ({ ...prev, [key]: value }));
     setUserPrefLoadings((prev) => ({ ...prev, [key]: true }));
 
-    userPrefsMut.mutate(
+    updateUserPrefs.mutate(
       { [key]: value },
       {
         onSettled: () => {

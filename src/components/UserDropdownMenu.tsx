@@ -150,10 +150,10 @@ export default function UserDropdownMenu() {
               key={id}
               id={`${id}-toggle`}
               label={label}
-              checked={userPrefs[id] ?? false}
+              checked={userPrefs[id]}
               onChange={(v) => setUserPrefAndSave(id, v)}
               disabled={userPrefLoadings[id]}
-              largeText={userPrefs["largeText"] ?? false}
+              largeText={userPrefs["largeText"]}
             />
           ))}
           {userMenuItems.map((item, idx) =>
@@ -164,7 +164,7 @@ export default function UserDropdownMenu() {
                 key={item.label}
                 icon={item.icon}
                 label={item.label}
-                largeText={userPrefs["largeText"] ?? false}
+                largeText={userPrefs["largeText"]}
                 onClick={item.onClick}
               />
             )

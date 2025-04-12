@@ -12,5 +12,18 @@
     "package.json",
     ".next/"
   ],
-  "words": ["safeql", "plpgsql", "ossp", "prefs", "genai", "tocstop"]
+  "words": [
+    "plpgsql",
+    "ossp",
+    "prefs",
+    "genai",
+    "tocstop",
+    "graphile",
+    "kysely",
+    "codegen",
+    "updateable",
+    "noti",
+    "unlisten",
+    "sonner"
+  ]
 }

@@ -10,8 +10,8 @@ type LayoutProps = {
 
 export default function Layout({ children }: LayoutProps) {
   const { userPrefs } = useSidebar();
-  const themeColor = userPrefs.themeColor ?? "0,123,255";
-  const themeOpacity = userPrefs.themeOpacity ?? 0.1;
+  const themeColor = userPrefs.themeColor;
+  const themeOpacity = userPrefs.themeOpacity;
   return (
     <div
       className="flex h-screen overflow-hidden"

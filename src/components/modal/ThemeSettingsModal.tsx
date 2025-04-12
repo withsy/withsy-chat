@@ -29,11 +29,9 @@ export function ThemeSettingsModal({
 }) {
   const { userPrefs, setUserPrefAndSave } = useSidebar();
   const [customColor, setCustomColor] = useState(
-    userPrefs.themeColor || "255,255,255"
+    userPrefs.themeColor // TODO: || "255,255,255"
   );
-  const [customOpacity, setCustomOpacity] = useState(
-    userPrefs.themeOpacity || 0.1
-  );
+  const [customOpacity, setCustomOpacity] = useState(userPrefs.themeOpacity);
 
   const handleApply = () => {
     setUserPrefAndSave("themeColor", customColor);
@@ -85,7 +83,7 @@ export function ThemeSettingsModal({
               min={0}
               max={0.5}
               step={0.01}
-              onValueChange={([value]) => setCustomOpacity(value)}
+              onValueChange={([value]: [number]) => setCustomOpacity(value)}
             />
           </div>
           <Button onClick={handleApply} className="w-full mt-4">

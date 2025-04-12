@@ -1,44 +1,52 @@
 import {
   ListChatMessages,
-  ReceiveChatMessageStream,
+  ReceiveChatChunkStream,
   SendChatMessage,
   StartChat,
   UpdateChat,
 } from "@/types/chat";
 import { UpdateUserPrefs } from "@/types/user";
-import { db, procedure, router } from "../global";
+import { procedure, router } from "../global";
 
 export const appRouter = router({
   user: router({
-    me: procedure.query((opts) => db.users.me(opts.ctx.userId)),
+    me: procedure.query((opts) => opts.ctx.r.get("user").me(opts.ctx.userId)),
     updatePrefs: procedure
       .input(UpdateUserPrefs)
       .mutation((opts) =>
-        db.users.updateUserPrefs(opts.ctx.userId, opts.input)
+        opts.ctx.r.get("user").updatePrefs(opts.ctx.userId, opts.input)
       ),
   }),
   chat: router({
     // TODO: pagination
-    list: procedure.query((opts) => db.chats.listChats(opts.ctx.userId)),
+    list: procedure.query((opts) =>
+      opts.ctx.r.get("chat").list(opts.ctx.userId)
+    ),
     update: procedure
       .input(UpdateChat)
-      .mutation((opts) => db.chats.updateChat(opts.input)),
+      .mutation((opts) => opts.ctx.r.get("chat").update(opts.input)),
     start: procedure
       .input(StartChat)
-      .mutation((opts) => db.chats.startChat(opts.ctx.userId, opts.input)),
-    // TODO: pagination
-    listMessages: procedure
-      .input(ListChatMessages)
-      .query((opts) => db.chats.listChatMessages(opts.input)),
-    sendMessage: procedure
-      .input(SendChatMessage)
-      .mutation((opts) => db.chats.sendChatMessage(opts.input)),
-    receiveMessageStream: procedure
-      .input(ReceiveChatMessageStream)
-      .subscription(async function* (opts) {
-        yield* db.chats.receiveChatMessageStream(opts.input);
-      }),
+      .mutation((opts) =>
+        opts.ctx.r.get("chat").start(opts.ctx.userId, opts.input)
+      ),
   }),
+  chatMessage: {
+    // TODO: pagination
+    list: procedure
+      .input(ListChatMessages)
+      .query((opts) => opts.ctx.r.get("chatMessage").list(opts.input)),
+    send: procedure
+      .input(SendChatMessage)
+      .mutation((opts) => opts.ctx.r.get("chatMessage").send(opts.input)),
+  },
+  chatChunk: {
+    receiveStream: procedure
+      .input(ReceiveChatChunkStream)
+      .subscription(async function* (opts) {
+        yield* opts.ctx.r.get("chatChunk").receiveStream(opts.input);
+      }),
+  },
 });
 
 export type AppRouter = typeof appRouter;

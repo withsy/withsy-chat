@@ -1,4 +1,4 @@
-import { trpc, type UserMe } from "@/lib/trpc";
+import type { User } from "@/types/user";
 import type { ReactNode } from "react";
 import { SidebarProvider } from "./SidebarContext";
 
@@ -6,7 +6,7 @@ export default function AppProviders({
   userMe,
   children,
 }: {
-  userMe: UserMe;
+  userMe: User;
   children: ReactNode;
 }) {
   return <SidebarProvider userMe={userMe}>{children}</SidebarProvider>;

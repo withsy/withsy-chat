@@ -27,7 +27,7 @@ export function BookmarkCard({
   const chatId = chattedAt;
   const [expanded, setExpanded] = useState(false);
   const [bookmarked, setBookmarked] = useState(true);
-  const [titleState, setTitleState] = useState(title);
+  const [titleState, _setTitleState] = useState(title);
 
   const shouldCollapse = content.length > 300;
 

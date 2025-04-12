@@ -1,9 +1,9 @@
-import type { Simplify } from "type-fest";
 import { z } from "zod";
+import { JsonValue, type zInfer } from "./common";
 import { UserId } from "./user";
 
 export const ChatId = z.string().uuid();
-export type ChatId = Simplify<z.infer<typeof ChatId>>;
+export type ChatId = zInfer<typeof ChatId>;
 
 export const Chat = z.object({
   id: ChatId,
@@ -13,66 +13,83 @@ export const Chat = z.object({
   createdAt: z.date(),
   updatedAt: z.date(),
 });
-export type Chat = Simplify<z.infer<typeof Chat>>;
+export type Chat = zInfer<typeof Chat>;
 
 export const UpdateChat = z.object({
   chatId: ChatId,
   title: z.string().optional(),
   isStarred: z.boolean().optional(),
 });
-export type UpdateChat = Simplify<z.infer<typeof UpdateChat>>;
+export type UpdateChat = zInfer<typeof UpdateChat>;
+
+export const ChatRole = z.enum(["user", "model", "system"]);
+export type ChatRole = zInfer<typeof ChatRole>;
 
 export const ChatModel = z.enum(["gemini-2.0-flash"]);
-export type ChatModel = Simplify<z.infer<typeof ChatModel>>;
+export type ChatModel = zInfer<typeof ChatModel>;
+
+export const ChatMessageId = z.number().int();
+export type ChatMessageId = zInfer<typeof ChatMessageId>;
+
+export const ChatMessageStatus = z.enum([
+  "pending",
+  "processing",
+  "succeeded",
+  "failed",
+]);
+export type ChatMessageStatus = zInfer<typeof ChatMessageStatus>;
+
+export const ChatMessage = z.object({
+  id: ChatMessageId,
+  chatId: ChatId,
+  role: ChatRole,
+  model: ChatModel.nullable(),
+  text: z.string().nullable(),
+  status: ChatMessageStatus,
+  createdAt: z.date(),
+  updatedAt: z.date(),
+});
+export type ChatMessage = zInfer<typeof ChatMessage>;
 
 export const StartChat = z.object({
   text: z.string(),
   model: ChatModel,
 });
-export type StartChat = Simplify<z.infer<typeof StartChat>>;
+export type StartChat = zInfer<typeof StartChat>;
 
-export const ChatMessageId = z.number().int();
-export type ChatMessageId = Simplify<z.infer<typeof ChatMessageId>>;
-
-export const ChatMessageData = z.discriminatedUnion("role", [
-  z.object({
-    role: z.literal("user"),
-    text: z.string(),
-    model: ChatModel,
-  }),
-  z.object({
-    role: z.literal("model"),
-  }),
-]);
-export type ChatMessageData = Simplify<z.infer<typeof ChatMessageData>>;
-
-export const ChatMessage = z.object({
-  id: ChatMessageId,
-  chatId: ChatId,
-  data: ChatMessageData,
-  isAi: z.boolean(),
-  model: z.string(),
-  text: z.string(),
-  createdAt: z.date(),
-  updatedAt: z.date(),
+export const StartChatResult = z.object({
+  chat: Chat,
+  modelChatMessageId: ChatMessageId,
 });
-export type ChatMessage = Simplify<z.infer<typeof ChatMessage>>;
+export type StartChatResult = zInfer<typeof StartChatResult>;
 
 export const ListChatMessages = z.object({
   chatId: ChatId,
 });
-export type ListChatMessages = Simplify<z.infer<typeof ListChatMessages>>;
+export type ListChatMessages = zInfer<typeof ListChatMessages>;
 
 export const SendChatMessage = z.object({
   chatId: ChatId,
   text: z.string(),
   model: ChatModel,
 });
-export type SendChatMessage = Simplify<z.infer<typeof SendChatMessage>>;
+export type SendChatMessage = zInfer<typeof SendChatMessage>;
 
-export const ReceiveChatMessageStream = z.object({
+export const ChatChunkIndex = z.number().int();
+export type ChatChunkIndex = zInfer<typeof ChatChunkIndex>;
+
+export const ReceiveChatChunkStream = z.object({
   chatMessageId: ChatMessageId,
+  lastEventId: ChatChunkIndex.optional(),
 });
-export type ReceiveChatMessageStream = Simplify<
-  z.infer<typeof ReceiveChatMessageStream>
->;
+export type ReceiveChatChunkStream = zInfer<typeof ReceiveChatChunkStream>;
+
+export const ChatChunk = z.object({
+  chatMessageId: ChatMessageId,
+  chunkIndex: ChatChunkIndex,
+  text: z.string(),
+  rawData: JsonValue,
+  createdAt: z.date(),
+  updatedAt: z.date(),
+});
+export type ChatChunk = zInfer<typeof ChatChunk>;

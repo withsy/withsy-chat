@@ -7,17 +7,10 @@ import {
 import { createTRPCNext } from "@trpc/next";
 import type { inferRouterInputs, inferRouterOutputs } from "@trpc/server";
 import superjson from "superjson";
-import { type Simplify } from "type-fest";
 import type { AppRouter } from "../server/routers/_app";
 
 export type RouterInput = inferRouterInputs<AppRouter>;
 export type RouterOutput = inferRouterOutputs<AppRouter>;
-
-export type UserMe = RouterOutput["user"]["me"];
-export type UserPrefs = UserMe["preferences"];
-export type UserUpdatePrefs = Simplify<
-  Required<RouterInput["user"]["updatePrefs"]>
->;
 
 /**
  * If you want to use SSR, you need to use the server's full URL

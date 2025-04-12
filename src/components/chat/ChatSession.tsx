@@ -1,33 +1,25 @@
 import { useSidebar } from "@/context/SidebarContext";
 import { trpc } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
-import type { ChatMessage } from "@/types/chat";
+import { ChatMessage } from "@/types/chat";
 import { skipToken } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { ChatInputBox } from "./ChatInputBox";
 import { ChatMessageList } from "./ChatMessageList";
+
 type Props = {
-  chatId?: string;
-  initialAiChatMessageId: number;
+  chatId: string | null;
   initialMessages: ChatMessage[];
   children?: React.ReactNode;
 };
 
-export function ChatSession({
-  chatId,
-  initialMessages,
-  initialAiChatMessageId,
-  children,
-}: Props) {
+export function ChatSession({ chatId, initialMessages, children }: Props) {
   const router = useRouter();
   const { addChat, userPrefs, isMobile } = useSidebar();
-  const [aiChatMessageId, setAiChatMessageId] = useState(
-    initialAiChatMessageId
-  );
   const [messages, setMessages] = useState(initialMessages);
-  const wideView = userPrefs["wideView"] ?? false;
+  const wideView = userPrefs["wideView"];
 
   useEffect(() => {
     setMessages(initialMessages);
@@ -35,29 +27,31 @@ export function ChatSession({
 
   const utils = trpc.useUtils();
   const startChat = trpc.chat.start.useMutation();
-  const sendChatMessage = trpc.chat.sendMessage.useMutation();
-  const receiveChatMessage = trpc.chat.receiveMessageStream.useSubscription(
-    chatId && aiChatMessageId !== 0
-      ? {
-          chatMessageId: aiChatMessageId,
-        }
-      : skipToken,
+  const sendChatMessage = trpc.chatMessage.send.useMutation();
+
+  const message =
+    messages.find((x) => x.status === "processing") ??
+    messages.find((x) => x.status === "pending");
+
+  const _receiveChatChunk = trpc.chatChunk.receiveStream.useSubscription(
+    message ? { chatMessageId: message.id } : skipToken,
     {
       onError(error) {
         toast.error(`Receive chat message failed. error: ${error}`);
       },
       onData(data) {
-        // TODO: refactor
-        if (data.text) {
+        const text = data.data.text;
+        if (text.length !== 0) {
+          // TODO: create chunk variables.
           setMessages((prev) => [
             ...prev,
             {
               id: Math.floor(Math.random() * 100000) + 1,
               chatId: chatId!,
-              text: data.text,
+              text,
               model: "gemini-2.0-flash",
-              data: { role: "model" },
-              isAi: true,
+              role: "model",
+              status: "succeeded",
               createdAt: new Date(),
               updatedAt: new Date(),
             },
@@ -68,8 +62,7 @@ export function ChatSession({
   );
 
   const onSendMessage = (message: string) => {
-    if (chatId) {
-      setAiChatMessageId(0);
+    if (chatId != null) {
       sendChatMessage.mutate(
         { chatId, text: message, model: "gemini-2.0-flash" },
         {
@@ -77,8 +70,11 @@ export function ChatSession({
             toast.error(`Send message failed. error: ${error}`);
           },
           onSuccess(data) {
-            setMessages((prev) => [...prev, data.userChatMessage]);
-            setAiChatMessageId(data.aiChatMessageId);
+            setMessages((prev) => [
+              ...prev,
+              ChatMessage.parse(data.userChatMessage),
+            ]);
+            utils.chat.list.invalidate();
           },
         }
       );
@@ -89,9 +85,7 @@ export function ChatSession({
           onSuccess(data) {
             addChat(data.chat);
             utils.chat.list.invalidate();
-            router.push(
-              `/chat/${data.chat.id}?chatMessageId=${data.aiChatMessageId}`
-            );
+            router.push(`/chat/${data.chat.id}`);
           },
         }
       );
