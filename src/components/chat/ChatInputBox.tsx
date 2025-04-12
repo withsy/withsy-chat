@@ -19,6 +19,7 @@ type Props = {
 export function ChatInputBox({ onSendMessage }: Props) {
   const { userPrefs, setUserPrefAndSave, userPrefLoadings } = useSidebar();
   const [message, setMessage] = useState("");
+  const [isComposing, setIsComposing] = useState(false);
 
   const enterToSend = userPrefs["enterToSend"];
   const isLoading = userPrefLoadings["enterToSend"];
@@ -29,22 +30,36 @@ export function ChatInputBox({ onSendMessage }: Props) {
   );
 
   const handleSend = () => {
+    console.log("1. send message", message);
     if (!message.trim()) return;
     onSendMessage(message);
     setMessage("");
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (enterToSend && e.key === "Enter" && !e.shiftKey) {
+    if (enterToSend && e.key === "Enter" && !e.shiftKey && !isComposing) {
+      console.log("Key pressed:", e.key, "Shift:", e.shiftKey);
+
       e.preventDefault();
       handleSend();
-    }
-    if (!enterToSend && e.key === "Enter" && e.shiftKey) {
+    } else if (
+      !enterToSend &&
+      e.key === "Enter" &&
+      e.shiftKey &&
+      !isComposing
+    ) {
       e.preventDefault();
       handleSend();
     }
   };
 
+  const handleCompositionStart = () => {
+    setIsComposing(true);
+  };
+
+  const handleCompositionEnd = () => {
+    setIsComposing(false);
+  };
   return (
     <div className={inputBoxClass}>
       <TextareaAutosize
@@ -53,6 +68,8 @@ export function ChatInputBox({ onSendMessage }: Props) {
         onKeyDown={handleKeyDown}
         placeholder="Type a message..."
         className="w-full resize-none focus:outline-none bg-transparent pb-10 max-h-[40vh]"
+        onCompositionStart={handleCompositionStart}
+        onCompositionEnd={handleCompositionEnd}
       />
 
       <div className="absolute bottom-2 left-4 right-4 flex items-center justify-between">
