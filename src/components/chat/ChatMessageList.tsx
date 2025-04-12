@@ -14,7 +14,7 @@ export function ChatMessageList({ messages }: Props) {
   }, [messages]);
 
   return (
-    <div className="space-y-4 overflow-x-hidden">
+    <div className="space-y-12 overflow-x-hidden">
       {messages.map((msg) => (
         <ChatBubble key={msg.id} message={msg} />
       ))}
