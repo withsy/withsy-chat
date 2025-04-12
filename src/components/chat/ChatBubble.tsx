@@ -29,7 +29,7 @@ export function ChatBubble({ message }: Props) {
     >
       <ModelAvatar name={fallbackName} />
 
-      <div className="max-w-[70%]">
+      <div className="max-w-[90%]">
         <div className="text-muted-foreground mb-1">
           {role === "model" ? message.model?.toUpperCase() : "You"} ·{" "}
           {new Date(message.createdAt).toLocaleTimeString()}
