@@ -19,7 +19,9 @@ export function MarkdownBox({ content }: { content: string }) {
           },
           table: ({ children, ...props }) => (
             <div className="overflow-x-auto">
-              <table {...props}>{children}</table>
+              <table {...props} className="table-fixed w-full">
+                {children}
+              </table>
             </div>
           ),
         }}

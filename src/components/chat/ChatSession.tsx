@@ -91,31 +91,15 @@ export function ChatSession({ chatId, initialMessages, children }: Props) {
       );
     }
   };
-
   return (
-    <div className="flex flex-col h-full relative">
-      <div className="flex-1 overflow-y-auto py-4 mb-[120px]">
-        <div
-          className={cn(
-            "mx-auto w-full px-4",
-            !isMobile && (wideView ? "max-w-screen-lg" : "max-w-screen-md"),
-            isMobile && "max-screen-sm"
-          )}
-        >
-          <ChatMessageList messages={messages} />
-          {children}
-        </div>
+    <div className="flex flex-col h-full relative items-center">
+      <div className="flex-1 overflow-y-auto py-4 mb-[120px] w-full">
+        <ChatMessageList messages={messages} />
+        {children}
       </div>
 
       <div className="absolute bottom-[2vh] left-0 right-0 flex justify-center px-4">
-        <div
-          className={cn(
-            "w-full",
-            !isMobile && (wideView ? "max-w-[90%]" : "max-w-[80%]")
-          )}
-        >
-          <ChatInputBox onSendMessage={onSendMessage} />
-        </div>
+        <ChatInputBox onSendMessage={onSendMessage} />
       </div>
     </div>
   );

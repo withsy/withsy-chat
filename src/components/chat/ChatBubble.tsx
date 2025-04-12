@@ -9,6 +9,7 @@ type Props = {
 
 export function ChatBubble({ message }: Props) {
   const { role } = message;
+
   if (role === "system") {
     return (
       <div className="flex justify-center my-4 py-4">
@@ -18,32 +19,36 @@ export function ChatBubble({ message }: Props) {
   }
 
   const username = "Jenn";
-  const fallbackName =
-    role === "model" ? "AI" : role === "user" ? username : "You";
+  const fallbackName = role === "model" ? "AI" : username;
+
   return (
     <div
       className={cn(
-        "flex gap-3 items-start",
+        "flex w-full gap-3 items-start",
         role === "model" ? "flex-row" : "flex-row-reverse"
       )}
     >
-      <ModelAvatar name={fallbackName} />
+      {/* <ModelAvatar name={fallbackName} /> */}
 
-      <div className="flex flex-col">
+      <div className="flex flex-col items-start flex-1">
         <div
           className={cn(
-            "text-muted-foreground text-sm mb-1",
-            role === "model" ? "text-left" : "text-right"
+            "text-muted-foreground text-sm mb-1 px-4",
+            role === "model" ? "text-left" : "text-right",
+            role === "user" && "self-end"
           )}
         >
           {role === "model" ? message.model?.toUpperCase() : "You"} ·{" "}
           {new Date(message.createdAt).toLocaleTimeString()}
         </div>
 
-        <div className={cn("flex", role === "user" && "justify-end")}>
-          <div className="inline-block max-w-full bg-muted rounded-md px-4 py-2 whitespace-pre-wrap break-words">
-            <MarkdownBox content={message.text ?? ""} />
-          </div>
+        <div
+          className={cn(
+            "inline-block rounded-md px-4 py-2 whitespace-pre-wrap break-words",
+            role === "user" ? "self-end bg-muted" : "self-start"
+          )}
+        >
+          <MarkdownBox content={message.text ? message.text : ""} />
         </div>
       </div>
     </div>

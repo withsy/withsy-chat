@@ -25,7 +25,7 @@ export function ChatInputBox({ onSendMessage }: Props) {
   const isLoading = userPrefLoadings["enterToSend"];
 
   const inputBoxClass = cn(
-    "relative w-full px-4 py-3 border rounded-xl bg-white",
+    "relative max-w-screen-md w-full px-4 py-3 border rounded-xl bg-white",
     "transition-all"
   );
 
@@ -38,8 +38,6 @@ export function ChatInputBox({ onSendMessage }: Props) {
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (enterToSend && e.key === "Enter" && !e.shiftKey && !isComposing) {
-      console.log("Key pressed:", e.key, "Shift:", e.shiftKey);
-
       e.preventDefault();
       handleSend();
     } else if (
@@ -71,7 +69,6 @@ export function ChatInputBox({ onSendMessage }: Props) {
         onCompositionStart={handleCompositionStart}
         onCompositionEnd={handleCompositionEnd}
       />
-
       <div className="absolute bottom-2 left-4 right-4 flex items-center justify-between">
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <Switch
