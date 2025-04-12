@@ -98,7 +98,8 @@ export function ChatSession({ chatId, initialMessages, children }: Props) {
         <div
           className={cn(
             "mx-auto w-full",
-            !isMobile && (wideView ? "max-w-[90%]" : "max-w-[80%]")
+            !isMobile && (wideView ? "max-w-[90%]" : "max-w-[80%]"),
+            isMobile && "max-w-[90%]"
           )}
         >
           <ChatMessageList messages={messages} />
