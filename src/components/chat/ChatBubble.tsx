@@ -44,8 +44,8 @@ export function ChatBubble({ message }: Props) {
 
         <div
           className={cn(
-            "inline-block rounded-md px-4 py-2 whitespace-pre-wrap break-words",
-            role === "user" ? "self-end bg-muted" : "self-start"
+            "inline-block rounded-md mx-4 px-4 py-2 whitespace-pre-wrap break-words",
+            role === "user" ? "self-end bg-muted max-w-[80%]" : "self-start"
           )}
         >
           <MarkdownBox content={message.text ? message.text : ""} />
