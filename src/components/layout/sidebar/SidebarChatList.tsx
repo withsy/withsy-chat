@@ -5,6 +5,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useSidebar } from "@/context/SidebarContext";
 import {
   formatDateLabel,
   toLocaleDateString,
@@ -20,8 +21,9 @@ import {
   StarOff,
   Trash2,
 } from "lucide-react";
-import Link from "next/link";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+
 export default function SidebarChatList() {
   const utils = trpc.useUtils();
   const chatsRes = trpc.chat.list.useQuery();
@@ -135,9 +137,19 @@ function SidebarChatItem({
   isStarred: boolean;
   onToggleStar: (chat: Chat) => void;
 }) {
+  const { isMobile, setCollapsed } = useSidebar();
+  const router = useRouter();
+
+  const handleLinkClick = () => {
+    if (isMobile) {
+      setCollapsed(true);
+    }
+    router.push(`/chat/${chat.id}`);
+  };
+
   return (
     <div className="group flex items-center px-2 py-2 rounded-md hover:bg-gray-300 transition-colors">
-      <Link href={`/chat/${chat.id}`} className="flex items-center w-full">
+      <div onClick={handleLinkClick} className="flex items-center w-full">
         <div className="relative w-5 h-5 mr-2">
           <SquareMenu
             size={16}
@@ -193,7 +205,7 @@ function SidebarChatItem({
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-      </Link>
+      </div>
     </div>
   );
 }

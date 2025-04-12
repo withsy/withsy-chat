@@ -1,16 +1,9 @@
 import { IconWithLabel } from "@/components/IconWithLabel";
-import { SearchModal } from "@/components/search/SearchModal";
-import { Bookmark, Search, SquarePen, type LucideIcon } from "lucide-react";
-import Link from "next/link";
-import { useState } from "react";
+import { useSidebar } from "@/context/SidebarContext";
+import { Bookmark, SquarePen, type LucideIcon } from "lucide-react";
+import { useRouter } from "next/router";
 
 const datas = [
-  {
-    id: "search",
-    icon: Search,
-    label: "Search",
-    fill: false,
-  },
   {
     id: "chat",
     icon: SquarePen,
@@ -44,6 +37,8 @@ function SidebarTooltip({
 }: SidebarTooltipProps) {
   const hoverClass = collapsed ? "hover:bg-gray-100" : "hover:bg-gray-300";
   const className = `group relative flex items-center gap-2 no-underline ${hoverClass} px-2.5 py-2.5 rounded-md transition-colors`;
+  const { isMobile, setCollapsed } = useSidebar();
+  const router = useRouter();
 
   if (id == "search" && onClick) {
     return (
@@ -58,16 +53,22 @@ function SidebarTooltip({
     );
   }
 
-  const href = `/${id}`;
+  const handleLinkClick = () => {
+    if (isMobile) {
+      setCollapsed(true);
+    }
+    router.push(`/${id}`);
+  };
+
   return (
-    <Link href={href} className={className}>
+    <button className={className} onClick={handleLinkClick}>
       <IconWithLabel
         icon={Icon}
         label={label}
         collapsed={collapsed}
         fill={fill}
       />
-    </Link>
+    </button>
   );
 }
 
@@ -76,10 +77,12 @@ interface Props {
 }
 
 export function SidebarTooltipGroup({ collapsed = false }: Props) {
-  const [isSearchModalOpen, setSearchModalOpen] = useState(false);
+  const { isMobile, setCollapsed } = useSidebar();
+
   const handleItemClick = (id: string) => {
-    if (id === "search") {
-      setSearchModalOpen(true);
+    console.log(isMobile, id, collapsed);
+    if (isMobile) {
+      setCollapsed(true);
     }
   };
 
@@ -96,12 +99,6 @@ export function SidebarTooltipGroup({ collapsed = false }: Props) {
           onClick={handleItemClick}
         />
       ))}
-      {isSearchModalOpen && (
-        <SearchModal
-          open={isSearchModalOpen}
-          onClose={() => setSearchModalOpen(false)}
-        />
-      )}
     </>
   );
 }
