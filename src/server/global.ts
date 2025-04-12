@@ -50,7 +50,7 @@ async function init() {
   const cronTasks: CronTask[] = [
     { cron: "*/5 * * * *", key: "chat_message_cleanup_zombies" },
   ];
-  s.set("task", await TaskService.create(s.get("pool"), taskMap, cronTasks));
+  s.set("task", await TaskService.create(s, taskMap, cronTasks));
 }
 
 export async function createContext({}: CreateNextContextOptions) {
