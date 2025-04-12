@@ -1,9 +1,9 @@
-import SidebarChatList from "@/components/sidebar/SidebarChatList";
-import { SidebarTooltipGroup } from "@/components/sidebar/SidebarTooltip";
 import { Button } from "@/components/ui/button";
 import { useSidebar } from "@/context/SidebarContext";
 import { cn } from "@/lib/utils";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import SidebarChatList from "./SidebarChatList";
+import { SidebarTooltipGroup } from "./SidebarTooltip";
 
 export default function Sidebar() {
   const { isMobile, collapsed, toggle, userPrefs } = useSidebar();

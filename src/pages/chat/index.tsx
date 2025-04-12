@@ -1,5 +1,5 @@
-import EmptyChatInterface from "@/components/chat/EmptyChatInterface";
+import EmptyChatView from "@/components/chat/EmptyChatView";
 
 export default function Page() {
-  return <EmptyChatInterface />;
+  return <EmptyChatView />;
 }

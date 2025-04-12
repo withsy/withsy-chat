@@ -1,4 +1,4 @@
-import { ChatSessionPage } from "@/components/chat/ChatSessionPage";
+import { ChatSession } from "@/components/chat/ChatSession";
 import { trpc } from "@/lib/trpc";
 import { skipToken } from "@tanstack/react-query";
 
@@ -21,7 +21,7 @@ export default function ChatView({ chatId, chatMessageId = 0 }: Props) {
     return <div>Error loading chat</div>;
 
   return (
-    <ChatSessionPage
+    <ChatSession
       chatId={chatId}
       initialMessages={listChatMessages.data}
       initialAiChatMessageId={chatMessageId}

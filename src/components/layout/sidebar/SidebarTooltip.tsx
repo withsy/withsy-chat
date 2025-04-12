@@ -1,8 +1,8 @@
+import { IconWithLabel } from "@/components/IconWithLabel";
+import { SearchModal } from "@/components/search/SearchModal";
 import { Bookmark, Search, SquarePen, type LucideIcon } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
-import { IconWithLabel } from "../IconWithLabel";
-import { SearchModal } from "../search/SearchModal";
 
 const datas = [
   {

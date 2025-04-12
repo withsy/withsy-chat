@@ -15,7 +15,7 @@ type Props = {
   children?: React.ReactNode;
 };
 
-export function ChatSessionPage({
+export function ChatSession({
   chatId,
   initialMessages,
   initialAiChatMessageId,

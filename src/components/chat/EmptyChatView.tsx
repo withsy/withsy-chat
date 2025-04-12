@@ -1,7 +1,7 @@
 import { InformationCard } from "@/components/chat/InformationCard";
 import { Archive, Book, Cpu, MessageSquare } from "lucide-react";
 import { useEffect, useState } from "react";
-import { ChatSessionPage } from "./ChatSessionPage";
+import { ChatSession } from "./ChatSession";
 
 function getGreeting() {
   const hour = new Date().getHours();
@@ -11,7 +11,7 @@ function getGreeting() {
   return "Good evening";
 }
 
-export default function EmptyChatInterface({ name = "" }: { name?: string }) {
+export default function EmptyChatView({ name = "" }: { name?: string }) {
   const [greeting, setGreeting] = useState(getGreeting());
 
   useEffect(() => {
@@ -50,7 +50,7 @@ export default function EmptyChatInterface({ name = "" }: { name?: string }) {
   ];
 
   return (
-    <ChatSessionPage
+    <ChatSession
       chatId={undefined}
       initialMessages={[]}
       initialAiChatMessageId={0}
@@ -68,6 +68,6 @@ export default function EmptyChatInterface({ name = "" }: { name?: string }) {
           </div>
         </div>
       </div>
-    </ChatSessionPage>
+    </ChatSession>
   );
 }
