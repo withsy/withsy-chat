@@ -72,7 +72,7 @@ CREATE TRIGGER tr_chat_chunks_update_updated_at
   EXECUTE PROCEDURE fn_update_updated_at();
 
 CREATE TABLE idempotency_keys(
-  key UUID PRIMARY KEY,
+  key uuid PRIMARY KEY,
   created_at timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
