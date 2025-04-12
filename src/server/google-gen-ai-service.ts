@@ -13,7 +13,7 @@ export class GoogleGenAiService {
     this.ai = new GoogleGenAI({ apiKey: geminiApiKey });
   }
 
-  async onSendChatTask(input: TaskInput<"googleGenAiSendChat">) {
+  async onSendChatTask(input: TaskInput<"google_gen_ai_send_chat">) {
     const { userChatMessageId, modelChatMessageId } = input;
     const chatMessage = await this.r
       .get("chatMessage")
@@ -66,7 +66,7 @@ export class GoogleGenAiService {
           rawData: chunk,
           text: texts.join(""),
         });
-        await notify(this.r.get("pool"), "chatChunkCreated", {
+        await notify(this.r.get("pool"), "chat_chunk_created", {
           status: "created",
           chatMessageId: modelChatMessageId,
           chunkIndex,
@@ -87,7 +87,7 @@ export class GoogleGenAiService {
         .get("chatMessage")
         .transitProcessingToFailed(modelChatMessageId);
     } finally {
-      await notify(this.r.get("pool"), "chatChunkCreated", {
+      await notify(this.r.get("pool"), "chat_chunk_created", {
         status: "completed",
         chatMessageId: modelChatMessageId,
       });
