@@ -1,6 +1,6 @@
 import type { ChatMessage } from "@/types/chat";
-import { ChatBubble } from "./ChatBubble";
 import { useEffect, useRef } from "react";
+import { ChatBubble } from "./ChatBubble";
 
 type Props = {
   messages: ChatMessage[];
@@ -14,7 +14,7 @@ export function ChatMessageList({ messages }: Props) {
   }, [messages]);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 overflow-x-hidden">
       {messages.map((msg) => (
         <ChatBubble key={msg.id} message={msg} />
       ))}

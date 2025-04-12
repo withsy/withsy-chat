@@ -23,19 +23,22 @@ export function ChatBubble({ message }: Props) {
   return (
     <div
       className={cn(
-        "flex gap-3",
+        "flex gap-3 items-start",
         role === "model" ? "flex-row" : "flex-row-reverse"
       )}
     >
       <ModelAvatar name={fallbackName} />
 
-      <div className="max-w-[90%]">
-        <div className="text-muted-foreground mb-1">
+      <div className="flex flex-col">
+        <div className="text-muted-foreground text-sm mb-1">
           {role === "model" ? message.model?.toUpperCase() : "You"} ·{" "}
           {new Date(message.createdAt).toLocaleTimeString()}
         </div>
-        <div className="bg-muted rounded-md px-4 py-2 whitespace-pre-wrap">
-          <MarkdownBox content={message.text ?? ""} />
+
+        <div className={cn("flex", role === "user" && "justify-end")}>
+          <div className="inline-block max-w-full bg-muted rounded-md px-4 py-2 whitespace-pre-wrap break-words">
+            <MarkdownBox content={message.text ?? ""} />
+          </div>
         </div>
       </div>
     </div>

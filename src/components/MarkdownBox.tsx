@@ -6,7 +6,7 @@ import { CodeBlock } from "./CodeBlock";
 
 export function MarkdownBox({ content }: { content: string }) {
   return (
-    <div className="prose prose-sm dark:prose-invert rounded-md">
+    <div className="prose prose-sm dark:prose-invert break-words max-w-full overflow-x-auto">
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         rehypePlugins={[rehypeHighlight]}

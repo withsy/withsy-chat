@@ -47,8 +47,13 @@ export function CodeBlock({ children, ...props }: CodeBlockProps) {
         </Button>
       </div>
 
-      <pre className={clsx("overflow-x-auto px-4 py-3", className)} {...props}>
-        <code>{(codeElement as any)?.props?.children}</code>
+      <pre
+        className={clsx("overflow-x-auto max-w-full px-4 py-3", className)}
+        {...props}
+      >
+        <code className="break-words">
+          {(codeElement as any)?.props?.children}
+        </code>
       </pre>
     </div>
   );
