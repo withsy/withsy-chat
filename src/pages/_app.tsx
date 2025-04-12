@@ -1,4 +1,5 @@
 import Layout from "@/components/layout/Layout";
+import AppProviders from "@/context/AppProviders";
 import { SidebarProvider } from "@/context/SidebarContext";
 import { trpc } from "@/lib/trpc";
 import "@/styles/globals.css";
@@ -13,12 +14,14 @@ const App: AppType = ({ Component, pageProps }: AppProps) => {
   if (userMe.isError || !userMe.data) return <div>Error loading user</div>;
 
   return (
-    <SidebarProvider userMe={userMe.data}>
-      <Layout>
-        <Component {...pageProps} />
-      </Layout>
-      <Sonner position="bottom-right" />
-    </SidebarProvider>
+    <AppProviders userMe={userMe.data}>
+      <SidebarProvider userMe={userMe.data}>
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
+        <Sonner position="bottom-right" />
+      </SidebarProvider>
+    </AppProviders>
   );
 };
 

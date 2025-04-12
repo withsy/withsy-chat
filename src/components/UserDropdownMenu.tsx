@@ -104,14 +104,6 @@ export default function UserDropdownMenu() {
       id: "largeText",
       label: "Large Text",
     },
-    {
-      id: "enableTabs",
-      label: "Enable Tabs",
-    },
-    {
-      id: "showIndex",
-      label: "Show Index",
-    },
   ] as const;
 
   const userMenuItems = [
