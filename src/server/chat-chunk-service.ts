@@ -7,11 +7,11 @@ import {
 import type { JsonValue } from "@/types/common";
 import { PgEvent, type PgEventInput } from "@/types/task";
 import { tracked } from "@trpc/server";
-import type { Registry } from "./global";
+import type { ServiceRegistry } from "./global";
 import { listen } from "./pg";
 
 export class ChatChunkService {
-  constructor(private readonly r: Registry) {}
+  constructor(private readonly s: ServiceRegistry) {}
 
   async add(input: {
     chatMessageId: ChatMessageId;
@@ -20,7 +20,7 @@ export class ChatChunkService {
     text: string;
   }) {
     const { chatMessageId, chunkIndex, text, rawData } = input;
-    await this.r
+    await this.s
       .get("db")
       .insertInto("chatChunks")
       .values({
@@ -33,7 +33,7 @@ export class ChatChunkService {
   }
 
   async buildText(chatMessageId: ChatMessageId): Promise<string> {
-    const chatChunks = await this.r
+    const chatChunks = await this.s
       .get("db")
       .selectFrom("chatChunks")
       .where("chatMessageId", "=", chatMessageId)
@@ -49,7 +49,7 @@ export class ChatChunkService {
     const q: PgEventInput<"chat_chunk_created">[] = [];
 
     const unlisten = await listen(
-      this.r.get("pool"),
+      this.s.get("pool"),
       "chat_chunk_created",
       PgEvent.chat_chunk_created,
       (input) => {
@@ -60,7 +60,7 @@ export class ChatChunkService {
 
     try {
       let lastChunkIndex = lastEventId ?? -1;
-      const chatChunks = await this.r
+      const chatChunks = await this.s
         .get("db")
         .selectFrom("chatChunks")
         .where("chatMessageId", "=", chatMessageId)
@@ -86,7 +86,7 @@ export class ChatChunkService {
 
           const { chunkIndex } = input;
           if (chunkIndex > lastChunkIndex) {
-            const chatChunk = await this.r
+            const chatChunk = await this.s
               .get("db")
               .selectFrom("chatChunks")
               .where("chatMessageId", "=", chatMessageId)
@@ -100,7 +100,7 @@ export class ChatChunkService {
             lastChunkIndex = chunkIndex;
           }
         } else {
-          if (await this.r.get("chatMessage").isStaleCompleted(chatMessageId)) {
+          if (await this.s.get("chatMessage").isStaleCompleted(chatMessageId)) {
             return;
           }
         }

@@ -9,24 +9,11 @@ import { ChatMessageService } from "./chat-message-service";
 import { ChatService } from "./chat-service";
 import { createDb, type Db } from "./db";
 import { GoogleGenAiService } from "./google-gen-ai-service";
+import { IdempotencyService } from "./idempotency-service";
 import { createPool } from "./pg";
+import { ServiceRegistryBase } from "./service-registry";
 import { TaskService } from "./task-service";
 import { UserService } from "./user-service";
-
-class ServiceRegistry<Defs extends Record<string, unknown>> {
-  private map = new Map<keyof Defs, unknown>();
-
-  set<K extends keyof Defs>(key: K, value: Defs[K]) {
-    if (this.map.has(key)) throw new Error(`${String(key)} already exists.`);
-    this.map.set(key, value);
-  }
-
-  get<K extends keyof Defs>(key: K): Defs[K] {
-    const value = this.map.get(key);
-    if (value === undefined) throw new Error(`${String(key)} does not exist.`);
-    return value as Defs[K];
-  }
-}
 
 type ServiceMap = {
   pool: Pool;
@@ -37,38 +24,40 @@ type ServiceMap = {
   chatChunk: ChatChunkService;
   googleGenAi: GoogleGenAiService;
   task: TaskService;
+  idempotency: IdempotencyService;
 };
 
-const r = new ServiceRegistry<ServiceMap>();
-export type Registry = typeof r;
+const s = new ServiceRegistryBase<ServiceMap>();
+export type ServiceRegistry = typeof s;
 
 await init();
 
 async function init() {
-  r.set("pool", createPool());
-  r.set("db", createDb(r));
-  r.set("user", new UserService(r));
-  r.set("chat", new ChatService(r));
-  r.set("chatMessage", new ChatMessageService(r));
-  r.set("chatChunk", new ChatChunkService(r));
-  r.set("googleGenAi", new GoogleGenAiService(r));
+  s.set("pool", createPool());
+  s.set("db", createDb(s));
+  s.set("user", new UserService(s));
+  s.set("chat", new ChatService(s));
+  s.set("chatMessage", new ChatMessageService(s));
+  s.set("chatChunk", new ChatChunkService(s));
+  s.set("googleGenAi", new GoogleGenAiService(s));
+  s.set("idempotency", new IdempotencyService(s));
 
   const taskMap: TaskMap = {
-    google_gen_ai_send_chat: (i) => r.get("googleGenAi").onSendChatTask(i),
+    google_gen_ai_send_chat: (i) => s.get("googleGenAi").onSendChatTask(i),
     chat_message_cleanup_zombies: () =>
-      r.get("chatMessage").onCleanupZombiesTask(),
+      s.get("chatMessage").onCleanupZombiesTask(),
   };
   const cronTasks: CronTask[] = [
     { cron: "*/5 * * * *", key: "chat_message_cleanup_zombies" },
   ];
-  r.set("task", await TaskService.create(r.get("pool"), taskMap, cronTasks));
+  s.set("task", await TaskService.create(s.get("pool"), taskMap, cronTasks));
 }
 
 export async function createContext({}: CreateNextContextOptions) {
-  // TODO: Parse auth header.
-  const { id } = await r.get("user").getSeedUserId_DEV();
+  // TODO: Parse auth heades.
+  const { id } = await s.get("user").getSeedUserId_DEV();
   return {
-    r,
+    s,
     userId: id,
   };
 }

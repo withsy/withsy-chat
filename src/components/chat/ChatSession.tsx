@@ -5,6 +5,7 @@ import { skipToken } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { v4 as uuid } from "uuid";
 import { ChatInputBox } from "./ChatInputBox";
 import { ChatMessageList } from "./ChatMessageList";
 
@@ -75,7 +76,12 @@ export function ChatSession({ chatId, initialMessages, children }: Props) {
   const onSendMessage = (message: string) => {
     if (chatId != null) {
       sendChatMessage.mutate(
-        { chatId, text: message, model: "gemini-2.0-flash" },
+        {
+          chatId,
+          text: message,
+          model: "gemini-2.0-flash",
+          idempotencyKey: uuid(),
+        },
         {
           onError(error) {
             toast.error(`Send message failed. error: ${error}`);
@@ -92,7 +98,7 @@ export function ChatSession({ chatId, initialMessages, children }: Props) {
       );
     } else {
       startChat.mutate(
-        { text: message, model: "gemini-2.0-flash" },
+        { text: message, model: "gemini-2.0-flash", idempotencyKey: uuid() },
         {
           onSuccess(data) {
             addChat(data.chat);

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { JsonValue, type zInfer } from "./common";
+import { IdempotencyKey, JsonValue, type zInfer } from "./common";
 import { UserId } from "./user";
 
 export const ChatId = z.string().uuid();
@@ -52,6 +52,7 @@ export const ChatMessage = z.object({
 export type ChatMessage = zInfer<typeof ChatMessage>;
 
 export const StartChat = z.object({
+  idempotencyKey: IdempotencyKey,
   text: z.string(),
   model: ChatModel,
 });
@@ -69,6 +70,7 @@ export const ListChatMessages = z.object({
 export type ListChatMessages = zInfer<typeof ListChatMessages>;
 
 export const SendChatMessage = z.object({
+  idempotencyKey: IdempotencyKey,
   chatId: ChatId,
   text: z.string(),
   model: ChatModel,
