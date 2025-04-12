@@ -20,10 +20,11 @@ export class GoogleGenAiService {
       .transitPendingToProcessing(modelChatMessageId);
     if (!chatMessage) return;
 
-    const [{ text }, { model }] = await Promise.all([
-      this.s.get("chatMessage").findById(userChatMessageId, ["text"]),
-      this.s.get("chatMessage").findById(modelChatMessageId, ["model"]),
-    ]);
+    const [{ text, chatId: userChatId }, { model, chatId: modelChatId }] =
+      await Promise.all([
+        this.s.get("chatMessage").findById(userChatMessageId, ["text"]),
+        this.s.get("chatMessage").findById(modelChatMessageId, ["model"]),
+      ]);
     if (text == null) {
       console.error(
         "User chat message text must not be null. chatMessageId:",
@@ -37,6 +38,11 @@ export class GoogleGenAiService {
         "Model chat message model must not be null. chatMessageId:",
         modelChatMessageId
       );
+      return;
+    }
+
+    if (userChatId !== modelChatId) {
+      console.error("Chat id is mismatched.");
       return;
     }
 
