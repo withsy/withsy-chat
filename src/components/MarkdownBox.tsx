@@ -12,7 +12,15 @@ export function MarkdownBox({ content }: { content: string }) {
         rehypePlugins={[rehypeHighlight]}
         components={{
           pre: ({ children, ...props }) => {
-            return <CodeBlock {...props}>{children}</CodeBlock>;
+            const existingClassName = props.className || "";
+            return (
+              <CodeBlock
+                {...props}
+                className={`${existingClassName} overflow-x-auto`}
+              >
+                {children}
+              </CodeBlock>
+            );
           },
           code: ({ children }) => {
             return <>{children}</>;
