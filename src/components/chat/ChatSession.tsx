@@ -1,6 +1,5 @@
 import { useSidebar } from "@/context/SidebarContext";
 import { trpc } from "@/lib/trpc";
-import { cn } from "@/lib/utils";
 import { ChatMessage } from "@/types/chat";
 import { skipToken } from "@tanstack/react-query";
 import { useRouter } from "next/router";
@@ -17,46 +16,58 @@ type Props = {
 
 export function ChatSession({ chatId, initialMessages, children }: Props) {
   const router = useRouter();
-  const { addChat, userPrefs, isMobile } = useSidebar();
+  const { addChat } = useSidebar();
   const [messages, setMessages] = useState(initialMessages);
-  const wideView = userPrefs["wideView"];
+  const [streamMessageId, setStreamMessageId] = useState<number | null>();
+  const utils = trpc.useUtils();
+  const startChat = trpc.chat.start.useMutation();
+  const sendChatMessage = trpc.chatMessage.send.useMutation();
 
   useEffect(() => {
     setMessages(initialMessages);
   }, [chatId, initialMessages]);
 
-  const utils = trpc.useUtils();
-  const startChat = trpc.chat.start.useMutation();
-  const sendChatMessage = trpc.chatMessage.send.useMutation();
-
-  const message =
-    messages.find((x) => x.status === "processing") ??
-    messages.find((x) => x.status === "pending");
+  useEffect(() => {
+    const message =
+      messages.find((x) => x.status === "processing") ??
+      messages.find((x) => x.status === "pending");
+    if (message) setStreamMessageId(message.id);
+  }, [messages]);
 
   const _receiveChatChunk = trpc.chatChunk.receiveStream.useSubscription(
-    message ? { chatMessageId: message.id } : skipToken,
+    streamMessageId != null ? { chatMessageId: streamMessageId } : skipToken,
     {
+      onStarted() {
+        console.log(
+          `Start to receive chunk for chat message id: ${streamMessageId}.`
+        );
+      },
+      onComplete() {
+        setMessages((prev) =>
+          prev.map((x) =>
+            x.id === streamMessageId ? { ...x, status: "succeeded" } : x
+          )
+        );
+        console.log(
+          `Complete to receive chunk for chat message id: ${streamMessageId}.`
+        );
+      },
       onError(error) {
+        setMessages((prev) =>
+          prev.map((x) =>
+            x.id === streamMessageId ? { ...x, status: "failed" } : x
+          )
+        );
         toast.error(`Receive chat message failed. error: ${error}`);
       },
       onData(data) {
-        const text = data.data.text;
-        if (text.length !== 0) {
-          // TODO: create chunk variables.
-          setMessages((prev) => [
-            ...prev,
-            {
-              id: Math.floor(Math.random() * 100000) + 1,
-              chatId: chatId!,
-              text,
-              model: "gemini-2.0-flash",
-              role: "model",
-              status: "succeeded",
-              createdAt: new Date(),
-              updatedAt: new Date(),
-            },
-          ]);
+        const chunk = data.data;
+        const msg = messages.find((x) => x.id === chunk.chatMessageId);
+        if (msg) {
+          msg.text = msg.text ?? "";
+          msg.text += chunk.text;
         }
+        console.log(`TODO: chunk to message. chunk text: ${chunk.text}`);
       },
     }
   );
@@ -73,6 +84,7 @@ export function ChatSession({ chatId, initialMessages, children }: Props) {
             setMessages((prev) => [
               ...prev,
               ChatMessage.parse(data.userChatMessage),
+              ChatMessage.parse(data.modelChatMessage),
             ]);
             utils.chat.list.invalidate();
           },
