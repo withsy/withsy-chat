@@ -24,7 +24,7 @@ export class ChatMessageService {
       .get("db")
       .selectFrom("chatMessages")
       .where("chatId", "=", chatId)
-      .orderBy("createdAt", "asc")
+      .orderBy("id", "asc")
       .selectAll()
       .execute();
     return await Promise.all(
