@@ -16,7 +16,7 @@ export function MarkdownBox({ content }: { content: string }) {
             return (
               <CodeBlock
                 {...props}
-                className={`${existingClassName} whitespace-pre-wrap break-all`}
+                className={`${existingClassName} whitespace-pre-wrap break-all px-4`}
               >
                 {children}
               </CodeBlock>
