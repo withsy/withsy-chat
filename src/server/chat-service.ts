@@ -61,7 +61,7 @@ export class ChatService {
           modelChatMessage,
         };
       });
-    await this.r.get("task").add("googleGenAiSendChat", {
+    await this.r.get("task").add("google_gen_ai_send_chat", {
       userChatMessageId: userChatMessage.id,
       modelChatMessageId: modelChatMessage.id,
     });

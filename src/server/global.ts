@@ -54,12 +54,12 @@ async function init() {
   r.set("googleGenAi", new GoogleGenAiService(r));
 
   const taskMap: TaskMap = {
-    googleGenAiSendChat: (i) => r.get("googleGenAi").onSendChatTask(i),
-    chatMessageCleanupZombies: () =>
+    google_gen_ai_send_chat: (i) => r.get("googleGenAi").onSendChatTask(i),
+    chat_message_cleanup_zombies: () =>
       r.get("chatMessage").onCleanupZombiesTask(),
   };
   const cronTasks: CronTask[] = [
-    { cron: "*/5 * * * *", key: "chatMessageCleanupZombies" },
+    { cron: "*/5 * * * *", key: "chat_message_cleanup_zombies" },
   ];
   r.set("task", await TaskService.create(r.get("pool"), taskMap, cronTasks));
 }

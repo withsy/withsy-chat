@@ -5,11 +5,11 @@ import type { MaybePromise, zInfer } from "./common";
 //#region Task
 
 export const Task = {
-  googleGenAiSendChat: z.object({
+  google_gen_ai_send_chat: z.object({
     userChatMessageId: ChatMessageId,
     modelChatMessageId: ChatMessageId,
   }),
-  chatMessageCleanupZombies: z.void(),
+  chat_message_cleanup_zombies: z.void(),
 } as const;
 
 export type TaskKey = keyof typeof Task;
@@ -39,7 +39,7 @@ export const ChatChunkCreatedInput = z.discriminatedUnion("status", [
 export type ChatChunkCreatedInput = zInfer<typeof ChatChunkCreatedInput>;
 
 export const PgEvent = {
-  chatChunkCreated: ChatChunkCreatedInput,
+  chat_chunk_created: ChatChunkCreatedInput,
 } as const;
 
 export const PgEventKey = z.enum(

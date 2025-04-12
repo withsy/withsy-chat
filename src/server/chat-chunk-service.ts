@@ -46,12 +46,12 @@ export class ChatChunkService {
 
   async *receiveStream(input: ReceiveChatChunkStream) {
     const { chatMessageId, lastEventId } = input;
-    const q: PgEventInput<"chatChunkCreated">[] = [];
+    const q: PgEventInput<"chat_chunk_created">[] = [];
 
     const unlisten = await listen(
       this.r.get("pool"),
-      "chatChunkCreated",
-      PgEvent.chatChunkCreated,
+      "chat_chunk_created",
+      PgEvent.chat_chunk_created,
       (input) => {
         if (input.chatMessageId !== chatMessageId) return;
         q.push(input);
