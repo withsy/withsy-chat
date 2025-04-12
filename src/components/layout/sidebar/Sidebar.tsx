@@ -7,7 +7,7 @@ import { SidebarTooltipGroup } from "./SidebarTooltip";
 
 export default function Sidebar() {
   const { isMobile, collapsed, toggle, userPrefs } = useSidebar();
-  const { largeText } = userPrefs;
+  const { largeText, themeColor, themeOpacity } = userPrefs;
 
   return (
     <>
@@ -23,7 +23,6 @@ export default function Sidebar() {
         >
           {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
         </Button>
-        {/* {collapsed && <SidebarTooltipGroup collapsed={collapsed} />} */}
       </div>
 
       <div
@@ -34,6 +33,11 @@ export default function Sidebar() {
           !collapsed && isMobile && "z-20 w-[100vw]  px-4",
           !collapsed && !isMobile && "z-20 w-[240px] px-4"
         )}
+        style={{
+          backgroundColor: "white",
+          backgroundImage: `linear-gradient(rgba(${themeColor}, ${themeOpacity}), rgba(${themeColor}, ${themeOpacity}))`,
+          backgroundBlendMode: "multiply",
+        }}
       >
         <div
           className={cn(
