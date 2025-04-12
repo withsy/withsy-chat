@@ -100,7 +100,7 @@ export function ChatSession({
 
   return (
     <div className="flex flex-col h-full bg-background relative">
-      <div className="flex-1 overflow-y-auto px-4 py-2 mt-4 mb-[120px]">
+      <div className="flex-1 overflow-y-auto py-4 mb-[120px]">
         <div
           className={cn(
             "mx-auto w-full",

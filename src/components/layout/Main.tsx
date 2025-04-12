@@ -21,7 +21,7 @@ export default function Main({ children }: MainProps) {
     >
       <div
         className={cn(
-          "px-4 py-4 transition-all h-full",
+          "transition-all h-full",
           largeText ? "text-lg" : "text-base",
           !wideView && "md:w-[80%] md:mx-auto"
         )}
