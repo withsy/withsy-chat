@@ -1,26 +1,15 @@
-import { Badge } from "@/components/ui/badge";
 import { CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowRight, BookmarkCheck, MessageSquareText } from "lucide-react";
+import { ArrowRight, MessageSquareText } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { BookmarkCardHeaderContext } from "./BookmarkCardHeaderContext";
 
 type Props = {
-  model: string;
   title: string;
-  bookmarkedAt: string;
   chattedAt: string;
   link: string;
-  themeColor: string;
 };
 
-export function BookmarkCardHeader({
-  model,
-  title,
-  bookmarkedAt,
-  chattedAt,
-  link,
-  themeColor,
-}: Props) {
+export function BookmarkCardHeader({ title, chattedAt, link }: Props) {
   const router = useRouter();
 
   return (
@@ -40,10 +29,6 @@ export function BookmarkCardHeader({
           <BookmarkCardHeaderContext
             icon={<MessageSquareText className="w-4 h-4" />}
             date={chattedAt}
-          />
-          <BookmarkCardHeaderContext
-            icon={<BookmarkCheck className="w-4 h-4" />}
-            date={bookmarkedAt}
           />
         </div>
       </div>

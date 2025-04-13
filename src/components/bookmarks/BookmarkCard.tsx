@@ -46,12 +46,9 @@ export function BookmarkCard({
     <div className="relative group">
       <Card>
         <BookmarkCardHeader
-          model={model}
           title={titleState}
-          bookmarkedAt={bookmarkedAt}
           chattedAt={chattedAt}
           link={`/chat/${chatId}`}
-          themeColor={themeColor}
         />
         <Separator />
         <CardContent className="mt-2 space-y-3 overflow-x-auto">
