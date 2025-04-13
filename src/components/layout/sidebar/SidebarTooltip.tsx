@@ -1,9 +1,15 @@
 import { IconWithLabel } from "@/components/IconWithLabel";
 import { useSidebar } from "@/context/SidebarContext";
-import { Bookmark, SquarePen, type LucideIcon } from "lucide-react";
+import {
+  Bookmark,
+  PanelRightClose,
+  PanelRightOpen,
+  SquarePen,
+  type LucideIcon,
+} from "lucide-react";
 import { useRouter } from "next/router";
 
-const datas = [
+export const datas = [
   {
     id: "chat",
     icon: SquarePen,
@@ -22,23 +28,22 @@ interface SidebarTooltipProps {
   id: string;
   icon: LucideIcon;
   label: string;
-  collapsed?: boolean;
   fill?: boolean;
-  onClick?: (id: string) => void;
+  size?: number;
 }
 
-function SidebarTooltip({
+export function SidebarTooltip({
   id,
   icon: Icon,
   label,
-  collapsed,
   fill,
-  onClick,
+  size = 24,
 }: SidebarTooltipProps) {
   const { isMobile, setCollapsed } = useSidebar();
   const router = useRouter();
 
-  const className = `group relative flex items-center gap-2 no-underline px-2.5 py-2.5 rounded-md transition-colors hover:font-bold`;
+  const className =
+    "cursor-pointer rounded-md group w-9 h-9 flex items-center justify-center hover:bg-transparent";
 
   const handleLinkClick = () => {
     if (isMobile) {
@@ -52,40 +57,58 @@ function SidebarTooltip({
       <IconWithLabel
         icon={Icon}
         label={label}
-        collapsed={collapsed}
+        collapsed={true}
         fill={fill}
+        size={size}
       />
     </button>
   );
 }
 
-interface Props {
-  collapsed?: boolean;
-}
-
-export function SidebarTooltipGroup({ collapsed = false }: Props) {
-  const { isMobile, setCollapsed } = useSidebar();
+export function SidebarTooltipGroup() {
+  const { isMobile, collapsed, setCollapsed, toggle } = useSidebar();
+  const iconSize = isMobile ? 28 : 24;
 
   const handleItemClick = (id: string) => {
-    console.log(isMobile, id, collapsed);
     if (isMobile) {
       setCollapsed(true);
     }
   };
 
   return (
-    <>
-      {datas.map((data) => (
-        <SidebarTooltip
-          id={data.id}
-          key={data.id}
-          icon={data.icon}
-          label={data.label}
-          fill={data.fill}
-          collapsed={collapsed}
-          onClick={handleItemClick}
-        />
-      ))}
-    </>
+    <div className="w-full z-50 flex flex-row justify-between items-center gap-2">
+      <div className="flex-shrink-0">
+        <div
+          onClick={toggle}
+          className="cursor-pointer rounded-md group w-9 h-9 flex items-center justify-center hover:bg-transparent"
+        >
+          {collapsed ? (
+            <PanelRightClose
+              size={iconSize}
+              className="group-hover:text-black text-gray-500"
+            />
+          ) : (
+            <PanelRightOpen
+              size={iconSize}
+              className="group-hover:text-black text-gray-500"
+            />
+          )}
+        </div>
+      </div>
+      {!collapsed && (
+        <div className="flex flex-row items-center gap-2">
+          {datas.map((data) => (
+            <SidebarTooltip
+              id={data.id}
+              key={data.id}
+              icon={data.icon}
+              label={data.label}
+              fill={data.fill}
+              size={iconSize}
+            />
+          ))}
+        </div>
+      )}
+    </div>
   );
 }

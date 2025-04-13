@@ -3,7 +3,7 @@ import { type LucideIcon } from "lucide-react";
 
 interface IconWithLabelProps {
   icon: LucideIcon;
-  label: string;
+  label?: string;
   collapsed?: boolean;
   fill?: boolean;
   size?: number;
@@ -32,7 +32,7 @@ export function IconWithLabel({
           }}
         />
       )}
-      {!collapsed && <span className="relative z-10">{label}</span>}
+      {!collapsed && label && <span className="relative z-10">{label}</span>}
     </>
   );
 }
