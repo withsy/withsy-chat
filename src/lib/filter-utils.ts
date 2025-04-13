@@ -1,6 +1,5 @@
 export function getFilteredBookmarks({
   bookmarks,
-  selectedModels,
   sortBy,
   sortOrder,
 }: {
@@ -9,11 +8,9 @@ export function getFilteredBookmarks({
   sortBy: "chattedAt" | "bookmarkedAt";
   sortOrder: "asc" | "desc";
 }) {
-  return bookmarks
-    .filter((b) => selectedModels.includes(b.model))
-    .sort((a, b) => {
-      const aTime = new Date(a[sortBy]).getTime();
-      const bTime = new Date(b[sortBy]).getTime();
-      return sortOrder === "asc" ? aTime - bTime : bTime - aTime;
-    });
+  return bookmarks.sort((a, b) => {
+    const aTime = new Date(a[sortBy]).getTime();
+    const bTime = new Date(b[sortBy]).getTime();
+    return sortOrder === "asc" ? aTime - bTime : bTime - aTime;
+  });
 }

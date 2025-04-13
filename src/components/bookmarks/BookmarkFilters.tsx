@@ -1,6 +1,5 @@
 import { FilterSelect } from "@/components/FilterSelect";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { ChevronDown, ChevronUp, RotateCcw } from "lucide-react";
 import { useState } from "react";
@@ -16,24 +15,13 @@ const sortOrderOptions = [
   { label: "Oldest First", value: "asc" },
 ];
 
-const modelOptions = [
-  { label: "GPT-4", value: "gpt-4" },
-  { label: "GPT-3.5", value: "gpt-3.5" },
-  { label: "Claude-3", value: "claude-3" },
-];
-
-const defaultModels = modelOptions.map((m) => m.value);
-
 type Props = {
   sortBy: string;
   setSortBy: (val: any) => void;
   sortOrder: string;
   setSortOrder: (val: any) => void;
-  selectedModels: string[];
-  setSelectedModels: (val: string[]) => void;
   searchText: string;
   setSearchText: (val: string) => void;
-  themeColor: string;
 };
 
 export function BookmarkFilters({
@@ -41,30 +29,16 @@ export function BookmarkFilters({
   setSortBy,
   sortOrder,
   setSortOrder,
-  selectedModels,
-  setSelectedModels,
   searchText,
   setSearchText,
-  themeColor,
 }: Props) {
   const [isOpen, setIsOpen] = useState(true);
 
   const reset = () => {
     setSortBy("bookmarkedAt");
     setSortOrder("desc");
-    setSelectedModels(defaultModels);
     setSearchText("");
     toast.success("Filters reset");
-  };
-
-  const toggle = (
-    val: string,
-    list: string[],
-    setList: (v: string[]) => void
-  ) => {
-    setList(
-      list.includes(val) ? list.filter((v) => v !== val) : [...list, val]
-    );
   };
 
   return (
@@ -131,36 +105,6 @@ export function BookmarkFilters({
                 onChange={(e) => setSearchText(e.target.value)}
                 className="w-full"
               />
-            </div>
-          </div>
-
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <div className="flex flex-wrap items-center gap-4">
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-bold">Model</span>
-                {modelOptions.map((m) => (
-                  <label
-                    key={m.value}
-                    className="flex items-center gap-1 text-sm"
-                  >
-                    <Checkbox
-                      checked={selectedModels.includes(m.value)}
-                      onCheckedChange={() =>
-                        toggle(m.value, selectedModels, setSelectedModels)
-                      }
-                      style={{
-                        backgroundColor: selectedModels.includes(m.value)
-                          ? `rgb(${themeColor})`
-                          : undefined,
-                        borderColor: selectedModels.includes(m.value)
-                          ? `rgb(${themeColor})`
-                          : undefined,
-                      }}
-                    />
-                    {m.label}
-                  </label>
-                ))}
-              </div>
             </div>
           </div>
         </div>
