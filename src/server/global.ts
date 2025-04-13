@@ -11,11 +11,11 @@ import { createDb, type Db } from "./db";
 import { GoogleGenAiService } from "./google-gen-ai-service";
 import { IdempotencyService } from "./idempotency-service";
 import { createPool } from "./pg";
-import { ServiceRegistryBase } from "./service-registry";
+import { createServiceRegistry } from "./service-registry";
 import { TaskService } from "./task-service";
 import { UserService } from "./user-service";
 
-type ServiceMap = {
+export type ServiceMap = {
   pool: Pool;
   db: Db;
   user: UserService;
@@ -27,40 +27,38 @@ type ServiceMap = {
   idempotency: IdempotencyService;
 };
 
-const s = new ServiceRegistryBase<ServiceMap>();
-export type ServiceRegistry = typeof s;
-
-await init();
+const s = createServiceRegistry<ServiceMap>();
 
 async function init() {
-  s.set("pool", createPool());
-  s.set("db", createDb(s));
-  s.set("user", new UserService(s));
-  s.set("chat", new ChatService(s));
-  s.set("chatMessage", new ChatMessageService(s));
-  s.set("chatChunk", new ChatChunkService(s));
-  s.set("googleGenAi", new GoogleGenAiService(s));
-  s.set("idempotency", new IdempotencyService(s));
+  s.pool = createPool();
+  s.db = createDb(s);
+  s.user = new UserService(s);
+  s.chat = new ChatService(s);
+  s.chatMessage = new ChatMessageService(s);
+  s.chatChunk = new ChatChunkService(s);
+  s.googleGenAi = new GoogleGenAiService(s);
+  s.idempotency = new IdempotencyService(s);
 
   const taskMap: TaskMap = {
-    google_gen_ai_send_chat: (i) => s.get("googleGenAi").onSendChatTask(i),
-    chat_message_cleanup_zombies: () =>
-      s.get("chatMessage").onCleanupZombiesTask(),
+    google_gen_ai_send_chat: (i) => s.googleGenAi.onSendChatTask(i),
+    chat_message_cleanup_zombies: () => s.chatMessage.onCleanupZombiesTask(),
   };
   const cronTasks: CronTask[] = [
     { cron: "*/5 * * * *", key: "chat_message_cleanup_zombies" },
   ];
-  s.set("task", await TaskService.create(s, taskMap, cronTasks));
+  s.task = await TaskService.create(s, taskMap, cronTasks);
 }
 
 export async function createContext({}: CreateNextContextOptions) {
   // TODO: Parse auth heades.
-  const { id } = await s.get("user").getSeedUserId_DEV();
+  const { id } = await s.user.getSeedUserId_DEV();
   return {
     s,
     userId: id,
   };
 }
+
+await init();
 
 type Context = Awaited<ReturnType<typeof createContext>>;
 

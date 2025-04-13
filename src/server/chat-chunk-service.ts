@@ -7,11 +7,11 @@ import {
 import type { JsonValue } from "@/types/common";
 import { PgEvent, type PgEventInput } from "@/types/task";
 import { tracked } from "@trpc/server";
-import type { ServiceRegistry } from "./global";
+import type { ServiceMap } from "./global";
 import { listen } from "./pg";
 
 export class ChatChunkService {
-  constructor(private readonly s: ServiceRegistry) {}
+  constructor(private readonly s: ServiceMap) {}
 
   async add(input: {
     chatMessageId: ChatMessageId;
@@ -20,8 +20,7 @@ export class ChatChunkService {
     text: string;
   }) {
     const { chatMessageId, chunkIndex, text, rawData } = input;
-    await this.s
-      .get("db")
+    await this.s.db
       .insertInto("chatChunks")
       .values({
         chatMessageId,
@@ -33,8 +32,7 @@ export class ChatChunkService {
   }
 
   async buildText(chatMessageId: ChatMessageId): Promise<string> {
-    const chatChunks = await this.s
-      .get("db")
+    const chatChunks = await this.s.db
       .selectFrom("chatChunks")
       .where("chatMessageId", "=", chatMessageId)
       .select(["text"])
@@ -49,7 +47,7 @@ export class ChatChunkService {
     const q: PgEventInput<"chat_chunk_created">[] = [];
 
     const unlisten = await listen(
-      this.s.get("pool"),
+      this.s.pool,
       "chat_chunk_created",
       PgEvent.chat_chunk_created,
       (input) => {
@@ -60,8 +58,7 @@ export class ChatChunkService {
 
     try {
       let lastChunkIndex = lastEventId ?? -1;
-      const chatChunks = await this.s
-        .get("db")
+      const chatChunks = await this.s.db
         .selectFrom("chatChunks")
         .where("chatMessageId", "=", chatMessageId)
         .where("chunkIndex", ">", lastChunkIndex)
@@ -86,8 +83,7 @@ export class ChatChunkService {
 
           const { chunkIndex } = input;
           if (chunkIndex > lastChunkIndex) {
-            const chatChunk = await this.s
-              .get("db")
+            const chatChunk = await this.s.db
               .selectFrom("chatChunks")
               .where("chatMessageId", "=", chatMessageId)
               .where("chunkIndex", "=", chunkIndex)
@@ -100,7 +96,7 @@ export class ChatChunkService {
             lastChunkIndex = chunkIndex;
           }
         } else {
-          if (await this.s.get("chatMessage").isStaleCompleted(chatMessageId)) {
+          if (await this.s.chatMessage.isStaleCompleted(chatMessageId)) {
             return;
           }
         }

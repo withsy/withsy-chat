@@ -9,7 +9,7 @@ import {
 } from "@/types/chat";
 import { TRPCError } from "@trpc/server";
 import type { Db, Tx } from "./db";
-import type { ServiceRegistry } from "./global";
+import type { ServiceMap } from "./global";
 import { IdempotencyService } from "./idempotency-service";
 
 export const CHAT_MESSAGE_NOT_FOUND_ERROR = new TRPCError({
@@ -18,12 +18,11 @@ export const CHAT_MESSAGE_NOT_FOUND_ERROR = new TRPCError({
 });
 
 export class ChatMessageService {
-  constructor(private readonly s: ServiceRegistry) {}
+  constructor(private readonly s: ServiceMap) {}
 
   async list(input: ListChatMessages): Promise<ChatMessage[]> {
     const { chatId } = input;
-    const chatMessages = await this.s
-      .get("db")
+    const chatMessages = await this.s.db
       .selectFrom("chatMessages")
       .where("chatId", "=", chatId)
       .orderBy("id", "asc")
@@ -35,8 +34,7 @@ export class ChatMessageService {
   }
 
   async listForAiChatHistory(chatId: ChatId) {
-    return (await this.s
-      .get("db")
+    return (await this.s.db
       .selectFrom("chatMessages")
       .where("chatId", "=", chatId)
       .where("status", "=", ChatMessageStatus.enum.succeeded)
@@ -47,8 +45,7 @@ export class ChatMessageService {
   }
 
   async findById(chatMessageId: ChatMessageId, keys: (keyof ChatMessage)[]) {
-    return await this.s
-      .get("db")
+    return await this.s.db
       .selectFrom("chatMessages")
       .where("id", "=", chatMessageId)
       .select(keys)
@@ -56,8 +53,7 @@ export class ChatMessageService {
   }
 
   async isStaleCompleted(chatMessageId: ChatMessageId) {
-    const chatMessage = await this.s
-      .get("db")
+    const chatMessage = await this.s.db
       .selectFrom("chatMessages")
       .where(({ or, and, eb }) =>
         and([
@@ -93,55 +89,45 @@ export class ChatMessageService {
   }
 
   async transitPendingToProcessing(chatMessageId: ChatMessageId) {
-    return await this.s
-      .get("db")
-      .transaction()
-      .execute((tx) =>
-        ChatMessageService.transit(tx, {
-          chatMessageId,
-          expectStatus: "pending",
-          nextStatus: "processing",
-        })
-      );
+    return await this.s.db.transaction().execute((tx) =>
+      ChatMessageService.transit(tx, {
+        chatMessageId,
+        expectStatus: "pending",
+        nextStatus: "processing",
+      })
+    );
   }
 
   async transitProcessingToSucceeded(
     chatMessageId: ChatMessageId,
     text: string
   ) {
-    return await this.s
-      .get("db")
-      .transaction()
-      .execute(async (tx) => {
-        await ChatMessageService.transit(tx, {
-          chatMessageId,
-          expectStatus: "processing",
-          nextStatus: "succeeded",
-        });
-        return await tx
-          .updateTable("chatMessages")
-          .set({ text })
-          .where("id", "=", chatMessageId)
-          .executeTakeFirstOrThrow();
+    return await this.s.db.transaction().execute(async (tx) => {
+      await ChatMessageService.transit(tx, {
+        chatMessageId,
+        expectStatus: "processing",
+        nextStatus: "succeeded",
       });
+      return await tx
+        .updateTable("chatMessages")
+        .set({ text })
+        .where("id", "=", chatMessageId)
+        .executeTakeFirstOrThrow();
+    });
   }
 
   async transitProcessingToFailed(chatMessageId: ChatMessageId) {
-    return await this.s
-      .get("db")
-      .transaction()
-      .execute((tx) =>
-        ChatMessageService.transit(tx, {
-          chatMessageId,
-          expectStatus: "processing",
-          nextStatus: "failed",
-        })
-      );
+    return await this.s.db.transaction().execute((tx) =>
+      ChatMessageService.transit(tx, {
+        chatMessageId,
+        expectStatus: "processing",
+        nextStatus: "failed",
+      })
+    );
   }
 
   async onCleanupZombiesTask() {
-    const { numUpdatedRows } = await this.s
-      .get("db")
+    const { numUpdatedRows } = await this.s.db
       .updateTable("chatMessages")
       .set({ status: "failed" })
       .where("status", "=", "processing")
@@ -153,14 +139,13 @@ export class ChatMessageService {
 
   async send(input: SendChatMessage) {
     const { idempotencyKey } = input;
-    const { userChatMessage, modelChatMessage } = await this.s
-      .get("db")
+    const { userChatMessage, modelChatMessage } = await this.s.db
       .transaction()
       .execute(async (tx) => {
         await IdempotencyService.checkDuplicateRequest(tx, idempotencyKey);
         return await ChatMessageService.createPair(tx, input);
       });
-    await this.s.get("task").add("google_gen_ai_send_chat", {
+    await this.s.task.add("google_gen_ai_send_chat", {
       userChatMessageId: userChatMessage.id,
       modelChatMessageId: modelChatMessage.id,
     });

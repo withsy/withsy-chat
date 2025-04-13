@@ -1,7 +1,7 @@
 import type { IdempotencyKey } from "@/types/common";
 import { TRPCError } from "@trpc/server";
 import type { Db } from "./db";
-import type { ServiceRegistry } from "./global";
+import type { ServiceMap } from "./global";
 
 export const DUPLICATE_REQUEST_ERROR = new TRPCError({
   code: "CONFLICT",
@@ -9,11 +9,11 @@ export const DUPLICATE_REQUEST_ERROR = new TRPCError({
 });
 
 export class IdempotencyService {
-  constructor(private readonly s: ServiceRegistry) {}
+  constructor(private readonly s: ServiceMap) {}
 
   async checkDuplicateRequest(idempotencyKey: IdempotencyKey) {
     return await IdempotencyService.checkDuplicateRequest(
-      this.s.get("db"),
+      this.s.db,
       idempotencyKey
     );
   }
