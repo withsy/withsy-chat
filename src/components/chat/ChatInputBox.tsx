@@ -76,6 +76,11 @@ export function ChatInputBox({ onSendMessage }: Props) {
             checked={enterToSend ?? false}
             onCheckedChange={(v) => setUserPrefAndSave("enterToSend", v)}
             disabled={isLoading}
+            style={{
+              backgroundColor: enterToSend
+                ? `rgb(${userPrefs.themeColor})`
+                : undefined,
+            }}
           />
           <TooltipProvider>
             <Tooltip>

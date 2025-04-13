@@ -15,6 +15,7 @@ interface BookmarkCardProps {
   chattedAt: string;
   bookmarkedAt: string;
   content: string;
+  themeColor: string;
 }
 
 export function BookmarkCard({
@@ -23,6 +24,7 @@ export function BookmarkCard({
   chattedAt,
   bookmarkedAt,
   content,
+  themeColor,
 }: BookmarkCardProps) {
   const chatId = chattedAt;
   const [expanded, setExpanded] = useState(false);
@@ -49,6 +51,7 @@ export function BookmarkCard({
           bookmarkedAt={bookmarkedAt}
           chattedAt={chattedAt}
           link={`/chat/${chatId}`}
+          themeColor={themeColor}
         />
         <Separator />
         <CardContent className="mt-2 space-y-3 overflow-x-auto">
@@ -81,6 +84,7 @@ export function BookmarkCard({
 
         <CardFooter className="flex justify-end gap-2">
           <BookmarkCardActions
+            themeColor={themeColor}
             content={content}
             onUnbookmark={handleToggleBookmark}
           />

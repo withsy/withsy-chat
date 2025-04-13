@@ -2,11 +2,13 @@ import { BookmarkCard } from "@/components/bookmarks/BookmarkCard";
 import { BookmarkFilters } from "@/components/bookmarks/BookmarkFilters";
 
 import { BookmarkHeader } from "@/components/bookmarks/BookmarkHeader";
+import { useSidebar } from "@/context/SidebarContext";
 import data from "@/data/bookmarks.json";
 import { getFilteredBookmarks } from "@/lib/filter-utils";
 import { useMemo, useState } from "react";
 
 export default function BookmarkPage() {
+  const { userPrefs } = useSidebar();
   const [searchText, setSearchText] = useState("");
   const [sortBy, setSortBy] = useState<"chattedAt" | "bookmarkedAt">(
     "bookmarkedAt"
@@ -36,7 +38,10 @@ export default function BookmarkPage() {
 
   return (
     <div className="h-full w-full flex flex-col p-6">
-      <BookmarkHeader count={`${filteredBookmarks.length}/${data.length}`} />
+      <BookmarkHeader
+        count={`${filteredBookmarks.length}/${data.length}`}
+        themeColor={userPrefs.themeColor}
+      />
       <BookmarkFilters
         sortBy={sortBy}
         setSortBy={setSortBy}
@@ -46,10 +51,15 @@ export default function BookmarkPage() {
         setSelectedModels={setSelectedModels}
         searchText={searchText}
         setSearchText={setSearchText}
+        themeColor={userPrefs.themeColor}
       />
       <div className="mt-4 flex-1 overflow-y-auto space-y-4">
         {filteredBookmarks.map((bookmark) => (
-          <BookmarkCard key={bookmark.id} {...bookmark} />
+          <BookmarkCard
+            key={bookmark.id}
+            themeColor={userPrefs.themeColor}
+            {...bookmark}
+          />
         ))}
       </div>
     </div>

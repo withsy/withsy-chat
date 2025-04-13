@@ -33,6 +33,7 @@ type Props = {
   setSelectedModels: (val: string[]) => void;
   searchText: string;
   setSearchText: (val: string) => void;
+  themeColor: string;
 };
 
 export function BookmarkFilters({
@@ -44,6 +45,7 @@ export function BookmarkFilters({
   setSelectedModels,
   searchText,
   setSearchText,
+  themeColor,
 }: Props) {
   const [isOpen, setIsOpen] = useState(true);
 
@@ -146,6 +148,14 @@ export function BookmarkFilters({
                       onCheckedChange={() =>
                         toggle(m.value, selectedModels, setSelectedModels)
                       }
+                      style={{
+                        backgroundColor: selectedModels.includes(m.value)
+                          ? `rgb(${themeColor})`
+                          : undefined,
+                        borderColor: selectedModels.includes(m.value)
+                          ? `rgb(${themeColor})`
+                          : undefined,
+                      }}
                     />
                     {m.label}
                   </label>

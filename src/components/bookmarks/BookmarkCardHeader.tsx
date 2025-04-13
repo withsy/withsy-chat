@@ -10,6 +10,7 @@ type Props = {
   bookmarkedAt: string;
   chattedAt: string;
   link: string;
+  themeColor: string;
 };
 
 export function BookmarkCardHeader({
@@ -18,6 +19,7 @@ export function BookmarkCardHeader({
   bookmarkedAt,
   chattedAt,
   link,
+  themeColor,
 }: Props) {
   const router = useRouter();
 
@@ -28,7 +30,13 @@ export function BookmarkCardHeader({
     >
       <div className="flex justify-between items-center gap-2">
         <div className="flex items-center gap-2">
-          <Badge>{model}</Badge>
+          <Badge
+            style={{
+              backgroundColor: `rgb(${themeColor})`,
+            }}
+          >
+            {model}
+          </Badge>
         </div>
         <div className="flex gap-x-3 mt-1 overflow-hidden">
           <BookmarkCardHeaderContext

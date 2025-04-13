@@ -43,6 +43,7 @@ interface ToggleMenuItemProps {
   disabled?: boolean;
   tooltip?: string;
   largeText?: boolean;
+  themeColor?: string;
 }
 
 export function ToggleMenuItem({
@@ -53,6 +54,7 @@ export function ToggleMenuItem({
   disabled = false,
   tooltip,
   largeText = false,
+  themeColor,
 }: ToggleMenuItemProps) {
   const content = (
     <div className="flex items-center justify-between px-2 py-1.5 opacity-100">
@@ -64,6 +66,9 @@ export function ToggleMenuItem({
         checked={checked}
         onCheckedChange={onChange}
         disabled={disabled}
+        style={{
+          backgroundColor: checked ? `rgb(${themeColor})` : undefined,
+        }}
       />
     </div>
   );
@@ -154,6 +159,7 @@ export default function UserDropdownMenu() {
               onChange={(v) => setUserPrefAndSave(id, v)}
               disabled={userPrefLoadings[id]}
               largeText={userPrefs["largeText"]}
+              themeColor={userPrefs.themeColor}
             />
           ))}
           {userMenuItems.map((item, idx) =>
