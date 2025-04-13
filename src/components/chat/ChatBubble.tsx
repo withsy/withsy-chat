@@ -13,9 +13,9 @@ export function ChatBubble({ message }: Props) {
   const { role, text: rawText } = message;
 
   const text = rawText ?? "";
-  const isLongMessage = text.length > 300;
+  const isLongMessage = text.length > 150;
   const [collapsed, setCollapsed] = useState(role === "user" && isLongMessage);
-  const displayedText = collapsed ? text.slice(0, 300) + "..." : text;
+  const displayedText = collapsed ? text.slice(0, 150) + "..." : text;
 
   const username = "Jenn";
   const fallbackName = role === "model" ? "AI" : username;
