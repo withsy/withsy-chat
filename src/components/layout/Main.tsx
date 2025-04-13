@@ -12,13 +12,14 @@ export default function Main({ children }: MainProps) {
   const sidebarWidth = !collapsed && !isMobile ? 240 : 0;
 
   const mainStyle: React.CSSProperties = {
-    height: "calc(100vh - 70px)",
+    minHeight: "calc(100vh - 70px)",
     backgroundColor: "white",
     ...(isMobile
       ? {}
       : {
           borderRadius: 30,
-          margin: 10,
+          marginRight: 10,
+          marginBottom: 10,
           marginLeft: 10 + sidebarWidth,
         }),
   };
