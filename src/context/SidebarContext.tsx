@@ -1,13 +1,13 @@
 import { trpc } from "@/lib/trpc";
 import type { Chat } from "@/types/chat";
-import type { User, UserPreferences } from "@/types/user";
+import type { UpdateUserPrefs, User, UserPreferences } from "@/types/user";
 import type { ReactNode } from "react";
 import { createContext, useContext, useEffect, useState } from "react";
 
-type UserPrefLoadings = Partial<Record<keyof UserPreferences, boolean>>;
-type SetUserPrefAndSave = <K extends keyof UserPreferences>(
+type UserPrefLoadings = Partial<Record<keyof UpdateUserPrefs, boolean>>;
+type SetUserPrefAndSave = <K extends keyof UpdateUserPrefs>(
   key: K,
-  value: UserPreferences[K]
+  value: UpdateUserPrefs[K]
 ) => void;
 
 type SidebarContextType = {

@@ -177,7 +177,7 @@ export class ChatMessageService {
     tx: Tx,
     input: Omit<SendChatMessage, "idempotencyKey">
   ) {
-    const { chatId, text, model } = input;
+    const { chatId, text, model, parentId } = input;
     const userChatMessage = await tx
       .insertInto("chatMessages")
       .values({
@@ -185,6 +185,7 @@ export class ChatMessageService {
         text,
         role: ChatRole.enum.user,
         status: ChatMessageStatus.enum.succeeded,
+        parentId: parentId ?? null,
       })
       .returningAll()
       .executeTakeFirstOrThrow();
@@ -195,6 +196,7 @@ export class ChatMessageService {
         role: ChatRole.enum.model,
         model,
         status: ChatMessageStatus.enum.pending,
+        parentId: parentId ?? null,
       })
       .returningAll()
       .executeTakeFirstOrThrow();

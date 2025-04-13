@@ -1,4 +1,4 @@
-import { User, type UserId, type UserPreferencesInput } from "@/types/user";
+import { UpdateUserPrefs, User, type UserId } from "@/types/user";
 import { TRPCError } from "@trpc/server";
 import { sql } from "kysely";
 import type { ServiceMap } from "./global";
@@ -20,10 +20,7 @@ export class UserService {
     return await User.parseAsync(user);
   }
 
-  async updatePrefs(
-    userId: UserId,
-    input: UserPreferencesInput
-  ): Promise<User> {
+  async updatePrefs(userId: UserId, input: UpdateUserPrefs): Promise<User> {
     const patch = Object.fromEntries(
       Object.entries(input).filter(([_, value]) => value != null)
     );

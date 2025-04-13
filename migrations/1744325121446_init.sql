@@ -45,6 +45,7 @@ CREATE TABLE chat_messages(
   text text,
   status text NOT NULL,
   is_bookmarked boolean NOT NULL DEFAULT FALSE,
+  parent_id integer,
   created_at timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT fk_chat_messages_chat_id FOREIGN KEY (chat_id) REFERENCES chats(id) ON DELETE CASCADE,

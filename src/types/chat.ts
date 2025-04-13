@@ -47,6 +47,7 @@ export const ChatMessage = z.object({
   text: z.string().nullable(),
   status: ChatMessageStatus,
   isBookmarked: z.boolean(),
+  parentId: ChatMessageId.nullable(),
   createdAt: z.date(),
   updatedAt: z.date(),
 });
@@ -86,6 +87,7 @@ export const SendChatMessage = z.object({
   chatId: ChatId,
   text: z.string(),
   model: ChatModel,
+  parentId: ChatMessageId.optional(),
 });
 export type SendChatMessage = zInfer<typeof SendChatMessage>;
 

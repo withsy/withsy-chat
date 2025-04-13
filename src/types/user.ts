@@ -12,7 +12,6 @@ export const UserPreferences = z.object({
   themeOpacity: z.number().default(0.1),
 });
 export type UserPreferences = zInfer<typeof UserPreferences>;
-export type UserPreferencesInput = zInput<typeof UserPreferences>;
 
 export const User = z.object({
   id: UserId,
@@ -21,3 +20,6 @@ export const User = z.object({
   updatedAt: z.date(),
 });
 export type User = zInfer<typeof User>;
+
+export const UpdateUserPrefs = UserPreferences.partial();
+export type UpdateUserPrefs = zInfer<typeof UpdateUserPrefs>;
