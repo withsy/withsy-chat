@@ -1,4 +1,4 @@
-import type { ChatChunkIndex } from "@/types/chat";
+import { ChatRole, type ChatChunkIndex } from "@/types/chat";
 import { type TaskInput } from "@/types/task";
 import { GoogleGenAI } from "@google/genai";
 import type { ServiceRegistry } from "./global";
@@ -22,8 +22,12 @@ export class GoogleGenAiService {
 
     const [{ text, chatId: userChatId }, { model, chatId: modelChatId }] =
       await Promise.all([
-        this.s.get("chatMessage").findById(userChatMessageId, ["text"]),
-        this.s.get("chatMessage").findById(modelChatMessageId, ["model"]),
+        this.s
+          .get("chatMessage")
+          .findById(userChatMessageId, ["chatId", "text"]),
+        this.s
+          .get("chatMessage")
+          .findById(modelChatMessageId, ["chatId", "model"]),
       ]);
     if (text == null) {
       console.error(
@@ -46,13 +50,26 @@ export class GoogleGenAiService {
       return;
     }
 
+    const msgsForHistory = await this.s
+      .get("chatMessage")
+      .listForAiChatHistory(userChatId);
+    while (true) {
+      const msg = msgsForHistory.at(0);
+      if (!msg) break;
+      if (msg.role === ChatRole.enum.user) break;
+      msgsForHistory.shift();
+    }
+    const history = msgsForHistory.map((v) => ({
+      role: v.role,
+      parts: [{ text: v.text }],
+    }));
+
     try {
       let chunkIndex: ChatChunkIndex = 0;
 
       const chat = this.ai.chats.create({
         model,
-        // TODO: fill history.
-        history: [],
+        history,
       });
       const stream = await chat.sendMessageStream({
         message: text,
