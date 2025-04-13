@@ -169,11 +169,15 @@ function SidebarChatItem({
           >
             <Star
               size={16}
-              className={`transition-colors ${
+              className="transition-colors"
+              style={
                 isStarred
-                  ? `fill-[rgb(${userPrefs.themeColor})] text-[rgb(${userPrefs.themeColor})]`
-                  : "text-gray-500"
-              }`}
+                  ? {
+                      fill: `rgb(${userPrefs.themeColor})`,
+                      color: `rgb(${userPrefs.themeColor})`,
+                    }
+                  : { color: "#6b7280" }
+              }
             />
           </button>
         </div>
