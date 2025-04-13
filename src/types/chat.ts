@@ -46,6 +46,7 @@ export const ChatMessage = z.object({
   model: ChatModel.nullable(),
   text: z.string().nullable(),
   status: ChatMessageStatus,
+  isBookmarked: z.boolean(),
   createdAt: z.date(),
   updatedAt: z.date(),
 });
@@ -58,17 +59,17 @@ export const StartChat = z.object({
 });
 export type StartChat = zInfer<typeof StartChat>;
 
-export const StartChatResult = z.object({
-  chat: Chat,
-  modelChatMessageId: ChatMessageId,
-});
-export type StartChatResult = zInfer<typeof StartChatResult>;
-
 export const ListChatMessages = z.object({
   chatId: ChatId,
   role: ChatRole.optional(),
 });
 export type ListChatMessages = zInfer<typeof ListChatMessages>;
+
+export const UpdateChatMessage = z.object({
+  chatMessageId: ChatMessageId,
+  isBookmarked: z.boolean().optional(),
+});
+export type UpdateChatMessage = zInfer<typeof UpdateChatMessage>;
 
 export const SendChatMessage = z.object({
   idempotencyKey: IdempotencyKey,

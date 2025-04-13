@@ -4,6 +4,7 @@ import {
   ChatMessageStatus,
   ChatRole,
   SendChatMessage,
+  UpdateChatMessage,
   type ChatMessageId,
   type ListChatMessages,
 } from "@/types/chat";
@@ -50,6 +51,18 @@ export class ChatMessageService {
       .where("id", "=", chatMessageId)
       .select(keys)
       .executeTakeFirstOrThrow(() => CHAT_MESSAGE_NOT_FOUND_ERROR);
+  }
+
+  async update(input: UpdateChatMessage) {
+    const { chatMessageId, isBookmarked } = input;
+    let query = this.s.db
+      .updateTable("chatMessages")
+      .where("id", "=", chatMessageId);
+    if (isBookmarked !== undefined) query = query.set({ isBookmarked });
+    const chatMessage = await query
+      .returningAll()
+      .executeTakeFirstOrThrow(() => CHAT_MESSAGE_NOT_FOUND_ERROR);
+    return await ChatMessage.parseAsync(chatMessage);
   }
 
   async isStaleCompleted(chatMessageId: ChatMessageId) {

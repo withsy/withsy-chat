@@ -4,6 +4,7 @@ import {
   SendChatMessage,
   StartChat,
   UpdateChat,
+  UpdateChatMessage,
 } from "@/types/chat";
 import { UpdateUserPrefs } from "@/types/user";
 import { procedure, router } from "../global";
@@ -32,6 +33,9 @@ export const appRouter = router({
     list: procedure
       .input(ListChatMessages)
       .query((opts) => opts.ctx.s.chatMessage.list(opts.input)),
+    update: procedure
+      .input(UpdateChatMessage)
+      .query((opts) => opts.ctx.s.chatMessage.update(opts.input)),
     send: procedure
       .input(SendChatMessage)
       .mutation((opts) => opts.ctx.s.chatMessage.send(opts.input)),
