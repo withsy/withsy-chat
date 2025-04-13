@@ -65,7 +65,7 @@ export function ChatInputBox({ onSendMessage }: Props) {
         onChange={(e) => setMessage(e.target.value)}
         onKeyDown={handleKeyDown}
         placeholder="Type a message..."
-        className="w-full resize-none focus:outline-none bg-transparent pb-10 max-h-[40vh]"
+        className="w-full resize-none focus:outline-none bg-transparent mb-5 max-h-[40vh]"
         onCompositionStart={handleCompositionStart}
         onCompositionEnd={handleCompositionEnd}
       />
