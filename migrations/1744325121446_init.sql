@@ -17,7 +17,7 @@ CREATE TABLE users(
   updated_at timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TRIGGER tr_users_update_updated_at
+CREATE TRIGGER trg_users_update_updated_at
   BEFORE UPDATE ON users
   FOR EACH ROW
   EXECUTE PROCEDURE fn_update_updated_at();
@@ -32,7 +32,7 @@ CREATE TABLE chats(
   CONSTRAINT fk_chats_user_id FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
-CREATE TRIGGER tr_chats_update_updated_at
+CREATE TRIGGER trg_chats_update_updated_at
   BEFORE UPDATE ON chats
   FOR EACH ROW
   EXECUTE PROCEDURE fn_update_updated_at();
@@ -50,7 +50,7 @@ CREATE TABLE chat_messages(
   CONSTRAINT chk_chat_messages_status CHECK (status IN ('pending', 'processing', 'succeeded', 'failed'))
 );
 
-CREATE TRIGGER tr_chat_messages_update_updated_at
+CREATE TRIGGER trg_chat_messages_update_updated_at
   BEFORE UPDATE ON chat_messages
   FOR EACH ROW
   EXECUTE PROCEDURE fn_update_updated_at();
@@ -66,7 +66,7 @@ CREATE TABLE chat_chunks(
   CONSTRAINT fk_chat_chunks_chat_message_id FOREIGN KEY (chat_message_id) REFERENCES chat_messages(id) ON DELETE CASCADE
 );
 
-CREATE TRIGGER tr_chat_chunks_update_updated_at
+CREATE TRIGGER trg_chat_chunks_update_updated_at
   BEFORE UPDATE ON chat_chunks
   FOR EACH ROW
   EXECUTE PROCEDURE fn_update_updated_at();
