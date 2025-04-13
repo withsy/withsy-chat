@@ -1,5 +1,7 @@
 import { cn } from "@/lib/utils";
 import type { ChatMessage } from "@/types/chat";
+import { useState } from "react";
+import { CollapseToggle } from "../CollapseToggle";
 import { MarkdownBox } from "../MarkdownBox";
 import { ModelAvatar } from "../ModelAvatar";
 
@@ -8,19 +10,15 @@ type Props = {
 };
 
 export function ChatBubble({ message }: Props) {
-  const { role } = message;
+  const { role, text: rawText } = message;
 
-  if (role === "system") {
-    return (
-      <div className="flex justify-center my-4 py-4">
-        <span className="text-muted-foreground italic">{message.text}</span>
-      </div>
-    );
-  }
+  const text = rawText ?? "";
+  const isLongMessage = text.length > 300;
+  const [collapsed, setCollapsed] = useState(role === "user" && isLongMessage);
+  const displayedText = collapsed ? text.slice(0, 300) + "..." : text;
 
   const username = "Jenn";
   const fallbackName = role === "model" ? "AI" : username;
-
   return (
     <div
       className={cn(
@@ -49,9 +47,14 @@ export function ChatBubble({ message }: Props) {
             role === "user" ? "self-end bg-muted " : "self-start"
           )}
         >
-          <MarkdownBox content={message.text ? message.text : ""} />
+          <MarkdownBox content={displayedText} />
         </div>
       </div>
+      <CollapseToggle
+        show={isLongMessage}
+        collapsed={collapsed}
+        setCollapsed={setCollapsed}
+      />
     </div>
   );
 }

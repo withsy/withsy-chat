@@ -2,10 +2,10 @@ import { useState } from "react";
 
 import { MarkdownBox } from "@/components/MarkdownBox";
 import { BookmarkCardHeader } from "@/components/bookmarks/BookmarkCardHeader";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
+import { CollapseToggle } from "../CollapseToggle";
 import { BookmarkCardActions } from "./BookmarkCardActions";
 
 interface BookmarkCardProps {
@@ -62,17 +62,13 @@ export function BookmarkCard({
               <div className="absolute bottom-0 left-0 w-full h-12 bg-gradient-to-t from-background to-transparent pointer-events-none" />
             )}
           </div>
-          {shouldCollapse && (
-            <div className="flex justify-center">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setExpanded((prev) => !prev)}
-              >
-                {expanded ? "Show less" : "Show more"}
-              </Button>
-            </div>
-          )}
+          <div className="flex justify-center">
+            <CollapseToggle
+              show={shouldCollapse}
+              collapsed={expanded}
+              setCollapsed={setExpanded}
+            />
+          </div>
         </CardContent>
 
         <CardFooter className="flex justify-end p-2">

@@ -15,9 +15,15 @@ export function ChatMessageList({ messages }: Props) {
 
   return (
     <div className="space-y-12 overflow-x-hidden">
-      {messages.map((msg) => (
-        <ChatBubble key={msg.id} message={msg} />
-      ))}
+      {messages.map((msg) =>
+        msg.role == "system" ? (
+          <div key={msg.id} className="flex justify-center my-4 py-4">
+            <span className="text-muted-foreground italic">{msg.text}</span>
+          </div>
+        ) : (
+          <ChatBubble key={msg.id} message={msg} />
+        )
+      )}
       <div ref={bottomRef} />
     </div>
   );
