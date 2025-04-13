@@ -21,17 +21,25 @@ export const CHAT_MESSAGE_NOT_FOUND_ERROR = new TRPCError({
 export class ChatMessageService {
   constructor(private readonly s: ServiceMap) {}
 
-  async list(input: ListChatMessages): Promise<ChatMessage[]> {
-    const { chatId, role } = input;
-    let query = this.s.db
-      .selectFrom("chatMessages")
-      .where("chatId", "=", chatId)
-      .orderBy("id", "asc");
+  async list(input: ListChatMessages) {
+    const { role, isBookmarked, options } = input;
+    const { scope, afterId, order, limit } = options;
+    let query = this.s.db.selectFrom("chatMessages");
+    if (scope.by === "user") {
+      query = query
+        .innerJoin("chats", "chats.id", "chatMessages.chatId")
+        .where("chats.userId", "=", scope.userId)
+        .selectAll("chatMessages");
+    } else if (scope.by === "chat")
+      query = query.where("chatId", "=", scope.chatId);
     if (role !== undefined) query = query.where("role", "=", role);
-    const chatMessages = await query.selectAll().execute();
-    return await Promise.all(
-      chatMessages.map((x) => ChatMessage.parseAsync(x))
-    );
+    if (isBookmarked !== undefined)
+      query = query.where("isBookmarked", "=", isBookmarked);
+    if (afterId !== undefined) {
+      const op = order === "asc" ? ">" : "<";
+      query = query.where("id", op, afterId);
+    }
+    return await query.orderBy("id", order).limit(limit).selectAll().execute();
   }
 
   async listForAiChatHistory(chatId: ChatId) {

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { IdempotencyKey, JsonValue, type zInfer } from "./common";
+import { IdempotencyKey, JsonValue, type zInfer, type zInput } from "./common";
 import { UserId } from "./user";
 
 export const ChatId = z.string().uuid();
@@ -60,10 +60,20 @@ export const StartChat = z.object({
 export type StartChat = zInfer<typeof StartChat>;
 
 export const ListChatMessages = z.object({
-  chatId: ChatId,
   role: ChatRole.optional(),
+  isBookmarked: z.boolean().optional(),
+  options: z.object({
+    scope: z.discriminatedUnion("by", [
+      z.object({ by: z.literal("user"), userId: UserId }),
+      z.object({ by: z.literal("chat"), chatId: ChatId }),
+    ]),
+    order: z.enum(["asc", "desc"]).optional().default("asc"),
+    limit: z.number().int().min(1).max(100).optional().default(20),
+    afterId: ChatMessageId.optional(),
+  }),
 });
 export type ListChatMessages = zInfer<typeof ListChatMessages>;
+export type ListChatMessagesInput = zInput<typeof ListChatMessages>;
 
 export const UpdateChatMessage = z.object({
   chatMessageId: ChatMessageId,

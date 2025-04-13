@@ -1,5 +1,5 @@
 import { z } from "zod";
-import type { zInfer } from "./common";
+import type { zInfer, zInput } from "./common";
 
 export const UserId = z.string().uuid();
 export type UserId = zInfer<typeof UserId>;
@@ -12,6 +12,7 @@ export const UserPreferences = z.object({
   themeOpacity: z.number().default(0.1),
 });
 export type UserPreferences = zInfer<typeof UserPreferences>;
+export type UserPreferencesInput = zInput<typeof UserPreferences>;
 
 export const User = z.object({
   id: UserId,
@@ -20,6 +21,3 @@ export const User = z.object({
   updatedAt: z.date(),
 });
 export type User = zInfer<typeof User>;
-
-export const UpdateUserPrefs = UserPreferences.partial();
-export type UpdateUserPrefs = zInfer<typeof UpdateUserPrefs>;

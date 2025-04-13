@@ -6,14 +6,14 @@ import {
   UpdateChat,
   UpdateChatMessage,
 } from "@/types/chat";
-import { UpdateUserPrefs } from "@/types/user";
+import { UserPreferences } from "@/types/user";
 import { procedure, router } from "../global";
 
 export const appRouter = router({
   user: router({
     me: procedure.query((opts) => opts.ctx.s.user.me(opts.ctx.userId)),
     updatePrefs: procedure
-      .input(UpdateUserPrefs)
+      .input(UserPreferences)
       .mutation((opts) =>
         opts.ctx.s.user.updatePrefs(opts.ctx.userId, opts.input)
       ),
