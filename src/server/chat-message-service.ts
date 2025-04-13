@@ -4,6 +4,7 @@ import {
   ChatMessageStatus,
   ChatRole,
   SendChatMessage,
+  UpdateChatMessage,
   type ChatMessageId,
   type ListChatMessages,
 } from "@/types/chat";
@@ -21,13 +22,13 @@ export class ChatMessageService {
   constructor(private readonly s: ServiceMap) {}
 
   async list(input: ListChatMessages): Promise<ChatMessage[]> {
-    const { chatId } = input;
-    const chatMessages = await this.s.db
+    const { chatId, role } = input;
+    let query = this.s.db
       .selectFrom("chatMessages")
       .where("chatId", "=", chatId)
-      .orderBy("id", "asc")
-      .selectAll()
-      .execute();
+      .orderBy("id", "asc");
+    if (role !== undefined) query = query.where("role", "=", role);
+    const chatMessages = await query.selectAll().execute();
     return await Promise.all(
       chatMessages.map((x) => ChatMessage.parseAsync(x))
     );
@@ -50,6 +51,18 @@ export class ChatMessageService {
       .where("id", "=", chatMessageId)
       .select(keys)
       .executeTakeFirstOrThrow(() => CHAT_MESSAGE_NOT_FOUND_ERROR);
+  }
+
+  async update(input: UpdateChatMessage) {
+    const { chatMessageId, isBookmarked } = input;
+    let query = this.s.db
+      .updateTable("chatMessages")
+      .where("id", "=", chatMessageId);
+    if (isBookmarked !== undefined) query = query.set({ isBookmarked });
+    const chatMessage = await query
+      .returningAll()
+      .executeTakeFirstOrThrow(() => CHAT_MESSAGE_NOT_FOUND_ERROR);
+    return await ChatMessage.parseAsync(chatMessage);
   }
 
   async isStaleCompleted(chatMessageId: ChatMessageId) {
