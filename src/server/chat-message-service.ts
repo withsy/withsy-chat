@@ -1,4 +1,5 @@
 import {
+  ChatId,
   ChatMessage,
   ChatMessageStatus,
   ChatRole,
@@ -31,6 +32,18 @@ export class ChatMessageService {
     return await Promise.all(
       chatMessages.map((x) => ChatMessage.parseAsync(x))
     );
+  }
+
+  async listForAiChatHistory(chatId: ChatId) {
+    return (await this.s
+      .get("db")
+      .selectFrom("chatMessages")
+      .where("chatId", "=", chatId)
+      .where("status", "=", ChatMessageStatus.enum.succeeded)
+      .where("text", "is not", null)
+      .orderBy("id", "asc")
+      .select(["role", "text"])
+      .execute()) as { role: string; text: string }[];
   }
 
   async findById(chatMessageId: ChatMessageId, keys: (keyof ChatMessage)[]) {
