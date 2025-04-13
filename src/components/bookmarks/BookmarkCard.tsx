@@ -10,19 +10,15 @@ import { BookmarkCardActions } from "./BookmarkCardActions";
 
 interface BookmarkCardProps {
   type: string;
-  model: string;
   title: string;
   chattedAt: string;
-  bookmarkedAt: string;
   content: string;
   themeColor: string;
 }
 
 export function BookmarkCard({
-  model,
   title,
   chattedAt,
-  bookmarkedAt,
   content,
   themeColor,
 }: BookmarkCardProps) {
