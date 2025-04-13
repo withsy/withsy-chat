@@ -1,7 +1,7 @@
 import { User, type UpdateUserPrefs, type UserId } from "@/types/user";
 import { TRPCError } from "@trpc/server";
 import { sql } from "kysely";
-import type { Registry } from "./global";
+import type { ServiceRegistry } from "./global";
 
 export const USER_NOT_FOUND_ERROR = new TRPCError({
   code: "NOT_FOUND",
@@ -9,10 +9,10 @@ export const USER_NOT_FOUND_ERROR = new TRPCError({
 });
 
 export class UserService {
-  constructor(private readonly r: Registry) {}
+  constructor(private readonly s: ServiceRegistry) {}
 
   async me(userId: UserId): Promise<User> {
-    const user = await this.r
+    const user = await this.s
       .get("db")
       .selectFrom("users")
       .where("id", "=", userId)
@@ -25,7 +25,7 @@ export class UserService {
     const patch = Object.fromEntries(
       Object.entries(input).filter(([_, value]) => value != null)
     );
-    const user = await this.r
+    const user = await this.s
       .get("db")
       .updateTable("users")
       .set({
@@ -38,7 +38,7 @@ export class UserService {
   }
 
   async getSeedUserId_DEV() {
-    return await this.r
+    return await this.s
       .get("db")
       .selectFrom("users")
       .orderBy("createdAt", "asc")

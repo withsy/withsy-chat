@@ -1,13 +1,17 @@
 import type { CronTask, TaskInput, TaskKey, TaskMap } from "@/types/task";
 import { run, type Runner, type TaskList } from "graphile-worker";
-import type { Pool } from "pg";
+import type { ServiceRegistry } from "./global";
 
 export class TaskService {
   private constructor(private readonly runner: Runner) {}
 
-  static async create(pool: Pool, taskMap: TaskMap, cronTasks: CronTask[]) {
+  static async create(
+    s: ServiceRegistry,
+    taskMap: TaskMap,
+    cronTasks: CronTask[]
+  ) {
     const runner = await run({
-      pgPool: pool,
+      pgPool: s.get("pool"),
       taskList: taskMap as TaskList,
       crontab: cronTasks.map(({ cron, key }) => `${cron} ${key}`).join("\n"),
     });

@@ -16,3 +16,6 @@ export const JsonValue: z.ZodType<unknown> = z.lazy(() =>
   ])
 );
 export type JsonValue = zInfer<typeof JsonValue>;
+
+export const IdempotencyKey = z.string().uuid();
+export type IdempotencyKey = zInfer<typeof IdempotencyKey>;
