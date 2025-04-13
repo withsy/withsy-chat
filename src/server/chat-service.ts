@@ -46,9 +46,10 @@ export class ChatService {
       .transaction()
       .execute(async (tx) => {
         await IdempotencyService.checkDuplicateRequest(tx, idempotencyKey);
+        const title = [...text].slice(0, 10).join("");
         const chat = await tx
           .insertInto("chats")
-          .values({ userId })
+          .values({ userId, title })
           .returningAll()
           .executeTakeFirstOrThrow();
         const { userChatMessage, modelChatMessage } =
