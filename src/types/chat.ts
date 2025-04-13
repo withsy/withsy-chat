@@ -66,6 +66,7 @@ export type StartChatResult = zInfer<typeof StartChatResult>;
 
 export const ListChatMessages = z.object({
   chatId: ChatId,
+  role: ChatRole.optional(),
 });
 export type ListChatMessages = zInfer<typeof ListChatMessages>;
 
