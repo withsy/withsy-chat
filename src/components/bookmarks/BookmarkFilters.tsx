@@ -42,7 +42,7 @@ export function BookmarkFilters({
   };
 
   return (
-    <div className="border-b pb-4">
+    <div className="pb-4">
       <div className="flex justify-between items-center mb-2">
         <h2 className="text-lg font-semibold">Filters</h2>
         <div className="flex items-center gap-2">
