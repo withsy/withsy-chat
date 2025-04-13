@@ -4,7 +4,6 @@ export function getFilteredBookmarks({
   sortOrder,
 }: {
   bookmarks: any[];
-  selectedModels: string[];
   sortBy: "chattedAt" | "bookmarkedAt";
   sortOrder: "asc" | "desc";
 }) {
