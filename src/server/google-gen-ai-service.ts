@@ -20,11 +20,17 @@ export class GoogleGenAiService {
     );
     if (!chatMessage) return;
 
-    const [{ text, chatId: userChatId }, { model, chatId: modelChatId }] =
-      await Promise.all([
-        this.s.chatMessage.findById(userChatMessageId, ["chatId", "text"]),
-        this.s.chatMessage.findById(modelChatMessageId, ["chatId", "model"]),
-      ]);
+    const [
+      { text, chatId: userChatId },
+      { model, chatId: modelChatId, parentId: modelParentId },
+    ] = await Promise.all([
+      this.s.chatMessage.findById(userChatMessageId, ["chatId", "text"]),
+      this.s.chatMessage.findById(modelChatMessageId, [
+        "chatId",
+        "model",
+        "parentId",
+      ]),
+    ]);
     if (text == null) {
       console.error(
         "User chat message text must not be null. chatMessageId:",
@@ -46,9 +52,11 @@ export class GoogleGenAiService {
       return;
     }
 
-    const msgsForHistory = await this.s.chatMessage.listForAiChatHistory(
-      userChatId
-    );
+    const msgsForHistory = await this.s.chatMessage.listForAiChatHistory({
+      modelChatId,
+      modelChatMessageId,
+      modelParentId,
+    });
     while (true) {
       const msg = msgsForHistory.at(0);
       if (!msg) break;

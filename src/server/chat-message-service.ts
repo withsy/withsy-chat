@@ -42,15 +42,52 @@ export class ChatMessageService {
     return await query.orderBy("id", order).limit(limit).selectAll().execute();
   }
 
-  async listForAiChatHistory(chatId: ChatId) {
-    return (await this.s.db
-      .selectFrom("chatMessages")
-      .where("chatId", "=", chatId)
-      .where("status", "=", ChatMessageStatus.enum.succeeded)
-      .where("text", "is not", null)
-      .orderBy("id", "asc")
-      .select(["role", "text"])
-      .execute()) as { role: string; text: string }[];
+  async listForAiChatHistory(input: {
+    modelChatId: ChatId;
+    modelChatMessageId: ChatMessageId;
+    modelParentId: ChatMessageId | null;
+  }) {
+    const { modelChatId, modelChatMessageId, modelParentId } = input;
+    // TODO: Change limit history length
+    const maxHistoryLength = 10;
+    const histories = await this.s.db.transaction().execute(async (tx) => {
+      let query = tx
+        .selectFrom("chatMessages")
+        .where("chatId", "=", modelChatId)
+        .where("status", "=", ChatMessageStatus.enum.succeeded)
+        .where("text", "is not", null)
+        .where("id", "<", modelChatMessageId);
+      if (modelParentId !== null)
+        query = query.where("parentId", "=", modelParentId);
+      query = query
+        .orderBy("id", "desc")
+        .limit(maxHistoryLength)
+        .select(["role", "text"]);
+      const histories = await query.execute();
+      if (modelParentId !== null) {
+        const remainLength = maxHistoryLength - histories.length;
+        if (remainLength > 0) {
+          const additionalHistories = await tx
+            .selectFrom("chatMessages")
+            .where("chatId", "=", modelChatId)
+            .where("status", "=", ChatMessageStatus.enum.succeeded)
+            .where("text", "is not", null)
+            .where("id", "<=", modelParentId)
+            .where("parentId", "is", null)
+            .orderBy("id", "desc")
+            .limit(remainLength)
+            .select(["role", "text"])
+            .execute();
+          histories.push(...additionalHistories);
+        }
+      }
+      return histories as {
+        role: string;
+        text: string;
+      }[];
+    });
+    histories.reverse();
+    return histories;
   }
 
   async findById(chatMessageId: ChatMessageId, keys: (keyof ChatMessage)[]) {
