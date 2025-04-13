@@ -35,23 +35,10 @@ function SidebarTooltip({
   fill,
   onClick,
 }: SidebarTooltipProps) {
-  const hoverClass = collapsed ? "hover:bg-gray-100" : "hover:bg-gray-300";
-  const className = `group relative flex items-center gap-2 no-underline ${hoverClass} px-2.5 py-2.5 rounded-md transition-colors`;
   const { isMobile, setCollapsed } = useSidebar();
   const router = useRouter();
 
-  if (id == "search" && onClick) {
-    return (
-      <button className={className} onClick={() => onClick?.(id)}>
-        <IconWithLabel
-          icon={Icon}
-          label={label}
-          collapsed={collapsed}
-          fill={fill}
-        />
-      </button>
-    );
-  }
+  const className = `group relative flex items-center gap-2 no-underline px-2.5 py-2.5 rounded-md transition-colors hover:font-bold`;
 
   const handleLinkClick = () => {
     if (isMobile) {

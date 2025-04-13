@@ -107,7 +107,13 @@ export function ThemeSettingsModal({
             </div>
           </div>
 
-          <Button onClick={handleApply} className="w-full mt-4">
+          <Button
+            onClick={handleApply}
+            className="w-full mt-4 "
+            style={{
+              backgroundColor: `rgba(${customColor}`,
+            }}
+          >
             SAVE
           </Button>
         </div>

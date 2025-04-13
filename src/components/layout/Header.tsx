@@ -14,7 +14,6 @@ export default function Header() {
   return (
     <header className="flex items-center justify-between h-16 px-4 py-1">
       <div className="flex items-center ml-auto gap-2">
-        <ArchiveButton />
         <UserDropdownMenu />
       </div>
     </header>

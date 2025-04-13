@@ -19,7 +19,7 @@ export function IconWithLabel({
     <>
       <Icon
         size={size}
-        className="group-hover:text-primary transition-colors"
+        className="group-hover:text-primary transition-colors text-gray-500"
         fill="none"
       />
       {fill && (

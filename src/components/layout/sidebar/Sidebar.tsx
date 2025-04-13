@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { useSidebar } from "@/context/SidebarContext";
 import { cn } from "@/lib/utils";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { PanelRightClose, PanelRightOpen } from "lucide-react";
 import SidebarChatList from "./SidebarChatList";
 import { SidebarTooltipGroup } from "./SidebarTooltip";
 
@@ -16,12 +16,19 @@ export default function Sidebar() {
           variant="ghost"
           size="icon"
           onClick={toggle}
-          className={cn(
-            "rounded-md",
-            collapsed ? "hover:bg-gray-100" : "hover:bg-gray-300"
-          )}
+          className={cn("rounded-md group hover:bg-transparent")}
         >
-          {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
+          {collapsed ? (
+            <PanelRightClose
+              size={16}
+              className="transition-colors group-hover:text-black text-gray-500"
+            />
+          ) : (
+            <PanelRightOpen
+              size={16}
+              className="transition-colors group-hover:text-black text-gray-500"
+            />
+          )}
         </Button>
       </div>
 
