@@ -82,7 +82,7 @@ export function BookmarkCard({
           )}
         </CardContent>
 
-        <CardFooter className="flex justify-end gap-2">
+        <CardFooter className="flex justify-end p-2">
           <BookmarkCardActions
             themeColor={themeColor}
             content={content}

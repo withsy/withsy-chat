@@ -28,17 +28,15 @@ export function BookmarkCardHeader({
       onClick={() => router.push(link)}
       className="cursor-pointer transition-colors rounded-md group"
     >
-      <div className="flex justify-between items-center gap-2">
-        <div className="flex items-center gap-2">
-          <Badge
-            style={{
-              backgroundColor: `rgb(${themeColor})`,
-            }}
-          >
-            {model}
-          </Badge>
+      <div className="flex justify-between items-start mt-1">
+        <div className="flex items-center gap-1">
+          <CardTitle className="relative group-hover:after:absolute group-hover:after:left-0 group-hover:after:bottom-0 group-hover:after:w-full group-hover:after:h-[1px] group-hover:after:bg-foreground">
+            {title}
+          </CardTitle>
+          <ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
         </div>
-        <div className="flex gap-x-3 mt-1 overflow-hidden">
+
+        <div className="flex gap-x-3 overflow-hidden">
           <BookmarkCardHeaderContext
             icon={<MessageSquareText className="w-4 h-4" />}
             date={chattedAt}
@@ -48,12 +46,6 @@ export function BookmarkCardHeader({
             date={bookmarkedAt}
           />
         </div>
-      </div>
-      <div className="flex items-center gap-1 mt-1">
-        <CardTitle className="relative group-hover:after:absolute group-hover:after:left-0 group-hover:after:bottom-0 group-hover:after:w-full group-hover:after:h-[1px] group-hover:after:bg-foreground">
-          {title}
-        </CardTitle>
-        <ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
       </div>
     </CardHeader>
   );

@@ -28,7 +28,7 @@ export function BookmarkCardActions({
 
   return (
     <TooltipProvider>
-      <div className="absolute right-2 z-10 transition-opacity flex gap-2 bg-white rounded-md p-1">
+      <div className="absolute right-2 z-10 transition-opacity flex rounded-md ">
         <Tooltip>
           <TooltipTrigger asChild>
             <Button variant="ghost" size="icon" onClick={handleCopy}>
@@ -42,7 +42,7 @@ export function BookmarkCardActions({
           <TooltipTrigger asChild>
             <Button variant="ghost" size="icon" onClick={onUnbookmark}>
               <BookmarkIcon
-                className="w-4 h-4"
+                className="w-8 h-8"
                 style={{
                   fill: `rgb(${themeColor})`,
                   color: `rgb(${themeColor})`,
