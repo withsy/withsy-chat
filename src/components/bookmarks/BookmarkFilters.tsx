@@ -52,7 +52,7 @@ export function BookmarkFilters({
             onClick={reset}
             className="flex items-center gap-1"
           >
-            <RotateCcw className="w-4 h-4" />
+            <RotateCcw className="w-4 h-4 text-gray-500" />
             Reset Filters
           </Button>
 
@@ -64,12 +64,12 @@ export function BookmarkFilters({
           >
             {isOpen ? (
               <>
-                <ChevronUp className="w-4 h-4" />
+                <ChevronUp className="w-4 h-4 text-gray-500" />
                 Hide Filters
               </>
             ) : (
               <>
-                <ChevronDown className="w-4 h-4" />
+                <ChevronDown className="w-4 h-4 text-gray-500" />
                 Show Filters
               </>
             )}
