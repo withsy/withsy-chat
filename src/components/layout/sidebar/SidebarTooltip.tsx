@@ -1,4 +1,10 @@
 import { IconWithLabel } from "@/components/IconWithLabel";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useSidebar } from "@/context/SidebarContext";
 import {
   Bookmark,
@@ -9,7 +15,7 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/router";
 
-export const datas = [
+const datas = [
   {
     id: "chat",
     icon: SquarePen,
@@ -53,62 +59,68 @@ export function SidebarTooltip({
   };
 
   return (
-    <button className={className} onClick={handleLinkClick}>
-      <IconWithLabel
-        icon={Icon}
-        label={label}
-        collapsed={true}
-        fill={fill}
-        size={size}
-      />
-    </button>
+    <TooltipProvider>
+      <Tooltip delayDuration={100}>
+        <TooltipTrigger asChild>
+          <button className={className} onClick={handleLinkClick}>
+            <IconWithLabel
+              icon={Icon}
+              label={label}
+              collapsed={true}
+              fill={fill}
+              size={size}
+            />
+          </button>
+        </TooltipTrigger>
+        <TooltipContent side="bottom" sideOffset={8}>
+          <p>{label}</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
 }
 
 export function SidebarTooltipGroup() {
-  const { isMobile, collapsed, setCollapsed, toggle } = useSidebar();
-  const iconSize = isMobile ? 28 : 24;
-
-  const handleItemClick = (id: string) => {
-    if (isMobile) {
-      setCollapsed(true);
-    }
-  };
+  const { collapsed, toggle } = useSidebar();
+  const iconSize = 24;
 
   return (
-    <div className="w-full z-50 flex flex-row justify-between items-center gap-2">
-      <div className="flex-shrink-0">
-        <div
-          onClick={toggle}
-          className="cursor-pointer rounded-md group w-9 h-9 flex items-center justify-center hover:bg-transparent"
-        >
-          {collapsed ? (
-            <PanelRightClose
-              size={iconSize}
-              className="group-hover:text-black text-gray-500"
-            />
-          ) : (
-            <PanelRightOpen
-              size={iconSize}
-              className="group-hover:text-black text-gray-500"
-            />
-          )}
-        </div>
+    <TooltipProvider>
+      <div className="flex items-center gap-2">
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button
+              onClick={toggle}
+              className="cursor-pointer rounded-md group w-9 h-9 flex items-center justify-center hover:bg-white"
+            >
+              {collapsed ? (
+                <PanelRightClose
+                  size={iconSize}
+                  className="group-hover:text-black text-gray-500"
+                />
+              ) : (
+                <PanelRightOpen
+                  size={iconSize}
+                  className="group-hover:text-black text-gray-500"
+                />
+              )}
+            </button>
+          </TooltipTrigger>
+          <TooltipContent side="bottom" sideOffset={8}>
+            <p>{collapsed ? "Expand Sidebar" : "Collapse Sidebar"}</p>
+          </TooltipContent>
+        </Tooltip>
+        {datas.map((data) => (
+          <SidebarTooltip
+            key={data.id}
+            id={data.id}
+            icon={data.icon}
+            label={data.label}
+            fill={data.fill}
+            size={iconSize}
+          />
+        ))}
       </div>
-      {!collapsed && (
-        <div className="flex flex-row items-center gap-2">
-          {datas.map((data) => (
-            <SidebarTooltip
-              id={data.id}
-              key={data.id}
-              icon={data.icon}
-              label={data.label}
-              fill={data.fill}
-              size={iconSize}
-            />
-          ))}
-        </div>
-      )}
-    </div>
+    </TooltipProvider>
   );
 }
