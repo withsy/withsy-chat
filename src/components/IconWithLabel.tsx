@@ -18,7 +18,7 @@ export function IconWithLabel({
 }: IconWithLabelProps) {
   const { userPrefs } = useSidebar();
   const { themeColor } = userPrefs;
-  const className = `transition-colors text-gray-500 hover:text-black group-hover:text-black`;
+  const className = `transition-colors hover:text-black group-hover:text-black`;
   return (
     <>
       <Icon size={size} className={className} fill="none" />

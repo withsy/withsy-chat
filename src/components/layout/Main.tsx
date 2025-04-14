@@ -8,7 +8,7 @@ type MainProps = {
 
 export default function Main({ children }: MainProps) {
   const { collapsed, isMobile, userPrefs } = useSidebar();
-  const { wideView, largeText } = userPrefs;
+  const { largeText } = userPrefs;
   const sidebarWidth = !collapsed && !isMobile ? 240 : 0;
 
   const mainStyle: React.CSSProperties = {
@@ -32,9 +32,7 @@ export default function Main({ children }: MainProps) {
           "text-sm",
           largeText && "text-base",
           "sm:text-base",
-          largeText && "sm:text-lg",
-
-          wideView ? "md:w-[95%] md:mx-auto" : "md:w-[80%] md:mx-auto"
+          largeText && "sm:text-lg"
         )}
       >
         {children}

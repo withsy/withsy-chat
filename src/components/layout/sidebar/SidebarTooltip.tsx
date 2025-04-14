@@ -82,7 +82,7 @@ export function SidebarTooltip({
 
 export function SidebarTooltipGroup() {
   const { collapsed, toggle } = useSidebar();
-  const iconSize = 24;
+  const iconSize = 20;
 
   return (
     <TooltipProvider>
@@ -96,12 +96,12 @@ export function SidebarTooltipGroup() {
               {collapsed ? (
                 <PanelRightClose
                   size={iconSize}
-                  className="group-hover:text-black text-gray-500"
+                  className="group-hover:text-black"
                 />
               ) : (
                 <PanelRightOpen
                   size={iconSize}
-                  className="group-hover:text-black text-gray-500"
+                  className="group-hover:text-black"
                 />
               )}
             </button>

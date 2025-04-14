@@ -154,7 +154,7 @@ function SidebarChatItem({
 
   return (
     <div
-      className="group relative flex items-center gap-2 no-underline px-2.5 py-2.5 rounded-md transition-colors hover:font-bold hover:bg-white cursor-pointer"
+      className="group relative flex items-center gap-2 no-underline px-2.5 py-2.5 rounded-md transition-colors hover:bg-white cursor-pointer"
       onClick={handleLinkClick}
     >
       <div className="flex items-center gap-2 flex-1">

@@ -11,12 +11,12 @@ import { useSidebar } from "@/context/SidebarContext";
 import { useState } from "react";
 
 const recommendedThemes = [
-  { name: "Dark", color: "30,30,30", opacity: 0.15 },
-  { name: "Ocean Blue", color: "0,123,255", opacity: 0.1 },
-  { name: "Cotton Pink", color: "255,105,180", opacity: 0.1 },
-  { name: "Purple", color: "128,90,213", opacity: 0.1 },
-  { name: "Sunset Orange", color: "255,87,34", opacity: 0.12 },
-  { name: "Mint Green", color: "0,200,150", opacity: 0.1 },
+  { name: "Dark", color: "30,30,30", opacity: 0.2 },
+  { name: "Ocean Blue", color: "0,123,255", opacity: 0.2 },
+  { name: "Cotton Pink", color: "255,105,180", opacity: 0.2 },
+  { name: "Purple", color: "128,90,213", opacity: 0.2 },
+  { name: "Sunset Orange", color: "255,87,34", opacity: 0.2 },
+  { name: "Mint Green", color: "0,200,150", opacity: 0.2 },
 ];
 
 export function ThemeSettingsModal({

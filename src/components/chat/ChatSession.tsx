@@ -1,11 +1,13 @@
 import { useSidebar } from "@/context/SidebarContext";
 import { trpc } from "@/lib/trpc";
+import { cn } from "@/lib/utils";
 import { ChatMessage } from "@/types/chat";
 import { skipToken } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { v4 as uuid } from "uuid";
+import ChatHeader from "./ChatHeader";
 import { ChatInputBox } from "./ChatInputBox";
 import { ChatMessageList } from "./ChatMessageList";
 
@@ -17,7 +19,7 @@ type Props = {
 
 export function ChatSession({ chatId, initialMessages, children }: Props) {
   const router = useRouter();
-  const { addChat } = useSidebar();
+  const { addChat, userPrefs } = useSidebar();
   const [messages, setMessages] = useState(initialMessages);
   const [streamMessageId, setStreamMessageId] = useState<number | null>();
   const utils = trpc.useUtils();
@@ -112,12 +114,17 @@ export function ChatSession({ chatId, initialMessages, children }: Props) {
     }
   };
   return (
-    <div className="flex flex-col h-full relative items-center">
-      <div className="flex-1 overflow-y-auto py-4 mb-[120px] w-full">
+    <div className="flex flex-col h-full relative items-center ">
+      <ChatHeader />
+      <div
+        className={cn(
+          "flex-1 overflow-y-auto mt-[50px] mb-[100px] w-full",
+          userPrefs.wideView ? "md:w-[95%] md:mx-auto" : "md:w-[80%] md:mx-auto"
+        )}
+      >
         <ChatMessageList messages={messages} />
         {children}
       </div>
-
       <div className="absolute bottom-[2vh] left-0 right-0 flex justify-center px-4">
         <ChatInputBox onSendMessage={onSendMessage} />
       </div>
