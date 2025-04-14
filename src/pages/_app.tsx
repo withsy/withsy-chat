@@ -15,12 +15,10 @@ const App: AppType = ({ Component, pageProps }: AppProps) => {
 
   return (
     <AppProviders userMe={userMe.data}>
-      <SidebarProvider userMe={userMe.data}>
-        <Layout>
-          <Component {...pageProps} />
-        </Layout>
-        <Sonner position="bottom-right" />
-      </SidebarProvider>
+      <Layout>
+        <Component {...pageProps} />
+      </Layout>
+      <Sonner position="bottom-right" />
     </AppProviders>
   );
 };
