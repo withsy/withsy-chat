@@ -30,7 +30,6 @@ export function ChatInputBox({ onSendMessage }: Props) {
   );
 
   const handleSend = () => {
-    console.log("1. send message", message);
     if (!message.trim()) return;
     onSendMessage(message);
     setMessage("");
