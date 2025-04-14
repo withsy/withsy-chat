@@ -1,6 +1,6 @@
 import { useSidebar } from "@/context/SidebarContext";
 import { trpc } from "@/lib/trpc";
-import { ChatMessage, ChatModel } from "@/types/chat";
+import { ChatMessage } from "@/types/chat";
 import { skipToken } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
