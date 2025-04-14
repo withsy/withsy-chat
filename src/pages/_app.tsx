@@ -1,3 +1,4 @@
+import { FullPageError } from "@/components/Error";
 import Layout from "@/components/layout/Layout";
 import { FullPageLoading } from "@/components/Loading";
 import AppProviders from "@/context/AppProviders";
@@ -9,10 +10,9 @@ import { Toaster as Sonner } from "sonner";
 const App: AppType = ({ Component, pageProps }: AppProps) => {
   const userMe = trpc.user.me.useQuery();
 
-  // TODO: Add loading and error page.
-
   if (userMe.isLoading) return <FullPageLoading />;
-  if (userMe.isError || !userMe.data) return <div>Error loading user</div>;
+  if (userMe.isError || !userMe.data)
+    return <FullPageError message="loading user" />;
 
   return (
     <AppProviders userMe={userMe.data}>

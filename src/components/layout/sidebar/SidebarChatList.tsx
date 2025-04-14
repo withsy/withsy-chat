@@ -1,3 +1,4 @@
+import { PartialError } from "@/components/Error";
 import { PartialLoading } from "@/components/Loading";
 import { Button } from "@/components/ui/button";
 import {
@@ -64,7 +65,8 @@ export default function SidebarChatList() {
   // TODO: Add loading and error page.
 
   if (chatsRes.isLoading) return <PartialLoading />;
-  if (chatsRes.isError || !chatsRes.data) return <div>Error loading chats</div>;
+  if (chatsRes.isError || !chatsRes.data)
+    return <PartialError message="loading chat list" />;
 
   const starreds: Chat[] = [];
   const nonStarredMap: Map<string, Chat[]> = new Map();
