@@ -10,8 +10,8 @@ import {
 } from "@/types/chat";
 import { TRPCError } from "@trpc/server";
 import type { Db, Tx } from "./db";
-import type { ServiceMap } from "./global";
 import { IdempotencyService } from "./idempotency-service";
+import type { ServiceMap } from "./service-map";
 
 export const CHAT_MESSAGE_NOT_FOUND_ERROR = new TRPCError({
   code: "NOT_FOUND",

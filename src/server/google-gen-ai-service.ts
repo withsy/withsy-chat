@@ -1,8 +1,8 @@
 import { ChatRole, type ChatChunkIndex } from "@/types/chat";
 import { type TaskInput } from "@/types/task";
 import { GoogleGenAI } from "@google/genai";
-import type { ServiceMap } from "./global";
 import { notify } from "./pg";
+import type { ServiceMap } from "./service-map";
 
 export class GoogleGenAiService {
   private ai: GoogleGenAI;

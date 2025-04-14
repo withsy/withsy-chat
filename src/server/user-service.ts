@@ -1,7 +1,7 @@
 import { UpdateUserPrefs, User, type UserId } from "@/types/user";
 import { TRPCError } from "@trpc/server";
 import { sql } from "kysely";
-import type { ServiceMap } from "./global";
+import type { ServiceMap } from "./service-map";
 
 export const USER_NOT_FOUND_ERROR = new TRPCError({
   code: "NOT_FOUND",

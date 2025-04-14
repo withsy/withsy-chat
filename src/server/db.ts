@@ -5,7 +5,7 @@ import {
   type Transaction,
 } from "kysely";
 import type { DB } from "kysely-codegen";
-import type { ServiceMap } from "./global";
+import type { ServiceMap } from "./service-map";
 
 export type Db = Kysely<DB>;
 export type Tx = Transaction<DB>;

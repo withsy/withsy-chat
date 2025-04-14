@@ -4,8 +4,8 @@ import { TRPCError } from "@trpc/server";
 import { type Updateable } from "kysely";
 import type { Chats } from "kysely-codegen";
 import { ChatMessageService } from "./chat-message-service";
-import type { ServiceMap } from "./global";
 import { IdempotencyService } from "./idempotency-service";
+import type { ServiceMap } from "./service-map";
 
 export const CHAT_NOT_FOUND_ERROR = new TRPCError({
   code: "NOT_FOUND",

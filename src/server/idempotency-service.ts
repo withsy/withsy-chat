@@ -1,7 +1,7 @@
 import type { IdempotencyKey } from "@/types/common";
 import { TRPCError } from "@trpc/server";
 import type { Db } from "./db";
-import type { ServiceMap } from "./global";
+import type { ServiceMap } from "./service-map";
 
 export const DUPLICATE_REQUEST_ERROR = new TRPCError({
   code: "CONFLICT",

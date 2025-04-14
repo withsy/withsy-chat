@@ -7,8 +7,8 @@ import {
 import type { JsonValue } from "@/types/common";
 import { PgEvent, type PgEventInput } from "@/types/task";
 import { tracked } from "@trpc/server";
-import type { ServiceMap } from "./global";
 import { listen } from "./pg";
+import type { ServiceMap } from "./service-map";
 
 export class ChatChunkService {
   constructor(private readonly s: ServiceMap) {}

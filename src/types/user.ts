@@ -1,5 +1,5 @@
 import { z } from "zod";
-import type { zInfer, zInput } from "./common";
+import type { zInfer } from "./common";
 
 export const UserId = z.string().uuid();
 export type UserId = zInfer<typeof UserId>;

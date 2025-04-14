@@ -22,6 +22,7 @@ export function createServiceRegistry<
       return true;
     },
     get(target, p: string) {
+      if (p === "then") return undefined;
       return target.get(p);
     },
   }) as unknown as TServiceMap;
