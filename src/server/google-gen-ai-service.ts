@@ -33,7 +33,7 @@ export class GoogleGenAiService {
     ]);
     if (text == null) {
       console.error(
-        "User chat message text must not be null. chatMessageId:",
+        "User chat message text must not be null. userChatMessageId:",
         userChatMessageId
       );
       return;
@@ -41,7 +41,7 @@ export class GoogleGenAiService {
 
     if (model == null) {
       console.error(
-        "Model chat message model must not be null. chatMessageId:",
+        "Model chat message model must not be null. modelChatMessageId:",
         modelChatMessageId
       );
       return;

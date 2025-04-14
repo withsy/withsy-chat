@@ -1,6 +1,6 @@
 import { useSidebar } from "@/context/SidebarContext";
 import { trpc } from "@/lib/trpc";
-import { ChatMessage } from "@/types/chat";
+import { ChatMessage, ChatModel } from "@/types/chat";
 import { skipToken } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -75,6 +75,7 @@ export function ChatSession({ chatId, initialMessages, children }: Props) {
 
   const onSendMessage = (message: string) => {
     if (chatId != null) {
+      // TODO: set model
       sendChatMessage.mutate(
         {
           chatId,
@@ -97,6 +98,7 @@ export function ChatSession({ chatId, initialMessages, children }: Props) {
         }
       );
     } else {
+      // TODO: set model
       startChat.mutate(
         { text: message, model: "gemini-2.0-flash", idempotencyKey: uuid() },
         {

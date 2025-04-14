@@ -25,7 +25,7 @@ export type UpdateChat = zInfer<typeof UpdateChat>;
 export const ChatRole = z.enum(["user", "model", "system"]);
 export type ChatRole = zInfer<typeof ChatRole>;
 
-export const ChatModel = z.enum(["gemini-2.0-flash"]);
+export const ChatModel = z.enum(["gemini-2.0-flash", "gemini-1.5-pro"]);
 export type ChatModel = zInfer<typeof ChatModel>;
 
 export const ChatMessageId = z.number().int();
