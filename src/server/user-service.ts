@@ -1,7 +1,7 @@
 import { UpdateUserPrefs, User, type UserId } from "@/types/user";
 import { TRPCError } from "@trpc/server";
 import { sql } from "kysely";
-import type { ServiceMap } from "./service-map";
+import type { Db } from "./db";
 
 export const USER_NOT_FOUND_ERROR = new TRPCError({
   code: "NOT_FOUND",
@@ -9,10 +9,10 @@ export const USER_NOT_FOUND_ERROR = new TRPCError({
 });
 
 export class UserService {
-  constructor(private readonly s: ServiceMap) {}
+  constructor(private readonly db: Db) {}
 
   async me(userId: UserId): Promise<User> {
-    const user = await this.s.db
+    const user = await this.db
       .selectFrom("users")
       .where("id", "=", userId)
       .selectAll()
@@ -24,7 +24,7 @@ export class UserService {
     const patch = Object.fromEntries(
       Object.entries(input).filter(([_, value]) => value != null)
     );
-    const user = await this.s.db
+    const user = await this.db
       .updateTable("users")
       .set({
         preferences: sql`preferences || ${patch}::jsonb`,
@@ -36,7 +36,7 @@ export class UserService {
   }
 
   async getSeedUserId_DEV() {
-    return await this.s.db
+    return await this.db
       .selectFrom("users")
       .orderBy("createdAt", "asc")
       .limit(1)

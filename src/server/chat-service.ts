@@ -4,8 +4,9 @@ import { TRPCError } from "@trpc/server";
 import { type Updateable } from "kysely";
 import type { Chats } from "kysely-codegen";
 import { ChatMessageService } from "./chat-message-service";
+import type { Db } from "./db";
 import { IdempotencyService } from "./idempotency-service";
-import type { ServiceMap } from "./service-map";
+import type { TaskService } from "./task-service";
 
 export const CHAT_NOT_FOUND_ERROR = new TRPCError({
   code: "NOT_FOUND",
@@ -13,10 +14,10 @@ export const CHAT_NOT_FOUND_ERROR = new TRPCError({
 });
 
 export class ChatService {
-  constructor(private readonly s: ServiceMap) {}
+  constructor(private readonly db: Db, private readonly task: TaskService) {}
 
   async list(userId: UserId) {
-    return await this.s.db
+    return await this.db
       .selectFrom("chats")
       .where("userId", "=", userId)
       .orderBy("createdAt", "asc")
@@ -29,7 +30,7 @@ export class ChatService {
     const updates: Updateable<Chats> = {};
     if (title !== undefined) updates.title = title;
     if (isStarred !== undefined) updates.isStarred = isStarred;
-    return await this.s.db
+    return await this.db
       .updateTable("chats")
       .set(updates)
       .where("id", "=", chatId)
@@ -39,7 +40,7 @@ export class ChatService {
 
   async start(userId: UserId, input: StartChat) {
     const { model, text, idempotencyKey } = input;
-    const { chat, userChatMessage, modelChatMessage } = await this.s.db
+    const { chat, userChatMessage, modelChatMessage } = await this.db
       .transaction()
       .execute(async (tx) => {
         await IdempotencyService.checkDuplicateRequest(tx, idempotencyKey);
@@ -61,7 +62,7 @@ export class ChatService {
           modelChatMessage,
         };
       });
-    await this.s.task.add("google_gen_ai_send_chat", {
+    await this.task.add("google_gen_ai_send_chat", {
       userChatMessageId: userChatMessage.id,
       modelChatMessageId: modelChatMessage.id,
     });

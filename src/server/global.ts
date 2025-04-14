@@ -2,22 +2,22 @@ import { initTRPC } from "@trpc/server";
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
 import "dotenv/config";
 import superjson from "superjson";
-import { initServiceMap } from "./service-map";
+import { createServiceRegistry } from "./service-registry";
 
-const s = await initServiceMap();
+const s = createServiceRegistry();
 
-export async function createContext({}: CreateNextContextOptions) {
-  // TODO: Parse auth heades.
-  const { id } = await s.user.getSeedUserId_DEV();
+export async function createTrpcContext({}: CreateNextContextOptions) {
+  // TODO: Parse auth header.
+  const { id } = await (await s.get("user")).getSeedUserId_DEV();
   return {
     s,
     userId: id,
   };
 }
 
-type Context = Awaited<ReturnType<typeof createContext>>;
+type TrpcContext = Awaited<ReturnType<typeof createTrpcContext>>;
 
-const t = initTRPC.context<Context>().create({
+export const t = initTRPC.context<TrpcContext>().create({
   transformer: superjson,
   sse: {
     maxDurationMs: 5 * 60 * 1_000, // 5 minutes
@@ -31,5 +31,5 @@ const t = initTRPC.context<Context>().create({
   },
 });
 
-export const router = t.router;
-export const procedure = t.procedure;
+export const tRouter = t.router;
+export const tProcedure = t.procedure;
