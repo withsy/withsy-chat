@@ -51,7 +51,7 @@ export default function EmptyChatView({ name = "" }: { name?: string }) {
 
   return (
     <ChatSession chatId={null} initialMessages={[]}>
-      <div className="flex flex-col items-center justify-center w-full px-4 py-8">
+      <div className="flex flex-col items-center justify-center w-full px-4 h-full">
         <h1 className="text-2xl font-semibold mb-6">
           {greeting}
           {name && `, ${name}`}
