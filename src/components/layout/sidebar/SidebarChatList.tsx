@@ -1,3 +1,4 @@
+import Loading from "@/components/Loading";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -61,7 +62,7 @@ export default function SidebarChatList() {
   };
 
   // TODO: Add loading and error page.
-  if (chatsRes.isLoading) return <div>Loading...</div>;
+  if (chatsRes.isLoading) return <Loading />;
   if (chatsRes.isError || !chatsRes.data) return <div>Error loading chats</div>;
 
   const starreds: Chat[] = [];
