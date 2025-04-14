@@ -1,14 +1,18 @@
 import { useSidebar } from "@/context/SidebarContext";
-import { Bookmark, GitBranch, ListTree } from "lucide-react";
-import { ToggleMenuItem } from "../UserDropdownMenu";
+import {
+  Bookmark,
+  ChevronsLeftRight,
+  ChevronsRightLeft,
+  GitBranch,
+  ListTree,
+} from "lucide-react";
 
 interface ChatHeaderProps {
   openDrawer: boolean;
 }
 
 export default function ChatHeader({ openDrawer }: ChatHeaderProps) {
-  const { userPrefs, isMobile, setUserPrefAndSave, userPrefLoadings } =
-    useSidebar();
+  const { userPrefs, isMobile, setUserPrefAndSave } = useSidebar();
   const { themeColor, themeOpacity } = userPrefs;
 
   const buttons = [
@@ -46,7 +50,7 @@ export default function ChatHeader({ openDrawer }: ChatHeaderProps) {
         {buttons.map(({ label, id, icon }) => (
           <button
             key={id}
-            className="flex items-center gap-1 rounded-md px-1 py-2 hover:bg-white transition text-sm font-medium "
+            className="flex items-center gap-1 rounded-md px-1 py-2 hover:bg-white transition text-sm font-medium"
             onClick={() => {
               console.log(`Toggle drawer: ${id}`);
             }}
@@ -57,16 +61,24 @@ export default function ChatHeader({ openDrawer }: ChatHeaderProps) {
         ))}
       </div>
       {!isMobile && (
-        <ToggleMenuItem
-          key="wideView"
-          id="wideView-toggle"
-          label={userPrefs["wideView"] ? "Full Width" : "Default Width"}
-          checked={userPrefs["wideView"]}
-          onChange={(v) => setUserPrefAndSave("wideView", v)}
-          disabled={userPrefLoadings["wideView"]}
-          largeText={userPrefs["largeText"]}
-          themeColor={userPrefs.themeColor}
-        />
+        <button
+          className="flex items-center gap-1 rounded-md px-1 py-2 hover:bg-white transition text-sm font-medium"
+          onClick={() => {
+            setUserPrefAndSave("wideView", !userPrefs.wideView);
+          }}
+        >
+          {userPrefs.wideView ? (
+            <>
+              <ChevronsLeftRight size={16} />
+              <span>Wide View</span>
+            </>
+          ) : (
+            <>
+              <ChevronsRightLeft size={16} />
+              <span>Default View</span>
+            </>
+          )}
+        </button>
       )}
     </div>
   );
