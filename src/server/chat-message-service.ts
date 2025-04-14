@@ -90,7 +90,10 @@ export class ChatMessageService {
     return histories;
   }
 
-  async findById(chatMessageId: ChatMessageId, keys: (keyof ChatMessage)[]) {
+  async findById<K extends keyof ChatMessage>(
+    chatMessageId: ChatMessageId,
+    keys: K[]
+  ) {
     return await this.s.db
       .selectFrom("chatMessages")
       .where("id", "=", chatMessageId)
