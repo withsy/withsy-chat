@@ -58,7 +58,7 @@ export function ToggleMenuItem({
 }: ToggleMenuItemProps) {
   const content = (
     <div className="flex items-center justify-between px-2 py-1.5 opacity-100">
-      <Label htmlFor={id} className={cn(largeText && "text-lg")}>
+      <Label htmlFor={id} className={cn(largeText && "text-lg", "px-2")}>
         {label}
       </Label>
       <Switch
@@ -113,10 +113,6 @@ export default function UserDropdownMenu() {
   const [themeModalOpen, setThemeModalOpen] = useState(false);
 
   const toggleItems = [
-    {
-      id: "wideView",
-      label: "Wide View",
-    },
     {
       id: "largeText",
       label: "Large Text",
