@@ -42,7 +42,11 @@ export function HeaderTooltipGroup() {
               )}
             </button>
           </TooltipTrigger>
-          <TooltipContent side="bottom" sideOffset={8}>
+          <TooltipContent
+            side="bottom"
+            sideOffset={8}
+            className="bg-black text-white rounded-md px-2 py-1 shadow-md"
+          >
             <p>{collapsed ? "Expand Sidebar" : "Collapse Sidebar"}</p>
           </TooltipContent>
         </Tooltip>
@@ -55,7 +59,11 @@ export function HeaderTooltipGroup() {
               <SquarePen size={iconSize} className="group-hover:text-black" />
             </button>
           </TooltipTrigger>
-          <TooltipContent side="bottom" sideOffset={8}>
+          <TooltipContent
+            side="bottom"
+            sideOffset={8}
+            className="bg-black text-white rounded-md px-2 py-1 shadow-md"
+          >
             <p>New Chat</p>
           </TooltipContent>
         </Tooltip>
