@@ -16,6 +16,7 @@ import {
 import { trpc } from "@/lib/trpc";
 import type { Chat } from "@/types/chat";
 import {
+  Bookmark,
   MoreHorizontal,
   Pencil,
   SquareMenu,
@@ -25,6 +26,7 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { SidebarTooltip } from "./SidebarTooltip";
 
 export default function SidebarChatList() {
   const utils = trpc.useUtils();
@@ -62,8 +64,6 @@ export default function SidebarChatList() {
     updateChat(chat.id, "isStarred", !chat.isStarred);
   };
 
-  // TODO: Add loading and error page.
-
   if (chatsRes.isLoading) return <PartialLoading />;
   if (chatsRes.isError || !chatsRes.data)
     return <PartialError message="loading chat list" />;
@@ -88,6 +88,13 @@ export default function SidebarChatList() {
 
   return (
     <div className="mt-4 space-y-2 ">
+      <SidebarTooltip
+        id={"saved"}
+        icon={Bookmark}
+        fill={true}
+        label={"All Saved"}
+        size={16}
+      />
       {starreds.length > 0 && (
         <div>
           <div className="py-1 px-2 mb-1 text-sm font-semibold">Starred</div>
@@ -153,7 +160,7 @@ function SidebarChatItem({
 
   return (
     <div
-      className="group relative flex items-center gap-2 no-underline px-2.5 py-2.5 rounded-md transition-colors hover:bg-white cursor-pointer"
+      className="group relative flex items-center gap-2 no-underline px-2.5 py-2 rounded-md transition-colors hover:bg-white cursor-pointer"
       onClick={handleLinkClick}
     >
       <div className="flex items-center gap-2 flex-1">

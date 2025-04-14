@@ -7,7 +7,7 @@ import { toast } from "sonner";
 
 const sortByOptions = [
   { label: "Conversation Time", value: "chattedAt" },
-  { label: "Bookmarked On", value: "bookmarkedAt" },
+  { label: "Saved On", value: "bookmarkedAt" },
 ];
 
 const sortOrderOptions = [

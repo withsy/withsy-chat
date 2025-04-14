@@ -16,7 +16,7 @@ export function BookmarkHeader({ count, themeColor }: Props) {
           color: `rgb(${themeColor})`,
         }}
       />
-      <h1 className="text-2xl font-bold">Bookmarks</h1>
+      <h1 className="text-2xl font-bold">All Saved</h1>
       <Badge
         className="px-2 py-0.5 rounded-full"
         style={{

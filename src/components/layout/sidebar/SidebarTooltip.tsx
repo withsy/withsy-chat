@@ -7,7 +7,6 @@ import {
 } from "@/components/ui/tooltip";
 import { useSidebar } from "@/context/SidebarContext";
 import {
-  Bookmark,
   PanelRightClose,
   PanelRightOpen,
   SquarePen,
@@ -21,12 +20,6 @@ const datas = [
     icon: SquarePen,
     label: "New Chat",
     fill: false,
-  },
-  {
-    id: "bookmarks",
-    icon: Bookmark,
-    label: "Bookmarks",
-    fill: true,
   },
 ];
 
@@ -45,12 +38,13 @@ export function SidebarTooltip({
   fill,
   size = 24,
 }: SidebarTooltipProps) {
-  const { isMobile, setCollapsed } = useSidebar();
+  const { isMobile, collapsed, setCollapsed } = useSidebar();
   const router = useRouter();
 
-  const className =
-    "cursor-pointer rounded-md group w-9 h-9 flex items-center justify-center hover:bg-white";
-
+  const className = `
+              group flex items-center gap-2 px-2.5 py-2 rounded-md transition-colors w-full 
+              hover:bg-white cursor-pointer
+            `;
   const handleLinkClick = () => {
     if (isMobile) {
       setCollapsed(true);
@@ -59,24 +53,15 @@ export function SidebarTooltip({
   };
 
   return (
-    <TooltipProvider>
-      <Tooltip delayDuration={100}>
-        <TooltipTrigger asChild>
-          <button className={className} onClick={handleLinkClick}>
-            <IconWithLabel
-              icon={Icon}
-              label={label}
-              collapsed={true}
-              fill={fill}
-              size={size}
-            />
-          </button>
-        </TooltipTrigger>
-        <TooltipContent side="bottom" sideOffset={8}>
-          <p>{label}</p>
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
+    <button className={className} onClick={handleLinkClick}>
+      <IconWithLabel
+        icon={Icon}
+        label={label}
+        collapsed={collapsed}
+        fill={fill}
+        size={size}
+      />
+    </button>
   );
 }
 
