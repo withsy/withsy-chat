@@ -160,7 +160,7 @@ function SidebarChatItem({
         <div className="w-5 h-5 flex items-center justify-center relative">
           <SquareMenu
             size={16}
-            className="opacity-100 group-hover:opacity-0 transition-opacity text-gray-500"
+            className="opacity-100 group-hover:opacity-0 transition-opacity"
           />
 
           <button
