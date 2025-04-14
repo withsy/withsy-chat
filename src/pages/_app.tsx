@@ -1,7 +1,6 @@
 import Layout from "@/components/layout/Layout";
-import Loading from "@/components/Loading";
+import { FullPageLoading } from "@/components/Loading";
 import AppProviders from "@/context/AppProviders";
-import { SidebarProvider } from "@/context/SidebarContext";
 import { trpc } from "@/lib/trpc";
 import "@/styles/globals.css";
 import type { AppProps, AppType } from "next/app";
@@ -11,7 +10,8 @@ const App: AppType = ({ Component, pageProps }: AppProps) => {
   const userMe = trpc.user.me.useQuery();
 
   // TODO: Add loading and error page.
-  if (userMe.isLoading) return <Loading />;
+
+  if (userMe.isLoading) return <FullPageLoading />;
   if (userMe.isError || !userMe.data) return <div>Error loading user</div>;
 
   return (
