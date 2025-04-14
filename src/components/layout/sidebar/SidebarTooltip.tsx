@@ -43,7 +43,7 @@ export function SidebarTooltip({
   const router = useRouter();
 
   const className =
-    "cursor-pointer rounded-md group w-9 h-9 flex items-center justify-center hover:bg-transparent";
+    "cursor-pointer rounded-md group w-9 h-9 flex items-center justify-center hover:bg-white";
 
   const handleLinkClick = () => {
     if (isMobile) {

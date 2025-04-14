@@ -11,7 +11,7 @@ export default function Header() {
       <div className="flex items-center gap-2">
         <button
           onClick={toggle}
-          className="cursor-pointer rounded-md group w-9 h-9 flex items-center justify-center hover:bg-transparent"
+          className="cursor-pointer rounded-md group w-9 h-9 flex items-center justify-center hover:bg-white"
         >
           {collapsed ? (
             <PanelRightClose
