@@ -90,7 +90,7 @@ export default function SidebarChatList() {
     <div className="mt-4 space-y-2 ">
       {starreds.length > 0 && (
         <div>
-          <h3 className="font-semibold px-2 py-2 rounded-md">Starred</h3>
+          <div className="py-1 px-2 mb-1 text-sm font-semibold">Starred</div>
           <div className="space-y-1 mt-1">
             {starreds.map((chat) => (
               <SidebarChatItem
