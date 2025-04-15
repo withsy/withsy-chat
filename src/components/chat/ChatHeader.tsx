@@ -94,7 +94,7 @@ export default function ChatHeader({
           ) : (
             <>
               <ChevronsRightLeft size={16} />
-              <span>Default View</span>
+              <span>Compact View</span>
             </>
           )}
         </button>
