@@ -21,6 +21,7 @@ export function ChatSession({ chatId, initialMessages, children }: Props) {
   const router = useRouter();
   const { addChat, userPrefs } = useSidebar();
   const [messages, setMessages] = useState(initialMessages);
+  const [openDrawer, setOpenDrawer] = useState(false);
   const [streamMessageId, setStreamMessageId] = useState<number | null>();
   const utils = trpc.useUtils();
   const startChat = trpc.chat.start.useMutation();

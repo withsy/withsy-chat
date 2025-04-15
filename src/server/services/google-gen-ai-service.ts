@@ -1,16 +1,15 @@
 import { ChatRole, type ChatChunkIndex } from "@/types/chat";
 import { type TaskInput } from "@/types/task";
 import { GoogleGenAI } from "@google/genai";
+import { envConfig } from "../env-config";
+import type { ServiceRegistry } from "../service-registry";
 import { notify } from "./pg";
-import type { ServiceMap } from "./service-map";
 
 export class GoogleGenAiService {
   private ai: GoogleGenAI;
 
-  constructor(private readonly s: ServiceMap) {
-    const geminiApiKey = process.env.GEMINI_API_KEY;
-    if (!geminiApiKey) throw new Error("Please set GEMINI_API_KEY env.");
-    this.ai = new GoogleGenAI({ apiKey: geminiApiKey });
+  constructor(private readonly s: ServiceRegistry) {
+    this.ai = new GoogleGenAI({ apiKey: envConfig.geminiApiKey });
   }
 
   async onSendChatTask(input: TaskInput<"google_gen_ai_send_chat">) {
