@@ -7,56 +7,48 @@ import {
   UpdateChatMessage,
 } from "@/types/chat";
 import { UpdateUserPrefs } from "@/types/user";
-import { tProcedure, tRouter } from "../global";
+import { publicProcedure, t } from "../trpc";
 
-export const trpcRouter = tRouter({
-  user: tRouter({
-    me: tProcedure.query(async (opts) =>
-      (await opts.ctx.s.get("user")).me(opts.ctx.userId)
+export const trpcRouter = t.router({
+  user: t.router({
+    me: publicProcedure.query(async (opts) =>
+      opts.ctx.s.user.me(opts.ctx.userId)
     ),
-    updatePrefs: tProcedure
+    updatePrefs: publicProcedure
       .input(UpdateUserPrefs)
       .mutation(async (opts) =>
-        (await opts.ctx.s.get("user")).updatePrefs(opts.ctx.userId, opts.input)
+        opts.ctx.s.user.updatePrefs(opts.ctx.userId, opts.input)
       ),
   }),
-  chat: tRouter({
-    list: tProcedure.query(async (opts) =>
-      (await opts.ctx.s.get("chat")).list(opts.ctx.userId)
+  chat: t.router({
+    list: publicProcedure.query(async (opts) =>
+      opts.ctx.s.chat.list(opts.ctx.userId)
     ),
-    update: tProcedure
+    update: publicProcedure
       .input(UpdateChat)
-      .mutation(async (opts) =>
-        (await opts.ctx.s.get("chat")).update(opts.input)
-      ),
-    start: tProcedure
+      .mutation(async (opts) => opts.ctx.s.chat.update(opts.input)),
+    start: publicProcedure
       .input(StartChat)
       .mutation(async (opts) =>
-        (await opts.ctx.s.get("chat")).start(opts.ctx.userId, opts.input)
+        opts.ctx.s.chat.start(opts.ctx.userId, opts.input)
       ),
   }),
-  chatMessage: tRouter({
-    list: tProcedure
+  chatMessage: t.router({
+    list: publicProcedure
       .input(ListChatMessages)
-      .query(async (opts) =>
-        (await opts.ctx.s.get("chatMessage")).list(opts.input)
-      ),
-    update: tProcedure
+      .query(async (opts) => opts.ctx.s.chatMessage.list(opts.input)),
+    update: publicProcedure
       .input(UpdateChatMessage)
-      .query(async (opts) =>
-        (await opts.ctx.s.get("chatMessage")).update(opts.input)
-      ),
-    send: tProcedure
+      .query(async (opts) => opts.ctx.s.chatMessage.update(opts.input)),
+    send: publicProcedure
       .input(SendChatMessage)
-      .mutation(async (opts) =>
-        (await opts.ctx.s.get("chatMessage")).send(opts.input)
-      ),
+      .mutation(async (opts) => opts.ctx.s.chatMessage.send(opts.input)),
   }),
-  chatChunk: tRouter({
-    receiveStream: tProcedure
+  chatChunk: t.router({
+    receiveStream: publicProcedure
       .input(ReceiveChatChunkStream)
       .subscription(async function* (opts) {
-        yield* (await opts.ctx.s.get("chatChunk")).receiveStream(opts.input);
+        yield* opts.ctx.s.chatChunk.receiveStream(opts.input);
       }),
   }),
 });

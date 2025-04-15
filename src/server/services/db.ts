@@ -5,15 +5,15 @@ import {
   type Transaction,
 } from "kysely";
 import type { DB } from "kysely-codegen";
-import type { Pool } from "pg";
+import type { ServiceRegistry } from "../service-registry";
 
 export type Db = Kysely<DB>;
 export type Tx = Transaction<DB>;
 
-export function createDb(pool: Pool) {
+export function createDb(s: ServiceRegistry) {
   return new Kysely<DB>({
     dialect: new PostgresDialect({
-      pool,
+      pool: s.pool,
     }),
     plugins: [new CamelCasePlugin()],
   });

@@ -21,6 +21,7 @@ export function ChatSession({ chatId, initialMessages, children }: Props) {
   const router = useRouter();
   const { addChat, userPrefs } = useSidebar();
   const [messages, setMessages] = useState(initialMessages);
+  const [openDrawer, setOpenDrawer] = useState(false);
   const [streamMessageId, setStreamMessageId] = useState<number | null>();
   const utils = trpc.useUtils();
   const startChat = trpc.chat.start.useMutation();
@@ -115,7 +116,7 @@ export function ChatSession({ chatId, initialMessages, children }: Props) {
   };
   return (
     <div className="flex flex-col h-full relative items-center ">
-      <ChatHeader />
+      <ChatHeader openDrawer={openDrawer} />
       <div
         className={cn(
           "flex-1 overflow-y-auto mt-[50px] mb-[100px] w-full",

@@ -9,9 +9,9 @@ import {
   type ListChatMessages,
 } from "@/types/chat";
 import { TRPCError } from "@trpc/server";
+import type { ServiceRegistry } from "../service-registry";
 import type { Db, Tx } from "./db";
 import { IdempotencyService } from "./idempotency-service";
-import type { TaskService } from "./task-service";
 
 export const CHAT_MESSAGE_NOT_FOUND_ERROR = new TRPCError({
   code: "NOT_FOUND",
@@ -19,12 +19,12 @@ export const CHAT_MESSAGE_NOT_FOUND_ERROR = new TRPCError({
 });
 
 export class ChatMessageService {
-  constructor(private readonly db: Db, private readonly task: TaskService) {}
+  constructor(private readonly s: ServiceRegistry) {}
 
   async list(input: ListChatMessages) {
     const { role, isBookmarked, options } = input;
     const { scope, afterId, order, limit } = options;
-    let query = this.db.selectFrom("chatMessages");
+    let query = this.s.db.selectFrom("chatMessages");
     if (scope.by === "user") {
       query = query
         .innerJoin("chats", "chats.id", "chatMessages.chatId")
@@ -50,7 +50,7 @@ export class ChatMessageService {
     const { modelChatId, modelChatMessageId, modelParentId } = input;
     // TODO: Change limit history length
     const maxHistoryLength = 10;
-    const histories = await this.db.transaction().execute(async (tx) => {
+    const histories = await this.s.db.transaction().execute(async (tx) => {
       let query = tx
         .selectFrom("chatMessages")
         .where("chatId", "=", modelChatId)
@@ -94,7 +94,7 @@ export class ChatMessageService {
     chatMessageId: ChatMessageId,
     keys: K[]
   ) {
-    return await this.db
+    return await this.s.db
       .selectFrom("chatMessages")
       .where("id", "=", chatMessageId)
       .select(keys)
@@ -103,7 +103,7 @@ export class ChatMessageService {
 
   async update(input: UpdateChatMessage) {
     const { chatMessageId, isBookmarked } = input;
-    let query = this.db
+    let query = this.s.db
       .updateTable("chatMessages")
       .where("id", "=", chatMessageId);
     if (isBookmarked !== undefined) query = query.set({ isBookmarked });
@@ -114,7 +114,7 @@ export class ChatMessageService {
   }
 
   async isStaleCompleted(chatMessageId: ChatMessageId) {
-    const chatMessage = await this.db
+    const chatMessage = await this.s.db
       .selectFrom("chatMessages")
       .where(({ or, and, eb }) =>
         and([
@@ -150,7 +150,7 @@ export class ChatMessageService {
   }
 
   async transitPendingToProcessing(chatMessageId: ChatMessageId) {
-    return await this.db.transaction().execute((tx) =>
+    return await this.s.db.transaction().execute((tx) =>
       ChatMessageService.transit(tx, {
         chatMessageId,
         expectStatus: "pending",
@@ -163,7 +163,7 @@ export class ChatMessageService {
     chatMessageId: ChatMessageId,
     text: string
   ) {
-    return await this.db.transaction().execute(async (tx) => {
+    return await this.s.db.transaction().execute(async (tx) => {
       await ChatMessageService.transit(tx, {
         chatMessageId,
         expectStatus: "processing",
@@ -178,7 +178,7 @@ export class ChatMessageService {
   }
 
   async transitProcessingToFailed(chatMessageId: ChatMessageId) {
-    return await this.db.transaction().execute((tx) =>
+    return await this.s.db.transaction().execute((tx) =>
       ChatMessageService.transit(tx, {
         chatMessageId,
         expectStatus: "processing",
@@ -188,7 +188,7 @@ export class ChatMessageService {
   }
 
   async onCleanupZombiesTask() {
-    const { numUpdatedRows } = await this.db
+    const { numUpdatedRows } = await this.s.db
       .updateTable("chatMessages")
       .set({ status: "failed" })
       .where("status", "=", "processing")
@@ -200,13 +200,13 @@ export class ChatMessageService {
 
   async send(input: SendChatMessage) {
     const { idempotencyKey } = input;
-    const { userChatMessage, modelChatMessage } = await this.db
+    const { userChatMessage, modelChatMessage } = await this.s.db
       .transaction()
       .execute(async (tx) => {
         await IdempotencyService.checkDuplicateRequest(tx, idempotencyKey);
         return await ChatMessageService.createPair(tx, input);
       });
-    await this.task.add("google_gen_ai_send_chat", {
+    await this.s.task.add("google_gen_ai_send_chat", {
       userChatMessageId: userChatMessage.id,
       modelChatMessageId: modelChatMessage.id,
     });

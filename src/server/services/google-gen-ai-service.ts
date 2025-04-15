@@ -1,27 +1,20 @@
 import { ChatRole, type ChatChunkIndex } from "@/types/chat";
 import { type TaskInput } from "@/types/task";
 import { GoogleGenAI } from "@google/genai";
-import type { Pool } from "pg";
-import type { ChatChunkService } from "./chat-chunk-service";
-import type { ChatMessageService } from "./chat-message-service";
+import { envConfig } from "../env-config";
+import type { ServiceRegistry } from "../service-registry";
 import { notify } from "./pg";
 
 export class GoogleGenAiService {
   private ai: GoogleGenAI;
 
-  constructor(
-    private readonly pool: Pool,
-    private readonly chatMessage: ChatMessageService,
-    private readonly chatChunk: ChatChunkService
-  ) {
-    const geminiApiKey = process.env.GEMINI_API_KEY;
-    if (!geminiApiKey) throw new Error("Please set GEMINI_API_KEY env.");
-    this.ai = new GoogleGenAI({ apiKey: geminiApiKey });
+  constructor(private readonly s: ServiceRegistry) {
+    this.ai = new GoogleGenAI({ apiKey: envConfig.geminiApiKey });
   }
 
   async onSendChatTask(input: TaskInput<"google_gen_ai_send_chat">) {
     const { userChatMessageId, modelChatMessageId } = input;
-    const chatMessage = await this.chatMessage.transitPendingToProcessing(
+    const chatMessage = await this.s.chatMessage.transitPendingToProcessing(
       modelChatMessageId
     );
     if (!chatMessage) return;
@@ -30,8 +23,8 @@ export class GoogleGenAiService {
       { text, chatId: userChatId },
       { model, chatId: modelChatId, parentId: modelParentId },
     ] = await Promise.all([
-      this.chatMessage.findById(userChatMessageId, ["chatId", "text"]),
-      this.chatMessage.findById(modelChatMessageId, [
+      this.s.chatMessage.findById(userChatMessageId, ["chatId", "text"]),
+      this.s.chatMessage.findById(modelChatMessageId, [
         "chatId",
         "model",
         "parentId",
@@ -58,7 +51,7 @@ export class GoogleGenAiService {
       return;
     }
 
-    const msgsForHistory = await this.chatMessage.listForAiChatHistory({
+    const msgsForHistory = await this.s.chatMessage.listForAiChatHistory({
       modelChatId,
       modelChatMessageId,
       modelParentId,
@@ -93,13 +86,13 @@ export class GoogleGenAiService {
               []
           ) ?? [];
 
-        await this.chatChunk.add({
+        await this.s.chatChunk.add({
           chatMessageId: modelChatMessageId,
           chunkIndex,
           rawData: chunk,
           text: texts.join(""),
         });
-        await notify(this.pool, "chat_chunk_created", {
+        await notify(this.s.pool, "chat_chunk_created", {
           status: "created",
           chatMessageId: modelChatMessageId,
           chunkIndex,
@@ -108,16 +101,16 @@ export class GoogleGenAiService {
         chunkIndex += 1;
       }
 
-      const builded = await this.chatChunk.buildText(modelChatMessageId);
-      await this.chatMessage.transitProcessingToSucceeded(
+      const builded = await this.s.chatChunk.buildText(modelChatMessageId);
+      await this.s.chatMessage.transitProcessingToSucceeded(
         modelChatMessageId,
         builded
       );
     } catch (e) {
       console.error("Google Gen AI send chat failed. error:", e);
-      await this.chatMessage.transitProcessingToFailed(modelChatMessageId);
+      await this.s.chatMessage.transitProcessingToFailed(modelChatMessageId);
     } finally {
-      await notify(this.pool, "chat_chunk_created", {
+      await notify(this.s.pool, "chat_chunk_created", {
         status: "completed",
         chatMessageId: modelChatMessageId,
       });

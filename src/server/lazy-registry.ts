@@ -1,48 +1,45 @@
-import type { MaybePromise } from "@/types/common";
-
-type FactoryMap<TDefinition extends Record<string, unknown>> = {
-  [K in keyof TDefinition]: (
-    registry: LazyRegistry<TDefinition>
-  ) => MaybePromise<TDefinition[K]>;
+export type LazyRegistryProxy<TDefinition extends Record<string, unknown>> = {
+  [K in keyof TDefinition]: TDefinition[K];
 };
 
-export class LazyRegistry<TDefinition extends Record<string, unknown>> {
-  private readonly map = new Map<
-    keyof TDefinition,
-    TDefinition[keyof TDefinition]
-  >();
-  private readonly creationStack: (keyof TDefinition)[] = [];
+export type FactoryMap<TDefinition extends Record<string, unknown>> = {
+  [K in keyof TDefinition]: (
+    registry: LazyRegistryProxy<TDefinition>
+  ) => TDefinition[K];
+};
 
-  constructor(private readonly factoryMap: FactoryMap<TDefinition>) {}
-
-  async get<K extends keyof TDefinition>(
-    key: K
-  ): Promise<MaybePromise<TDefinition[K]>> {
-    const value = this.map.get(key);
-    if (value !== undefined) return value as TDefinition[K];
-    if (!Reflect.has(this.factoryMap, key))
-      throw new Error(`Factory must exist. key: ${key.toString()}`);
-    if (this.creationStack.find((v) => v === key))
-      throw new Error(
-        `Circular dependency detected while creating. key: ${key.toString()} creation stack: ${
-          this.creationStack
-        }`
-      );
-    this.creationStack.push(key);
-    try {
-      const factory = Reflect.get(
-        this.factoryMap,
-        key
-      ) as FactoryMap<TDefinition>[K];
-      const value = await factory(this);
-      this.map.set(key, value);
-      return value;
-    } finally {
-      const last = this.creationStack.pop();
-      if (last !== key)
+export function createLazyRegistry<TDefinition extends Record<string, unknown>>(
+  factoryMap: FactoryMap<TDefinition>
+): LazyRegistryProxy<TDefinition> {
+  const factoryStack: (keyof TDefinition)[] = [];
+  const target: Partial<TDefinition> = {};
+  const proxy = new Proxy(target, {
+    set() {
+      throw new Error("Use createLazyRegistry function.");
+    },
+    get(t: typeof target, p: string) {
+      if (p === "then") return undefined;
+      if (Reflect.has(t, p)) return Reflect.get(t, p);
+      if (!Reflect.has(factoryMap, p))
+        throw new Error(`Factory must exist. property: ${p.toString()}`);
+      if (factoryStack.find((v) => v === p))
         throw new Error(
-          ` creation stack is invalid. key: ${key.toString()} last: ${last?.toString()}`
+          `Circular dependency detected while creating. property: ${p.toString()} factory stack: ${factoryStack}`
         );
-    }
-  }
+      factoryStack.push(p);
+      try {
+        const factory = Reflect.get(factoryMap, p);
+        const value = factory(proxy as LazyRegistryProxy<TDefinition>);
+        Reflect.set(t, p, value);
+        return value;
+      } finally {
+        const last = factoryStack.pop();
+        if (last !== p)
+          throw new Error(
+            ` factory stack is invalid. property: ${p.toString()} last: ${last?.toString()}`
+          );
+      }
+    },
+  });
+  return proxy as LazyRegistryProxy<TDefinition>;
 }
