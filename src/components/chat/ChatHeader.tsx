@@ -4,7 +4,6 @@ import {
   Bookmark,
   ChevronsLeftRight,
   ChevronsRightLeft,
-  EllipsisVertical,
   GitBranch,
 } from "lucide-react";
 
