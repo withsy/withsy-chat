@@ -7,9 +7,9 @@ export type UserId = zInfer<typeof UserId>;
 export const UserPreferences = z.object({
   wideView: z.boolean().default(false),
   largeText: z.boolean().default(false),
-  enterToSend: z.boolean().default(false),
+  enterToSend: z.boolean().default(true),
   themeColor: z.string().default("0,123,255"),
-  themeOpacity: z.number().default(0.1),
+  themeOpacity: z.number().default(0.2),
 });
 export type UserPreferences = zInfer<typeof UserPreferences>;
 
