@@ -24,12 +24,12 @@ export default function ChatHeader({ openDrawer }: ChatHeaderProps) {
     {
       label: "Saved",
       id: "saved-messages",
-      icon: <Bookmark size={16} />,
+      icon: <Bookmark size={16} fill={`rgb(${themeColor})`} />,
     },
     {
       label: "Branches",
       id: "message-branches",
-      icon: <GitBranch size={16} />,
+      icon: <GitBranch size={16} fill={`rgb(${themeColor})`} />,
     },
   ];
 

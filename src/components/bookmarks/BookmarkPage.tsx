@@ -1,7 +1,6 @@
 import { BookmarkCard } from "@/components/bookmarks/BookmarkCard";
 import { BookmarkFilters } from "@/components/bookmarks/BookmarkFilters";
 
-import { BookmarkHeader } from "@/components/bookmarks/BookmarkHeader";
 import { useSidebar } from "@/context/SidebarContext";
 import data from "@/data/bookmarks.json";
 import { getFilteredBookmarks } from "@/lib/filter-utils";
@@ -32,10 +31,6 @@ export default function BookmarkPage() {
 
   return (
     <div className="h-full w-full flex flex-col p-6">
-      <BookmarkHeader
-        count={`${filteredBookmarks.length}/${data.length}`}
-        themeColor={userPrefs.themeColor}
-      />
       <BookmarkFilters
         sortBy={sortBy}
         setSortBy={setSortBy}
