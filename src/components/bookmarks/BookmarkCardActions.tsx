@@ -28,7 +28,7 @@ export function BookmarkCardActions({ content, onUnsave, themeColor }: Props) {
         <Tooltip>
           <TooltipTrigger asChild>
             <Button variant="ghost" size="icon" onClick={handleCopy}>
-              <Copy className="w-4 h-4" />
+              <Copy className="w-4 h-4 text-gray-500" />
             </Button>
           </TooltipTrigger>
           <TooltipContent side="top">Copy</TooltipContent>
@@ -38,7 +38,7 @@ export function BookmarkCardActions({ content, onUnsave, themeColor }: Props) {
           <TooltipTrigger asChild>
             <Button variant="ghost" size="icon" onClick={onUnsave}>
               <BookmarkIcon
-                className="w-8 h-8"
+                className="w-8 h-8 text-gray-500"
                 style={{
                   fill: `rgb(${themeColor})`,
                 }}
