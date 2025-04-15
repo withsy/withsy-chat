@@ -3,7 +3,7 @@ import { HeaderTooltipGroup } from "./HeaderTooltip";
 
 export default function Header() {
   return (
-    <header className="flex items-center justify-between h-16 px-4 py-1 z-50">
+    <header className="flex items-center justify-between h-16 px-4 py-1 z-150">
       <HeaderTooltipGroup />
       <div className="flex items-center ml-auto gap-2">
         <UserDropdownMenu />

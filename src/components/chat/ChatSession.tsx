@@ -7,6 +7,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { v4 as uuid } from "uuid";
+import { DrawerContent } from "./ChatDrawer";
 import ChatHeader from "./ChatHeader";
 import { ChatInputBox } from "./ChatInputBox";
 import { ChatMessageList } from "./ChatMessageList";
@@ -19,9 +20,9 @@ type Props = {
 
 export function ChatSession({ chatId, initialMessages, children }: Props) {
   const router = useRouter();
-  const { addChat, userPrefs } = useSidebar();
+  const { addChat, userPrefs, isMobile } = useSidebar();
   const [messages, setMessages] = useState(initialMessages);
-  const [openDrawer, setOpenDrawer] = useState(false);
+  const [openDrawer, setOpenDrawer] = useState<string | null>(null);
   const [streamMessageId, setStreamMessageId] = useState<number | null>();
   const utils = trpc.useUtils();
   const startChat = trpc.chat.start.useMutation();
@@ -78,7 +79,6 @@ export function ChatSession({ chatId, initialMessages, children }: Props) {
 
   const onSendMessage = (message: string) => {
     if (chatId != null) {
-      // TODO: set model
       sendChatMessage.mutate(
         {
           chatId,
@@ -101,7 +101,6 @@ export function ChatSession({ chatId, initialMessages, children }: Props) {
         }
       );
     } else {
-      // TODO: set model
       startChat.mutate(
         { text: message, model: "gemini-2.0-flash", idempotencyKey: uuid() },
         {
@@ -114,21 +113,56 @@ export function ChatSession({ chatId, initialMessages, children }: Props) {
       );
     }
   };
+
   return (
-    <div className="flex flex-col h-full relative items-center ">
-      <ChatHeader openDrawer={false} />
+    <div className="flex h-full relative">
       <div
         className={cn(
-          "flex-1 overflow-y-auto mt-[50px] mb-[100px] w-full",
-          userPrefs.wideView ? "md:w-[95%] md:mx-auto" : "md:w-[80%] md:mx-auto"
+          "flex flex-col h-full relative items-center transition-all duration-300",
+          isMobile ? "w-full" : "w-[70%] w-full"
         )}
       >
-        <ChatMessageList messages={messages} />
-        {children}
+        <ChatHeader setOpenDrawer={setOpenDrawer} openDrawer={openDrawer} />
+        <div
+          className={cn(
+            "flex-1 overflow-y-auto mt-[50px] mb-[100px] w-full transition-all duration-300",
+            userPrefs.wideView
+              ? "md:w-[95%] md:mx-auto"
+              : "md:w-[80%] md:mx-auto"
+          )}
+        >
+          <ChatMessageList messages={messages} />
+          {children}
+        </div>
+        <div className="absolute bottom-[2vh] left-0 right-0 flex justify-center px-4">
+          <ChatInputBox onSendMessage={onSendMessage} />
+        </div>
       </div>
-      <div className="absolute bottom-[2vh] left-0 right-0 flex justify-center px-4">
-        <ChatInputBox onSendMessage={onSendMessage} />
-      </div>
+
+      {openDrawer &&
+        (isMobile ? (
+          <div
+            className={cn(
+              "fixed left-0 bottom-0 w-full h-[80%] z-50 bg-white rounded-t-2xl shadow-lg transition-transform duration-300",
+              openDrawer ? "translate-y-0" : "translate-y-full"
+            )}
+          >
+            <div className="p-4">
+              <button onClick={() => setOpenDrawer(null)}>Close</button>
+              <DrawerContent drawerType={openDrawer!} />
+            </div>
+          </div>
+        ) : (
+          <div
+            className={cn(
+              "h-full border-l bg-white transition-all duration-300",
+              openDrawer ? "w-[30%]" : "w-0 overflow-hidden"
+            )}
+          >
+            <button onClick={() => setOpenDrawer(null)}>Close</button>
+            <DrawerContent drawerType={openDrawer} />
+          </div>
+        ))}
     </div>
   );
 }
