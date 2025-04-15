@@ -52,19 +52,20 @@ export default function ChatHeader({
     },
   ];
 
+  const headerStyle: React.CSSProperties = {
+    backgroundColor: `rgba(${themeColor}, ${themeOpacity - 0.1})`,
+  };
+
+  if (!isMobile) {
+    headerStyle.borderTopLeftRadius = 30;
+    if (!openDrawer) {
+      headerStyle.borderTopRightRadius = 30;
+    }
+  }
   return (
     <div
       className="absolute top-0 left-0 w-full h-[50px] px-4 flex items-center justify-between"
-      style={{
-        backgroundColor: `rgba(${themeColor}, ${themeOpacity - 0.1})`,
-
-        ...(isMobile
-          ? {}
-          : {
-              borderTopLeftRadius: 30,
-              borderTopRightRadius: 30,
-            }),
-      }}
+      style={headerStyle}
     >
       <div className="flex gap-3">
         {buttons.map(({ label, id, icon }) => (
