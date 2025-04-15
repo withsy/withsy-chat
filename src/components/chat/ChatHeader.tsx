@@ -1,29 +1,35 @@
 import { useSidebar } from "@/context/SidebarContext";
-import { Bookmark, GitBranch, ListTree } from "lucide-react";
+import {
+  Bookmark,
+  ChevronsLeftRight,
+  ChevronsRightLeft,
+  GitBranch,
+  ListTree,
+} from "lucide-react";
 
 interface ChatHeaderProps {
   openDrawer: boolean;
 }
 
 export default function ChatHeader({ openDrawer }: ChatHeaderProps) {
-  const { userPrefs, isMobile } = useSidebar();
+  const { userPrefs, isMobile, setUserPrefAndSave } = useSidebar();
   const { themeColor, themeOpacity } = userPrefs;
 
   const buttons = [
     {
-      label: "Message Index",
+      label: "Index",
       id: "message-index",
       icon: <ListTree size={16} />,
     },
     {
-      label: "Saved Messages",
+      label: "Saved",
       id: "saved-messages",
-      icon: <Bookmark size={16} />,
+      icon: <Bookmark size={16} fill={`rgb(${themeColor})`} />,
     },
     {
-      label: "Message Branches",
+      label: "Branches",
       id: "message-branches",
-      icon: <GitBranch size={16} />,
+      icon: <GitBranch size={16} fill={`rgb(${themeColor})`} />,
     },
   ];
 
@@ -44,7 +50,7 @@ export default function ChatHeader({ openDrawer }: ChatHeaderProps) {
         {buttons.map(({ label, id, icon }) => (
           <button
             key={id}
-            className="flex items-center gap-1 px-3 py-1 rounded-md hover:bg-white transition text-sm font-medium"
+            className="flex items-center gap-1 rounded-md px-1 py-2 hover:bg-white transition text-sm font-medium"
             onClick={() => {
               console.log(`Toggle drawer: ${id}`);
             }}
@@ -54,6 +60,26 @@ export default function ChatHeader({ openDrawer }: ChatHeaderProps) {
           </button>
         ))}
       </div>
+      {!isMobile && (
+        <button
+          className="flex items-center gap-1 rounded-md px-1 py-2 hover:bg-white transition text-sm font-medium"
+          onClick={() => {
+            setUserPrefAndSave("wideView", !userPrefs.wideView);
+          }}
+        >
+          {userPrefs.wideView ? (
+            <>
+              <ChevronsLeftRight size={16} />
+              <span>Wide View</span>
+            </>
+          ) : (
+            <>
+              <ChevronsRightLeft size={16} />
+              <span>Default View</span>
+            </>
+          )}
+        </button>
+      )}
     </div>
   );
 }

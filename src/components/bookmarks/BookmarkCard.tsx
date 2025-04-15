@@ -23,16 +23,15 @@ export function BookmarkCard({
   themeColor,
 }: BookmarkCardProps) {
   const chatId = chattedAt;
-  const [expanded, setExpanded] = useState(false);
+  const isLongMessage = content.length > 300;
+  const [collapsed, setCollapsed] = useState(isLongMessage);
   const [bookmarked, setBookmarked] = useState(true);
   const [titleState, _setTitleState] = useState(title);
 
-  const shouldCollapse = content.length > 300;
-
   const handleToggleBookmark = () => {
     setBookmarked(false);
-    toast.info("Bookmark removed", {
-      description: "This chat has been removed from bookmarks.",
+    toast.info("Remove from Saved", {
+      description: "This chat has been removed from saved.",
     });
   };
 
@@ -50,23 +49,23 @@ export function BookmarkCard({
         <CardContent className="mt-2 space-y-3 overflow-x-auto">
           <div
             className={`transition-all overflow-hidden relative ${
-              expanded
-                ? "max-h-full"
-                : shouldCollapse
-                ? "max-h-[160px]"
+              collapsed
+                ? isLongMessage
+                  ? "max-h-[160px]"
+                  : "max-h-full"
                 : "max-h-full"
             }`}
           >
             <MarkdownBox content={content} />
-            {!expanded && shouldCollapse && (
+            {!collapsed && isLongMessage && (
               <div className="absolute bottom-0 left-0 w-full h-12 bg-gradient-to-t from-background to-transparent pointer-events-none" />
             )}
           </div>
           <div className="flex justify-center">
             <CollapseToggle
-              show={shouldCollapse}
-              collapsed={expanded}
-              setCollapsed={setExpanded}
+              show={isLongMessage}
+              collapsed={collapsed}
+              setCollapsed={setCollapsed}
             />
           </div>
         </CardContent>
@@ -75,7 +74,7 @@ export function BookmarkCard({
           <BookmarkCardActions
             themeColor={themeColor}
             content={content}
-            onUnbookmark={handleToggleBookmark}
+            onUnsave={handleToggleBookmark}
           />
         </CardFooter>
       </Card>

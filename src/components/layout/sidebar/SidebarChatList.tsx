@@ -184,9 +184,8 @@ function SidebarChatItem({
                 isStarred
                   ? {
                       fill: `rgb(${userPrefs.themeColor})`,
-                      color: `rgb(${userPrefs.themeColor})`,
                     }
-                  : { color: "#6b7280" }
+                  : {}
               }
             />
           </button>

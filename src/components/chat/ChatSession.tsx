@@ -116,7 +116,7 @@ export function ChatSession({ chatId, initialMessages, children }: Props) {
   };
   return (
     <div className="flex flex-col h-full relative items-center ">
-      <ChatHeader openDrawer={openDrawer} />
+      <ChatHeader openDrawer={false} />
       <div
         className={cn(
           "flex-1 overflow-y-auto mt-[50px] mb-[100px] w-full",

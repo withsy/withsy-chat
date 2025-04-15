@@ -10,15 +10,11 @@ import { toast } from "sonner";
 
 type Props = {
   content: string;
-  onUnbookmark: () => void;
+  onUnsave: () => void;
   themeColor: string;
 };
 
-export function BookmarkCardActions({
-  content,
-  onUnbookmark,
-  themeColor,
-}: Props) {
+export function BookmarkCardActions({ content, onUnsave, themeColor }: Props) {
   const handleCopy = async () => {
     await navigator.clipboard.writeText(content);
     toast.success("Copied!", {
@@ -32,7 +28,7 @@ export function BookmarkCardActions({
         <Tooltip>
           <TooltipTrigger asChild>
             <Button variant="ghost" size="icon" onClick={handleCopy}>
-              <Copy className="w-4 h-4 text-muted-foreground" />
+              <Copy className="w-4 h-4" />
             </Button>
           </TooltipTrigger>
           <TooltipContent side="top">Copy</TooltipContent>
@@ -40,17 +36,16 @@ export function BookmarkCardActions({
 
         <Tooltip>
           <TooltipTrigger asChild>
-            <Button variant="ghost" size="icon" onClick={onUnbookmark}>
+            <Button variant="ghost" size="icon" onClick={onUnsave}>
               <BookmarkIcon
                 className="w-8 h-8"
                 style={{
                   fill: `rgb(${themeColor})`,
-                  color: `rgb(${themeColor})`,
                 }}
               />
             </Button>
           </TooltipTrigger>
-          <TooltipContent side="top">Remove bookmark</TooltipContent>
+          <TooltipContent side="top">Unsave</TooltipContent>
         </Tooltip>
       </div>
     </TooltipProvider>

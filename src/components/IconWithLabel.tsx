@@ -28,7 +28,6 @@ export function IconWithLabel({
           className="absolute opacity-0 group-hover:opacity-100 text-black transition-all"
           style={{
             fill: `rgb(${themeColor})`,
-            color: `rgb(${themeColor})`,
           }}
         />
       )}
