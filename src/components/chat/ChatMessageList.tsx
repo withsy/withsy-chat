@@ -1,5 +1,7 @@
+import { useSidebar } from "@/context/SidebarContext";
 import type { ChatMessage } from "@/types/chat";
-import { useEffect, useRef } from "react";
+import { ChevronDown } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { ChatBubble } from "./ChatBubble";
 
 type Props = {
@@ -7,24 +9,63 @@ type Props = {
 };
 
 export function ChatMessageList({ messages }: Props) {
+  const { userPrefs } = useSidebar();
+  const { themeColor } = userPrefs;
+
   const bottomRef = useRef<HTMLDivElement | null>(null);
+  const listRef = useRef<HTMLDivElement | null>(null);
+  const [showScrollToBottom, setShowScrollToBottom] = useState(false);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "auto" });
   }, [messages]);
 
+  useEffect(() => {
+    const el = listRef.current;
+    if (!el) return;
+
+    const handleScroll = () => {
+      const threshold = 150;
+      const isScrolledUp =
+        el.scrollHeight - el.scrollTop - el.clientHeight > threshold;
+      setShowScrollToBottom(isScrolledUp);
+    };
+
+    el.addEventListener("scroll", handleScroll);
+    return () => el.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const scrollToBottom = () => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
   return (
-    <div className="space-y-12 overflow-x-hidden">
-      {messages.map((msg) =>
-        msg.role == "system" ? (
-          <div key={msg.id} className="flex justify-center my-4 py-4">
-            <span className="text-muted-foreground italic">{msg.text}</span>
-          </div>
-        ) : (
-          <ChatBubble key={msg.id} message={msg} />
-        )
+    <div className="relative h-full">
+      <div
+        ref={listRef}
+        className="space-y-12 overflow-x-hidden overflow-y-auto h-full pr-2"
+      >
+        {messages.map((msg) =>
+          msg.role == "system" ? (
+            <div key={msg.id} className="flex justify-center my-4 py-4">
+              <span className="text-muted-foreground italic">{msg.text}</span>
+            </div>
+          ) : (
+            <ChatBubble key={msg.id} message={msg} />
+          )
+        )}
+        <div ref={bottomRef} />
+      </div>
+
+      {showScrollToBottom && (
+        <button
+          onClick={scrollToBottom}
+          className={`absolute right-4 bottom-4 bg-black text-white p-2 rounded-full shadow-md transition`}
+          style={{ backgroundColor: `rgb(${themeColor})` }}
+        >
+          <ChevronDown size={16} />
+        </button>
       )}
-      <div ref={bottomRef} />
     </div>
   );
 }
