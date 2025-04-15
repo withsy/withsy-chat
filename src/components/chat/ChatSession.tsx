@@ -7,7 +7,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { v4 as uuid } from "uuid";
-import { DrawerContent } from "./ChatDrawer";
+import { ResponsiveDrawer } from "./ChatDrawer";
 import ChatHeader from "./ChatHeader";
 import { ChatInputBox } from "./ChatInputBox";
 import { ChatMessageList } from "./ChatMessageList";
@@ -138,31 +138,11 @@ export function ChatSession({ chatId, initialMessages, children }: Props) {
           <ChatInputBox onSendMessage={onSendMessage} />
         </div>
       </div>
-
-      {openDrawer &&
-        (isMobile ? (
-          <div
-            className={cn(
-              "fixed left-0 bottom-0 w-full h-[80%] z-50 bg-white rounded-t-2xl shadow-lg transition-transform duration-300",
-              openDrawer ? "translate-y-0" : "translate-y-full"
-            )}
-          >
-            <div className="p-4">
-              <button onClick={() => setOpenDrawer(null)}>Close</button>
-              <DrawerContent drawerType={openDrawer!} />
-            </div>
-          </div>
-        ) : (
-          <div
-            className={cn(
-              "h-full border-l bg-white transition-all duration-300",
-              openDrawer ? "w-[30%]" : "w-0 overflow-hidden"
-            )}
-          >
-            <button onClick={() => setOpenDrawer(null)}>Close</button>
-            <DrawerContent drawerType={openDrawer} />
-          </div>
-        ))}
+      <ResponsiveDrawer
+        openDrawer={openDrawer}
+        setOpenDrawer={setOpenDrawer}
+        isMobile={isMobile}
+      />
     </div>
   );
 }
