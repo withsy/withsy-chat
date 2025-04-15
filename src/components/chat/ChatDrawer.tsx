@@ -37,8 +37,8 @@ export const ResponsiveDrawer = ({
   return (
     <div
       className={cn(
-        "h-full border-l bg-white transition-all duration-300",
-        isDrawerOpen ? "w-[30%]" : "w-0 overflow-hidden"
+        "h-full bg-white transition-all duration-300",
+        isDrawerOpen ? "w-[30%] border-l" : "w-0 overflow-hidden"
       )}
     >
       <div className="p-4">{drawerBody}</div>
