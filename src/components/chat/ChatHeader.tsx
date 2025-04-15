@@ -24,12 +24,24 @@ export default function ChatHeader({ openDrawer }: ChatHeaderProps) {
     {
       label: "Saved",
       id: "saved-messages",
-      icon: <Bookmark size={16} fill={`rgb(${themeColor})`} />,
+      icon: (
+        <>
+          <Bookmark
+            className="group-hover:opacity-0 transition-all"
+            size={16}
+          />
+          <Bookmark
+            size={16}
+            className="absolute opacity-0 group-hover:opacity-100 transition-all"
+            fill={`rgb(${themeColor})`}
+          />
+        </>
+      ),
     },
     {
       label: "Branches",
       id: "message-branches",
-      icon: <GitBranch size={16} fill={`rgb(${themeColor})`} />,
+      icon: <GitBranch size={16} />,
     },
   ];
 
@@ -50,7 +62,7 @@ export default function ChatHeader({ openDrawer }: ChatHeaderProps) {
         {buttons.map(({ label, id, icon }) => (
           <button
             key={id}
-            className="flex items-center gap-1 rounded-md px-1 py-2 hover:bg-white transition text-sm font-medium"
+            className="group flex items-center gap-1 rounded-md px-1 py-2 hover:bg-white transition-colors text-sm font-medium"
             onClick={() => {
               console.log(`Toggle drawer: ${id}`);
             }}
@@ -62,7 +74,7 @@ export default function ChatHeader({ openDrawer }: ChatHeaderProps) {
       </div>
       {!isMobile && (
         <button
-          className="flex items-center gap-1 rounded-md px-1 py-2 hover:bg-white transition text-sm font-medium"
+          className="group flex items-center gap-1 rounded-md px-1 py-2 hover:bg-white transition-colors text-sm font-medium"
           onClick={() => {
             setUserPrefAndSave("wideView", !userPrefs.wideView);
           }}
