@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import clsx from "clsx";
 import { Copy } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 
 function extractTextFromElement(node: any): string {
   if (typeof node === "string") return node;
@@ -28,12 +29,16 @@ export function CodeBlock({ children, ...props }: CodeBlockProps) {
     await navigator.clipboard.writeText(rawCode.trim());
     setCopied(true);
     setTimeout(() => setCopied(false), 1500);
+
+    toast.success("Copied!", {
+      description: "Code copied to clipboard.",
+    });
   };
 
   return (
     <div className="relative rounded-md border bg-gray-100 mt-4 mb-4">
       <div className="flex justify-between items-center px-3 py-2 bg-gray-200 text-muted-foreground">
-        <span className="capitalize font-medium select-none">
+        <span className="capitalize font-medium select-none text-sm">
           {language || "code"}
         </span>
         <Button
