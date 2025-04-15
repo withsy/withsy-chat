@@ -1,8 +1,10 @@
 import { useSidebar } from "@/context/SidebarContext";
 import {
+  Archive,
   Bookmark,
   ChevronsLeftRight,
   ChevronsRightLeft,
+  EllipsisVertical,
   GitBranch,
 } from "lucide-react";
 
@@ -73,26 +75,35 @@ export default function ChatHeader({
           </button>
         ))}
       </div>
-      {!isMobile && (
+      <div className="flex gap-3">
+        {!isMobile && (
+          <button
+            className="group flex items-center gap-1 rounded-md px-1 py-2 hover:bg-white transition-colors text-sm font-medium"
+            onClick={() => {
+              setUserPrefAndSave("wideView", !userPrefs.wideView);
+            }}
+          >
+            {userPrefs.wideView ? (
+              <>
+                <ChevronsLeftRight size={16} />
+                <span>Wide View</span>
+              </>
+            ) : (
+              <>
+                <ChevronsRightLeft size={16} />
+                <span>Compact View</span>
+              </>
+            )}
+          </button>
+        )}
         <button
           className="group flex items-center gap-1 rounded-md px-1 py-2 hover:bg-white transition-colors text-sm font-medium"
-          onClick={() => {
-            setUserPrefAndSave("wideView", !userPrefs.wideView);
-          }}
+          onClick={() => {}}
         >
-          {userPrefs.wideView ? (
-            <>
-              <ChevronsLeftRight size={16} />
-              <span>Wide View</span>
-            </>
-          ) : (
-            <>
-              <ChevronsRightLeft size={16} />
-              <span>Compact View</span>
-            </>
-          )}
+          <Archive size={16} />
+          <span>Archive</span>
         </button>
-      )}
+      </div>
     </div>
   );
 }
