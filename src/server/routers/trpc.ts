@@ -60,7 +60,7 @@ export type TrpcRouter = typeof trpcRouter;
 
 export const trpcHandler = trpcNext.createNextApiHandler({
   router: trpcRouter,
-  createContext: async ({ req }: CreateNextContextOptions) => {
+  createContext: async ({}: CreateNextContextOptions) => {
     return await createApiContext();
   },
   onError: (opts) => {

@@ -1,7 +1,6 @@
 import { ChatRole, type ChatChunkIndex } from "@/types/chat";
 import { type TaskInput } from "@/types/task";
 import { GoogleGenAI, type Part } from "@google/genai";
-import fs from "node:fs";
 import { envConfig } from "../env-config";
 import type { ServiceRegistry } from "../service-registry";
 import { notify } from "./pg";
