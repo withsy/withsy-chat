@@ -1,3 +1,4 @@
+import type { TrpcRouter } from "@/server/routers/trpc";
 import {
   httpBatchLink,
   httpSubscriptionLink,
@@ -5,12 +6,7 @@ import {
   splitLink,
 } from "@trpc/client";
 import { createTRPCNext } from "@trpc/next";
-import type { inferRouterInputs, inferRouterOutputs } from "@trpc/server";
 import superjson from "superjson";
-import type { AppRouter } from "../server/routers/_app";
-
-export type RouterInput = inferRouterInputs<AppRouter>;
-export type RouterOutput = inferRouterOutputs<AppRouter>;
 
 /**
  * If you want to use SSR, you need to use the server's full URL
@@ -34,7 +30,7 @@ function getUrl() {
   return `${getBaseUrl()}/api/trpc`;
 }
 
-export const trpc = createTRPCNext<AppRouter>({
+export const trpc = createTRPCNext<TrpcRouter>({
   transformer: superjson,
   config() {
     return {

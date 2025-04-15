@@ -7,11 +7,11 @@ import {
 import type { JsonValue } from "@/types/common";
 import { PgEvent, type PgEventInput } from "@/types/task";
 import { tracked } from "@trpc/server";
+import type { ServiceRegistry } from "../service-registry";
 import { listen } from "./pg";
-import type { ServiceMap } from "./service-map";
 
 export class ChatChunkService {
-  constructor(private readonly s: ServiceMap) {}
+  constructor(private readonly s: ServiceRegistry) {}
 
   async add(input: {
     chatMessageId: ChatMessageId;

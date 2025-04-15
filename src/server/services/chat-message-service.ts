@@ -9,9 +9,9 @@ import {
   type ListChatMessages,
 } from "@/types/chat";
 import { TRPCError } from "@trpc/server";
+import type { ServiceRegistry } from "../service-registry";
 import type { Db, Tx } from "./db";
 import { IdempotencyService } from "./idempotency-service";
-import type { ServiceMap } from "./service-map";
 
 export const CHAT_MESSAGE_NOT_FOUND_ERROR = new TRPCError({
   code: "NOT_FOUND",
@@ -19,7 +19,7 @@ export const CHAT_MESSAGE_NOT_FOUND_ERROR = new TRPCError({
 });
 
 export class ChatMessageService {
-  constructor(private readonly s: ServiceMap) {}
+  constructor(private readonly s: ServiceRegistry) {}
 
   async list(input: ListChatMessages) {
     const { role, isBookmarked, options } = input;

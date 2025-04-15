@@ -1,29 +1,41 @@
-class ServiceRegistry<TServiceMap extends Record<string, unknown>> {
-  private data = new Map<keyof TServiceMap, unknown>();
+import type { Pool } from "pg";
+import { createLazyRegistry, type LazyRegistryProxy } from "./lazy-registry";
+import { ChatChunkService } from "./services/chat-chunk-service";
+import { ChatMessageService } from "./services/chat-message-service";
+import { ChatService } from "./services/chat-service";
+import { createDb, type Db } from "./services/db";
+import { GoogleGenAiService } from "./services/google-gen-ai-service";
+import { IdempotencyService } from "./services/idempotency-service";
+import { createPool } from "./services/pg";
+import { TaskService } from "./services/task-service";
+import { UserService } from "./services/user-service";
 
-  set<K extends keyof TServiceMap>(key: K, value: TServiceMap[K]) {
-    if (this.data.has(key)) throw new Error(`${String(key)} already exists.`);
-    this.data.set(key, value);
-  }
+type ServiceDefinition = {
+  pool: Pool;
+  db: Db;
+  user: UserService;
+  chat: ChatService;
+  chatMessage: ChatMessageService;
+  chatChunk: ChatChunkService;
+  googleGenAi: GoogleGenAiService;
+  task: TaskService;
+  idempotency: IdempotencyService;
+};
 
-  get<K extends keyof TServiceMap>(key: K): TServiceMap[K] {
-    const value = this.data.get(key);
-    if (value === undefined) throw new Error(`${String(key)} does not exist.`);
-    return value as TServiceMap[K];
-  }
+export type ServiceRegistry = LazyRegistryProxy<ServiceDefinition>;
+
+function createServiceRegistry() {
+  return createLazyRegistry<ServiceDefinition>({
+    pool: () => createPool(),
+    db: (s) => createDb(s),
+    user: (s) => new UserService(s),
+    chat: (s) => new ChatService(s),
+    chatMessage: (s) => new ChatMessageService(s),
+    chatChunk: (s) => new ChatChunkService(s),
+    googleGenAi: (s) => new GoogleGenAiService(s),
+    idempotency: (s) => new IdempotencyService(s),
+    task: (s) => new TaskService(s),
+  });
 }
 
-export function createServiceRegistry<
-  TServiceMap extends Record<string, unknown>
->() {
-  return new Proxy(new ServiceRegistry<TServiceMap>(), {
-    set(target, p: string, newValue) {
-      target.set(p, newValue);
-      return true;
-    },
-    get(target, p: string) {
-      if (p === "then") return undefined;
-      return target.get(p);
-    },
-  }) as unknown as TServiceMap;
-}
+export const s = createServiceRegistry();

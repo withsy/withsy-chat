@@ -3,9 +3,9 @@ import type { UserId } from "@/types/user";
 import { TRPCError } from "@trpc/server";
 import { type Updateable } from "kysely";
 import type { Chats } from "kysely-codegen";
+import type { ServiceRegistry } from "../service-registry";
 import { ChatMessageService } from "./chat-message-service";
 import { IdempotencyService } from "./idempotency-service";
-import type { ServiceMap } from "./service-map";
 
 export const CHAT_NOT_FOUND_ERROR = new TRPCError({
   code: "NOT_FOUND",
@@ -13,7 +13,7 @@ export const CHAT_NOT_FOUND_ERROR = new TRPCError({
 });
 
 export class ChatService {
-  constructor(private readonly s: ServiceMap) {}
+  constructor(private readonly s: ServiceRegistry) {}
 
   async list(userId: UserId) {
     return await this.s.db

@@ -1,12 +1,11 @@
 import type { PgEventInput, PgEventKey, PgEventSchema } from "@/types/task";
 import type { MaybePromise } from "@trpc/server/unstable-core-do-not-import";
 import { type Notification, Pool } from "pg";
+import { envConfig } from "../env-config";
 
 export function createPool(): Pool {
-  const databaseUrl = process.env.DATABASE_URL;
-  if (!databaseUrl) throw new Error("Please set DATABASE_URL env.");
   const pool = new Pool({
-    connectionString: databaseUrl,
+    connectionString: envConfig.databaseUrl,
   });
 
   const onError = (e: unknown) => {
