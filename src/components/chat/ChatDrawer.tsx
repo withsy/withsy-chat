@@ -56,8 +56,6 @@ export const ResponsiveDrawer = ({
 
 function CustomDrawerContent({ drawerType }: { drawerType: string }) {
   switch (drawerType) {
-    case "message-index":
-      return <div>Message Index Content</div>;
     case "saved-messages":
       return <div>Saved Messages Content</div>;
     case "message-branches":
