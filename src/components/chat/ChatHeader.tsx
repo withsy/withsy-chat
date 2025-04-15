@@ -4,7 +4,6 @@ import {
   ChevronsLeftRight,
   ChevronsRightLeft,
   GitBranch,
-  ListTree,
 } from "lucide-react";
 
 interface ChatHeaderProps {
@@ -24,13 +23,8 @@ export default function ChatHeader({
 
   const buttons = [
     {
-      label: "Index",
-      id: "message-index",
-      icon: <ListTree size={16} />,
-    },
-    {
       label: "Saved",
-      id: "saved-messages",
+      id: "saved",
       icon: (
         <>
           <Bookmark
@@ -47,7 +41,7 @@ export default function ChatHeader({
     },
     {
       label: "Branches",
-      id: "message-branches",
+      id: "branches",
       icon: <GitBranch size={16} />,
     },
   ];

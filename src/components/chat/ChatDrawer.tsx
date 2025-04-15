@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
 import { Drawer, DrawerContent } from "../ui/drawer";
+import ChatDrawerHeader from "./ChatDrawerHeader";
 
 type ResponsiveDrawerProps = {
   openDrawer: string | null;
@@ -47,6 +48,7 @@ export const ResponsiveDrawer = ({
         }),
       }}
     >
+      <ChatDrawerHeader openDrawer={openDrawer} setOpenDrawer={setOpenDrawer} />
       <div className="p-4">{drawerBody}</div>
     </div>
   );
