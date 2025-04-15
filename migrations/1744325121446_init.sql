@@ -78,3 +78,12 @@ CREATE TABLE idempotency_keys(
   created_at timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE chat_message_files(
+  id integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  chat_message_id integer NOT NULL,
+  file_uri text NOT NULL,
+  mime_type text NOT NULL,
+  created_at timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_chat_message_files_chat_message_id FOREIGN KEY (chat_message_id) REFERENCES chat_messages(id) ON DELETE CASCADE
+);
+

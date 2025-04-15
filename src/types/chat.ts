@@ -57,6 +57,7 @@ export const StartChat = z.object({
   idempotencyKey: IdempotencyKey,
   text: z.string(),
   model: ChatModel,
+  files: z.array(z.instanceof(File)).optional(),
 });
 export type StartChat = zInfer<typeof StartChat>;
 
@@ -88,6 +89,7 @@ export const SendChatMessage = z.object({
   text: z.string(),
   model: ChatModel,
   parentId: ChatMessageId.optional(),
+  files: z.array(z.instanceof(File)).optional(),
 });
 export type SendChatMessage = zInfer<typeof SendChatMessage>;
 
@@ -109,3 +111,14 @@ export const ChatChunk = z.object({
   updatedAt: z.date(),
 });
 export type ChatChunk = zInfer<typeof ChatChunk>;
+
+export const ChatMessageFileId = z.number().int();
+export type ChatMessageFileId = zInfer<typeof ChatMessageFileId>;
+
+export const ChatMessageFile = z.object({
+  id: ChatMessageFileId,
+  chatMessageId: ChatMessageId,
+  fileUri: z.string(),
+  mimeType: z.string(),
+});
+export type ChatMessageFile = zInfer<typeof ChatMessageFile>;

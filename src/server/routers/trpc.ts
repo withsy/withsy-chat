@@ -7,6 +7,9 @@ import {
   UpdateChatMessage,
 } from "@/types/chat";
 import { UpdateUserPrefs } from "@/types/user";
+import type { CreateNextContextOptions } from "@trpc/server/adapters/next";
+import * as trpcNext from "@trpc/server/adapters/next";
+import { createApiContext } from "../api-context";
 import { publicProcedure, t } from "../trpc";
 
 export const trpcRouter = t.router({
@@ -54,3 +57,17 @@ export const trpcRouter = t.router({
 });
 
 export type TrpcRouter = typeof trpcRouter;
+
+export const trpcHandler = trpcNext.createNextApiHandler({
+  router: trpcRouter,
+  createContext: async ({ req }: CreateNextContextOptions) => {
+    return await createApiContext();
+  },
+  onError: (opts) => {
+    console.log("Trpc error occurred.", {
+      type: opts.type,
+      path: opts.path,
+      error: opts.error,
+    });
+  },
+});

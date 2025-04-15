@@ -1,5 +1,4 @@
-import { rest } from "@/server/routers/rest";
-import { handle } from "@hono/node-server/vercel";
+import { restHandler } from "@/server/routers/rest";
 import type { PageConfig } from "next";
 
 export const config: PageConfig = {
@@ -8,4 +7,4 @@ export const config: PageConfig = {
   },
 };
 
-export default handle(rest);
+export default restHandler;

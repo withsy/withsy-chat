@@ -10,7 +10,8 @@ import {
 } from "@/types/chat";
 import { TRPCError } from "@trpc/server";
 import type { ServiceRegistry } from "../service-registry";
-import type { Db, Tx } from "./db";
+import { ChatService } from "./chat-service";
+import type { Db } from "./db";
 import { IdempotencyService } from "./idempotency-service";
 
 export const CHAT_MESSAGE_NOT_FOUND_ERROR = new TRPCError({
@@ -199,26 +200,38 @@ export class ChatMessageService {
   }
 
   async send(input: SendChatMessage) {
-    const { idempotencyKey } = input;
+    const { idempotencyKey, chatId, model, text } = input;
+    const files = input.files ?? [];
+
+    const { fileInfos } = await this.s.s3.uploads({ files });
+
     const { userChatMessage, modelChatMessage } = await this.s.db
       .transaction()
       .execute(async (tx) => {
         await IdempotencyService.checkDuplicateRequest(tx, idempotencyKey);
-        return await ChatMessageService.createPair(tx, input);
+        return await ChatService.createMessageInfo(tx, {
+          chatId,
+          model,
+          text,
+          fileInfos,
+        });
       });
+
     await this.s.task.add("google_gen_ai_send_chat", {
       userChatMessageId: userChatMessage.id,
       modelChatMessageId: modelChatMessage.id,
     });
+
     return { userChatMessage, modelChatMessage };
   }
 
   static async createPair(
-    tx: Tx,
+    db: Db,
     input: Omit<SendChatMessage, "idempotencyKey">
   ) {
     const { chatId, text, model, parentId } = input;
-    const userChatMessage = await tx
+
+    const userChatMessage = await db
       .insertInto("chatMessages")
       .values({
         chatId,
@@ -229,7 +242,8 @@ export class ChatMessageService {
       })
       .returningAll()
       .executeTakeFirstOrThrow();
-    const modelChatMessage = await tx
+
+    const modelChatMessage = await db
       .insertInto("chatMessages")
       .values({
         chatId,
@@ -240,6 +254,7 @@ export class ChatMessageService {
       })
       .returningAll()
       .executeTakeFirstOrThrow();
+
     return {
       userChatMessage,
       modelChatMessage,
