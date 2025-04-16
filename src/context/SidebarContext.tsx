@@ -1,14 +1,6 @@
-import { trpc } from "@/lib/trpc";
 import type { Chat } from "@/types/chat";
-import type { UpdateUserPrefs, User, UserPreferences } from "@/types/user";
 import type { ReactNode } from "react";
 import { createContext, useContext, useEffect, useState } from "react";
-
-type UserPrefLoadings = Partial<Record<keyof UpdateUserPrefs, boolean>>;
-type SetUserPrefAndSave = <K extends keyof UpdateUserPrefs>(
-  key: K,
-  value: UpdateUserPrefs[K]
-) => void;
 
 type SidebarContextType = {
   collapsed: boolean;
@@ -17,10 +9,6 @@ type SidebarContextType = {
   hydrated: boolean;
   isMobile: boolean;
 
-  userPrefs: UserPreferences;
-  setUserPrefAndSave: SetUserPrefAndSave;
-  userPrefLoadings: UserPrefLoadings;
-
   chatList: Chat[];
   setChatList: (list: Chat[]) => void;
   addChat: (chat: Chat) => void;
@@ -28,41 +16,10 @@ type SidebarContextType = {
 
 const SidebarContext = createContext<SidebarContextType | undefined>(undefined);
 
-export function SidebarProvider({
-  userMe,
-  children,
-}: {
-  userMe: User;
-  children: ReactNode;
-}) {
+export function SidebarProvider({ children }: { children: ReactNode }) {
   const [collapsed, setCollapsed] = useState(false);
   const [hydrated, setHydrated] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-
-  const [userPrefs, setUserPrefs] = useState(userMe.preferences);
-  const updateUserPrefs = trpc.user.updatePrefs.useMutation();
-  const [userPrefLoadings, setUserPrefLoadings] = useState<UserPrefLoadings>(
-    {}
-  );
-
-  const setUserPrefAndSave: SetUserPrefAndSave = (key, value) => {
-    const prevValue = userPrefs[key];
-
-    setUserPrefs((prev) => ({ ...prev, [key]: value }));
-    setUserPrefLoadings((prev) => ({ ...prev, [key]: true }));
-
-    updateUserPrefs.mutate(
-      { [key]: value },
-      {
-        onSettled: () => {
-          setUserPrefLoadings((prev) => ({ ...prev, [key]: false }));
-        },
-        onError: () => {
-          setUserPrefs((prev) => ({ ...prev, [key]: prevValue }));
-        },
-      }
-    );
-  };
 
   useEffect(() => {
     const saved = localStorage.getItem("sidebarCollapsed");
@@ -103,9 +60,6 @@ export function SidebarProvider({
         setCollapsed,
         hydrated,
         isMobile,
-        userPrefs,
-        setUserPrefAndSave,
-        userPrefLoadings,
         chatList,
         setChatList,
         addChat,

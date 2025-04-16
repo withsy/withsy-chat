@@ -5,7 +5,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useSidebar } from "@/context/SidebarContext";
+import { useUser } from "@/context/UserContext";
 import { cn } from "@/lib/utils";
 import { Bookmark, Copy, GitBranch, RefreshCw } from "lucide-react";
 
@@ -28,7 +28,7 @@ export const ChatBubbleTooltips: React.FC<ChatBubbleTooltipsProps> = ({
   onChangeModel,
   className,
 }) => {
-  const { userPrefs } = useSidebar();
+  const { userPrefs } = useUser();
   const { themeColor } = userPrefs;
   return (
     <TooltipProvider>

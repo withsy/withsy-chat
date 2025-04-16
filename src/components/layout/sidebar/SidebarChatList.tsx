@@ -8,6 +8,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useSidebar } from "@/context/SidebarContext";
+import { useUser } from "@/context/UserContext";
 import {
   formatDateLabel,
   toLocaleDateString,
@@ -15,6 +16,7 @@ import {
 } from "@/lib/date-utils";
 import { trpc } from "@/lib/trpc";
 import type { Chat } from "@/types/chat";
+import { skipToken } from "@tanstack/react-query";
 import {
   Bookmark,
   MoreHorizontal,
@@ -29,14 +31,17 @@ import { useEffect, useState } from "react";
 import { SidebarTooltip } from "./SidebarTooltip";
 
 export default function SidebarChatList() {
+  const { userSession } = useUser();
   const utils = trpc.useUtils();
-  const chatsRes = trpc.chat.list.useQuery();
+  const listChats = trpc.chat.list.useQuery(
+    userSession ? undefined : skipToken
+  );
   const updateChatMut = trpc.chat.update.useMutation();
   const [chats, setChats] = useState<Chat[]>([]);
 
   useEffect(() => {
-    if (chatsRes.data) setChats(chatsRes.data);
-  }, [chatsRes]);
+    if (listChats.data) setChats(listChats.data);
+  }, [listChats]);
 
   const updateChat = <K extends keyof Chat>(
     chatId: string,
@@ -64,13 +69,13 @@ export default function SidebarChatList() {
     updateChat(chat.id, "isStarred", !chat.isStarred);
   };
 
-  if (chatsRes.isLoading) return <PartialLoading />;
-  if (chatsRes.isError || !chatsRes.data)
-    return <PartialError message="loading chat list" />;
+  if (listChats.isLoading) return <PartialLoading />;
+  if (listChats.isError) return <PartialError message="loading chat list" />;
+  if (!listChats.data) return <></>;
 
   const starreds: Chat[] = [];
   const nonStarredMap: Map<string, Chat[]> = new Map();
-  chatsRes.data.forEach((chat) => {
+  listChats.data.forEach((chat) => {
     if (chat.isStarred) {
       starreds.push(chat);
     } else {
@@ -147,7 +152,8 @@ function SidebarChatItem({
   isStarred: boolean;
   onToggleStar: (chat: Chat) => void;
 }) {
-  const { isMobile, setCollapsed, userPrefs } = useSidebar();
+  const { isMobile, setCollapsed } = useSidebar();
+  const { userPrefs } = useUser();
 
   const router = useRouter();
 

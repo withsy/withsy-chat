@@ -1,4 +1,4 @@
-import { useSidebar } from "@/context/SidebarContext";
+import { useUser } from "@/context/UserContext";
 import type { ReactNode } from "react";
 import Header from "./Header";
 import Main from "./Main";
@@ -9,7 +9,7 @@ type LayoutProps = {
 };
 
 export default function Layout({ children }: LayoutProps) {
-  const { userPrefs } = useSidebar();
+  const { userPrefs } = useUser();
   const themeColor = userPrefs.themeColor;
   const themeOpacity = userPrefs.themeOpacity;
   return (

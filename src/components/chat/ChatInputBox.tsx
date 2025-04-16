@@ -6,7 +6,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useSidebar } from "@/context/SidebarContext";
+import { useUser } from "@/context/UserContext";
 import { cn } from "@/lib/utils";
 import { Send } from "lucide-react";
 import { useState } from "react";
@@ -17,7 +17,7 @@ type Props = {
 };
 
 export function ChatInputBox({ onSendMessage }: Props) {
-  const { userPrefs, setUserPrefAndSave, userPrefLoadings } = useSidebar();
+  const { userPrefs, setUserPrefAndSave, userPrefLoadings } = useUser();
   const [message, setMessage] = useState("");
   const [isComposing, setIsComposing] = useState(false);
 

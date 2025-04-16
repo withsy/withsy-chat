@@ -1,3 +1,4 @@
+import { useUser } from "@/context/UserContext";
 import { trpc } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
 import type { ChatMessage } from "@/types/chat";
@@ -13,6 +14,7 @@ type Props = {
 };
 
 export function ChatBubble({ message }: Props) {
+  const { userSession } = useUser();
   const [localMessage, setLocalMessage] = useState(message);
   const { role, text: rawText } = localMessage;
 
@@ -21,7 +23,7 @@ export function ChatBubble({ message }: Props) {
   const [collapsed, setCollapsed] = useState(role === "user" && isLongMessage);
   const displayedText = collapsed ? text.slice(0, 150) + "..." : text;
 
-  const fallbackName = role === "model" ? "AI" : "username";
+  const name = role === "model" ? "AI" : userSession?.user?.name ?? "username";
 
   const handleCopy = async () => {
     try {
@@ -88,7 +90,7 @@ export function ChatBubble({ message }: Props) {
         "flex-col gap-2"
       )}
     >
-      <ModelAvatar name={fallbackName} />
+      <ModelAvatar name={name} />
 
       <div className="flex flex-col items-start flex-1">
         <div

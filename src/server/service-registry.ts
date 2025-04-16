@@ -1,7 +1,7 @@
 import { StatusCodes } from "http-status-codes";
 import type { Pool } from "pg";
 import { envConfig } from "./env-config";
-import { HttpApiError } from "./error";
+import { HttpServerError } from "./error";
 import { createLazyRegistry, type LazyRegistryProxy } from "./lazy-registry";
 import { ChatChunkService } from "./services/chat-chunk-service";
 import { ChatMessageFileService } from "./services/chat-message-file-service";
@@ -13,12 +13,14 @@ import { IdempotencyService } from "./services/idempotency-service";
 import { MockS3Service } from "./services/mock-s3-service";
 import { createPool } from "./services/pg";
 import { TaskService } from "./services/task-service";
+import { UserLinkAccountService } from "./services/user-link-account-service";
 import { UserService } from "./services/user-service";
 
 type ServiceDefinition = {
   pool: Pool;
   db: Db;
   user: UserService;
+  userLinkAccount: UserLinkAccountService;
   chat: ChatService;
   chatMessage: ChatMessageService;
   chatMessageFile: ChatMessageFileService;
@@ -36,6 +38,7 @@ function createServiceRegistry() {
     pool: () => createPool(),
     db: (s) => createDb(s),
     user: (s) => new UserService(s),
+    userLinkAccount: (s) => new UserLinkAccountService(s),
     chat: (s) => new ChatService(s),
     chatMessage: (s) => new ChatMessageService(s),
     chatMessageFile: (s) => new ChatMessageFileService(s),
@@ -45,7 +48,7 @@ function createServiceRegistry() {
     task: (s) => new TaskService(s),
     s3: (s) => {
       if (envConfig.nodeEnv === "development") return new MockS3Service(s);
-      throw new HttpApiError(
+      throw new HttpServerError(
         StatusCodes.INTERNAL_SERVER_ERROR,
         "S3 service is not implemented."
       );
@@ -53,4 +56,4 @@ function createServiceRegistry() {
   });
 }
 
-export const s = createServiceRegistry();
+export const service = createServiceRegistry();

@@ -4,7 +4,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { Readable } from "node:stream";
 import { pipeline } from "node:stream/promises";
-import { HttpApiError, parseMessageFromUnknown } from "../error";
+import { HttpServerError, parseMessageFromUnknown } from "../error";
 import type { ServiceRegistry } from "../service-registry";
 
 export const MOCK_S3_INFO = {
@@ -12,9 +12,9 @@ export const MOCK_S3_INFO = {
   baseUrl_DEV: "http://localhost:3000",
 };
 
-export class UploadFileError extends HttpApiError<{ fileName: string }> {
+export class UploadFileError extends HttpServerError<{ fileName: string }> {
   constructor(message: string, fileName: string) {
-    super(503, message, {
+    super(StatusCodes.SERVICE_UNAVAILABLE, message, {
       extra: {
         fileName,
       },
@@ -33,9 +33,22 @@ export class MockS3Service {
     })();
   }
 
-  async uploads(input: { files: File[] }) {
+  async uploads(
+    input: { files: File[] },
+    options?: { maxUploadCount?: number }
+  ) {
     await this.init;
     const { files } = input;
+    const maxUploadCount = options?.maxUploadCount ?? 10;
+    if (files.length > maxUploadCount) {
+      throw new HttpServerError(
+        StatusCodes.BAD_REQUEST,
+        `Maximum ${maxUploadCount} file upload allowed.`
+      );
+
+      // TODO: check mime type.
+    }
+
     const fileInfos: FileInfo[] = [];
     const errors: UploadFileError[] = [];
     for (const file of files) {
@@ -82,7 +95,7 @@ export class MockS3Service {
     }
 
     if (errors.length > 0)
-      throw new HttpApiError(
+      throw new HttpServerError(
         StatusCodes.SERVICE_UNAVAILABLE,
         "File upload failed.",
         { errors }

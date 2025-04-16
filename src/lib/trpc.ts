@@ -1,4 +1,4 @@
-import type { TrpcRouter } from "@/server/routers/trpc";
+import type { TrpcRouter } from "@/server/trpc/router";
 import {
   httpBatchLink,
   httpSubscriptionLink,

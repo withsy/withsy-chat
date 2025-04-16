@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
-import { useSidebar } from "@/context/SidebarContext";
+import { useUser } from "@/context/UserContext";
 import { useState } from "react";
 
 const recommendedThemes = [
@@ -26,10 +26,8 @@ export function ThemeSettingsModal({
   open: boolean;
   onClose: () => void;
 }) {
-  const { userPrefs, setUserPrefAndSave } = useSidebar();
-  const [customColor, setCustomColor] = useState(
-    userPrefs.themeColor // TODO: || "255,255,255"
-  );
+  const { userPrefs, setUserPrefAndSave } = useUser();
+  const [customColor, setCustomColor] = useState(userPrefs.themeColor);
   const [customOpacity, setCustomOpacity] = useState(userPrefs.themeOpacity);
 
   const handleApply = () => {

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import type { zInfer } from "./common";
+import { type zInfer, type zInput } from "./common";
 
 export const UserId = z.string().uuid();
 export type UserId = zInfer<typeof UserId>;
@@ -23,3 +23,36 @@ export type User = zInfer<typeof User>;
 
 export const UpdateUserPrefs = UserPreferences.partial();
 export type UpdateUserPrefs = zInfer<typeof UpdateUserPrefs>;
+
+export const UserLinkAccountId = z.number().int();
+export type UserLinkAccountId = zInfer<typeof UserLinkAccountId>;
+
+export const UserLinkAccount = z.object({
+  id: UserLinkAccountId,
+  userId: UserId,
+  provider: z.string(),
+  providerAccountId: z.string(),
+  createdAt: z.date(),
+});
+export type UserLinkAccount = zInfer<typeof UserLinkAccount>;
+
+export const UserJwt = z.object({
+  name: z.string().nullish(),
+  email: z.string().nullish(),
+  picture: z.string().nullish(),
+  sub: z.string(),
+});
+export type UserJwt = zInfer<typeof UserJwt>;
+export type UserJwtInput = zInput<typeof UserJwt>;
+
+export const UserSession = z.object({
+  user: z.object({
+    name: z.string().nullish(),
+    email: z.string().nullish(),
+    image: z.string().nullish(),
+    id: z.string(),
+  }),
+  expires: z.string(),
+});
+export type UserSession = zInfer<typeof UserSession>;
+export type UserSessionInput = zInput<typeof UserSession>;

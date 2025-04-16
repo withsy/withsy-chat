@@ -6,7 +6,14 @@ SHELL ["/bin/bash", "-c"]
 
 RUN apt update && \
     apt install -y \
-    curl \
+    curl
+# For ngrok
+RUN curl -sSL https://ngrok-agent.s3.amazonaws.com/ngrok.asc \
+    | sudo tee /etc/apt/trusted.gpg.d/ngrok.asc >/dev/null \
+    && echo "deb https://ngrok-agent.s3.amazonaws.com buster main" \
+    | sudo tee /etc/apt/sources.list.d/ngrok.list
+RUN apt update && \
+    apt install -y \
     wget \
     unzip \
     git \
@@ -15,6 +22,7 @@ RUN apt update && \
     xdg-utils \
     # For SafeQL
     python3 \
+    ngrok \
     && apt clean && \
     rm -rf "/var/lib/apt/lists/*"
 

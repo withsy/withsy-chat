@@ -1,34 +1,34 @@
-import type { ApiErrorData, Extra } from "@/types/error";
+import type { Extra, ServerErrorData } from "@/types/error";
 import { StatusCodes, getReasonPhrase } from "http-status-codes";
 import { envConfig } from "./env-config";
 
-export type ApiErrorOptions<TExtra extends Extra = Extra> = {
+export type ServerErrorOptions<TExtra extends Extra = Extra> = {
   extra?: TExtra;
-  errors?: ApiError[];
+  errors?: ServerError[];
 };
 
-export class ApiError<
+export class ServerError<
     TExtra extends Extra = Extra,
     TCode extends number = number
   >
   extends Error
-  implements ApiErrorData
+  implements ServerErrorData
 {
   public extra?: TExtra;
-  public errors?: ApiError[];
+  public errors?: ServerError[];
 
   constructor(
     public code: TCode,
     message: string,
-    options?: ApiErrorOptions<TExtra>
+    options?: ServerErrorOptions<TExtra>
   ) {
     super(message);
     this.extra = options?.extra;
     this.errors = options?.errors;
   }
 
-  toData(): ApiErrorData {
-    const data: ApiErrorData = {
+  toData(): ServerErrorData {
+    const data: ServerErrorData = {
       code: this.code,
       name: this.name,
       message: this.message,
@@ -41,14 +41,14 @@ export class ApiError<
   }
 }
 
-export class HttpApiError<TExtra extends Extra = Extra> extends ApiError<
+export class HttpServerError<TExtra extends Extra = Extra> extends ServerError<
   TExtra,
   StatusCodes
 > {
   constructor(
     code: StatusCodes,
     message: string,
-    options?: ApiErrorOptions<TExtra>
+    options?: ServerErrorOptions<TExtra>
   ) {
     super(code, message, options);
     this.name = getReasonPhrase(code);

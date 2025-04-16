@@ -1,4 +1,5 @@
 import { useSidebar } from "@/context/SidebarContext";
+import { useUser } from "@/context/UserContext";
 import { trpc } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
 import { ChatMessage } from "@/types/chat";
@@ -20,7 +21,8 @@ type Props = {
 
 export function ChatSession({ chatId, initialMessages, children }: Props) {
   const router = useRouter();
-  const { addChat, userPrefs, isMobile } = useSidebar();
+  const { addChat, isMobile } = useSidebar();
+  const { userPrefs } = useUser();
   const [messages, setMessages] = useState(initialMessages);
   const [openDrawer, setOpenDrawer] = useState<string | null>(null);
   const [streamMessageId, setStreamMessageId] = useState<number | null>();

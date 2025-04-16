@@ -10,7 +10,7 @@ function getGreeting() {
 }
 
 export default function EmptyChatView({ name = "" }: { name?: string }) {
-  const [greeting, setGreeting] = useState(getGreeting());
+  const [greeting, setGreeting] = useState("Good day");
 
   useEffect(() => {
     const interval = setInterval(() => {

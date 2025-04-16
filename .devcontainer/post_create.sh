@@ -6,3 +6,4 @@ nvm --version
 node --version
 npm --version
 psql --version
+ngrok --version
