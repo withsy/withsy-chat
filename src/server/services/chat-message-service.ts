@@ -251,6 +251,7 @@ export class ChatMessageService {
         model,
         status: ChatMessageStatus.enum.pending,
         parentId: parentId ?? null,
+        replyToId: userChatMessage.id,
       })
       .returningAll()
       .executeTakeFirstOrThrow();
