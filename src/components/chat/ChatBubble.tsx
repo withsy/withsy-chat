@@ -4,6 +4,7 @@ import { useState } from "react";
 import { CollapseToggle } from "../CollapseToggle";
 import { MarkdownBox } from "../MarkdownBox";
 import { ModelAvatar } from "../ModelAvatar";
+import { ChatBubbleTooltips } from "./ChatBubbleTooltips";
 
 type Props = {
   message: ChatMessage;
@@ -49,12 +50,15 @@ export function ChatBubble({ message }: Props) {
         >
           <MarkdownBox content={displayedText} />
         </div>
+        <div className="flex justify-between w-full mt-2">
+          <ChatBubbleTooltips isAi={role == "model"} />
+          <CollapseToggle
+            show={isLongMessage}
+            collapsed={collapsed}
+            setCollapsed={setCollapsed}
+          />
+        </div>
       </div>
-      <CollapseToggle
-        show={isLongMessage}
-        collapsed={collapsed}
-        setCollapsed={setCollapsed}
-      />
     </div>
   );
 }
