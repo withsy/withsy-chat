@@ -6,9 +6,10 @@ import { ChatBubble } from "./ChatBubble";
 
 type Props = {
   messages: ChatMessage[];
+  onToggleSaved: (id: number, newValue: boolean) => void;
 };
 
-export function ChatMessageList({ messages }: Props) {
+export function ChatMessageList({ messages, onToggleSaved }: Props) {
   const { userPrefs } = useUser();
   const { themeColor } = userPrefs;
 
@@ -51,7 +52,11 @@ export function ChatMessageList({ messages }: Props) {
               <span className="text-muted-foreground italic">{msg.text}</span>
             </div>
           ) : (
-            <ChatBubble key={msg.id} message={msg} />
+            <ChatBubble
+              key={msg.id}
+              message={msg}
+              onToggleSaved={onToggleSaved}
+            />
           )
         )}
         <div ref={bottomRef} />

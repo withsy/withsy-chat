@@ -29,6 +29,7 @@ export function ChatSession({ chatId, initialMessages, children }: Props) {
   const utils = trpc.useUtils();
   const startChat = trpc.chat.start.useMutation();
   const sendChatMessage = trpc.chatMessage.send.useMutation();
+  const savedMessages = messages.filter((msg) => msg.isBookmarked);
 
   useEffect(() => {
     setMessages(initialMessages);
@@ -116,6 +117,38 @@ export function ChatSession({ chatId, initialMessages, children }: Props) {
     }
   };
 
+  const updateMessageMutation = trpc.chatMessage.update.useMutation();
+
+  const handleToggleSaved = (id: number, newValue: boolean) => {
+    updateMessageMutation.mutate(
+      { chatMessageId: id, isBookmarked: newValue },
+      {
+        onSuccess: () => {
+          setMessages((prev) =>
+            prev.map((msg) =>
+              msg.id === id ? { ...msg, isBookmarked: newValue } : msg
+            )
+          );
+
+          if (newValue) {
+            toast.success("Saved for later", {
+              description: "You can find it in your saved list.",
+            });
+          } else {
+            toast.success("Removed from saved", {
+              description: "It’s no longer in your saved list.",
+            });
+          }
+        },
+        onError: () => {
+          toast.error("Failed", {
+            description: "Please try again or contact support.",
+          });
+        },
+      }
+    );
+  };
+
   return (
     <div className="flex h-full relative">
       <div
@@ -133,7 +166,12 @@ export function ChatSession({ chatId, initialMessages, children }: Props) {
               : "md:w-[80%] md:mx-auto"
           )}
         >
-          {messages.length > 0 && <ChatMessageList messages={messages} />}
+          {messages.length > 0 && (
+            <ChatMessageList
+              messages={messages}
+              onToggleSaved={handleToggleSaved}
+            />
+          )}
           {children}
         </div>
         <div className="absolute bottom-[2vh] left-0 right-0 flex justify-center px-4">
@@ -144,6 +182,7 @@ export function ChatSession({ chatId, initialMessages, children }: Props) {
         openDrawer={openDrawer}
         setOpenDrawer={setOpenDrawer}
         isMobile={isMobile}
+        savedMessages={savedMessages}
       />
     </div>
   );

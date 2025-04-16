@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import type { ChatMessage } from "@/types/chat";
 import { Drawer, DrawerContent } from "../ui/drawer";
 import ChatDrawerHeader from "./ChatDrawerHeader";
 
@@ -6,14 +7,17 @@ type ResponsiveDrawerProps = {
   openDrawer: string | null;
   setOpenDrawer: (value: string | null) => void;
   isMobile: boolean;
+  bookmarkedMessages?: ChatMessage[];
 };
 
 export const ResponsiveDrawer = ({
   openDrawer,
   setOpenDrawer,
+  bookmarkedMessages,
   isMobile,
 }: ResponsiveDrawerProps) => {
   const isDrawerOpen = !!openDrawer;
+  console.log("bookmarked", bookmarkedMessages, bookmarkedMessages?.length);
 
   const drawerBody = (
     <>
