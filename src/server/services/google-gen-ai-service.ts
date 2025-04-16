@@ -124,19 +124,19 @@ export class GoogleGenAiService {
         chunkIndex += 1;
       }
 
-      const builded = await this.service.chatChunk.buildText(
+      const text = await this.service.chatChunk.buildText(
         userId,
         modelChatMessageId
       );
       await this.service.chatMessage.transitProcessingToSucceeded(userId, {
         chatMessageId: modelChatMessageId,
-        builded,
+        text,
       });
     } catch (e) {
       console.error("Google Gen AI send chat failed. error:", e);
-      await this.service.chatMessage.transitProcessingToFailed(
-        modelChatMessageId
-      );
+      await this.service.chatMessage.tryTransitProcessingToFailed(userId, {
+        chatMessageId: modelChatMessageId,
+      });
     } finally {
       await notify(this.service.pool, "chat_chunk_created", {
         status: "completed",

@@ -49,7 +49,10 @@ const chats = new Hono()
       parentId,
       files,
     });
-    const res = await serverContext.service.chatMessage.send(input);
+    const res = await serverContext.service.chatMessage.send(
+      serverContext.userId,
+      input
+    );
     return c.json(res);
   });
 

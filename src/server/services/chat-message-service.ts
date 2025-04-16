@@ -168,15 +168,13 @@ export class ChatMessageService {
 
   async update(userId: UserId, input: UpdateChatMessage) {
     const { chatMessageId, isBookmarked } = input;
-    const res = await this.service.db
+    await this.service.db
       .updateTable("chatMessages as cm")
       .innerJoin("chats as c", "c.id", "cm.chatId")
       .where("c.userId", "=", userId)
       .where("cm.id", "=", chatMessageId)
       .set({ isBookmarked })
-      .returning([])
       .executeTakeFirstOrThrow();
-    return res;
   }
 
   async isStaleCompleted(

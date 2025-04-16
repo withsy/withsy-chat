@@ -1,46 +1,37 @@
-import { UpdateUserPrefs, User, type UserId } from "@/types/user";
-import { TRPCError } from "@trpc/server";
+import { UpdateUserPrefs, type UserId } from "@/types/user";
 import { sql } from "kysely";
 import type { ServiceRegistry } from "../service-registry";
-
-export const USER_NOT_FOUND_ERROR = new TRPCError({
-  code: "NOT_FOUND",
-  message: "User not found",
-});
 
 export class UserService {
   constructor(private readonly service: ServiceRegistry) {}
 
-  async me(userId: UserId): Promise<User> {
-    const user = await this.service.db
-      .selectFrom("users")
-      .where("id", "=", userId)
-      .selectAll()
-      .executeTakeFirstOrThrow(() => USER_NOT_FOUND_ERROR);
-    return await User.parseAsync(user);
+  async prefs(userId: UserId) {
+    const { preferences } = await this.service.db
+      .selectFrom("users as u")
+      .where("u.id", "=", userId)
+      .select(["u.preferences"])
+      .executeTakeFirstOrThrow();
+    return preferences;
   }
 
-  async updatePrefs(userId: UserId, input: UpdateUserPrefs): Promise<User> {
+  async updatePrefs(userId: UserId, input: UpdateUserPrefs) {
     const patch = Object.fromEntries(
-      Object.entries(input).filter(([_, value]) => value != null)
+      Object.entries(input).filter(([_, value]) => value !== undefined)
     );
-    const user = await this.service.db
-      .updateTable("users")
-      .set({
-        preferences: sql`preferences || ${patch}::jsonb`,
-      })
-      .where("id", "=", userId)
-      .returningAll()
-      .executeTakeFirstOrThrow(() => USER_NOT_FOUND_ERROR);
-    return await User.parseAsync(user);
-  }
-
-  async getSeedUserId_DEV() {
-    return await this.service.db
-      .selectFrom("users")
-      .orderBy("createdAt", "asc")
-      .limit(1)
-      .select("id")
-      .executeTakeFirstOrThrow(() => USER_NOT_FOUND_ERROR);
+    const res = await this.service.db.transaction().execute(async (tx) => {
+      await tx
+        .selectFrom("users as u")
+        .where("u.id", "=", userId)
+        .forUpdate("u")
+        .executeTakeFirstOrThrow();
+      const res = await tx
+        .updateTable("users as u")
+        .where("u.id", "=", userId)
+        .set({ preferences: sql`preferences || ${patch} ::jsonb` })
+        .returning(["u.preferences"])
+        .executeTakeFirstOrThrow();
+      return res;
+    });
+    return res;
   }
 }

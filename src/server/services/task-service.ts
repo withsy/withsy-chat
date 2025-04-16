@@ -7,15 +7,16 @@ export class TaskService {
 
   constructor(private readonly service: ServiceRegistry) {
     const taskMap: TaskMap = {
-      google_gen_ai_send_chat: (i) => s.googleGenAi.onSendChatTask(i),
-      chat_message_cleanup_zombies: () => s.chatMessage.onCleanupZombiesTask(),
+      google_gen_ai_send_chat: (i) => service.googleGenAi.onSendChatTask(i),
+      chat_message_cleanup_zombies: () =>
+        service.chatMessage.onCleanupZombiesTask(),
     };
     const cronTasks: CronTask[] = [
       { cron: "*/5 * * * *", key: "chat_message_cleanup_zombies" },
     ];
     this.runner = (async () => {
       return await run({
-        pgPool: s.pool,
+        pgPool: service.pool,
         taskList: taskMap as TaskList,
         crontab: cronTasks.map(({ cron, key }) => `${cron} ${key}`).join("\n"),
       });

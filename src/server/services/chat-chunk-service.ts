@@ -72,7 +72,7 @@ export class ChatChunkService {
         .where("cc.chatMessageId", "=", chatMessageId)
         .where("cc.chunkIndex", ">", lastChunkIndex)
         .orderBy("cc.chunkIndex", "asc")
-        .select(["cc.text", "cc.chunkIndex"])
+        .select(["cc.text", "cc.chunkIndex", "cc.chatMessageId"])
         .execute();
       for (const chatChunk of chatChunks) {
         yield tracked(chatChunk.chunkIndex.toString(), chatChunk);
@@ -96,13 +96,17 @@ export class ChatChunkService {
               .where("c.userId", "=", userId)
               .where("cc.chatMessageId", "=", chatMessageId)
               .where("cc.chunkIndex", "=", chunkIndex)
-              .select(["cc.text", "cc.chunkIndex"])
+              .select(["cc.text", "cc.chunkIndex", "cc.chatMessageId"])
               .executeTakeFirstOrThrow();
             yield tracked(chunkIndex.toString(), chatChunk);
             lastChunkIndex = chunkIndex;
           }
         } else {
-          if (await this.service.chatMessage.isStaleCompleted(chatMessageId)) {
+          if (
+            await this.service.chatMessage.isStaleCompleted(userId, {
+              chatMessageId,
+            })
+          ) {
             return;
           }
         }

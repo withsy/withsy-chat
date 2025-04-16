@@ -14,7 +14,7 @@ import {
   toLocaleDateString,
   toNewest,
 } from "@/lib/date-utils";
-import { trpc } from "@/lib/trpc";
+import { trpc, type TrpcRouterOutput } from "@/lib/trpc";
 import type { Chat } from "@/types/chat";
 import { skipToken } from "@tanstack/react-query";
 import {
@@ -30,6 +30,8 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { SidebarTooltip } from "./SidebarTooltip";
 
+type ChatData = TrpcRouterOutput["chat"]["list"][number];
+
 export default function SidebarChatList() {
   const { userSession } = useUser();
   const utils = trpc.useUtils();
@@ -37,10 +39,11 @@ export default function SidebarChatList() {
     userSession ? undefined : skipToken
   );
   const updateChatMut = trpc.chat.update.useMutation();
-  const [chats, setChats] = useState<Chat[]>([]);
+  const [chats, setChats] = useState<ChatData[]>([]);
 
   useEffect(() => {
-    if (listChats.data) setChats(listChats.data);
+    if (!listChats.data) return;
+    setChats(listChats.data);
   }, [listChats]);
 
   const updateChat = <K extends keyof Chat>(
@@ -65,7 +68,7 @@ export default function SidebarChatList() {
     );
   };
 
-  const toggleStar = (chat: Chat) => {
+  const toggleStar = (chat: ChatData) => {
     updateChat(chat.id, "isStarred", !chat.isStarred);
   };
 
@@ -73,16 +76,15 @@ export default function SidebarChatList() {
   if (listChats.isError) return <PartialError message="loading chat list" />;
   if (!listChats.data) return <></>;
 
-  const starreds: Chat[] = [];
-  const nonStarredMap: Map<string, Chat[]> = new Map();
+  const starreds: ChatData[] = [];
+  const nonStarredMap: Map<string, ChatData[]> = new Map();
   listChats.data.forEach((chat) => {
     if (chat.isStarred) {
       starreds.push(chat);
     } else {
       const localeDateString = toLocaleDateString(chat.updatedAt);
-      if (!nonStarredMap.has(localeDateString)) {
+      if (!nonStarredMap.has(localeDateString))
         nonStarredMap.set(localeDateString, []);
-      }
       nonStarredMap.get(localeDateString)?.push(chat);
     }
   });
@@ -148,9 +150,9 @@ function SidebarChatItem({
   isStarred,
   onToggleStar,
 }: {
-  chat: Chat;
+  chat: ChatData;
   isStarred: boolean;
-  onToggleStar: (chat: Chat) => void;
+  onToggleStar: (chat: ChatData) => void;
 }) {
   const { isMobile, setCollapsed } = useSidebar();
   const { userPrefs } = useUser();

@@ -10,10 +10,10 @@ export class UserLinkAccountService {
     const { provider, providerAccountId } = input;
     return await this.service.db.transaction().execute(async (tx) => {
       const userLinkAccount = await tx
-        .selectFrom("userLinkAccounts")
-        .where("provider", "=", provider)
-        .where("providerAccountId", "=", providerAccountId)
-        .select("userId")
+        .selectFrom("userLinkAccounts as ula")
+        .where("ula.provider", "=", provider)
+        .where("ula.providerAccountId", "=", providerAccountId)
+        .select("ula.userId")
         .executeTakeFirst();
       if (userLinkAccount) return userLinkAccount;
       const user = await tx

@@ -12,21 +12,19 @@ export class ChatService {
       .selectFrom("chats as c")
       .where("c.userId", "=", userId)
       .orderBy("c.createdAt", "asc")
-      .select([])
+      .select(["c.id", "c.isStarred", "c.updatedAt", "c.title"])
       .execute();
     return rows;
   }
 
   async update(userId: UserId, input: UpdateChat) {
     const { chatId, title, isStarred } = input;
-    const res = await this.service.db
+    await this.service.db
       .updateTable("chats as c")
       .where("c.userId", "=", userId)
       .where("c.id", "=", chatId)
       .set({ title, isStarred })
-      .returning([])
       .executeTakeFirstOrThrow();
-    return res;
   }
 
   async start(userId: UserId, input: StartChat) {
