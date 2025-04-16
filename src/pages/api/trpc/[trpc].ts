@@ -1,5 +1,5 @@
-import { createApiContext } from "@/server/api-context";
-import { trpcRouter } from "@/server/routers/trpc";
+import { createServerContext } from "@/server/server-context";
+import { trpcRouter } from "@/server/trpc/router";
 import { TRPCError } from "@trpc/server";
 import type { CreateNextContextOptions } from "@trpc/server/adapters/next";
 import * as trpcNext from "@trpc/server/adapters/next";
@@ -16,7 +16,7 @@ export default trpcNext.createNextApiHandler({
         message: "Authentication failed.",
       });
 
-    return await createApiContext(session);
+    return await createServerContext(session);
   },
   onError: (opts) => {
     console.error("Trpc error occurred.", opts.type, opts.path, opts.error);

@@ -7,48 +7,50 @@ import {
   UpdateChatMessage,
 } from "@/types/chat";
 import { UpdateUserPrefs } from "@/types/user";
-import { publicProcedure, t } from "../trpc";
+import { publicProcedure, t } from "./server";
 
 export const trpcRouter = t.router({
   user: t.router({
     me: publicProcedure.query(async (opts) =>
-      opts.ctx.s.user.me(opts.ctx.userId)
+      opts.ctx.service.user.me(opts.ctx.userId)
     ),
     updatePrefs: publicProcedure
       .input(UpdateUserPrefs)
       .mutation(async (opts) =>
-        opts.ctx.s.user.updatePrefs(opts.ctx.userId, opts.input)
+        opts.ctx.service.user.updatePrefs(opts.ctx.userId, opts.input)
       ),
   }),
   chat: t.router({
     list: publicProcedure.query(async (opts) =>
-      opts.ctx.s.chat.list(opts.ctx.userId)
+      opts.ctx.service.chat.list(opts.ctx.userId)
     ),
     update: publicProcedure
       .input(UpdateChat)
-      .mutation(async (opts) => opts.ctx.s.chat.update(opts.input)),
+      .mutation(async (opts) => opts.ctx.service.chat.update(opts.input)),
     start: publicProcedure
       .input(StartChat)
       .mutation(async (opts) =>
-        opts.ctx.s.chat.start(opts.ctx.userId, opts.input)
+        opts.ctx.service.chat.start(opts.ctx.userId, opts.input)
       ),
   }),
   chatMessage: t.router({
     list: publicProcedure
       .input(ListChatMessages)
-      .query(async (opts) => opts.ctx.s.chatMessage.list(opts.input)),
+      .query(async (opts) => opts.ctx.service.chatMessage.list(opts.input)),
     update: publicProcedure
       .input(UpdateChatMessage)
-      .mutation(async (opts) => opts.ctx.s.chatMessage.update(opts.input)),
+      .mutation(async (opts) =>
+        opts.ctx.service.chatMessage.update(opts.input)
+      ),
     send: publicProcedure
       .input(SendChatMessage)
-      .mutation(async (opts) => opts.ctx.s.chatMessage.send(opts.input)),
+      .mutation(async (opts) => opts.ctx.service.chatMessage.send(opts.input)),
   }),
   chatChunk: t.router({
     receiveStream: publicProcedure
       .input(ReceiveChatChunkStream)
       .subscription(async function* (opts) {
-        yield* opts.ctx.s.chatChunk.receiveStream(opts.input);
+        yield* opts.ctx.service.chatChunk.receiveStream(opts.input);
       }),
   }),
 });

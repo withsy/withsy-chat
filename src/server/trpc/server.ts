@@ -1,8 +1,8 @@
 import { initTRPC } from "@trpc/server";
 import superjson from "superjson";
-import type { ApiContext } from "./api-context";
+import type { ServerContext } from "../server-context";
 
-export const t = initTRPC.context<ApiContext>().create({
+export const t = initTRPC.context<ServerContext>().create({
   transformer: superjson,
   sse: {
     maxDurationMs: 5 * 60 * 1_000, // 5 minutes

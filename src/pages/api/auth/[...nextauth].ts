@@ -1,5 +1,5 @@
 import { envConfig } from "@/server/env-config";
-import { s } from "@/server/service-registry";
+import { service } from "@/server/service-registry";
 import { UserJwt, UserSession } from "@/types/user";
 import NextAuth, { type AuthOptions } from "next-auth";
 import GithubProvider from "next-auth/providers/github";
@@ -15,10 +15,11 @@ export const authOptions: AuthOptions = {
     async jwt({ token, account }) {
       if (!account) return token;
       const { provider, providerAccountId } = account;
-      const { userId } = await s.userLinkAccount.getOrCreateUserByProvider({
-        provider,
-        providerAccountId,
-      });
+      const { userId } =
+        await service.userLinkAccount.getOrCreateUserByProvider({
+          provider,
+          providerAccountId,
+        });
       const userJwt = await UserJwt.parseAsync({ ...token, userId });
       return userJwt;
     },

@@ -1,7 +1,7 @@
 import { StatusCodes } from "http-status-codes";
 import type { Pool } from "pg";
 import { envConfig } from "./env-config";
-import { HttpApiError } from "./error";
+import { HttpServerError } from "./error";
 import { createLazyRegistry, type LazyRegistryProxy } from "./lazy-registry";
 import { ChatChunkService } from "./services/chat-chunk-service";
 import { ChatMessageFileService } from "./services/chat-message-file-service";
@@ -48,7 +48,7 @@ function createServiceRegistry() {
     task: (s) => new TaskService(s),
     s3: (s) => {
       if (envConfig.nodeEnv === "development") return new MockS3Service(s);
-      throw new HttpApiError(
+      throw new HttpServerError(
         StatusCodes.INTERNAL_SERVER_ERROR,
         "S3 service is not implemented."
       );
@@ -56,4 +56,4 @@ function createServiceRegistry() {
   });
 }
 
-export const s = createServiceRegistry();
+export const service = createServiceRegistry();
