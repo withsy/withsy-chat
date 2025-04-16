@@ -1,3 +1,4 @@
+import { trpc } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
 import type { ChatMessage } from "@/types/chat";
 import { useState } from "react";
@@ -12,7 +13,7 @@ type Props = {
 };
 
 export function ChatBubble({ message }: Props) {
-  const { role, text: rawText } = message;
+  const { role, text: rawText, isBookmarked } = message;
 
   const text = rawText ?? "";
   const isLongMessage = text.length > 150;
@@ -20,6 +21,7 @@ export function ChatBubble({ message }: Props) {
   const displayedText = collapsed ? text.slice(0, 150) + "..." : text;
 
   const fallbackName = role === "model" ? "AI" : "username";
+  const utils = trpc.useUtils();
 
   const handleCopy = async () => {
     try {
@@ -35,10 +37,35 @@ export function ChatBubble({ message }: Props) {
     }
   };
 
-  const handleSave = () => {
-    toast.success("Saved!", {
-      description: "Message saved.",
-    });
+  const updateMessageMutation = trpc.chatMessage.update.useMutation({
+    onSuccess: () => {
+      if (!isBookmarked) {
+        toast.success("Saved for later", {
+          description: "You can find it in your saved list.",
+        });
+      } else {
+        toast.success("Removed from saved", {
+          description: "It’s no longer in your saved list.",
+        });
+      }
+      utils.invalidate();
+    },
+    onError: () => {
+      toast.error("Failed", {
+        description: "Please try again or contact support.",
+      });
+    },
+  });
+
+  const handleSave = async () => {
+    try {
+      await updateMessageMutation.mutateAsync({
+        chatMessageId: message.id,
+        isBookmarked: !message.isBookmarked,
+      });
+    } catch (err) {
+      console.error("Failed to toggle bookmark:", err);
+    }
   };
 
   const handleBranch = () => {
@@ -81,6 +108,7 @@ export function ChatBubble({ message }: Props) {
         <div className="flex justify-between w-full mt-2">
           <ChatBubbleTooltips
             isAi={role == "model"}
+            isSaved={isBookmarked}
             onCopy={handleCopy}
             onSave={handleSave}
             onBranch={handleBranch}
