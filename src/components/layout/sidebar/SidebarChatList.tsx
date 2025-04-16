@@ -18,6 +18,7 @@ import { trpc, type TrpcRouterOutput } from "@/lib/trpc";
 import type { Chat } from "@/types/chat";
 import { skipToken } from "@tanstack/react-query";
 import {
+  Archive,
   Bookmark,
   MoreHorizontal,
   Pencil,
@@ -102,6 +103,13 @@ export default function SidebarChatList() {
         label={"All Saved"}
         size={16}
       />
+      <SidebarTooltip
+        id={"archive"}
+        icon={Archive}
+        fill={true}
+        label={"Archived"}
+        size={16}
+      />
       {starreds.length > 0 && (
         <div>
           <div className="py-1 px-2 mb-1 text-sm font-semibold">Starred</div>
@@ -171,7 +179,7 @@ function SidebarChatItem({
       className="group relative flex items-center gap-2 no-underline px-2.5 py-2 rounded-md transition-colors hover:bg-white cursor-pointer"
       onClick={handleLinkClick}
     >
-      <div className="flex items-center gap-2 flex-1">
+      <div className="flex items-center gap-2 flex-1 group-hover:font-bold">
         <div className="w-5 h-5 flex items-center justify-center relative">
           <SquareMenu
             size={16}
@@ -199,7 +207,7 @@ function SidebarChatItem({
           </button>
         </div>
 
-        <span className="text-foreground truncate">{chat.title}</span>
+        <span className="text-foreground truncate ">{chat.title}</span>
       </div>
 
       <DropdownMenu>

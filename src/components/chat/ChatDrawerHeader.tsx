@@ -33,7 +33,6 @@ export default function ChatDrawerHeader({
         onClick={handleClick}
       >
         <CircleX size={16} />
-        <span>Close</span>
       </button>
     </div>
   );

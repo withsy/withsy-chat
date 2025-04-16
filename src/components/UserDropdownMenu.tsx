@@ -16,13 +16,14 @@ import {
 import { useUser } from "@/context/UserContext";
 import { cn } from "@/lib/utils";
 import {
-  Archive,
   Cpu,
+  LogOut,
   MessageSquare,
   Palette,
   Settings,
   type LucideIcon,
 } from "lucide-react";
+import { signOut } from "next-auth/react";
 import { useState } from "react";
 import { ModelAvatar } from "./ModelAvatar";
 import { ThemeSettingsModal } from "./modal/ThemeSettingsModal";
@@ -109,6 +110,7 @@ function UserMenuItem({
 export default function UserDropdownMenu() {
   const { userPrefs, setUserPrefAndSave, userPrefLoadings, userSession } =
     useUser();
+
   const { largeText } = userPrefs;
   const [themeModalOpen, setThemeModalOpen] = useState(false);
 
@@ -121,7 +123,6 @@ export default function UserDropdownMenu() {
 
   const userMenuItems: MenuItem[] = [
     "separator",
-    { icon: Archive, label: "Archive" },
     { icon: MessageSquare, label: "Prompts" },
     { icon: Cpu, label: "Models" },
     {
@@ -129,8 +130,9 @@ export default function UserDropdownMenu() {
       label: "Theme",
       onClick: () => setThemeModalOpen(true),
     },
-    "separator",
     { icon: Settings, label: "Settings" },
+    "separator",
+    { icon: LogOut, label: "Log out", onClick: () => signOut() },
   ];
 
   return (
@@ -138,7 +140,7 @@ export default function UserDropdownMenu() {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <button type="button" className="cursor-pointer">
-            <ModelAvatar name={userSession?.user?.name ?? "Jenn"} />
+            <ModelAvatar name={userSession?.user?.name ?? ""} />
           </button>
         </DropdownMenuTrigger>
 
