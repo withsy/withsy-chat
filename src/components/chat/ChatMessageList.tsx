@@ -1,6 +1,6 @@
 import { useSidebar } from "@/context/SidebarContext";
 import type { ChatMessage } from "@/types/chat";
-import { ChevronDown } from "lucide-react";
+import { ChevronsDown } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { ChatBubble } from "./ChatBubble";
 
@@ -60,10 +60,10 @@ export function ChatMessageList({ messages }: Props) {
       {showScrollToBottom && (
         <button
           onClick={scrollToBottom}
-          className={`absolute right-4 bottom-4 bg-black text-white p-2 rounded-full shadow-md transition`}
+          className="absolute left-1/2 bottom-2 transform -translate-x-1/2 text-white p-2 rounded-full shadow-md transition"
           style={{ backgroundColor: `rgb(${themeColor})` }}
         >
-          <ChevronDown size={16} />
+          <ChevronsDown size={16} />
         </button>
       )}
     </div>
