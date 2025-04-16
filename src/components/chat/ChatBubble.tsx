@@ -1,6 +1,7 @@
 import { cn } from "@/lib/utils";
 import type { ChatMessage } from "@/types/chat";
 import { useState } from "react";
+import { toast } from "sonner";
 import { CollapseToggle } from "../CollapseToggle";
 import { MarkdownBox } from "../MarkdownBox";
 import { ModelAvatar } from "../ModelAvatar";
@@ -18,8 +19,35 @@ export function ChatBubble({ message }: Props) {
   const [collapsed, setCollapsed] = useState(role === "user" && isLongMessage);
   const displayedText = collapsed ? text.slice(0, 150) + "..." : text;
 
-  const username = "Jenn";
-  const fallbackName = role === "model" ? "AI" : username;
+  const fallbackName = role === "model" ? "AI" : "username";
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(text);
+      toast.success("Copied!", {
+        description: "Message copied to clipboard.",
+      });
+    } catch (err) {
+      console.error("Failed to copy text: ", err);
+      toast.error("Failed", {
+        description: "Please try again or check clipboard permissions.",
+      });
+    }
+  };
+
+  const handleSave = () => {
+    toast.success("Saved!", {
+      description: "Message saved.",
+    });
+  };
+
+  const handleBranch = () => {
+    console.log("start new branch");
+  };
+
+  const handleChangeModel = () => {
+    console.log("change model");
+  };
   return (
     <div
       className={cn(
@@ -51,7 +79,13 @@ export function ChatBubble({ message }: Props) {
           <MarkdownBox content={displayedText} />
         </div>
         <div className="flex justify-between w-full mt-2">
-          <ChatBubbleTooltips isAi={role == "model"} />
+          <ChatBubbleTooltips
+            isAi={role == "model"}
+            onCopy={handleCopy}
+            onSave={handleSave}
+            onBranch={handleBranch}
+            onChangeModel={handleChangeModel}
+          />
           <CollapseToggle
             show={isLongMessage}
             collapsed={collapsed}

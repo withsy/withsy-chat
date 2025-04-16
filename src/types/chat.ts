@@ -48,6 +48,7 @@ export const ChatMessage = z.object({
   status: ChatMessageStatus,
   isBookmarked: z.boolean(),
   parentId: ChatMessageId.nullable(),
+  replyToId: ChatMessageId.nullable(),
   createdAt: z.date(),
   updatedAt: z.date(),
 });

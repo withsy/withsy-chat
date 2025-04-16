@@ -50,45 +50,79 @@ export class ChatMessageService {
   }) {
     const { modelChatId, modelChatMessageId, modelParentId } = input;
     // TODO: Change limit history length
-    const maxHistoryLength = 10;
+    let remainLength = 10;
     const histories = await this.s.db.transaction().execute(async (tx) => {
-      let query = tx
+      let baseQuery = tx
         .selectFrom("chatMessages")
         .where("chatId", "=", modelChatId)
         .where("status", "=", ChatMessageStatus.enum.succeeded)
         .where("text", "is not", null)
-        .where("id", "<", modelChatMessageId);
-      if (modelParentId !== null)
-        query = query.where("parentId", "=", modelParentId);
-      query = query
-        .orderBy("id", "desc")
-        .limit(maxHistoryLength)
-        .select(["role", "text"]);
-      const histories = await query.execute();
+        .select(["role", "text", "id"])
+        .orderBy("id", "desc");
+
+      const histories: {
+        role: string;
+        text: string | null;
+      }[] = [];
+      let oldestId = -1;
       if (modelParentId !== null) {
-        const remainLength = maxHistoryLength - histories.length;
+        // branch messages
         if (remainLength > 0) {
-          const additionalHistories = await tx
-            .selectFrom("chatMessages")
-            .where("chatId", "=", modelChatId)
-            .where("status", "=", ChatMessageStatus.enum.succeeded)
-            .where("text", "is not", null)
-            .where("id", "<=", modelParentId)
-            .where("parentId", "is", null)
-            .orderBy("id", "desc")
+          const branchMsgs = await baseQuery
+            .where("id", "<", modelChatMessageId)
+            .where("parentId", "=", modelParentId)
             .limit(remainLength)
-            .select(["role", "text"])
             .execute();
-          histories.push(...additionalHistories);
+          histories.push(...branchMsgs);
+          remainLength -= branchMsgs.length;
+          oldestId = branchMsgs.at(0)?.id ?? -1;
+        }
+
+        // parent message
+        if (remainLength > 0) {
+          const parentMsg = await baseQuery
+            .where("id", "=", modelParentId)
+            .where("parentId", "is", null)
+            .select("replyToId")
+            .executeTakeFirst();
+          if (parentMsg) {
+            histories.push(parentMsg);
+            remainLength -= 1;
+            oldestId = parentMsg.id;
+
+            // reply to message
+            if (remainLength > 0 && parentMsg.replyToId !== null) {
+              const replyToMsg = await baseQuery
+                .where("id", "=", parentMsg.replyToId)
+                .where("parentId", "is", null)
+                .executeTakeFirst();
+              if (replyToMsg) {
+                histories.push(replyToMsg);
+                remainLength -= 1;
+                oldestId = replyToMsg.id;
+              }
+            }
+          }
         }
       }
-      return histories as {
-        role: string;
-        text: string;
-      }[];
+
+      // non-branch messages
+      if (remainLength > 0) {
+        if (oldestId !== -1) baseQuery = baseQuery.where("id", "<", oldestId);
+        const msgs = await baseQuery
+          .where("parentId", "is", null)
+          .limit(remainLength)
+          .execute();
+        histories.push(...msgs);
+        remainLength -= msgs.length;
+      }
+
+      return histories;
     });
+
+    // sort to oldest
     histories.reverse();
-    return histories;
+    return histories as { role: string; text: string }[];
   }
 
   async findById<K extends keyof ChatMessage>(
