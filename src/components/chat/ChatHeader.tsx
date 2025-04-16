@@ -7,6 +7,7 @@ import {
   ChevronsRightLeft,
   GitBranch,
 } from "lucide-react";
+import HoverSwitchIcon from "../HoverSwitchIcon";
 
 interface ChatHeaderProps {
   setOpenDrawer: (id: string | null) => void;
@@ -29,17 +30,11 @@ export default function ChatHeader({
       label: "Saved",
       id: "saved",
       icon: (
-        <>
-          <Bookmark
-            className="group-hover:opacity-0 transition-all"
-            size={16}
-          />
-          <Bookmark
-            size={16}
-            className="absolute opacity-0 group-hover:opacity-100 transition-all"
-            fill={`rgb(${themeColor})`}
-          />
-        </>
+        <HoverSwitchIcon
+          DefaultIcon={Bookmark}
+          HoverIcon={Bookmark}
+          fill={`rgb(${themeColor})`}
+        />
       ),
     },
     {
@@ -101,7 +96,11 @@ export default function ChatHeader({
           className="group flex items-center gap-1 rounded-md px-1 py-2 hover:bg-white transition-colors text-sm font-medium"
           onClick={() => {}}
         >
-          <Archive size={16} />
+          <HoverSwitchIcon
+            DefaultIcon={Archive}
+            HoverIcon={Archive}
+            fill={`rgb(${themeColor})`}
+          />
           <span>Archive</span>
         </button>
       </div>
