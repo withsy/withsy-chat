@@ -8,6 +8,7 @@ import {
   type ChatMessageId,
   type ListChatMessages,
 } from "@/types/chat";
+import type { UserId } from "@/types/user";
 import { TRPCError } from "@trpc/server";
 import type { ServiceRegistry } from "../service-registry";
 import { ChatService } from "./chat-service";
@@ -22,43 +23,69 @@ export const CHAT_MESSAGE_NOT_FOUND_ERROR = new TRPCError({
 export class ChatMessageService {
   constructor(private readonly s: ServiceRegistry) {}
 
-  async list(input: ListChatMessages) {
+  async list(userId: UserId, input: ListChatMessages) {
     const { role, isBookmarked, options } = input;
     const { scope, afterId, order, limit } = options;
-    let query = this.s.db.selectFrom("chatMessages");
+
+    let query = this.s.db
+      .selectFrom("chatMessages as cm")
+      .innerJoin("chats as c", "c.id", "cm.chatId")
+      .where("c.userId", "=", userId);
+
     if (scope.by === "user") {
-      query = query
-        .innerJoin("chats", "chats.id", "chatMessages.chatId")
-        .where("chats.userId", "=", scope.userId)
-        .selectAll("chatMessages");
+      // noop
     } else if (scope.by === "chat")
-      query = query.where("chatId", "=", scope.chatId);
-    if (role !== undefined) query = query.where("role", "=", role);
+      query = query.where("cm.chatId", "=", scope.chatId);
+
+    if (role !== undefined) query = query.where("cm.role", "=", role);
+
     if (isBookmarked !== undefined)
-      query = query.where("isBookmarked", "=", isBookmarked);
+      query = query.where("cm.isBookmarked", "=", isBookmarked);
+
     if (afterId !== undefined) {
       const op = order === "asc" ? ">" : "<";
-      query = query.where("id", op, afterId);
+      query = query.where("cm.id", op, afterId);
     }
-    return await query.orderBy("id", order).limit(limit).selectAll().execute();
+
+    const rows = await query
+      .orderBy("cm.id", order)
+      .limit(limit)
+      .select([
+        "cm.isBookmarked",
+        "cm.model",
+        "cm.role",
+        "cm.status",
+        "cm.text",
+        "cm.parentId",
+      ])
+      .execute();
+
+    return rows;
   }
 
-  async listForAiChatHistory(input: {
-    modelChatId: ChatId;
-    modelChatMessageId: ChatMessageId;
-    modelParentId: ChatMessageId | null;
-  }) {
+  async listForAiChatHistory(
+    userId: UserId,
+    input: {
+      modelChatId: ChatId;
+      modelChatMessageId: ChatMessageId;
+      modelParentId: ChatMessageId | null;
+    }
+  ) {
     const { modelChatId, modelChatMessageId, modelParentId } = input;
+
     // TODO: Change limit history length
     let remainLength = 10;
     const histories = await this.s.db.transaction().execute(async (tx) => {
+      // WIP
       let baseQuery = tx
-        .selectFrom("chatMessages")
-        .where("chatId", "=", modelChatId)
-        .where("status", "=", ChatMessageStatus.enum.succeeded)
-        .where("text", "is not", null)
-        .select(["role", "text", "id"])
-        .orderBy("id", "desc");
+        .selectFrom("chatMessages as cm")
+        .innerJoin("chats as c", "c.id", "cm.chatId")
+        .where("c.userId", "=", userId)
+        .where("cm.chatId", "=", modelChatId)
+        .where("cm.status", "=", ChatMessageStatus.enum.succeeded)
+        .where("cm.text", "is not", null)
+        .select(["cm.role", "cm.text", "cm.id"])
+        .orderBy("cm.id", "desc");
 
       const histories: {
         role: string;
