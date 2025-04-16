@@ -1,15 +1,20 @@
 import { useUser } from "@/context/UserContext";
 import type { ChatMessage } from "@/types/chat";
 import { ChevronsDown } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type RefObject } from "react";
 import { ChatBubble } from "./ChatBubble";
 
 type Props = {
   messages: ChatMessage[];
   onToggleSaved: (id: number, newValue: boolean) => void;
+  shouldAutoScrollRef: RefObject<boolean>;
 };
 
-export function ChatMessageList({ messages, onToggleSaved }: Props) {
+export function ChatMessageList({
+  messages,
+  onToggleSaved,
+  shouldAutoScrollRef,
+}: Props) {
   const { userPrefs } = useUser();
   const { themeColor } = userPrefs;
 
@@ -18,8 +23,11 @@ export function ChatMessageList({ messages, onToggleSaved }: Props) {
   const [showScrollToBottom, setShowScrollToBottom] = useState(false);
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "auto" });
-  }, [messages]);
+    if (shouldAutoScrollRef.current) {
+      bottomRef.current?.scrollIntoView({ behavior: "auto" });
+    }
+    shouldAutoScrollRef.current = false;
+  }, [messages, shouldAutoScrollRef]);
 
   useEffect(() => {
     const el = listRef.current;
