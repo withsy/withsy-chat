@@ -18,6 +18,7 @@ import { trpc } from "@/lib/trpc";
 import type { Chat } from "@/types/chat";
 import { skipToken } from "@tanstack/react-query";
 import {
+  Archive,
   Bookmark,
   MoreHorizontal,
   Pencil,
@@ -98,6 +99,13 @@ export default function SidebarChatList() {
         icon={Bookmark}
         fill={true}
         label={"All Saved"}
+        size={16}
+      />
+      <SidebarTooltip
+        id={"archive"}
+        icon={Archive}
+        fill={true}
+        label={"Archived"}
         size={16}
       />
       {starreds.length > 0 && (
