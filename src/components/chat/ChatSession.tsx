@@ -131,7 +131,7 @@ export function ChatSession({ chatId, initialMessages, children }: Props) {
               : "md:w-[80%] md:mx-auto"
           )}
         >
-          <ChatMessageList messages={messages} />
+          {messages.length > 0 && <ChatMessageList messages={messages} />}
           {children}
         </div>
         <div className="absolute bottom-[2vh] left-0 right-0 flex justify-center px-4">
