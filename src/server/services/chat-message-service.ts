@@ -9,16 +9,12 @@ import {
   type ListChatMessages,
 } from "@/types/chat";
 import type { UserId } from "@/types/user";
-import { TRPCError } from "@trpc/server";
+import { StatusCodes } from "http-status-codes";
+import { HttpServerError } from "../error";
 import type { ServiceRegistry } from "../service-registry";
 import { ChatService } from "./chat-service";
 import type { Db } from "./db";
 import { IdempotencyService } from "./idempotency-service";
-
-export const CHAT_MESSAGE_NOT_FOUND_ERROR = new TRPCError({
-  code: "NOT_FOUND",
-  message: "Chat message not found",
-});
 
 export class ChatMessageService {
   constructor(private readonly s: ServiceRegistry) {}
@@ -76,15 +72,14 @@ export class ChatMessageService {
     // TODO: Change limit history length
     let remainLength = 10;
     const histories = await this.s.db.transaction().execute(async (tx) => {
-      // WIP
-      let baseQuery = tx
+      const baseQuery = tx
         .selectFrom("chatMessages as cm")
         .innerJoin("chats as c", "c.id", "cm.chatId")
         .where("c.userId", "=", userId)
         .where("cm.chatId", "=", modelChatId)
         .where("cm.status", "=", ChatMessageStatus.enum.succeeded)
         .where("cm.text", "is not", null)
-        .select(["cm.role", "cm.text", "cm.id"])
+        .select(["cm.role", "cm.text"])
         .orderBy("cm.id", "desc");
 
       const histories: {
@@ -92,41 +87,44 @@ export class ChatMessageService {
         text: string | null;
       }[] = [];
       let oldestId = -1;
+
+      // branch messages
       if (modelParentId !== null) {
-        // branch messages
         if (remainLength > 0) {
-          const branchMsgs = await baseQuery
-            .where("id", "<", modelChatMessageId)
-            .where("parentId", "=", modelParentId)
+          const rows = await baseQuery
+            .where("cm.id", "<", modelChatMessageId)
+            .where("cm.parentId", "=", modelParentId)
+            .select("cm.id")
             .limit(remainLength)
             .execute();
-          histories.push(...branchMsgs);
-          remainLength -= branchMsgs.length;
-          oldestId = branchMsgs.at(0)?.id ?? -1;
+          histories.push(...rows);
+          remainLength -= rows.length;
+          oldestId = rows.at(-1)?.id ?? -1;
         }
 
         // parent message
         if (remainLength > 0) {
-          const parentMsg = await baseQuery
-            .where("id", "=", modelParentId)
-            .where("parentId", "is", null)
-            .select("replyToId")
+          const parent = await baseQuery
+            .where("cm.id", "=", modelParentId)
+            .where("cm.parentId", "is", null)
+            .select(["cm.id", "cm.replyToId"])
             .executeTakeFirst();
-          if (parentMsg) {
-            histories.push(parentMsg);
+          if (parent) {
+            histories.push(parent);
             remainLength -= 1;
-            oldestId = parentMsg.id;
+            oldestId = parent.id;
 
             // reply to message
-            if (remainLength > 0 && parentMsg.replyToId !== null) {
-              const replyToMsg = await baseQuery
-                .where("id", "=", parentMsg.replyToId)
-                .where("parentId", "is", null)
+            if (remainLength > 0 && parent.replyToId !== null) {
+              const replyTo = await baseQuery
+                .where("cm.id", "=", parent.replyToId)
+                .where("cm.parentId", "is", null)
+                .select("cm.id")
                 .executeTakeFirst();
-              if (replyToMsg) {
-                histories.push(replyToMsg);
+              if (replyTo) {
+                histories.push(replyTo);
                 remainLength -= 1;
-                oldestId = replyToMsg.id;
+                oldestId = replyTo.id;
               }
             }
           }
@@ -135,66 +133,74 @@ export class ChatMessageService {
 
       // non-branch messages
       if (remainLength > 0) {
-        if (oldestId !== -1) baseQuery = baseQuery.where("id", "<", oldestId);
-        const msgs = await baseQuery
-          .where("parentId", "is", null)
+        let query = baseQuery;
+        if (oldestId !== -1) query = query.where("cm.id", "<", oldestId);
+        const rows = await query
+          .where("cm.parentId", "is", null)
           .limit(remainLength)
           .execute();
-        histories.push(...msgs);
-        remainLength -= msgs.length;
+        histories.push(...rows);
+        remainLength -= rows.length;
       }
 
       return histories;
     });
 
-    // sort to oldest
+    // sort newest to oldest
     histories.reverse();
     return histories as { role: string; text: string }[];
   }
 
-  async findById<K extends keyof ChatMessage>(
-    chatMessageId: ChatMessageId,
-    keys: K[]
-  ) {
-    return await this.s.db
-      .selectFrom("chatMessages")
-      .where("id", "=", chatMessageId)
-      .select(keys)
-      .executeTakeFirstOrThrow(() => CHAT_MESSAGE_NOT_FOUND_ERROR);
+  async find(userId: UserId, input: { chatMessageId: ChatMessageId }) {
+    const { chatMessageId } = input;
+    const row = await this.s.db
+      .selectFrom("chatMessages as cm")
+      .innerJoin("chats as c", "c.id", "cm.chatId")
+      .where("c.userId", "=", userId)
+      .where("cm.id", "=", chatMessageId)
+      .select([])
+      .executeTakeFirstOrThrow();
+    return row;
   }
 
-  async update(input: UpdateChatMessage) {
+  async update(userId: UserId, input: UpdateChatMessage) {
     const { chatMessageId, isBookmarked } = input;
-    let query = this.s.db
-      .updateTable("chatMessages")
-      .where("id", "=", chatMessageId);
-    if (isBookmarked !== undefined) query = query.set({ isBookmarked });
-    const chatMessage = await query
-      .returningAll()
-      .executeTakeFirstOrThrow(() => CHAT_MESSAGE_NOT_FOUND_ERROR);
-    return await ChatMessage.parseAsync(chatMessage);
+    const row = await this.s.db
+      .updateTable("chatMessages as cm")
+      .innerJoin("chats as c", "c.id", "cm.chatId")
+      .where("c.userId", "=", userId)
+      .where("cm.id", "=", chatMessageId)
+      .set({ isBookmarked })
+      .returning([])
+      .executeTakeFirstOrThrow();
+    return row;
   }
 
-  async isStaleCompleted(chatMessageId: ChatMessageId) {
+  async isStaleCompleted(
+    userId: UserId,
+    input: { chatMessageId: ChatMessageId }
+  ) {
+    const { chatMessageId } = input;
     const chatMessage = await this.s.db
-      .selectFrom("chatMessages")
-      .where(({ or, and, eb }) =>
-        and([
-          eb("id", "=", chatMessageId),
-          eb("updatedAt", "<", new Date(Date.now() - 5 * 60_000)),
-          or([
-            eb("status", "=", ChatMessageStatus.enum.succeeded),
-            eb("status", "=", ChatMessageStatus.enum.failed),
-          ]),
+      .selectFrom("chatMessages as cm")
+      .innerJoin("chats as c", "c.id", "cm.chatId")
+      .where("c.userId", "=", userId)
+      .where("cm.id", "=", chatMessageId)
+      .where("cm.updatedAt", "<", new Date(Date.now() - 5 * 60_000)) // 5 minutes
+      .where(({ or, eb }) =>
+        or([
+          eb("cm.status", "=", ChatMessageStatus.enum.succeeded),
+          eb("cm.status", "=", ChatMessageStatus.enum.failed),
         ])
       )
-      .select(["id"])
+      .select(["cm.id"])
       .executeTakeFirst();
-    return chatMessage != null;
+    return !!chatMessage;
   }
 
   static async transit(
     db: Db,
+    userId: UserId,
     input: {
       chatMessageId: ChatMessageId;
       expectStatus: ChatMessageStatus;
@@ -202,53 +208,75 @@ export class ChatMessageService {
     }
   ) {
     const { chatMessageId, expectStatus, nextStatus } = input;
-    return await db
-      .updateTable("chatMessages")
+    const row = await db
+      .updateTable("chatMessages as cm")
+      .innerJoin("chats as c", "c.id", "cm.chatId")
+      .where("c.userId", "=", userId)
+      .where("cm.id", "=", chatMessageId)
+      .where("cm.status", "=", expectStatus)
       .set({ status: nextStatus })
-      .where("id", "=", chatMessageId)
-      .where("status", "=", expectStatus)
-      .returning("id")
+      .returning("cm.id")
       .executeTakeFirst();
+    return row;
   }
 
-  async transitPendingToProcessing(chatMessageId: ChatMessageId) {
-    return await this.s.db.transaction().execute((tx) =>
-      ChatMessageService.transit(tx, {
-        chatMessageId,
-        expectStatus: "pending",
-        nextStatus: "processing",
-      })
-    );
+  async transitPendingToProcessing(
+    userId: UserId,
+    input: { chatMessageId: ChatMessageId }
+  ) {
+    const { chatMessageId } = input;
+    const row = await ChatMessageService.transit(this.s.db, userId, {
+      chatMessageId,
+      expectStatus: "pending",
+      nextStatus: "processing",
+    });
+    return row;
   }
 
   async transitProcessingToSucceeded(
-    chatMessageId: ChatMessageId,
-    text: string
+    userId: UserId,
+    input: { chatMessageId: ChatMessageId; text: string }
   ) {
-    return await this.s.db.transaction().execute(async (tx) => {
-      await ChatMessageService.transit(tx, {
+    const { chatMessageId, text } = input;
+    await this.s.db.transaction().execute(async (tx) => {
+      const row = await ChatMessageService.transit(tx, userId, {
         chatMessageId,
         expectStatus: "processing",
         nextStatus: "succeeded",
       });
-      return await tx
-        .updateTable("chatMessages")
+      if (!row)
+        throw new HttpServerError(
+          StatusCodes.INTERNAL_SERVER_ERROR,
+          `Chat message transition failed. chatMessageId: ${chatMessageId} status: processing to succeeded.`
+        );
+
+      await tx
+        .updateTable("chatMessages as cm")
+        .innerJoin("chats as c", "c.id", "cm.chatId")
+        .where("c.userId", "=", userId)
+        .where("cm.id", "=", chatMessageId)
         .set({ text })
-        .where("id", "=", chatMessageId)
         .executeTakeFirstOrThrow();
     });
   }
 
-  async transitProcessingToFailed(chatMessageId: ChatMessageId) {
-    return await this.s.db.transaction().execute((tx) =>
-      ChatMessageService.transit(tx, {
-        chatMessageId,
-        expectStatus: "processing",
-        nextStatus: "failed",
-      })
-    );
+  async tryTransitProcessingToFailed(
+    userId: UserId,
+    input: { chatMessageId: ChatMessageId }
+  ) {
+    const { chatMessageId } = input;
+    const row = await ChatMessageService.transit(this.s.db, userId, {
+      chatMessageId,
+      expectStatus: "processing",
+      nextStatus: "failed",
+    });
+    if (!row)
+      console.warn(
+        `Chat message transition failed. chatMessageId: ${chatMessageId} status: processing to failed.`
+      );
   }
 
+  // WIP
   async onCleanupZombiesTask() {
     const { numUpdatedRows } = await this.s.db
       .updateTable("chatMessages")
