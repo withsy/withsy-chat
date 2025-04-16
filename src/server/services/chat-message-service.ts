@@ -1,6 +1,5 @@
 import {
   ChatId,
-  ChatMessage,
   ChatMessageStatus,
   ChatRole,
   SendChatMessage,
@@ -12,9 +11,9 @@ import type { UserId } from "@/types/user";
 import { StatusCodes } from "http-status-codes";
 import { HttpServerError } from "../error";
 import type { ServiceRegistry } from "../service-registry";
-import { ChatService } from "./chat-service";
+import { ChatMessageFileService } from "./chat-message-file-service";
 import type { Db } from "./db";
-import { IdempotencyService } from "./idempotency-service";
+import type { FileInfo } from "./mock-s3-service";
 
 export class ChatMessageService {
   constructor(private readonly s: ServiceRegistry) {}
@@ -225,10 +224,13 @@ export class ChatMessageService {
     input: { chatMessageId: ChatMessageId }
   ) {
     const { chatMessageId } = input;
-    const row = await ChatMessageService.transit(this.s.db, userId, {
-      chatMessageId,
-      expectStatus: "pending",
-      nextStatus: "processing",
+    const row = await this.s.db.transaction().execute(async (tx) => {
+      const row = await ChatMessageService.transit(tx, userId, {
+        chatMessageId,
+        expectStatus: "pending",
+        nextStatus: "processing",
+      });
+      return row;
     });
     return row;
   }
@@ -265,10 +267,13 @@ export class ChatMessageService {
     input: { chatMessageId: ChatMessageId }
   ) {
     const { chatMessageId } = input;
-    const row = await ChatMessageService.transit(this.s.db, userId, {
-      chatMessageId,
-      expectStatus: "processing",
-      nextStatus: "failed",
+    const row = await this.s.db.transaction().execute(async (tx) => {
+      const row = await ChatMessageService.transit(tx, userId, {
+        chatMessageId,
+        expectStatus: "processing",
+        nextStatus: "failed",
+      });
+      return row;
     });
     if (!row)
       console.warn(
@@ -291,19 +296,20 @@ export class ChatMessageService {
     const { idempotencyKey, chatId, model, text } = input;
     const files = input.files ?? [];
 
+    await this.s.idempotency.checkDuplicateRequest(idempotencyKey);
+
     const { fileInfos } = await this.s.s3.uploads(userId, { files });
 
     const { userChatMessage, modelChatMessage } = await this.s.db
       .transaction()
       .execute(async (tx) => {
-        await IdempotencyService.checkDuplicateRequest(tx, idempotencyKey);
-        // WIP
-        return await ChatService.createMessageInfo(tx, {
+        const result = await ChatMessageService.createInfo(tx, {
           chatId,
           model,
           text,
           fileInfos,
         });
+        return result;
       });
 
     await this.s.task.add("google_gen_ai_send_chat", {
@@ -314,11 +320,13 @@ export class ChatMessageService {
     return { userChatMessage, modelChatMessage };
   }
 
-  static async createPair(
+  static async createInfo(
     db: Db,
-    input: Omit<SendChatMessage, "idempotencyKey">
+    input: Omit<SendChatMessage, "idempotencyKey" | "files"> & {
+      fileInfos: FileInfo[];
+    }
   ) {
-    const { chatId, text, model, parentId } = input;
+    const { chatId, text, model, parentId, fileInfos } = input;
 
     const userChatMessage = await db
       .insertInto("chatMessages")
@@ -329,7 +337,7 @@ export class ChatMessageService {
         status: ChatMessageStatus.enum.succeeded,
         parentId: parentId ?? null,
       })
-      .returningAll()
+      .returning(["id"])
       .executeTakeFirstOrThrow();
 
     const modelChatMessage = await db
@@ -342,8 +350,13 @@ export class ChatMessageService {
         parentId: parentId ?? null,
         replyToId: userChatMessage.id,
       })
-      .returningAll()
+      .returning(["id"])
       .executeTakeFirstOrThrow();
+
+    await ChatMessageFileService.createAll(db, {
+      chatMessageId: userChatMessage.id,
+      fileInfos,
+    });
 
     return {
       userChatMessage,

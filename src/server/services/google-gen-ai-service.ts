@@ -14,6 +14,7 @@ export class GoogleGenAiService {
     this.ai = new GoogleGenAI({ apiKey: envConfig.geminiApiKey });
   }
 
+  // WIP
   async onSendChatTask(input: TaskInput<"google_gen_ai_send_chat">) {
     const { userChatMessageId, modelChatMessageId } = input;
     const chatMessage = await this.s.chatMessage.transitPendingToProcessing(

@@ -21,7 +21,7 @@ export class ChatMessageFileService {
     return rows;
   }
 
-  static async creates(
+  static async createAll(
     db: Db,
     input: { chatMessageId: ChatMessageId; fileInfos: FileInfo[] }
   ) {

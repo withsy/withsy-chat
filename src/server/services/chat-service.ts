@@ -1,64 +1,48 @@
-import {
-  ChatId,
-  ChatModel,
-  type StartChat,
-  type UpdateChat,
-} from "@/types/chat";
+import { type StartChat, type UpdateChat } from "@/types/chat";
 import type { UserId } from "@/types/user";
-import { TRPCError } from "@trpc/server";
-import { type Updateable } from "kysely";
-import type { Chats } from "kysely-codegen";
 import type { ServiceRegistry } from "../service-registry";
-import { ChatMessageFileService } from "./chat-message-file-service";
 import { ChatMessageService } from "./chat-message-service";
 import type { Db } from "./db";
-import { IdempotencyService } from "./idempotency-service";
-import type { FileInfo } from "./mock-s3-service";
-
-export const CHAT_NOT_FOUND_ERROR = new TRPCError({
-  code: "NOT_FOUND",
-  message: "Chat not found",
-});
 
 export class ChatService {
   constructor(private readonly s: ServiceRegistry) {}
 
   async list(userId: UserId) {
-    return await this.s.db
-      .selectFrom("chats")
-      .where("userId", "=", userId)
-      .orderBy("createdAt", "asc")
-      .selectAll()
+    const rows = await this.s.db
+      .selectFrom("chats as c")
+      .where("c.userId", "=", userId)
+      .orderBy("c.createdAt", "asc")
+      .select([])
       .execute();
+    return rows;
   }
 
-  async update(input: UpdateChat) {
+  async update(userId: UserId, input: UpdateChat) {
     const { chatId, title, isStarred } = input;
-    const updates: Updateable<Chats> = {};
-    if (title !== undefined) updates.title = title;
-    if (isStarred !== undefined) updates.isStarred = isStarred;
-    return await this.s.db
-      .updateTable("chats")
-      .set(updates)
-      .where("id", "=", chatId)
-      .returningAll()
-      .executeTakeFirstOrThrow(() => CHAT_NOT_FOUND_ERROR);
+    const row = await this.s.db
+      .updateTable("chats as c")
+      .where("c.userId", "=", userId)
+      .where("c.id", "=", chatId)
+      .set({ title, isStarred })
+      .returning([])
+      .executeTakeFirstOrThrow();
+    return row;
   }
 
   async start(userId: UserId, input: StartChat) {
     const { model, text, idempotencyKey } = input;
     const files = input.files ?? [];
 
-    const { fileInfos } = await this.s.s3.uploads({ files });
+    await this.s.idempotency.checkDuplicateRequest(idempotencyKey);
+
+    const { fileInfos } = await this.s.s3.uploads(userId, { files });
 
     const { chat, userChatMessage, modelChatMessage } = await this.s.db
       .transaction()
       .execute(async (tx) => {
-        await IdempotencyService.checkDuplicateRequest(tx, idempotencyKey);
         const chat = await ChatService.createChat(tx, { userId, text });
-
         const { userChatMessage, modelChatMessage } =
-          await ChatService.createMessageInfo(tx, {
+          await ChatMessageService.createInfo(tx, {
             chatId: chat.id,
             model,
             text,
@@ -82,32 +66,7 @@ export class ChatService {
     return await db
       .insertInto("chats")
       .values({ userId, title })
-      .returningAll()
+      .returning(["id"])
       .executeTakeFirstOrThrow();
-  }
-
-  static async createMessageInfo(
-    db: Db,
-    input: {
-      chatId: ChatId;
-      model: ChatModel;
-      text: string;
-      fileInfos: FileInfo[];
-    }
-  ) {
-    const { chatId, model, text, fileInfos } = input;
-
-    const { userChatMessage, modelChatMessage } =
-      await ChatMessageService.createPair(db, {
-        chatId,
-        model,
-        text,
-      });
-    await ChatMessageFileService.creates(db, {
-      chatMessageId: userChatMessage.id,
-      fileInfos,
-    });
-
-    return { userChatMessage, modelChatMessage };
   }
 }
