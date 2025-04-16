@@ -1,6 +1,5 @@
 import { SendChatMessage, StartChat } from "@/types/chat";
 import { serveStatic } from "@hono/node-server/serve-static";
-import { handle } from "@hono/node-server/vercel";
 import { TRPCError } from "@trpc/server";
 import { Hono, type Context, type Next } from "hono";
 import { logger } from "hono/logger";
@@ -64,9 +63,9 @@ const chats = new Hono()
     return c.json(res);
   });
 
-export const app = new Hono().basePath("/api").use(logger());
+export const rest = new Hono().basePath("/api").use(logger());
 
-app.use(async (c: Context, next: Next) => {
+rest.use(async (c: Context, next: Next) => {
   try {
     await next();
   } catch (e) {
@@ -86,18 +85,18 @@ app.use(async (c: Context, next: Next) => {
   }
 });
 
-app.use(async (c: Context, next: Next) => {
+rest.use(async (c: Context, next: Next) => {
   const ctx = await createApiContext();
   c.set("ctx", ctx);
   await next();
 });
 
-app.route("/trpc-ui", trpcUi).route("/chats", chats);
+rest.route("/trpc-ui", trpcUi).route("/chats", chats);
 
 if (process.env.NODE_ENV === "development") {
   console.log("Serve static enabled.");
   // NOTE: The file path must match the MockS3Service.
-  app.use(
+  rest.use(
     `/s3/*`,
     serveStatic({
       root: "./temp",
@@ -105,8 +104,6 @@ if (process.env.NODE_ENV === "development") {
     })
   );
 }
-
-export const restHandler = handle(app);
 
 function checkFiles(files?: File[]) {
   if (files && files.length > 10) {

@@ -7,7 +7,10 @@ import "@/styles/globals.css";
 import type { AppProps, AppType } from "next/app";
 import { Toaster as Sonner } from "sonner";
 
-const App: AppType = ({ Component, pageProps }: AppProps) => {
+const App: AppType = ({
+  Component,
+  pageProps: { session, ...pageProps },
+}: AppProps) => {
   const userMe = trpc.user.me.useQuery();
 
   if (userMe.isLoading) return <FullPageLoading />;
@@ -15,7 +18,7 @@ const App: AppType = ({ Component, pageProps }: AppProps) => {
     return <FullPageError message="loading user" />;
 
   return (
-    <AppProviders userMe={userMe.data}>
+    <AppProviders userMe={userMe.data} session={session}>
       <Layout>
         <Component {...pageProps} />
       </Layout>

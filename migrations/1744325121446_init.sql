@@ -10,6 +10,7 @@ END;
 $$
 LANGUAGE plpgsql;
 
+-- TODO: index
 CREATE TABLE users(
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
   preferences jsonb NOT NULL DEFAULT '{}' ::jsonb,
@@ -22,6 +23,18 @@ CREATE TRIGGER trg_users_update_updated_at
   FOR EACH ROW
   EXECUTE PROCEDURE fn_update_updated_at();
 
+-- TODO: index
+CREATE TABLE user_logins(
+  id integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  user_id uuid NOT NULL,
+  provider text NOT NULL,
+  provider_account_id text NOT NULL,
+  created_at timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_user_logins_user_id FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  CONSTRAINT unq_user_logins_provider UNIQUE (provider, provider_account_id)
+);
+
+-- TODO: index
 CREATE TABLE chats(
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
   user_id uuid NOT NULL,
@@ -37,6 +50,7 @@ CREATE TRIGGER trg_chats_update_updated_at
   FOR EACH ROW
   EXECUTE PROCEDURE fn_update_updated_at();
 
+-- TODO: index
 CREATE TABLE chat_messages(
   id integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   chat_id uuid NOT NULL,
@@ -57,6 +71,7 @@ CREATE TRIGGER trg_chat_messages_update_updated_at
   FOR EACH ROW
   EXECUTE PROCEDURE fn_update_updated_at();
 
+-- TODO: index
 CREATE TABLE chat_chunks(
   chat_message_id integer NOT NULL,
   chunk_index integer NOT NULL,
@@ -73,11 +88,13 @@ CREATE TRIGGER trg_chat_chunks_update_updated_at
   FOR EACH ROW
   EXECUTE PROCEDURE fn_update_updated_at();
 
+-- TODO: index
 CREATE TABLE idempotency_keys(
   key uuid PRIMARY KEY,
   created_at timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
+-- TODO: index
 CREATE TABLE chat_message_files(
   id integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   chat_message_id integer NOT NULL,

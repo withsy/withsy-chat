@@ -75,6 +75,7 @@ export default function SidebarChatList() {
       starreds.push(chat);
     } else {
       const localeDateString = toLocaleDateString(chat.updatedAt);
+      console.log("@@@", localeDateString);
       if (!nonStarredMap.has(localeDateString)) {
         nonStarredMap.set(localeDateString, []);
       }
