@@ -28,7 +28,7 @@ export type FileInfo = { fileUri: string; mimeType: string };
 export class MockS3Service {
   private init: Promise<void>;
 
-  constructor(private readonly s: ServiceRegistry) {
+  constructor(private readonly service: ServiceRegistry) {
     this.init = (async () => {
       await fs.promises.mkdir(MOCK_S3_INFO.baseDir, { recursive: true });
     })();

@@ -5,7 +5,7 @@ import type { ServiceRegistry } from "../service-registry";
 export class TaskService {
   private runner: Promise<Runner>;
 
-  constructor(private readonly s: ServiceRegistry) {
+  constructor(private readonly service: ServiceRegistry) {
     const taskMap: TaskMap = {
       google_gen_ai_send_chat: (i) => s.googleGenAi.onSendChatTask(i),
       chat_message_cleanup_zombies: () => s.chatMessage.onCleanupZombiesTask(),

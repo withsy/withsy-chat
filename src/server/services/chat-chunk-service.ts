@@ -11,7 +11,7 @@ import type { ServiceRegistry } from "../service-registry";
 import { listen } from "./pg";
 
 export class ChatChunkService {
-  constructor(private readonly s: ServiceRegistry) {}
+  constructor(private readonly service: ServiceRegistry) {}
 
   async add(input: {
     chatMessageId: ChatMessageId;
@@ -20,7 +20,7 @@ export class ChatChunkService {
     text: string;
   }) {
     const { chatMessageId, chunkIndex, text, rawData } = input;
-    await this.s.db
+    await this.service.db
       .insertInto("chatChunks")
       .values({
         chatMessageId,
@@ -35,7 +35,7 @@ export class ChatChunkService {
     userId: UserId,
     chatMessageId: ChatMessageId
   ): Promise<string> {
-    const rows = await this.s.db
+    const rows = await this.service.db
       .selectFrom("chatChunks as cc")
       .innerJoin("chatMessages as cm", "cm.id", "cc.chatMessageId")
       .innerJoin("chats as c", "c.id", "cm.chatId")
@@ -53,7 +53,7 @@ export class ChatChunkService {
     const q: PgEventInput<"chat_chunk_created">[] = [];
 
     const unlisten = await listen(
-      this.s.pool,
+      this.service.pool,
       "chat_chunk_created",
       PgEvent.chat_chunk_created,
       (input) => {
@@ -64,7 +64,7 @@ export class ChatChunkService {
 
     try {
       let lastChunkIndex = lastEventId ?? -1;
-      const chatChunks = await this.s.db
+      const chatChunks = await this.service.db
         .selectFrom("chatChunks as cc")
         .innerJoin("chatMessages as cm", "cm.id", "cc.chatMessageId")
         .innerJoin("chats as c", "c.id", "cm.chatId")
@@ -89,7 +89,7 @@ export class ChatChunkService {
 
           const { chunkIndex } = input;
           if (chunkIndex > lastChunkIndex) {
-            const chatChunk = await this.s.db
+            const chatChunk = await this.service.db
               .selectFrom("chatChunks as cc")
               .innerJoin("chatMessages as cm", "cm.id", "cc.chatMessageId")
               .innerJoin("chats as c", "c.id", "cm.chatId")
@@ -102,7 +102,7 @@ export class ChatChunkService {
             lastChunkIndex = chunkIndex;
           }
         } else {
-          if (await this.s.chatMessage.isStaleCompleted(chatMessageId)) {
+          if (await this.service.chatMessage.isStaleCompleted(chatMessageId)) {
             return;
           }
         }

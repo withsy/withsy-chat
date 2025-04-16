@@ -5,18 +5,18 @@ import type { ServiceRegistry } from "../service-registry";
 import type { Db } from "./db";
 
 export class IdempotencyService {
-  constructor(private readonly s: ServiceRegistry) {}
+  constructor(private readonly service: ServiceRegistry) {}
 
   async checkDuplicateRequest(idempotencyKey: IdempotencyKey) {
-    const row = await IdempotencyService.checkDuplicateRequest(
-      this.s.db,
+    const res = await IdempotencyService.checkDuplicateRequest(
+      this.service.db,
       idempotencyKey
     );
-    return row;
+    return res;
   }
 
   static async checkDuplicateRequest(db: Db, idempotencyKey: IdempotencyKey) {
-    const row = await db
+    const res = await db
       .insertInto("idempotencyKeys")
       .values({ key: idempotencyKey })
       .onConflict((oc) => oc.doNothing())
@@ -29,6 +29,6 @@ export class IdempotencyService {
             },
           })
       );
-    return row;
+    return res;
   }
 }

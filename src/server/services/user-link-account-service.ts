@@ -1,14 +1,14 @@
 import type { ServiceRegistry } from "../service-registry";
 
 export class UserLinkAccountService {
-  constructor(private readonly s: ServiceRegistry) {}
+  constructor(private readonly service: ServiceRegistry) {}
 
   async getOrCreateUserByProvider(input: {
     provider: string;
     providerAccountId: string;
   }) {
     const { provider, providerAccountId } = input;
-    return await this.s.db.transaction().execute(async (tx) => {
+    return await this.service.db.transaction().execute(async (tx) => {
       const userLinkAccount = await tx
         .selectFrom("userLinkAccounts")
         .where("provider", "=", provider)

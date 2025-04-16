@@ -5,11 +5,11 @@ import type { Db } from "./db";
 import type { FileInfo } from "./mock-s3-service";
 
 export class ChatMessageFileService {
-  constructor(private readonly s: ServiceRegistry) {}
+  constructor(private readonly service: ServiceRegistry) {}
 
   async list(userId: UserId, input: { chatMessageId: ChatMessageId }) {
     const { chatMessageId } = input;
-    const rows = await this.s.db
+    const rows = await this.service.db
       .selectFrom("chatMessageFiles as cmf")
       .innerJoin("chatMessages as cm", "cm.id", "cmf.chatMessageId")
       .innerJoin("chats as c", "c.id", "cm.chatId")

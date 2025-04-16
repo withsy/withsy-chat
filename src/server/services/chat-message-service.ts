@@ -16,13 +16,13 @@ import type { Db } from "./db";
 import type { FileInfo } from "./mock-s3-service";
 
 export class ChatMessageService {
-  constructor(private readonly s: ServiceRegistry) {}
+  constructor(private readonly service: ServiceRegistry) {}
 
   async list(userId: UserId, input: ListChatMessages) {
     const { role, isBookmarked, options } = input;
     const { scope, afterId, order, limit } = options;
 
-    let query = this.s.db
+    let query = this.service.db
       .selectFrom("chatMessages as cm")
       .innerJoin("chats as c", "c.id", "cm.chatId")
       .where("c.userId", "=", userId);
@@ -61,89 +61,93 @@ export class ChatMessageService {
   async listForAiChatHistory(
     userId: UserId,
     input: {
-      modelChatId: ChatId;
-      modelChatMessageId: ChatMessageId;
-      modelParentId: ChatMessageId | null;
+      modelChatMessage: {
+        id: ChatMessageId;
+        chatId: ChatId;
+        parentId: ChatMessageId | null;
+      };
     }
   ) {
-    const { modelChatId, modelChatMessageId, modelParentId } = input;
+    const { modelChatMessage } = input;
 
     // TODO: Change limit history length
     let remainLength = 10;
-    const histories = await this.s.db.transaction().execute(async (tx) => {
-      const baseQuery = tx
-        .selectFrom("chatMessages as cm")
-        .innerJoin("chats as c", "c.id", "cm.chatId")
-        .where("c.userId", "=", userId)
-        .where("cm.chatId", "=", modelChatId)
-        .where("cm.status", "=", ChatMessageStatus.enum.succeeded)
-        .where("cm.text", "is not", null)
-        .select(["cm.role", "cm.text"])
-        .orderBy("cm.id", "desc");
+    const histories = await this.service.db
+      .transaction()
+      .execute(async (tx) => {
+        const baseQuery = tx
+          .selectFrom("chatMessages as cm")
+          .innerJoin("chats as c", "c.id", "cm.chatId")
+          .where("c.userId", "=", userId)
+          .where("cm.chatId", "=", modelChatMessage.chatId)
+          .where("cm.status", "=", ChatMessageStatus.enum.succeeded)
+          .where("cm.text", "is not", null)
+          .select(["cm.role", "cm.text"])
+          .orderBy("cm.id", "desc");
 
-      const histories: {
-        role: string;
-        text: string | null;
-      }[] = [];
-      let oldestId = -1;
+        const histories: {
+          role: string;
+          text: string | null;
+        }[] = [];
+        let oldestId = -1;
 
-      // branch messages
-      if (modelParentId !== null) {
-        if (remainLength > 0) {
-          const rows = await baseQuery
-            .where("cm.id", "<", modelChatMessageId)
-            .where("cm.parentId", "=", modelParentId)
-            .select("cm.id")
-            .limit(remainLength)
-            .execute();
-          histories.push(...rows);
-          remainLength -= rows.length;
-          oldestId = rows.at(-1)?.id ?? -1;
-        }
+        // branch messages
+        if (modelChatMessage.parentId !== null) {
+          if (remainLength > 0) {
+            const rows = await baseQuery
+              .where("cm.id", "<", modelChatMessage.id)
+              .where("cm.parentId", "=", modelChatMessage.parentId)
+              .select("cm.id")
+              .limit(remainLength)
+              .execute();
+            histories.push(...rows);
+            remainLength -= rows.length;
+            oldestId = rows.at(-1)?.id ?? -1;
+          }
 
-        // parent message
-        if (remainLength > 0) {
-          const parent = await baseQuery
-            .where("cm.id", "=", modelParentId)
-            .where("cm.parentId", "is", null)
-            .select(["cm.id", "cm.replyToId"])
-            .executeTakeFirst();
-          if (parent) {
-            histories.push(parent);
-            remainLength -= 1;
-            oldestId = parent.id;
+          // parent message
+          if (remainLength > 0) {
+            const parent = await baseQuery
+              .where("cm.id", "=", modelChatMessage.parentId)
+              .where("cm.parentId", "is", null)
+              .select(["cm.id", "cm.replyToId"])
+              .executeTakeFirst();
+            if (parent) {
+              histories.push(parent);
+              remainLength -= 1;
+              oldestId = parent.id;
 
-            // reply to message
-            if (remainLength > 0 && parent.replyToId !== null) {
-              const replyTo = await baseQuery
-                .where("cm.id", "=", parent.replyToId)
-                .where("cm.parentId", "is", null)
-                .select("cm.id")
-                .executeTakeFirst();
-              if (replyTo) {
-                histories.push(replyTo);
-                remainLength -= 1;
-                oldestId = replyTo.id;
+              // reply to message
+              if (remainLength > 0 && parent.replyToId !== null) {
+                const replyTo = await baseQuery
+                  .where("cm.id", "=", parent.replyToId)
+                  .where("cm.parentId", "is", null)
+                  .select("cm.id")
+                  .executeTakeFirst();
+                if (replyTo) {
+                  histories.push(replyTo);
+                  remainLength -= 1;
+                  oldestId = replyTo.id;
+                }
               }
             }
           }
         }
-      }
 
-      // non-branch messages
-      if (remainLength > 0) {
-        let query = baseQuery;
-        if (oldestId !== -1) query = query.where("cm.id", "<", oldestId);
-        const rows = await query
-          .where("cm.parentId", "is", null)
-          .limit(remainLength)
-          .execute();
-        histories.push(...rows);
-        remainLength -= rows.length;
-      }
+        // non-branch messages
+        if (remainLength > 0) {
+          let query = baseQuery;
+          if (oldestId !== -1) query = query.where("cm.id", "<", oldestId);
+          const rows = await query
+            .where("cm.parentId", "is", null)
+            .limit(remainLength)
+            .execute();
+          histories.push(...rows);
+          remainLength -= rows.length;
+        }
 
-      return histories;
-    });
+        return histories;
+      });
 
     // sort newest to oldest
     histories.reverse();
@@ -152,19 +156,19 @@ export class ChatMessageService {
 
   async find(userId: UserId, input: { chatMessageId: ChatMessageId }) {
     const { chatMessageId } = input;
-    const row = await this.s.db
+    const res = await this.service.db
       .selectFrom("chatMessages as cm")
       .innerJoin("chats as c", "c.id", "cm.chatId")
       .where("c.userId", "=", userId)
       .where("cm.id", "=", chatMessageId)
-      .select([])
+      .select(["cm.id", "cm.text", "cm.model", "cm.chatId", "cm.parentId"])
       .executeTakeFirstOrThrow();
-    return row;
+    return res;
   }
 
   async update(userId: UserId, input: UpdateChatMessage) {
     const { chatMessageId, isBookmarked } = input;
-    const row = await this.s.db
+    const res = await this.service.db
       .updateTable("chatMessages as cm")
       .innerJoin("chats as c", "c.id", "cm.chatId")
       .where("c.userId", "=", userId)
@@ -172,7 +176,7 @@ export class ChatMessageService {
       .set({ isBookmarked })
       .returning([])
       .executeTakeFirstOrThrow();
-    return row;
+    return res;
   }
 
   async isStaleCompleted(
@@ -180,7 +184,7 @@ export class ChatMessageService {
     input: { chatMessageId: ChatMessageId }
   ) {
     const { chatMessageId } = input;
-    const chatMessage = await this.s.db
+    const chatMessage = await this.service.db
       .selectFrom("chatMessages as cm")
       .innerJoin("chats as c", "c.id", "cm.chatId")
       .where("c.userId", "=", userId)
@@ -207,7 +211,7 @@ export class ChatMessageService {
     }
   ) {
     const { chatMessageId, expectStatus, nextStatus } = input;
-    const row = await db
+    const res = await db
       .updateTable("chatMessages as cm")
       .innerJoin("chats as c", "c.id", "cm.chatId")
       .where("c.userId", "=", userId)
@@ -216,7 +220,7 @@ export class ChatMessageService {
       .set({ status: nextStatus })
       .returning("cm.id")
       .executeTakeFirst();
-    return row;
+    return res;
   }
 
   async transitPendingToProcessing(
@@ -224,15 +228,15 @@ export class ChatMessageService {
     input: { chatMessageId: ChatMessageId }
   ) {
     const { chatMessageId } = input;
-    const row = await this.s.db.transaction().execute(async (tx) => {
-      const row = await ChatMessageService.transit(tx, userId, {
+    const res = await this.service.db.transaction().execute(async (tx) => {
+      const res = await ChatMessageService.transit(tx, userId, {
         chatMessageId,
         expectStatus: "pending",
         nextStatus: "processing",
       });
-      return row;
+      return res;
     });
-    return row;
+    return res;
   }
 
   async transitProcessingToSucceeded(
@@ -240,13 +244,13 @@ export class ChatMessageService {
     input: { chatMessageId: ChatMessageId; text: string }
   ) {
     const { chatMessageId, text } = input;
-    await this.s.db.transaction().execute(async (tx) => {
-      const row = await ChatMessageService.transit(tx, userId, {
+    await this.service.db.transaction().execute(async (tx) => {
+      const res = await ChatMessageService.transit(tx, userId, {
         chatMessageId,
         expectStatus: "processing",
         nextStatus: "succeeded",
       });
-      if (!row)
+      if (!res)
         throw new HttpServerError(
           StatusCodes.INTERNAL_SERVER_ERROR,
           `Chat message transition failed. chatMessageId: ${chatMessageId} status: processing to succeeded.`
@@ -267,22 +271,22 @@ export class ChatMessageService {
     input: { chatMessageId: ChatMessageId }
   ) {
     const { chatMessageId } = input;
-    const row = await this.s.db.transaction().execute(async (tx) => {
-      const row = await ChatMessageService.transit(tx, userId, {
+    const res = await this.service.db.transaction().execute(async (tx) => {
+      const res = await ChatMessageService.transit(tx, userId, {
         chatMessageId,
         expectStatus: "processing",
         nextStatus: "failed",
       });
-      return row;
+      return res;
     });
-    if (!row)
+    if (!res)
       console.warn(
         `Chat message transition failed. chatMessageId: ${chatMessageId} status: processing to failed.`
       );
   }
 
   async onCleanupZombiesTask() {
-    const { numUpdatedRows } = await this.s.db
+    const { numUpdatedRows } = await this.service.db
       .updateTable("chatMessages as cm")
       .where("cm.status", "=", "processing")
       .where("cm.updatedAt", "<", new Date(Date.now() - 5 * 60_000)) // 5 minutes
@@ -296,11 +300,11 @@ export class ChatMessageService {
     const { idempotencyKey, chatId, model, text } = input;
     const files = input.files ?? [];
 
-    await this.s.idempotency.checkDuplicateRequest(idempotencyKey);
+    await this.service.idempotency.checkDuplicateRequest(idempotencyKey);
 
-    const { fileInfos } = await this.s.s3.uploads(userId, { files });
+    const { fileInfos } = await this.service.s3.uploads(userId, { files });
 
-    const { userChatMessage, modelChatMessage } = await this.s.db
+    const { userChatMessage, modelChatMessage } = await this.service.db
       .transaction()
       .execute(async (tx) => {
         const result = await ChatMessageService.createInfo(tx, {
@@ -312,7 +316,8 @@ export class ChatMessageService {
         return result;
       });
 
-    await this.s.task.add("google_gen_ai_send_chat", {
+    await this.service.task.add("google_gen_ai_send_chat", {
+      userId,
       userChatMessageId: userChatMessage.id,
       modelChatMessageId: modelChatMessage.id,
     });

@@ -5,10 +5,10 @@ import { ChatMessageService } from "./chat-message-service";
 import type { Db } from "./db";
 
 export class ChatService {
-  constructor(private readonly s: ServiceRegistry) {}
+  constructor(private readonly service: ServiceRegistry) {}
 
   async list(userId: UserId) {
-    const rows = await this.s.db
+    const rows = await this.service.db
       .selectFrom("chats as c")
       .where("c.userId", "=", userId)
       .orderBy("c.createdAt", "asc")
@@ -19,25 +19,25 @@ export class ChatService {
 
   async update(userId: UserId, input: UpdateChat) {
     const { chatId, title, isStarred } = input;
-    const row = await this.s.db
+    const res = await this.service.db
       .updateTable("chats as c")
       .where("c.userId", "=", userId)
       .where("c.id", "=", chatId)
       .set({ title, isStarred })
       .returning([])
       .executeTakeFirstOrThrow();
-    return row;
+    return res;
   }
 
   async start(userId: UserId, input: StartChat) {
     const { model, text, idempotencyKey } = input;
     const files = input.files ?? [];
 
-    await this.s.idempotency.checkDuplicateRequest(idempotencyKey);
+    await this.service.idempotency.checkDuplicateRequest(idempotencyKey);
 
-    const { fileInfos } = await this.s.s3.uploads(userId, { files });
+    const { fileInfos } = await this.service.s3.uploads(userId, { files });
 
-    const { chat, userChatMessage, modelChatMessage } = await this.s.db
+    const { chat, userChatMessage, modelChatMessage } = await this.service.db
       .transaction()
       .execute(async (tx) => {
         const chat = await ChatService.createChat(tx, { userId, text });
@@ -52,7 +52,8 @@ export class ChatService {
         return { chat, userChatMessage, modelChatMessage };
       });
 
-    await this.s.task.add("google_gen_ai_send_chat", {
+    await this.service.task.add("google_gen_ai_send_chat", {
+      userId,
       userChatMessageId: userChatMessage.id,
       modelChatMessageId: modelChatMessage.id,
     });
