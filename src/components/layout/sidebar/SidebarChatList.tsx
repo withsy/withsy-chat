@@ -177,7 +177,7 @@ function SidebarChatItem({
       className="group relative flex items-center gap-2 no-underline px-2.5 py-2 rounded-md transition-colors hover:bg-white cursor-pointer"
       onClick={handleLinkClick}
     >
-      <div className="flex items-center gap-2 flex-1">
+      <div className="flex items-center gap-2 flex-1 group-hover:font-bold">
         <div className="w-5 h-5 flex items-center justify-center relative">
           <SquareMenu
             size={16}
@@ -205,7 +205,7 @@ function SidebarChatItem({
           </button>
         </div>
 
-        <span className="text-foreground truncate">{chat.title}</span>
+        <span className="text-foreground truncate ">{chat.title}</span>
       </div>
 
       <DropdownMenu>

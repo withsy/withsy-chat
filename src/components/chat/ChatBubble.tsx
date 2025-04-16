@@ -1,5 +1,4 @@
 import { useUser } from "@/context/UserContext";
-import { trpc } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
 import type { ChatMessage } from "@/types/chat";
 import { useState } from "react";

@@ -40,7 +40,13 @@ export default function ChatHeader({
     {
       label: "Branches",
       id: "branches",
-      icon: <GitBranch size={16} />,
+      icon: (
+        <HoverSwitchIcon
+          DefaultIcon={GitBranch}
+          HoverIcon={GitBranch}
+          fill={`rgb(${themeColor})`}
+        />
+      ),
     },
   ];
 
@@ -54,6 +60,9 @@ export default function ChatHeader({
       headerStyle.borderTopRightRadius = 30;
     }
   }
+
+  const buttonClassName =
+    "group flex items-center gap-1 rounded-md px-1 py-2 hover:bg-white hover:font-bold transition-colors text-sm font-medium";
   return (
     <div
       className="absolute top-0 left-0 w-full h-[50px] px-4 flex items-center justify-between"
@@ -63,7 +72,7 @@ export default function ChatHeader({
         {buttons.map(({ label, id, icon }) => (
           <button
             key={id}
-            className="group flex items-center gap-1 rounded-md px-1 py-2 hover:bg-white transition-colors text-sm font-medium"
+            className={buttonClassName}
             onClick={() => handleClick(id)}
           >
             {icon}
@@ -74,7 +83,7 @@ export default function ChatHeader({
       <div className="flex gap-3">
         {!isMobile && (
           <button
-            className="group flex items-center gap-1 rounded-md px-1 py-2 hover:bg-white transition-colors text-sm font-medium"
+            className={buttonClassName}
             onClick={() => {
               setUserPrefAndSave("wideView", !userPrefs.wideView);
             }}
@@ -92,10 +101,7 @@ export default function ChatHeader({
             )}
           </button>
         )}
-        <button
-          className="group flex items-center gap-1 rounded-md px-1 py-2 hover:bg-white transition-colors text-sm font-medium"
-          onClick={() => {}}
-        >
+        <button className={buttonClassName} onClick={() => {}}>
           <HoverSwitchIcon
             DefaultIcon={Archive}
             HoverIcon={Archive}
