@@ -39,7 +39,7 @@ export const trpcRouter = t.router({
       .query(async (opts) => opts.ctx.s.chatMessage.list(opts.input)),
     update: publicProcedure
       .input(UpdateChatMessage)
-      .query(async (opts) => opts.ctx.s.chatMessage.update(opts.input)),
+      .mutation(async (opts) => opts.ctx.s.chatMessage.update(opts.input)),
     send: publicProcedure
       .input(SendChatMessage)
       .mutation(async (opts) => opts.ctx.s.chatMessage.send(opts.input)),

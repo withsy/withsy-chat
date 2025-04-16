@@ -8,6 +8,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useSidebar } from "@/context/SidebarContext";
+import { useUser } from "@/context/UserContext";
 import {
   formatDateLabel,
   toLocaleDateString,
@@ -148,7 +149,8 @@ function SidebarChatItem({
   isStarred: boolean;
   onToggleStar: (chat: Chat) => void;
 }) {
-  const { isMobile, setCollapsed, userPrefs } = useSidebar();
+  const { isMobile, setCollapsed } = useSidebar();
+  const { userPrefs } = useUser();
 
   const router = useRouter();
 

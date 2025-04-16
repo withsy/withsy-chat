@@ -24,14 +24,14 @@ CREATE TRIGGER trigger_users_update_updated_at
   EXECUTE PROCEDURE fn_update_updated_at();
 
 -- TODO: index
-CREATE TABLE user_logins(
+CREATE TABLE user_link_accounts(
   id integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   user_id uuid NOT NULL,
   provider text NOT NULL,
   provider_account_id text NOT NULL,
   created_at timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  CONSTRAINT fk_user_logins_user_id FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-  CONSTRAINT unique_user_logins_provider UNIQUE (provider, provider_account_id)
+  CONSTRAINT fk_user_link_accounts_user_id FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  CONSTRAINT unique_user_link_accounts_provider UNIQUE (provider, provider_account_id)
 );
 
 -- TODO: index

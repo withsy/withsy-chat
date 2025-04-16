@@ -1,4 +1,4 @@
-import { useSidebar } from "@/context/SidebarContext";
+import { useUser } from "@/context/UserContext";
 import type { ChatMessage } from "@/types/chat";
 import { ChevronsDown } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
@@ -9,7 +9,7 @@ type Props = {
 };
 
 export function ChatMessageList({ messages }: Props) {
-  const { userPrefs } = useSidebar();
+  const { userPrefs } = useUser();
   const { themeColor } = userPrefs;
 
   const bottomRef = useRef<HTMLDivElement | null>(null);

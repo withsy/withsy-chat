@@ -1,4 +1,4 @@
-import { useSidebar } from "@/context/SidebarContext";
+import { useUser } from "@/context/UserContext";
 import { type LucideIcon } from "lucide-react";
 
 interface IconWithLabelProps {
@@ -16,7 +16,7 @@ export function IconWithLabel({
   fill = false,
   size = 16,
 }: IconWithLabelProps) {
-  const { userPrefs } = useSidebar();
+  const { userPrefs } = useUser();
   const { themeColor } = userPrefs;
   const className = `transition-colors hover:text-black group-hover:text-black`;
   return (

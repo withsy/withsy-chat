@@ -1,9 +1,11 @@
 import { useSidebar } from "@/context/SidebarContext";
+import { useUser } from "@/context/UserContext";
 import { cn } from "@/lib/utils";
 import SidebarChatList from "./SidebarChatList";
 
 export default function Sidebar() {
-  const { isMobile, collapsed, userPrefs } = useSidebar();
+  const { isMobile, collapsed } = useSidebar();
+  const { userPrefs } = useUser();
   const { largeText, themeColor, themeOpacity } = userPrefs;
 
   return (

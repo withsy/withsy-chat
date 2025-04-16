@@ -13,12 +13,14 @@ import { IdempotencyService } from "./services/idempotency-service";
 import { MockS3Service } from "./services/mock-s3-service";
 import { createPool } from "./services/pg";
 import { TaskService } from "./services/task-service";
+import { UserLinkAccountService } from "./services/user-link-account-service";
 import { UserService } from "./services/user-service";
 
 type ServiceDefinition = {
   pool: Pool;
   db: Db;
   user: UserService;
+  userLinkAccount: UserLinkAccountService;
   chat: ChatService;
   chatMessage: ChatMessageService;
   chatMessageFile: ChatMessageFileService;
@@ -36,6 +38,7 @@ function createServiceRegistry() {
     pool: () => createPool(),
     db: (s) => createDb(s),
     user: (s) => new UserService(s),
+    userLinkAccount: (s) => new UserLinkAccountService(s),
     chat: (s) => new ChatService(s),
     chatMessage: (s) => new ChatMessageService(s),
     chatMessageFile: (s) => new ChatMessageFileService(s),

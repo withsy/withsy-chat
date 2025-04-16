@@ -1,5 +1,6 @@
 // components/ModelAvatar.tsx
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useUser } from "@/context/UserContext";
 import { getModelAvatar } from "@/lib/avatar-utils";
 
 type Props = {
@@ -8,7 +9,12 @@ type Props = {
 };
 
 export function ModelAvatar({ name, size = "md" }: Props) {
-  const src = getModelAvatar(name);
+  const { userSession } = useUser();
+  // TODO: refactor.
+  const src =
+    name === userSession?.user?.name
+      ? userSession?.user?.image ?? getModelAvatar(name)
+      : getModelAvatar(name);
 
   const sizeClass = {
     sm: "w-6 h-6 text-xs",

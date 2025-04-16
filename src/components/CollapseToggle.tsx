@@ -1,4 +1,4 @@
-import { useSidebar } from "@/context/SidebarContext";
+import { useUser } from "@/context/UserContext";
 
 type Props = {
   show: boolean;
@@ -7,8 +7,8 @@ type Props = {
 };
 
 export function CollapseToggle({ show, collapsed, setCollapsed }: Props) {
-  const { userPrefs } = useSidebar();
-  const themeColor = userPrefs["themeColor"];
+  const { userPrefs } = useUser();
+  const { themeColor } = userPrefs;
 
   if (!show) return null;
   return (

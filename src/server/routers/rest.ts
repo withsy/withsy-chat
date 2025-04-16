@@ -4,31 +4,56 @@ import { TRPCError } from "@trpc/server";
 import { Hono, type Context, type Next } from "hono";
 import { logger } from "hono/logger";
 import { StatusCodes } from "http-status-codes";
+import { type Session } from "next-auth";
+import type { IncomingMessage } from "node:http";
 import { createApiContext, type ApiContext } from "../api-context";
 import { envConfig } from "../env-config";
-import { ApiError, HttpApiError, parseMessageFromUnknown } from "../error";
+import {
+  ApiError,
+  HttpApiError,
+  parseMessageFromUnknown,
+  UnauthorizedApiError,
+} from "../error";
 import { trpcRouter } from "./trpc";
 
 declare module "hono" {
   interface ContextVariableMap {
-    ctx: ApiContext;
+    apiCtx: ApiContext;
   }
 }
 
-const trpcUi = new Hono().get("/", async (c) => {
-  if (envConfig.nodeEnv !== "development") {
-    return c.text("Not Found", 404);
-  }
-  const { renderTrpcPanel } = await import("trpc-ui");
-  return c.html(
-    renderTrpcPanel(trpcRouter, {
-      url: "/api/trpc",
-      transformer: "superjson",
-    })
-  );
-});
+export function setSessionToRequest(
+  req: IncomingMessage,
+  session: Session | null
+) {
+  Reflect.set(req, "session", session);
+}
+
+function getSessionFromHonoContext(c: Context) {
+  const incoming = Reflect.get(c.env, "incoming") as
+    | IncomingMessage
+    | undefined;
+  if (!incoming)
+    throw new HttpApiError(
+      StatusCodes.INTERNAL_SERVER_ERROR,
+      "Unexpected error occurred."
+    );
+
+  const session = Reflect.get(incoming, "session") as
+    | Session
+    | null
+    | undefined;
+  if (!session) throw new UnauthorizedApiError("Session does not exist.");
+  return session;
+}
 
 const chats = new Hono()
+  .use(async (c: Context, next: Next) => {
+    const session = getSessionFromHonoContext(c);
+    const apiCtx = await createApiContext(session);
+    c.set("apiCtx", apiCtx);
+    await next();
+  })
   .post("/", async (c) => {
     const formData = await c.req.formData();
     const input = await StartChat.parseAsync({
@@ -40,8 +65,8 @@ const chats = new Hono()
 
     checkFiles(input.files);
 
-    const ctx = c.get("ctx");
-    const res = await ctx.s.chat.start(ctx.userId, input);
+    const apiCtx = c.get("apiCtx");
+    const res = await apiCtx.s.chat.start(apiCtx.userId, input);
     return c.json(res);
   })
   .post("/:chatId/messages", async (c) => {
@@ -58,43 +83,48 @@ const chats = new Hono()
 
     checkFiles(input.files);
 
-    const ctx = c.get("ctx");
-    const res = await ctx.s.chatMessage.send(input);
+    const apiCtx = c.get("apiCtx");
+    const res = await apiCtx.s.chatMessage.send(input);
     return c.json(res);
   });
 
-export const rest = new Hono().basePath("/api").use(logger());
-
-rest.use(async (c: Context, next: Next) => {
-  try {
-    await next();
-  } catch (e) {
-    if (e instanceof ApiError) {
-      return c.json(e, e.code);
-    } else if (e instanceof TRPCError) {
-      // TODO: error handling.
-      console.warn("TRPCError conversion is required. error:", e);
-      return c.json(e, 500);
-    } else if (e instanceof Error) {
-      // TODO: error handling.
-      return c.json(e, 500);
-    } else {
-      // TODO: error handling.
-      return c.json(parseMessageFromUnknown(e), 500);
+export const rest = new Hono()
+  .basePath("/api")
+  .use(logger())
+  .use(async (c: Context, next: Next) => {
+    try {
+      await next();
+    } catch (e) {
+      if (e instanceof ApiError) {
+        return c.json(e, e.code);
+      } else if (e instanceof TRPCError) {
+        // TODO: error handling.
+        console.warn("TRPCError conversion is required. error:", e);
+        return c.json(e, 500);
+      } else if (e instanceof Error) {
+        // TODO: error handling.
+        return c.json(e, 500);
+      } else {
+        // TODO: error handling.
+        return c.json(parseMessageFromUnknown(e), 500);
+      }
     }
-  }
-});
+  })
+  .route("/chats", chats);
 
-rest.use(async (c: Context, next: Next) => {
-  const ctx = await createApiContext();
-  c.set("ctx", ctx);
-  await next();
-});
+if (envConfig.nodeEnv === "development") {
+  console.warn("Development endpoints /trpc-ui and /s3 are opened.");
 
-rest.route("/trpc-ui", trpcUi).route("/chats", chats);
+  rest.get("/trpc-ui", async (c) => {
+    const { renderTrpcPanel } = await import("trpc-ui");
+    return c.html(
+      renderTrpcPanel(trpcRouter, {
+        url: "/api/trpc",
+        transformer: "superjson",
+      })
+    );
+  });
 
-if (process.env.NODE_ENV === "development") {
-  console.log("Serve static enabled.");
   // NOTE: The file path must match the MockS3Service.
   rest.use(
     `/s3/*`,

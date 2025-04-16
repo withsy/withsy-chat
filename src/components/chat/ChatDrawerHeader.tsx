@@ -1,4 +1,4 @@
-import { useSidebar } from "@/context/SidebarContext";
+import { useUser } from "@/context/UserContext";
 import { CircleX } from "lucide-react";
 
 interface ChatHeaderProps {
@@ -10,7 +10,7 @@ export default function ChatDrawerHeader({
   setOpenDrawer,
   openDrawer,
 }: ChatHeaderProps) {
-  const { userPrefs } = useSidebar();
+  const { userPrefs } = useUser();
   const { themeColor, themeOpacity } = userPrefs;
   const handleClick = () => {
     setOpenDrawer(null);

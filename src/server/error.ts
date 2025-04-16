@@ -55,6 +55,14 @@ export class HttpApiError<TExtra extends Extra = Extra> extends ApiError<
   }
 }
 
+export class UnauthorizedApiError<
+  TExtra extends Extra = Extra
+> extends HttpApiError<TExtra> {
+  constructor(message: string, options?: ApiErrorOptions<TExtra>) {
+    super(StatusCodes.UNAUTHORIZED, message, options);
+  }
+}
+
 export function parseMessageFromUnknown(x: unknown) {
   if (typeof x === "string") return x;
   if (typeof x === "object" && x !== null && "message" in x)

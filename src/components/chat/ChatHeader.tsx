@@ -1,4 +1,5 @@
 import { useSidebar } from "@/context/SidebarContext";
+import { useUser } from "@/context/UserContext";
 import {
   Archive,
   Bookmark,
@@ -16,7 +17,8 @@ export default function ChatHeader({
   setOpenDrawer,
   openDrawer,
 }: ChatHeaderProps) {
-  const { userPrefs, isMobile, setUserPrefAndSave } = useSidebar();
+  const { isMobile } = useSidebar();
+  const { userPrefs, setUserPrefAndSave } = useUser();
   const { themeColor, themeOpacity } = userPrefs;
   const handleClick = (id: string) => {
     setOpenDrawer(openDrawer === id ? null : id);

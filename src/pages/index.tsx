@@ -1,5 +1,7 @@
 import EmptyChatInterface from "@/components/chat/EmptyChatView";
+import { useUser } from "@/context/UserContext";
 
 export default function Home() {
-  return <EmptyChatInterface name="Jenn" />;
+  const { userSession } = useUser();
+  return <EmptyChatInterface name={userSession?.user?.name ?? "Jenn"} />;
 }

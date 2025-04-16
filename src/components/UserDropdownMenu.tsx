@@ -13,7 +13,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useSidebar } from "@/context/SidebarContext";
+import { useUser } from "@/context/UserContext";
 import { cn } from "@/lib/utils";
 import {
   Archive,
@@ -107,9 +107,9 @@ function UserMenuItem({
 }
 
 export default function UserDropdownMenu() {
-  const username = "Jenn";
-  const { userPrefs, setUserPrefAndSave, userPrefLoadings } = useSidebar();
-  const largeText = userPrefs["largeText"];
+  const { userPrefs, setUserPrefAndSave, userPrefLoadings, userSession } =
+    useUser();
+  const { largeText } = userPrefs;
   const [themeModalOpen, setThemeModalOpen] = useState(false);
 
   const toggleItems = [
@@ -138,7 +138,7 @@ export default function UserDropdownMenu() {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <button type="button" className="cursor-pointer">
-            <ModelAvatar name={username} />
+            <ModelAvatar name={userSession?.user?.name ?? "Jenn"} />
           </button>
         </DropdownMenuTrigger>
 

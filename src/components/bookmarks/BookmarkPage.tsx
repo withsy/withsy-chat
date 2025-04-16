@@ -1,13 +1,13 @@
 import { BookmarkCard } from "@/components/bookmarks/BookmarkCard";
 import { BookmarkFilters } from "@/components/bookmarks/BookmarkFilters";
 
-import { useSidebar } from "@/context/SidebarContext";
+import { useUser } from "@/context/UserContext";
 import data from "@/data/bookmarks.json";
 import { getFilteredBookmarks } from "@/lib/filter-utils";
 import { useMemo, useState } from "react";
 
 export default function BookmarkPage() {
-  const { userPrefs } = useSidebar();
+  const { userPrefs } = useUser();
   const [searchText, setSearchText] = useState("");
   const [sortBy, setSortBy] = useState<"chattedAt" | "bookmarkedAt">(
     "bookmarkedAt"
