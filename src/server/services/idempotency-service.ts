@@ -1,29 +1,34 @@
 import type { IdempotencyKey } from "@/types/common";
-import { TRPCError } from "@trpc/server";
+import { StatusCodes } from "http-status-codes";
+import { HttpServerError } from "../error";
 import type { ServiceRegistry } from "../service-registry";
 import type { Db } from "./db";
-
-export const DUPLICATE_REQUEST_ERROR = new TRPCError({
-  code: "CONFLICT",
-  message: "Duplicate request",
-});
 
 export class IdempotencyService {
   constructor(private readonly s: ServiceRegistry) {}
 
   async checkDuplicateRequest(idempotencyKey: IdempotencyKey) {
-    return await IdempotencyService.checkDuplicateRequest(
+    const row = await IdempotencyService.checkDuplicateRequest(
       this.s.db,
       idempotencyKey
     );
+    return row;
   }
 
   static async checkDuplicateRequest(db: Db, idempotencyKey: IdempotencyKey) {
-    return await db
+    const row = await db
       .insertInto("idempotencyKeys")
       .values({ key: idempotencyKey })
       .onConflict((oc) => oc.doNothing())
-      .returning("key")
-      .executeTakeFirstOrThrow(() => DUPLICATE_REQUEST_ERROR);
+      .returning(["key"])
+      .executeTakeFirstOrThrow(
+        () =>
+          new HttpServerError(StatusCodes.CONFLICT, "Duplicate request", {
+            extra: {
+              idempotencyKey,
+            },
+          })
+      );
+    return row;
   }
 }

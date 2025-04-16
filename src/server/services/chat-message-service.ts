@@ -276,28 +276,28 @@ export class ChatMessageService {
       );
   }
 
-  // WIP
   async onCleanupZombiesTask() {
     const { numUpdatedRows } = await this.s.db
-      .updateTable("chatMessages")
+      .updateTable("chatMessages as cm")
+      .where("cm.status", "=", "processing")
+      .where("cm.updatedAt", "<", new Date(Date.now() - 5 * 60_000)) // 5 minutes
       .set({ status: "failed" })
-      .where("status", "=", "processing")
-      .where("updatedAt", "<", new Date(Date.now() - 5 * 60_000)) // 5 minutes
       .executeTakeFirst();
     if (numUpdatedRows > 0)
       console.warn(`Marked ${numUpdatedRows} zombie chat messages as failed.`);
   }
 
-  async send(input: SendChatMessage) {
+  async send(userId: UserId, input: SendChatMessage) {
     const { idempotencyKey, chatId, model, text } = input;
     const files = input.files ?? [];
 
-    const { fileInfos } = await this.s.s3.uploads({ files });
+    const { fileInfos } = await this.s.s3.uploads(userId, { files });
 
     const { userChatMessage, modelChatMessage } = await this.s.db
       .transaction()
       .execute(async (tx) => {
         await IdempotencyService.checkDuplicateRequest(tx, idempotencyKey);
+        // WIP
         return await ChatService.createMessageInfo(tx, {
           chatId,
           model,
