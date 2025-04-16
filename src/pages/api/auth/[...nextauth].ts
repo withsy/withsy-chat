@@ -1,16 +1,22 @@
 import { envConfig } from "@/server/env-config";
+import { localDevAuthProvider } from "@/server/local-auth-provider";
 import { service } from "@/server/service-registry";
 import { UserJwt, UserSession } from "@/types/user";
 import NextAuth, { type AuthOptions } from "next-auth";
 import GithubProvider from "next-auth/providers/github";
+import type { Provider } from "next-auth/providers/index";
+
+const providers: Provider[] = [
+  GithubProvider({
+    clientId: envConfig.githubClientId,
+    clientSecret: envConfig.githubClientSecret,
+  }),
+];
+
+if (envConfig.nodeEnv === "development") providers.push(localDevAuthProvider);
 
 export const authOptions: AuthOptions = {
-  providers: [
-    GithubProvider({
-      clientId: envConfig.githubClientId,
-      clientSecret: envConfig.githubClientSecret,
-    }),
-  ],
+  providers,
   callbacks: {
     async jwt({ token, account }) {
       if (!account) return token;
@@ -20,14 +26,14 @@ export const authOptions: AuthOptions = {
           provider,
           providerAccountId,
         });
-      const userJwt = await UserJwt.parseAsync({ ...token, userId });
+      const userJwt = await UserJwt.parseAsync({ ...token, sub: userId });
       return userJwt;
     },
     async session({ session, token }) {
       const userJwt = await UserJwt.parseAsync(token);
       const userSession = await UserSession.parseAsync({
         ...session,
-        user: { ...(session.user ?? {}), id: userJwt.userId },
+        user: { ...(session.user ?? {}), id: userJwt.sub },
       });
       return userSession;
     },

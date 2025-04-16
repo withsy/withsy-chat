@@ -40,7 +40,7 @@ export const UserJwt = z.object({
   name: z.string().nullish(),
   email: z.string().nullish(),
   picture: z.string().nullish(),
-  userId: z.string(),
+  sub: z.string(),
 });
 export type UserJwt = zInfer<typeof UserJwt>;
 export type UserJwtInput = zInput<typeof UserJwt>;
