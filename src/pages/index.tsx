@@ -3,5 +3,5 @@ import { useUser } from "@/context/UserContext";
 
 export default function Home() {
   const { userSession } = useUser();
-  return <EmptyChatInterface name={userSession?.user?.name ?? "Jenn"} />;
+  return <EmptyChatInterface name={userSession?.user?.name ?? ""} />;
 }

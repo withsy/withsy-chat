@@ -138,7 +138,7 @@ export default function UserDropdownMenu() {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <button type="button" className="cursor-pointer">
-            <ModelAvatar name={userSession?.user?.name ?? "Jenn"} />
+            <ModelAvatar name={userSession?.user?.name ?? ""} />
           </button>
         </DropdownMenuTrigger>
 
