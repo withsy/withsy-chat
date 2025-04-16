@@ -46,24 +46,26 @@ export const ChatBubbleTooltips: React.FC<ChatBubbleTooltipsProps> = ({
           <TooltipContent>Save</TooltipContent>
         </Tooltip>
 
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button size="icon" variant="ghost" onClick={onBranch}>
-              <GitBranch className="w-4 h-4" />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>Branch</TooltipContent>
-        </Tooltip>
-
         {isAi && (
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button size="icon" variant="ghost" onClick={onChangeModel}>
-                <RefreshCw className="w-4 h-4" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>Change Model</TooltipContent>
-          </Tooltip>
+          <>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button size="icon" variant="ghost" onClick={onBranch}>
+                  <GitBranch className="w-4 h-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Branch</TooltipContent>
+            </Tooltip>
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button size="icon" variant="ghost" onClick={onChangeModel}>
+                  <RefreshCw className="w-4 h-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Change Model</TooltipContent>
+            </Tooltip>
+          </>
         )}
       </div>
     </TooltipProvider>
