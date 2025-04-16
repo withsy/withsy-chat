@@ -13,7 +13,8 @@ type Props = {
 };
 
 export function ChatBubble({ message }: Props) {
-  const { role, text: rawText, isBookmarked } = message;
+  const [localMessage, setLocalMessage] = useState(message);
+  const { role, text: rawText } = localMessage;
 
   const text = rawText ?? "";
   const isLongMessage = text.length > 150;
@@ -21,7 +22,6 @@ export function ChatBubble({ message }: Props) {
   const displayedText = collapsed ? text.slice(0, 150) + "..." : text;
 
   const fallbackName = role === "model" ? "AI" : "username";
-  const utils = trpc.useUtils();
 
   const handleCopy = async () => {
     try {
@@ -39,7 +39,12 @@ export function ChatBubble({ message }: Props) {
 
   const updateMessageMutation = trpc.chatMessage.update.useMutation({
     onSuccess: () => {
-      if (!isBookmarked) {
+      const updated = {
+        ...localMessage,
+        isBookmarked: !localMessage.isBookmarked,
+      };
+      setLocalMessage(updated);
+      if (!localMessage.isBookmarked) {
         toast.success("Saved for later", {
           description: "You can find it in your saved list.",
         });
@@ -48,7 +53,6 @@ export function ChatBubble({ message }: Props) {
           description: "It’s no longer in your saved list.",
         });
       }
-      utils.invalidate();
     },
     onError: () => {
       toast.error("Failed", {
@@ -60,8 +64,8 @@ export function ChatBubble({ message }: Props) {
   const handleSave = async () => {
     try {
       await updateMessageMutation.mutateAsync({
-        chatMessageId: message.id,
-        isBookmarked: !message.isBookmarked,
+        chatMessageId: localMessage.id,
+        isBookmarked: !localMessage.isBookmarked,
       });
     } catch (err) {
       console.error("Failed to toggle bookmark:", err);
@@ -75,6 +79,7 @@ export function ChatBubble({ message }: Props) {
   const handleChangeModel = () => {
     console.log("change model");
   };
+
   return (
     <div
       className={cn(
@@ -93,8 +98,8 @@ export function ChatBubble({ message }: Props) {
             role === "user" && "self-end"
           )}
         >
-          {role === "model" ? message.model?.toUpperCase() : "You"} ·{" "}
-          {new Date(message.createdAt).toLocaleTimeString()}
+          {role === "model" ? localMessage.model?.toUpperCase() : "You"} ·{" "}
+          {new Date(localMessage.createdAt).toLocaleTimeString()}
         </div>
 
         <div
@@ -108,7 +113,7 @@ export function ChatBubble({ message }: Props) {
         <div className="flex justify-between w-full mt-2">
           <ChatBubbleTooltips
             isAi={role == "model"}
-            isSaved={isBookmarked}
+            isSaved={localMessage.isBookmarked}
             onCopy={handleCopy}
             onSave={handleSave}
             onBranch={handleBranch}
