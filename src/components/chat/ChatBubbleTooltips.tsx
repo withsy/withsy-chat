@@ -5,11 +5,13 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useSidebar } from "@/context/SidebarContext";
 import { cn } from "@/lib/utils";
 import { Bookmark, Copy, GitBranch, RefreshCw } from "lucide-react";
 
 interface ChatBubbleTooltipsProps {
   isAi: boolean;
+  isSaved: boolean;
   onCopy?: () => void;
   onSave?: () => void;
   onBranch?: () => void;
@@ -19,12 +21,15 @@ interface ChatBubbleTooltipsProps {
 
 export const ChatBubbleTooltips: React.FC<ChatBubbleTooltipsProps> = ({
   isAi,
+  isSaved,
   onCopy,
   onSave,
   onBranch,
   onChangeModel,
   className,
 }) => {
+  const { userPrefs } = useSidebar();
+  const { themeColor } = userPrefs;
   return (
     <TooltipProvider>
       <div className={cn("flex gap-2", className)}>
@@ -40,7 +45,10 @@ export const ChatBubbleTooltips: React.FC<ChatBubbleTooltipsProps> = ({
         <Tooltip>
           <TooltipTrigger asChild>
             <Button size="icon" variant="ghost" onClick={onSave}>
-              <Bookmark className="w-4 h-4" />
+              <Bookmark
+                className="w-4 h-4"
+                fill={isSaved ? `rgb(${themeColor})` : "transparent"}
+              />
             </Button>
           </TooltipTrigger>
           <TooltipContent>Save</TooltipContent>

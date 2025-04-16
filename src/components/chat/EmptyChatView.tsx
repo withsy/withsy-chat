@@ -1,5 +1,3 @@
-import { InformationCard } from "@/components/chat/InformationCard";
-import { Archive, Book, Cpu, MessageSquare } from "lucide-react";
 import { useEffect, useState } from "react";
 import { ChatSession } from "./ChatSession";
 
@@ -21,34 +19,6 @@ export default function EmptyChatView({ name = "" }: { name?: string }) {
     return () => clearInterval(interval);
   }, []);
 
-  const cards = [
-    {
-      title: "Archive",
-      description: "Archive & manage your chats",
-      icon: <Archive className="w-6 h-6 text-blue-500" />,
-      onClick: () => console.log("Open Tag Modal"),
-    },
-    {
-      title: "Prompt",
-      description: "Manage auto & saved prompts",
-      icon: <MessageSquare className="w-6 h-6 text-green-500" />,
-      onClick: () => console.log("Open Prompt Modal"),
-    },
-    {
-      title: "Model",
-      description: "Change default model & manage keys",
-      icon: <Cpu className="w-6 h-6 text-purple-500" />,
-      onClick: () => console.log("Open Model Modal"),
-    },
-    {
-      title: "Guide",
-      description: "How to use the service",
-      icon: <Book className="w-6 h-6 text-orange-500" />,
-      isExternal: true,
-      onClick: () => window.open("https://your-guide-url.com", "_blank"),
-    },
-  ];
-
   return (
     <ChatSession chatId={null} initialMessages={[]}>
       <div className="flex flex-col items-center justify-center w-full px-4 h-full">
@@ -56,13 +26,6 @@ export default function EmptyChatView({ name = "" }: { name?: string }) {
           {greeting}
           {name && `, ${name}`}
         </h1>
-        <div className="p-4">
-          <div className="grid grid-cols-2 gap-3 max-w-lg">
-            {cards.map((card) => (
-              <InformationCard key={card.title} {...card} />
-            ))}
-          </div>
-        </div>
       </div>
     </ChatSession>
   );
