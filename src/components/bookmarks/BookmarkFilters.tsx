@@ -43,8 +43,7 @@ export function BookmarkFilters({
 
   return (
     <div className="pb-4">
-      <div className="flex justify-between items-center mb-2">
-        <h2 className="text-lg font-semibold">Filters</h2>
+      <div className="flex justify-end items-center mb-2">
         <div className="flex items-center gap-2">
           <Button
             variant="ghost"

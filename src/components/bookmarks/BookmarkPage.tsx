@@ -1,5 +1,6 @@
 import { BookmarkCard } from "@/components/bookmarks/BookmarkCard";
 import { BookmarkFilters } from "@/components/bookmarks/BookmarkFilters";
+import { Bookmark } from "lucide-react";
 
 import { useUser } from "@/context/UserContext";
 import { getFilteredBookmarks } from "@/lib/filter-utils";
@@ -10,6 +11,7 @@ import { useEffect, useMemo, useState } from "react";
 
 export default function BookmarkPage() {
   const { userPrefs, userSession } = useUser();
+  const { themeColor } = userPrefs;
   const [data, setData] = useState<ChatMessage[]>([]);
   const [searchText, setSearchText] = useState("");
   const [sortBy, setSortBy] = useState<"chattedAt" | "bookmarkedAt">(
@@ -35,7 +37,6 @@ export default function BookmarkPage() {
     if (!listSaved.data) return;
     setData(listSaved.data.map((x) => ChatMessage.parse(x)));
   }, [listSaved.data]);
-  console.log(data);
 
   const filteredMessages = useMemo(() => {
     const keyword = searchText.toLowerCase().trim();
@@ -51,6 +52,10 @@ export default function BookmarkPage() {
 
   return (
     <div className="h-full w-full flex flex-col p-6">
+      <div className="flex items-center gap-2">
+        <Bookmark size={22} fill={`rgb(${themeColor})`} />
+        <h1 className="text-xl font-bold">All Saved</h1>
+      </div>
       <BookmarkFilters
         sortBy={sortBy}
         setSortBy={setSortBy}
