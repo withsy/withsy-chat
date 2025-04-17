@@ -100,10 +100,8 @@ function CustomDrawerContent({
   messages: ChatMessage[];
   onToggleSaved: (id: number, newValue: boolean) => void;
 }) {
-  console.log(messages);
   return (
-    <div>
-      test
+    <div className="overflow-y-auto max-h-[80%] pr-2">
       {messages.map((msg) => (
         <ChatBubble key={msg.id} message={msg} onToggleSaved={onToggleSaved} />
       ))}
