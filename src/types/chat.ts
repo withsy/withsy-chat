@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { JsonValue, type zInfer, type zInput } from "./common";
+import { type zInfer, type zInput } from "./common";
 import { IdempotencyKey } from "./idempotency";
 import { UserId } from "./user";
 
