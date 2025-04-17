@@ -6,14 +6,12 @@ import { useEffect, useRef, useState, type RefObject } from "react";
 import { ChatBubble } from "./ChatBubble";
 
 type Props = {
-  chatId: string | null;
   messages: ChatMessage[];
   onToggleSaved: (id: number, newValue: boolean) => void;
   shouldAutoScrollRef: RefObject<boolean>;
 };
 
 export function ChatMessageList({
-  chatId,
   messages,
   onToggleSaved,
   shouldAutoScrollRef,
