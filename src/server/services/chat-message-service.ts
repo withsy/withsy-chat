@@ -1,17 +1,19 @@
 import {
   ChatId,
-  ChatMessage,
   ChatMessageId,
+  ChatMessageSchema,
   ChatMessageStatus,
   ChatRole,
+  ChatSchema,
   SendChatMessage,
   UpdateChatMessage,
   type ListChatMessages,
 } from "@/types/chat";
-import { checkExactKeys, checkExactKeysArray } from "@/types/common";
+import { cols } from "@/types/common";
 import type { UserId } from "@/types/user";
 import { StatusCodes } from "http-status-codes";
-import { jsonBuildObject } from "kysely/helpers/postgres";
+import type { Expression } from "kysely";
+import { jsonObjectFrom } from "kysely/helpers/postgres";
 import { HttpServerError } from "../error";
 import type { ServiceRegistry } from "../service-registry";
 import { ChatMessageFileService } from "./chat-message-file-service";
@@ -23,12 +25,21 @@ type History = {
   text: string;
 };
 
+function withChat(db: Db, chatId: Expression<string>) {
+  return jsonObjectFrom(
+    db
+      .selectFrom("chats")
+      .where("chats.id", "=", chatId)
+      .select(cols(ChatSchema, "chats"))
+  );
+}
+
 export class ChatMessageService {
   constructor(private readonly service: ServiceRegistry) {}
 
   async list(userId: UserId, input: ListChatMessages) {
     const { role, isBookmarked, options } = input;
-    const { scope, afterId, order, limit } = options;
+    const { scope, afterId, order, limit, include } = options;
 
     let query = this.service.db
       .selectFrom("chatMessages as cm")
@@ -53,21 +64,17 @@ export class ChatMessageService {
     const res = await query
       .orderBy("cm.id", order)
       .limit(limit)
-      .select((eb) => [
-        "cm.isBookmarked",
-        "cm.model",
-        "cm.role",
-        "cm.status",
-        "cm.text",
-        "cm.parentId",
-        "cm.id",
-        "cm.chatId",
-        "cm.createdAt",
-        jsonBuildObject({ title: eb.ref("c.title") }).as("chat"),
-      ])
+      .select((eb) =>
+        [
+          ...cols(ChatMessageSchema, "cm"),
+          include?.chat
+            ? withChat(this.service.db, eb.ref("cm.chatId")).as("chat")
+            : undefined,
+        ].filter((x) => x != null)
+      )
       .execute();
 
-    return checkExactKeysArray<ChatMessage>()(res);
+    return res;
   }
 
   async listForAiChatHistory(
@@ -111,13 +118,11 @@ export class ChatMessageService {
               .execute();
 
             histories.push(
-              ...checkExactKeysArray<History>()(
-                rows.map((x) => {
-                  if (x.text === null)
-                    throw new Error("text must have a not null query applied.");
-                  return { role: x.role, text: x.text };
-                })
-              )
+              ...rows.map((x) => {
+                if (x.text === null)
+                  throw new Error("text must have a not null query applied.");
+                return { role: x.role, text: x.text };
+              })
             );
             remainLength -= rows.length;
             oldestId = rows.at(-1)?.id ?? -1;
@@ -133,12 +138,10 @@ export class ChatMessageService {
             if (parent) {
               if (parent.text === null)
                 throw new Error("text must have a not null query applied.");
-              histories.push(
-                checkExactKeys<History>()({
-                  role: parent.role,
-                  text: parent.text,
-                })
-              );
+              histories.push({
+                role: parent.role,
+                text: parent.text,
+              });
               remainLength -= 1;
               oldestId = parent.id;
 
@@ -152,12 +155,10 @@ export class ChatMessageService {
                 if (replyTo) {
                   if (replyTo.text === null)
                     throw new Error("text must have a not null query applied.");
-                  histories.push(
-                    checkExactKeys<History>()({
-                      role: replyTo.role,
-                      text: replyTo.text,
-                    })
-                  );
+                  histories.push({
+                    role: replyTo.role,
+                    text: replyTo.text,
+                  });
                   remainLength -= 1;
                   oldestId = replyTo.id;
                 }
@@ -175,13 +176,11 @@ export class ChatMessageService {
             .limit(remainLength)
             .execute();
           histories.push(
-            ...checkExactKeysArray<History>()(
-              rows.map((x) => {
-                if (x.text === null)
-                  throw new Error("text must have a not null query applied.");
-                return { role: x.role, text: x.text };
-              })
-            )
+            ...rows.map((x) => {
+              if (x.text === null)
+                throw new Error("text must have a not null query applied.");
+              return { role: x.role, text: x.text };
+            })
           );
           remainLength -= rows.length;
         }
@@ -190,7 +189,7 @@ export class ChatMessageService {
       });
 
     histories.reverse(); // to oldest
-    return checkExactKeysArray<History>()(histories);
+    return histories;
   }
 
   async find(userId: UserId, input: { chatMessageId: ChatMessageId }) {
@@ -200,32 +199,24 @@ export class ChatMessageService {
       .innerJoin("chats as c", "c.id", "cm.chatId")
       .where("c.userId", "=", userId)
       .where("cm.id", "=", chatMessageId)
-      .select([
-        "cm.id",
-        "cm.text",
-        "cm.model",
-        "cm.chatId",
-        "cm.parentId",
-        "cm.role",
-        "cm.isBookmarked",
-        "cm.status",
-        "cm.createdAt",
-      ])
+      .select(cols(ChatMessageSchema, "cm"))
       .executeTakeFirstOrThrow();
 
-    return checkExactKeys<ChatMessage>()(res);
+    return res;
   }
 
   async update(userId: UserId, input: UpdateChatMessage) {
     const { chatMessageId, isBookmarked } = input;
-    await this.service.db
+    const res = await this.service.db
       .updateTable("chatMessages as cm")
       .from("chats as c")
       .whereRef("c.id", "=", "cm.chatId")
       .where("c.userId", "=", userId)
       .where("cm.id", "=", chatMessageId)
       .set({ isBookmarked })
+      .returning(cols(ChatMessageSchema, "cm"))
       .executeTakeFirstOrThrow();
+    return res;
   }
 
   async isStaleCompleted(
@@ -248,8 +239,7 @@ export class ChatMessageService {
       .select(["cm.id"])
       .executeTakeFirst();
 
-    if (!res) return false;
-    return !!checkExactKeys<{ id: ChatMessageId }>()(res);
+    return !!res;
   }
 
   static async transit(
@@ -273,8 +263,7 @@ export class ChatMessageService {
       .returning("cm.id")
       .executeTakeFirst();
 
-    if (!res) return undefined;
-    return checkExactKeys<{ id: ChatMessageId }>()(res);
+    return res;
   }
 
   async transitPendingToProcessing(
@@ -291,8 +280,7 @@ export class ChatMessageService {
       return res;
     });
 
-    if (!res) return undefined;
-    return checkExactKeys<{ id: ChatMessageId }>()(res);
+    return res;
   }
 
   async transitProcessingToSucceeded(
@@ -380,8 +368,8 @@ export class ChatMessageService {
     });
 
     return {
-      userChatMessage: checkExactKeys<ChatMessage>()(userChatMessage),
-      modelChatMessage: checkExactKeys<ChatMessage>()(modelChatMessage),
+      userChatMessage,
+      modelChatMessage,
     };
   }
 
@@ -402,17 +390,7 @@ export class ChatMessageService {
         status: ChatMessageStatus.enum.succeeded,
         parentId: parentId ?? null,
       })
-      .returning([
-        "id",
-        "status",
-        "chatId",
-        "model",
-        "isBookmarked",
-        "parentId",
-        "role",
-        "text",
-        "createdAt",
-      ])
+      .returning(cols(ChatMessageSchema, "chatMessages"))
       .executeTakeFirstOrThrow();
 
     const modelChatMessage = await db
@@ -425,17 +403,7 @@ export class ChatMessageService {
         parentId: parentId ?? null,
         replyToId: userChatMessage.id,
       })
-      .returning([
-        "id",
-        "status",
-        "chatId",
-        "model",
-        "isBookmarked",
-        "parentId",
-        "role",
-        "text",
-        "createdAt",
-      ])
+      .returning(cols(ChatMessageSchema, "chatMessages"))
       .executeTakeFirstOrThrow();
 
     await ChatMessageFileService.createAll(db, {
@@ -444,8 +412,8 @@ export class ChatMessageService {
     });
 
     return {
-      userChatMessage: checkExactKeys<ChatMessage>()(userChatMessage),
-      modelChatMessage: checkExactKeys<ChatMessage>()(modelChatMessage),
+      userChatMessage,
+      modelChatMessage,
     };
   }
 }

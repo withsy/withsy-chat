@@ -25,6 +25,7 @@
     "noti",
     "unlisten",
     "sonner",
-    "nextauth"
+    "nextauth",
+    "timestamptz"
   ]
 }

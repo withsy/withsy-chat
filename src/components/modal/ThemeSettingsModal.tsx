@@ -26,13 +26,15 @@ export function ThemeSettingsModal({
   open: boolean;
   onClose: () => void;
 }) {
-  const { userPrefs, setUserPrefAndSave } = useUser();
+  const { userPrefs, setUserPrefsAndSave } = useUser();
   const [customColor, setCustomColor] = useState(userPrefs.themeColor);
   const [customOpacity, setCustomOpacity] = useState(userPrefs.themeOpacity);
 
   const handleApply = () => {
-    setUserPrefAndSave("themeColor", customColor);
-    setUserPrefAndSave("themeOpacity", customOpacity);
+    setUserPrefsAndSave({
+      themeColor: customColor,
+      themeOpacity: customOpacity,
+    });
     onClose();
   };
 

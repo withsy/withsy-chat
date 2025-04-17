@@ -1,9 +1,5 @@
 import { trpc } from "@/lib/trpc";
-import {
-  UserPreferences,
-  UserSession,
-  type UpdateUserPrefs,
-} from "@/types/user";
+import { UserPrefs, UserSession, type UpdateUserPrefs } from "@/types/user";
 import { skipToken } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import {
@@ -15,34 +11,61 @@ import {
 } from "react";
 
 type UserPrefLoadings = Partial<Record<keyof UpdateUserPrefs, boolean>>;
-type SetUserPrefAndSave = <K extends keyof UpdateUserPrefs>(
-  key: K,
-  value: UpdateUserPrefs[K]
-) => void;
+type SetUserPrefsAndSave = (input: UpdateUserPrefs) => void;
 
 type UserContextType = {
   userSession: UserSession | null;
-  userPrefs: UserPreferences;
-  setUserPrefAndSave: SetUserPrefAndSave;
+  userPrefs: UserPrefs;
+  setUserPrefsAndSave: SetUserPrefsAndSave;
   userPrefLoadings: UserPrefLoadings;
 };
+
+const DEFAULT_USER_PREFS = UserPrefs.parse({});
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export function UserProvider({ children }: { children: ReactNode }) {
   const { data: session } = useSession();
   const [userSession, setUserSession] = useState<UserSession | null>(null);
-  const [userPrefs, setUserPrefs] = useState<UserPreferences>(
-    UserPreferences.parse({})
-  );
   const [userPrefLoadings, setUserPrefLoadings] = useState<UserPrefLoadings>(
     {}
   );
-
-  const userPrefsQuery = trpc.user.prefs.useQuery(
+  const utils = trpc.useUtils();
+  const _userPrefsQuery = trpc.user.prefs.useQuery(
     userSession ? undefined : skipToken
   );
-  const updateUserPrefs = trpc.user.updatePrefs.useMutation();
+  const updateUserPrefs = trpc.user.updatePrefs.useMutation({
+    onMutate: async (input: UpdateUserPrefs) => {
+      const inputs = Object.entries(input).filter(([_, v]) => v !== undefined);
+      await utils.user.prefs.cancel();
+      const previous = utils.user.prefs.getData();
+      utils.user.prefs.setData(undefined, (old) => {
+        if (old) inputs.forEach(([k, v]) => Reflect.set(old, k, v));
+        return old;
+      });
+      const loadingOns = inputs.map(([k, _]) => [k, true]);
+      setUserPrefLoadings((p) => ({
+        ...p,
+        ...Object.fromEntries(loadingOns),
+      }));
+      return { previous, loadingOns };
+    },
+    onError(_, __, ctx) {
+      if (ctx?.previous) utils.user.prefs.setData(undefined, ctx.previous);
+    },
+    onSettled(_, __, ___, ctx) {
+      utils.user.prefs.invalidate();
+      if (ctx?.loadingOns) {
+        const loadingOffs = Object.fromEntries(
+          ctx.loadingOns.map(([k, _]) => [k, false])
+        );
+        setUserPrefLoadings((p) => ({
+          ...p,
+          ...loadingOffs,
+        }));
+      }
+    },
+  });
 
   useEffect(() => {
     if (!session) return;
@@ -50,34 +73,26 @@ export function UserProvider({ children }: { children: ReactNode }) {
     setUserSession(userSession);
   }, [session]);
 
-  useEffect(() => {
-    if (!userPrefsQuery.data) return;
-    const userPrefs = UserPreferences.parse(userPrefsQuery.data);
-    setUserPrefs(userPrefs);
-  }, [userPrefsQuery.data]);
-
-  const setUserPrefAndSave: SetUserPrefAndSave = (k, v) => {
-    const prevValue = userPrefs[k];
-
-    setUserPrefs((prev) => ({ ...prev, [k]: v }));
-    setUserPrefLoadings((prev) => ({ ...prev, [k]: true }));
-
-    updateUserPrefs.mutate(
-      { [k]: v },
-      {
-        onSettled: () =>
-          setUserPrefLoadings((prev) => ({ ...prev, [k]: false })),
-        onError: () => setUserPrefs((prev) => ({ ...prev, [k]: prevValue })),
-      }
-    );
+  const setUserPrefsAndSave: SetUserPrefsAndSave = (input) => {
+    updateUserPrefs.mutate(input);
   };
+
+  const userPrefs = new Proxy(
+    {},
+    {
+      get(_, p) {
+        const previous = utils.user.prefs.getData();
+        return Reflect.get(previous ?? DEFAULT_USER_PREFS, p);
+      },
+    }
+  ) as UserPrefs;
 
   return (
     <UserContext.Provider
       value={{
         userSession,
         userPrefs,
-        setUserPrefAndSave,
+        setUserPrefsAndSave,
         userPrefLoadings,
       }}
     >

@@ -25,6 +25,7 @@ export default function BookmarkPage() {
               userId: userSession.user.id,
             },
             order: sortOrder,
+            include: { chat: true },
           },
           isBookmarked: true,
         }
@@ -33,7 +34,7 @@ export default function BookmarkPage() {
 
   useEffect(() => {
     if (!listSaved.data) return;
-    setData(listSaved.data.map((x) => ChatMessage.parse(x)));
+    setData(listSaved.data);
   }, [listSaved.data]);
 
   const filteredMessages = useMemo(() => {

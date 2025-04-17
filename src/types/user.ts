@@ -4,20 +4,20 @@ import { type zInfer, type zInput } from "./common";
 export const UserId = z.string().uuid();
 export type UserId = zInfer<typeof UserId>;
 
-export const UserPreferences = z.object({
+export const UserPrefs = z.object({
   wideView: z.boolean().default(false),
   largeText: z.boolean().default(false),
   enterToSend: z.boolean().default(true),
   themeColor: z.string().default("0,123,255"),
   themeOpacity: z.number().default(0.2),
 });
-export type UserPreferences = zInfer<typeof UserPreferences>;
+export type UserPrefs = zInfer<typeof UserPrefs>;
 
-export const UpdateUserPrefs = UserPreferences.partial();
+export const UpdateUserPrefs = UserPrefs.partial();
 export type UpdateUserPrefs = zInfer<typeof UpdateUserPrefs>;
 
 export const User = z.object({
-  preferences: UserPreferences,
+  preferences: UserPrefs,
 });
 export type User = zInfer<typeof User>;
 

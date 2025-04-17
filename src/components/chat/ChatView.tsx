@@ -1,6 +1,5 @@
 import { ChatSession } from "@/components/chat/ChatSession";
 import { trpc } from "@/lib/trpc";
-import { ChatMessage } from "@/types/chat";
 import { PartialError } from "../Error";
 import { PartialLoading } from "../Loading";
 
@@ -17,9 +16,6 @@ export default function ChatView({ chatId }: Props) {
     return <PartialError message="Loading Messages" />;
 
   return (
-    <ChatSession
-      chatId={chatId}
-      initialMessages={listChatMessages.data.map((v) => ChatMessage.parse(v))}
-    />
+    <ChatSession chatId={chatId} initialMessages={listChatMessages.data} />
   );
 }

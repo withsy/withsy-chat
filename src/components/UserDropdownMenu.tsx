@@ -24,6 +24,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { signOut } from "next-auth/react";
+import { useRouter } from "next/router";
 import { useState } from "react";
 import { ModelAvatar } from "./ModelAvatar";
 import { ThemeSettingsModal } from "./modal/ThemeSettingsModal";
@@ -108,7 +109,8 @@ function UserMenuItem({
 }
 
 export default function UserDropdownMenu() {
-  const { userPrefs, setUserPrefAndSave, userPrefLoadings, userSession } =
+  const router = useRouter();
+  const { userPrefs, setUserPrefsAndSave, userPrefLoadings, userSession } =
     useUser();
 
   const { largeText } = userPrefs;
@@ -132,7 +134,15 @@ export default function UserDropdownMenu() {
     },
     { icon: Settings, label: "Settings" },
     "separator",
-    { icon: LogOut, label: "Log out", onClick: () => signOut() },
+    {
+      icon: LogOut,
+      label: "Log out",
+      onClick: () => {
+        signOut();
+        // TODO
+        router.push("/chat");
+      },
+    },
   ];
 
   return (
@@ -154,7 +164,7 @@ export default function UserDropdownMenu() {
               id={`${id}-toggle`}
               label={label}
               checked={userPrefs[id]}
-              onChange={(v) => setUserPrefAndSave(id, v)}
+              onChange={(v) => setUserPrefsAndSave({ [id]: v })}
               disabled={userPrefLoadings[id]}
               largeText={userPrefs["largeText"]}
               themeColor={userPrefs.themeColor}

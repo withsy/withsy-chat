@@ -1,11 +1,10 @@
-import { useState } from "react";
-
 import { MarkdownBox } from "@/components/MarkdownBox";
 import { BookmarkCardHeader } from "@/components/bookmarks/BookmarkCardHeader";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { useUser } from "@/context/UserContext";
 import { trpc } from "@/lib/trpc";
+import { useState } from "react";
 import { toast } from "sonner";
 import { CollapseToggle } from "../CollapseToggle";
 import { BookmarkCardActions } from "./BookmarkCardActions";

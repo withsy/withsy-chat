@@ -19,7 +19,7 @@ export default function ChatHeader({
   openDrawer,
 }: ChatHeaderProps) {
   const { isMobile } = useSidebar();
-  const { userPrefs, setUserPrefAndSave } = useUser();
+  const { userPrefs, setUserPrefsAndSave } = useUser();
   const { themeColor, themeOpacity } = userPrefs;
   const handleClick = (id: string) => {
     setOpenDrawer(openDrawer === id ? null : id);
@@ -89,7 +89,7 @@ export default function ChatHeader({
           <button
             className={buttonClassName}
             onClick={() => {
-              setUserPrefAndSave("wideView", !userPrefs.wideView);
+              setUserPrefsAndSave({ wideView: !userPrefs.wideView });
             }}
           >
             {userPrefs.wideView ? (

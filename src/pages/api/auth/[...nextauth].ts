@@ -4,9 +4,21 @@ import { service } from "@/server/service-registry";
 import { UserJwt, UserSession } from "@/types/user";
 import NextAuth, { type AuthOptions } from "next-auth";
 import GithubProvider from "next-auth/providers/github";
+import GoogleProvider from "next-auth/providers/google";
 import type { Provider } from "next-auth/providers/index";
 
 const providers: Provider[] = [
+  GoogleProvider({
+    clientId: envConfig.googleClientId,
+    clientSecret: envConfig.googleClientSecret,
+    authorization: {
+      params: {
+        prompt: "consent",
+        access_type: "offline",
+        response_type: "code",
+      },
+    },
+  }),
   GithubProvider({
     clientId: envConfig.githubClientId,
     clientSecret: envConfig.githubClientSecret,
@@ -17,21 +29,28 @@ if (envConfig.nodeEnv === "development") providers.push(localDevAuthProvider);
 
 export const authOptions: AuthOptions = {
   providers,
+  session: {
+    strategy: "jwt",
+    maxAge: 24 * 60 * 60, // 24 hours
+    updateAge: 60 * 60, // 1 hours
+  },
   callbacks: {
-    async jwt({ token, account }) {
+    async jwt(params) {
+      const { token, account } = params;
       if (!account) return token;
-      const { provider, providerAccountId } = account;
-      const { userId } =
-        await service.userLinkAccount.getOrCreateUserByProvider({
-          provider,
-          providerAccountId,
-        });
-      const userJwt = await UserJwt.parseAsync({ ...token, sub: userId });
+      const { provider, providerAccountId, refresh_token } = account;
+      const { userId } = await service.userLinkAccount.ensureUserByAccount({
+        provider,
+        providerAccountId,
+        refreshToken: refresh_token,
+      });
+      const userJwt = UserJwt.parse({ ...token, sub: userId });
       return userJwt;
     },
-    async session({ session, token }) {
-      const userJwt = await UserJwt.parseAsync(token);
-      const userSession = await UserSession.parseAsync({
+    async session(params) {
+      const { token, session } = params;
+      const userJwt = UserJwt.parse(token);
+      const userSession = UserSession.parse({
         ...session,
         user: { ...(session.user ?? {}), id: userJwt.sub },
       });

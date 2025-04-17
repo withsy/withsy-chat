@@ -1,5 +1,4 @@
-import { checkExactKeys } from "@/types/common";
-import { IdempotencyInfo, type IdempotencyKey } from "@/types/idempotency";
+import { type IdempotencyKey } from "@/types/idempotency";
 import { StatusCodes } from "http-status-codes";
 import { HttpServerError } from "../error";
 import type { ServiceRegistry } from "../service-registry";
@@ -14,7 +13,7 @@ export class IdempotencyInfoService {
       idempotencyKey
     );
 
-    return checkExactKeys<IdempotencyInfo>()(res);
+    return res;
   }
 
   static async checkDuplicateRequest(db: Db, idempotencyKey: IdempotencyKey) {
@@ -32,6 +31,6 @@ export class IdempotencyInfoService {
           })
       );
 
-    return checkExactKeys<IdempotencyInfo>()(res);
+    return res;
   }
 }
