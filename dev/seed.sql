@@ -2,7 +2,7 @@ INSERT INTO users(id)
   VALUES ('b24c885e-a501-4882-938b-f5fb16cbd395');
 
 INSERT INTO user_link_accounts(user_id, provider, provider_account_id)
-  VALUES ('b24c885e-a501-4882-938b-f5fb16cbd395', 'credentials', 'Near Local Dev');
+  VALUES ('b24c885e-a501-4882-938b-f5fb16cbd395', 'credentials', 'near local dev');
 
 INSERT INTO public.chats(id, user_id, title, is_starred, created_at, updated_at)
   VALUES ('cda09a70-8fdb-40d7-a0d0-efa84a86b736'::uuid, 'b24c885e-a501-4882-938b-f5fb16cbd395'::uuid, '안녕', FALSE, '2025-04-15 20:56:56.663', '2025-04-15 20:56:56.663');
