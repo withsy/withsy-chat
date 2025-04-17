@@ -43,23 +43,27 @@ export function UserProvider({ children }: { children: ReactNode }) {
         if (old) inputs.forEach(([k, v]) => Reflect.set(old, k, v));
         return old;
       });
-      const loadings = inputs.map(([k, _]) => [k, true]);
+      const loadingOns = inputs.map(([k, _]) => [k, true]);
       setUserPrefLoadings((p) => ({
         ...p,
-        ...Object.fromEntries(loadings),
+        ...Object.fromEntries(loadingOns),
       }));
-      return { previous, loadings };
+      return { previous, loadingOns };
     },
     onError(_, __, ctx) {
       if (ctx?.previous) utils.user.prefs.setData(undefined, ctx.previous);
     },
     onSettled(_, __, ___, ctx) {
       utils.user.prefs.invalidate();
-      if (ctx?.loadings)
+      if (ctx?.loadingOns) {
+        const loadingOffs = Object.fromEntries(
+          ctx.loadingOns.map(([k, _]) => [k, false])
+        );
         setUserPrefLoadings((p) => ({
           ...p,
-          ...Object.entries(ctx.loadings.map(([k, _]) => [k, false])),
+          ...loadingOffs,
         }));
+      }
     },
   });
 

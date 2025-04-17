@@ -29,6 +29,7 @@ CREATE TABLE user_link_accounts(
   user_id uuid NOT NULL,
   provider text NOT NULL,
   provider_account_id text NOT NULL,
+  refresh_token text,
   created_at timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT fk_user_link_accounts_user_id FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
   CONSTRAINT unique_user_link_accounts_provider UNIQUE (provider, provider_account_id)
@@ -44,6 +45,8 @@ CREATE TABLE chats(
   updated_at timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT fk_chats_user_id FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
+
+CREATE INDEX idx_chats_user_id ON chats(user_id);
 
 CREATE TRIGGER trigger_chats_update_updated_at
   BEFORE UPDATE ON chats
@@ -67,6 +70,8 @@ CREATE TABLE chat_messages(
   CONSTRAINT check_chat_messages_status CHECK (status IN ('pending', 'processing', 'succeeded', 'failed'))
 );
 
+CREATE INDEX idx_chat_messages_chat_id ON chat_messages(chat_id);
+
 CREATE TRIGGER trigger_chat_messages_update_updated_at
   BEFORE UPDATE ON chat_messages
   FOR EACH ROW
@@ -81,6 +86,8 @@ CREATE TABLE chat_message_files(
   created_at timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT fk_chat_message_files_chat_message_id FOREIGN KEY (chat_message_id) REFERENCES chat_messages(id) ON DELETE CASCADE
 );
+
+CREATE INDEX idx_chat_message_files_chat_message_id ON chat_message_files(chat_message_id);
 
 -- alias: cc
 CREATE TABLE chat_chunks(

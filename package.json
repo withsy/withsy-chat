@@ -6,7 +6,6 @@
     "build": "next build",
     "db:migrate": "npm run db:migrate:core && npm run db:migrate:worker && npm run db:typegen",
     "db:migrate:core": "node-pg-migrate up",
-    "db:migrate:auth": "tsx src/server/db/migrate.ts",
     "db:migrate:worker": "dotenv -- graphile-worker --schema-only",
     "db:reset": "psql -h 127.0.0.1 -U postgres -f dev/reset.sql",
     "db:seed": "psql -h 127.0.0.1 -U postgres -f dev/seed.sql",
@@ -18,7 +17,6 @@
     "typecheck": "tsc"
   },
   "dependencies": {
-    "@auth/kysely-adapter": "^1.8.0",
     "@google/genai": "^0.8.0",
     "@hono/node-server": "^1.14.1",
     "@monaco-editor/react": "^4.7.0",
