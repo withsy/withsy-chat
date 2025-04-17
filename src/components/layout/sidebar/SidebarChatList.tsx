@@ -177,9 +177,11 @@ function SidebarChatItem({
   return (
     <div
       className={`group relative flex items-center gap-2 no-underline px-2.5 py-2 rounded-md transition-colors hover:bg-white cursor-pointer ${isHoveredOrDropdown}`}
-      onClick={handleLinkClick}
     >
-      <div className="flex items-center gap-2 flex-1 group-hover:font-bold">
+      <div
+        className="flex items-center gap-2 flex-1 group-hover:font-bold"
+        onClick={handleLinkClick}
+      >
         <div className="w-5 h-5 flex items-center justify-center relative">
           <SquareMenu
             size={16}
@@ -212,9 +214,7 @@ function SidebarChatItem({
         <span className="text-foreground truncate ">{chat.title}</span>
       </div>
 
-      <DropdownMenu
-        onOpenChange={(open) => setIsDropdownOpen(open)} // dropdown 열림 상태 추적
-      >
+      <DropdownMenu onOpenChange={(open) => setIsDropdownOpen(open)}>
         <DropdownMenuTrigger asChild>
           <Button
             variant="ghost"
