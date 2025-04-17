@@ -24,7 +24,6 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { signOut } from "next-auth/react";
-import { useRouter } from "next/router";
 import { useState } from "react";
 import { ModelAvatar } from "./ModelAvatar";
 import { ThemeSettingsModal } from "./modal/ThemeSettingsModal";
@@ -109,7 +108,6 @@ function UserMenuItem({
 }
 
 export default function UserDropdownMenu() {
-  const router = useRouter();
   const { userPrefs, setUserPrefsAndSave, userPrefLoadings, userSession } =
     useUser();
 
@@ -137,10 +135,8 @@ export default function UserDropdownMenu() {
     {
       icon: LogOut,
       label: "Log out",
-      onClick: () => {
-        signOut();
-        // TODO
-        router.push("/chat");
+      onClick: async () => {
+        signOut({ callbackUrl: "/" });
       },
     },
   ];
