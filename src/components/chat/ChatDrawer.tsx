@@ -21,39 +21,7 @@ export const ResponsiveDrawer = ({
   isMobile,
 }: ResponsiveDrawerProps) => {
   const isDrawerOpen = !!openDrawer;
-  const [messages, setMessages] = useState(savedMessages);
 
-  const updateMessageMutation = trpc.chatMessage.update.useMutation();
-
-  const handleToggleSaved = (id: number, newValue: boolean) => {
-    updateMessageMutation.mutate(
-      { chatMessageId: id, isBookmarked: newValue },
-      {
-        onSuccess: () => {
-          setMessages((prev) =>
-            (prev ?? []).map((msg) =>
-              msg.id === id ? { ...msg, isBookmarked: newValue } : msg
-            )
-          );
-
-          if (newValue) {
-            toast.success("Saved for later", {
-              description: "You can find it in your saved list.",
-            });
-          } else {
-            toast.success("Removed from saved", {
-              description: "It’s no longer in your saved list.",
-            });
-          }
-        },
-        onError: () => {
-          toast.error("Failed", {
-            description: "Please try again or contact support.",
-          });
-        },
-      }
-    );
-  };
   if (isMobile) {
     return (
       <Drawer
@@ -61,10 +29,7 @@ export const ResponsiveDrawer = ({
         onOpenChange={(open) => setOpenDrawer(open ? openDrawer : null)}
       >
         <DrawerContent className="h-[80%] rounded-t-2xl p-4">
-          <CustomDrawerContent
-            messages={messages ?? []}
-            onToggleSaved={handleToggleSaved}
-          />
+          <CustomDrawerContent messages={savedMessages ?? []} />
         </DrawerContent>
       </Drawer>
     );
@@ -84,25 +49,16 @@ export const ResponsiveDrawer = ({
       }}
     >
       <ChatDrawerHeader openDrawer={openDrawer} setOpenDrawer={setOpenDrawer} />
-      <CustomDrawerContent
-        messages={messages ?? []}
-        onToggleSaved={handleToggleSaved}
-      />
+      <CustomDrawerContent messages={savedMessages ?? []} />
     </div>
   );
 };
 
-function CustomDrawerContent({
-  messages,
-  onToggleSaved,
-}: {
-  messages: ChatMessage[];
-  onToggleSaved: (id: number, newValue: boolean) => void;
-}) {
+function CustomDrawerContent({ messages }: { messages: ChatMessage[] }) {
   return (
     <div className="overflow-y-auto max-h-[80%] pr-2">
       {messages.map((msg) => (
-        <ChatBubble key={msg.id} message={msg} onToggleSaved={onToggleSaved} />
+        <ChatBubble key={msg.id} message={msg} onToggleSaved={() => {}} />
       ))}
     </div>
   );

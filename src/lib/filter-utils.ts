@@ -1,13 +1,13 @@
 export function getFilteredBookmarks({
-  bookmarks,
+  messages,
   sortBy,
   sortOrder,
 }: {
-  bookmarks: any[];
+  messages: any[];
   sortBy: "chattedAt" | "bookmarkedAt";
   sortOrder: "asc" | "desc";
 }) {
-  return bookmarks.sort((a, b) => {
+  return messages.sort((a, b) => {
     const aTime = new Date(a[sortBy]).getTime();
     const bTime = new Date(b[sortBy]).getTime();
     return sortOrder === "asc" ? aTime - bTime : bTime - aTime;

@@ -9,24 +9,23 @@ import { CollapseToggle } from "../CollapseToggle";
 import { BookmarkCardActions } from "./BookmarkCardActions";
 
 interface BookmarkCardProps {
-  type: string;
-  title: string;
-  chattedAt: string;
-  content: string;
+  title?: string;
+  chatId: string;
+  text: string;
   themeColor: string;
+  createdAt: string;
 }
 
 export function BookmarkCard({
+  chatId,
   title,
-  chattedAt,
-  content,
+  text,
   themeColor,
+  createdAt,
 }: BookmarkCardProps) {
-  const chatId = chattedAt;
-  const isLongMessage = content.length > 300;
+  const isLongMessage = text.length > 150;
   const [collapsed, setCollapsed] = useState(isLongMessage);
   const [bookmarked, setBookmarked] = useState(true);
-  const [titleState, _setTitleState] = useState(title);
 
   const handleToggleBookmark = () => {
     setBookmarked(false);
@@ -40,23 +39,27 @@ export function BookmarkCard({
   return (
     <div className="relative group">
       <Card>
-        <BookmarkCardHeader
-          title={titleState}
-          chattedAt={chattedAt}
-          link={`/chat/${chatId}`}
-        />
-        <Separator />
+        {title && (
+          <>
+            <BookmarkCardHeader
+              title={title}
+              chattedAt={createdAt}
+              link={`/chat/${chatId}`}
+            />
+            <Separator />
+          </>
+        )}
         <CardContent className="mt-2 space-y-3 overflow-x-auto">
           <div
             className={`transition-all overflow-hidden relative ${
               collapsed
                 ? isLongMessage
-                  ? "max-h-[160px]"
+                  ? "max-h-[100px]"
                   : "max-h-full"
                 : "max-h-full"
             }`}
           >
-            <MarkdownBox content={content} />
+            <MarkdownBox content={text} />
             {collapsed && isLongMessage && (
               <div className="absolute bottom-0 left-0 w-full h-12 bg-gradient-to-t from-background to-transparent pointer-events-none" />
             )}
@@ -73,7 +76,7 @@ export function BookmarkCard({
         <CardFooter className="flex justify-end p-2">
           <BookmarkCardActions
             themeColor={themeColor}
-            content={content}
+            content={text}
             onUnsave={handleToggleBookmark}
           />
         </CardFooter>
