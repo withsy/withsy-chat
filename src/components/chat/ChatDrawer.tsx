@@ -22,7 +22,6 @@ export const ResponsiveDrawer = ({
 }: ResponsiveDrawerProps) => {
   const isDrawerOpen = !!openDrawer;
   const [messages, setMessages] = useState(savedMessages);
-  console.log("여기서는?", savedMessages);
 
   const updateMessageMutation = trpc.chatMessage.update.useMutation();
 
