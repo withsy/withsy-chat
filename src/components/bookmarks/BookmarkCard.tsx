@@ -4,6 +4,7 @@ import { MarkdownBox } from "@/components/MarkdownBox";
 import { BookmarkCardHeader } from "@/components/bookmarks/BookmarkCardHeader";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { useUser } from "@/context/UserContext";
 import { toast } from "sonner";
 import { CollapseToggle } from "../CollapseToggle";
 import { BookmarkCardActions } from "./BookmarkCardActions";
@@ -13,7 +14,6 @@ interface BookmarkCardProps {
   messageId: number;
   chatId: string;
   text: string | null;
-  themeColor: string;
   createdAt: Date;
 }
 
@@ -22,9 +22,10 @@ export function BookmarkCard({
   messageId,
   title,
   text,
-  themeColor,
   createdAt,
 }: BookmarkCardProps) {
+  const { userPrefs } = useUser();
+  const { themeColor } = userPrefs;
   const isLongMessage = text ? text.length > 150 : false;
 
   const [collapsed, setCollapsed] = useState(isLongMessage);

@@ -73,7 +73,6 @@ export default function BookmarkPage() {
         {filteredMessages.map((message) => (
           <BookmarkCard
             key={message.id}
-            themeColor={userPrefs.themeColor}
             chatId={message.chatId}
             messageId={message.id}
             title={message?.chat?.title}

@@ -61,7 +61,6 @@ function CustomDrawerContent({ messages }: { messages: ChatMessage[] }) {
           chatId={msg.chatId}
           text={msg.text}
           createdAt={msg.createdAt}
-          updatedAt={msg.updatedAt}
         />
       ))}
     </div>
