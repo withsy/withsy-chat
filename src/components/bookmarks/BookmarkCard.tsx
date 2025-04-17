@@ -26,6 +26,7 @@ export function BookmarkCard({
   const isLongMessage = text.length > 150;
   const [collapsed, setCollapsed] = useState(isLongMessage);
   const [bookmarked, setBookmarked] = useState(true);
+  const displayedText = collapsed ? text.slice(0, 150) + "..." : text;
 
   const handleToggleBookmark = () => {
     setBookmarked(false);
@@ -50,30 +51,17 @@ export function BookmarkCard({
           </>
         )}
         <CardContent className="mt-2 space-y-3 overflow-x-auto">
-          <div
-            className={`transition-all overflow-hidden relative ${
-              collapsed
-                ? isLongMessage
-                  ? "max-h-[100px]"
-                  : "max-h-full"
-                : "max-h-full"
-            }`}
-          >
-            <MarkdownBox content={text} />
-            {collapsed && isLongMessage && (
-              <div className="absolute bottom-0 left-0 w-full h-12 bg-gradient-to-t from-background to-transparent pointer-events-none" />
-            )}
-          </div>
-          <div className="flex justify-center">
-            <CollapseToggle
-              show={isLongMessage}
-              collapsed={collapsed}
-              setCollapsed={setCollapsed}
-            />
+          <div className={`transition-all overflow-hidden relative`}>
+            <MarkdownBox content={displayedText} />
           </div>
         </CardContent>
 
-        <CardFooter className="flex justify-end p-2">
+        <CardFooter className="flex justify-between pl-4 pr-4 pb-2">
+          <CollapseToggle
+            show={isLongMessage}
+            collapsed={collapsed}
+            setCollapsed={setCollapsed}
+          />
           <BookmarkCardActions
             themeColor={themeColor}
             content={text}
