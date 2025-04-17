@@ -5,12 +5,14 @@ import { useEffect, useRef, useState, type RefObject } from "react";
 import { ChatBubble } from "./ChatBubble";
 
 type Props = {
+  chatId: string | null;
   messages: ChatMessage[];
   onToggleSaved: (id: number, newValue: boolean) => void;
   shouldAutoScrollRef: RefObject<boolean>;
 };
 
 export function ChatMessageList({
+  chatId,
   messages,
   onToggleSaved,
   shouldAutoScrollRef,
@@ -21,6 +23,15 @@ export function ChatMessageList({
   const bottomRef = useRef<HTMLDivElement | null>(null);
   const listRef = useRef<HTMLDivElement | null>(null);
   const [showScrollToBottom, setShowScrollToBottom] = useState(false);
+
+  useEffect(() => {
+    // defer scroll to bottom until DOM is painted
+    const timeout = setTimeout(() => {
+      bottomRef.current?.scrollIntoView({ behavior: "auto" });
+    }, 0);
+
+    return () => clearTimeout(timeout);
+  }, [chatId]);
 
   useEffect(() => {
     if (shouldAutoScrollRef.current) {
