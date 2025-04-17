@@ -39,7 +39,7 @@ export function BookmarkFilters({
             variant="ghost"
             size="sm"
             onClick={reset}
-            className="flex items-center gap-1"
+            className="flex items-center gap-1 text-sm"
           >
             <RotateCcw className="w-4 h-4 text-gray-500" />
             Reset Filters
@@ -49,7 +49,7 @@ export function BookmarkFilters({
             variant="ghost"
             size="sm"
             onClick={() => setIsOpen((prev) => !prev)}
-            className="flex items-center gap-1"
+            className="flex items-center gap-1 text-sm"
           >
             {isOpen ? (
               <>
