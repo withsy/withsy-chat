@@ -164,7 +164,7 @@ export function ChatSession({ chatId, initialMessages, children }: Props) {
       <div
         className={cn(
           "flex flex-col h-full relative items-center transition-all duration-300",
-          isMobile ? "w-full" : "w-[70%] w-full"
+          isMobile ? "w-full" : "w-[50%] w-full"
         )}
       >
         <ChatHeader setOpenDrawer={setOpenDrawer} openDrawer={openDrawer} />

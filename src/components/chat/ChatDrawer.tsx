@@ -35,8 +35,8 @@ export const ResponsiveDrawer = ({
   return (
     <div
       className={cn(
-        "h-full bg-white",
-        isDrawerOpen ? "w-[30%] border-l" : "w-0 overflow-hidden"
+        "h-full bg-gray-50",
+        isDrawerOpen ? "w-[50%] border-l" : "w-0 overflow-hidden"
       )}
       style={{
         ...(isDrawerOpen && {
@@ -53,7 +53,7 @@ export const ResponsiveDrawer = ({
 
 function CustomDrawerContent({ messages }: { messages: ChatMessage[] }) {
   return (
-    <div className="overflow-y-auto max-h-[80%] pr-2">
+    <div className="overflow-y-auto max-h-[80%] m-2 flex flex-col gap-y-4 bg-transparent">
       {messages.map((msg) => (
         <BookmarkCard
           key={msg.id}
@@ -61,7 +61,6 @@ function CustomDrawerContent({ messages }: { messages: ChatMessage[] }) {
           chatId={msg.chatId}
           text={msg.text}
           createdAt={msg.createdAt}
-          updatedAt={msg.updatedAt}
         />
       ))}
     </div>
