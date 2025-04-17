@@ -1,7 +1,7 @@
 import { useUser } from "@/context/UserContext";
 import { cn } from "@/lib/utils";
 import type { ChatMessage } from "@/types/chat";
-import { useState } from "react";
+import { memo, useState } from "react";
 import { toast } from "sonner";
 import { CollapseToggle } from "../CollapseToggle";
 import { MarkdownBox } from "../MarkdownBox";
@@ -13,7 +13,7 @@ type Props = {
   onToggleSaved: (id: number, newValue: boolean) => void;
 };
 
-export function ChatBubble({ message, onToggleSaved }: Props) {
+const ChatBubbleComponent = ({ message, onToggleSaved }: Props) => {
   const { userSession } = useUser();
   const { role, text: rawText } = message;
 
@@ -98,4 +98,16 @@ export function ChatBubble({ message, onToggleSaved }: Props) {
       </div>
     </div>
   );
-}
+};
+
+export const ChatBubble = memo(ChatBubbleComponent, (prev, next) => {
+  return (
+    prev.message.id === next.message.id &&
+    prev.message.isBookmarked === next.message.isBookmarked &&
+    prev.message.text === next.message.text &&
+    prev.message.status === next.message.status &&
+    prev.message.role === next.message.role &&
+    prev.message.model === next.message.model &&
+    prev.message.createdAt === next.message.createdAt
+  );
+});

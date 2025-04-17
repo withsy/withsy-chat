@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { ChatMessage } from "@/types/chat";
 import { skipToken } from "@tanstack/react-query";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { v4 as uuid } from "uuid";
 import { ResponsiveDrawer } from "./ChatDrawer";
@@ -27,9 +27,11 @@ export function ChatSession({ chatId, initialMessages, children }: Props) {
   const [openDrawer, setOpenDrawer] = useState<string | null>(null);
   const [streamMessageId, setStreamMessageId] = useState<number | null>();
   const utils = trpc.useUtils();
+
+  const shouldAutoScrollRef = useRef(true);
+
   const startChat = trpc.chat.start.useMutation();
   const sendChatMessage = trpc.chatMessage.send.useMutation();
-  const savedMessages = messages.filter((msg) => msg.isBookmarked);
 
   useEffect(() => {
     setMessages(initialMessages);
@@ -82,6 +84,7 @@ export function ChatSession({ chatId, initialMessages, children }: Props) {
 
   const onSendMessage = (message: string) => {
     if (chatId != null) {
+      shouldAutoScrollRef.current = true;
       sendChatMessage.mutate(
         {
           chatId,
@@ -104,6 +107,7 @@ export function ChatSession({ chatId, initialMessages, children }: Props) {
         }
       );
     } else {
+      shouldAutoScrollRef.current = true;
       startChat.mutate(
         { text: message, model: "gemini-2.0-flash", idempotencyKey: uuid() },
         {
@@ -119,6 +123,8 @@ export function ChatSession({ chatId, initialMessages, children }: Props) {
   const updateMessageMutation = trpc.chatMessage.update.useMutation();
 
   const handleToggleSaved = (id: number, newValue: boolean) => {
+    shouldAutoScrollRef.current = false;
+
     updateMessageMutation.mutate(
       { chatMessageId: id, isBookmarked: newValue },
       {
@@ -148,6 +154,11 @@ export function ChatSession({ chatId, initialMessages, children }: Props) {
     );
   };
 
+  const savedMessages = useMemo(
+    () => messages.filter((msg) => msg.isBookmarked),
+    [messages]
+  );
+
   return (
     <div className="flex h-full relative">
       <div
@@ -169,6 +180,7 @@ export function ChatSession({ chatId, initialMessages, children }: Props) {
             <ChatMessageList
               messages={messages}
               onToggleSaved={handleToggleSaved}
+              shouldAutoScrollRef={shouldAutoScrollRef}
             />
           )}
           {children}
