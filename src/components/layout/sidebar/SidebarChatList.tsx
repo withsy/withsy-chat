@@ -164,7 +164,6 @@ function SidebarChatItem({
   const { userPrefs } = useUser();
   const router = useRouter();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  console.log("dropdown", isDropdownOpen);
 
   const handleLinkClick = () => {
     if (isMobile) {
