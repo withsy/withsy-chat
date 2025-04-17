@@ -19,6 +19,18 @@ export const ResponsiveDrawer = ({
 }: ResponsiveDrawerProps) => {
   const isDrawerOpen = !!openDrawer;
 
+  let body;
+  if (openDrawer == null) {
+    body = <div>error</div>;
+  } else if (openDrawer == "saved") {
+    body = <SavedMessages messages={savedMessages ?? []} />;
+  } else if (openDrawer == "branches") {
+    body = <div>branches</div>;
+  } else {
+    // branch
+    body = <div>branch</div>;
+  }
+
   if (isMobile) {
     return (
       <Drawer
@@ -26,7 +38,7 @@ export const ResponsiveDrawer = ({
         onOpenChange={(open) => setOpenDrawer(open ? openDrawer : null)}
       >
         <DrawerContent className="h-[80%] rounded-t-2xl p-4">
-          <CustomDrawerContent messages={savedMessages ?? []} />
+          {body}
         </DrawerContent>
       </Drawer>
     );
@@ -46,12 +58,19 @@ export const ResponsiveDrawer = ({
       }}
     >
       <ChatDrawerHeader openDrawer={openDrawer} setOpenDrawer={setOpenDrawer} />
-      <CustomDrawerContent messages={savedMessages ?? []} />
+      {body}
     </div>
   );
 };
 
-function CustomDrawerContent({ messages }: { messages: ChatMessage[] }) {
+function SavedMessages({ messages }: { messages: ChatMessage[] }) {
+  if (messages.length == 0) {
+    return (
+      <div className="h-full w-full flex items-center justify-center text-muted-foreground">
+        No saved items yet.
+      </div>
+    );
+  }
   return (
     <div className="overflow-y-auto max-h-[80%] m-2 flex flex-col gap-y-4 bg-transparent">
       {messages.map((msg) => (
