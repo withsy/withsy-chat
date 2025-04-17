@@ -29,6 +29,11 @@ if (envConfig.nodeEnv === "development") providers.push(localDevAuthProvider);
 
 export const authOptions: AuthOptions = {
   providers,
+  session: {
+    strategy: "jwt",
+    maxAge: 24 * 60 * 60, // 24 hours
+    updateAge: 60 * 60, // 1 hours
+  },
   callbacks: {
     async jwt(params) {
       const { token, account } = params;
