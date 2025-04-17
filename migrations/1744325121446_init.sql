@@ -10,7 +10,7 @@ END;
 $$
 LANGUAGE plpgsql;
 
--- TODO: index
+-- alias: u
 CREATE TABLE users(
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
   preferences jsonb NOT NULL DEFAULT '{}' ::jsonb,
@@ -23,7 +23,7 @@ CREATE TRIGGER trigger_users_update_updated_at
   FOR EACH ROW
   EXECUTE PROCEDURE fn_update_updated_at();
 
--- TODO: index
+-- alias: ula
 CREATE TABLE user_link_accounts(
   id integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   user_id uuid NOT NULL,
@@ -34,7 +34,7 @@ CREATE TABLE user_link_accounts(
   CONSTRAINT unique_user_link_accounts_provider UNIQUE (provider, provider_account_id)
 );
 
--- TODO: index
+-- alias: c
 CREATE TABLE chats(
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
   user_id uuid NOT NULL,
@@ -50,7 +50,7 @@ CREATE TRIGGER trigger_chats_update_updated_at
   FOR EACH ROW
   EXECUTE PROCEDURE fn_update_updated_at();
 
--- TODO: index
+-- alias: cm
 CREATE TABLE chat_messages(
   id integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   chat_id uuid NOT NULL,
@@ -72,7 +72,7 @@ CREATE TRIGGER trigger_chat_messages_update_updated_at
   FOR EACH ROW
   EXECUTE PROCEDURE fn_update_updated_at();
 
--- TODO: index
+-- alias: cmf
 CREATE TABLE chat_message_files(
   id integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   chat_message_id integer NOT NULL,
@@ -82,7 +82,7 @@ CREATE TABLE chat_message_files(
   CONSTRAINT fk_chat_message_files_chat_message_id FOREIGN KEY (chat_message_id) REFERENCES chat_messages(id) ON DELETE CASCADE
 );
 
--- TODO: index
+-- alias: cc
 CREATE TABLE chat_chunks(
   chat_message_id integer NOT NULL,
   chunk_index integer NOT NULL,
@@ -99,8 +99,8 @@ CREATE TRIGGER trigger_chat_chunks_update_updated_at
   FOR EACH ROW
   EXECUTE PROCEDURE fn_update_updated_at();
 
--- TODO: index
-CREATE TABLE idempotency_keys(
+-- alias: ii
+CREATE TABLE idempotency_infos(
   key uuid PRIMARY KEY,
   created_at timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP
 );

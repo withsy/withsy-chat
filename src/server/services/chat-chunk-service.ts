@@ -4,14 +4,19 @@ import {
   type ChatChunkIndex,
   type ReceiveChatChunkStream,
 } from "@/types/chat";
-import type { JsonValue } from "@/types/common";
+import {
+  checkExactKeys,
+  checkExactKeysArray,
+  type JsonValue,
+} from "@/types/common";
 import { PgEvent, type PgEventInput } from "@/types/task";
+import type { UserId } from "@/types/user";
 import { tracked } from "@trpc/server";
 import type { ServiceRegistry } from "../service-registry";
 import { listen } from "./pg";
 
 export class ChatChunkService {
-  constructor(private readonly s: ServiceRegistry) {}
+  constructor(private readonly service: ServiceRegistry) {}
 
   async add(input: {
     chatMessageId: ChatMessageId;
@@ -20,7 +25,7 @@ export class ChatChunkService {
     text: string;
   }) {
     const { chatMessageId, chunkIndex, text, rawData } = input;
-    await this.s.db
+    await this.service.db
       .insertInto("chatChunks")
       .values({
         chatMessageId,
@@ -31,23 +36,27 @@ export class ChatChunkService {
       .execute();
   }
 
-  async buildText(chatMessageId: ChatMessageId): Promise<string> {
-    const chatChunks = await this.s.db
-      .selectFrom("chatChunks")
-      .where("chatMessageId", "=", chatMessageId)
-      .select(["text"])
-      .orderBy("chunkIndex", "asc")
+  async buildText(userId: UserId, chatMessageId: ChatMessageId) {
+    const rows = await this.service.db
+      .selectFrom("chatChunks as cc")
+      .innerJoin("chatMessages as cm", "cm.id", "cc.chatMessageId")
+      .innerJoin("chats as c", "c.id", "cm.chatId")
+      .where("c.userId", "=", userId)
+      .where("cc.chatMessageId", "=", chatMessageId)
+      .select(["cc.text"])
+      .orderBy("cc.chunkIndex", "asc")
       .execute();
-    const text = chatChunks.map((x) => x.text).join("");
-    return text;
+    const text = rows.map((x) => x.text).join("");
+
+    return checkExactKeys<{ text: string }>()({ text });
   }
 
-  async *receiveStream(input: ReceiveChatChunkStream) {
+  async *receiveStream(userId: UserId, input: ReceiveChatChunkStream) {
     const { chatMessageId, lastEventId } = input;
     const q: PgEventInput<"chat_chunk_created">[] = [];
 
     const unlisten = await listen(
-      this.s.pool,
+      this.service.pool,
       "chat_chunk_created",
       PgEvent.chat_chunk_created,
       (input) => {
@@ -58,18 +67,21 @@ export class ChatChunkService {
 
     try {
       let lastChunkIndex = lastEventId ?? -1;
-      const chatChunks = await this.s.db
-        .selectFrom("chatChunks")
-        .where("chatMessageId", "=", chatMessageId)
-        .where("chunkIndex", ">", lastChunkIndex)
-        .orderBy("chunkIndex", "asc")
-        .selectAll()
+      const chatChunks = await this.service.db
+        .selectFrom("chatChunks as cc")
+        .innerJoin("chatMessages as cm", "cm.id", "cc.chatMessageId")
+        .innerJoin("chats as c", "c.id", "cm.chatId")
+        .where("c.userId", "=", userId)
+        .where("cc.chatMessageId", "=", chatMessageId)
+        .where("cc.chunkIndex", ">", lastChunkIndex)
+        .orderBy("cc.chunkIndex", "asc")
+        .select(["cc.text", "cc.chunkIndex", "cc.chatMessageId"])
         .execute();
+
+      checkExactKeysArray<ChatChunk>()(chatChunks);
+
       for (const chatChunk of chatChunks) {
-        yield tracked(
-          chatChunk.chunkIndex.toString(),
-          await ChatChunk.parseAsync(chatChunk)
-        );
+        yield tracked(chatChunk.chunkIndex.toString(), chatChunk);
         lastChunkIndex = chatChunk.chunkIndex;
       }
 
@@ -83,20 +95,27 @@ export class ChatChunkService {
 
           const { chunkIndex } = input;
           if (chunkIndex > lastChunkIndex) {
-            const chatChunk = await this.s.db
-              .selectFrom("chatChunks")
-              .where("chatMessageId", "=", chatMessageId)
-              .where("chunkIndex", "=", chunkIndex)
-              .selectAll()
+            const chatChunk = await this.service.db
+              .selectFrom("chatChunks as cc")
+              .innerJoin("chatMessages as cm", "cm.id", "cc.chatMessageId")
+              .innerJoin("chats as c", "c.id", "cm.chatId")
+              .where("c.userId", "=", userId)
+              .where("cc.chatMessageId", "=", chatMessageId)
+              .where("cc.chunkIndex", "=", chunkIndex)
+              .select(["cc.text", "cc.chunkIndex", "cc.chatMessageId"])
               .executeTakeFirstOrThrow();
-            yield tracked(
-              chunkIndex.toString(),
-              await ChatChunk.parseAsync(chatChunk)
-            );
+
+            checkExactKeys<ChatChunk>()(chatChunk);
+
+            yield tracked(chunkIndex.toString(), chatChunk);
             lastChunkIndex = chunkIndex;
           }
         } else {
-          if (await this.s.chatMessage.isStaleCompleted(chatMessageId)) {
+          if (
+            await this.service.chatMessage.isStaleCompleted(userId, {
+              chatMessageId,
+            })
+          ) {
             return;
           }
         }

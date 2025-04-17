@@ -1,3 +1,5 @@
+import { checkExactKeys } from "@/types/common";
+import type { UserId } from "@/types/user";
 import { StatusCodes } from "http-status-codes";
 import { randomUUID } from "node:crypto";
 import fs from "node:fs";
@@ -27,13 +29,14 @@ export type FileInfo = { fileUri: string; mimeType: string };
 export class MockS3Service {
   private init: Promise<void>;
 
-  constructor(private readonly s: ServiceRegistry) {
+  constructor(private readonly service: ServiceRegistry) {
     this.init = (async () => {
       await fs.promises.mkdir(MOCK_S3_INFO.baseDir, { recursive: true });
     })();
   }
 
   async uploads(
+    userId: UserId,
     input: { files: File[] },
     options?: { maxUploadCount?: number }
   ) {
@@ -58,7 +61,7 @@ export class MockS3Service {
         const fileName = fileExt
           ? `${fileNameWithoutExt}.${fileExt}`
           : fileNameWithoutExt;
-        const filePath = path.resolve(MOCK_S3_INFO.baseDir, fileName);
+        const filePath = path.resolve(MOCK_S3_INFO.baseDir, userId, fileName);
         const writeStream = fs.createWriteStream(filePath);
 
         const reader = file.stream().getReader();
@@ -85,7 +88,7 @@ export class MockS3Service {
         await pipeline(readStream, writeStream);
         fileInfos.push({
           // TODO: Public URL.
-          fileUri: `${MOCK_S3_INFO.baseUrl_DEV}/api/s3/${fileName}`,
+          fileUri: `${MOCK_S3_INFO.baseUrl_DEV}/api/s3/${userId}/${fileName}`,
           mimeType: file.type,
         });
       } catch (e) {
@@ -101,7 +104,9 @@ export class MockS3Service {
         { errors }
       );
 
-    return { fileInfos };
+    return checkExactKeys<{
+      fileInfos: FileInfo[];
+    }>()({ fileInfos });
   }
 }
 

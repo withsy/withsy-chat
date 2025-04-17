@@ -6,7 +6,11 @@ import {
   splitLink,
 } from "@trpc/client";
 import { createTRPCNext } from "@trpc/next";
+import type { inferRouterInputs, inferRouterOutputs } from "@trpc/server";
 import superjson from "superjson";
+
+export type TrpcRouterInput = inferRouterInputs<TrpcRouter>;
+export type TrpcRouterOutput = inferRouterOutputs<TrpcRouter>;
 
 /**
  * If you want to use SSR, you need to use the server's full URL

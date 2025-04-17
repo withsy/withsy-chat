@@ -10,34 +10,31 @@ const FILE_UPLOAD_STRATEGY: "fileData" | "inlineData" = "inlineData";
 export class GoogleGenAiService {
   private ai: GoogleGenAI;
 
-  constructor(private readonly s: ServiceRegistry) {
+  constructor(private readonly service: ServiceRegistry) {
     this.ai = new GoogleGenAI({ apiKey: envConfig.geminiApiKey });
   }
 
   async onSendChatTask(input: TaskInput<"google_gen_ai_send_chat">) {
-    const { userChatMessageId, modelChatMessageId } = input;
-    const chatMessage = await this.s.chatMessage.transitPendingToProcessing(
-      modelChatMessageId
-    );
+    const { userId, userChatMessageId, modelChatMessageId } = input;
+    const chatMessage =
+      await this.service.chatMessage.transitPendingToProcessing(userId, {
+        chatMessageId: modelChatMessageId,
+      });
     if (!chatMessage) return;
 
-    const [
-      { text, chatId: userChatId },
-      { model, chatId: modelChatId, parentId: modelParentId },
-      chatMessageFiles,
-    ] = await Promise.all([
-      this.s.chatMessage.findById(userChatMessageId, ["chatId", "text"]),
-      this.s.chatMessage.findById(modelChatMessageId, [
-        "chatId",
-        "model",
-        "parentId",
-      ]),
-      this.s.chatMessageFile.findAllByChatMessageId(userChatMessageId, [
-        "fileUri",
-        "mimeType",
-      ]),
-    ]);
-    if (text == null) {
+    const [userChatMessage, modelChatMessage, chatMessageFiles] =
+      await Promise.all([
+        this.service.chatMessage.find(userId, {
+          chatMessageId: userChatMessageId,
+        }),
+        this.service.chatMessage.find(userId, {
+          chatMessageId: modelChatMessageId,
+        }),
+        this.service.chatMessageFile.list(userId, {
+          chatMessageId: userChatMessageId,
+        }),
+      ]);
+    if (userChatMessage.text == null) {
       console.error(
         "User chat message text must not be null. userChatMessageId:",
         userChatMessageId
@@ -45,7 +42,7 @@ export class GoogleGenAiService {
       return;
     }
 
-    if (model == null) {
+    if (modelChatMessage.model == null) {
       console.error(
         "Model chat message model must not be null. modelChatMessageId:",
         modelChatMessageId
@@ -53,16 +50,15 @@ export class GoogleGenAiService {
       return;
     }
 
-    if (userChatId !== modelChatId) {
+    if (userChatMessage.chatId !== modelChatMessage.chatId) {
       console.error("Chat id is mismatched.");
       return;
     }
 
-    const msgsForHistory = await this.s.chatMessage.listForAiChatHistory({
-      modelChatId,
-      modelChatMessageId,
-      modelParentId,
-    });
+    const msgsForHistory = await this.service.chatMessage.listForAiChatHistory(
+      userId,
+      { modelChatMessage }
+    );
     while (true) {
       const msg = msgsForHistory.at(0);
       if (!msg) break;
@@ -75,7 +71,7 @@ export class GoogleGenAiService {
     }));
 
     try {
-      const parts: Part[] = [{ text }];
+      const parts: Part[] = [{ text: userChatMessage.text }];
       for (const { fileUri, mimeType } of chatMessageFiles) {
         if (FILE_UPLOAD_STRATEGY === "fileData")
           parts.push({ fileData: { fileUri, mimeType } });
@@ -95,7 +91,7 @@ export class GoogleGenAiService {
       }
 
       const chat = this.ai.chats.create({
-        model,
+        model: modelChatMessage.model,
         history,
       });
       const stream = await chat.sendMessageStream({
@@ -112,14 +108,14 @@ export class GoogleGenAiService {
               []
           ) ?? [];
 
-        await this.s.chatChunk.add({
+        await this.service.chatChunk.add({
           chatMessageId: modelChatMessageId,
           chunkIndex,
           // TODO: Parse chunk to rawData.
           rawData: JSON.stringify(chunk),
           text: texts.join(""),
         });
-        await notify(this.s.pool, "chat_chunk_created", {
+        await notify(this.service.pool, "chat_chunk_created", {
           status: "created",
           chatMessageId: modelChatMessageId,
           chunkIndex,
@@ -128,16 +124,21 @@ export class GoogleGenAiService {
         chunkIndex += 1;
       }
 
-      const builded = await this.s.chatChunk.buildText(modelChatMessageId);
-      await this.s.chatMessage.transitProcessingToSucceeded(
-        modelChatMessageId,
-        builded
+      const { text } = await this.service.chatChunk.buildText(
+        userId,
+        modelChatMessageId
       );
+      await this.service.chatMessage.transitProcessingToSucceeded(userId, {
+        chatMessageId: modelChatMessageId,
+        text,
+      });
     } catch (e) {
       console.error("Google Gen AI send chat failed. error:", e);
-      await this.s.chatMessage.transitProcessingToFailed(modelChatMessageId);
+      await this.service.chatMessage.tryTransitProcessingToFailed(userId, {
+        chatMessageId: modelChatMessageId,
+      });
     } finally {
-      await notify(this.s.pool, "chat_chunk_created", {
+      await notify(this.service.pool, "chat_chunk_created", {
         status: "completed",
         chatMessageId: modelChatMessageId,
       });

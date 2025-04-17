@@ -13,16 +13,13 @@ export const UserPreferences = z.object({
 });
 export type UserPreferences = zInfer<typeof UserPreferences>;
 
-export const User = z.object({
-  id: UserId,
-  preferences: UserPreferences,
-  createdAt: z.date(),
-  updatedAt: z.date(),
-});
-export type User = zInfer<typeof User>;
-
 export const UpdateUserPrefs = UserPreferences.partial();
 export type UpdateUserPrefs = zInfer<typeof UpdateUserPrefs>;
+
+export const User = z.object({
+  preferences: UserPreferences,
+});
+export type User = zInfer<typeof User>;
 
 export const UserLinkAccountId = z.number().int();
 export type UserLinkAccountId = zInfer<typeof UserLinkAccountId>;
@@ -50,7 +47,7 @@ export const UserSession = z.object({
     name: z.string().nullish(),
     email: z.string().nullish(),
     image: z.string().nullish(),
-    id: z.string(),
+    id: z.string().min(1),
   }),
   expires: z.string(),
 });

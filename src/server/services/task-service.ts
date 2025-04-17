@@ -5,17 +5,18 @@ import type { ServiceRegistry } from "../service-registry";
 export class TaskService {
   private runner: Promise<Runner>;
 
-  constructor(private readonly s: ServiceRegistry) {
+  constructor(private readonly service: ServiceRegistry) {
     const taskMap: TaskMap = {
-      google_gen_ai_send_chat: (i) => s.googleGenAi.onSendChatTask(i),
-      chat_message_cleanup_zombies: () => s.chatMessage.onCleanupZombiesTask(),
+      google_gen_ai_send_chat: (i) => service.googleGenAi.onSendChatTask(i),
+      chat_message_cleanup_zombies: () =>
+        service.chatMessage.onCleanupZombiesTask(),
     };
     const cronTasks: CronTask[] = [
       { cron: "*/5 * * * *", key: "chat_message_cleanup_zombies" },
     ];
     this.runner = (async () => {
       return await run({
-        pgPool: s.pool,
+        pgPool: service.pool,
         taskList: taskMap as TaskList,
         crontab: cronTasks.map(({ cron, key }) => `${cron} ${key}`).join("\n"),
       });
@@ -24,6 +25,6 @@ export class TaskService {
 
   async add<K extends TaskKey>(key: K, input: TaskInput<K>) {
     const runner = await this.runner;
-    return await runner.addJob(key, input as any);
+    await runner.addJob(key, input as any);
   }
 }

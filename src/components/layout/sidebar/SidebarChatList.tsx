@@ -41,7 +41,8 @@ export default function SidebarChatList() {
   const [chats, setChats] = useState<Chat[]>([]);
 
   useEffect(() => {
-    if (listChats.data) setChats(listChats.data);
+    if (!listChats.data) return;
+    setChats(listChats.data);
   }, [listChats]);
 
   const updateChat = <K extends keyof Chat>(
@@ -81,9 +82,8 @@ export default function SidebarChatList() {
       starreds.push(chat);
     } else {
       const localeDateString = toLocaleDateString(chat.updatedAt);
-      if (!nonStarredMap.has(localeDateString)) {
+      if (!nonStarredMap.has(localeDateString))
         nonStarredMap.set(localeDateString, []);
-      }
       nonStarredMap.get(localeDateString)?.push(chat);
     }
   });

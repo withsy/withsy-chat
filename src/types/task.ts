@@ -1,11 +1,13 @@
 import { z } from "zod";
 import { ChatChunkIndex, ChatMessageId } from "./chat";
 import type { MaybePromise, zInfer } from "./common";
+import { UserId } from "./user";
 
 //#region Task
 
 export const Task = {
   google_gen_ai_send_chat: z.object({
+    userId: UserId,
     userChatMessageId: ChatMessageId,
     modelChatMessageId: ChatMessageId,
   }),

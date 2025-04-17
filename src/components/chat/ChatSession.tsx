@@ -21,7 +21,7 @@ type Props = {
 
 export function ChatSession({ chatId, initialMessages, children }: Props) {
   const router = useRouter();
-  const { addChat, isMobile } = useSidebar();
+  const { isMobile } = useSidebar();
   const { userPrefs } = useUser();
   const [messages, setMessages] = useState(initialMessages);
   const [openDrawer, setOpenDrawer] = useState<string | null>(null);
@@ -112,7 +112,6 @@ export function ChatSession({ chatId, initialMessages, children }: Props) {
         { text: message, model: "gemini-2.0-flash", idempotencyKey: uuid() },
         {
           onSuccess(data) {
-            addChat(data.chat);
             utils.chat.list.invalidate();
             router.push(`/chat/${data.chat.id}`);
           },
@@ -142,7 +141,7 @@ export function ChatSession({ chatId, initialMessages, children }: Props) {
             });
           } else {
             toast.success("Removed from saved", {
-              description: "It’s no longer in your saved list.",
+              description: "It's no longer in your saved list.",
             });
           }
         },

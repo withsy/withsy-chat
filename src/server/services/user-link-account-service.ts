@@ -1,19 +1,21 @@
+import { checkExactKeys } from "@/types/common";
+import type { UserId } from "@/types/user";
 import type { ServiceRegistry } from "../service-registry";
 
 export class UserLinkAccountService {
-  constructor(private readonly s: ServiceRegistry) {}
+  constructor(private readonly service: ServiceRegistry) {}
 
   async getOrCreateUserByProvider(input: {
     provider: string;
     providerAccountId: string;
   }) {
     const { provider, providerAccountId } = input;
-    return await this.s.db.transaction().execute(async (tx) => {
+    const res = await this.service.db.transaction().execute(async (tx) => {
       const userLinkAccount = await tx
-        .selectFrom("userLinkAccounts")
-        .where("provider", "=", provider)
-        .where("providerAccountId", "=", providerAccountId)
-        .select("userId")
+        .selectFrom("userLinkAccounts as ula")
+        .where("ula.provider", "=", provider)
+        .where("ula.providerAccountId", "=", providerAccountId)
+        .select("ula.userId")
         .executeTakeFirst();
       if (userLinkAccount) return userLinkAccount;
       const user = await tx
@@ -33,5 +35,7 @@ export class UserLinkAccountService {
         userId: user.id,
       };
     });
+
+    return checkExactKeys<{ userId: UserId }>()(res);
   }
 }

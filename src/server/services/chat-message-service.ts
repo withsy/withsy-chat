@@ -1,173 +1,257 @@
 import {
   ChatId,
   ChatMessage,
+  ChatMessageId,
   ChatMessageStatus,
   ChatRole,
   SendChatMessage,
   UpdateChatMessage,
-  type ChatMessageId,
   type ListChatMessages,
 } from "@/types/chat";
-import { TRPCError } from "@trpc/server";
+import { checkExactKeys, checkExactKeysArray } from "@/types/common";
+import type { UserId } from "@/types/user";
+import { StatusCodes } from "http-status-codes";
+import { HttpServerError } from "../error";
 import type { ServiceRegistry } from "../service-registry";
-import { ChatService } from "./chat-service";
+import { ChatMessageFileService } from "./chat-message-file-service";
 import type { Db } from "./db";
-import { IdempotencyService } from "./idempotency-service";
+import type { FileInfo } from "./mock-s3-service";
 
-export const CHAT_MESSAGE_NOT_FOUND_ERROR = new TRPCError({
-  code: "NOT_FOUND",
-  message: "Chat message not found",
-});
+type History = {
+  role: string;
+  text: string;
+};
 
 export class ChatMessageService {
-  constructor(private readonly s: ServiceRegistry) {}
+  constructor(private readonly service: ServiceRegistry) {}
 
-  async list(input: ListChatMessages) {
+  async list(userId: UserId, input: ListChatMessages) {
     const { role, isBookmarked, options } = input;
     const { scope, afterId, order, limit } = options;
-    let query = this.s.db.selectFrom("chatMessages");
+
+    let query = this.service.db
+      .selectFrom("chatMessages as cm")
+      .innerJoin("chats as c", "c.id", "cm.chatId")
+      .where("c.userId", "=", userId);
+
     if (scope.by === "user") {
-      query = query
-        .innerJoin("chats", "chats.id", "chatMessages.chatId")
-        .where("chats.userId", "=", scope.userId)
-        .selectAll("chatMessages");
+      // noop
     } else if (scope.by === "chat")
-      query = query.where("chatId", "=", scope.chatId);
-    if (role !== undefined) query = query.where("role", "=", role);
+      query = query.where("cm.chatId", "=", scope.chatId);
+
+    if (role !== undefined) query = query.where("cm.role", "=", role);
+
     if (isBookmarked !== undefined)
-      query = query.where("isBookmarked", "=", isBookmarked);
+      query = query.where("cm.isBookmarked", "=", isBookmarked);
+
     if (afterId !== undefined) {
       const op = order === "asc" ? ">" : "<";
-      query = query.where("id", op, afterId);
+      query = query.where("cm.id", op, afterId);
     }
-    return await query.orderBy("id", order).limit(limit).selectAll().execute();
+
+    const res = await query
+      .orderBy("cm.id", order)
+      .limit(limit)
+      .select([
+        "cm.isBookmarked",
+        "cm.model",
+        "cm.role",
+        "cm.status",
+        "cm.text",
+        "cm.parentId",
+        "cm.id",
+        "cm.chatId",
+        "cm.createdAt",
+      ])
+      .execute();
+
+    return checkExactKeysArray<ChatMessage>()(res);
   }
 
-  async listForAiChatHistory(input: {
-    modelChatId: ChatId;
-    modelChatMessageId: ChatMessageId;
-    modelParentId: ChatMessageId | null;
-  }) {
-    const { modelChatId, modelChatMessageId, modelParentId } = input;
+  async listForAiChatHistory(
+    userId: UserId,
+    input: {
+      modelChatMessage: {
+        id: ChatMessageId;
+        chatId: ChatId;
+        parentId: ChatMessageId | null;
+      };
+    }
+  ) {
+    const { modelChatMessage } = input;
+
     // TODO: Change limit history length
     let remainLength = 10;
-    const histories = await this.s.db.transaction().execute(async (tx) => {
-      let baseQuery = tx
-        .selectFrom("chatMessages")
-        .where("chatId", "=", modelChatId)
-        .where("status", "=", ChatMessageStatus.enum.succeeded)
-        .where("text", "is not", null)
-        .select(["role", "text", "id"])
-        .orderBy("id", "desc");
+    const histories = await this.service.db
+      .transaction()
+      .execute(async (tx) => {
+        const baseQuery = tx
+          .selectFrom("chatMessages as cm")
+          .innerJoin("chats as c", "c.id", "cm.chatId")
+          .where("c.userId", "=", userId)
+          .where("cm.chatId", "=", modelChatMessage.chatId)
+          .where("cm.status", "=", ChatMessageStatus.enum.succeeded)
+          .where("cm.text", "is not", null)
+          .select(["cm.role", "cm.text"])
+          .orderBy("cm.id", "desc");
 
-      const histories: {
-        role: string;
-        text: string | null;
-      }[] = [];
-      let oldestId = -1;
-      if (modelParentId !== null) {
+        const histories: History[] = [];
+        let oldestId = -1;
+
         // branch messages
-        if (remainLength > 0) {
-          const branchMsgs = await baseQuery
-            .where("id", "<", modelChatMessageId)
-            .where("parentId", "=", modelParentId)
-            .limit(remainLength)
-            .execute();
-          histories.push(...branchMsgs);
-          remainLength -= branchMsgs.length;
-          oldestId = branchMsgs.at(0)?.id ?? -1;
-        }
+        if (modelChatMessage.parentId !== null) {
+          if (remainLength > 0) {
+            const rows = await baseQuery
+              .where("cm.id", "<", modelChatMessage.id)
+              .where("cm.parentId", "=", modelChatMessage.parentId)
+              .select("cm.id")
+              .limit(remainLength)
+              .execute();
 
-        // parent message
-        if (remainLength > 0) {
-          const parentMsg = await baseQuery
-            .where("id", "=", modelParentId)
-            .where("parentId", "is", null)
-            .select("replyToId")
-            .executeTakeFirst();
-          if (parentMsg) {
-            histories.push(parentMsg);
-            remainLength -= 1;
-            oldestId = parentMsg.id;
+            histories.push(
+              ...checkExactKeysArray<History>()(
+                rows.map((x) => {
+                  if (x.text === null)
+                    throw new Error("text must have a not null query applied.");
+                  return { role: x.role, text: x.text };
+                })
+              )
+            );
+            remainLength -= rows.length;
+            oldestId = rows.at(-1)?.id ?? -1;
+          }
 
-            // reply to message
-            if (remainLength > 0 && parentMsg.replyToId !== null) {
-              const replyToMsg = await baseQuery
-                .where("id", "=", parentMsg.replyToId)
-                .where("parentId", "is", null)
-                .executeTakeFirst();
-              if (replyToMsg) {
-                histories.push(replyToMsg);
-                remainLength -= 1;
-                oldestId = replyToMsg.id;
+          // parent message
+          if (remainLength > 0) {
+            const parent = await baseQuery
+              .where("cm.id", "=", modelChatMessage.parentId)
+              .where("cm.parentId", "is", null)
+              .select(["cm.id", "cm.replyToId"])
+              .executeTakeFirst();
+            if (parent) {
+              if (parent.text === null)
+                throw new Error("text must have a not null query applied.");
+              histories.push(
+                checkExactKeys<History>()({
+                  role: parent.role,
+                  text: parent.text,
+                })
+              );
+              remainLength -= 1;
+              oldestId = parent.id;
+
+              // reply to message
+              if (remainLength > 0 && parent.replyToId !== null) {
+                const replyTo = await baseQuery
+                  .where("cm.id", "=", parent.replyToId)
+                  .where("cm.parentId", "is", null)
+                  .select("cm.id")
+                  .executeTakeFirst();
+                if (replyTo) {
+                  if (replyTo.text === null)
+                    throw new Error("text must have a not null query applied.");
+                  histories.push(
+                    checkExactKeys<History>()({
+                      role: replyTo.role,
+                      text: replyTo.text,
+                    })
+                  );
+                  remainLength -= 1;
+                  oldestId = replyTo.id;
+                }
               }
             }
           }
         }
-      }
 
-      // non-branch messages
-      if (remainLength > 0) {
-        if (oldestId !== -1) baseQuery = baseQuery.where("id", "<", oldestId);
-        const msgs = await baseQuery
-          .where("parentId", "is", null)
-          .limit(remainLength)
-          .execute();
-        histories.push(...msgs);
-        remainLength -= msgs.length;
-      }
+        // non-branch messages
+        if (remainLength > 0) {
+          let query = baseQuery;
+          if (oldestId !== -1) query = query.where("cm.id", "<", oldestId);
+          const rows = await query
+            .where("cm.parentId", "is", null)
+            .limit(remainLength)
+            .execute();
+          histories.push(
+            ...checkExactKeysArray<History>()(
+              rows.map((x) => {
+                if (x.text === null)
+                  throw new Error("text must have a not null query applied.");
+                return { role: x.role, text: x.text };
+              })
+            )
+          );
+          remainLength -= rows.length;
+        }
 
-      return histories;
-    });
+        return histories;
+      });
 
-    // sort to oldest
-    histories.reverse();
-    return histories as { role: string; text: string }[];
+    histories.reverse(); // to oldest
+    return checkExactKeysArray<History>()(histories);
   }
 
-  async findById<K extends keyof ChatMessage>(
-    chatMessageId: ChatMessageId,
-    keys: K[]
-  ) {
-    return await this.s.db
-      .selectFrom("chatMessages")
-      .where("id", "=", chatMessageId)
-      .select(keys)
-      .executeTakeFirstOrThrow(() => CHAT_MESSAGE_NOT_FOUND_ERROR);
+  async find(userId: UserId, input: { chatMessageId: ChatMessageId }) {
+    const { chatMessageId } = input;
+    const res = await this.service.db
+      .selectFrom("chatMessages as cm")
+      .innerJoin("chats as c", "c.id", "cm.chatId")
+      .where("c.userId", "=", userId)
+      .where("cm.id", "=", chatMessageId)
+      .select([
+        "cm.id",
+        "cm.text",
+        "cm.model",
+        "cm.chatId",
+        "cm.parentId",
+        "cm.role",
+        "cm.isBookmarked",
+        "cm.status",
+        "cm.createdAt",
+      ])
+      .executeTakeFirstOrThrow();
+
+    return checkExactKeys<ChatMessage>()(res);
   }
 
-  async update(input: UpdateChatMessage) {
+  async update(userId: UserId, input: UpdateChatMessage) {
     const { chatMessageId, isBookmarked } = input;
-    let query = this.s.db
-      .updateTable("chatMessages")
-      .where("id", "=", chatMessageId);
-    if (isBookmarked !== undefined) query = query.set({ isBookmarked });
-    const chatMessage = await query
-      .returningAll()
-      .executeTakeFirstOrThrow(() => CHAT_MESSAGE_NOT_FOUND_ERROR);
-    return await ChatMessage.parseAsync(chatMessage);
+    await this.service.db
+      .updateTable("chatMessages as cm")
+      .innerJoin("chats as c", "c.id", "cm.chatId")
+      .where("c.userId", "=", userId)
+      .where("cm.id", "=", chatMessageId)
+      .set({ isBookmarked })
+      .executeTakeFirstOrThrow();
   }
 
-  async isStaleCompleted(chatMessageId: ChatMessageId) {
-    const chatMessage = await this.s.db
-      .selectFrom("chatMessages")
-      .where(({ or, and, eb }) =>
-        and([
-          eb("id", "=", chatMessageId),
-          eb("updatedAt", "<", new Date(Date.now() - 5 * 60_000)),
-          or([
-            eb("status", "=", ChatMessageStatus.enum.succeeded),
-            eb("status", "=", ChatMessageStatus.enum.failed),
-          ]),
+  async isStaleCompleted(
+    userId: UserId,
+    input: { chatMessageId: ChatMessageId }
+  ) {
+    const { chatMessageId } = input;
+    const res = await this.service.db
+      .selectFrom("chatMessages as cm")
+      .innerJoin("chats as c", "c.id", "cm.chatId")
+      .where("c.userId", "=", userId)
+      .where("cm.id", "=", chatMessageId)
+      .where("cm.updatedAt", "<", new Date(Date.now() - 5 * 60_000)) // 5 minutes
+      .where(({ or, eb }) =>
+        or([
+          eb("cm.status", "=", ChatMessageStatus.enum.succeeded),
+          eb("cm.status", "=", ChatMessageStatus.enum.failed),
         ])
       )
-      .select(["id"])
+      .select(["cm.id"])
       .executeTakeFirst();
-    return chatMessage != null;
+
+    if (!res) return false;
+    return !!checkExactKeys<{ id: ChatMessageId }>()(res);
   }
 
   static async transit(
     db: Db,
+    userId: UserId,
     input: {
       chatMessageId: ChatMessageId;
       expectStatus: ChatMessageStatus;
@@ -175,95 +259,134 @@ export class ChatMessageService {
     }
   ) {
     const { chatMessageId, expectStatus, nextStatus } = input;
-    return await db
-      .updateTable("chatMessages")
+    const res = await db
+      .updateTable("chatMessages as cm")
+      .innerJoin("chats as c", "c.id", "cm.chatId")
+      .where("c.userId", "=", userId)
+      .where("cm.id", "=", chatMessageId)
+      .where("cm.status", "=", expectStatus)
       .set({ status: nextStatus })
-      .where("id", "=", chatMessageId)
-      .where("status", "=", expectStatus)
-      .returning("id")
+      .returning("cm.id")
       .executeTakeFirst();
+
+    if (!res) return undefined;
+    return checkExactKeys<{ id: ChatMessageId }>()(res);
   }
 
-  async transitPendingToProcessing(chatMessageId: ChatMessageId) {
-    return await this.s.db.transaction().execute((tx) =>
-      ChatMessageService.transit(tx, {
+  async transitPendingToProcessing(
+    userId: UserId,
+    input: { chatMessageId: ChatMessageId }
+  ) {
+    const { chatMessageId } = input;
+    const res = await this.service.db.transaction().execute(async (tx) => {
+      const res = await ChatMessageService.transit(tx, userId, {
         chatMessageId,
         expectStatus: "pending",
         nextStatus: "processing",
-      })
-    );
+      });
+      return res;
+    });
+
+    if (!res) return undefined;
+    return checkExactKeys<{ id: ChatMessageId }>()(res);
   }
 
   async transitProcessingToSucceeded(
-    chatMessageId: ChatMessageId,
-    text: string
+    userId: UserId,
+    input: { chatMessageId: ChatMessageId; text: string }
   ) {
-    return await this.s.db.transaction().execute(async (tx) => {
-      await ChatMessageService.transit(tx, {
+    const { chatMessageId, text } = input;
+    await this.service.db.transaction().execute(async (tx) => {
+      const res = await ChatMessageService.transit(tx, userId, {
         chatMessageId,
         expectStatus: "processing",
         nextStatus: "succeeded",
       });
-      return await tx
-        .updateTable("chatMessages")
+      if (!res)
+        throw new HttpServerError(
+          StatusCodes.INTERNAL_SERVER_ERROR,
+          `Chat message transition failed. chatMessageId: ${chatMessageId} status: processing to succeeded.`
+        );
+
+      await tx
+        .updateTable("chatMessages as cm")
+        .innerJoin("chats as c", "c.id", "cm.chatId")
+        .where("c.userId", "=", userId)
+        .where("cm.id", "=", chatMessageId)
         .set({ text })
-        .where("id", "=", chatMessageId)
         .executeTakeFirstOrThrow();
     });
   }
 
-  async transitProcessingToFailed(chatMessageId: ChatMessageId) {
-    return await this.s.db.transaction().execute((tx) =>
-      ChatMessageService.transit(tx, {
+  async tryTransitProcessingToFailed(
+    userId: UserId,
+    input: { chatMessageId: ChatMessageId }
+  ) {
+    const { chatMessageId } = input;
+    const res = await this.service.db.transaction().execute(async (tx) => {
+      const res = await ChatMessageService.transit(tx, userId, {
         chatMessageId,
         expectStatus: "processing",
         nextStatus: "failed",
-      })
-    );
+      });
+      return res;
+    });
+    if (!res)
+      console.warn(
+        `Chat message transition failed. chatMessageId: ${chatMessageId} status: processing to failed.`
+      );
   }
 
   async onCleanupZombiesTask() {
-    const { numUpdatedRows } = await this.s.db
-      .updateTable("chatMessages")
+    const { numUpdatedRows } = await this.service.db
+      .updateTable("chatMessages as cm")
+      .where("cm.status", "=", "processing")
+      .where("cm.updatedAt", "<", new Date(Date.now() - 5 * 60_000)) // 5 minutes
       .set({ status: "failed" })
-      .where("status", "=", "processing")
-      .where("updatedAt", "<", new Date(Date.now() - 5 * 60_000)) // 5 minutes
       .executeTakeFirst();
     if (numUpdatedRows > 0)
       console.warn(`Marked ${numUpdatedRows} zombie chat messages as failed.`);
   }
 
-  async send(input: SendChatMessage) {
+  async send(userId: UserId, input: SendChatMessage) {
     const { idempotencyKey, chatId, model, text } = input;
     const files = input.files ?? [];
 
-    const { fileInfos } = await this.s.s3.uploads({ files });
+    await this.service.idempotencyInfo.checkDuplicateRequest(idempotencyKey);
 
-    const { userChatMessage, modelChatMessage } = await this.s.db
+    const { fileInfos } = await this.service.s3.uploads(userId, { files });
+
+    const { userChatMessage, modelChatMessage } = await this.service.db
       .transaction()
       .execute(async (tx) => {
-        await IdempotencyService.checkDuplicateRequest(tx, idempotencyKey);
-        return await ChatService.createMessageInfo(tx, {
+        const res = await ChatMessageService.createInfo(tx, {
           chatId,
           model,
           text,
           fileInfos,
         });
+        return res;
       });
 
-    await this.s.task.add("google_gen_ai_send_chat", {
+    await this.service.task.add("google_gen_ai_send_chat", {
+      userId,
       userChatMessageId: userChatMessage.id,
       modelChatMessageId: modelChatMessage.id,
     });
 
-    return { userChatMessage, modelChatMessage };
+    return {
+      userChatMessage: checkExactKeys<ChatMessage>()(userChatMessage),
+      modelChatMessage: checkExactKeys<ChatMessage>()(modelChatMessage),
+    };
   }
 
-  static async createPair(
+  static async createInfo(
     db: Db,
-    input: Omit<SendChatMessage, "idempotencyKey">
+    input: Omit<SendChatMessage, "idempotencyKey" | "files"> & {
+      fileInfos: FileInfo[];
+    }
   ) {
-    const { chatId, text, model, parentId } = input;
+    const { chatId, text, model, parentId, fileInfos } = input;
 
     const userChatMessage = await db
       .insertInto("chatMessages")
@@ -274,7 +397,17 @@ export class ChatMessageService {
         status: ChatMessageStatus.enum.succeeded,
         parentId: parentId ?? null,
       })
-      .returningAll()
+      .returning([
+        "id",
+        "status",
+        "chatId",
+        "model",
+        "isBookmarked",
+        "parentId",
+        "role",
+        "text",
+        "createdAt",
+      ])
       .executeTakeFirstOrThrow();
 
     const modelChatMessage = await db
@@ -287,12 +420,27 @@ export class ChatMessageService {
         parentId: parentId ?? null,
         replyToId: userChatMessage.id,
       })
-      .returningAll()
+      .returning([
+        "id",
+        "status",
+        "chatId",
+        "model",
+        "isBookmarked",
+        "parentId",
+        "role",
+        "text",
+        "createdAt",
+      ])
       .executeTakeFirstOrThrow();
 
+    await ChatMessageFileService.createAll(db, {
+      chatMessageId: userChatMessage.id,
+      fileInfos,
+    });
+
     return {
-      userChatMessage,
-      modelChatMessage,
+      userChatMessage: checkExactKeys<ChatMessage>()(userChatMessage),
+      modelChatMessage: checkExactKeys<ChatMessage>()(modelChatMessage),
     };
   }
 }

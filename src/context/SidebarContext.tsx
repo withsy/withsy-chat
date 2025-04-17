@@ -1,4 +1,3 @@
-import type { Chat } from "@/types/chat";
 import type { ReactNode } from "react";
 import { createContext, useContext, useEffect, useState } from "react";
 
@@ -8,10 +7,6 @@ type SidebarContextType = {
   setCollapsed: (value: boolean) => void;
   hydrated: boolean;
   isMobile: boolean;
-
-  chatList: Chat[];
-  setChatList: (list: Chat[]) => void;
-  addChat: (chat: Chat) => void;
 };
 
 const SidebarContext = createContext<SidebarContextType | undefined>(undefined);
@@ -46,12 +41,6 @@ export function SidebarProvider({ children }: { children: ReactNode }) {
 
   const toggle = () => setCollapsed((prev) => !prev);
 
-  const [chatList, setChatList] = useState<Chat[]>([]);
-
-  const addChat = (chat: Chat) => {
-    setChatList((prev) => [chat, ...prev]);
-  };
-
   return (
     <SidebarContext.Provider
       value={{
@@ -60,9 +49,6 @@ export function SidebarProvider({ children }: { children: ReactNode }) {
         setCollapsed,
         hydrated,
         isMobile,
-        chatList,
-        setChatList,
-        addChat,
       }}
     >
       {children}

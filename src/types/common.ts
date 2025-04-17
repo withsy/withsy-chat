@@ -27,5 +27,44 @@ export const JsonValueSchema: z.ZodType<JsonValue> = z.lazy(() =>
 );
 export const JsonValue = JsonValueSchema;
 
-export const IdempotencyKey = z.string().uuid();
-export type IdempotencyKey = zInfer<typeof IdempotencyKey>;
+type PrettyError<Message extends string> = { __error__: Message };
+
+type HasExactKeys<T, U> = Exclude<keyof U, keyof T> extends infer Extra
+  ? Exclude<keyof T, keyof U> extends infer Missing
+    ? [Extra] extends [never]
+      ? [Missing] extends [never]
+        ? true
+        : PrettyError<`❌ Missing keys: ${Extract<Missing, string>}`>
+      : PrettyError<`❌ Extra keys: ${Extract<Extra, string>}`>
+    : never
+  : never;
+
+type IsArray<T> = T extends readonly any[] ? true : false;
+
+type RejectArray<T> = IsArray<T> extends true
+  ? { __error__: "❌ This is an array. Use checkExactKeysArray<T>() instead." }
+  : unknown;
+
+export function checkExactKeys<T>() {
+  return <U>(
+    value: U &
+      RejectArray<U> &
+      (HasExactKeys<T, U> extends true ? unknown : HasExactKeys<T, U>)
+  ): U => value;
+}
+
+type AllHasExactKeys<
+  T,
+  U extends readonly unknown[]
+> = U[number] extends infer Item
+  ? HasExactKeys<T, Item> extends true
+    ? true
+    : HasExactKeys<T, Item>
+  : false;
+
+export function checkExactKeysArray<T>() {
+  return <U extends readonly unknown[]>(
+    value: U &
+      (AllHasExactKeys<T, U> extends true ? unknown : AllHasExactKeys<T, U>)
+  ): U => value;
+}
