@@ -10,14 +10,17 @@ import { BookmarkCardActions } from "./BookmarkCardActions";
 
 interface BookmarkCardProps {
   title?: string;
+  messageId: string;
   chatId: string;
   text: string;
   themeColor: string;
   createdAt: string;
+  updatedAt: string;
 }
 
 export function BookmarkCard({
   chatId,
+  messageId,
   title,
   text,
   themeColor,
@@ -45,7 +48,7 @@ export function BookmarkCard({
             <BookmarkCardHeader
               title={title}
               chattedAt={createdAt}
-              link={`/chat/${chatId}`}
+              link={`/chat/${chatId}?messageId=${messageId}`}
             />
             <Separator />
           </>

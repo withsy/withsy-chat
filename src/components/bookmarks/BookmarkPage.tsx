@@ -69,7 +69,12 @@ export default function BookmarkPage() {
           <BookmarkCard
             key={message.id}
             themeColor={userPrefs.themeColor}
-            {...message}
+            chatId={message.chatId}
+            messageId={message.id}
+            title={message?.chat?.title}
+            text={message.text}
+            createdAt={message.createdAt}
+            updatedAt={message.updatedAt}
           />
         ))}
       </div>
