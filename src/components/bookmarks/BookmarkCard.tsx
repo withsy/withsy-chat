@@ -28,7 +28,8 @@ export function BookmarkCard({
   const isLongMessage = text ? text.length > 150 : false;
 
   const [collapsed, setCollapsed] = useState(isLongMessage);
-  const displayedText = collapsed ? text?.slice(0, 150) + "..." : text;
+  const displayedText =
+    isLongMessage && collapsed ? text?.slice(0, 150) + "..." : text;
 
   const [bookmarked, setBookmarked] = useState(true);
 
