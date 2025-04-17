@@ -3,7 +3,7 @@ import { BookmarkFilters } from "@/components/bookmarks/BookmarkFilters";
 import { Bookmark } from "lucide-react";
 
 import { useUser } from "@/context/UserContext";
-import { getFilteredBookmarks } from "@/lib/filter-utils";
+import { filterMessages } from "@/lib/filter-utils";
 import { trpc } from "@/lib/trpc";
 import { ChatMessage } from "@/types/chat";
 import { skipToken } from "@tanstack/react-query";
@@ -38,7 +38,7 @@ export default function BookmarkPage() {
   const filteredMessages = useMemo(() => {
     const keyword = searchText.toLowerCase().trim();
 
-    return getFilteredBookmarks({
+    return filterMessages({
       messages: data,
       sortOrder,
     }).filter((b) => {
@@ -58,7 +58,7 @@ export default function BookmarkPage() {
         searchText={searchText}
         setSearchText={setSearchText}
       />
-      <div className="mt-4 flex-1 overflow-y-auto space-y-4">
+      <div className="flex-1 overflow-y-auto space-y-4">
         {filteredMessages.map((message) => (
           <BookmarkCard
             key={message.id}

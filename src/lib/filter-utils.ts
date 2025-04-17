@@ -1,6 +1,6 @@
 import type { ChatMessage } from "@/types/chat";
 
-export function getFilteredBookmarks({
+export function filterMessages({
   messages,
   sortOrder,
 }: {
