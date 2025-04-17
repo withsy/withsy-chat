@@ -54,7 +54,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
     if (!userPrefsQuery.data) return;
     const userPrefs = UserPreferences.parse(userPrefsQuery.data);
     setUserPrefs(userPrefs);
-  }, [userPrefsQuery]);
+  }, [userPrefsQuery.data]);
 
   const setUserPrefAndSave: SetUserPrefAndSave = (k, v) => {
     const prevValue = userPrefs[k];
