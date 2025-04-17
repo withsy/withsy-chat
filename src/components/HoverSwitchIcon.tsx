@@ -6,6 +6,7 @@ interface HoverSwitchIconProps {
   size?: number;
   fill?: string;
   className?: string;
+  isActive?: boolean;
 }
 
 const HoverSwitchIcon: React.FC<HoverSwitchIconProps> = ({
@@ -14,6 +15,7 @@ const HoverSwitchIcon: React.FC<HoverSwitchIconProps> = ({
   size = 16,
   fill,
   className = "",
+  isActive = false,
 }) => {
   return (
     <div
@@ -21,11 +23,15 @@ const HoverSwitchIcon: React.FC<HoverSwitchIconProps> = ({
       style={{ width: size, height: size }}
     >
       <DefaultIcon
-        className="transition-all group-hover:opacity-0 w-full h-full"
+        className={`transition-all w-full h-full ${
+          isActive ? "opacity-0" : "group-hover:opacity-0"
+        }`}
         size={size}
       />
       <HoverIcon
-        className="transition-all opacity-0 group-hover:opacity-100 absolute top-0 left-0 w-full h-full"
+        className={`transition-all absolute top-0 left-0 w-full h-full ${
+          isActive ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+        }`}
         size={size}
         fill={fill}
       />

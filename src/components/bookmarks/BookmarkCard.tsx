@@ -3,6 +3,7 @@ import { BookmarkCardHeader } from "@/components/bookmarks/BookmarkCardHeader";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { useUser } from "@/context/UserContext";
+import { trpc } from "@/lib/trpc";
 import { useState } from "react";
 import { toast } from "sonner";
 import { CollapseToggle } from "../CollapseToggle";
@@ -34,12 +35,25 @@ export function BookmarkCard({
   const [bookmarked, setBookmarked] = useState(true);
   const link = `/chat/${chatId}?messageId=${messageId}`;
 
-  const handleToggleBookmark = () => {
-    // TODO handleToggleBookmark works
-    setBookmarked(false);
-    toast.info("Remove from Saved", {
-      description: "This chat has been removed from saved.",
-    });
+  const updateMessageMutation = trpc.chatMessage.update.useMutation();
+
+  const handleToggleSaved = () => {
+    updateMessageMutation.mutate(
+      { chatMessageId: messageId, isBookmarked: false },
+      {
+        onSuccess: () => {
+          setBookmarked(false);
+          toast.success("Removed from saved", {
+            description: "It's no longer in your saved list.",
+          });
+        },
+        onError: () => {
+          toast.error("Failed", {
+            description: "Please try again or contact support.",
+          });
+        },
+      }
+    );
   };
 
   if (!bookmarked) return null;
@@ -74,7 +88,7 @@ export function BookmarkCard({
             themeColor={themeColor}
             content={text}
             link={link}
-            onUnsave={handleToggleBookmark}
+            onUnsave={handleToggleSaved}
           />
         </CardFooter>
       </Card>

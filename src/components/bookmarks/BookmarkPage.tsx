@@ -61,7 +61,7 @@ export default function BookmarkPage() {
             color: "white",
           }}
         >
-          {filterMessages.length}/{data.length}
+          {filteredMessages.length}/{data.length}
         </Badge>
       </div>
       <BookmarkFilters

@@ -1,6 +1,7 @@
 import { useUser } from "@/context/UserContext";
 import type { ChatMessage } from "@/types/chat";
 import { ChevronsDown } from "lucide-react";
+import { useRouter } from "next/router";
 import { useEffect, useRef, useState, type RefObject } from "react";
 import { ChatBubble } from "./ChatBubble";
 
@@ -15,12 +16,53 @@ export function ChatMessageList({
   onToggleSaved,
   shouldAutoScrollRef,
 }: Props) {
+  const router = useRouter();
+  const { messageId } = router.query;
+
   const { userPrefs } = useUser();
   const { themeColor } = userPrefs;
 
   const bottomRef = useRef<HTMLDivElement | null>(null);
   const listRef = useRef<HTMLDivElement | null>(null);
   const [showScrollToBottom, setShowScrollToBottom] = useState(false);
+
+  const messageRefs = useRef<Record<number, HTMLDivElement | null>>({});
+
+  useEffect(() => {
+    if (messageId) {
+      const id = parseInt(messageId as string, 10);
+      const targetRef = messageRefs.current[id];
+      if (targetRef) {
+        targetRef.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    }
+  }, [messageId, messages]);
+
+  useEffect(() => {
+    if (messageId) {
+      const timeout = setTimeout(() => {
+        const id = parseInt(messageId as string, 10);
+        const targetRef = messageRefs.current[id];
+        if (targetRef) {
+          targetRef.scrollIntoView({ behavior: "smooth", block: "center" });
+
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          const { messageId, ...restQuery } = router.query;
+
+          router.replace(
+            {
+              pathname: router.pathname,
+              query: restQuery,
+            },
+            undefined,
+            { shallow: true }
+          );
+        }
+      }, 100);
+
+      return () => clearTimeout(timeout);
+    }
+  }, [messageId, messages, router]);
 
   useEffect(() => {
     if (shouldAutoScrollRef.current) {
@@ -60,11 +102,18 @@ export function ChatMessageList({
               <span className="text-muted-foreground italic">{msg.text}</span>
             </div>
           ) : (
-            <ChatBubble
+            <div
               key={msg.id}
-              message={msg}
-              onToggleSaved={onToggleSaved}
-            />
+              ref={(el) => {
+                messageRefs.current[msg.id] = el;
+              }}
+            >
+              <ChatBubble
+                key={msg.id}
+                message={msg}
+                onToggleSaved={onToggleSaved}
+              />
+            </div>
           )
         )}
         <div ref={bottomRef} />

@@ -162,8 +162,8 @@ function SidebarChatItem({
 }) {
   const { isMobile, setCollapsed } = useSidebar();
   const { userPrefs } = useUser();
-
   const router = useRouter();
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const handleLinkClick = () => {
     if (isMobile) {
@@ -172,16 +172,22 @@ function SidebarChatItem({
     router.push(`/chat/${chat.id}`);
   };
 
+  const isHoveredOrDropdown = `${isDropdownOpen ? "bg-white font-bold" : ""}`;
+
   return (
     <div
-      className="group relative flex items-center gap-2 no-underline px-2.5 py-2 rounded-md transition-colors hover:bg-white cursor-pointer"
-      onClick={handleLinkClick}
+      className={`group relative flex items-center gap-2 no-underline px-2.5 py-2 rounded-md transition-colors hover:bg-white cursor-pointer ${isHoveredOrDropdown}`}
     >
-      <div className="flex items-center gap-2 flex-1 group-hover:font-bold">
+      <div
+        className="flex items-center gap-2 flex-1 group-hover:font-bold"
+        onClick={handleLinkClick}
+      >
         <div className="w-5 h-5 flex items-center justify-center relative">
           <SquareMenu
             size={16}
-            className="opacity-100 group-hover:opacity-0 transition-opacity"
+            className={`opacity-100 transition-opacity ${
+              isDropdownOpen ? "opacity-0" : "group-hover:opacity-0"
+            }`}
           />
 
           <button
@@ -208,23 +214,27 @@ function SidebarChatItem({
         <span className="text-foreground truncate ">{chat.title}</span>
       </div>
 
-      <DropdownMenu>
+      <DropdownMenu onOpenChange={(open) => setIsDropdownOpen(open)}>
         <DropdownMenuTrigger asChild>
           <Button
             variant="ghost"
             size="icon"
-            className="h-5 w-5 p-0 opacity-0 group-hover:opacity-100 transition-opacity bg-transparent hover:bg-transparent"
+            className={`h-5 w-5 p-0 transition-opacity bg-transparent hover:bg-transparent ${
+              isDropdownOpen
+                ? "opacity-100"
+                : "opacity-0 group-hover:opacity-100"
+            }`}
             onClick={(e) => e.stopPropagation()}
           >
             <MoreHorizontal size={14} />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent side="right" align="start">
+        <DropdownMenuContent side="top" align="start" className="z-[9999]">
           <DropdownMenuItem onClick={() => onToggleStar(chat)}>
             {isStarred ? (
               <>
                 <StarOff size={14} className="mr-2" />
-                Unstar
+                StarOff
               </>
             ) : (
               <>
