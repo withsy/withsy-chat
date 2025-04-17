@@ -1,4 +1,5 @@
 import ChatView from "@/components/chat/ChatView";
+import { PartialError } from "@/components/Error";
 import { useRouter } from "next/router";
 
 export default function Page() {
@@ -6,7 +7,7 @@ export default function Page() {
   const { id } = router.query;
 
   const chatId = typeof id === "string" ? id : null;
-  if (!chatId) return <div>Invalid chatId</div>;
+  if (!chatId) return <PartialError message="Invaild chat id" />;
 
   return <ChatView chatId={chatId} />;
 }
