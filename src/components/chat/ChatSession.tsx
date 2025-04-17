@@ -99,8 +99,8 @@ export function ChatSession({ chatId, initialMessages, children }: Props) {
           onSuccess(data) {
             setMessages((prev) => [
               ...prev,
-              ChatMessage.parse(data.userChatMessage),
-              ChatMessage.parse(data.modelChatMessage),
+              data.userChatMessage,
+              data.modelChatMessage,
             ]);
             utils.chat.list.invalidate();
           },

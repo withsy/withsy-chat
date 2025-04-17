@@ -17,7 +17,7 @@ type Props = {
 };
 
 export function ChatInputBox({ onSendMessage }: Props) {
-  const { userPrefs, setUserPrefAndSave, userPrefLoadings } = useUser();
+  const { userPrefs, setUserPrefsAndSave, userPrefLoadings } = useUser();
   const [message, setMessage] = useState("");
   const [isComposing, setIsComposing] = useState(false);
 
@@ -73,7 +73,7 @@ export function ChatInputBox({ onSendMessage }: Props) {
           <Switch
             id="enter-toggle"
             checked={enterToSend ?? false}
-            onCheckedChange={(v) => setUserPrefAndSave("enterToSend", v)}
+            onCheckedChange={(v) => setUserPrefsAndSave({ enterToSend: v })}
             disabled={isLoading}
             style={{
               backgroundColor: enterToSend

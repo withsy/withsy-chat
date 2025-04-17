@@ -108,7 +108,7 @@ function UserMenuItem({
 }
 
 export default function UserDropdownMenu() {
-  const { userPrefs, setUserPrefAndSave, userPrefLoadings, userSession } =
+  const { userPrefs, setUserPrefsAndSave, userPrefLoadings, userSession } =
     useUser();
 
   const { largeText } = userPrefs;
@@ -154,7 +154,7 @@ export default function UserDropdownMenu() {
               id={`${id}-toggle`}
               label={label}
               checked={userPrefs[id]}
-              onChange={(v) => setUserPrefAndSave(id, v)}
+              onChange={(v) => setUserPrefsAndSave({ [id]: v })}
               disabled={userPrefLoadings[id]}
               largeText={userPrefs["largeText"]}
               themeColor={userPrefs.themeColor}
