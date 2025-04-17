@@ -52,8 +52,8 @@ export function UserProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!userPrefsQuery.data) return;
-    const userPrefs = UserPreferences.parse(userPrefsQuery.data);
-    setUserPrefs(userPrefs);
+    const prefs = UserPreferences.parse(userPrefsQuery.data);
+    setUserPrefs(prefs);
   }, [userPrefsQuery.data]);
 
   const setUserPrefAndSave: SetUserPrefAndSave = (k, v) => {

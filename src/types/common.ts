@@ -71,3 +71,11 @@ export function checkExactKeysArray<T>() {
       (AllHasExactKeys<T, U> extends true ? unknown : AllHasExactKeys<T, U>)
   ): U => value;
 }
+
+export function cols<S extends z.ZodObject<any>, Table extends string>(
+  schema: S,
+  table: Table
+): Array<`${Table}.${Extract<keyof S["shape"], string>}`> {
+  const keys = Object.keys(schema.shape) as Extract<keyof S["shape"], string>[];
+  return keys.map((k) => `${table}.${k}` as `${Table}.${typeof k}`);
+}

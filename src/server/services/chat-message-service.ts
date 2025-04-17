@@ -2,16 +2,19 @@ import {
   ChatId,
   ChatMessage,
   ChatMessageId,
+  ChatMessageSchema,
   ChatMessageStatus,
   ChatRole,
+  ChatSchema,
   SendChatMessage,
   UpdateChatMessage,
   type ListChatMessages,
 } from "@/types/chat";
-import { checkExactKeys, checkExactKeysArray } from "@/types/common";
+import { checkExactKeys, checkExactKeysArray, cols } from "@/types/common";
 import type { UserId } from "@/types/user";
 import { StatusCodes } from "http-status-codes";
-import { jsonBuildObject } from "kysely/helpers/postgres";
+import type { Expression } from "kysely";
+import { jsonObjectFrom } from "kysely/helpers/postgres";
 import { HttpServerError } from "../error";
 import type { ServiceRegistry } from "../service-registry";
 import { ChatMessageFileService } from "./chat-message-file-service";
@@ -23,12 +26,21 @@ type History = {
   text: string;
 };
 
+function withChat(db: Db, chatId: Expression<string>) {
+  return jsonObjectFrom(
+    db
+      .selectFrom("chats")
+      .where("chats.id", "=", chatId)
+      .select(cols(ChatSchema, "chats"))
+  );
+}
+
 export class ChatMessageService {
   constructor(private readonly service: ServiceRegistry) {}
 
   async list(userId: UserId, input: ListChatMessages) {
     const { role, isBookmarked, options } = input;
-    const { scope, afterId, order, limit } = options;
+    const { scope, afterId, order, limit, include } = options;
 
     let query = this.service.db
       .selectFrom("chatMessages as cm")
@@ -53,18 +65,14 @@ export class ChatMessageService {
     const res = await query
       .orderBy("cm.id", order)
       .limit(limit)
-      .select((eb) => [
-        "cm.isBookmarked",
-        "cm.model",
-        "cm.role",
-        "cm.status",
-        "cm.text",
-        "cm.parentId",
-        "cm.id",
-        "cm.chatId",
-        "cm.createdAt",
-        jsonBuildObject({ title: eb.ref("c.title") }).as("chat"),
-      ])
+      .select((eb) =>
+        [
+          ...cols(ChatMessageSchema, "cm"),
+          include?.chat
+            ? withChat(this.service.db, eb.ref("cm.chatId")).as("chat")
+            : undefined,
+        ].filter((x) => x != null)
+      )
       .execute();
 
     return checkExactKeysArray<ChatMessage>()(res);
@@ -200,17 +208,7 @@ export class ChatMessageService {
       .innerJoin("chats as c", "c.id", "cm.chatId")
       .where("c.userId", "=", userId)
       .where("cm.id", "=", chatMessageId)
-      .select([
-        "cm.id",
-        "cm.text",
-        "cm.model",
-        "cm.chatId",
-        "cm.parentId",
-        "cm.role",
-        "cm.isBookmarked",
-        "cm.status",
-        "cm.createdAt",
-      ])
+      .select(cols(ChatMessageSchema, "cm"))
       .executeTakeFirstOrThrow();
 
     return checkExactKeys<ChatMessage>()(res);

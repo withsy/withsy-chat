@@ -1,17 +1,20 @@
 import { z } from "zod";
-import { type zInfer, type zInput } from "./common";
+import { type zInfer } from "./common";
 import { IdempotencyKey } from "./idempotency";
 import { UserId } from "./user";
 
 export const ChatId = z.string().uuid();
 export type ChatId = zInfer<typeof ChatId>;
 
-export const Chat = z.object({
+export const ChatSchema = z.object({
   id: ChatId,
   title: z.string(),
   isStarred: z.boolean(),
   updatedAt: z.date(),
 });
+export type ChatSchema = zInfer<typeof ChatSchema>;
+
+export const Chat = ChatSchema.extend({});
 export type Chat = zInfer<typeof Chat>;
 
 export const UpdateChat = z.object({
@@ -38,7 +41,7 @@ export const ChatMessageStatus = z.enum([
 ]);
 export type ChatMessageStatus = zInfer<typeof ChatMessageStatus>;
 
-export const ChatMessage = z.object({
+export const ChatMessageSchema = z.object({
   id: ChatMessageId,
   chatId: ChatId,
   role: ChatRole,
@@ -48,7 +51,11 @@ export const ChatMessage = z.object({
   isBookmarked: z.boolean(),
   parentId: ChatMessageId.nullable(),
   createdAt: z.date(),
-  chat: Chat.partial().nullable().default(null),
+});
+export type ChatMessageSchema = zInfer<typeof ChatMessageSchema>;
+
+export const ChatMessage = ChatMessageSchema.extend({
+  chat: Chat.nullable().default(null),
 });
 export type ChatMessage = zInfer<typeof ChatMessage>;
 
@@ -71,6 +78,11 @@ export const ListChatMessages = z.object({
     order: z.enum(["asc", "desc"]).optional().default("asc"),
     limit: z.number().int().min(1).max(100).optional().default(20),
     afterId: ChatMessageId.optional(),
+    include: z
+      .object({
+        chat: z.boolean().optional().default(false),
+      })
+      .optional(),
   }),
 });
 export type ListChatMessages = zInfer<typeof ListChatMessages>;
@@ -100,18 +112,24 @@ export const ReceiveChatChunkStream = z.object({
 });
 export type ReceiveChatChunkStream = zInfer<typeof ReceiveChatChunkStream>;
 
-export const ChatChunk = z.object({
+export const ChatChunkSchema = z.object({
   chatMessageId: ChatMessageId,
   chunkIndex: ChatChunkIndex,
   text: z.string(),
 });
+export type ChatChunkSchema = zInfer<typeof ChatChunkSchema>;
+
+export const ChatChunk = ChatChunkSchema.extend({});
 export type ChatChunk = zInfer<typeof ChatChunk>;
 
 export const ChatMessageFileId = z.number().int();
 export type ChatMessageFileId = zInfer<typeof ChatMessageFileId>;
 
-export const ChatMessageFile = z.object({
+export const ChatMessageFileSchema = z.object({
   fileUri: z.string(),
   mimeType: z.string(),
 });
+export type ChatMessageFileSchema = zInfer<typeof ChatMessageFileSchema>;
+
+export const ChatMessageFile = ChatMessageFileSchema.extend({});
 export type ChatMessageFile = zInfer<typeof ChatMessageFile>;

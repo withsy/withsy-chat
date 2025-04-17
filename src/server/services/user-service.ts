@@ -1,5 +1,10 @@
 import { checkExactKeys } from "@/types/common";
-import { UpdateUserPrefs, User, type UserId } from "@/types/user";
+import {
+  UpdateUserPrefs,
+  User,
+  UserPreferences,
+  type UserId,
+} from "@/types/user";
 import { sql } from "kysely";
 import type { ServiceRegistry } from "../service-registry";
 
@@ -7,13 +12,13 @@ export class UserService {
   constructor(private readonly service: ServiceRegistry) {}
 
   async prefs(userId: UserId) {
-    const res = await this.service.db
+    const { preferences } = await this.service.db
       .selectFrom("users as u")
       .where("u.id", "=", userId)
       .select(["u.preferences"])
       .executeTakeFirstOrThrow();
 
-    return checkExactKeys<User>()(res);
+    return checkExactKeys<UserPreferences>()(preferences);
   }
 
   async updatePrefs(userId: UserId, input: UpdateUserPrefs) {
