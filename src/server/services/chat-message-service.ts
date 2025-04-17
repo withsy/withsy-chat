@@ -11,6 +11,7 @@ import {
 import { checkExactKeys, checkExactKeysArray } from "@/types/common";
 import type { UserId } from "@/types/user";
 import { StatusCodes } from "http-status-codes";
+import { jsonBuildObject } from "kysely/helpers/postgres";
 import { HttpServerError } from "../error";
 import type { ServiceRegistry } from "../service-registry";
 import { ChatMessageFileService } from "./chat-message-file-service";
@@ -52,7 +53,7 @@ export class ChatMessageService {
     const res = await query
       .orderBy("cm.id", order)
       .limit(limit)
-      .select([
+      .select((eb) => [
         "cm.isBookmarked",
         "cm.model",
         "cm.role",
@@ -62,6 +63,7 @@ export class ChatMessageService {
         "cm.id",
         "cm.chatId",
         "cm.createdAt",
+        jsonBuildObject({ title: eb.ref("c.title") }).as("chat"),
       ])
       .execute();
 
