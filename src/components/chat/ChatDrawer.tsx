@@ -36,7 +36,7 @@ export const ResponsiveDrawer = ({
     <div
       className={cn(
         "h-full bg-white",
-        isDrawerOpen ? "w-[30%] border-l" : "w-0 overflow-hidden"
+        isDrawerOpen ? "w-[50%] border-l" : "w-0 overflow-hidden"
       )}
       style={{
         ...(isDrawerOpen && {
