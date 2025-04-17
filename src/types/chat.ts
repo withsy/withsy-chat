@@ -48,6 +48,7 @@ export const ChatMessage = z.object({
   isBookmarked: z.boolean(),
   parentId: ChatMessageId.nullable(),
   createdAt: z.date(),
+  chat: Chat.partial().nullable().default(null),
 });
 export type ChatMessage = zInfer<typeof ChatMessage>;
 
@@ -73,7 +74,6 @@ export const ListChatMessages = z.object({
   }),
 });
 export type ListChatMessages = zInfer<typeof ListChatMessages>;
-export type ListChatMessagesInput = zInput<typeof ListChatMessages>;
 
 export const UpdateChatMessage = z.object({
   chatMessageId: ChatMessageId,

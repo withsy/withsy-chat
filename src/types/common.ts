@@ -27,20 +27,23 @@ export const JsonValueSchema: z.ZodType<JsonValue> = z.lazy(() =>
 );
 export const JsonValue = JsonValueSchema;
 
+type RequiredKeys<T> = {
+  [K in keyof T]-?: object extends Pick<T, K> ? never : K;
+}[keyof T];
+
 type PrettyError<Message extends string> = { __error__: Message };
 
 type HasExactKeys<T, U> = Exclude<keyof U, keyof T> extends infer Extra
-  ? Exclude<keyof T, keyof U> extends infer Missing
-    ? [Extra] extends [never]
-      ? [Missing] extends [never]
+  ? Extra extends never
+    ? Exclude<RequiredKeys<T>, keyof U> extends infer Missing
+      ? Missing extends never
         ? true
-        : PrettyError<`❌ Missing keys: ${Extract<Missing, string>}`>
-      : PrettyError<`❌ Extra keys: ${Extract<Extra, string>}`>
-    : never
+        : PrettyError<`❌ Missing required keys: ${Extract<Missing, string>}`>
+      : never
+    : PrettyError<`❌ Extra keys: ${Extract<Extra, string>}`>
   : never;
 
 type IsArray<T> = T extends readonly any[] ? true : false;
-
 type RejectArray<T> = IsArray<T> extends true
   ? { __error__: "❌ This is an array. Use checkExactKeysArray<T>() instead." }
   : unknown;
