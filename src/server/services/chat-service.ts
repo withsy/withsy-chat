@@ -1,10 +1,4 @@
-import {
-  Chat,
-  ChatMessage,
-  type StartChat,
-  type UpdateChat,
-} from "@/types/chat";
-import { checkExactKeys, checkExactKeysArray } from "@/types/common";
+import { type StartChat, type UpdateChat } from "@/types/chat";
 import type { UserId } from "@/types/user";
 import type { ServiceRegistry } from "../service-registry";
 import { ChatMessageService } from "./chat-message-service";
@@ -21,7 +15,7 @@ export class ChatService {
       .select(["c.id", "c.isStarred", "c.updatedAt", "c.title"])
       .execute();
 
-    return checkExactKeysArray<Chat>()(res);
+    return res;
   }
 
   async update(userId: UserId, input: UpdateChat) {
@@ -34,7 +28,7 @@ export class ChatService {
       .returning(["c.id", "c.isStarred", "c.updatedAt", "c.title"])
       .executeTakeFirstOrThrow();
 
-    return checkExactKeys<Chat>()(res);
+    return res;
   }
 
   async start(userId: UserId, input: StartChat) {
@@ -67,9 +61,9 @@ export class ChatService {
     });
 
     return {
-      chat: checkExactKeys<Chat>()(chat),
-      userChatMessage: checkExactKeys<ChatMessage>()(userChatMessage),
-      modelChatMessage: checkExactKeys<ChatMessage>()(modelChatMessage),
+      chat,
+      userChatMessage,
+      modelChatMessage,
     };
   }
 
@@ -82,6 +76,6 @@ export class ChatService {
       .returning(["id", "updatedAt", "title", "isStarred"])
       .executeTakeFirstOrThrow();
 
-    return checkExactKeys<Chat>()(res);
+    return res;
   }
 }

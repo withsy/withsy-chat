@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { type zInfer } from "./common";
+import { zParseDate, type zInfer } from "./common";
 import { IdempotencyKey } from "./idempotency";
 import { UserId } from "./user";
 
@@ -10,7 +10,7 @@ export const ChatSchema = z.object({
   id: ChatId,
   title: z.string(),
   isStarred: z.boolean(),
-  updatedAt: z.date(),
+  updatedAt: zParseDate(),
 });
 export type ChatSchema = zInfer<typeof ChatSchema>;
 
@@ -50,7 +50,7 @@ export const ChatMessageSchema = z.object({
   status: ChatMessageStatus,
   isBookmarked: z.boolean(),
   parentId: ChatMessageId.nullable(),
-  createdAt: z.date(),
+  createdAt: zParseDate(),
 });
 export type ChatMessageSchema = zInfer<typeof ChatMessageSchema>;
 
@@ -66,6 +66,13 @@ export const StartChat = z.object({
   files: z.array(z.instanceof(File)).optional(),
 });
 export type StartChat = zInfer<typeof StartChat>;
+
+export const StartChatResult = z.object({
+  chat: Chat,
+  userChatMessage: ChatMessage,
+  modelChatMessage: ChatMessage,
+});
+export type StartChatResult = zInfer<typeof StartChatResult>;
 
 export const ListChatMessages = z.object({
   role: ChatRole.optional(),
@@ -102,6 +109,12 @@ export const SendChatMessage = z.object({
   files: z.array(z.instanceof(File)).optional(),
 });
 export type SendChatMessage = zInfer<typeof SendChatMessage>;
+
+export const SendChatMessageResult = z.object({
+  userChatMessage: ChatMessage,
+  modelChatMessage: ChatMessage,
+});
+export type SendChatMessageResult = zInfer<typeof SendChatMessageResult>;
 
 export const ChatChunkIndex = z.number().int();
 export type ChatChunkIndex = zInfer<typeof ChatChunkIndex>;

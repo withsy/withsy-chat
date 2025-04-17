@@ -15,6 +15,7 @@ interface BookmarkCardProps {
   text: string | null;
   themeColor: string;
   createdAt: Date;
+  updatedAt: Date;
 }
 
 export function BookmarkCard({
@@ -24,6 +25,7 @@ export function BookmarkCard({
   text,
   themeColor,
   createdAt,
+  updatedAt,
 }: BookmarkCardProps) {
   const isLongMessage = text ? text.length > 150 : false;
 

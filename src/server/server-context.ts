@@ -10,6 +10,6 @@ export type ServerContext = {
 export async function createServerContext(
   session: Session
 ): Promise<ServerContext> {
-  const userSession = await UserSession.parseAsync(session);
+  const userSession = UserSession.parse(session);
   return { service, userId: userSession.user.id };
 }

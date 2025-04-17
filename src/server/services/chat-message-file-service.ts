@@ -1,5 +1,4 @@
-import type { ChatMessageFile, ChatMessageId } from "@/types/chat";
-import { checkExactKeysArray } from "@/types/common";
+import type { ChatMessageId } from "@/types/chat";
 import type { UserId } from "@/types/user";
 import type { ServiceRegistry } from "../service-registry";
 import type { Db } from "./db";
@@ -20,7 +19,7 @@ export class ChatMessageFileService {
       .select(["cmf.fileUri", "cmf.mimeType"])
       .execute();
 
-    return checkExactKeysArray<ChatMessageFile>()(res);
+    return res;
   }
 
   static async createAll(

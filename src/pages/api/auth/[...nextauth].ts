@@ -26,12 +26,12 @@ export const authOptions: AuthOptions = {
           provider,
           providerAccountId,
         });
-      const userJwt = await UserJwt.parseAsync({ ...token, sub: userId });
+      const userJwt = UserJwt.parse({ ...token, sub: userId });
       return userJwt;
     },
     async session({ session, token }) {
-      const userJwt = await UserJwt.parseAsync(token);
-      const userSession = await UserSession.parseAsync({
+      const userJwt = UserJwt.parse(token);
+      const userSession = UserSession.parse({
         ...session,
         user: { ...(session.user ?? {}), id: userJwt.sub },
       });

@@ -1,6 +1,6 @@
 import { trpc } from "@/lib/trpc";
 import {
-  UserPreferences,
+  UserPrefsSchema,
   UserSession,
   type UpdateUserPrefs,
 } from "@/types/user";
@@ -22,7 +22,7 @@ type SetUserPrefAndSave = <K extends keyof UpdateUserPrefs>(
 
 type UserContextType = {
   userSession: UserSession | null;
-  userPrefs: UserPreferences;
+  userPrefs: UserPrefsSchema;
   setUserPrefAndSave: SetUserPrefAndSave;
   userPrefLoadings: UserPrefLoadings;
 };
@@ -32,8 +32,8 @@ const UserContext = createContext<UserContextType | undefined>(undefined);
 export function UserProvider({ children }: { children: ReactNode }) {
   const { data: session } = useSession();
   const [userSession, setUserSession] = useState<UserSession | null>(null);
-  const [userPrefs, setUserPrefs] = useState<UserPreferences>(
-    UserPreferences.parse({})
+  const [userPrefs, setUserPrefs] = useState<UserPrefsSchema>(
+    UserPrefsSchema.parse({})
   );
   const [userPrefLoadings, setUserPrefLoadings] = useState<UserPrefLoadings>(
     {}
@@ -52,8 +52,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!userPrefsQuery.data) return;
-    const prefs = UserPreferences.parse(userPrefsQuery.data);
-    setUserPrefs(prefs);
+    setUserPrefs(userPrefsQuery.data.preferences);
   }, [userPrefsQuery.data]);
 
   const setUserPrefAndSave: SetUserPrefAndSave = (k, v) => {

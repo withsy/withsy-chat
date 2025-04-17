@@ -1,5 +1,3 @@
-import { checkExactKeys } from "@/types/common";
-import type { UserId } from "@/types/user";
 import type { ServiceRegistry } from "../service-registry";
 
 export class UserLinkAccountService {
@@ -36,6 +34,6 @@ export class UserLinkAccountService {
       };
     });
 
-    return checkExactKeys<{ userId: UserId }>()(res);
+    return res;
   }
 }

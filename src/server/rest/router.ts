@@ -19,7 +19,7 @@ const chats = new Hono()
     const files = formData.getAll("files");
     const serverContext = c.get("serverContext");
 
-    const input = await StartChat.parseAsync({
+    const input = StartChat.parse({
       idempotencyKey,
       text,
       model,
@@ -41,7 +41,7 @@ const chats = new Hono()
     const files = formData.getAll("files");
     const parentId = formData.get("parentId");
 
-    const input = await SendChatMessage.parseAsync({
+    const input = SendChatMessage.parse({
       chatId,
       idempotencyKey,
       text,
