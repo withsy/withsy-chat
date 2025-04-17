@@ -5,16 +5,25 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Bookmark as BookmarkIcon, Copy } from "lucide-react";
+import { Bookmark as BookmarkIcon, Copy, Footprints } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 type Props = {
   content: string;
+  link: string;
   onUnsave: () => void;
   themeColor: string;
 };
 
-export function BookmarkCardActions({ content, onUnsave, themeColor }: Props) {
+export function BookmarkCardActions({
+  content,
+  link,
+  onUnsave,
+  themeColor,
+}: Props) {
+  const router = useRouter();
+
   const handleCopy = async () => {
     await navigator.clipboard.writeText(content);
     toast.success("Copied!", {
@@ -27,13 +36,25 @@ export function BookmarkCardActions({ content, onUnsave, themeColor }: Props) {
       <div className="absolute right-2 z-10 transition-opacity flex rounded-md ">
         <Tooltip>
           <TooltipTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => router.push(link)}
+            >
+              <Footprints className="w-4 h-4" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent side="top">Go to message</TooltipContent>
+        </Tooltip>
+
+        <Tooltip>
+          <TooltipTrigger asChild>
             <Button variant="ghost" size="icon" onClick={handleCopy}>
               <Copy className="w-4 h-4" />
             </Button>
           </TooltipTrigger>
           <TooltipContent side="top">Copy</TooltipContent>
         </Tooltip>
-
         <Tooltip>
           <TooltipTrigger asChild>
             <Button variant="ghost" size="icon" onClick={onUnsave}>
