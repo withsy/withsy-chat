@@ -218,7 +218,8 @@ export class ChatMessageService {
     const { chatMessageId, isBookmarked } = input;
     await this.service.db
       .updateTable("chatMessages as cm")
-      .innerJoin("chats as c", "c.id", "cm.chatId")
+      .from("chats as c")
+      .whereRef("c.id", "=", "cm.chatId")
       .where("c.userId", "=", userId)
       .where("cm.id", "=", chatMessageId)
       .set({ isBookmarked })
@@ -261,7 +262,8 @@ export class ChatMessageService {
     const { chatMessageId, expectStatus, nextStatus } = input;
     const res = await db
       .updateTable("chatMessages as cm")
-      .innerJoin("chats as c", "c.id", "cm.chatId")
+      .from("chats as c")
+      .whereRef("c.id", "=", "cm.chatId")
       .where("c.userId", "=", userId)
       .where("cm.id", "=", chatMessageId)
       .where("cm.status", "=", expectStatus)
@@ -310,7 +312,8 @@ export class ChatMessageService {
 
       await tx
         .updateTable("chatMessages as cm")
-        .innerJoin("chats as c", "c.id", "cm.chatId")
+        .from("chats as c")
+        .whereRef("c.id", "=", "cm.chatId")
         .where("c.userId", "=", userId)
         .where("cm.id", "=", chatMessageId)
         .set({ text })
