@@ -21,6 +21,8 @@ type Props = {
 
 export function ChatSession({ chatId, initialMessages, children }: Props) {
   const router = useRouter();
+  const { parentId } = router.query;
+
   const { isMobile } = useSidebar();
   const { userPrefs } = useUser();
   const [messages, setMessages] = useState(initialMessages);
@@ -36,6 +38,12 @@ export function ChatSession({ chatId, initialMessages, children }: Props) {
   useEffect(() => {
     setMessages(initialMessages);
   }, [chatId, initialMessages]);
+
+  useEffect(() => {
+    if (typeof parentId === "string") {
+      setOpenDrawer(parentId);
+    }
+  }, [parentId]);
 
   useEffect(() => {
     const message =

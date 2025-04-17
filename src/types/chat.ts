@@ -50,6 +50,7 @@ export const ChatMessageSchema = z.object({
   status: ChatMessageStatus,
   isBookmarked: z.boolean(),
   parentId: ChatMessageId.nullable(),
+  replyToId: ChatMessageId.nullable(),
   createdAt: zParseDate(),
 });
 export type ChatMessageSchema = zInfer<typeof ChatMessageSchema>;
