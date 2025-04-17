@@ -34,6 +34,7 @@ export default function ChatHeader({
           DefaultIcon={Bookmark}
           HoverIcon={Bookmark}
           fill={`rgb(${themeColor})`}
+          isActive={openDrawer == "saved"}
         />
       ),
     },
@@ -45,6 +46,7 @@ export default function ChatHeader({
           DefaultIcon={GitBranch}
           HoverIcon={GitBranch}
           fill={`rgb(${themeColor})`}
+          isActive={openDrawer == "branches"}
         />
       ),
     },
@@ -62,7 +64,7 @@ export default function ChatHeader({
   }
 
   const buttonClassName =
-    "group flex items-center gap-1 rounded-md px-1 py-2 hover:bg-white hover:font-bold transition-colors text-sm font-medium";
+    "group flex items-center gap-1 rounded-md px-1 py-2 hover:bg-white hover:font-bold transition-colors text-sm";
   return (
     <div
       className="absolute top-0 left-0 w-full h-[50px] px-4 flex items-center justify-between"
@@ -72,7 +74,9 @@ export default function ChatHeader({
         {buttons.map(({ label, id, icon }) => (
           <button
             key={id}
-            className={buttonClassName}
+            className={`${buttonClassName} ${
+              openDrawer === id ? "bg-white font-bold" : ""
+            }`}
             onClick={() => handleClick(id)}
           >
             {icon}
