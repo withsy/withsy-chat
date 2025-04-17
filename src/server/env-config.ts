@@ -6,10 +6,12 @@ export const EnvConfig = z.object({
   nodeEnv: z.enum(["development", "production", "test"]),
   databaseUrl: z.string().min(1),
   geminiApiKey: z.string().min(1),
-  githubClientId: z.string().min(1),
-  githubClientSecret: z.string().min(1),
   nextauthUrl: z.string().min(1),
   nextauthSecret: z.string().min(1),
+  githubClientId: z.string().min(1),
+  githubClientSecret: z.string().min(1),
+  googleClientId: z.string().min(1),
+  googleClientSecret: z.string().min(1),
 });
 export type EnvConfig = zInfer<typeof EnvConfig>;
 
@@ -19,10 +21,12 @@ function load() {
       nodeEnv: process.env.NODE_ENV,
       databaseUrl: process.env.DATABASE_URL,
       geminiApiKey: process.env.GEMINI_API_KEY,
-      githubClientId: process.env.GITHUB_CLIENT_ID,
-      githubClientSecret: process.env.GITHUB_CLIENT_SECRET,
       nextauthUrl: process.env.NEXTAUTH_URL,
       nextauthSecret: process.env.NEXTAUTH_SECRET,
+      githubClientId: process.env.GITHUB_CLIENT_ID,
+      githubClientSecret: process.env.GITHUB_CLIENT_SECRET,
+      googleClientId: process.env.GOOGLE_CLIENT_ID,
+      googleClientSecret: process.env.GOOGLE_CLIENT_SECRET,
     });
   } catch (e) {
     console.log("Environment variable parsing failed.");
