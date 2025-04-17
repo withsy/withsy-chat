@@ -5,19 +5,12 @@ import { ChevronDown, ChevronUp, RotateCcw } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
-const sortByOptions = [
-  { label: "Conversation Time", value: "chattedAt" },
-  { label: "Saved On", value: "bookmarkedAt" },
-];
-
 const sortOrderOptions = [
   { label: "Newest First", value: "desc" },
   { label: "Oldest First", value: "asc" },
 ];
 
 type Props = {
-  sortBy: string;
-  setSortBy: (val: any) => void;
   sortOrder: string;
   setSortOrder: (val: any) => void;
   searchText: string;
@@ -25,8 +18,6 @@ type Props = {
 };
 
 export function BookmarkFilters({
-  sortBy,
-  setSortBy,
   sortOrder,
   setSortOrder,
   searchText,
@@ -35,7 +26,6 @@ export function BookmarkFilters({
   const [isOpen, setIsOpen] = useState(true);
 
   const reset = () => {
-    setSortBy("bookmarkedAt");
     setSortOrder("desc");
     setSearchText("");
     toast.success("Filters reset");
@@ -80,13 +70,6 @@ export function BookmarkFilters({
         <div className="flex flex-col gap-4">
           <div className="flex flex-wrap gap-4 items-end">
             <div className="flex gap-2">
-              <FilterSelect
-                value={sortBy}
-                onChange={setSortBy}
-                options={sortByOptions}
-                placeholder="Sort by"
-                className="w-full sm:w-[180px]"
-              />
               <FilterSelect
                 value={sortOrder}
                 onChange={setSortOrder}

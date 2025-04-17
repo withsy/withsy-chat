@@ -10,12 +10,11 @@ import { BookmarkCardActions } from "./BookmarkCardActions";
 
 interface BookmarkCardProps {
   title?: string;
-  messageId: string;
+  messageId: number;
   chatId: string;
-  text: string;
+  text: string | null;
   themeColor: string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date;
 }
 
 export function BookmarkCard({
@@ -26,10 +25,12 @@ export function BookmarkCard({
   themeColor,
   createdAt,
 }: BookmarkCardProps) {
-  const isLongMessage = text.length > 150;
+  const isLongMessage = text ? text.length > 150 : false;
+
   const [collapsed, setCollapsed] = useState(isLongMessage);
+  const displayedText = collapsed ? text?.slice(0, 150) + "..." : text;
+
   const [bookmarked, setBookmarked] = useState(true);
-  const displayedText = collapsed ? text.slice(0, 150) + "..." : text;
 
   const handleToggleBookmark = () => {
     setBookmarked(false);
@@ -39,6 +40,7 @@ export function BookmarkCard({
   };
 
   if (!bookmarked) return null;
+  if (!text) return null;
 
   return (
     <div className="relative group">
@@ -47,7 +49,7 @@ export function BookmarkCard({
           <>
             <BookmarkCardHeader
               title={title}
-              chattedAt={createdAt}
+              createdAt={createdAt.toISOString()}
               link={`/chat/${chatId}?messageId=${messageId}`}
             />
             <Separator />

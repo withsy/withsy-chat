@@ -5,11 +5,11 @@ import { BookmarkCardHeaderContext } from "./BookmarkCardHeaderContext";
 
 type Props = {
   title: string;
-  chattedAt: string;
+  createdAt: string;
   link: string;
 };
 
-export function BookmarkCardHeader({ title, chattedAt, link }: Props) {
+export function BookmarkCardHeader({ title, createdAt, link }: Props) {
   const router = useRouter();
 
   return (
@@ -28,7 +28,7 @@ export function BookmarkCardHeader({ title, chattedAt, link }: Props) {
         <div className="flex gap-x-3 overflow-hidden">
           <BookmarkCardHeaderContext
             icon={<MessageSquareText className="w-4 h-4" />}
-            date={chattedAt}
+            date={createdAt}
           />
         </div>
       </div>

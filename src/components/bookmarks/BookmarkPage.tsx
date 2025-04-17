@@ -14,9 +14,6 @@ export default function BookmarkPage() {
   const { themeColor } = userPrefs;
   const [data, setData] = useState<ChatMessage[]>([]);
   const [searchText, setSearchText] = useState("");
-  const [sortBy, setSortBy] = useState<"chattedAt" | "bookmarkedAt">(
-    "bookmarkedAt"
-  );
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const listSaved = trpc.chatMessage.list.useQuery(
     userSession
@@ -43,12 +40,11 @@ export default function BookmarkPage() {
 
     return getFilteredBookmarks({
       messages: data,
-      sortBy,
       sortOrder,
     }).filter((b) => {
-      return b.text.toLowerCase().includes(keyword);
+      return b.text?.toLowerCase().includes(keyword) ?? false;
     });
-  }, [sortBy, sortOrder, searchText, data]);
+  }, [sortOrder, searchText, data]);
 
   return (
     <div className="h-full w-full flex flex-col p-6">
@@ -57,8 +53,6 @@ export default function BookmarkPage() {
         <h1 className="text-xl font-bold">All Saved</h1>
       </div>
       <BookmarkFilters
-        sortBy={sortBy}
-        setSortBy={setSortBy}
         sortOrder={sortOrder}
         setSortOrder={setSortOrder}
         searchText={searchText}
@@ -74,7 +68,6 @@ export default function BookmarkPage() {
             title={message?.chat?.title}
             text={message.text}
             createdAt={message.createdAt}
-            updatedAt={message.updatedAt}
           />
         ))}
       </div>

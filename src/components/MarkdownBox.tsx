@@ -4,7 +4,7 @@ import rehypeHighlight from "rehype-highlight";
 import remarkGfm from "remark-gfm";
 import { CodeBlock } from "./CodeBlock";
 
-export function MarkdownBox({ content }: { content: string }) {
+export function MarkdownBox({ content }: { content: string | null }) {
   return (
     <div className="prose prose-sm dark:prose-invert break-words max-w-full overflow-x-auto">
       <ReactMarkdown

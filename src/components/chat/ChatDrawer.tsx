@@ -1,10 +1,7 @@
-import { trpc } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
-import type { ChatMessage } from "@/types/chat";
-import { useState } from "react";
-import { toast } from "sonner";
+import { type ChatMessage } from "@/types/chat";
+import { BookmarkCard } from "../bookmarks/BookmarkCard";
 import { Drawer, DrawerContent } from "../ui/drawer";
-import { ChatBubble } from "./ChatBubble";
 import ChatDrawerHeader from "./ChatDrawerHeader";
 
 type ResponsiveDrawerProps = {
@@ -58,7 +55,14 @@ function CustomDrawerContent({ messages }: { messages: ChatMessage[] }) {
   return (
     <div className="overflow-y-auto max-h-[80%] pr-2">
       {messages.map((msg) => (
-        <ChatBubble key={msg.id} message={msg} onToggleSaved={() => {}} />
+        <BookmarkCard
+          key={msg.id}
+          messageId={msg.id}
+          chatId={msg.chatId}
+          text={msg.text}
+          createdAt={msg.createdAt}
+          updatedAt={msg.updatedAt}
+        />
       ))}
     </div>
   );
