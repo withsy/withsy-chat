@@ -37,7 +37,7 @@ export function ThemeSettingsModal({
   };
 
   return (
-    <div className="z-500">
+    <div className="z-150">
       <Dialog open={open} onOpenChange={onClose}>
         <DialogContent className="max-w-lg max-h-[80%] w-full h-full">
           <DialogHeader>
