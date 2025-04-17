@@ -17,10 +17,7 @@ export const UpdateUserPrefs = UserPreferences.partial();
 export type UpdateUserPrefs = zInfer<typeof UpdateUserPrefs>;
 
 export const User = z.object({
-  id: UserId,
   preferences: UserPreferences,
-  createdAt: z.date(),
-  updatedAt: z.date(),
 });
 export type User = zInfer<typeof User>;
 

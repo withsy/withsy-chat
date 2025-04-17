@@ -1,3 +1,5 @@
+import { checkExactKeys } from "@/types/common";
+import type { UserId } from "@/types/user";
 import type { ServiceRegistry } from "../service-registry";
 
 export class UserLinkAccountService {
@@ -8,7 +10,7 @@ export class UserLinkAccountService {
     providerAccountId: string;
   }) {
     const { provider, providerAccountId } = input;
-    return await this.service.db.transaction().execute(async (tx) => {
+    const res = await this.service.db.transaction().execute(async (tx) => {
       const userLinkAccount = await tx
         .selectFrom("userLinkAccounts as ula")
         .where("ula.provider", "=", provider)
@@ -33,5 +35,7 @@ export class UserLinkAccountService {
         userId: user.id,
       };
     });
+
+    return checkExactKeys<{ userId: UserId }>()(res);
   }
 }

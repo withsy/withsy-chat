@@ -99,8 +99,8 @@ CREATE TRIGGER trigger_chat_chunks_update_updated_at
   FOR EACH ROW
   EXECUTE PROCEDURE fn_update_updated_at();
 
--- alias: ik
-CREATE TABLE idempotency_keys(
+-- alias: ii
+CREATE TABLE idempotency_infos(
   key uuid PRIMARY KEY,
   created_at timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP
 );

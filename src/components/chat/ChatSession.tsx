@@ -135,7 +135,7 @@ export function ChatSession({ chatId, initialMessages, children }: Props) {
             });
           } else {
             toast.success("Removed from saved", {
-              description: "It’s no longer in your saved list.",
+              description: "It's no longer in your saved list.",
             });
           }
         },

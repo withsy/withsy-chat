@@ -1,3 +1,4 @@
+import { checkExactKeys } from "@/types/common";
 import type { UserId } from "@/types/user";
 import { StatusCodes } from "http-status-codes";
 import { randomUUID } from "node:crypto";
@@ -103,7 +104,9 @@ export class MockS3Service {
         { errors }
       );
 
-    return { fileInfos };
+    return checkExactKeys<{
+      fileInfos: FileInfo[];
+    }>()({ fileInfos });
   }
 }
 

@@ -1,12 +1,14 @@
 import {
   ChatId,
+  ChatMessage,
+  ChatMessageId,
   ChatMessageStatus,
   ChatRole,
   SendChatMessage,
   UpdateChatMessage,
-  type ChatMessageId,
   type ListChatMessages,
 } from "@/types/chat";
+import { checkExactKeys, checkExactKeysArray } from "@/types/common";
 import type { UserId } from "@/types/user";
 import { StatusCodes } from "http-status-codes";
 import { HttpServerError } from "../error";
@@ -14,6 +16,11 @@ import type { ServiceRegistry } from "../service-registry";
 import { ChatMessageFileService } from "./chat-message-file-service";
 import type { Db } from "./db";
 import type { FileInfo } from "./mock-s3-service";
+
+type History = {
+  role: string;
+  text: string;
+};
 
 export class ChatMessageService {
   constructor(private readonly service: ServiceRegistry) {}
@@ -42,7 +49,7 @@ export class ChatMessageService {
       query = query.where("cm.id", op, afterId);
     }
 
-    const rows = await query
+    const res = await query
       .orderBy("cm.id", order)
       .limit(limit)
       .select([
@@ -52,10 +59,13 @@ export class ChatMessageService {
         "cm.status",
         "cm.text",
         "cm.parentId",
+        "cm.id",
+        "cm.chatId",
+        "cm.createdAt",
       ])
       .execute();
 
-    return rows;
+    return checkExactKeysArray<ChatMessage>()(res);
   }
 
   async listForAiChatHistory(
@@ -85,10 +95,7 @@ export class ChatMessageService {
           .select(["cm.role", "cm.text"])
           .orderBy("cm.id", "desc");
 
-        const histories: {
-          role: string;
-          text: string | null;
-        }[] = [];
+        const histories: History[] = [];
         let oldestId = -1;
 
         // branch messages
@@ -100,7 +107,16 @@ export class ChatMessageService {
               .select("cm.id")
               .limit(remainLength)
               .execute();
-            histories.push(...rows);
+
+            histories.push(
+              ...checkExactKeysArray<History>()(
+                rows.map((x) => {
+                  if (x.text === null)
+                    throw new Error("text must have a not null query applied.");
+                  return { role: x.role, text: x.text };
+                })
+              )
+            );
             remainLength -= rows.length;
             oldestId = rows.at(-1)?.id ?? -1;
           }
@@ -113,7 +129,14 @@ export class ChatMessageService {
               .select(["cm.id", "cm.replyToId"])
               .executeTakeFirst();
             if (parent) {
-              histories.push(parent);
+              if (parent.text === null)
+                throw new Error("text must have a not null query applied.");
+              histories.push(
+                checkExactKeys<History>()({
+                  role: parent.role,
+                  text: parent.text,
+                })
+              );
               remainLength -= 1;
               oldestId = parent.id;
 
@@ -125,7 +148,14 @@ export class ChatMessageService {
                   .select("cm.id")
                   .executeTakeFirst();
                 if (replyTo) {
-                  histories.push(replyTo);
+                  if (replyTo.text === null)
+                    throw new Error("text must have a not null query applied.");
+                  histories.push(
+                    checkExactKeys<History>()({
+                      role: replyTo.role,
+                      text: replyTo.text,
+                    })
+                  );
                   remainLength -= 1;
                   oldestId = replyTo.id;
                 }
@@ -142,16 +172,23 @@ export class ChatMessageService {
             .where("cm.parentId", "is", null)
             .limit(remainLength)
             .execute();
-          histories.push(...rows);
+          histories.push(
+            ...checkExactKeysArray<History>()(
+              rows.map((x) => {
+                if (x.text === null)
+                  throw new Error("text must have a not null query applied.");
+                return { role: x.role, text: x.text };
+              })
+            )
+          );
           remainLength -= rows.length;
         }
 
         return histories;
       });
 
-    // sort newest to oldest
-    histories.reverse();
-    return histories as { role: string; text: string }[];
+    histories.reverse(); // to oldest
+    return checkExactKeysArray<History>()(histories);
   }
 
   async find(userId: UserId, input: { chatMessageId: ChatMessageId }) {
@@ -161,9 +198,20 @@ export class ChatMessageService {
       .innerJoin("chats as c", "c.id", "cm.chatId")
       .where("c.userId", "=", userId)
       .where("cm.id", "=", chatMessageId)
-      .select(["cm.id", "cm.text", "cm.model", "cm.chatId", "cm.parentId"])
+      .select([
+        "cm.id",
+        "cm.text",
+        "cm.model",
+        "cm.chatId",
+        "cm.parentId",
+        "cm.role",
+        "cm.isBookmarked",
+        "cm.status",
+        "cm.createdAt",
+      ])
       .executeTakeFirstOrThrow();
-    return res;
+
+    return checkExactKeys<ChatMessage>()(res);
   }
 
   async update(userId: UserId, input: UpdateChatMessage) {
@@ -182,7 +230,7 @@ export class ChatMessageService {
     input: { chatMessageId: ChatMessageId }
   ) {
     const { chatMessageId } = input;
-    const chatMessage = await this.service.db
+    const res = await this.service.db
       .selectFrom("chatMessages as cm")
       .innerJoin("chats as c", "c.id", "cm.chatId")
       .where("c.userId", "=", userId)
@@ -196,7 +244,9 @@ export class ChatMessageService {
       )
       .select(["cm.id"])
       .executeTakeFirst();
-    return !!chatMessage;
+
+    if (!res) return false;
+    return !!checkExactKeys<{ id: ChatMessageId }>()(res);
   }
 
   static async transit(
@@ -218,7 +268,9 @@ export class ChatMessageService {
       .set({ status: nextStatus })
       .returning("cm.id")
       .executeTakeFirst();
-    return res;
+
+    if (!res) return undefined;
+    return checkExactKeys<{ id: ChatMessageId }>()(res);
   }
 
   async transitPendingToProcessing(
@@ -234,7 +286,9 @@ export class ChatMessageService {
       });
       return res;
     });
-    return res;
+
+    if (!res) return undefined;
+    return checkExactKeys<{ id: ChatMessageId }>()(res);
   }
 
   async transitProcessingToSucceeded(
@@ -298,20 +352,20 @@ export class ChatMessageService {
     const { idempotencyKey, chatId, model, text } = input;
     const files = input.files ?? [];
 
-    await this.service.idempotency.checkDuplicateRequest(idempotencyKey);
+    await this.service.idempotencyInfo.checkDuplicateRequest(idempotencyKey);
 
     const { fileInfos } = await this.service.s3.uploads(userId, { files });
 
     const { userChatMessage, modelChatMessage } = await this.service.db
       .transaction()
       .execute(async (tx) => {
-        const result = await ChatMessageService.createInfo(tx, {
+        const res = await ChatMessageService.createInfo(tx, {
           chatId,
           model,
           text,
           fileInfos,
         });
-        return result;
+        return res;
       });
 
     await this.service.task.add("google_gen_ai_send_chat", {
@@ -320,7 +374,10 @@ export class ChatMessageService {
       modelChatMessageId: modelChatMessage.id,
     });
 
-    return { userChatMessage, modelChatMessage };
+    return {
+      userChatMessage: checkExactKeys<ChatMessage>()(userChatMessage),
+      modelChatMessage: checkExactKeys<ChatMessage>()(modelChatMessage),
+    };
   }
 
   static async createInfo(
@@ -340,7 +397,17 @@ export class ChatMessageService {
         status: ChatMessageStatus.enum.succeeded,
         parentId: parentId ?? null,
       })
-      .returning(["id"])
+      .returning([
+        "id",
+        "status",
+        "chatId",
+        "model",
+        "isBookmarked",
+        "parentId",
+        "role",
+        "text",
+        "createdAt",
+      ])
       .executeTakeFirstOrThrow();
 
     const modelChatMessage = await db
@@ -353,7 +420,17 @@ export class ChatMessageService {
         parentId: parentId ?? null,
         replyToId: userChatMessage.id,
       })
-      .returning(["id"])
+      .returning([
+        "id",
+        "status",
+        "chatId",
+        "model",
+        "isBookmarked",
+        "parentId",
+        "role",
+        "text",
+        "createdAt",
+      ])
       .executeTakeFirstOrThrow();
 
     await ChatMessageFileService.createAll(db, {
@@ -362,8 +439,8 @@ export class ChatMessageService {
     });
 
     return {
-      userChatMessage,
-      modelChatMessage,
+      userChatMessage: checkExactKeys<ChatMessage>()(userChatMessage),
+      modelChatMessage: checkExactKeys<ChatMessage>()(modelChatMessage),
     };
   }
 }

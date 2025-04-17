@@ -124,7 +124,7 @@ export class GoogleGenAiService {
         chunkIndex += 1;
       }
 
-      const text = await this.service.chatChunk.buildText(
+      const { text } = await this.service.chatChunk.buildText(
         userId,
         modelChatMessageId
       );

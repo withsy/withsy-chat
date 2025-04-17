@@ -25,6 +25,6 @@ export class TaskService {
 
   async add<K extends TaskKey>(key: K, input: TaskInput<K>) {
     const runner = await this.runner;
-    return await runner.addJob(key, input as any);
+    await runner.addJob(key, input as any);
   }
 }

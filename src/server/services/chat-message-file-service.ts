@@ -1,4 +1,5 @@
-import type { ChatMessageId } from "@/types/chat";
+import type { ChatMessageFile, ChatMessageId } from "@/types/chat";
+import { checkExactKeysArray } from "@/types/common";
 import type { UserId } from "@/types/user";
 import type { ServiceRegistry } from "../service-registry";
 import type { Db } from "./db";
@@ -9,7 +10,7 @@ export class ChatMessageFileService {
 
   async list(userId: UserId, input: { chatMessageId: ChatMessageId }) {
     const { chatMessageId } = input;
-    const rows = await this.service.db
+    const res = await this.service.db
       .selectFrom("chatMessageFiles as cmf")
       .innerJoin("chatMessages as cm", "cm.id", "cmf.chatMessageId")
       .innerJoin("chats as c", "c.id", "cm.chatId")
@@ -18,7 +19,8 @@ export class ChatMessageFileService {
       .orderBy("cmf.id")
       .select(["cmf.fileUri", "cmf.mimeType"])
       .execute();
-    return rows;
+
+    return checkExactKeysArray<ChatMessageFile>()(res);
   }
 
   static async createAll(

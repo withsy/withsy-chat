@@ -14,7 +14,7 @@ import {
   toLocaleDateString,
   toNewest,
 } from "@/lib/date-utils";
-import { trpc, type TrpcRouterOutput } from "@/lib/trpc";
+import { trpc } from "@/lib/trpc";
 import type { Chat } from "@/types/chat";
 import { skipToken } from "@tanstack/react-query";
 import {
@@ -31,8 +31,6 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { SidebarTooltip } from "./SidebarTooltip";
 
-type ChatData = TrpcRouterOutput["chat"]["list"][number];
-
 export default function SidebarChatList() {
   const { userSession } = useUser();
   const utils = trpc.useUtils();
@@ -40,7 +38,7 @@ export default function SidebarChatList() {
     userSession ? undefined : skipToken
   );
   const updateChatMut = trpc.chat.update.useMutation();
-  const [chats, setChats] = useState<ChatData[]>([]);
+  const [chats, setChats] = useState<Chat[]>([]);
 
   useEffect(() => {
     if (!listChats.data) return;
@@ -69,7 +67,7 @@ export default function SidebarChatList() {
     );
   };
 
-  const toggleStar = (chat: ChatData) => {
+  const toggleStar = (chat: Chat) => {
     updateChat(chat.id, "isStarred", !chat.isStarred);
   };
 
@@ -77,8 +75,8 @@ export default function SidebarChatList() {
   if (listChats.isError) return <PartialError message="loading chat list" />;
   if (!listChats.data) return <></>;
 
-  const starreds: ChatData[] = [];
-  const nonStarredMap: Map<string, ChatData[]> = new Map();
+  const starreds: Chat[] = [];
+  const nonStarredMap: Map<string, Chat[]> = new Map();
   listChats.data.forEach((chat) => {
     if (chat.isStarred) {
       starreds.push(chat);
@@ -158,9 +156,9 @@ function SidebarChatItem({
   isStarred,
   onToggleStar,
 }: {
-  chat: ChatData;
+  chat: Chat;
   isStarred: boolean;
-  onToggleStar: (chat: ChatData) => void;
+  onToggleStar: (chat: Chat) => void;
 }) {
   const { isMobile, setCollapsed } = useSidebar();
   const { userPrefs } = useUser();
