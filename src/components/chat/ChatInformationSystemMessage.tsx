@@ -33,7 +33,7 @@ const ChatInformationSystemMessage: React.FC<
   }
 
   return (
-    <div key={chat.id} className="flex justify-center my-4 py-4">
+    <div key={chat.id} className="flex justify-center my-4 p-4">
       {content}
     </div>
   );
