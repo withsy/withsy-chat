@@ -8,6 +8,7 @@ import {
   DialogPortal,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { useUser } from "@/context/UserContext";
 
 export function ConfirmDeleteModal({
   open,
@@ -22,6 +23,7 @@ export function ConfirmDeleteModal({
   onCancel: () => void;
   onConfirm: () => void;
 }) {
+  const { userPrefs } = useUser();
   return (
     <Dialog open={open} onOpenChange={onCancel}>
       <DialogPortal>
@@ -34,7 +36,13 @@ export function ConfirmDeleteModal({
             <Button variant="ghost" onClick={onCancel}>
               Cancel
             </Button>
-            <Button variant="destructive" onClick={onConfirm}>
+            <Button
+              variant="destructive"
+              onClick={onConfirm}
+              style={{
+                background: `rgb(${userPrefs.themeColor})`,
+              }}
+            >
               Confirm
             </Button>
           </DialogFooter>
