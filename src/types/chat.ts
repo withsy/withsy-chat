@@ -40,8 +40,22 @@ export type UpdateChat = zInfer<typeof UpdateChat>;
 export const ChatRole = z.enum(["user", "model", "system"]);
 export type ChatRole = zInfer<typeof ChatRole>;
 
-export const ChatModel = z.enum(["gemini-2.0-flash", "gemini-1.5-pro"]);
+export const ChatModel = z.enum([
+  "gemini-2.0-flash",
+  "gemini-1.5-pro",
+  "gpt-4o",
+]);
 export type ChatModel = zInfer<typeof ChatModel>;
+
+export const ChatModelProvider = z.enum(["google-gen-ai", "open-ai"]);
+export type ChatModelProvider = zInfer<typeof ChatModelProvider>;
+
+const ChatModelProviderMap: Record<ChatModel, ChatModelProvider> = {
+  "gemini-2.0-flash": "google-gen-ai",
+  "gemini-1.5-pro": "google-gen-ai",
+  "gpt-4o": "open-ai",
+};
+export type ChatModelProviderMap = typeof ChatModelProviderMap;
 
 export const ChatMessageStatus = z.enum([
   "pending",

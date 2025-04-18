@@ -6,6 +6,7 @@ import { createLazyRegistry, type LazyRegistryProxy } from "./lazy-registry";
 import { ChatChunkService } from "./services/chat-chunk-service";
 import { ChatMessageFileService } from "./services/chat-message-file-service";
 import { ChatMessageService } from "./services/chat-message-service";
+import { ChatModelRouteService } from "./services/chat-model-route-service";
 import { ChatService } from "./services/chat-service";
 import { createDb, type Db } from "./services/db";
 import { GoogleGenAiService } from "./services/google-gen-ai-service";
@@ -26,6 +27,7 @@ type ServiceDefinition = {
   chatMessage: ChatMessageService;
   chatMessageFile: ChatMessageFileService;
   chatChunk: ChatChunkService;
+  chatModelRoute: ChatModelRouteService;
   googleGenAi: GoogleGenAiService;
   openAi: OpenAiService;
   task: TaskService;
@@ -45,6 +47,7 @@ function createServiceRegistry() {
     chatMessage: (s) => new ChatMessageService(s),
     chatMessageFile: (s) => new ChatMessageFileService(s),
     chatChunk: (s) => new ChatChunkService(s),
+    chatModelRoute: (s) => new ChatModelRouteService(s),
     googleGenAi: (s) => new GoogleGenAiService(s),
     openAi: (s) => new OpenAiService(s),
     idempotencyInfo: (s) => new IdempotencyInfoService(s),
