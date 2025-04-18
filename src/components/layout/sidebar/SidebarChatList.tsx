@@ -9,11 +9,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useSidebar } from "@/context/SidebarContext";
 import { useUser } from "@/context/UserContext";
-import {
-  formatDateLabel,
-  toLocaleDateString,
-  toNewest,
-} from "@/lib/date-utils";
+import { formatDateLabel, toNewest } from "@/lib/date-utils";
 import { trpc } from "@/lib/trpc";
 import type { Chat } from "@/types/chat";
 import { skipToken } from "@tanstack/react-query";
@@ -81,10 +77,9 @@ export default function SidebarChatList() {
     if (chat.isStarred) {
       starreds.push(chat);
     } else {
-      const localeDateString = toLocaleDateString(chat.updatedAt);
-      if (!nonStarredMap.has(localeDateString))
-        nonStarredMap.set(localeDateString, []);
-      nonStarredMap.get(localeDateString)?.push(chat);
+      const dateLabel = formatDateLabel(chat.updatedAt);
+      if (!nonStarredMap.has(dateLabel)) nonStarredMap.set(dateLabel, []);
+      nonStarredMap.get(dateLabel)?.push(chat);
     }
   });
   starreds.sort((a, b) => toNewest(a.updatedAt, b.updatedAt));
@@ -132,7 +127,7 @@ export default function SidebarChatList() {
             return (
               <div key={date}>
                 <div className="py-1 px-2 mb-1 text-sm font-semibold">
-                  {formatDateLabel(date)}
+                  {date}
                 </div>
                 {chats.map((chat) => (
                   <SidebarChatItem

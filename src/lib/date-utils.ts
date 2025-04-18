@@ -7,17 +7,20 @@ dayjs.extend(relativeTime);
 dayjs.extend(isToday);
 dayjs.extend(isYesterday);
 
-export function formatDateLabel(dateStr: string): string {
+export function formatDateLabel(date: Date): string {
   const today = new Date();
-  const targetDate = new Date(dateStr);
-  const diff = Math.floor(
-    (today.getTime() - targetDate.getTime()) / (1000 * 60 * 60 * 24)
-  );
+  const yesterday = new Date();
+  yesterday.setDate(today.getDate() - 1);
 
-  if (diff === 0) return "Today";
-  if (diff === 1) return "Yesterday";
+  const formatDate = (d: Date) => d.toLocaleDateString("sv-SE");
 
-  return dateStr.replace(/-/g, ".");
+  const inputDate = formatDate(date);
+  const todayStr = formatDate(today);
+  const yesterdayStr = formatDate(yesterday);
+
+  if (inputDate === todayStr) return "Today";
+  if (inputDate === yesterdayStr) return "Yesterday";
+  return inputDate;
 }
 
 export function formatSmartDate(dateString: string) {
