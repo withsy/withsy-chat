@@ -93,8 +93,6 @@ export class ChatService {
     const res = await this.service.db.transaction().execute(async (tx) => {
       await IdempotencyInfoService.checkDuplicateRequest(tx, idempotencyKey);
 
-      // TODO: check userId by parentMessageId.
-
       const parentMessage = await ChatMessageService.get(tx, userId, {
         chatMessageId: parentMessageId,
       });
