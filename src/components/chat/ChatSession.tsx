@@ -177,8 +177,9 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
               : "md:w-[80%] md:mx-auto"
           )}
         >
-          {messages.length > 0 && (
+          {(chat || messages.length > 0) && (
             <ChatMessageList
+              chat={chat}
               messages={messages}
               onToggleSaved={handleToggleSaved}
               shouldAutoScrollRef={shouldAutoScrollRef}

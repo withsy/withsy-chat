@@ -1,17 +1,20 @@
 import { useUser } from "@/context/UserContext";
-import type { ChatMessage } from "@/types/chat";
+import type { Chat, ChatMessage } from "@/types/chat";
 import { ChevronsDown } from "lucide-react";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState, type RefObject } from "react";
 import { ChatBubble } from "./ChatBubble";
+import ChatInformationSystemMessage from "./ChatInformationSystemMessage";
 
 type Props = {
+  chat: Chat | null;
   messages: ChatMessage[];
   onToggleSaved: (id: number, newValue: boolean) => void;
   shouldAutoScrollRef: RefObject<boolean>;
 };
 
 export function ChatMessageList({
+  chat,
   messages,
   onToggleSaved,
   shouldAutoScrollRef,
@@ -96,6 +99,7 @@ export function ChatMessageList({
         ref={listRef}
         className="space-y-12 overflow-x-hidden overflow-y-auto h-full pr-2"
       >
+        {chat != null && <ChatInformationSystemMessage chat={chat} />}
         {messages.map((msg) =>
           msg.role == "system" ? (
             <div key={msg.id} className="flex justify-center my-4 py-4">

@@ -10,7 +10,7 @@ import { ChatBubbleTooltips } from "./ChatBubbleTooltips";
 
 type Props = {
   message: ChatMessage;
-  onToggleSaved: (id: number, newValue: boolean) => void;
+  onToggleSaved?: (id: number, newValue: boolean) => void;
 };
 
 const ChatBubbleComponent = ({ message, onToggleSaved }: Props) => {
@@ -39,7 +39,7 @@ const ChatBubbleComponent = ({ message, onToggleSaved }: Props) => {
   };
 
   const handleSave = () => {
-    onToggleSaved(message.id, !message.isBookmarked);
+    onToggleSaved?.(message.id, !message.isBookmarked);
   };
 
   return (
