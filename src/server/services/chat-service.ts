@@ -95,7 +95,7 @@ export class ChatService {
         return { chat, userChatMessage, modelChatMessage };
       });
 
-    await this.service.task.add("google_gen_ai_send_chat", {
+    await this.service.task.add("chat_model_route_send_chat_to_ai", {
       userId,
       userChatMessageId: userChatMessage.id,
       modelChatMessageId: modelChatMessage.id,

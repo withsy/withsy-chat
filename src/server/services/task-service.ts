@@ -7,7 +7,8 @@ export class TaskService {
 
   constructor(private readonly service: ServiceRegistry) {
     const taskMap: TaskMap = {
-      google_gen_ai_send_chat: (i) => service.googleGenAi.onSendChatTask(i),
+      chat_model_route_send_chat_to_ai: (i) =>
+        service.chatModelRoute.onSendChatToAiTask(i),
       chat_message_cleanup_zombies: () =>
         service.chatMessage.onCleanupZombiesTask(),
     };
