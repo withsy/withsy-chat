@@ -11,12 +11,12 @@ import { useUser } from "@/context/UserContext";
 import { useState } from "react";
 
 const recommendedThemes = [
-  { name: "Dark", color: "30,30,30", opacity: 0.2 },
-  { name: "Ocean Blue", color: "0,123,255", opacity: 0.2 },
-  { name: "Cotton Pink", color: "255,105,180", opacity: 0.2 },
-  { name: "Purple", color: "128,90,213", opacity: 0.2 },
   { name: "Sunset Orange", color: "255,87,34", opacity: 0.2 },
   { name: "Mint Green", color: "0,200,150", opacity: 0.2 },
+  { name: "Cotton Pink", color: "255,105,180", opacity: 0.2 },
+  { name: "Purple", color: "128,90,213", opacity: 0.2 },
+  { name: "Dark", color: "30,30,30", opacity: 0.2 },
+  { name: "Ocean Blue", color: "0,123,255", opacity: 0.2 },
 ];
 
 export function ThemeSettingsModal({
@@ -46,27 +46,6 @@ export function ThemeSettingsModal({
             <DialogTitle className="text-xl">THEME</DialogTitle>
           </DialogHeader>
           <div className="overflow-y-auto">
-            <div className="grid grid-cols-2 gap-4 my-4">
-              {recommendedThemes.map((theme) => (
-                <button
-                  key={theme.name}
-                  className="rounded-xl p-4 border hover:border-blue-500 flex flex-col items-start text-left"
-                  style={{
-                    backgroundColor: `rgba(${theme.color}, ${theme.opacity})`,
-                  }}
-                  onClick={() => {
-                    setCustomColor(theme.color);
-                    setCustomOpacity(theme.opacity);
-                  }}
-                >
-                  <span className="text-sm mb-1">{theme.name}</span>
-                  <span className="text-xs text-muted-foreground">
-                    {theme.color} / {theme.opacity}
-                  </span>
-                </button>
-              ))}
-            </div>
-
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4 items-start">
                 <div className="space-y-4">
@@ -93,7 +72,6 @@ export function ThemeSettingsModal({
                     />
                   </div>
                 </div>
-
                 <div>
                   <Label>Preview</Label>
                   <div
@@ -107,6 +85,26 @@ export function ThemeSettingsModal({
                   </p>
                 </div>
               </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4 my-4">
+              {recommendedThemes.map((theme) => (
+                <button
+                  key={theme.name}
+                  className="rounded-xl p-4 border hover:border-blue-500 flex flex-col items-start text-left"
+                  style={{
+                    backgroundColor: `rgba(${theme.color}, ${theme.opacity})`,
+                  }}
+                  onClick={() => {
+                    setCustomColor(theme.color);
+                    setCustomOpacity(theme.opacity);
+                  }}
+                >
+                  <span className="text-sm mb-1">{theme.name}</span>
+                  <span className="text-xs text-muted-foreground">
+                    {theme.color} / {theme.opacity}
+                  </span>
+                </button>
+              ))}
             </div>
           </div>
           <Button
