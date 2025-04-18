@@ -86,6 +86,13 @@ export default function SidebarChatList() {
   nonStarredMap.forEach((chats) =>
     chats.sort((a, b) => toNewest(a.updatedAt, b.updatedAt))
   );
+  const orderedEntries = [...nonStarredMap.entries()].sort(([a], [b]) => {
+    if (a === "Today") return -1;
+    if (b === "Today") return 1;
+    if (a === "Yesterday") return b === "Today" ? 1 : -1;
+    if (b === "Yesterday") return a === "Today" ? -1 : 1;
+    return new Date(b).getTime() - new Date(a).getTime();
+  });
 
   return (
     <div className="mt-4 space-y-2 ">
@@ -121,7 +128,7 @@ export default function SidebarChatList() {
 
       <div>
         <div className="space-y-4 mt-1">
-          {[...nonStarredMap.entries()].map(([date, chats]) => {
+          {orderedEntries.map(([date, chats]) => {
             if (chats.length === 0) return null;
 
             return (
