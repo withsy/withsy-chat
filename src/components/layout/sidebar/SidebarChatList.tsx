@@ -165,6 +165,8 @@ export function SidebarChatItem({
 }) {
   const router = useRouter();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [editMode, setEditMode] = useState(false);
+  const [editedTitle, setEditedTitle] = useState(chat.title);
 
   const { isMobile, setCollapsed } = useSidebar();
   const { userPrefs } = useUser();
@@ -180,12 +182,21 @@ export function SidebarChatItem({
   }`;
 
   const handleLinkClick = () => {
+    if (editMode) return;
     if (isSidebar == true) {
       if (isMobile) {
         setCollapsed(true);
       }
       router.push(`/chat/${chat.id}`);
     }
+  };
+
+  const handleTitleSave = () => {
+    if (editedTitle.trim() !== chat.title) {
+      // TODO: trigger rename mutation
+      console.log("Rename:", editedTitle);
+    }
+    setEditMode(false);
   };
 
   return (
@@ -224,19 +235,39 @@ export function SidebarChatItem({
           </button>
         </div>
 
-        <span className="truncate text-foreground flex-1">{chat.title}</span>
+        {editMode ? (
+          <input
+            autoFocus
+            value={editedTitle}
+            onChange={(e) => setEditedTitle(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                handleTitleSave();
+              } else if (e.key === "Escape") {
+                setEditMode(false);
+                setEditedTitle(chat.title);
+              }
+            }}
+            onBlur={handleTitleSave}
+            className="flex-1 text-sm px-1 py-0.5 border rounded bg-white text-foreground"
+          />
+        ) : (
+          <span className="truncate text-foreground flex-1">{chat.title}</span>
+        )}
       </div>
 
       <DropdownMenu onOpenChange={(open) => setIsDropdownOpen(open)}>
         <DropdownMenuTrigger asChild>
-          <Button
-            variant="ghost"
-            size="icon"
-            className={`h-5 w-5 p-0 transition-opacity bg-transparent hover:bg-transparent`}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <EllipsisVertical size={14} />
-          </Button>
+          {!editMode && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-5 w-5 p-0 transition-opacity bg-transparent hover:bg-transparent"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <EllipsisVertical size={14} />
+            </Button>
+          )}
         </DropdownMenuTrigger>
         <DropdownMenuContent side="top" align="start" className="z-[9999]">
           <DropdownMenuItem onClick={() => onToggleStar(chat)}>
@@ -252,7 +283,13 @@ export function SidebarChatItem({
               </>
             )}
           </DropdownMenuItem>
-          <DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={(e) => {
+              e.stopPropagation();
+              setEditMode(true);
+              setIsDropdownOpen(false);
+            }}
+          >
             <Pencil size={14} className="mr-2" />
             Rename
           </DropdownMenuItem>
