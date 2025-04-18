@@ -80,6 +80,13 @@ export function ChatMessageList({
 
     const handleScroll = () => {
       const threshold = 150;
+      const canScroll = el.scrollHeight > el.clientHeight;
+
+      if (!canScroll) {
+        setShowScrollToBottom(false);
+        return;
+      }
+
       const isScrolledUp =
         el.scrollHeight - el.scrollTop - el.clientHeight > threshold;
       setShowScrollToBottom(isScrolledUp);
