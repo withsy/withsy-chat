@@ -75,7 +75,7 @@ export default function ChatHeader({
           <button
             key={id}
             className={`${buttonClassName} ${
-              openDrawer === id ? "bg-white font-bold" : ""
+              openDrawer === id ? "font-bold" : ""
             }`}
             onClick={() => handleClick(id)}
           >

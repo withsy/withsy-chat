@@ -165,6 +165,8 @@ function SidebarChatItem({
   const { isMobile, setCollapsed } = useSidebar();
   const { userPrefs } = useUser();
   const router = useRouter();
+  const isActive = router.asPath === `/chat/${chat.id}`;
+
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const handleLinkClick = () => {
@@ -174,7 +176,9 @@ function SidebarChatItem({
     router.push(`/chat/${chat.id}`);
   };
 
-  const isHoveredOrDropdown = `${isDropdownOpen ? "bg-white font-bold" : ""}`;
+  const isHoveredOrDropdown = `${
+    isDropdownOpen || isActive ? "font-bold" : ""
+  }`;
 
   return (
     <div

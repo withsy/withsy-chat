@@ -20,10 +20,13 @@ export function SidebarTooltip({
 }: SidebarTooltipProps) {
   const { isMobile, collapsed, setCollapsed } = useSidebar();
   const router = useRouter();
+  const isActive = `/${id}` == router.asPath;
 
   const className = `
               group flex items-center gap-2 px-2.5 py-2 rounded-md transition-colors w-full 
-              hover:bg-white hover:font-bold cursor-pointer
+              hover:bg-white hover:font-bold cursor-pointer ${
+                isActive ? "font-bold" : ""
+              }
             `;
   const handleLinkClick = () => {
     if (isMobile) {
