@@ -16,7 +16,6 @@ import { trpc } from "@/lib/trpc";
 import type { Chat } from "@/types/chat";
 import { skipToken } from "@tanstack/react-query";
 import {
-  Archive,
   Bookmark,
   EllipsisVertical,
   FolderRoot,
@@ -106,13 +105,13 @@ export default function SidebarChatList() {
         label={"All Saved"}
         size={16}
       />
-      <SidebarTooltip
+      {/* <SidebarTooltip
         id={"archive"}
         icon={Archive}
         fill={true}
         label={"Archived"}
         size={16}
-      />
+      /> */}
       {starred.length > 0 && (
         <div>
           <div className="py-1 px-2 mb-1 text-sm font-semibold">Starred</div>

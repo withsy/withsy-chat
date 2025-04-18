@@ -3,7 +3,6 @@ import { useUser } from "@/context/UserContext";
 import { trpc } from "@/lib/trpc";
 import type { Chat } from "@/types/chat";
 import {
-  Archive,
   Bookmark,
   ChevronsLeftRight,
   ChevronsRightLeft,
@@ -136,14 +135,14 @@ export default function ChatHeader({
             {!hideLabels && <span>{label}</span>}
           </button>
         ))}
-        <button className={buttonClassName} onClick={() => {}}>
+        {/* <button className={buttonClassName} onClick={() => {}}>
           <HoverSwitchIcon
             DefaultIcon={Archive}
             HoverIcon={Archive}
             fill={`rgb(${themeColor})`}
           />
           {!hideLabels && <span>Archive</span>}
-        </button>
+        </button> */}
         {!isMobile && (
           <button
             className={buttonClassName}
