@@ -16,9 +16,9 @@ import { skipToken } from "@tanstack/react-query";
 import {
   Archive,
   Bookmark,
+  EllipsisVertical,
   FolderRoot,
   GitBranch,
-  MoreHorizontal,
   Pencil,
   Star,
   StarOff,
@@ -226,14 +226,10 @@ export function SidebarChatItem({
           <Button
             variant="ghost"
             size="icon"
-            className={`h-5 w-5 p-0 transition-opacity bg-transparent hover:bg-transparent ${
-              isDropdownOpen
-                ? "opacity-100"
-                : "opacity-0 group-hover:opacity-100"
-            }`}
+            className={`h-5 w-5 p-0 transition-opacity bg-transparent hover:bg-transparent`}
             onClick={(e) => e.stopPropagation()}
           >
-            <MoreHorizontal size={14} />
+            <EllipsisVertical size={14} />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent side="top" align="start" className="z-[9999]">
