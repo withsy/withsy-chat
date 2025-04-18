@@ -1,5 +1,5 @@
+import { devAuthProvider } from "@/server/dev-auth-provider";
 import { envConfig } from "@/server/env-config";
-import { localDevAuthProvider } from "@/server/local-auth-provider";
 import { service } from "@/server/service-registry";
 import { UserJwt, UserSession } from "@/types/user";
 import NextAuth, { type AuthOptions } from "next-auth";
@@ -25,7 +25,7 @@ const providers: Provider[] = [
   }),
 ];
 
-if (envConfig.nodeEnv === "development") providers.push(localDevAuthProvider);
+if (envConfig.nodeEnv === "development") providers.push(devAuthProvider);
 
 export const authOptions: AuthOptions = {
   providers,

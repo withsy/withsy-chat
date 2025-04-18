@@ -26,6 +26,7 @@
     "unlisten",
     "sonner",
     "nextauth",
-    "timestamptz"
+    "timestamptz",
+    "withsy"
   ]
 }
