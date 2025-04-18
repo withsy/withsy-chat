@@ -122,7 +122,7 @@ export default function UserDropdownMenu() {
   ] as const;
 
   const userMenuItems: MenuItem[] = [
-    "separator",
+    // "separator",
     { icon: MessageSquare, label: "Prompts" },
     { icon: Cpu, label: "Models" },
     {
@@ -131,7 +131,7 @@ export default function UserDropdownMenu() {
       onClick: () => setThemeModalOpen(true),
     },
     { icon: Settings, label: "Settings" },
-    "separator",
+    // "separator",
     {
       icon: LogOut,
       label: "Log out",
@@ -152,9 +152,9 @@ export default function UserDropdownMenu() {
 
         <DropdownMenuContent
           align="end"
-          className={cn("w-48 mt-2", largeText ? "text-lg" : "text-base")}
+          className={cn("w-48 p-2", largeText ? "text-lg" : "text-base")}
         >
-          {toggleItems.map(({ id, label }) => (
+          {/* {toggleItems.map(({ id, label }) => (
             <ToggleMenuItem
               key={id}
               id={`${id}-toggle`}
@@ -165,7 +165,7 @@ export default function UserDropdownMenu() {
               largeText={userPrefs["largeText"]}
               themeColor={userPrefs.themeColor}
             />
-          ))}
+          ))} */}
           {userMenuItems.map((item, idx) =>
             item === "separator" ? (
               <DropdownMenuSeparator key={`sep-${idx}`} />
@@ -179,6 +179,12 @@ export default function UserDropdownMenu() {
               />
             )
           )}
+          <DropdownMenuSeparator key={`sep-text`} />
+          <div className="flex justify-center p-2">
+            <span className="text-xs text-muted-foreground select-none">
+              withsy with ♥
+            </span>
+          </div>
         </DropdownMenuContent>
       </DropdownMenu>
       <ThemeSettingsModal
