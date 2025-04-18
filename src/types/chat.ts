@@ -6,10 +6,18 @@ import { UserId } from "./user";
 export const ChatId = z.string().uuid();
 export type ChatId = zInfer<typeof ChatId>;
 
+export const ChatType = z.enum(["chat", "branch"]);
+export type ChatType = zInfer<typeof ChatType>;
+
+export const ChatMessageId = z.number().int();
+export type ChatMessageId = zInfer<typeof ChatMessageId>;
+
 export const ChatSchema = z.object({
   id: ChatId,
   title: z.string(),
   isStarred: z.boolean(),
+  type: ChatType,
+  parentMessageId: ChatMessageId.nullable(),
   updatedAt: zParseDate(),
 });
 export type ChatSchema = zInfer<typeof ChatSchema>;
@@ -30,9 +38,6 @@ export type ChatRole = zInfer<typeof ChatRole>;
 export const ChatModel = z.enum(["gemini-2.0-flash", "gemini-1.5-pro"]);
 export type ChatModel = zInfer<typeof ChatModel>;
 
-export const ChatMessageId = z.number().int();
-export type ChatMessageId = zInfer<typeof ChatMessageId>;
-
 export const ChatMessageStatus = z.enum([
   "pending",
   "processing",
@@ -49,7 +54,6 @@ export const ChatMessageSchema = z.object({
   text: z.string().nullable(),
   status: ChatMessageStatus,
   isBookmarked: z.boolean(),
-  parentId: ChatMessageId.nullable(),
   replyToId: ChatMessageId.nullable(),
   createdAt: zParseDate(),
 });
@@ -65,6 +69,7 @@ export const StartChat = z.object({
   text: z.string(),
   model: ChatModel,
   files: z.array(z.instanceof(File)).optional(),
+  parentMessageId: ChatMessageId.optional(),
 });
 export type StartChat = zInfer<typeof StartChat>;
 
@@ -106,7 +111,6 @@ export const SendChatMessage = z.object({
   chatId: ChatId,
   text: z.string(),
   model: ChatModel,
-  parentId: ChatMessageId.optional(),
   files: z.array(z.instanceof(File)).optional(),
 });
 export type SendChatMessage = zInfer<typeof SendChatMessage>;

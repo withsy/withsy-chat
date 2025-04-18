@@ -41,9 +41,12 @@ CREATE TABLE chats(
   user_id uuid NOT NULL,
   title text NOT NULL DEFAULT 'New chat',
   is_starred boolean NOT NULL DEFAULT FALSE,
+  type text NOT NULL,
+  parent_message_id integer,
   created_at timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  CONSTRAINT fk_chats_user_id FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+  CONSTRAINT fk_chats_user_id FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  CONSTRAINT chk_chats_type CHECK (type IN ('chat', 'branch'))
 );
 
 CREATE INDEX idx_chats_user_id ON chats(user_id);
@@ -62,12 +65,11 @@ CREATE TABLE chat_messages(
   text text,
   status text NOT NULL,
   is_bookmarked boolean NOT NULL DEFAULT FALSE,
-  parent_id integer,
   reply_to_id integer,
   created_at timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT fk_chat_messages_chat_id FOREIGN KEY (chat_id) REFERENCES chats(id) ON DELETE CASCADE,
-  CONSTRAINT check_chat_messages_status CHECK (status IN ('pending', 'processing', 'succeeded', 'failed'))
+  CONSTRAINT chk_chat_messages_status CHECK (status IN ('pending', 'processing', 'succeeded', 'failed'))
 );
 
 CREATE INDEX idx_chat_messages_chat_id ON chat_messages(chat_id);

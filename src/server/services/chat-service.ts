@@ -1,4 +1,11 @@
-import { type StartChat, type UpdateChat } from "@/types/chat";
+import {
+  Chat,
+  ChatMessageId,
+  ChatType,
+  type StartChat,
+  type UpdateChat,
+} from "@/types/chat";
+import { cols } from "@/types/common";
 import type { UserId } from "@/types/user";
 import type { ServiceRegistry } from "../service-registry";
 import { ChatMessageService } from "./chat-message-service";
@@ -12,7 +19,7 @@ export class ChatService {
       .selectFrom("chats as c")
       .where("c.userId", "=", userId)
       .orderBy("c.createdAt", "asc")
-      .select(["c.id", "c.isStarred", "c.updatedAt", "c.title"])
+      .select(cols(Chat, "c"))
       .execute();
 
     return res;
@@ -25,7 +32,7 @@ export class ChatService {
       .where("c.userId", "=", userId)
       .where("c.id", "=", chatId)
       .set({ title, isStarred })
-      .returning(["c.id", "c.isStarred", "c.updatedAt", "c.title"])
+      .returning(cols(Chat, "c"))
       .executeTakeFirstOrThrow();
 
     return res;
@@ -36,6 +43,8 @@ export class ChatService {
     const files = input.files ?? [];
 
     await this.service.idempotencyInfo.checkDuplicateRequest(idempotencyKey);
+
+    // TODO: check userId by parentMessageId.
 
     const { fileInfos } = await this.service.s3.uploads(userId, { files });
 
@@ -67,13 +76,17 @@ export class ChatService {
     };
   }
 
-  static async createChat(db: Db, input: { userId: UserId; text: string }) {
-    const { userId, text } = input;
+  static async createChat(
+    db: Db,
+    input: { userId: UserId; text: string; parentMessageId?: ChatMessageId }
+  ) {
+    const { userId, text, parentMessageId } = input;
     const title = [...text].slice(0, 10).join("");
+    const type: ChatType = parentMessageId ? "branch" : "chat";
     const res = await db
       .insertInto("chats")
-      .values({ userId, title })
-      .returning(["id", "updatedAt", "title", "isStarred"])
+      .values({ userId, title, type, parentMessageId })
+      .returning(cols(Chat, "chats"))
       .executeTakeFirstOrThrow();
 
     return res;

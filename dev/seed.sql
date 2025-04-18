@@ -2,19 +2,19 @@ INSERT INTO users(id)
   VALUES ('b24c885e-a501-4882-938b-f5fb16cbd395');
 
 INSERT INTO user_link_accounts(user_id, provider, provider_account_id)
-  VALUES ('b24c885e-a501-4882-938b-f5fb16cbd395', 'credentials', 'Near Local Dev');
+  VALUES ('b24c885e-a501-4882-938b-f5fb16cbd395', 'credentials', 'near local dev');
 
-INSERT INTO public.chats(id, user_id, title, is_starred, created_at, updated_at)
-  VALUES ('cda09a70-8fdb-40d7-a0d0-efa84a86b736'::uuid, 'b24c885e-a501-4882-938b-f5fb16cbd395'::uuid, '안녕', FALSE, '2025-04-15 20:56:56.663', '2025-04-15 20:56:56.663');
+INSERT INTO public.chats(id, user_id, title, is_starred, type, created_at, updated_at)
+  VALUES ('cda09a70-8fdb-40d7-a0d0-efa84a86b736'::uuid, 'b24c885e-a501-4882-938b-f5fb16cbd395'::uuid, '안녕', FALSE, 'chat', '2025-04-15 20:56:56.663', '2025-04-15 20:56:56.663');
 
-INSERT INTO public.chat_messages(chat_id, "role", model, "text", status, is_bookmarked, parent_id, reply_to_id, created_at, updated_at)
-  VALUES ('cda09a70-8fdb-40d7-a0d0-efa84a86b736'::uuid, 'user', NULL, '안녕', 'succeeded', FALSE, NULL, NULL, '2025-04-15 20:56:56.663', '2025-04-15 20:56:56.663');
+INSERT INTO public.chat_messages(chat_id, "role", model, "text", status, is_bookmarked, reply_to_id, created_at, updated_at)
+  VALUES ('cda09a70-8fdb-40d7-a0d0-efa84a86b736'::uuid, 'user', NULL, '안녕', 'succeeded', FALSE, NULL, '2025-04-15 20:56:56.663', '2025-04-15 20:56:56.663');
 
-INSERT INTO public.chat_messages(chat_id, "role", model, "text", status, is_bookmarked, parent_id, reply_to_id, created_at, updated_at)
+INSERT INTO public.chat_messages(chat_id, "role", model, "text", status, is_bookmarked, reply_to_id, created_at, updated_at)
   VALUES ('cda09a70-8fdb-40d7-a0d0-efa84a86b736'::uuid, 'model', 'gemini-2.0-flash', '안녕하세요! 무엇을 도와드릴까요? 😊
-', 'succeeded', false, NULL, 1, '2025-04-15 20:56:56.663', '2025-04-15 20:56:57.218');
+', 'succeeded', false, 1, '2025-04-15 20:56:56.663', '2025-04-15 20:56:57.218');
 
-INSERT INTO public.chat_messages(chat_id, "role", model, "text", status, is_bookmarked, parent_id, reply_to_id, created_at, updated_at)
+INSERT INTO public.chat_messages(chat_id, "role", model, "text", status, is_bookmarked, reply_to_id, created_at, updated_at)
   VALUES ('cda09a70-8fdb-40d7-a0d0-efa84a86b736'::uuid, 'user', NULL, '내가 지금 챗웹앱을 만드는데
 채팅 메시지를 보내는데 엔터로 보내기 그리고 쉬프트 엔터로 보내기 두가지 보내는 기능이 있어
 이 때 그냥 엔터로 보내기가 기본 기능이야
@@ -178,9 +178,9 @@ INSERT INTO public.chat_messages(chat_id, "role", model, "text", status, is_book
 기본 엔터로 전송을 on으로 디폴트값으로 주고 보여줄지 (off일 경우 쉬프트엔터 전송)
 기본 엔터로 전송을 off에 매칭해서 디폴트값으로 주고 보여줄지 모르겠다 (on일 경우 쉬프트엔터 전송)
 
-150줄 이상 답변해줘', 'succeeded', false, NULL, NULL, '2025-04-15 21:07:28.756', '2025-04-15 21:07:28.756');
+150줄 이상 답변해줘', 'succeeded', false, NULL, '2025-04-15 21:07:28.756', '2025-04-15 21:07:28.756');
 
-INSERT INTO public.chat_messages(chat_id, "role", model, "text", status, is_bookmarked, parent_id, reply_to_id, created_at, updated_at)
+INSERT INTO public.chat_messages(chat_id, "role", model, "text", status, is_bookmarked, reply_to_id, created_at, updated_at)
   VALUES ('cda09a70-8fdb-40d7-a0d0-efa84a86b736'::uuid, 'model', 'gemini-2.0-flash', '같은 질문을 반복해서 주셨네요! 😊
 
 **결론부터 말씀드리면, "기본 엔터로 전송"을 ON으로 두고, 이를 끄는 옵션을 제공하는 것이 사용자 경험 측면에서 더 좋습니다.**
@@ -281,5 +281,5 @@ export default App;
 이 코드는 React를 사용하여 "엔터 키로 메시지 전송" 설정을 ON/OFF 할 수 있는 간단한 체크박스 UI를 구현합니다. `enterToSend` 상태 변수를 사용하여 현재 설정을 관리하고, `handleEnterToSendChange` 함수를 사용하여 체크박스 상태가 변경될 때마다 상태 변수를 업데이트합니다.
 
 궁금한 점이 있다면 언제든지 다시 질문해주세요! 😊
-', 'succeeded', false, NULL, 3, '2025-04-15 21:07:28.756', '2025-04-15 21:07:36.027');
+', 'succeeded', false, 3, '2025-04-15 21:07:28.756', '2025-04-15 21:07:36.027');
 

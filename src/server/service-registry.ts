@@ -11,6 +11,7 @@ import { createDb, type Db } from "./services/db";
 import { GoogleGenAiService } from "./services/google-gen-ai-service";
 import { IdempotencyInfoService } from "./services/idempotency-info-service";
 import { MockS3Service } from "./services/mock-s3-service";
+import { OpenAiService } from "./services/open-ai-service";
 import { createPool } from "./services/pg";
 import { TaskService } from "./services/task-service";
 import { UserLinkAccountService } from "./services/user-link-account-service";
@@ -26,6 +27,7 @@ type ServiceDefinition = {
   chatMessageFile: ChatMessageFileService;
   chatChunk: ChatChunkService;
   googleGenAi: GoogleGenAiService;
+  openAi: OpenAiService;
   task: TaskService;
   idempotencyInfo: IdempotencyInfoService;
   s3: MockS3Service;
@@ -44,6 +46,7 @@ function createServiceRegistry() {
     chatMessageFile: (s) => new ChatMessageFileService(s),
     chatChunk: (s) => new ChatChunkService(s),
     googleGenAi: (s) => new GoogleGenAiService(s),
+    openAi: (s) => new OpenAiService(s),
     idempotencyInfo: (s) => new IdempotencyInfoService(s),
     task: (s) => new TaskService(s),
     s3: (s) => {

@@ -83,14 +83,13 @@ export class ChatMessageService {
       modelChatMessage: {
         id: ChatMessageId;
         chatId: ChatId;
-        parentId: ChatMessageId | null;
       };
     }
   ) {
     const { modelChatMessage } = input;
 
     // TODO: Change limit history length
-    let remainLength = 10;
+    const remainLength = 10;
     const histories = await this.service.db
       .transaction()
       .execute(async (tx) => {
@@ -105,85 +104,85 @@ export class ChatMessageService {
           .orderBy("cm.id", "desc");
 
         const histories: History[] = [];
-        let oldestId = -1;
+        const oldestId = -1;
 
-        // branch messages
-        if (modelChatMessage.parentId !== null) {
-          if (remainLength > 0) {
-            const rows = await baseQuery
-              .where("cm.id", "<", modelChatMessage.id)
-              .where("cm.parentId", "=", modelChatMessage.parentId)
-              .select("cm.id")
-              .limit(remainLength)
-              .execute();
+        // // branch messages
+        // if (modelChatMessage.parentId !== null) {
+        //   if (remainLength > 0) {
+        //     const rows = await baseQuery
+        //       .where("cm.id", "<", modelChatMessage.id)
+        //       .where("cm.parentId", "=", modelChatMessage.parentId)
+        //       .select("cm.id")
+        //       .limit(remainLength)
+        //       .execute();
 
-            histories.push(
-              ...rows.map((x) => {
-                if (x.text === null)
-                  throw new Error("text must have a not null query applied.");
-                return { role: x.role, text: x.text };
-              })
-            );
-            remainLength -= rows.length;
-            oldestId = rows.at(-1)?.id ?? -1;
-          }
+        //     histories.push(
+        //       ...rows.map((x) => {
+        //         if (x.text === null)
+        //           throw new Error("text must have a not null query applied.");
+        //         return { role: x.role, text: x.text };
+        //       })
+        //     );
+        //     remainLength -= rows.length;
+        //     oldestId = rows.at(-1)?.id ?? -1;
+        //   }
 
-          // parent message
-          if (remainLength > 0) {
-            const parent = await baseQuery
-              .where("cm.id", "=", modelChatMessage.parentId)
-              .where("cm.parentId", "is", null)
-              .select(["cm.id", "cm.replyToId"])
-              .executeTakeFirst();
-            if (parent) {
-              if (parent.text === null)
-                throw new Error("text must have a not null query applied.");
-              histories.push({
-                role: parent.role,
-                text: parent.text,
-              });
-              remainLength -= 1;
-              oldestId = parent.id;
+        //   // parent message
+        //   if (remainLength > 0) {
+        //     const parent = await baseQuery
+        //       .where("cm.id", "=", modelChatMessage.parentId)
+        //       .where("cm.parentId", "is", null)
+        //       .select(["cm.id", "cm.replyToId"])
+        //       .executeTakeFirst();
+        //     if (parent) {
+        //       if (parent.text === null)
+        //         throw new Error("text must have a not null query applied.");
+        //       histories.push({
+        //         role: parent.role,
+        //         text: parent.text,
+        //       });
+        //       remainLength -= 1;
+        //       oldestId = parent.id;
 
-              // reply to message
-              if (remainLength > 0 && parent.replyToId !== null) {
-                const replyTo = await baseQuery
-                  .where("cm.id", "=", parent.replyToId)
-                  .where("cm.parentId", "is", null)
-                  .select("cm.id")
-                  .executeTakeFirst();
-                if (replyTo) {
-                  if (replyTo.text === null)
-                    throw new Error("text must have a not null query applied.");
-                  histories.push({
-                    role: replyTo.role,
-                    text: replyTo.text,
-                  });
-                  remainLength -= 1;
-                  oldestId = replyTo.id;
-                }
-              }
-            }
-          }
-        }
+        //       // reply to message
+        //       if (remainLength > 0 && parent.replyToId !== null) {
+        //         const replyTo = await baseQuery
+        //           .where("cm.id", "=", parent.replyToId)
+        //           .where("cm.parentId", "is", null)
+        //           .select("cm.id")
+        //           .executeTakeFirst();
+        //         if (replyTo) {
+        //           if (replyTo.text === null)
+        //             throw new Error("text must have a not null query applied.");
+        //           histories.push({
+        //             role: replyTo.role,
+        //             text: replyTo.text,
+        //           });
+        //           remainLength -= 1;
+        //           oldestId = replyTo.id;
+        //         }
+        //       }
+        //     }
+        //   }
+        // }
 
-        // non-branch messages
-        if (remainLength > 0) {
-          let query = baseQuery;
-          if (oldestId !== -1) query = query.where("cm.id", "<", oldestId);
-          const rows = await query
-            .where("cm.parentId", "is", null)
-            .limit(remainLength)
-            .execute();
-          histories.push(
-            ...rows.map((x) => {
-              if (x.text === null)
-                throw new Error("text must have a not null query applied.");
-              return { role: x.role, text: x.text };
-            })
-          );
-          remainLength -= rows.length;
-        }
+        // // non-branch messages
+        // if (remainLength > 0) {
+        //   let query = baseQuery;
+        //   if (oldestId !== -1) query = query.where("cm.id", "<", oldestId);
+        //   const rows = await query
+        //     .where("cm.parentId", "is", null)
+        //     .limit(remainLength)
+        //     .execute();
+        //   histories.push(
+        //     ...rows.map((x) => {
+        //       if (x.text === null)
+        //         throw new Error("text must have a not null query applied.");
+        //       return { role: x.role, text: x.text };
+        //     })
+        //   );
+        //   remainLength -= rows.length;
+        // }
 
         return histories;
       });
@@ -379,7 +378,7 @@ export class ChatMessageService {
       fileInfos: FileInfo[];
     }
   ) {
-    const { chatId, text, model, parentId, fileInfos } = input;
+    const { chatId, text, model, fileInfos } = input;
 
     const userChatMessage = await db
       .insertInto("chatMessages")
@@ -388,7 +387,6 @@ export class ChatMessageService {
         text,
         role: ChatRole.enum.user,
         status: ChatMessageStatus.enum.succeeded,
-        parentId: parentId ?? null,
       })
       .returning(cols(ChatMessageSchema, "chatMessages"))
       .executeTakeFirstOrThrow();
@@ -400,7 +398,6 @@ export class ChatMessageService {
         role: ChatRole.enum.model,
         model,
         status: ChatMessageStatus.enum.pending,
-        parentId: parentId ?? null,
         replyToId: userChatMessage.id,
       })
       .returning(cols(ChatMessageSchema, "chatMessages"))
