@@ -9,7 +9,7 @@ import {
   ChevronsRightLeft,
   FolderGit2,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import HoverSwitchIcon from "../HoverSwitchIcon";
 import { SidebarChatItem } from "../layout/sidebar/SidebarChatList";
 
@@ -31,6 +31,10 @@ export default function ChatHeader({
   const updateChatMut = trpc.chat.update.useMutation();
   const utils = trpc.useUtils();
   const [displayChat, setDisplayChat] = useState<Chat>(chat);
+
+  useEffect(() => {
+    setDisplayChat(chat);
+  }, [chat]);
 
   const handleClick = (id: string) => {
     setOpenDrawer(openDrawer === id ? null : id);
