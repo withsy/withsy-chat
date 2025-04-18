@@ -105,7 +105,10 @@ export default function ChatHeader({
       className="absolute top-0 left-0 w-full h-[50px] px-4 flex items-center justify-between"
       style={headerStyle}
     >
-      <SidebarChatItem chat={displayChat} onToggleStar={updateChat} />
+      {!isMobile && (
+        <SidebarChatItem chat={displayChat} onToggleStar={updateChat} />
+      )}
+
       <div className="flex gap-3">
         {buttons.map(({ label, id, icon }) => (
           <button
