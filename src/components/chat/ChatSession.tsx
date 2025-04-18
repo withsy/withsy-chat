@@ -73,11 +73,13 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
       },
       onData(data) {
         const chunk = data.data;
-        const msg = messages.find((x) => x.id === chunk.chatMessageId);
-        if (msg) {
-          msg.text = msg.text ?? "";
-          msg.text += chunk.text;
-        }
+        setMessages((prevMessages) =>
+          prevMessages.map((msg) =>
+            msg.id === chunk.chatMessageId
+              ? { ...msg, text: (msg.text ?? "") + chunk.text }
+              : msg
+          )
+        );
         console.log(`TODO: chunk to message. chunk text: ${chunk.text}`);
       },
     }
