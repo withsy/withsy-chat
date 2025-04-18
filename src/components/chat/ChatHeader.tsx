@@ -123,7 +123,7 @@ export default function ChatHeader({
     >
       <SidebarChatItem chat={displayChat} onToggleStar={updateChat} />
 
-      <div className="flex gap-3">
+      <div className="flex gap-5">
         {buttons.map(({ label, id, icon }) => (
           <button
             key={id}
