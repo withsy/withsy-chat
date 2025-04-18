@@ -141,6 +141,7 @@ export default function SidebarChatList() {
                     key={chat.id}
                     chat={chat}
                     onToggleStar={toggleStar}
+                    isSidebar={true}
                   />
                 ))}
               </div>
@@ -155,9 +156,11 @@ export default function SidebarChatList() {
 export function SidebarChatItem({
   chat,
   onToggleStar,
+  isSidebar,
 }: {
   chat: Chat;
   onToggleStar: (chat: Chat) => void;
+  isSidebar?: boolean;
 }) {
   const router = useRouter();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -176,10 +179,12 @@ export function SidebarChatItem({
   }`;
 
   const handleLinkClick = () => {
-    if (isMobile) {
-      setCollapsed(true);
+    if (isSidebar) {
+      if (isMobile) {
+        setCollapsed(true);
+      }
+      router.push(`/chat/${chat.id}`);
     }
-    router.push(`/chat/${chat.id}`);
   };
 
   return (
