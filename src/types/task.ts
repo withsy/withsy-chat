@@ -6,7 +6,7 @@ import { UserId } from "./user";
 //#region Task
 
 export const Task = {
-  google_gen_ai_send_chat: z.object({
+  chat_model_route_send_chat_to_ai: z.object({
     userId: UserId,
     userChatMessageId: ChatMessageId,
     modelChatMessageId: ChatMessageId,

@@ -1,5 +1,3 @@
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-
 CREATE FUNCTION fn_update_updated_at()
   RETURNS TRIGGER
   AS $$
@@ -12,13 +10,13 @@ LANGUAGE plpgsql;
 
 -- alias: u
 CREATE TABLE users(
-  id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   preferences jsonb NOT NULL DEFAULT '{}' ::jsonb,
   created_at timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TRIGGER trigger_users_update_updated_at
+CREATE TRIGGER trg_users_update_updated_at
   BEFORE UPDATE ON users
   FOR EACH ROW
   EXECUTE PROCEDURE fn_update_updated_at();
@@ -37,7 +35,7 @@ CREATE TABLE user_link_accounts(
 
 -- alias: c
 CREATE TABLE chats(
-  id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id uuid NOT NULL,
   title text NOT NULL DEFAULT 'New chat',
   is_starred boolean NOT NULL DEFAULT FALSE,
@@ -51,7 +49,7 @@ CREATE TABLE chats(
 
 CREATE INDEX idx_chats_user_id ON chats(user_id);
 
-CREATE TRIGGER trigger_chats_update_updated_at
+CREATE TRIGGER trg_chats_update_updated_at
   BEFORE UPDATE ON chats
   FOR EACH ROW
   EXECUTE PROCEDURE fn_update_updated_at();
@@ -65,7 +63,6 @@ CREATE TABLE chat_messages(
   text text,
   status text NOT NULL,
   is_bookmarked boolean NOT NULL DEFAULT FALSE,
-  reply_to_id integer,
   created_at timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT fk_chat_messages_chat_id FOREIGN KEY (chat_id) REFERENCES chats(id) ON DELETE CASCADE,
@@ -74,7 +71,7 @@ CREATE TABLE chat_messages(
 
 CREATE INDEX idx_chat_messages_chat_id ON chat_messages(chat_id);
 
-CREATE TRIGGER trigger_chat_messages_update_updated_at
+CREATE TRIGGER trg_chat_messages_update_updated_at
   BEFORE UPDATE ON chat_messages
   FOR EACH ROW
   EXECUTE PROCEDURE fn_update_updated_at();
@@ -103,7 +100,7 @@ CREATE TABLE chat_chunks(
   CONSTRAINT fk_chat_chunks_chat_message_id FOREIGN KEY (chat_message_id) REFERENCES chat_messages(id) ON DELETE CASCADE
 );
 
-CREATE TRIGGER trigger_chat_chunks_update_updated_at
+CREATE TRIGGER trg_chat_chunks_update_updated_at
   BEFORE UPDATE ON chat_chunks
   FOR EACH ROW
   EXECUTE PROCEDURE fn_update_updated_at();

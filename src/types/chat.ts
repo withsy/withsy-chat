@@ -25,8 +25,41 @@ export type ChatSchema = zInfer<typeof ChatSchema>;
 export const ChatRole = z.enum(["user", "model", "system"]);
 export type ChatRole = zInfer<typeof ChatRole>;
 
-export const ChatModel = z.enum(["gemini-2.0-flash", "gemini-1.5-pro"]);
+export const ChatRoleGoogleGenAi = z.enum(["user", "model"]);
+export type ChatRoleGoogleGenAi = zInfer<typeof ChatRoleGoogleGenAi>;
+
+export const ChatRoleGoogleGenAiMap = {
+  user: "user",
+  model: "model",
+  system: "user",
+} as const satisfies Record<ChatRole, ChatRoleGoogleGenAi>;
+export type ChatRoleGoogleGenAiMap = typeof ChatRoleGoogleGenAiMap;
+
+export const ChatRoleOpenAi = z.enum(["user", "assistant", "system"]);
+export type ChatRoleOpenAi = zInfer<typeof ChatRoleOpenAi>;
+
+export const ChatRoleOpenAiMap = {
+  user: "user",
+  model: "assistant",
+  system: "system",
+} as const satisfies Record<ChatRole, ChatRoleOpenAi>;
+
+export const ChatModel = z.enum([
+  "gemini-2.0-flash",
+  "gemini-1.5-pro",
+  "gpt-4o",
+]);
 export type ChatModel = zInfer<typeof ChatModel>;
+
+export const ChatModelProvider = z.enum(["google-gen-ai", "open-ai"]);
+export type ChatModelProvider = zInfer<typeof ChatModelProvider>;
+
+export const ChatModelProviderMap = {
+  "gemini-2.0-flash": "google-gen-ai",
+  "gemini-1.5-pro": "google-gen-ai",
+  "gpt-4o": "open-ai",
+} satisfies Record<ChatModel, ChatModelProvider>;
+export type ChatModelProviderMap = typeof ChatModelProviderMap;
 
 export const ChatMessageStatus = z.enum([
   "pending",
@@ -44,10 +77,14 @@ export const ChatMessageSchema = z.object({
   text: z.string().nullable(),
   status: ChatMessageStatus,
   isBookmarked: z.boolean(),
-  replyToId: ChatMessageId.nullable(),
   createdAt: zParseDate(),
 });
 export type ChatMessageSchema = zInfer<typeof ChatMessageSchema>;
+
+export type ChatMessageForHistory = {
+  role: string;
+  text: string;
+};
 
 export const Chat = ChatSchema.extend({
   parentMessage: ChatMessageSchema.nullable().default(null),

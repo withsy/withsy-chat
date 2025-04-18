@@ -7,6 +7,7 @@ import {
   ChatSchema,
   SendChatMessage,
   UpdateChatMessage,
+  type ChatMessageForHistory,
   type ListChatMessages,
 } from "@/types/chat";
 import { cols } from "@/types/common";
@@ -19,11 +20,6 @@ import type { ServiceRegistry } from "../service-registry";
 import { ChatMessageFileService } from "./chat-message-file-service";
 import type { Db } from "./db";
 import type { FileInfo } from "./mock-s3-service";
-
-type History = {
-  role: string;
-  text: string;
-};
 
 function withChat(db: Db, chatId: Expression<string>) {
   return jsonObjectFrom(
@@ -93,7 +89,7 @@ export class ChatMessageService {
     return res;
   }
 
-  async listForAiChatHistory(
+  async listForHistory(
     userId: UserId,
     input: {
       modelChatMessage: {
@@ -122,7 +118,7 @@ export class ChatMessageService {
           .limit(remainLength)
           .execute();
 
-        const histories: History[] = [];
+        const histories: ChatMessageForHistory[] = [];
         histories.push(
           ...currentHistories.map((x) => {
             if (x.text === null) throw new Error("Text must not null.");
@@ -353,7 +349,7 @@ export class ChatMessageService {
         return res;
       });
 
-    await this.service.task.add("google_gen_ai_send_chat", {
+    await this.service.task.add("chat_model_route_send_chat_to_ai", {
       userId,
       userChatMessageId: userChatMessage.id,
       modelChatMessageId: modelChatMessage.id,
@@ -391,7 +387,6 @@ export class ChatMessageService {
         role: ChatRole.enum.model,
         model,
         status: ChatMessageStatus.enum.pending,
-        replyToId: userChatMessage.id,
       })
       .returning(cols(ChatMessageSchema, "chatMessages"))
       .executeTakeFirstOrThrow();
