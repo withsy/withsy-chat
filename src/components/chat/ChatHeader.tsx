@@ -117,12 +117,12 @@ export default function ChatHeader({
             {userPrefs.wideView ? (
               <>
                 <ChevronsLeftRight size={16} />
-                <span>Wide View</span>
+                <span>Wide</span>
               </>
             ) : (
               <>
                 <ChevronsRightLeft size={16} />
-                <span>Compact View</span>
+                <span>Compact</span>
               </>
             )}
           </button>
