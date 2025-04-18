@@ -71,18 +71,18 @@ export default function SidebarChatList() {
   if (listChats.isError) return <PartialError message="loading chat list" />;
   if (!listChats.data) return <></>;
 
-  const starreds: Chat[] = [];
+  const starred: Chat[] = [];
   const nonStarredMap: Map<string, Chat[]> = new Map();
   listChats.data.forEach((chat) => {
     if (chat.isStarred) {
-      starreds.push(chat);
+      starred.push(chat);
     } else {
       const dateLabel = formatDateLabel(chat.updatedAt);
       if (!nonStarredMap.has(dateLabel)) nonStarredMap.set(dateLabel, []);
       nonStarredMap.get(dateLabel)?.push(chat);
     }
   });
-  starreds.sort((a, b) => toNewest(a.updatedAt, b.updatedAt));
+  starred.sort((a, b) => toNewest(a.updatedAt, b.updatedAt));
   nonStarredMap.forEach((chats) =>
     chats.sort((a, b) => toNewest(a.updatedAt, b.updatedAt))
   );
@@ -103,11 +103,11 @@ export default function SidebarChatList() {
         label={"Archived"}
         size={16}
       />
-      {starreds.length > 0 && (
+      {starred.length > 0 && (
         <div>
           <div className="py-1 px-2 mb-1 text-sm font-semibold">Starred</div>
           <div className="space-y-1 mt-1">
-            {starreds.map((chat) => (
+            {starred.map((chat) => (
               <SidebarChatItem
                 key={chat.id}
                 chat={chat}
