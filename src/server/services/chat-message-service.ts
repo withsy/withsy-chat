@@ -1,4 +1,5 @@
 import {
+  Chat,
   ChatId,
   ChatMessageId,
   ChatMessageSchema,
@@ -105,101 +106,77 @@ export class ChatMessageService {
     const { modelChatMessage } = input;
 
     // TODO: Change limit history length
-    const remainLength = 10;
+    let remainLength = 10;
     const histories = await this.service.db
       .transaction()
       .execute(async (tx) => {
-        const baseQuery = tx
+        const currentHistories = await tx
           .selectFrom("chatMessages as cm")
           .innerJoin("chats as c", "c.id", "cm.chatId")
           .where("c.userId", "=", userId)
           .where("cm.chatId", "=", modelChatMessage.chatId)
           .where("cm.status", "=", ChatMessageStatus.enum.succeeded)
           .where("cm.text", "is not", null)
+          .where("cm.id", "<=", modelChatMessage.id)
           .select(["cm.role", "cm.text"])
-          .orderBy("cm.id", "desc");
+          .orderBy("cm.id", "desc")
+          .limit(remainLength)
+          .execute();
 
         const histories: History[] = [];
-        const oldestId = -1;
+        histories.push(
+          ...currentHistories.map((x) => {
+            if (x.text === null) throw new Error("Text must not null.");
+            return { role: x.role, text: x.text };
+          })
+        );
 
-        // TODO: history by parentMessageId of chat.
-        // // branch messages
-        // if (modelChatMessage.parentId !== null) {
-        //   if (remainLength > 0) {
-        //     const rows = await baseQuery
-        //       .where("cm.id", "<", modelChatMessage.id)
-        //       .where("cm.parentId", "=", modelChatMessage.parentId)
-        //       .select("cm.id")
-        //       .limit(remainLength)
-        //       .execute();
+        remainLength -= currentHistories.length;
+        if (remainLength > 0) {
+          const chat = await tx
+            .selectFrom("chats as c")
+            .where("c.userId", "=", userId)
+            .where("c.id", "=", modelChatMessage.chatId)
+            .select("c.parentMessageId")
+            .executeTakeFirstOrThrow();
+          if (chat.parentMessageId) {
+            const parentMessage = await tx
+              .selectFrom("chatMessages as cm")
+              .innerJoin("chats as c", "c.id", "cm.chatId")
+              .where("c.userId", "=", userId)
+              .where("cm.id", "=", chat.parentMessageId)
+              .select(["cm.role", "cm.text", "cm.chatId", "cm.status", "cm.id"])
+              .executeTakeFirstOrThrow();
+            if (parentMessage.status === "succeeded" && parentMessage.text) {
+              histories.push({
+                role: parentMessage.role,
+                text: parentMessage.text,
+              });
+              remainLength -= 1;
+            }
 
-        //     histories.push(
-        //       ...rows.map((x) => {
-        //         if (x.text === null)
-        //           throw new Error("text must have a not null query applied.");
-        //         return { role: x.role, text: x.text };
-        //       })
-        //     );
-        //     remainLength -= rows.length;
-        //     oldestId = rows.at(-1)?.id ?? -1;
-        //   }
-
-        //   // parent message
-        //   if (remainLength > 0) {
-        //     const parent = await baseQuery
-        //       .where("cm.id", "=", modelChatMessage.parentId)
-        //       .where("cm.parentId", "is", null)
-        //       .select(["cm.id", "cm.replyToId"])
-        //       .executeTakeFirst();
-        //     if (parent) {
-        //       if (parent.text === null)
-        //         throw new Error("text must have a not null query applied.");
-        //       histories.push({
-        //         role: parent.role,
-        //         text: parent.text,
-        //       });
-        //       remainLength -= 1;
-        //       oldestId = parent.id;
-
-        //       // reply to message
-        //       if (remainLength > 0 && parent.replyToId !== null) {
-        //         const replyTo = await baseQuery
-        //           .where("cm.id", "=", parent.replyToId)
-        //           .where("cm.parentId", "is", null)
-        //           .select("cm.id")
-        //           .executeTakeFirst();
-        //         if (replyTo) {
-        //           if (replyTo.text === null)
-        //             throw new Error("text must have a not null query applied.");
-        //           histories.push({
-        //             role: replyTo.role,
-        //             text: replyTo.text,
-        //           });
-        //           remainLength -= 1;
-        //           oldestId = replyTo.id;
-        //         }
-        //       }
-        //     }
-        //   }
-        // }
-
-        // // non-branch messages
-        // if (remainLength > 0) {
-        //   let query = baseQuery;
-        //   if (oldestId !== -1) query = query.where("cm.id", "<", oldestId);
-        //   const rows = await query
-        //     .where("cm.parentId", "is", null)
-        //     .limit(remainLength)
-        //     .execute();
-        //   histories.push(
-        //     ...rows.map((x) => {
-        //       if (x.text === null)
-        //         throw new Error("text must have a not null query applied.");
-        //       return { role: x.role, text: x.text };
-        //     })
-        //   );
-        //   remainLength -= rows.length;
-        // }
+            if (remainLength > 0) {
+              const parentHistories = await tx
+                .selectFrom("chatMessages as cm")
+                .innerJoin("chats as c", "c.id", "cm.chatId")
+                .where("c.userId", "=", userId)
+                .where("cm.chatId", "=", parentMessage.chatId)
+                .where("cm.status", "=", ChatMessageStatus.enum.succeeded)
+                .where("cm.text", "is not", null)
+                .where("cm.id", "<=", parentMessage.id)
+                .select(["cm.role", "cm.text"])
+                .orderBy("cm.id", "desc")
+                .limit(remainLength)
+                .execute();
+              histories.push(
+                ...parentHistories.map((x) => {
+                  if (x.text === null) throw new Error("Text must not null.");
+                  return { role: x.role, text: x.text };
+                })
+              );
+            }
+          }
+        }
 
         return histories;
       });
