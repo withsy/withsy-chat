@@ -1,6 +1,9 @@
 import {
   Chat,
+  ChatMessage,
   ChatMessageId,
+  ChatMessageSchema,
+  ChatSchema,
   GetChat,
   StartBranchChat,
   type StartChat,
@@ -21,20 +24,38 @@ export class ChatService {
       .selectFrom("chats as c")
       .where("c.userId", "=", userId)
       .orderBy("c.createdAt", "asc")
-      .select(cols(Chat, "c"))
+      .select(cols(ChatSchema, "c"))
       .execute();
 
     return res;
   }
 
   async get(userId: UserId, input: GetChat) {
-    const { chatId } = input;
-    const res = await this.service.db
-      .selectFrom("chats as c")
-      .where("c.userId", "=", userId)
-      .where("c.id", "=", chatId)
-      .select(cols(Chat, "c"))
-      .executeTakeFirstOrThrow();
+    const { chatId, options } = input;
+    const { include } = options ?? {};
+    const res = await this.service.db.transaction().execute(async (tx) => {
+      const chat = await tx
+        .selectFrom("chats as c")
+        .where("c.userId", "=", userId)
+        .where("c.id", "=", chatId)
+        .select(cols(ChatSchema, "c"))
+        .executeTakeFirstOrThrow();
+
+      const parsedChat = Chat.parse(chat);
+      if (chat.parentMessageId && include?.parentMessage) {
+        const parentMessage = await tx
+          .selectFrom("chatMessages as cm")
+          .innerJoin("chats as c", "c.id", "cm.chatId")
+          .where("c.userId", "=", userId)
+          .where("cm.id", "=", chat.parentMessageId)
+          .select(cols(ChatMessageSchema, "cm"))
+          .executeTakeFirstOrThrow();
+        parsedChat.parentMessage = ChatMessage.parse(parentMessage);
+      }
+
+      return parsedChat;
+    });
+
     return res;
   }
 
@@ -45,7 +66,7 @@ export class ChatService {
       .where("c.userId", "=", userId)
       .where("c.id", "=", chatId)
       .set({ title, isStarred })
-      .returning(cols(Chat, "c"))
+      .returning(cols(ChatSchema, "c"))
       .executeTakeFirstOrThrow();
 
     return res;
@@ -117,7 +138,7 @@ export class ChatService {
     const res = await db
       .insertInto("chats")
       .values({ userId, title, type: "chat" })
-      .returning(cols(Chat, "chats"))
+      .returning(cols(ChatSchema, "chats"))
       .executeTakeFirstOrThrow();
 
     return res;
@@ -131,7 +152,7 @@ export class ChatService {
     const res = await db
       .insertInto("chats")
       .values({ userId, title, type: "branch", parentMessageId })
-      .returning(cols(Chat, "chats"))
+      .returning(cols(ChatSchema, "chats"))
       .executeTakeFirstOrThrow();
 
     return res;

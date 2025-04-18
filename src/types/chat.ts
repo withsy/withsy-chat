@@ -22,21 +22,6 @@ export const ChatSchema = z.object({
 });
 export type ChatSchema = zInfer<typeof ChatSchema>;
 
-export const Chat = ChatSchema.extend({});
-export type Chat = zInfer<typeof Chat>;
-
-export const GetChat = z.object({
-  chatId: ChatId,
-});
-export type GetChat = zInfer<typeof GetChat>;
-
-export const UpdateChat = z.object({
-  chatId: ChatId,
-  title: z.string().optional(),
-  isStarred: z.boolean().optional(),
-});
-export type UpdateChat = zInfer<typeof UpdateChat>;
-
 export const ChatRole = z.enum(["user", "model", "system"]);
 export type ChatRole = zInfer<typeof ChatRole>;
 
@@ -63,6 +48,32 @@ export const ChatMessageSchema = z.object({
   createdAt: zParseDate(),
 });
 export type ChatMessageSchema = zInfer<typeof ChatMessageSchema>;
+
+export const Chat = ChatSchema.extend({
+  parentMessage: ChatMessageSchema.nullable().default(null),
+});
+export type Chat = zInfer<typeof Chat>;
+
+export const GetChat = z.object({
+  chatId: ChatId,
+  options: z
+    .object({
+      include: z
+        .object({
+          parentMessage: z.boolean().default(false),
+        })
+        .optional(),
+    })
+    .optional(),
+});
+export type GetChat = zInfer<typeof GetChat>;
+
+export const UpdateChat = z.object({
+  chatId: ChatId,
+  title: z.string().optional(),
+  isStarred: z.boolean().optional(),
+});
+export type UpdateChat = zInfer<typeof UpdateChat>;
 
 export const ChatMessage = ChatMessageSchema.extend({
   chat: Chat.nullable().default(null),
