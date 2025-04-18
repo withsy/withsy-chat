@@ -93,13 +93,11 @@ export class ChatService {
     const res = await this.service.db.transaction().execute(async (tx) => {
       await IdempotencyInfoService.checkDuplicateRequest(tx, idempotencyKey);
 
-      // TODO: check userId by parentMessageId.
-
       const parentMessage = await ChatMessageService.get(tx, userId, {
         chatMessageId: parentMessageId,
       });
       const title = parentMessage.text
-        ? [...parentMessage.text].slice(0, 10).join("")
+        ? [...parentMessage.text].slice(0, 20).join("")
         : undefined;
       const chat = await ChatService.createBranchChat(tx, {
         userId,
@@ -115,7 +113,7 @@ export class ChatService {
 
   static async createChat(db: Db, input: { userId: UserId; text: string }) {
     const { userId, text } = input;
-    const title = text ? [...text].slice(0, 10).join("") : undefined;
+    const title = text ? [...text].slice(0, 20).join("") : undefined;
     const res = await db
       .insertInto("chats")
       .values({ userId, title, type: "chat" })
