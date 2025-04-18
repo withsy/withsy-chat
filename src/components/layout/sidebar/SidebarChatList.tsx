@@ -120,6 +120,7 @@ export default function SidebarChatList() {
                 key={chat.id}
                 chat={chat}
                 onToggleStar={toggleStar}
+                isSidebar={true}
               />
             ))}
           </div>
@@ -179,7 +180,7 @@ export function SidebarChatItem({
   }`;
 
   const handleLinkClick = () => {
-    if (isSidebar) {
+    if (isSidebar == true) {
       if (isMobile) {
         setCollapsed(true);
       }
