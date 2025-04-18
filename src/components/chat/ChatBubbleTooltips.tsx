@@ -35,6 +35,7 @@ export const ChatBubbleTooltips: React.FC<ChatBubbleTooltipsProps> = ({
   const { themeColor } = userPrefs;
 
   const startBranchChat = trpc.chat.startBranch.useMutation();
+  const utils = trpc.useUtils();
 
   const handleBranch = () => {
     if (!parentId) return;
@@ -47,6 +48,7 @@ export const ChatBubbleTooltips: React.FC<ChatBubbleTooltipsProps> = ({
       {
         onSuccess(data) {
           router.push(`/chat/${data.id}`);
+          utils.chat.list.invalidate();
         },
       }
     );
