@@ -106,6 +106,7 @@ export class ChatMessageService {
         const histories: History[] = [];
         const oldestId = -1;
 
+        // TODO: history by parentMessageId of chat.
         // // branch messages
         // if (modelChatMessage.parentId !== null) {
         //   if (remainLength > 0) {
