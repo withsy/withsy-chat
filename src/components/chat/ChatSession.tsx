@@ -38,12 +38,6 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
     setMessages(initialMessages);
   }, [chat, initialMessages]);
 
-  // useEffect(() => {
-  //   if (typeof parentId === "string") {
-  //     setOpenDrawer(parentId);
-  //   }
-  // }, [parentId]);
-
   useEffect(() => {
     const message =
       messages.find((x) => x.status === "processing") ??
