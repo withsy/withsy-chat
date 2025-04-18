@@ -9,7 +9,7 @@ import {
   ChevronsRightLeft,
   FolderGit2,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import HoverSwitchIcon from "../HoverSwitchIcon";
 import { SidebarChatItem } from "../layout/sidebar/SidebarChatList";
 
@@ -31,6 +31,21 @@ export default function ChatHeader({
   const updateChatMut = trpc.chat.update.useMutation();
   const utils = trpc.useUtils();
   const [displayChat, setDisplayChat] = useState<Chat>(chat);
+  const [hideLabels, setHideLabels] = useState(false);
+
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (!containerRef.current) return;
+      const width = containerRef.current.offsetWidth;
+      setHideLabels(width < 600);
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     setDisplayChat(chat);
@@ -104,10 +119,9 @@ export default function ChatHeader({
     <div
       className="absolute top-0 left-0 w-full h-[50px] px-4 flex items-center justify-between"
       style={headerStyle}
+      ref={containerRef}
     >
-      {!isMobile && (
-        <SidebarChatItem chat={displayChat} onToggleStar={updateChat} />
-      )}
+      <SidebarChatItem chat={displayChat} onToggleStar={updateChat} />
 
       <div className="flex gap-3">
         {buttons.map(({ label, id, icon }) => (
@@ -119,7 +133,7 @@ export default function ChatHeader({
             onClick={() => handleClick(id)}
           >
             {icon}
-            <span>{label}</span>
+            {!hideLabels && <span>{label}</span>}
           </button>
         ))}
         <button className={buttonClassName} onClick={() => {}}>
@@ -128,7 +142,7 @@ export default function ChatHeader({
             HoverIcon={Archive}
             fill={`rgb(${themeColor})`}
           />
-          <span>Archive</span>
+          {!hideLabels && <span>Archive</span>}
         </button>
         {!isMobile && (
           <button
@@ -140,12 +154,12 @@ export default function ChatHeader({
             {userPrefs.wideView ? (
               <>
                 <ChevronsLeftRight size={16} />
-                <span>Wide</span>
+                {!hideLabels && <span>Wide</span>}
               </>
             ) : (
               <>
                 <ChevronsRightLeft size={16} />
-                <span>Compact</span>
+                {!hideLabels && <span>Compact</span>}
               </>
             )}
           </button>
