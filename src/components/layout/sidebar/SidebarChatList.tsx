@@ -16,9 +16,10 @@ import { skipToken } from "@tanstack/react-query";
 import {
   Archive,
   Bookmark,
+  FolderRoot,
+  GitBranch,
   MoreHorizontal,
   Pencil,
-  SquareMenu,
   Star,
   StarOff,
   Trash2,
@@ -162,12 +163,21 @@ function SidebarChatItem({
   isStarred: boolean;
   onToggleStar: (chat: Chat) => void;
 }) {
+  const router = useRouter();
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
   const { isMobile, setCollapsed } = useSidebar();
   const { userPrefs } = useUser();
-  const router = useRouter();
-  const isActive = router.asPath === `/chat/${chat.id}`;
 
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const isActive = router.asPath === `/chat/${chat.id}`;
+  const chatType = chat.type;
+
+  const isHoveredOrDropdown = `${
+    isDropdownOpen || isActive ? "font-bold" : ""
+  }`;
+  const iconClassName = `opacity-100 transition-opacity ${
+    isDropdownOpen ? "opacity-0" : "group-hover:opacity-0"
+  }`;
 
   const handleLinkClick = () => {
     if (isMobile) {
@@ -175,10 +185,6 @@ function SidebarChatItem({
     }
     router.push(`/chat/${chat.id}`);
   };
-
-  const isHoveredOrDropdown = `${
-    isDropdownOpen || isActive ? "font-bold" : ""
-  }`;
 
   return (
     <div
@@ -189,12 +195,11 @@ function SidebarChatItem({
         onClick={handleLinkClick}
       >
         <div className="w-5 h-5 flex items-center justify-center relative">
-          <SquareMenu
-            size={16}
-            className={`opacity-100 transition-opacity ${
-              isDropdownOpen ? "opacity-0" : "group-hover:opacity-0"
-            }`}
-          />
+          {chatType == "chat" ? (
+            <FolderRoot size={16} className={iconClassName} />
+          ) : (
+            <GitBranch size={16} className={iconClassName} />
+          )}
 
           <button
             onClick={(e) => {
