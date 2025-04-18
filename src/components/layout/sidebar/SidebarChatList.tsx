@@ -191,7 +191,7 @@ function SidebarChatItem({
       className={`group relative flex items-center gap-2 no-underline px-2.5 py-2 rounded-md transition-colors hover:bg-white cursor-pointer ${isHoveredOrDropdown}`}
     >
       <div
-        className="flex items-center gap-2 flex-1 group-hover:font-bold"
+        className="flex items-center gap-2 flex-1 min-w-0 group-hover:font-bold"
         onClick={handleLinkClick}
       >
         <div className="w-5 h-5 flex items-center justify-center relative">
@@ -222,7 +222,7 @@ function SidebarChatItem({
           </button>
         </div>
 
-        <span className="text-foreground truncate ">{chat.title}</span>
+        <span className="truncate text-foreground flex-1">{chat.title}</span>
       </div>
 
       <DropdownMenu onOpenChange={(open) => setIsDropdownOpen(open)}>
