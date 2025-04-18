@@ -21,7 +21,6 @@ type Props = {
 
 export function ChatSession({ chatId, initialMessages, children }: Props) {
   const router = useRouter();
-  const { parentId } = router.query;
 
   const { isMobile } = useSidebar();
   const { userPrefs } = useUser();
