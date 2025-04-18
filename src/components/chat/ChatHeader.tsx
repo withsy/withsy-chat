@@ -1,20 +1,25 @@
 import { useSidebar } from "@/context/SidebarContext";
 import { useUser } from "@/context/UserContext";
+import type { Chat } from "@/types/chat";
 import {
   Archive,
   Bookmark,
   ChevronsLeftRight,
   ChevronsRightLeft,
   FolderGit2,
+  FolderRoot,
+  GitBranch,
 } from "lucide-react";
 import HoverSwitchIcon from "../HoverSwitchIcon";
 
 interface ChatHeaderProps {
+  chat: Chat | null;
   setOpenDrawer: (id: string | null) => void;
   openDrawer: string | null;
 }
 
 export default function ChatHeader({
+  chat,
   setOpenDrawer,
   openDrawer,
 }: ChatHeaderProps) {
@@ -51,6 +56,7 @@ export default function ChatHeader({
       ),
     },
   ];
+  const chatType = chat?.type;
 
   const headerStyle: React.CSSProperties = {
     backgroundColor: `rgba(${themeColor}, ${themeOpacity - 0.1})`,
@@ -70,6 +76,16 @@ export default function ChatHeader({
       className="absolute top-0 left-0 w-full h-[50px] px-4 flex items-center justify-between"
       style={headerStyle}
     >
+      <div className="flex min-w-0 gap-3 items-center">
+        {chatType == "chat" ? (
+          <FolderRoot size={16} />
+        ) : (
+          <GitBranch size={16} />
+        )}
+        <span className="truncate text-foreground flex-1 font-bold">
+          {chat?.title}
+        </span>
+      </div>
       <div className="flex gap-3">
         {buttons.map(({ label, id, icon }) => (
           <button
@@ -83,8 +99,14 @@ export default function ChatHeader({
             <span>{label}</span>
           </button>
         ))}
-      </div>
-      <div className="flex gap-3">
+        <button className={buttonClassName} onClick={() => {}}>
+          <HoverSwitchIcon
+            DefaultIcon={Archive}
+            HoverIcon={Archive}
+            fill={`rgb(${themeColor})`}
+          />
+          <span>Archive</span>
+        </button>
         {!isMobile && (
           <button
             className={buttonClassName}
@@ -105,14 +127,6 @@ export default function ChatHeader({
             )}
           </button>
         )}
-        <button className={buttonClassName} onClick={() => {}}>
-          <HoverSwitchIcon
-            DefaultIcon={Archive}
-            HoverIcon={Archive}
-            fill={`rgb(${themeColor})`}
-          />
-          <span>Archive</span>
-        </button>
       </div>
     </div>
   );

@@ -170,7 +170,11 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
           isMobile ? "w-full" : "w-[50%] w-full"
         )}
       >
-        <ChatHeader setOpenDrawer={setOpenDrawer} openDrawer={openDrawer} />
+        <ChatHeader
+          chat={chat}
+          setOpenDrawer={setOpenDrawer}
+          openDrawer={openDrawer}
+        />
         <div
           className={cn(
             "flex-1 overflow-y-auto mt-[50px] mb-[100px] w-full transition-all duration-300",
