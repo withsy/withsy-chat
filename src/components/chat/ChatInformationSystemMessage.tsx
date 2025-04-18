@@ -17,12 +17,14 @@ const ChatInformationSystemMessage: React.FC<
   if (chatType === "chat") {
     const message = getRandomMessage(newChatMessages);
     content = (
-      <div className="text-muted-foreground italic text-center">{message}</div>
+      <div className="text-muted-foreground italic text-center select-none">
+        {message}
+      </div>
     );
   } else if (chatType === "branch" && chatId && messageId) {
     const message = getRandomMessage(branchChatMessages);
     content = (
-      <div className="text-muted-foreground italic text-center">
+      <div className="text-muted-foreground italic text-center select-none">
         {message.prefix}
         <Link
           href={`/chat/${chatId}?messageId=${messageId}`}

@@ -55,7 +55,7 @@ const ChatBubbleComponent = ({ message, onToggleSaved }: Props) => {
       <div className="flex flex-col items-start flex-1">
         <div
           className={cn(
-            "text-muted-foreground text-sm mb-1",
+            "text-muted-foreground text-sm mb-1 select-none",
             role === "model" ? "text-left" : "text-right",
             role === "user" && "self-end"
           )}
