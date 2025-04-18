@@ -1,7 +1,6 @@
 import {
   Chat,
   ChatMessageId,
-  ChatType,
   GetChat,
   StartBranchChat,
   type StartChat,
@@ -96,9 +95,16 @@ export class ChatService {
 
       // TODO: check userId by parentMessageId.
 
-      const chat = await ChatService.createChat(tx, {
+      const parentMessage = await ChatMessageService.get(tx, userId, {
+        chatMessageId: parentMessageId,
+      });
+      const title = parentMessage.text
+        ? [...parentMessage.text].slice(0, 10).join("")
+        : undefined;
+      const chat = await ChatService.createBranchChat(tx, {
         userId,
         parentMessageId,
+        title,
       });
 
       return chat;
@@ -107,16 +113,26 @@ export class ChatService {
     return res;
   }
 
-  static async createChat(
-    db: Db,
-    input: { userId: UserId; text?: string; parentMessageId?: ChatMessageId }
-  ) {
-    const { userId, text, parentMessageId } = input;
+  static async createChat(db: Db, input: { userId: UserId; text: string }) {
+    const { userId, text } = input;
     const title = text ? [...text].slice(0, 10).join("") : undefined;
-    const type: ChatType = parentMessageId ? "branch" : "chat";
     const res = await db
       .insertInto("chats")
-      .values({ userId, title, type, parentMessageId })
+      .values({ userId, title, type: "chat" })
+      .returning(cols(Chat, "chats"))
+      .executeTakeFirstOrThrow();
+
+    return res;
+  }
+
+  static async createBranchChat(
+    db: Db,
+    input: { userId: UserId; parentMessageId: ChatMessageId; title?: string }
+  ) {
+    const { userId, parentMessageId, title } = input;
+    const res = await db
+      .insertInto("chats")
+      .values({ userId, title, type: "branch", parentMessageId })
       .returning(cols(Chat, "chats"))
       .executeTakeFirstOrThrow();
 

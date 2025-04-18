@@ -37,6 +37,22 @@ function withChat(db: Db, chatId: Expression<string>) {
 export class ChatMessageService {
   constructor(private readonly service: ServiceRegistry) {}
 
+  static async get(
+    db: Db,
+    userId: UserId,
+    input: { chatMessageId: ChatMessageId }
+  ) {
+    const { chatMessageId } = input;
+    const res = await db
+      .selectFrom("chatMessages as cm")
+      .innerJoin("chats as c", "c.id", "cm.chatId")
+      .where("c.userId", "=", userId)
+      .where("cm.id", "=", chatMessageId)
+      .select(cols(ChatMessageSchema, "cm"))
+      .executeTakeFirstOrThrow();
+    return res;
+  }
+
   async list(userId: UserId, input: ListChatMessages) {
     const { role, isBookmarked, options } = input;
     const { scope, afterId, order, limit, include } = options;
