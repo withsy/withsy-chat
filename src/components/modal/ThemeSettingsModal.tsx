@@ -113,7 +113,7 @@ export function ThemeSettingsModal({
             onClick={handleApply}
             className="w-full mt-4 "
             style={{
-              backgroundColor: `rgba(${customColor}`,
+              backgroundColor: `rgba(${userPrefs.themeColor}`,
             }}
           >
             SAVE
