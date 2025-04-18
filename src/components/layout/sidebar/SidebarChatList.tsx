@@ -7,6 +7,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+
+import { ConfirmDeleteModal } from "@/components/modal/ConfirmDeleteModal";
 import { useSidebar } from "@/context/SidebarContext";
 import { useUser } from "@/context/UserContext";
 import { formatDateLabel, toNewest } from "@/lib/date-utils";
@@ -167,6 +169,7 @@ export function SidebarChatItem({
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [editedTitle, setEditedTitle] = useState(chat.title);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const { isMobile, setCollapsed } = useSidebar();
   const { userPrefs } = useUser();
@@ -269,7 +272,12 @@ export function SidebarChatItem({
             </Button>
           )}
         </DropdownMenuTrigger>
-        <DropdownMenuContent side="top" align="start" className="z-[9999]">
+        <DropdownMenuContent
+          side="top"
+          align="start"
+          className="z-[9999]"
+          sideOffset={4}
+        >
           <DropdownMenuItem onClick={() => onToggleStar(chat)}>
             {chat.isStarred ? (
               <>
@@ -293,12 +301,30 @@ export function SidebarChatItem({
             <Pencil size={14} className="mr-2" />
             Rename
           </DropdownMenuItem>
-          <DropdownMenuItem className="text-red-500">
+          <DropdownMenuItem
+            className="text-red-500"
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsDropdownOpen(false);
+              setShowDeleteModal(true);
+            }}
+          >
             <Trash2 size={14} className="mr-2 text-red-500" />
             Delete
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+      {showDeleteModal && (
+        <ConfirmDeleteModal
+          open={showDeleteModal}
+          onCancel={() => setShowDeleteModal(false)}
+          onConfirm={() => {
+            setShowDeleteModal(false);
+            // TODO: Delete Mutation
+            console.log("Delete:", chat.id);
+          }}
+        />
+      )}
     </div>
   );
 }
