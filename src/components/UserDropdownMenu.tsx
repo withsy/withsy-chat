@@ -108,18 +108,17 @@ function UserMenuItem({
 }
 
 export default function UserDropdownMenu() {
-  const { userPrefs, setUserPrefsAndSave, userPrefLoadings, userSession } =
-    useUser();
+  const { userPrefs, userSession } = useUser();
 
   const { largeText } = userPrefs;
   const [themeModalOpen, setThemeModalOpen] = useState(false);
 
-  const toggleItems = [
-    {
-      id: "largeText",
-      label: "Large Text",
-    },
-  ] as const;
+  // const toggleItems = [
+  //   {
+  //     id: "largeText",
+  //     label: "Large Text",
+  //   },
+  // ] as const;
 
   const userMenuItems: MenuItem[] = [
     // "separator",
@@ -182,7 +181,14 @@ export default function UserDropdownMenu() {
           <DropdownMenuSeparator key={`sep-text`} />
           <div className="flex justify-center p-2">
             <span className="text-xs text-muted-foreground select-none">
-              withsy with ♥
+              withsy with{" "}
+              <span
+                style={{
+                  color: `rgb(${userPrefs.themeColor})`,
+                }}
+              >
+                ♥
+              </span>
             </span>
           </div>
         </DropdownMenuContent>
