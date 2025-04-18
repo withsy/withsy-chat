@@ -6,30 +6,58 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useUser } from "@/context/UserContext";
+import { trpc } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
 import { Bookmark, Copy, GitBranch, RefreshCw } from "lucide-react";
+import { useRouter } from "next/router";
+import { v4 as uuid } from "uuid";
 
 interface ChatBubbleTooltipsProps {
+  parentId: number | null;
   isAi: boolean;
   isSaved: boolean;
   onCopy?: () => void;
   onSave?: () => void;
-  onBranch?: () => void;
-  onChangeModel?: () => void;
   className?: string;
 }
 
 export const ChatBubbleTooltips: React.FC<ChatBubbleTooltipsProps> = ({
+  parentId,
   isAi,
   isSaved,
   onCopy,
   onSave,
-  onBranch,
-  onChangeModel,
   className,
 }) => {
+  const router = useRouter();
+
   const { userPrefs } = useUser();
   const { themeColor } = userPrefs;
+
+  const startBranchChat = trpc.chat.startBranch.useMutation();
+  const utils = trpc.useUtils();
+
+  const handleBranch = () => {
+    if (!parentId) return;
+
+    startBranchChat.mutate(
+      {
+        idempotencyKey: uuid(),
+        parentMessageId: parentId,
+      },
+      {
+        onSuccess(data) {
+          router.push(`/chat/${data.id}`);
+          utils.chat.list.invalidate();
+        },
+      }
+    );
+
+    router.push({
+      pathname: router.pathname,
+      query: { ...router.query, parentId: parentId },
+    });
+  };
   return (
     <TooltipProvider>
       <div className={cn("flex gap-2", className)}>
@@ -58,7 +86,7 @@ export const ChatBubbleTooltips: React.FC<ChatBubbleTooltipsProps> = ({
           <>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button size="icon" variant="ghost" onClick={onBranch}>
+                <Button size="icon" variant="ghost" onClick={handleBranch}>
                   <GitBranch className="w-4 h-4" />
                 </Button>
               </TooltipTrigger>
@@ -67,7 +95,7 @@ export const ChatBubbleTooltips: React.FC<ChatBubbleTooltipsProps> = ({
 
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button size="icon" variant="ghost" onClick={onChangeModel}>
+                <Button size="icon" variant="ghost" onClick={handleBranch}>
                   <RefreshCw className="w-4 h-4" />
                 </Button>
               </TooltipTrigger>

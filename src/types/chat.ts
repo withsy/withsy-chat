@@ -6,16 +6,29 @@ import { UserId } from "./user";
 export const ChatId = z.string().uuid();
 export type ChatId = zInfer<typeof ChatId>;
 
+export const ChatType = z.enum(["chat", "branch"]);
+export type ChatType = zInfer<typeof ChatType>;
+
+export const ChatMessageId = z.number().int();
+export type ChatMessageId = zInfer<typeof ChatMessageId>;
+
 export const ChatSchema = z.object({
   id: ChatId,
   title: z.string(),
   isStarred: z.boolean(),
+  type: ChatType,
+  parentMessageId: ChatMessageId.nullable(),
   updatedAt: zParseDate(),
 });
 export type ChatSchema = zInfer<typeof ChatSchema>;
 
 export const Chat = ChatSchema.extend({});
 export type Chat = zInfer<typeof Chat>;
+
+export const GetChat = z.object({
+  chatId: ChatId,
+});
+export type GetChat = zInfer<typeof GetChat>;
 
 export const UpdateChat = z.object({
   chatId: ChatId,
@@ -29,9 +42,6 @@ export type ChatRole = zInfer<typeof ChatRole>;
 
 export const ChatModel = z.enum(["gemini-2.0-flash", "gemini-1.5-pro"]);
 export type ChatModel = zInfer<typeof ChatModel>;
-
-export const ChatMessageId = z.number().int();
-export type ChatMessageId = zInfer<typeof ChatMessageId>;
 
 export const ChatMessageStatus = z.enum([
   "pending",
@@ -49,7 +59,7 @@ export const ChatMessageSchema = z.object({
   text: z.string().nullable(),
   status: ChatMessageStatus,
   isBookmarked: z.boolean(),
-  parentId: ChatMessageId.nullable(),
+  replyToId: ChatMessageId.nullable(),
   createdAt: zParseDate(),
 });
 export type ChatMessageSchema = zInfer<typeof ChatMessageSchema>;
@@ -73,6 +83,12 @@ export const StartChatResult = z.object({
   modelChatMessage: ChatMessage,
 });
 export type StartChatResult = zInfer<typeof StartChatResult>;
+
+export const StartBranchChat = z.object({
+  idempotencyKey: IdempotencyKey,
+  parentMessageId: ChatMessageId,
+});
+export type StartBranchChat = zInfer<typeof StartBranchChat>;
 
 export const ListChatMessages = z.object({
   role: ChatRole.optional(),
@@ -105,7 +121,6 @@ export const SendChatMessage = z.object({
   chatId: ChatId,
   text: z.string(),
   model: ChatModel,
-  parentId: ChatMessageId.optional(),
   files: z.array(z.instanceof(File)).optional(),
 });
 export type SendChatMessage = zInfer<typeof SendChatMessage>;

@@ -9,20 +9,17 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useSidebar } from "@/context/SidebarContext";
 import { useUser } from "@/context/UserContext";
-import {
-  formatDateLabel,
-  toLocaleDateString,
-  toNewest,
-} from "@/lib/date-utils";
+import { formatDateLabel, toNewest } from "@/lib/date-utils";
 import { trpc } from "@/lib/trpc";
 import type { Chat } from "@/types/chat";
 import { skipToken } from "@tanstack/react-query";
 import {
   Archive,
   Bookmark,
+  FolderRoot,
+  GitBranch,
   MoreHorizontal,
   Pencil,
-  SquareMenu,
   Star,
   StarOff,
   Trash2,
@@ -75,22 +72,28 @@ export default function SidebarChatList() {
   if (listChats.isError) return <PartialError message="loading chat list" />;
   if (!listChats.data) return <></>;
 
-  const starreds: Chat[] = [];
+  const starred: Chat[] = [];
   const nonStarredMap: Map<string, Chat[]> = new Map();
   listChats.data.forEach((chat) => {
     if (chat.isStarred) {
-      starreds.push(chat);
+      starred.push(chat);
     } else {
-      const localeDateString = toLocaleDateString(chat.updatedAt);
-      if (!nonStarredMap.has(localeDateString))
-        nonStarredMap.set(localeDateString, []);
-      nonStarredMap.get(localeDateString)?.push(chat);
+      const dateLabel = formatDateLabel(chat.updatedAt);
+      if (!nonStarredMap.has(dateLabel)) nonStarredMap.set(dateLabel, []);
+      nonStarredMap.get(dateLabel)?.push(chat);
     }
   });
-  starreds.sort((a, b) => toNewest(a.updatedAt, b.updatedAt));
+  starred.sort((a, b) => toNewest(a.updatedAt, b.updatedAt));
   nonStarredMap.forEach((chats) =>
     chats.sort((a, b) => toNewest(a.updatedAt, b.updatedAt))
   );
+  const orderedEntries = [...nonStarredMap.entries()].sort(([a], [b]) => {
+    if (a === "Today") return -1;
+    if (b === "Today") return 1;
+    if (a === "Yesterday") return b === "Today" ? 1 : -1;
+    if (b === "Yesterday") return a === "Today" ? -1 : 1;
+    return new Date(b).getTime() - new Date(a).getTime();
+  });
 
   return (
     <div className="mt-4 space-y-2 ">
@@ -108,11 +111,11 @@ export default function SidebarChatList() {
         label={"Archived"}
         size={16}
       />
-      {starreds.length > 0 && (
+      {starred.length > 0 && (
         <div>
           <div className="py-1 px-2 mb-1 text-sm font-semibold">Starred</div>
           <div className="space-y-1 mt-1">
-            {starreds.map((chat) => (
+            {starred.map((chat) => (
               <SidebarChatItem
                 key={chat.id}
                 chat={chat}
@@ -126,13 +129,13 @@ export default function SidebarChatList() {
 
       <div>
         <div className="space-y-4 mt-1">
-          {[...nonStarredMap.entries()].map(([date, chats]) => {
+          {orderedEntries.map(([date, chats]) => {
             if (chats.length === 0) return null;
 
             return (
               <div key={date}>
                 <div className="py-1 px-2 mb-1 text-sm font-semibold">
-                  {formatDateLabel(date)}
+                  {date}
                 </div>
                 {chats.map((chat) => (
                   <SidebarChatItem
@@ -160,10 +163,21 @@ function SidebarChatItem({
   isStarred: boolean;
   onToggleStar: (chat: Chat) => void;
 }) {
-  const { isMobile, setCollapsed } = useSidebar();
-  const { userPrefs } = useUser();
   const router = useRouter();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  const { isMobile, setCollapsed } = useSidebar();
+  const { userPrefs } = useUser();
+
+  const isActive = router.asPath === `/chat/${chat.id}`;
+  const chatType = chat.type;
+
+  const isHoveredOrDropdown = `${
+    isDropdownOpen || isActive ? "font-bold" : ""
+  }`;
+  const iconClassName = `opacity-100 transition-opacity ${
+    isDropdownOpen ? "opacity-0" : "group-hover:opacity-0"
+  }`;
 
   const handleLinkClick = () => {
     if (isMobile) {
@@ -171,8 +185,6 @@ function SidebarChatItem({
     }
     router.push(`/chat/${chat.id}`);
   };
-
-  const isHoveredOrDropdown = `${isDropdownOpen ? "bg-white font-bold" : ""}`;
 
   return (
     <div
@@ -183,12 +195,11 @@ function SidebarChatItem({
         onClick={handleLinkClick}
       >
         <div className="w-5 h-5 flex items-center justify-center relative">
-          <SquareMenu
-            size={16}
-            className={`opacity-100 transition-opacity ${
-              isDropdownOpen ? "opacity-0" : "group-hover:opacity-0"
-            }`}
-          />
+          {chatType == "chat" ? (
+            <FolderRoot size={16} className={iconClassName} />
+          ) : (
+            <GitBranch size={16} className={iconClassName} />
+          )}
 
           <button
             onClick={(e) => {

@@ -5,7 +5,7 @@ import {
   Bookmark,
   ChevronsLeftRight,
   ChevronsRightLeft,
-  GitBranch,
+  FolderGit2,
 } from "lucide-react";
 import HoverSwitchIcon from "../HoverSwitchIcon";
 
@@ -43,8 +43,8 @@ export default function ChatHeader({
       id: "branches",
       icon: (
         <HoverSwitchIcon
-          DefaultIcon={GitBranch}
-          HoverIcon={GitBranch}
+          DefaultIcon={FolderGit2}
+          HoverIcon={FolderGit2}
           fill={`rgb(${themeColor})`}
           isActive={openDrawer == "branches"}
         />
@@ -75,7 +75,7 @@ export default function ChatHeader({
           <button
             key={id}
             className={`${buttonClassName} ${
-              openDrawer === id ? "bg-white font-bold" : ""
+              openDrawer === id ? "font-bold" : ""
             }`}
             onClick={() => handleClick(id)}
           >

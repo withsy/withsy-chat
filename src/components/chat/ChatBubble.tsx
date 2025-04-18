@@ -42,14 +42,6 @@ const ChatBubbleComponent = ({ message, onToggleSaved }: Props) => {
     onToggleSaved(message.id, !message.isBookmarked);
   };
 
-  const handleBranch = () => {
-    console.log("start new branch");
-  };
-
-  const handleChangeModel = () => {
-    console.log("change model");
-  };
-
   return (
     <div
       className={cn(
@@ -82,12 +74,11 @@ const ChatBubbleComponent = ({ message, onToggleSaved }: Props) => {
         </div>
         <div className="flex justify-between w-full mt-2">
           <ChatBubbleTooltips
+            parentId={message.id}
             isAi={role == "model"}
             isSaved={message.isBookmarked}
             onCopy={handleCopy}
             onSave={handleSave}
-            onBranch={handleBranch}
-            onChangeModel={handleChangeModel}
           />
           <CollapseToggle
             show={isLongMessage}

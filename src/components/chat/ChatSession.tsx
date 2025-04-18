@@ -2,7 +2,7 @@ import { useSidebar } from "@/context/SidebarContext";
 import { useUser } from "@/context/UserContext";
 import { trpc } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
-import { ChatMessage } from "@/types/chat";
+import { Chat, ChatMessage } from "@/types/chat";
 import { skipToken } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -14,13 +14,14 @@ import { ChatInputBox } from "./ChatInputBox";
 import { ChatMessageList } from "./ChatMessageList";
 
 type Props = {
-  chatId: string | null;
+  chat: Chat | null;
   initialMessages: ChatMessage[];
   children?: React.ReactNode;
 };
 
-export function ChatSession({ chatId, initialMessages, children }: Props) {
+export function ChatSession({ chat, initialMessages, children }: Props) {
   const router = useRouter();
+
   const { isMobile } = useSidebar();
   const { userPrefs } = useUser();
   const [messages, setMessages] = useState(initialMessages);
@@ -35,7 +36,7 @@ export function ChatSession({ chatId, initialMessages, children }: Props) {
 
   useEffect(() => {
     setMessages(initialMessages);
-  }, [chatId, initialMessages]);
+  }, [chat, initialMessages]);
 
   useEffect(() => {
     const message =
@@ -83,11 +84,11 @@ export function ChatSession({ chatId, initialMessages, children }: Props) {
   );
 
   const onSendMessage = (message: string) => {
-    if (chatId != null) {
+    if (chat != null) {
       shouldAutoScrollRef.current = true;
       sendChatMessage.mutate(
         {
-          chatId,
+          chatId: chat.id,
           text: message,
           model: "gemini-2.0-flash",
           idempotencyKey: uuid(),

@@ -37,6 +37,22 @@ function withChat(db: Db, chatId: Expression<string>) {
 export class ChatMessageService {
   constructor(private readonly service: ServiceRegistry) {}
 
+  static async get(
+    db: Db,
+    userId: UserId,
+    input: { chatMessageId: ChatMessageId }
+  ) {
+    const { chatMessageId } = input;
+    const res = await db
+      .selectFrom("chatMessages as cm")
+      .innerJoin("chats as c", "c.id", "cm.chatId")
+      .where("c.userId", "=", userId)
+      .where("cm.id", "=", chatMessageId)
+      .select(cols(ChatMessageSchema, "cm"))
+      .executeTakeFirstOrThrow();
+    return res;
+  }
+
   async list(userId: UserId, input: ListChatMessages) {
     const { role, isBookmarked, options } = input;
     const { scope, afterId, order, limit, include } = options;
@@ -83,7 +99,6 @@ export class ChatMessageService {
       modelChatMessage: {
         id: ChatMessageId;
         chatId: ChatId;
-        parentId: ChatMessageId | null;
       };
     }
   ) {
@@ -94,95 +109,72 @@ export class ChatMessageService {
     const histories = await this.service.db
       .transaction()
       .execute(async (tx) => {
-        const baseQuery = tx
+        const currentHistories = await tx
           .selectFrom("chatMessages as cm")
           .innerJoin("chats as c", "c.id", "cm.chatId")
           .where("c.userId", "=", userId)
           .where("cm.chatId", "=", modelChatMessage.chatId)
           .where("cm.status", "=", ChatMessageStatus.enum.succeeded)
           .where("cm.text", "is not", null)
+          .where("cm.id", "<=", modelChatMessage.id)
           .select(["cm.role", "cm.text"])
-          .orderBy("cm.id", "desc");
+          .orderBy("cm.id", "desc")
+          .limit(remainLength)
+          .execute();
 
         const histories: History[] = [];
-        let oldestId = -1;
+        histories.push(
+          ...currentHistories.map((x) => {
+            if (x.text === null) throw new Error("Text must not null.");
+            return { role: x.role, text: x.text };
+          })
+        );
 
-        // branch messages
-        if (modelChatMessage.parentId !== null) {
-          if (remainLength > 0) {
-            const rows = await baseQuery
-              .where("cm.id", "<", modelChatMessage.id)
-              .where("cm.parentId", "=", modelChatMessage.parentId)
-              .select("cm.id")
-              .limit(remainLength)
-              .execute();
-
-            histories.push(
-              ...rows.map((x) => {
-                if (x.text === null)
-                  throw new Error("text must have a not null query applied.");
-                return { role: x.role, text: x.text };
-              })
-            );
-            remainLength -= rows.length;
-            oldestId = rows.at(-1)?.id ?? -1;
-          }
-
-          // parent message
-          if (remainLength > 0) {
-            const parent = await baseQuery
-              .where("cm.id", "=", modelChatMessage.parentId)
-              .where("cm.parentId", "is", null)
-              .select(["cm.id", "cm.replyToId"])
-              .executeTakeFirst();
-            if (parent) {
-              if (parent.text === null)
-                throw new Error("text must have a not null query applied.");
+        remainLength -= currentHistories.length;
+        if (remainLength > 0) {
+          const chat = await tx
+            .selectFrom("chats as c")
+            .where("c.userId", "=", userId)
+            .where("c.id", "=", modelChatMessage.chatId)
+            .select("c.parentMessageId")
+            .executeTakeFirstOrThrow();
+          if (chat.parentMessageId) {
+            const parentMessage = await tx
+              .selectFrom("chatMessages as cm")
+              .innerJoin("chats as c", "c.id", "cm.chatId")
+              .where("c.userId", "=", userId)
+              .where("cm.id", "=", chat.parentMessageId)
+              .select(["cm.role", "cm.text", "cm.chatId", "cm.status", "cm.id"])
+              .executeTakeFirstOrThrow();
+            if (parentMessage.status === "succeeded" && parentMessage.text) {
               histories.push({
-                role: parent.role,
-                text: parent.text,
+                role: parentMessage.role,
+                text: parentMessage.text,
               });
               remainLength -= 1;
-              oldestId = parent.id;
+            }
 
-              // reply to message
-              if (remainLength > 0 && parent.replyToId !== null) {
-                const replyTo = await baseQuery
-                  .where("cm.id", "=", parent.replyToId)
-                  .where("cm.parentId", "is", null)
-                  .select("cm.id")
-                  .executeTakeFirst();
-                if (replyTo) {
-                  if (replyTo.text === null)
-                    throw new Error("text must have a not null query applied.");
-                  histories.push({
-                    role: replyTo.role,
-                    text: replyTo.text,
-                  });
-                  remainLength -= 1;
-                  oldestId = replyTo.id;
-                }
-              }
+            if (remainLength > 0) {
+              const parentHistories = await tx
+                .selectFrom("chatMessages as cm")
+                .innerJoin("chats as c", "c.id", "cm.chatId")
+                .where("c.userId", "=", userId)
+                .where("cm.chatId", "=", parentMessage.chatId)
+                .where("cm.status", "=", ChatMessageStatus.enum.succeeded)
+                .where("cm.text", "is not", null)
+                .where("cm.id", "<=", parentMessage.id)
+                .select(["cm.role", "cm.text"])
+                .orderBy("cm.id", "desc")
+                .limit(remainLength)
+                .execute();
+              histories.push(
+                ...parentHistories.map((x) => {
+                  if (x.text === null) throw new Error("Text must not null.");
+                  return { role: x.role, text: x.text };
+                })
+              );
             }
           }
-        }
-
-        // non-branch messages
-        if (remainLength > 0) {
-          let query = baseQuery;
-          if (oldestId !== -1) query = query.where("cm.id", "<", oldestId);
-          const rows = await query
-            .where("cm.parentId", "is", null)
-            .limit(remainLength)
-            .execute();
-          histories.push(
-            ...rows.map((x) => {
-              if (x.text === null)
-                throw new Error("text must have a not null query applied.");
-              return { role: x.role, text: x.text };
-            })
-          );
-          remainLength -= rows.length;
         }
 
         return histories;
@@ -379,7 +371,7 @@ export class ChatMessageService {
       fileInfos: FileInfo[];
     }
   ) {
-    const { chatId, text, model, parentId, fileInfos } = input;
+    const { chatId, text, model, fileInfos } = input;
 
     const userChatMessage = await db
       .insertInto("chatMessages")
@@ -388,7 +380,6 @@ export class ChatMessageService {
         text,
         role: ChatRole.enum.user,
         status: ChatMessageStatus.enum.succeeded,
-        parentId: parentId ?? null,
       })
       .returning(cols(ChatMessageSchema, "chatMessages"))
       .executeTakeFirstOrThrow();
@@ -400,7 +391,6 @@ export class ChatMessageService {
         role: ChatRole.enum.model,
         model,
         status: ChatMessageStatus.enum.pending,
-        parentId: parentId ?? null,
         replyToId: userChatMessage.id,
       })
       .returning(cols(ChatMessageSchema, "chatMessages"))

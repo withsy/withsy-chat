@@ -1,8 +1,17 @@
-import { type StartChat, type UpdateChat } from "@/types/chat";
+import {
+  Chat,
+  ChatMessageId,
+  GetChat,
+  StartBranchChat,
+  type StartChat,
+  type UpdateChat,
+} from "@/types/chat";
+import { cols } from "@/types/common";
 import type { UserId } from "@/types/user";
 import type { ServiceRegistry } from "../service-registry";
 import { ChatMessageService } from "./chat-message-service";
 import type { Db } from "./db";
+import { IdempotencyInfoService } from "./idempotency-info-service";
 
 export class ChatService {
   constructor(private readonly service: ServiceRegistry) {}
@@ -12,9 +21,20 @@ export class ChatService {
       .selectFrom("chats as c")
       .where("c.userId", "=", userId)
       .orderBy("c.createdAt", "asc")
-      .select(["c.id", "c.isStarred", "c.updatedAt", "c.title"])
+      .select(cols(Chat, "c"))
       .execute();
 
+    return res;
+  }
+
+  async get(userId: UserId, input: GetChat) {
+    const { chatId } = input;
+    const res = await this.service.db
+      .selectFrom("chats as c")
+      .where("c.userId", "=", userId)
+      .where("c.id", "=", chatId)
+      .select(cols(Chat, "c"))
+      .executeTakeFirstOrThrow();
     return res;
   }
 
@@ -25,7 +45,7 @@ export class ChatService {
       .where("c.userId", "=", userId)
       .where("c.id", "=", chatId)
       .set({ title, isStarred })
-      .returning(["c.id", "c.isStarred", "c.updatedAt", "c.title"])
+      .returning(cols(Chat, "c"))
       .executeTakeFirstOrThrow();
 
     return res;
@@ -67,13 +87,51 @@ export class ChatService {
     };
   }
 
+  async startBranch(userId: UserId, input: StartBranchChat) {
+    const { idempotencyKey, parentMessageId } = input;
+
+    const res = await this.service.db.transaction().execute(async (tx) => {
+      await IdempotencyInfoService.checkDuplicateRequest(tx, idempotencyKey);
+
+      const parentMessage = await ChatMessageService.get(tx, userId, {
+        chatMessageId: parentMessageId,
+      });
+      const title = parentMessage.text
+        ? [...parentMessage.text].slice(0, 20).join("")
+        : undefined;
+      const chat = await ChatService.createBranchChat(tx, {
+        userId,
+        parentMessageId,
+        title,
+      });
+
+      return chat;
+    });
+
+    return res;
+  }
+
   static async createChat(db: Db, input: { userId: UserId; text: string }) {
     const { userId, text } = input;
-    const title = [...text].slice(0, 10).join("");
+    const title = text ? [...text].slice(0, 20).join("") : undefined;
     const res = await db
       .insertInto("chats")
-      .values({ userId, title })
-      .returning(["id", "updatedAt", "title", "isStarred"])
+      .values({ userId, title, type: "chat" })
+      .returning(cols(Chat, "chats"))
+      .executeTakeFirstOrThrow();
+
+    return res;
+  }
+
+  static async createBranchChat(
+    db: Db,
+    input: { userId: UserId; parentMessageId: ChatMessageId; title?: string }
+  ) {
+    const { userId, parentMessageId, title } = input;
+    const res = await db
+      .insertInto("chats")
+      .values({ userId, title, type: "branch", parentMessageId })
+      .returning(cols(Chat, "chats"))
       .executeTakeFirstOrThrow();
 
     return res;
