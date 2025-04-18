@@ -6,9 +6,11 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useUser } from "@/context/UserContext";
+import { trpc } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
 import { Bookmark, Copy, GitBranch, RefreshCw } from "lucide-react";
 import { useRouter } from "next/router";
+import { v4 as uuid } from "uuid";
 
 interface ChatBubbleTooltipsProps {
   parentId: number | null;
@@ -32,8 +34,23 @@ export const ChatBubbleTooltips: React.FC<ChatBubbleTooltipsProps> = ({
   const { userPrefs } = useUser();
   const { themeColor } = userPrefs;
 
+  const startChat = trpc.chat.start.useMutation();
+
   const handleBranch = () => {
-    console.log("parentId", parentId);
+    startChat.mutate(
+      {
+        text: "",
+        model: "gemini-2.0-flash",
+        idempotencyKey: uuid(),
+        parentMessageId: parentId ?? undefined,
+      },
+      {
+        onSuccess(data) {
+          router.push(`/chat/${data.chat.id}`);
+        },
+      }
+    );
+
     router.push({
       pathname: router.pathname,
       query: { ...router.query, parentId: parentId },
