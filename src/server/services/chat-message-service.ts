@@ -1,5 +1,4 @@
 import {
-  Chat,
   ChatId,
   ChatMessageId,
   ChatMessageSchema,
