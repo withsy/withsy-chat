@@ -119,7 +119,6 @@ export default function SidebarChatList() {
               <SidebarChatItem
                 key={chat.id}
                 chat={chat}
-                isStarred
                 onToggleStar={toggleStar}
               />
             ))}
@@ -141,7 +140,6 @@ export default function SidebarChatList() {
                   <SidebarChatItem
                     key={chat.id}
                     chat={chat}
-                    isStarred={false}
                     onToggleStar={toggleStar}
                   />
                 ))}
@@ -154,13 +152,11 @@ export default function SidebarChatList() {
   );
 }
 
-function SidebarChatItem({
+export function SidebarChatItem({
   chat,
-  isStarred,
   onToggleStar,
 }: {
   chat: Chat;
-  isStarred: boolean;
   onToggleStar: (chat: Chat) => void;
 }) {
   const router = useRouter();
@@ -212,7 +208,7 @@ function SidebarChatItem({
               size={16}
               className="transition-colors"
               style={
-                isStarred
+                chat.isStarred
                   ? {
                       fill: `rgb(${userPrefs.themeColor})`,
                     }
@@ -242,7 +238,7 @@ function SidebarChatItem({
         </DropdownMenuTrigger>
         <DropdownMenuContent side="top" align="start" className="z-[9999]">
           <DropdownMenuItem onClick={() => onToggleStar(chat)}>
-            {isStarred ? (
+            {chat.isStarred ? (
               <>
                 <StarOff size={14} className="mr-2" />
                 StarOff

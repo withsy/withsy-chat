@@ -1,5 +1,6 @@
 import { useSidebar } from "@/context/SidebarContext";
 import { useUser } from "@/context/UserContext";
+import { trpc } from "@/lib/trpc";
 import type { Chat } from "@/types/chat";
 import {
   Archive,
@@ -7,13 +8,13 @@ import {
   ChevronsLeftRight,
   ChevronsRightLeft,
   FolderGit2,
-  FolderRoot,
-  GitBranch,
 } from "lucide-react";
+import { useState } from "react";
 import HoverSwitchIcon from "../HoverSwitchIcon";
+import { SidebarChatItem } from "../layout/sidebar/SidebarChatList";
 
 interface ChatHeaderProps {
-  chat: Chat | null;
+  chat: Chat;
   setOpenDrawer: (id: string | null) => void;
   openDrawer: string | null;
 }
@@ -26,8 +27,33 @@ export default function ChatHeader({
   const { isMobile } = useSidebar();
   const { userPrefs, setUserPrefsAndSave } = useUser();
   const { themeColor, themeOpacity } = userPrefs;
+
+  const updateChatMut = trpc.chat.update.useMutation();
+  const utils = trpc.useUtils();
+  const [displayChat, setDisplayChat] = useState<Chat>(chat);
+
   const handleClick = (id: string) => {
     setOpenDrawer(openDrawer === id ? null : id);
+  };
+
+  const updateChat = () => {
+    const chatId = displayChat.id;
+    const prev = { ...displayChat };
+
+    const newChat = { ...displayChat, isStarred: !displayChat.isStarred };
+    setDisplayChat(newChat);
+
+    updateChatMut.mutate(
+      { chatId, isStarred: newChat.isStarred },
+      {
+        onError: () => {
+          setDisplayChat(prev);
+        },
+        onSuccess: () => {
+          utils.chat.list.invalidate();
+        },
+      }
+    );
   };
 
   const buttons = [
@@ -56,7 +82,6 @@ export default function ChatHeader({
       ),
     },
   ];
-  const chatType = chat?.type;
 
   const headerStyle: React.CSSProperties = {
     backgroundColor: `rgba(${themeColor}, ${themeOpacity - 0.1})`,
@@ -76,16 +101,7 @@ export default function ChatHeader({
       className="absolute top-0 left-0 w-full h-[50px] px-4 flex items-center justify-between"
       style={headerStyle}
     >
-      <div className="flex min-w-0 gap-3 items-center">
-        {chatType == "chat" ? (
-          <FolderRoot size={16} />
-        ) : (
-          <GitBranch size={16} />
-        )}
-        <span className="truncate text-foreground flex-1 font-bold">
-          {chat?.title}
-        </span>
-      </div>
+      <SidebarChatItem chat={displayChat} onToggleStar={updateChat} />
       <div className="flex gap-3">
         {buttons.map(({ label, id, icon }) => (
           <button
