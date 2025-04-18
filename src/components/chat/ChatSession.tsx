@@ -39,11 +39,11 @@ export function ChatSession({ chatId, initialMessages, children }: Props) {
     setMessages(initialMessages);
   }, [chatId, initialMessages]);
 
-  useEffect(() => {
-    if (typeof parentId === "string") {
-      setOpenDrawer(parentId);
-    }
-  }, [parentId]);
+  // useEffect(() => {
+  //   if (typeof parentId === "string") {
+  //     setOpenDrawer(parentId);
+  //   }
+  // }, [parentId]);
 
   useEffect(() => {
     const message =
