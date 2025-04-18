@@ -25,6 +25,11 @@ export type ChatSchema = zInfer<typeof ChatSchema>;
 export const Chat = ChatSchema.extend({});
 export type Chat = zInfer<typeof Chat>;
 
+export const GetChat = z.object({
+  chatId: ChatId,
+});
+export type GetChat = zInfer<typeof GetChat>;
+
 export const UpdateChat = z.object({
   chatId: ChatId,
   title: z.string().optional(),
@@ -69,7 +74,6 @@ export const StartChat = z.object({
   text: z.string(),
   model: ChatModel,
   files: z.array(z.instanceof(File)).optional(),
-  parentMessageId: ChatMessageId.optional(),
 });
 export type StartChat = zInfer<typeof StartChat>;
 
@@ -79,6 +83,12 @@ export const StartChatResult = z.object({
   modelChatMessage: ChatMessage,
 });
 export type StartChatResult = zInfer<typeof StartChatResult>;
+
+export const StartBranchChat = z.object({
+  idempotencyKey: IdempotencyKey,
+  parentMessageId: ChatMessageId,
+});
+export type StartBranchChat = zInfer<typeof StartBranchChat>;
 
 export const ListChatMessages = z.object({
   role: ChatRole.optional(),

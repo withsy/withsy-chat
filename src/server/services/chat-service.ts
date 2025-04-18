@@ -2,6 +2,8 @@ import {
   Chat,
   ChatMessageId,
   ChatType,
+  GetChat,
+  StartBranchChat,
   type StartChat,
   type UpdateChat,
 } from "@/types/chat";
@@ -10,6 +12,7 @@ import type { UserId } from "@/types/user";
 import type { ServiceRegistry } from "../service-registry";
 import { ChatMessageService } from "./chat-message-service";
 import type { Db } from "./db";
+import { IdempotencyInfoService } from "./idempotency-info-service";
 
 export class ChatService {
   constructor(private readonly service: ServiceRegistry) {}
@@ -22,6 +25,17 @@ export class ChatService {
       .select(cols(Chat, "c"))
       .execute();
 
+    return res;
+  }
+
+  async get(userId: UserId, input: GetChat) {
+    const { chatId } = input;
+    const res = await this.service.db
+      .selectFrom("chats as c")
+      .where("c.userId", "=", userId)
+      .where("c.id", "=", chatId)
+      .select(cols(Chat, "c"))
+      .executeTakeFirstOrThrow();
     return res;
   }
 
@@ -43,8 +57,6 @@ export class ChatService {
     const files = input.files ?? [];
 
     await this.service.idempotencyInfo.checkDuplicateRequest(idempotencyKey);
-
-    // TODO: check userId by parentMessageId.
 
     const { fileInfos } = await this.service.s3.uploads(userId, { files });
 
@@ -76,12 +88,31 @@ export class ChatService {
     };
   }
 
+  async startBranch(userId: UserId, input: StartBranchChat) {
+    const { idempotencyKey, parentMessageId } = input;
+
+    const res = await this.service.db.transaction().execute(async (tx) => {
+      await IdempotencyInfoService.checkDuplicateRequest(tx, idempotencyKey);
+
+      // TODO: check userId by parentMessageId.
+
+      const chat = await ChatService.createChat(tx, {
+        userId,
+        parentMessageId,
+      });
+
+      return chat;
+    });
+
+    return res;
+  }
+
   static async createChat(
     db: Db,
-    input: { userId: UserId; text: string; parentMessageId?: ChatMessageId }
+    input: { userId: UserId; text?: string; parentMessageId?: ChatMessageId }
   ) {
     const { userId, text, parentMessageId } = input;
-    const title = [...text].slice(0, 10).join("");
+    const title = text ? [...text].slice(0, 10).join("") : undefined;
     const type: ChatType = parentMessageId ? "branch" : "chat";
     const res = await db
       .insertInto("chats")

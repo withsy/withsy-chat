@@ -2,10 +2,12 @@ import {
   Chat,
   ChatChunk,
   ChatMessage,
+  GetChat,
   ListChatMessages,
   ReceiveChatChunkStream,
   SendChatMessage,
   SendChatMessageResult,
+  StartBranchChat,
   StartChat,
   StartChatResult,
   UpdateChat,
@@ -41,6 +43,14 @@ export const trpcRouter = t.router({
           .list(opts.ctx.userId)
           .then((xs) => xs.map((x) => Chat.parse(x)))
       ),
+    get: publicProcedure
+      .input(GetChat)
+      .output(Chat)
+      .query(async (opts) =>
+        opts.ctx.service.chat
+          .get(opts.ctx.userId, opts.input)
+          .then((x) => Chat.parse(x))
+      ),
     update: publicProcedure
       .input(UpdateChat)
       .output(Chat)
@@ -56,6 +66,14 @@ export const trpcRouter = t.router({
         opts.ctx.service.chat
           .start(opts.ctx.userId, opts.input)
           .then((x) => StartChatResult.parse(x))
+      ),
+    startBranch: publicProcedure
+      .input(StartBranchChat)
+      .output(Chat)
+      .mutation(async (opts) =>
+        opts.ctx.service.chat
+          .startBranch(opts.ctx.userId, opts.input)
+          .then((x) => Chat.parse(x))
       ),
   }),
   chatMessage: t.router({

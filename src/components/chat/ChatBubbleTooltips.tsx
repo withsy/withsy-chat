@@ -34,19 +34,19 @@ export const ChatBubbleTooltips: React.FC<ChatBubbleTooltipsProps> = ({
   const { userPrefs } = useUser();
   const { themeColor } = userPrefs;
 
-  const startChat = trpc.chat.start.useMutation();
+  const startBranchChat = trpc.chat.startBranch.useMutation();
 
   const handleBranch = () => {
-    startChat.mutate(
+    if (!parentId) return;
+
+    startBranchChat.mutate(
       {
-        text: "",
-        model: "gemini-2.0-flash",
         idempotencyKey: uuid(),
-        parentMessageId: parentId ?? undefined,
+        parentMessageId: parentId,
       },
       {
         onSuccess(data) {
-          router.push(`/chat/${data.chat.id}`);
+          router.push(`/chat/${data.id}`);
         },
       }
     );

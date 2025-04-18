@@ -8,14 +8,20 @@ type Props = {
 };
 
 export default function ChatView({ chatId }: Props) {
+  const getChat = trpc.chat.get.useQuery({ chatId });
   const listChatMessages = trpc.chatMessage.list.useQuery({
     options: { scope: { by: "chat", chatId } },
   });
+
+  if (getChat.isLoading) return <PartialLoading />;
+  if (getChat.isError || !getChat.data)
+    return <PartialError message="Loading Chat" />;
+
   if (listChatMessages.isLoading) return <PartialLoading />;
   if (listChatMessages.isError || !listChatMessages.data)
     return <PartialError message="Loading Messages" />;
 
   return (
-    <ChatSession chatId={chatId} initialMessages={listChatMessages.data} />
+    <ChatSession chat={getChat.data} initialMessages={listChatMessages.data} />
   );
 }
