@@ -1,8 +1,12 @@
+import { trpc } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
-import { type ChatMessage } from "@/types/chat";
+import { Chat, type ChatMessage } from "@/types/chat";
+import { skipToken } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { BookmarkCard } from "../bookmarks/BookmarkCard";
+import { PartialError } from "../Error";
+import { PartialLoading } from "../Loading";
 import { Drawer, DrawerContent } from "../ui/drawer";
 import ChatDrawerHeader from "./ChatDrawerHeader";
 
@@ -23,6 +27,9 @@ export const ResponsiveDrawer = ({
 }: ResponsiveDrawerProps) => {
   const router = useRouter();
   const isDrawerOpen = !!openDrawer;
+  const chatListBranches = trpc.chat.listBranches.useQuery(
+    chatId && openDrawer === "branches" ? { chatId } : skipToken
+  );
 
   useEffect(() => {
     const { parentId, ...restQuery } = router.query;
@@ -47,8 +54,7 @@ export const ResponsiveDrawer = ({
   } else if (openDrawer === "saved") {
     body = <SavedMessages messages={savedMessages ?? []} />;
   } else if (openDrawer === "branches") {
-    console.log("branches", chatId);
-    body = <div>branches</div>;
+    body = <Branches chatListBranches={chatListBranches} />;
   } else {
     body = <div className="text-sm text-muted-foreground">No content</div>;
   }
@@ -112,6 +118,34 @@ function SavedMessages({ messages }: { messages: ChatMessage[] }) {
           hideUnsave={true}
         />
       ))}
+    </div>
+  );
+}
+
+function Branches({ chatListBranches }: { chatListBranches: any }) {
+  if (chatListBranches.isLoading) {
+    return <PartialLoading />;
+  } else if (chatListBranches.isError) {
+    return <PartialError />;
+  } else if (chatListBranches.data) {
+    if (chatListBranches.data.length == 0) {
+      return (
+        <div className="h-full w-full flex items-center justify-center text-muted-foreground">
+          No branches yet.
+        </div>
+      );
+    }
+    return (
+      <div>
+        {chatListBranches.data.map((x: Chat) => {
+          return <div key={x.id}>{x.title}</div>;
+        })}
+      </div>
+    );
+  }
+  return (
+    <div className="h-full w-full flex items-center justify-center text-muted-foreground">
+      Unknown Error. Please Report.
     </div>
   );
 }
