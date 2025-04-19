@@ -9,16 +9,24 @@ export class ChatMessageFileService {
 
   async list(userId: UserId, input: { chatMessageId: ChatMessageId }) {
     const { chatMessageId } = input;
-    const res = await this.service.db
-      .selectFrom("chatMessageFiles as cmf")
-      .innerJoin("chatMessages as cm", "cm.id", "cmf.chatMessageId")
-      .innerJoin("chats as c", "c.id", "cm.chatId")
-      .where("c.userId", "=", userId)
-      .where("c.deletedAt", "is", null)
-      .where("cmf.chatMessageId", "=", chatMessageId)
-      .orderBy("cmf.id")
-      .select(["cmf.fileUri", "cmf.mimeType"])
-      .execute();
+    const res = await this.service.db.chatMessageFiles.findMany({
+      where: {
+        chatMessage: {
+          chat: {
+            userId,
+            deletedAt: null,
+          },
+        },
+        chatMessageId,
+      },
+      orderBy: {
+        id: "asc",
+      },
+      select: {
+        fileUri: true,
+        mimeType: true,
+      },
+    });
 
     return res;
   }

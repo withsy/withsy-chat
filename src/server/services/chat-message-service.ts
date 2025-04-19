@@ -85,83 +85,79 @@ export class ChatMessageService {
 
     // TODO: Change limit history length
     let remainLength = 10;
-    const histories = await this.service.db
-      .transaction()
-      .execute(async (tx) => {
-        const currentHistories = await tx
-          .selectFrom("chatMessages as cm")
-          .innerJoin("chats as c", "c.id", "cm.chatId")
-          .where("c.userId", "=", userId)
-          .where("c.deletedAt", "is", null)
-          .where("cm.chatId", "=", modelChatMessage.chatId)
-          .where("cm.status", "=", ChatMessageStatus.enum.succeeded)
-          .where("cm.text", "is not", null)
-          .where("cm.id", "<=", modelChatMessage.id)
-          .select(["cm.role", "cm.text"])
-          .orderBy("cm.id", "desc")
-          .limit(remainLength)
-          .execute();
+    const histories = await this.service.db.$transaction(async (tx) => {
+      const currentHistories = await tx.chatMessages.findMany({
+        where: {
+          chat: {
+            userId,
+            deletedAt: null,
+          },
+          chatId: modelChatMessage.chatId,
+          status: "succeeded",
+          id: {
+            lte: modelChatMessage.id,
+          },
+        },
+        select: {
+          role: true,
+          text: true,
+        },
+        take: remainLength,
+        orderBy: {
+          id: "desc",
+        },
+      });
 
-        const histories: ChatMessageForHistory[] = [];
-        histories.push(
-          ...currentHistories.map((x) => {
-            if (x.text === null) throw new Error("Text must not null.");
-            return { role: x.role, text: x.text };
-          })
-        );
+      const histories: ChatMessageForHistory[] = [];
+      histories.push(...currentHistories);
 
-        remainLength -= currentHistories.length;
-        if (remainLength > 0) {
-          const chat = await tx
-            .selectFrom("chats as c")
-            .where("c.userId", "=", userId)
-            .where("c.deletedAt", "is", null)
-            .where("c.id", "=", modelChatMessage.chatId)
-            .select("c.parentMessageId")
-            .executeTakeFirstOrThrow();
-          if (chat.parentMessageId) {
-            const parentMessage = await tx
-              .selectFrom("chatMessages as cm")
-              .innerJoin("chats as c", "c.id", "cm.chatId")
-              .where("c.userId", "=", userId)
-              .where("c.deletedAt", "is", null)
-              .where("cm.id", "=", chat.parentMessageId)
-              .select(["cm.role", "cm.text", "cm.chatId", "cm.status", "cm.id"])
-              .executeTakeFirstOrThrow();
-            if (parentMessage.status === "succeeded" && parentMessage.text) {
-              histories.push({
-                role: parentMessage.role,
-                text: parentMessage.text,
-              });
-              remainLength -= 1;
-            }
+      remainLength -= currentHistories.length;
+      if (remainLength > 0) {
+        const chat = await tx.chats.findUniqueOrThrow({
+          where: {
+            userId,
+            deletedAt: null,
+            id: modelChatMessage.chatId,
+          },
+          include: {
+            parentMessage: true,
+          },
+        });
+        const { parentMessage } = chat;
+        if (parentMessage && parentMessage.status === "succeeded") {
+          histories.push({
+            role: parentMessage.role,
+            text: parentMessage.text,
+          });
+          remainLength -= 1;
 
-            if (remainLength > 0) {
-              const parentHistories = await tx
-                .selectFrom("chatMessages as cm")
-                .innerJoin("chats as c", "c.id", "cm.chatId")
-                .where("c.userId", "=", userId)
-                .where("c.deletedAt", "is", null)
-                .where("cm.chatId", "=", parentMessage.chatId)
-                .where("cm.status", "=", ChatMessageStatus.enum.succeeded)
-                .where("cm.text", "is not", null)
-                .where("cm.id", "<=", parentMessage.id)
-                .select(["cm.role", "cm.text"])
-                .orderBy("cm.id", "desc")
-                .limit(remainLength)
-                .execute();
-              histories.push(
-                ...parentHistories.map((x) => {
-                  if (x.text === null) throw new Error("Text must not null.");
-                  return { role: x.role, text: x.text };
-                })
-              );
-            }
+          if (remainLength > 0) {
+            const parentHistories = await tx.chatMessages.findMany({
+              where: {
+                chat: {
+                  userId,
+                  deletedAt: null,
+                },
+                chatId: parentMessage.chatId,
+                status: "succeeded",
+                id: parentMessage.id,
+              },
+              select: {
+                role: true,
+                text: true,
+              },
+              orderBy: {
+                id: "desc",
+              },
+              take: remainLength,
+            });
+            histories.push(...parentHistories);
           }
         }
+      }
 
-        return histories;
-      });
+      return histories;
+    });
 
     histories.reverse(); // to oldest
     return histories;
@@ -169,30 +165,34 @@ export class ChatMessageService {
 
   async find(userId: UserId, input: { chatMessageId: ChatMessageId }) {
     const { chatMessageId } = input;
-    const res = await this.service.db
-      .selectFrom("chatMessages as cm")
-      .innerJoin("chats as c", "c.id", "cm.chatId")
-      .where("c.userId", "=", userId)
-      .where("c.deletedAt", "is", null)
-      .where("cm.id", "=", chatMessageId)
-      .select(cols(ChatMessageSchema, "cm"))
-      .executeTakeFirstOrThrow();
+    const res = await this.service.db.chatMessages.findUnique({
+      where: {
+        chat: {
+          userId,
+          deletedAt: null,
+        },
+        id: chatMessageId,
+      },
+    });
 
     return res;
   }
 
   async update(userId: UserId, input: UpdateChatMessage) {
     const { chatMessageId, isBookmarked } = input;
-    const res = await this.service.db
-      .updateTable("chatMessages as cm")
-      .from("chats as c")
-      .whereRef("c.id", "=", "cm.chatId")
-      .where("c.userId", "=", userId)
-      .where("c.deletedAt", "is", null)
-      .where("cm.id", "=", chatMessageId)
-      .set({ isBookmarked })
-      .returning(cols(ChatMessageSchema, "cm"))
-      .executeTakeFirstOrThrow();
+    const res = await this.service.db.chatMessages.update({
+      where: {
+        chat: {
+          userId,
+          deletedAt: null,
+        },
+        id: chatMessageId,
+      },
+      data: {
+        isBookmarked,
+      },
+    });
+
     return res;
   }
 
@@ -201,27 +201,30 @@ export class ChatMessageService {
     input: { chatMessageId: ChatMessageId }
   ) {
     const { chatMessageId } = input;
-    const res = await this.service.db
-      .selectFrom("chatMessages as cm")
-      .innerJoin("chats as c", "c.id", "cm.chatId")
-      .where("c.userId", "=", userId)
-      .where("c.deletedAt", "is", null)
-      .where("cm.id", "=", chatMessageId)
-      .where("cm.updatedAt", "<", new Date(Date.now() - 5 * 60_000)) // 5 minutes
-      .where(({ or, eb }) =>
-        or([
-          eb("cm.status", "=", ChatMessageStatus.enum.succeeded),
-          eb("cm.status", "=", ChatMessageStatus.enum.failed),
-        ])
-      )
-      .select(["cm.id"])
-      .executeTakeFirst();
+    const res = await this.service.db.chatMessages.findUnique({
+      where: {
+        chat: {
+          userId,
+          deletedAt: null,
+        },
+        id: chatMessageId,
+        updatedAt: {
+          lt: new Date(Date.now() - 5 * 60_000), // 5 minutes
+        },
+        status: {
+          in: ["succeeded", "failed"],
+        },
+      },
+      select: {
+        id: true,
+      },
+    });
 
     return !!res;
   }
 
   static async transit(
-    db: Db,
+    tx: Tx,
     userId: UserId,
     input: {
       chatMessageId: ChatMessageId;
@@ -230,17 +233,22 @@ export class ChatMessageService {
     }
   ) {
     const { chatMessageId, expectStatus, nextStatus } = input;
-    const res = await db
-      .updateTable("chatMessages as cm")
-      .from("chats as c")
-      .whereRef("c.id", "=", "cm.chatId")
-      .where("c.userId", "=", userId)
-      .where("c.deletedAt", "is", null)
-      .where("cm.id", "=", chatMessageId)
-      .where("cm.status", "=", expectStatus)
-      .set({ status: nextStatus })
-      .returning("cm.id")
-      .executeTakeFirst();
+    const res = await tx.chatMessages.update({
+      where: {
+        chat: {
+          userId,
+          deletedAt: null,
+        },
+        id: chatMessageId,
+        status: expectStatus,
+      },
+      data: {
+        status: nextStatus,
+      },
+      select: {
+        id: true,
+      },
+    });
 
     return res;
   }
@@ -250,7 +258,7 @@ export class ChatMessageService {
     input: { chatMessageId: ChatMessageId }
   ) {
     const { chatMessageId } = input;
-    const res = await this.service.db.transaction().execute(async (tx) => {
+    const res = await this.service.db.$transaction(async (tx) => {
       const res = await ChatMessageService.transit(tx, userId, {
         chatMessageId,
         expectStatus: "pending",
@@ -267,7 +275,7 @@ export class ChatMessageService {
     input: { chatMessageId: ChatMessageId; text: string }
   ) {
     const { chatMessageId, text } = input;
-    await this.service.db.transaction().execute(async (tx) => {
+    await this.service.db.$transaction(async (tx) => {
       const res = await ChatMessageService.transit(tx, userId, {
         chatMessageId,
         expectStatus: "processing",
@@ -279,15 +287,18 @@ export class ChatMessageService {
           `Chat message transition failed. chatMessageId: ${chatMessageId} status: processing to succeeded.`
         );
 
-      await tx
-        .updateTable("chatMessages as cm")
-        .from("chats as c")
-        .whereRef("c.id", "=", "cm.chatId")
-        .where("c.userId", "=", userId)
-        .where("c.deletedAt", "is", null)
-        .where("cm.id", "=", chatMessageId)
-        .set({ text })
-        .executeTakeFirstOrThrow();
+      await tx.chatMessages.update({
+        where: {
+          chat: {
+            userId,
+            deletedAt: null,
+          },
+          id: chatMessageId,
+        },
+        data: {
+          text,
+        },
+      });
     });
   }
 
@@ -296,7 +307,7 @@ export class ChatMessageService {
     input: { chatMessageId: ChatMessageId }
   ) {
     const { chatMessageId } = input;
-    const res = await this.service.db.transaction().execute(async (tx) => {
+    const res = await this.service.db.$transaction(async (tx) => {
       const res = await ChatMessageService.transit(tx, userId, {
         chatMessageId,
         expectStatus: "processing",
@@ -311,14 +322,19 @@ export class ChatMessageService {
   }
 
   async onCleanupZombiesTask() {
-    const { numUpdatedRows } = await this.service.db
-      .updateTable("chatMessages as cm")
-      .where("cm.status", "=", "processing")
-      .where("cm.updatedAt", "<", new Date(Date.now() - 5 * 60_000)) // 5 minutes
-      .set({ status: "failed" })
-      .executeTakeFirst();
-    if (numUpdatedRows > 0)
-      console.warn(`Marked ${numUpdatedRows} zombie chat messages as failed.`);
+    const res = await this.service.db.chatMessages.updateMany({
+      where: {
+        status: "processing",
+        updatedAt: {
+          lt: new Date(Date.now() - 5 * 60_000), // 5 minutes
+        },
+      },
+      data: {
+        status: "failed",
+      },
+    });
+    if (res.count > 0)
+      console.warn(`Marked ${res.count} zombie chat messages as failed.`);
   }
 
   async send(userId: UserId, input: SendChatMessage) {
@@ -329,9 +345,8 @@ export class ChatMessageService {
 
     const { fileInfos } = await this.service.s3.uploads(userId, { files });
 
-    const { userChatMessage, modelChatMessage } = await this.service.db
-      .transaction()
-      .execute(async (tx) => {
+    const { userChatMessage, modelChatMessage } =
+      await this.service.db.$transaction(async (tx) => {
         const res = await ChatMessageService.createInfo(tx, {
           chatId,
           model,
