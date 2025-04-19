@@ -26,6 +26,7 @@ function withChat(db: Db, chatId: Expression<string>) {
     db
       .selectFrom("chats")
       .where("chats.id", "=", chatId)
+      .where("chats.deletedAt", "is", null)
       .select(cols(ChatSchema, "chats"))
   );
 }
@@ -43,6 +44,7 @@ export class ChatMessageService {
       .selectFrom("chatMessages as cm")
       .innerJoin("chats as c", "c.id", "cm.chatId")
       .where("c.userId", "=", userId)
+      .where("c.deletedAt", "is", null)
       .where("cm.id", "=", chatMessageId)
       .select(cols(ChatMessageSchema, "cm"))
       .executeTakeFirstOrThrow();
@@ -56,7 +58,8 @@ export class ChatMessageService {
     let query = this.service.db
       .selectFrom("chatMessages as cm")
       .innerJoin("chats as c", "c.id", "cm.chatId")
-      .where("c.userId", "=", userId);
+      .where("c.userId", "=", userId)
+      .where("c.deletedAt", "is", null);
 
     if (scope.by === "user") {
       // noop
@@ -109,6 +112,7 @@ export class ChatMessageService {
           .selectFrom("chatMessages as cm")
           .innerJoin("chats as c", "c.id", "cm.chatId")
           .where("c.userId", "=", userId)
+          .where("c.deletedAt", "is", null)
           .where("cm.chatId", "=", modelChatMessage.chatId)
           .where("cm.status", "=", ChatMessageStatus.enum.succeeded)
           .where("cm.text", "is not", null)
@@ -131,6 +135,7 @@ export class ChatMessageService {
           const chat = await tx
             .selectFrom("chats as c")
             .where("c.userId", "=", userId)
+            .where("c.deletedAt", "is", null)
             .where("c.id", "=", modelChatMessage.chatId)
             .select("c.parentMessageId")
             .executeTakeFirstOrThrow();
@@ -139,6 +144,7 @@ export class ChatMessageService {
               .selectFrom("chatMessages as cm")
               .innerJoin("chats as c", "c.id", "cm.chatId")
               .where("c.userId", "=", userId)
+              .where("c.deletedAt", "is", null)
               .where("cm.id", "=", chat.parentMessageId)
               .select(["cm.role", "cm.text", "cm.chatId", "cm.status", "cm.id"])
               .executeTakeFirstOrThrow();
@@ -155,6 +161,7 @@ export class ChatMessageService {
                 .selectFrom("chatMessages as cm")
                 .innerJoin("chats as c", "c.id", "cm.chatId")
                 .where("c.userId", "=", userId)
+                .where("c.deletedAt", "is", null)
                 .where("cm.chatId", "=", parentMessage.chatId)
                 .where("cm.status", "=", ChatMessageStatus.enum.succeeded)
                 .where("cm.text", "is not", null)
@@ -186,6 +193,7 @@ export class ChatMessageService {
       .selectFrom("chatMessages as cm")
       .innerJoin("chats as c", "c.id", "cm.chatId")
       .where("c.userId", "=", userId)
+      .where("c.deletedAt", "is", null)
       .where("cm.id", "=", chatMessageId)
       .select(cols(ChatMessageSchema, "cm"))
       .executeTakeFirstOrThrow();
@@ -200,6 +208,7 @@ export class ChatMessageService {
       .from("chats as c")
       .whereRef("c.id", "=", "cm.chatId")
       .where("c.userId", "=", userId)
+      .where("c.deletedAt", "is", null)
       .where("cm.id", "=", chatMessageId)
       .set({ isBookmarked })
       .returning(cols(ChatMessageSchema, "cm"))
@@ -216,6 +225,7 @@ export class ChatMessageService {
       .selectFrom("chatMessages as cm")
       .innerJoin("chats as c", "c.id", "cm.chatId")
       .where("c.userId", "=", userId)
+      .where("c.deletedAt", "is", null)
       .where("cm.id", "=", chatMessageId)
       .where("cm.updatedAt", "<", new Date(Date.now() - 5 * 60_000)) // 5 minutes
       .where(({ or, eb }) =>
@@ -245,6 +255,7 @@ export class ChatMessageService {
       .from("chats as c")
       .whereRef("c.id", "=", "cm.chatId")
       .where("c.userId", "=", userId)
+      .where("c.deletedAt", "is", null)
       .where("cm.id", "=", chatMessageId)
       .where("cm.status", "=", expectStatus)
       .set({ status: nextStatus })
@@ -293,6 +304,7 @@ export class ChatMessageService {
         .from("chats as c")
         .whereRef("c.id", "=", "cm.chatId")
         .where("c.userId", "=", userId)
+        .where("c.deletedAt", "is", null)
         .where("cm.id", "=", chatMessageId)
         .set({ text })
         .executeTakeFirstOrThrow();

@@ -1,6 +1,7 @@
 import {
   Chat,
   ChatChunk,
+  ChatDelete,
   ChatListBranches,
   ChatMessage,
   GetChat,
@@ -66,6 +67,14 @@ export const trpcRouter = t.router({
       .mutation(async (opts) =>
         opts.ctx.service.chat
           .update(opts.ctx.userId, opts.input)
+          .then((x) => Chat.parse(x))
+      ),
+    delete: publicProcedure
+      .input(ChatDelete)
+      .output(Chat)
+      .mutation(async (opts) =>
+        opts.ctx.service.chat
+          .delete(opts.ctx.userId, opts.input)
           .then((x) => Chat.parse(x))
       ),
     start: publicProcedure

@@ -175,10 +175,13 @@ export function SidebarChatItem({
 
   const utils = trpc.useUtils();
   const updateChatTitle = trpc.chat.update.useMutation({
-    async onMutate() {
-      await utils.chat.list.cancel();
-    },
-    onSuccess() {
+    onMutate: () => utils.chat.list.cancel(),
+    onSuccess: () => utils.chat.list.invalidate(),
+  });
+  const deleteChat = trpc.chat.delete.useMutation({
+    onMutate: () => utils.chat.list.cancel(),
+    onSuccess: () => {
+      if (isActive) router.push("/chat");
       utils.chat.list.invalidate();
     },
   });
@@ -327,8 +330,7 @@ export function SidebarChatItem({
           onCancel={() => setShowDeleteModal(false)}
           onConfirm={() => {
             setShowDeleteModal(false);
-            // TODO: Delete Mutation
-            console.log("Delete:", chat.id);
+            deleteChat.mutate({ chatId: chat.id });
           }}
         />
       )}
