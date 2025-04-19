@@ -24,4 +24,4 @@ COPY --from=builder /app/prod ./prod
 ENV NODE_ENV=production
 EXPOSE 3000
 
-CMD ["node", "prod/start.mjs", "npm", "start"]
+CMD ["node", "start.mjs", "npm", "start"]
