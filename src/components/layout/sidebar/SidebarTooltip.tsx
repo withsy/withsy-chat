@@ -24,8 +24,8 @@ export function SidebarTooltip({
 
   const className = `
               group flex items-center gap-2 px-2.5 py-2 rounded-md transition-colors w-full 
-              hover:bg-white hover:font-bold cursor-pointer ${
-                isActive ? "font-bold" : ""
+              hover:bg-white hover:font-semibold cursor-pointer ${
+                isActive ? "font-semibold" : ""
               }
             `;
   const handleLinkClick = () => {

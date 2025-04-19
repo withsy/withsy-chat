@@ -55,7 +55,7 @@ export function ModelSelect({ value, onChange }: Props) {
               }}
               className={cn(
                 "cursor-pointer px-3 py-1 hover:bg-gray-100",
-                model.value === value && "bg-gray-100 font-bold"
+                model.value === value && "bg-gray-100 font-semibold"
               )}
             >
               {model.label}
