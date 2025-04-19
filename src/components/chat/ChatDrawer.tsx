@@ -7,6 +7,7 @@ import { Drawer, DrawerContent } from "../ui/drawer";
 import ChatDrawerHeader from "./ChatDrawerHeader";
 
 type ResponsiveDrawerProps = {
+  chatId: string | undefined;
   openDrawer: string | null;
   setOpenDrawer: (value: string | null) => void;
   isMobile: boolean;
@@ -14,6 +15,7 @@ type ResponsiveDrawerProps = {
 };
 
 export const ResponsiveDrawer = ({
+  chatId,
   openDrawer,
   setOpenDrawer,
   savedMessages,
@@ -39,16 +41,16 @@ export const ResponsiveDrawer = ({
     setOpenDrawer(null);
   };
 
-  // 🧩 Body content
   let body;
   if (openDrawer == null) {
     body = <div className="text-sm text-muted-foreground">No content</div>;
   } else if (openDrawer === "saved") {
     body = <SavedMessages messages={savedMessages ?? []} />;
   } else if (openDrawer === "branches") {
+    console.log("branches", chatId);
     body = <div>branches</div>;
   } else {
-    body = <div>branch: {openDrawer}</div>;
+    body = <div className="text-sm text-muted-foreground">No content</div>;
   }
 
   if (isMobile) {

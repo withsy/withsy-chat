@@ -214,6 +214,7 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
         </div>
       </div>
       <ResponsiveDrawer
+        chatId={chat?.id}
         openDrawer={openDrawer}
         setOpenDrawer={setOpenDrawer}
         isMobile={isMobile}
