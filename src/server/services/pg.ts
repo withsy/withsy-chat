@@ -3,7 +3,7 @@ import type { MaybePromise } from "@trpc/server/unstable-core-do-not-import";
 import { type Notification, Pool } from "pg";
 import { envConfig } from "../env-config";
 
-export function createPool(): Pool {
+export function createPgPool(): Pool {
   const pool = new Pool({
     connectionString: envConfig.databaseUrl,
   });

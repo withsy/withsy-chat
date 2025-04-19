@@ -1,7 +1,4 @@
-import { StatusCodes } from "http-status-codes";
 import type { Pool } from "pg";
-import { envConfig } from "./env-config";
-import { HttpServerError } from "./error";
 import { createLazyRegistry, type LazyRegistryProxy } from "./lazy-registry";
 import { ChatChunkService } from "./services/chat-chunk-service";
 import { ChatMessageFileService } from "./services/chat-message-file-service";
@@ -13,13 +10,13 @@ import { GoogleGenAiService } from "./services/google-gen-ai-service";
 import { IdempotencyInfoService } from "./services/idempotency-info-service";
 import { MockS3Service } from "./services/mock-s3-service";
 import { OpenAiService } from "./services/open-ai-service";
-import { createPool } from "./services/pg";
+import { createPgPool } from "./services/pg";
 import { TaskService } from "./services/task-service";
 import { UserLinkAccountService } from "./services/user-link-account-service";
 import { UserService } from "./services/user-service";
 
 type ServiceDefinition = {
-  pool: Pool;
+  pgPool: Pool;
   db: Db;
   user: UserService;
   userLinkAccount: UserLinkAccountService;
@@ -39,7 +36,7 @@ export type ServiceRegistry = LazyRegistryProxy<ServiceDefinition>;
 
 function createServiceRegistry() {
   return createLazyRegistry<ServiceDefinition>({
-    pool: () => createPool(),
+    pgPool: () => createPgPool(),
     db: (s) => createDb(s),
     user: (s) => new UserService(s),
     userLinkAccount: (s) => new UserLinkAccountService(s),

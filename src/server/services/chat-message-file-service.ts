@@ -1,7 +1,7 @@
 import type { ChatMessageId } from "@/types/chat";
 import type { UserId } from "@/types/user";
 import type { ServiceRegistry } from "../service-registry";
-import type { Db } from "./db";
+import type { Db, Tx } from "./db";
 import type { FileInfo } from "./mock-s3-service";
 
 export class ChatMessageFileService {
@@ -24,7 +24,7 @@ export class ChatMessageFileService {
   }
 
   static async createAll(
-    db: Db,
+    tx: Tx,
     input: { chatMessageId: ChatMessageId; fileInfos: FileInfo[] }
   ) {
     const { chatMessageId, fileInfos } = input;
@@ -34,6 +34,8 @@ export class ChatMessageFileService {
       fileUri: x.fileUri,
       mimeType: x.mimeType,
     }));
-    await db.insertInto("chatMessageFiles").values(files).execute();
+    await tx.chatMessageFiles.createMany({
+      data: files,
+    });
   }
 }

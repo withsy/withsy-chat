@@ -15,66 +15,53 @@ import { cols } from "@/types/common";
 import { UserId } from "@/types/user";
 import type { ServiceRegistry } from "../service-registry";
 import { ChatMessageService } from "./chat-message-service";
-import type { Db } from "./db";
+import type { Db, Tx } from "./db";
 import { IdempotencyInfoService } from "./idempotency-info-service";
 
 export class ChatService {
   constructor(private readonly service: ServiceRegistry) {}
 
   async list(userId: UserId) {
-    const res = await this.service.db
-      .selectFrom("chats as c")
-      .where("c.userId", "=", userId)
-      .where("c.deletedAt", "is", null)
-      .orderBy("c.createdAt", "asc")
-      .select(cols(ChatSchema, "c"))
-      .execute();
+    const xs = await this.service.db.chats.findMany({
+      where: {
+        userId,
+        deletedAt: null,
+      },
+      orderBy: {
+        createdAt: "asc",
+      },
+    });
 
-    return res;
+    return xs;
   }
 
   async listBranches(userId: UserId, input: ChatListBranches) {
     const { chatId } = input;
-    const res = await this.service.db
-      .selectFrom("chats as c")
-      .innerJoin("chatMessages as cm", (join) =>
-        join
-          .onRef("cm.id", "=", "c.parentMessageId")
-          .on("cm.chatId", "=", chatId)
-      )
-      .where("c.userId", "=", userId)
-      .where("c.deletedAt", "is", null)
-      .select(cols(ChatSchema, "c"))
-      .execute();
-    return res;
+    const xs = this.service.db.chats.findMany({
+      where: {
+        parentMessage: {
+          chatId,
+        },
+        userId,
+        deletedAt: null,
+      },
+    });
+
+    return xs;
   }
 
   async get(userId: UserId, input: GetChat) {
     const { chatId, options } = input;
     const { include } = options ?? {};
-    const res = await this.service.db.transaction().execute(async (tx) => {
-      const chat = await tx
-        .selectFrom("chats as c")
-        .where("c.userId", "=", userId)
-        .where("c.deletedAt", "is", null)
-        .where("c.id", "=", chatId)
-        .select(cols(ChatSchema, "c"))
-        .executeTakeFirstOrThrow();
-
-      const parsedChat = Chat.parse(chat);
-      if (chat.parentMessageId && include?.parentMessage) {
-        const parentMessage = await tx
-          .selectFrom("chatMessages as cm")
-          .innerJoin("chats as c", "c.id", "cm.chatId")
-          .where("c.userId", "=", userId)
-          .where("c.deletedAt", "is", null)
-          .where("cm.id", "=", chat.parentMessageId)
-          .select(cols(ChatMessageSchema, "cm"))
-          .executeTakeFirstOrThrow();
-        parsedChat.parentMessage = ChatMessage.parse(parentMessage);
-      }
-
-      return parsedChat;
+    const res = await this.service.db.chats.findUnique({
+      where: {
+        id: chatId,
+        userId,
+        deletedAt: null,
+      },
+      include: {
+        parentMessage: include?.parentMessage ?? false,
+      },
     });
 
     return res;
@@ -82,28 +69,33 @@ export class ChatService {
 
   async update(userId: UserId, input: UpdateChat) {
     const { chatId, title, isStarred } = input;
-    const res = await this.service.db
-      .updateTable("chats as c")
-      .where("c.userId", "=", userId)
-      .where("c.deletedAt", "is", null)
-      .where("c.id", "=", chatId)
-      .set({ title, isStarred })
-      .returning(cols(ChatSchema, "c"))
-      .executeTakeFirstOrThrow();
+    const res = await this.service.db.chats.update({
+      where: {
+        id: chatId,
+        userId,
+        deletedAt: null,
+      },
+      data: {
+        title,
+        isStarred,
+      },
+    });
 
     return res;
   }
 
   async delete(userId: UserId, input: ChatDelete) {
     const { chatId } = input;
-    const res = await this.service.db
-      .updateTable("chats as c")
-      .where("c.userId", "=", userId)
-      .where("c.deletedAt", "is", null)
-      .where("c.id", "=", chatId)
-      .set({ deletedAt: new Date() })
-      .returning(cols(ChatSchema, "c"))
-      .executeTakeFirstOrThrow();
+    const res = await this.service.db.chats.update({
+      where: {
+        id: chatId,
+        userId,
+        deletedAt: null,
+      },
+      data: {
+        deletedAt: new Date(),
+      },
+    });
 
     return res;
   }
@@ -116,9 +108,8 @@ export class ChatService {
 
     const { fileInfos } = await this.service.s3.uploads(userId, { files });
 
-    const { chat, userChatMessage, modelChatMessage } = await this.service.db
-      .transaction()
-      .execute(async (tx) => {
+    const { chat, userChatMessage, modelChatMessage } =
+      await this.service.db.$transaction(async (tx) => {
         const chat = await ChatService.createChat(tx, { userId, text });
         const { userChatMessage, modelChatMessage } =
           await ChatMessageService.createInfo(tx, {
@@ -147,10 +138,10 @@ export class ChatService {
   async startBranch(userId: UserId, input: StartBranchChat) {
     const { idempotencyKey, parentMessageId } = input;
 
-    const res = await this.service.db.transaction().execute(async (tx) => {
+    const res = await this.service.db.$transaction(async (tx) => {
       await IdempotencyInfoService.checkDuplicateRequest(tx, idempotencyKey);
 
-      const parentMessage = await ChatMessageService.get(tx, userId, {
+      const parentMessage = await ChatMessageService.find(tx, userId, {
         chatMessageId: parentMessageId,
       });
       const title = parentMessage.text
@@ -168,28 +159,33 @@ export class ChatService {
     return res;
   }
 
-  static async createChat(db: Db, input: { userId: UserId; text: string }) {
+  static async createChat(tx: Tx, input: { userId: UserId; text: string }) {
     const { userId, text } = input;
     const title = text ? [...text].slice(0, 20).join("") : undefined;
-    const res = await db
-      .insertInto("chats")
-      .values({ userId, title, type: "chat" })
-      .returning(cols(ChatSchema, "chats"))
-      .executeTakeFirstOrThrow();
+    const res = await tx.chats.create({
+      data: {
+        userId,
+        title,
+        type: "chat",
+      },
+    });
 
     return res;
   }
 
   static async createBranchChat(
-    db: Db,
+    tx: Tx,
     input: { userId: UserId; parentMessageId: ChatMessageId; title?: string }
   ) {
     const { userId, parentMessageId, title } = input;
-    const res = await db
-      .insertInto("chats")
-      .values({ userId, title, type: "branch", parentMessageId })
-      .returning(cols(ChatSchema, "chats"))
-      .executeTakeFirstOrThrow();
+    const res = await tx.chats.create({
+      data: {
+        userId,
+        title,
+        type: "branch",
+        parentMessageId,
+      },
+    });
 
     return res;
   }

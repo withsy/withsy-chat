@@ -13,83 +13,63 @@ import {
 import { cols } from "@/types/common";
 import type { UserId } from "@/types/user";
 import { StatusCodes } from "http-status-codes";
-import type { Expression } from "kysely";
-import { jsonObjectFrom } from "kysely/helpers/postgres";
 import { HttpServerError } from "../error";
 import type { ServiceRegistry } from "../service-registry";
 import { ChatMessageFileService } from "./chat-message-file-service";
-import type { Db } from "./db";
+import type { Db, Tx } from "./db";
 import type { FileInfo } from "./mock-s3-service";
-
-function withChat(db: Db, chatId: Expression<string>) {
-  return jsonObjectFrom(
-    db
-      .selectFrom("chats")
-      .where("chats.id", "=", chatId)
-      .where("chats.deletedAt", "is", null)
-      .select(cols(ChatSchema, "chats"))
-  );
-}
 
 export class ChatMessageService {
   constructor(private readonly service: ServiceRegistry) {}
 
-  static async get(
-    db: Db,
+  static async find(
+    tx: Tx,
     userId: UserId,
     input: { chatMessageId: ChatMessageId }
   ) {
     const { chatMessageId } = input;
-    const res = await db
-      .selectFrom("chatMessages as cm")
-      .innerJoin("chats as c", "c.id", "cm.chatId")
-      .where("c.userId", "=", userId)
-      .where("c.deletedAt", "is", null)
-      .where("cm.id", "=", chatMessageId)
-      .select(cols(ChatMessageSchema, "cm"))
-      .executeTakeFirstOrThrow();
+    const res = await tx.chatMessages.findUniqueOrThrow({
+      where: {
+        chat: {
+          userId,
+          deletedAt: null,
+        },
+        id: chatMessageId,
+      },
+    });
+
     return res;
   }
 
   async list(userId: UserId, input: ListChatMessages) {
     const { role, isBookmarked, options } = input;
     const { scope, afterId, order, limit, include } = options;
+    const xs = this.service.db.chatMessages.findMany({
+      where: {
+        chat: {
+          userId,
+          deletedAt: null,
+        },
+        chatId: scope.by === "chat" ? scope.chatId : undefined,
+        role,
+        isBookmarked,
+      },
+      orderBy: {
+        id: order,
+      },
+      include: {
+        chat: include?.chat,
+      },
+      take: limit,
+      ...(afterId && {
+        cursor: {
+          id: afterId,
+        },
+        skip: 1,
+      }),
+    });
 
-    let query = this.service.db
-      .selectFrom("chatMessages as cm")
-      .innerJoin("chats as c", "c.id", "cm.chatId")
-      .where("c.userId", "=", userId)
-      .where("c.deletedAt", "is", null);
-
-    if (scope.by === "user") {
-      // noop
-    } else if (scope.by === "chat")
-      query = query.where("cm.chatId", "=", scope.chatId);
-
-    if (role !== undefined) query = query.where("cm.role", "=", role);
-
-    if (isBookmarked !== undefined)
-      query = query.where("cm.isBookmarked", "=", isBookmarked);
-
-    if (afterId !== undefined) {
-      const op = order === "asc" ? ">" : "<";
-      query = query.where("cm.id", op, afterId);
-    }
-
-    const res = await query
-      .orderBy("cm.id", order)
-      .limit(limit)
-      .select((eb) =>
-        [
-          ...cols(ChatMessageSchema, "cm"),
-          include?.chat
-            ? withChat(this.service.db, eb.ref("cm.chatId")).as("chat")
-            : undefined,
-        ].filter((x) => x != null)
-      )
-      .execute();
-
-    return res;
+    return xs;
   }
 
   async listForHistory(
@@ -374,36 +354,32 @@ export class ChatMessageService {
   }
 
   static async createInfo(
-    db: Db,
+    tx: Tx,
     input: Omit<SendChatMessage, "idempotencyKey" | "files"> & {
       fileInfos: FileInfo[];
     }
   ) {
     const { chatId, text, model, fileInfos } = input;
 
-    const userChatMessage = await db
-      .insertInto("chatMessages")
-      .values({
+    const userChatMessage = await tx.chatMessages.create({
+      data: {
         chatId,
         text,
         role: ChatRole.enum.user,
-        status: ChatMessageStatus.enum.succeeded,
-      })
-      .returning(cols(ChatMessageSchema, "chatMessages"))
-      .executeTakeFirstOrThrow();
+        status: "succeeded",
+      },
+    });
 
-    const modelChatMessage = await db
-      .insertInto("chatMessages")
-      .values({
+    const modelChatMessage = await tx.chatMessages.create({
+      data: {
         chatId,
         role: ChatRole.enum.model,
         model,
-        status: ChatMessageStatus.enum.pending,
-      })
-      .returning(cols(ChatMessageSchema, "chatMessages"))
-      .executeTakeFirstOrThrow();
+        status: "pending",
+      },
+    });
 
-    await ChatMessageFileService.createAll(db, {
+    await ChatMessageFileService.createAll(tx, {
       chatMessageId: userChatMessage.id,
       fileInfos,
     });

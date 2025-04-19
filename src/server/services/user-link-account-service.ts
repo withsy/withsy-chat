@@ -9,37 +9,49 @@ export class UserLinkAccountService {
     refreshToken?: string;
   }) {
     const { provider, providerAccountId, refreshToken } = input;
-    const res = await this.service.db.transaction().execute(async (tx) => {
-      let ula = await tx
-        .selectFrom("userLinkAccounts as ula")
-        .where("ula.provider", "=", provider)
-        .where("ula.providerAccountId", "=", providerAccountId)
-        .select(["ula.id", "ula.userId"])
-        .executeTakeFirst();
+    const res = await this.service.db.$transaction(async (tx) => {
+      let ula = await tx.userLinkAccounts.findFirst({
+        select: {
+          id: true,
+          userId: true,
+        },
+        where: {
+          provider,
+          providerAccountId,
+        },
+      });
 
       if (!ula) {
-        const user = await tx
-          .insertInto("users")
-          .values({ preferences: {} })
-          .returning("id")
-          .executeTakeFirstOrThrow();
-        ula = await tx
-          .insertInto("userLinkAccounts")
-          .values({
+        const user = await tx.users.create({
+          data: {
+            preferences: {},
+          },
+          select: {
+            id: true,
+          },
+        });
+        ula = await tx.userLinkAccounts.create({
+          data: {
             userId: user.id,
             provider,
             providerAccountId,
-          })
-          .returning(["userLinkAccounts.id", "userLinkAccounts.userId"])
-          .executeTakeFirstOrThrow();
+          },
+          select: {
+            id: true,
+            userId: true,
+          },
+        });
       }
 
       if (refreshToken)
-        await tx
-          .updateTable("userLinkAccounts as ula")
-          .set({ refreshToken })
-          .where("ula.id", "=", ula.id)
-          .executeTakeFirstOrThrow();
+        await tx.userLinkAccounts.update({
+          data: {
+            refreshToken,
+          },
+          where: {
+            id: ula.id,
+          },
+        });
 
       return {
         userId: ula.userId,
