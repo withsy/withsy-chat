@@ -180,7 +180,10 @@ export function SidebarChatItem({
   });
   const deleteChat = trpc.chat.delete.useMutation({
     onMutate: () => utils.chat.list.cancel(),
-    onSuccess: () => utils.chat.list.invalidate(),
+    onSuccess: () => {
+      if (isActive) router.push("/chat");
+      utils.chat.list.invalidate();
+    },
   });
 
   const isActive = router.asPath === `/chat/${chat.id}`;
