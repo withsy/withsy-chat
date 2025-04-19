@@ -148,9 +148,10 @@ function Branches({
     return <PartialError />;
   } else if (chatListBranches.data) {
     let originalChat;
-    if (chat && chat.type == "branch") {
-      const chatId = chat.parentMessage?.chatId;
+    if (chat && chat.type == "branch" && chat.parentMessage) {
+      const chatId = chat.parentMessage.chatId;
       const messageId = chat.parentMessageId;
+      const parentMessageText = chat.parentMessage.text ?? "";
       originalChat = (
         <div>
           <div className="flex gap-2 items-center p-2 font-semibold text-sm">
@@ -168,7 +169,9 @@ function Branches({
             }}
           >
             <GitBranch size={16} />
-            {chat.parentMessage?.text}
+            {parentMessageText.length > 20
+              ? `${parentMessageText.slice(0, 20)}...`
+              : chat.parentMessage?.text}{" "}
           </div>
         </div>
       );
