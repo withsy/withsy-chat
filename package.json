@@ -5,7 +5,7 @@
   "scripts": {
     "build": "next build",
     "db:migrate": "npm run db:migrate:core && npm run db:migrate:worker",
-    "db:migrate:core": "prisma db push",
+    "db:migrate:core": "prisma migrate deploy",
     "db:migrate:worker": "dotenv -- graphile-worker --schema-only",
     "db:reset": "psql -h 127.0.0.1 -U postgres -f dev/reset.sql",
     "db:seed": "psql -h 127.0.0.1 -U postgres -f dev/seed.sql",
