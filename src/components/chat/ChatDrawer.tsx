@@ -2,7 +2,7 @@ import { trpc } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
 import { Chat, type ChatMessage } from "@/types/chat";
 import { skipToken } from "@tanstack/react-query";
-import { FolderGit2, FolderRoot, GitBranch } from "lucide-react";
+import { Bookmark, FolderGit2, FolderRoot, GitBranch } from "lucide-react";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { BookmarkCard } from "../bookmarks/BookmarkCard";
@@ -120,6 +120,10 @@ function SavedMessages({ messages }: { messages: ChatMessage[] }) {
 
   return (
     <div className="overflow-y-auto max-h-[80%] m-2 flex flex-col gap-y-4 bg-transparent">
+      <div className="flex gap-2 items-center font-semibold text-sm select-none">
+        <Bookmark size={16} />
+        List of Saved Items
+      </div>
       {messages.map((msg) => (
         <BookmarkCard
           key={msg.id}
