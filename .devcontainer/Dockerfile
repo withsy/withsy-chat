@@ -20,8 +20,6 @@ RUN apt update && \
     postgresql-client \
     # To open in a browser on the host
     xdg-utils \
-    # For SafeQL
-    python3 \
     ngrok \
     && apt clean && \
     rm -rf "/var/lib/apt/lists/*"
