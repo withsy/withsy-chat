@@ -189,7 +189,7 @@ export function SidebarChatItem({
       if (isMobile) {
         setCollapsed(true);
       }
-      router.push(`/chat/${chat.id}`);
+      router.push(`/chat/${chat.id}?messageId=last`);
     }
   };
 

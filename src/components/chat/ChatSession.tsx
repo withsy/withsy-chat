@@ -45,6 +45,10 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
     if (message) setStreamMessageId(message.id);
   }, [messages]);
 
+  useEffect(() => {
+    shouldAutoScrollRef.current = true;
+  }, [chat?.id]);
+
   const _receiveChatChunk = trpc.chatChunk.receiveStream.useSubscription(
     streamMessageId != null ? { chatMessageId: streamMessageId } : skipToken,
     {
@@ -187,6 +191,7 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
         >
           {(chat || messages.length > 0) && (
             <ChatMessageList
+              key={chat?.id}
               chat={chat}
               messages={messages}
               onToggleSaved={handleToggleSaved}

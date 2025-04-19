@@ -44,23 +44,24 @@ export function ChatMessageList({
   useEffect(() => {
     if (messageId) {
       const timeout = setTimeout(() => {
-        const id = parseInt(messageId as string, 10);
-        const targetRef = messageRefs.current[id];
-        if (targetRef) {
-          targetRef.scrollIntoView({ behavior: "smooth", block: "center" });
-
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          const { messageId, ...restQuery } = router.query;
-
-          router.replace(
-            {
-              pathname: router.pathname,
-              query: restQuery,
-            },
-            undefined,
-            { shallow: true }
-          );
+        if (messageId == "last") {
+          bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+        } else {
+          const id = parseInt(messageId as string, 10);
+          const targetRef = messageRefs.current[id];
+          if (targetRef) {
+            targetRef.scrollIntoView({ behavior: "smooth" });
+          }
         }
+        const { messageId: _, ...rest } = router.query;
+        router.replace(
+          {
+            pathname: router.pathname,
+            query: rest,
+          },
+          undefined,
+          { shallow: true }
+        );
       }, 100);
 
       return () => clearTimeout(timeout);
