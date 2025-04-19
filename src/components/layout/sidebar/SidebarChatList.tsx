@@ -177,7 +177,7 @@ export function SidebarChatItem({
   const chatType = chat.type;
 
   const isHoveredOrDropdown = `${
-    isDropdownOpen || isActive ? "font-bold" : ""
+    isDropdownOpen || isActive || isSidebar == undefined ? "font-bold" : ""
   } ${isDropdownOpen && "bg-white"}`;
   const iconClassName = `opacity-100 transition-opacity ${
     isDropdownOpen ? "opacity-0" : "group-hover:opacity-0"
