@@ -9,6 +9,7 @@ import {
 import type { JsonValue, MaybePromise } from "@/types/common";
 import type { TaskInput } from "@/types/task";
 import type { UserId } from "@/types/user";
+import type { Prisma } from "@prisma/client";
 import { match } from "ts-pattern";
 import type { Simplify } from "type-fest";
 import type { ServiceRegistry } from "../service-registry";
@@ -34,7 +35,7 @@ export type SendChatToAiInput = {
 
 export type OnChatChunkReceivedInput = {
   text: string;
-  rawData: JsonValue;
+  rawData: Prisma.InputJsonValue;
 };
 export type OnChatChunkReceived = (
   input: OnChatChunkReceivedInput
@@ -79,7 +80,7 @@ export class ChatModelRouteService {
           text,
           rawData,
         });
-        await notify(this.service.pool, "chat_chunk_created", {
+        await notify(this.service.pgPool, "chat_chunk_created", {
           status: "created",
           chatMessageId: modelChatMessage.id,
           chunkIndex,
@@ -115,7 +116,7 @@ export class ChatModelRouteService {
         chatMessageId: modelChatMessageId,
       });
     } finally {
-      await notify(this.service.pool, "chat_chunk_created", {
+      await notify(this.service.pgPool, "chat_chunk_created", {
         status: "completed",
         chatMessageId: modelChatMessageId,
       });

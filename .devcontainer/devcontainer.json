@@ -6,6 +6,7 @@
         "dbaeumer.vscode-eslint",
         "esbenp.prettier-vscode",
         "ms-azuretools.vscode-docker",
+        "Prisma.prisma",
         "redhat.vscode-yaml",
         "streetsidesoftware.code-spell-checker",
         "thebearingedge.vscode-sql-lit",
@@ -58,6 +59,10 @@
           "editor.tabSize": 2,
           "files.encoding": "utf8",
           "files.eol": "\n"
+        },
+        "[prisma]": {
+          "editor.defaultFormatter": "Prisma.prisma",
+          "editor.formatOnSave": true
         },
         "[sql]": {
           "editor.defaultFormatter": "bradymholt.pgformatter",

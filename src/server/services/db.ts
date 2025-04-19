@@ -1,20 +1,12 @@
-import {
-  CamelCasePlugin,
-  Kysely,
-  PostgresDialect,
-  type Transaction,
-} from "kysely";
-import type { DB } from "kysely-codegen";
+import { PrismaClient } from "@prisma/client";
 import type { ServiceRegistry } from "../service-registry";
 
-export type Db = Kysely<DB>;
-export type Tx = Transaction<DB>;
-
-export function createDb(s: ServiceRegistry) {
-  return new Kysely<DB>({
-    dialect: new PostgresDialect({
-      pool: s.pool,
-    }),
-    plugins: [new CamelCasePlugin()],
-  });
+export function createDb(_s: ServiceRegistry) {
+  const prisma = new PrismaClient();
+  return prisma;
 }
+
+export type Db = ReturnType<typeof createDb>;
+export type Tx = Parameters<
+  Parameters<ReturnType<typeof createDb>["$transaction"]>[0]
+>[0];

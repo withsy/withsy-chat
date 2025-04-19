@@ -14,19 +14,17 @@
   ],
   "words": [
     "plpgsql",
-    "ossp",
     "prefs",
     "genai",
     "tocstop",
     "graphile",
-    "kysely",
-    "codegen",
-    "updateable",
     "noti",
     "unlisten",
     "sonner",
     "nextauth",
     "timestamptz",
-    "withsy"
+    "withsy",
+    "autoincrement",
+    "dbgenerated"
   ]
 }

@@ -1,8 +1,9 @@
 import { type IdempotencyKey } from "@/types/idempotency";
+import { Prisma } from "@prisma/client";
 import { StatusCodes } from "http-status-codes";
 import { HttpServerError } from "../error";
 import type { ServiceRegistry } from "../service-registry";
-import type { Db } from "./db";
+import type { Db, Tx } from "./db";
 
 export class IdempotencyInfoService {
   constructor(private readonly service: ServiceRegistry) {}
@@ -16,21 +17,31 @@ export class IdempotencyInfoService {
     return res;
   }
 
-  static async checkDuplicateRequest(db: Db, idempotencyKey: IdempotencyKey) {
-    const res = await db
-      .insertInto("idempotencyInfos")
-      .values({ key: idempotencyKey })
-      .onConflict((oc) => oc.doNothing())
-      .returning(["key"])
-      .executeTakeFirstOrThrow(
-        () =>
-          new HttpServerError(StatusCodes.CONFLICT, "Duplicate request", {
-            extra: {
-              idempotencyKey,
-            },
-          })
-      );
+  static async checkDuplicateRequest(tx: Tx, idempotencyKey: IdempotencyKey) {
+    try {
+      const res = await tx.idempotencyInfos.create({
+        data: {
+          key: idempotencyKey,
+        },
+        select: {
+          key: true,
+        },
+      });
 
-    return res;
+      return res;
+    } catch (e) {
+      if (
+        e instanceof Prisma.PrismaClientKnownRequestError &&
+        e.code === "P2002"
+      ) {
+        throw new HttpServerError(StatusCodes.CONFLICT, "Duplicate request", {
+          extra: {
+            idempotencyKey,
+          },
+        });
+      }
+
+      throw e;
+    }
   }
 }

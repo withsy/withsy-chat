@@ -1,16 +1,21 @@
 import { UpdateUserPrefs, type UserId } from "@/types/user";
-import { sql } from "kysely";
+import type { Prisma } from "@prisma/client";
+import { StatusCodes } from "http-status-codes";
+import { HttpServerError } from "../error";
 import type { ServiceRegistry } from "../service-registry";
 
 export class UserService {
   constructor(private readonly service: ServiceRegistry) {}
 
   async prefs(userId: UserId) {
-    const { preferences } = await this.service.db
-      .selectFrom("users as u")
-      .where("u.id", "=", userId)
-      .select(["u.preferences"])
-      .executeTakeFirstOrThrow();
+    const { preferences } = await this.service.db.users.findUniqueOrThrow({
+      select: {
+        preferences: true,
+      },
+      where: {
+        id: userId,
+      },
+    });
     return preferences;
   }
 
@@ -19,22 +24,19 @@ export class UserService {
       Object.entries(input).filter(([_, value]) => value !== undefined)
     );
 
-    const { preferences } = await this.service.db
-      .transaction()
-      .execute(async (tx) => {
-        await tx
-          .selectFrom("users as u")
-          .where("u.id", "=", userId)
-          .forUpdate("u")
-          .executeTakeFirstOrThrow();
-        const row = await tx
-          .updateTable("users as u")
-          .where("u.id", "=", userId)
-          .set({ preferences: sql`preferences || ${patch} ::jsonb` })
-          .returning(["u.preferences"])
-          .executeTakeFirstOrThrow();
-        return row;
-      });
+    const { preferences } = await this.service.db.$transaction(async (tx) => {
+      const affected =
+        await tx.$executeRaw`SELECT id FROM users WHERE id = ${userId} ::uuid FOR UPDATE`;
+      if (affected === 0)
+        throw new HttpServerError(StatusCodes.NOT_FOUND, `User not found.`);
+      const xs = await tx.$queryRaw<{ preferences: Prisma.JsonValue }[]>`
+        UPDATE users 
+        SET preferences = preferences || ${patch} ::jsonb 
+        WHERE id = ${userId} ::uuid RETURNING preferences`;
+      if (xs.length === 0)
+        throw new HttpServerError(StatusCodes.NOT_FOUND, `User not found.`);
+      return xs[0];
+    });
 
     return preferences;
   }

@@ -17,7 +17,7 @@ export class TaskService {
     ];
     this.runner = (async () => {
       return await run({
-        pgPool: service.pool,
+        pgPool: service.pgPool,
         taskList: taskMap as TaskList,
         crontab: cronTasks.map(({ cron, key }) => `${cron} ${key}`).join("\n"),
       });
