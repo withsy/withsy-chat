@@ -23,4 +23,4 @@ COPY --from=builder /app/public ./public
 ENV NODE_ENV=production
 EXPOSE 3000
 
-CMD ["npm", "start"]
+CMD ["node", "start_prod.mjs", "npm", "start"]
