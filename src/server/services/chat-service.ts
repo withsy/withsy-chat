@@ -1,5 +1,6 @@
 import {
   Chat,
+  ChatListBranches,
   ChatMessage,
   ChatMessageId,
   ChatMessageSchema,
@@ -27,6 +28,21 @@ export class ChatService {
       .select(cols(ChatSchema, "c"))
       .execute();
 
+    return res;
+  }
+
+  async listBranches(userId: UserId, input: ChatListBranches) {
+    const { chatId } = input;
+    const res = await this.service.db
+      .selectFrom("chats as c")
+      .innerJoin("chatMessages as cm", (join) =>
+        join
+          .onRef("cm.id", "=", "c.parentMessageId")
+          .on("cm.chatId", "=", chatId)
+      )
+      .where("c.userId", "=", userId)
+      .select(cols(ChatSchema, "c"))
+      .execute();
     return res;
   }
 
