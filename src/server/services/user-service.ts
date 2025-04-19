@@ -26,13 +26,13 @@ export class UserService {
 
     const { preferences } = await this.service.db.$transaction(async (tx) => {
       const affected =
-        await tx.$executeRaw`SELECT id FROM users WHERE id = ${userId} FOR UPDATE`;
+        await tx.$executeRaw`SELECT id FROM users WHERE id = ${userId} ::uuid FOR UPDATE`;
       if (affected === 0)
         throw new HttpServerError(StatusCodes.NOT_FOUND, `User not found.`);
       const xs = await tx.$queryRaw<{ preferences: Prisma.JsonValue }[]>`
         UPDATE users 
         SET preferences = preferences || ${patch} ::jsonb 
-        WHERE id = ${userId} RETURNING preferences`;
+        WHERE id = ${userId} ::uuid RETURNING preferences`;
       if (xs.length === 0)
         throw new HttpServerError(StatusCodes.NOT_FOUND, `User not found.`);
       return xs[0];
