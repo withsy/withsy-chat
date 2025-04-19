@@ -192,7 +192,7 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
         )}
         <div
           className={cn(
-            "flex-1 overflow-y-auto mt-[50px] mb-[100px] w-full transition-all duration-300",
+            "flex-1 overflow-y-auto mt-[50px] mb-[150px] w-full transition-all duration-300",
             userPrefs.wideView
               ? "md:w-[95%] md:mx-auto"
               : "md:w-[80%] md:mx-auto"
