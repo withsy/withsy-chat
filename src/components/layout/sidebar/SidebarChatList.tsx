@@ -173,6 +173,16 @@ export function SidebarChatItem({
   const { isMobile, setCollapsed } = useSidebar();
   const { userPrefs } = useUser();
 
+  const utils = trpc.useUtils();
+  const updateChatTitle = trpc.chat.update.useMutation({
+    async onMutate() {
+      await utils.chat.list.cancel();
+    },
+    onSuccess() {
+      utils.chat.list.invalidate();
+    },
+  });
+
   const isActive = router.asPath === `/chat/${chat.id}`;
   const chatType = chat.type;
 
@@ -194,10 +204,8 @@ export function SidebarChatItem({
   };
 
   const handleTitleSave = () => {
-    if (editedTitle.trim() !== chat.title) {
-      // TODO: trigger rename mutation
-      console.log("Rename:", editedTitle);
-    }
+    if (editedTitle.trim() !== chat.title)
+      updateChatTitle.mutate({ chatId: chat.id, title: editedTitle });
     setEditMode(false);
   };
 
