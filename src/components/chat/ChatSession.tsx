@@ -8,7 +8,7 @@ import { useRouter } from "next/router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { v4 as uuid } from "uuid";
-import { ResponsiveDrawer } from "./ChatDrawer";
+import { ChatDrawer } from "./ChatDrawer";
 import ChatHeader from "./ChatHeader";
 import { ChatInputBox } from "./ChatInputBox";
 import { ChatMessageList } from "./ChatMessageList";
@@ -217,7 +217,7 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
           />
         </div>
       </div>
-      <ResponsiveDrawer
+      <ChatDrawer
         chat={chat}
         openDrawer={openDrawer}
         setOpenDrawer={setOpenDrawer}

@@ -11,7 +11,7 @@ import { PartialLoading } from "../Loading";
 import { Drawer, DrawerContent } from "../ui/drawer";
 import ChatDrawerHeader from "./ChatDrawerHeader";
 
-type ResponsiveDrawerProps = {
+type ChatDrawerProps = {
   chat: Chat | null;
   openDrawer: string | null;
   setOpenDrawer: (value: string | null) => void;
@@ -19,13 +19,13 @@ type ResponsiveDrawerProps = {
   savedMessages?: ChatMessage[];
 };
 
-export const ResponsiveDrawer = ({
+export const ChatDrawer = ({
   chat,
   openDrawer,
   setOpenDrawer,
   savedMessages,
   isMobile,
-}: ResponsiveDrawerProps) => {
+}: ChatDrawerProps) => {
   const router = useRouter();
   const isDrawerOpen = !!openDrawer;
   const chatId = chat?.id;
