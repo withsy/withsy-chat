@@ -38,7 +38,7 @@ export default function ChatHeader({
     const handleResize = () => {
       if (!containerRef.current) return;
       const width = containerRef.current.offsetWidth;
-      setHideLabels(width < 600);
+      setHideLabels(width < 640);
     };
 
     handleResize();
