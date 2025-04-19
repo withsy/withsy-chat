@@ -2,7 +2,7 @@ import { trpc } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
 import { Chat, type ChatMessage } from "@/types/chat";
 import { skipToken } from "@tanstack/react-query";
-import { GitBranch } from "lucide-react";
+import { FolderGit2, GitBranch } from "lucide-react";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { BookmarkCard } from "../bookmarks/BookmarkCard";
@@ -149,12 +149,16 @@ function Branches({ chatListBranches }: { chatListBranches: any }) {
     }
     return (
       <div>
+        <div className="flex gap-2 items-center p-2 font-semibold text-sm">
+          <FolderGit2 size={16} />
+          List of Branches
+        </div>
         {chatListBranches.data.map((x: Chat) => {
           return (
             <div
               key={x.id}
               className="flex gap-2 p-3 items-center select-none m-2 border shadow-xs"
-              onClick={() => router.push(`/chat/${x.id}`)}
+              onClick={() => router.push(`/chat/${x.id}?messageId=last`)}
               style={{
                 borderRadius: 10,
               }}
