@@ -122,8 +122,11 @@ function SavedMessages({ messages }: { messages: ChatMessage[] }) {
     <div className="overflow-y-auto max-h-[80%] m-2 flex flex-col gap-y-4 bg-transparent">
       <div className="flex gap-2 items-center font-semibold text-sm select-none">
         <Bookmark size={16} />
-        List of Saved Items
+        Saved Messages
       </div>
+      <span className="text-sm select-none">
+        {"Here you can find the messages you've saved from this chat."}
+      </span>
       {messages.map((msg) => (
         <BookmarkCard
           key={msg.id}
@@ -191,7 +194,7 @@ function Branches({
         {originalChat}
         <div className="flex gap-2 items-center font-semibold text-sm select-none">
           <FolderGit2 size={16} />
-          List of Branches
+          Branch List
         </div>
         <span className="text-sm select-none">
           Branches created from this chat. Tap to jump to a specific branch.
