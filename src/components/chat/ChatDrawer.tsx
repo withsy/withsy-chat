@@ -2,7 +2,7 @@ import { trpc } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
 import { Chat, type ChatMessage } from "@/types/chat";
 import { skipToken } from "@tanstack/react-query";
-import { FolderGit2, GitBranch } from "lucide-react";
+import { FolderGit2, FolderRoot, GitBranch } from "lucide-react";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { BookmarkCard } from "../bookmarks/BookmarkCard";
@@ -12,7 +12,7 @@ import { Drawer, DrawerContent } from "../ui/drawer";
 import ChatDrawerHeader from "./ChatDrawerHeader";
 
 type ResponsiveDrawerProps = {
-  chatId: string | undefined;
+  chat: Chat | null;
   openDrawer: string | null;
   setOpenDrawer: (value: string | null) => void;
   isMobile: boolean;
@@ -20,7 +20,7 @@ type ResponsiveDrawerProps = {
 };
 
 export const ResponsiveDrawer = ({
-  chatId,
+  chat,
   openDrawer,
   setOpenDrawer,
   savedMessages,
@@ -28,6 +28,7 @@ export const ResponsiveDrawer = ({
 }: ResponsiveDrawerProps) => {
   const router = useRouter();
   const isDrawerOpen = !!openDrawer;
+  const chatId = chat?.id;
   const chatListBranches = trpc.chat.listBranches.useQuery(
     chatId && openDrawer === "branches" ? { chatId } : skipToken
   );
@@ -65,7 +66,7 @@ export const ResponsiveDrawer = ({
   } else if (openDrawer === "saved") {
     body = <SavedMessages messages={savedMessages ?? []} />;
   } else if (openDrawer === "branches") {
-    body = <Branches chatListBranches={chatListBranches} />;
+    body = <Branches chatListBranches={chatListBranches} chat={chat} />;
   } else {
     body = <div className="text-sm text-muted-foreground">No content</div>;
   }
@@ -133,22 +134,51 @@ function SavedMessages({ messages }: { messages: ChatMessage[] }) {
   );
 }
 
-function Branches({ chatListBranches }: { chatListBranches: any }) {
+function Branches({
+  chat,
+  chatListBranches,
+}: {
+  chat: Chat | null;
+  chatListBranches: any;
+}) {
   const router = useRouter();
   if (chatListBranches.isLoading) {
     return <PartialLoading />;
   } else if (chatListBranches.isError) {
     return <PartialError />;
   } else if (chatListBranches.data) {
-    if (chatListBranches.data.length == 0) {
-      return (
-        <div className="h-full w-full flex items-center justify-center text-muted-foreground">
-          No branches yet.
+    let originalChat;
+    if (chat && chat.type == "branch") {
+      const chatId = chat.parentMessage?.chatId;
+      const messageId = chat.parentMessageId;
+      originalChat = (
+        <div>
+          <div className="flex gap-2 items-center p-2 font-semibold text-sm">
+            <FolderRoot size={16} />
+            Original Chat
+          </div>
+          <div
+            key={chat.parentMessageId}
+            className="flex gap-2 p-3 items-center select-none m-2 border shadow-xs"
+            onClick={() =>
+              router.push(`/chat/${chatId}?messageId=${messageId}`)
+            }
+            style={{
+              borderRadius: 10,
+            }}
+          >
+            <GitBranch size={16} />
+            {chat.parentMessage?.text}
+          </div>
         </div>
       );
     }
+    if (chatListBranches.data.length == 0) {
+      return originalChat;
+    }
     return (
       <div>
+        {originalChat}
         <div className="flex gap-2 items-center p-2 font-semibold text-sm">
           <FolderGit2 size={16} />
           List of Branches

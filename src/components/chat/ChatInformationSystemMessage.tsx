@@ -60,7 +60,7 @@ const branchChatMessages = [
     linkText: "View original chat",
   },
   {
-    prefix: "📎 This thread continues from a previous message. ",
+    prefix: "📎 This branch continues from a previous message. ",
     linkText: "Click here to go back",
   },
   { prefix: "🧵 You're in a branch chat. ", linkText: "See the original" },
