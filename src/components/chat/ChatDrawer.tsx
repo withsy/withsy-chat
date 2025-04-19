@@ -154,7 +154,7 @@ function Branches({
       const parentMessageText = chat.parentMessage.text ?? "";
       originalChat = (
         <div>
-          <div className="flex gap-2 items-center font-semibold text-sm mb-3">
+          <div className="flex gap-2 items-center font-semibold text-sm mb-3 select-none">
             <FolderRoot size={16} />
             Original Chat
           </div>
@@ -163,7 +163,7 @@ function Branches({
           </span>
           <div
             key={chat.parentMessageId}
-            className="flex gap-2 p-3 mt-2 items-center select-none border shadow-xs"
+            className="flex gap-2 p-3 mt-2 items-center select-none border shadow-xs  hover:bg-gray-50 hover:font-semibold"
             onClick={() =>
               router.push(`/chat/${chatId}?messageId=${messageId}`)
             }
@@ -185,7 +185,7 @@ function Branches({
     return (
       <div className="overflow-y-auto max-h-[80%] m-2 flex flex-col gap-y-4 bg-transparent">
         {originalChat}
-        <div className="flex gap-2 items-center font-semibold text-sm">
+        <div className="flex gap-2 items-center font-semibold text-sm select-none">
           <FolderGit2 size={16} />
           List of Branches
         </div>
@@ -196,7 +196,7 @@ function Branches({
           return (
             <div
               key={x.id}
-              className="flex gap-2 p-3 items-center select-none border shadow-xs"
+              className="flex gap-2 p-3 items-center select-none border shadow-xs hover:bg-gray-50 hover:font-semibold"
               onClick={() => router.push(`/chat/${x.id}?messageId=last`)}
               style={{
                 borderRadius: 10,
