@@ -45,7 +45,7 @@ export function ModelSelect({ value, onChange }: Props) {
       </button>
 
       {open && (
-        <ul className="absolute z-10 bottom-full mb-1 w-max min-w-full rounded border border-gray-200 bg-white shadow-md text-xs p-1">
+        <ul className="absolute z-10 bottom-full mb-1 w-max min-w-full rounded border border-gray-200 bg-white shadow-md p-1">
           {models.map((model) => (
             <li
               key={model.value}
@@ -54,7 +54,7 @@ export function ModelSelect({ value, onChange }: Props) {
                 setOpen(false);
               }}
               className={cn(
-                "cursor-pointer px-3 py-1 hover:bg-gray-100",
+                "cursor-pointer px-3 py-2 hover:bg-gray-100",
                 model.value === value && "bg-gray-100 font-semibold"
               )}
             >
