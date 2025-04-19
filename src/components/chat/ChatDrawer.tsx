@@ -2,8 +2,9 @@ import { trpc } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
 import { Chat, type ChatMessage } from "@/types/chat";
 import { skipToken } from "@tanstack/react-query";
+import { GitBranch } from "lucide-react";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { BookmarkCard } from "../bookmarks/BookmarkCard";
 import { PartialError } from "../Error";
 import { PartialLoading } from "../Loading";
@@ -31,11 +32,12 @@ export const ResponsiveDrawer = ({
     chatId && openDrawer === "branches" ? { chatId } : skipToken
   );
 
+  const [ready, setReady] = useState(false);
+
   useEffect(() => {
     const { parentId, ...restQuery } = router.query;
     if (typeof parentId === "string") {
       setOpenDrawer(parentId);
-
       router.replace(
         { pathname: router.pathname, query: restQuery },
         undefined,
@@ -43,6 +45,15 @@ export const ResponsiveDrawer = ({
       );
     }
   }, [router.query.parentId, setOpenDrawer, router]);
+
+  useEffect(() => {
+    if (isDrawerOpen) {
+      const timer = setTimeout(() => setReady(true), 50);
+      return () => clearTimeout(timer);
+    } else {
+      setReady(false);
+    }
+  }, [isDrawerOpen]);
 
   const handleCloseDrawer = () => {
     setOpenDrawer(null);
@@ -69,7 +80,7 @@ export const ResponsiveDrawer = ({
         }}
       >
         <DrawerContent className="h-[80%] rounded-t-2xl p-4">
-          {body}
+          {ready && body}
         </DrawerContent>
       </Drawer>
     );
@@ -78,8 +89,8 @@ export const ResponsiveDrawer = ({
   return (
     <div
       className={cn(
-        "h-full bg-gray-50 transition-all duration-300",
-        isDrawerOpen ? "w-[50%] border-l" : "w-0 overflow-hidden"
+        "h-full transition-all duration-300",
+        isDrawerOpen ? "w-[30%] border-l" : "w-0 overflow-hidden"
       )}
       style={{
         ...(isDrawerOpen && {
@@ -123,6 +134,7 @@ function SavedMessages({ messages }: { messages: ChatMessage[] }) {
 }
 
 function Branches({ chatListBranches }: { chatListBranches: any }) {
+  const router = useRouter();
   if (chatListBranches.isLoading) {
     return <PartialLoading />;
   } else if (chatListBranches.isError) {
@@ -138,7 +150,19 @@ function Branches({ chatListBranches }: { chatListBranches: any }) {
     return (
       <div>
         {chatListBranches.data.map((x: Chat) => {
-          return <div key={x.id}>{x.title}</div>;
+          return (
+            <div
+              key={x.id}
+              className="flex gap-2 p-3 items-center select-none m-2 border shadow-xs"
+              onClick={() => router.push(`/chat/${x.id}`)}
+              style={{
+                borderRadius: 10,
+              }}
+            >
+              <GitBranch size={16} />
+              {x.title}
+            </div>
+          );
         })}
       </div>
     );

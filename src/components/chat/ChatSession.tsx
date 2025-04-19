@@ -52,6 +52,10 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
     shouldAutoScrollRef.current = true;
   }, [chat?.id]);
 
+  useEffect(() => {
+    setOpenDrawer(null);
+  }, [chat?.id]);
+
   const _receiveChatChunk = trpc.chatChunk.receiveStream.useSubscription(
     streamMessageId != null ? { chatMessageId: streamMessageId } : skipToken,
     {
@@ -176,7 +180,7 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
       <div
         className={cn(
           "flex flex-col h-full relative items-center transition-all duration-300",
-          isMobile ? "w-full" : "w-[50%] w-full"
+          isMobile ? "w-full" : openDrawer ? "w-[70%]" : "w-full"
         )}
       >
         {chat && (
