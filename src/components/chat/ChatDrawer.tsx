@@ -107,6 +107,7 @@ function SavedMessages({ messages }: { messages: ChatMessage[] }) {
           chatId={msg.chatId}
           text={msg.text}
           createdAt={msg.createdAt}
+          hideUnsave={true}
         />
       ))}
     </div>

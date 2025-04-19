@@ -15,6 +15,7 @@ interface BookmarkCardProps {
   chatId: string;
   text: string | null;
   createdAt: Date;
+  hideUnsave?: boolean;
 }
 
 export function BookmarkCard({
@@ -23,6 +24,7 @@ export function BookmarkCard({
   title,
   text,
   createdAt,
+  hideUnsave,
 }: BookmarkCardProps) {
   const { userPrefs } = useUser();
   const { themeColor } = userPrefs;
@@ -89,6 +91,7 @@ export function BookmarkCard({
             content={text}
             link={link}
             onUnsave={handleToggleSaved}
+            hideUnsave={hideUnsave}
           />
         </CardFooter>
       </Card>

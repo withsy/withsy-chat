@@ -14,6 +14,7 @@ type Props = {
   link: string;
   onUnsave: () => void;
   themeColor: string;
+  hideUnsave?: boolean;
 };
 
 export function BookmarkCardActions({
@@ -21,6 +22,7 @@ export function BookmarkCardActions({
   link,
   onUnsave,
   themeColor,
+  hideUnsave,
 }: Props) {
   const router = useRouter();
 
@@ -55,19 +57,21 @@ export function BookmarkCardActions({
           </TooltipTrigger>
           <TooltipContent side="top">Copy</TooltipContent>
         </Tooltip>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button variant="ghost" size="icon" onClick={onUnsave}>
-              <BookmarkIcon
-                className="w-8 h-8"
-                style={{
-                  fill: `rgb(${themeColor})`,
-                }}
-              />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent side="top">Unsave</TooltipContent>
-        </Tooltip>
+        {!hideUnsave && (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button variant="ghost" size="icon" onClick={onUnsave}>
+                <BookmarkIcon
+                  className="w-8 h-8"
+                  style={{
+                    fill: `rgb(${themeColor})`,
+                  }}
+                />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="top">Unsave</TooltipContent>
+          </Tooltip>
+        )}
       </div>
     </TooltipProvider>
   );
