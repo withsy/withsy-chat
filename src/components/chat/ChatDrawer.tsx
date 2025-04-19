@@ -158,9 +158,12 @@ function Branches({
             <FolderRoot size={16} />
             Original Chat
           </div>
+          <span className="text-sm select-none">
+            You are viewing a branch. Tap below to go back to the original chat.
+          </span>
           <div
             key={chat.parentMessageId}
-            className="flex gap-2 p-3 items-center select-none border shadow-xs"
+            className="flex gap-2 p-3 mt-2 items-center select-none border shadow-xs"
             onClick={() =>
               router.push(`/chat/${chatId}?messageId=${messageId}`)
             }
@@ -186,6 +189,9 @@ function Branches({
           <FolderGit2 size={16} />
           List of Branches
         </div>
+        <span className="text-sm select-none">
+          Branches created from this chat. Tap to jump to a specific branch.
+        </span>
         {chatListBranches.data.map((x: Chat) => {
           return (
             <div
