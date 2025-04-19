@@ -1,6 +1,7 @@
 import {
   Chat,
   ChatChunk,
+  ChatListBranches,
   ChatMessage,
   GetChat,
   ListChatMessages,
@@ -41,6 +42,14 @@ export const trpcRouter = t.router({
       .query(async (opts) =>
         opts.ctx.service.chat
           .list(opts.ctx.userId)
+          .then((xs) => xs.map((x) => Chat.parse(x)))
+      ),
+    listBranches: publicProcedure
+      .input(ChatListBranches)
+      .output(Chat.array())
+      .query(async (opts) =>
+        opts.ctx.service.chat
+          .listBranches(opts.ctx.userId, opts.input)
           .then((xs) => xs.map((x) => Chat.parse(x)))
       ),
     get: publicProcedure

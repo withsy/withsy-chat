@@ -112,6 +112,11 @@ export const UpdateChat = z.object({
 });
 export type UpdateChat = zInfer<typeof UpdateChat>;
 
+export const ChatListBranches = z.object({
+  chatId: ChatId,
+});
+export type ChatListBranches = zInfer<typeof ChatListBranches>;
+
 export const ChatMessage = ChatMessageSchema.extend({
   chat: Chat.nullable().default(null),
 });
