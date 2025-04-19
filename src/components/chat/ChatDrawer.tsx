@@ -197,7 +197,7 @@ function Branches({
               }}
             >
               <GitBranch size={16} />
-              {x.title}
+              {x.title.length > 20 ? `${x.title.slice(0, 20)}...` : x.title}
             </div>
           );
         })}
