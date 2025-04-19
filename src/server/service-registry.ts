@@ -52,13 +52,7 @@ function createServiceRegistry() {
     openAi: (s) => new OpenAiService(s),
     idempotencyInfo: (s) => new IdempotencyInfoService(s),
     task: (s) => new TaskService(s),
-    s3: (s) => {
-      if (envConfig.nodeEnv === "development") return new MockS3Service(s);
-      throw new HttpServerError(
-        StatusCodes.INTERNAL_SERVER_ERROR,
-        "S3 service is not implemented."
-      );
-    },
+    s3: (s) => new MockS3Service(s),
   });
 }
 
