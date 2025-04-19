@@ -110,7 +110,7 @@ export class ChatModelRouteService {
         text,
       });
     } catch (e) {
-      console.error("Google Gen AI send chat failed. error:", e);
+      console.error("Send chat to ai failed. error:", e);
       await this.service.chatMessage.tryTransitProcessingToFailed(userId, {
         chatMessageId: modelChatMessageId,
       });
