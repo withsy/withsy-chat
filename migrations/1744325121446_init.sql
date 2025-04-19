@@ -43,6 +43,7 @@ CREATE TABLE chats(
   parent_message_id integer,
   created_at timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  deleted_at timestamptz DEFAULT NULL,
   CONSTRAINT fk_chats_user_id FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
   CONSTRAINT chk_chats_type CHECK (type IN ('chat', 'branch'))
 );

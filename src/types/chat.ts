@@ -112,6 +112,11 @@ export const UpdateChat = z.object({
 });
 export type UpdateChat = zInfer<typeof UpdateChat>;
 
+export const ChatDelete = z.object({
+  chatId: ChatId,
+});
+export type ChatDelete = zInfer<typeof ChatDelete>;
+
 export const ChatListBranches = z.object({
   chatId: ChatId,
 });

@@ -14,6 +14,7 @@ export class ChatMessageFileService {
       .innerJoin("chatMessages as cm", "cm.id", "cmf.chatMessageId")
       .innerJoin("chats as c", "c.id", "cm.chatId")
       .where("c.userId", "=", userId)
+      .where("c.deletedAt", "is", null)
       .where("cmf.chatMessageId", "=", chatMessageId)
       .orderBy("cmf.id")
       .select(["cmf.fileUri", "cmf.mimeType"])

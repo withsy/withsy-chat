@@ -1,5 +1,6 @@
 import {
   Chat,
+  ChatDelete,
   ChatListBranches,
   ChatMessage,
   ChatMessageId,
@@ -11,7 +12,7 @@ import {
   type UpdateChat,
 } from "@/types/chat";
 import { cols } from "@/types/common";
-import type { UserId } from "@/types/user";
+import { UserId } from "@/types/user";
 import type { ServiceRegistry } from "../service-registry";
 import { ChatMessageService } from "./chat-message-service";
 import type { Db } from "./db";
@@ -24,6 +25,7 @@ export class ChatService {
     const res = await this.service.db
       .selectFrom("chats as c")
       .where("c.userId", "=", userId)
+      .where("c.deletedAt", "is", null)
       .orderBy("c.createdAt", "asc")
       .select(cols(ChatSchema, "c"))
       .execute();
@@ -41,6 +43,7 @@ export class ChatService {
           .on("cm.chatId", "=", chatId)
       )
       .where("c.userId", "=", userId)
+      .where("c.deletedAt", "is", null)
       .select(cols(ChatSchema, "c"))
       .execute();
     return res;
@@ -53,6 +56,7 @@ export class ChatService {
       const chat = await tx
         .selectFrom("chats as c")
         .where("c.userId", "=", userId)
+        .where("c.deletedAt", "is", null)
         .where("c.id", "=", chatId)
         .select(cols(ChatSchema, "c"))
         .executeTakeFirstOrThrow();
@@ -63,6 +67,7 @@ export class ChatService {
           .selectFrom("chatMessages as cm")
           .innerJoin("chats as c", "c.id", "cm.chatId")
           .where("c.userId", "=", userId)
+          .where("c.deletedAt", "is", null)
           .where("cm.id", "=", chat.parentMessageId)
           .select(cols(ChatMessageSchema, "cm"))
           .executeTakeFirstOrThrow();
@@ -80,8 +85,23 @@ export class ChatService {
     const res = await this.service.db
       .updateTable("chats as c")
       .where("c.userId", "=", userId)
+      .where("c.deletedAt", "is", null)
       .where("c.id", "=", chatId)
       .set({ title, isStarred })
+      .returning(cols(ChatSchema, "c"))
+      .executeTakeFirstOrThrow();
+
+    return res;
+  }
+
+  async delete(userId: UserId, input: ChatDelete) {
+    const { chatId } = input;
+    const res = await this.service.db
+      .updateTable("chats as c")
+      .where("c.userId", "=", userId)
+      .where("c.deletedAt", "is", null)
+      .where("c.id", "=", chatId)
+      .set({ deletedAt: new Date() })
       .returning(cols(ChatSchema, "c"))
       .executeTakeFirstOrThrow();
 
