@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "build": "next build",
+    "build": "prisma generate && next build",
     "db:migrate": "npm run db:migrate:core && npm run db:migrate:worker",
     "db:migrate:core": "prisma migrate deploy",
     "db:migrate:worker": "dotenv -- graphile-worker --schema-only",
