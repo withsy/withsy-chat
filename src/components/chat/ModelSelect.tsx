@@ -1,10 +1,11 @@
-import { cn } from "@/lib/utils"; // 없으면 그냥 classNames 써도 됨
+import { cn } from "@/lib/utils";
+import type { ChatModel } from "@/types/chat";
 import { AtSign, ChevronDown } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 type Props = {
-  value: string;
-  onChange: (model: string) => void;
+  value: ChatModel;
+  onChange: (model: ChatModel) => void;
 };
 
 const models = [
@@ -15,11 +16,14 @@ const models = [
 
 export function ModelSelect({ value, onChange }: Props) {
   const [open, setOpen] = useState(false);
-  const buttonRef = useRef<HTMLButtonElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (buttonRef.current && !buttonRef.current.contains(e.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(e.target as Node)
+      ) {
         setOpen(false);
       }
     };
@@ -28,9 +32,8 @@ export function ModelSelect({ value, onChange }: Props) {
   }, []);
 
   return (
-    <div className="relative inline-block">
+    <div className="relative inline-block" ref={dropdownRef}>
       <button
-        ref={buttonRef}
         onClick={() => setOpen((prev) => !prev)}
         className="inline-flex items-center gap-1 rounded px-2 py-[2px] text-xs font-semibold text-gray-500 hover:bg-gray-200 transition"
       >
@@ -47,7 +50,7 @@ export function ModelSelect({ value, onChange }: Props) {
             <li
               key={model.value}
               onClick={() => {
-                onChange(model.value);
+                onChange(model.value as ChatModel);
                 setOpen(false);
               }}
               className={cn(

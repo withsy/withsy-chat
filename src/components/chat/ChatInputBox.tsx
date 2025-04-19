@@ -12,17 +12,23 @@ import { Send } from "lucide-react";
 import { useState } from "react";
 import TextareaAutosize from "react-textarea-autosize";
 
+import type { ChatModel } from "@/types/chat";
 import { ModelSelect } from "./ModelSelect";
 
 type Props = {
   onSendMessage: (message: string) => void;
+  selectedModel: ChatModel;
+  onChangeModel: (model: ChatModel) => void;
 };
 
-export function ChatInputBox({ onSendMessage }: Props) {
+export function ChatInputBox({
+  onSendMessage,
+  selectedModel,
+  onChangeModel,
+}: Props) {
   const { userPrefs, setUserPrefsAndSave, userPrefLoadings } = useUser();
   const [message, setMessage] = useState("");
   const [isComposing, setIsComposing] = useState(false);
-  const [selectedModel, setSelectedModel] = useState("gemini-2.0-flash");
 
   const enterToSend = userPrefs["enterToSend"];
   const isLoading = userPrefLoadings["enterToSend"];
@@ -63,7 +69,7 @@ export function ChatInputBox({ onSendMessage }: Props) {
   return (
     <div className={inputBoxClass}>
       <div className="mb-3">
-        <ModelSelect value={selectedModel} onChange={setSelectedModel} />
+        <ModelSelect value={selectedModel} onChange={onChangeModel} />
       </div>
       <TextareaAutosize
         value={message}
