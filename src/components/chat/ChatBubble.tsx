@@ -22,7 +22,12 @@ const ChatBubbleComponent = ({ message, onToggleSaved }: Props) => {
   const [collapsed, setCollapsed] = useState(role === "user" && isLongMessage);
   const displayedText = collapsed ? text.slice(0, 150) + "..." : text;
 
-  const name = role === "model" ? "AI" : userSession?.user?.name ?? "username";
+  const name =
+    role === "model"
+      ? message.model
+        ? message.model
+        : "AI"
+      : userSession?.user?.name ?? "username";
 
   const handleCopy = async () => {
     try {
