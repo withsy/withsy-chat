@@ -10,7 +10,7 @@ RUN npm run build
 FROM base AS prod_deps
 WORKDIR /app
 COPY package*.json ./
-RUN npm install --production --frozen-lockfile
+RUN npm install --omit=dev --frozen-lockfile
 
 FROM base AS runner
 WORKDIR /app
@@ -20,7 +20,7 @@ COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/package.json ./
 COPY --from=builder /app/next.config.ts ./
-COPY --from=builder /app/start.mjs ./
+COPY --from=builder /app/gcp ./gcp
 ENV NODE_ENV=production
 EXPOSE 3000
-CMD ["node", "start.mjs", "npm", "start"]
+CMD ["node", "--experimental-transform-types", "--disable-warning=ExperimentalWarning", "gcp/run.mts", "npm", "start"]
