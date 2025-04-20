@@ -12,9 +12,10 @@ export default function Main({ children }: MainProps) {
   const { userPrefs } = useUser();
   const { largeText } = userPrefs;
   const sidebarWidth = !collapsed && !isMobile ? 240 : 0;
+  const HEADER_HEIGHT = 64;
 
   const mainStyle: React.CSSProperties = {
-    minHeight: "calc(100vh - 70px)",
+    minHeight: `calc(100dvh - ${HEADER_HEIGHT}px)`,
     backgroundColor: "white",
     ...(isMobile
       ? {}
