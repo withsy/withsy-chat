@@ -1,1 +1,0 @@
-git tag -d prod && git tag prod && git push origin prod --force
