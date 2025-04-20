@@ -11,7 +11,7 @@ export default function Sidebar() {
   return (
     <div
       className={cn(
-        "transition-all duration-300 ease-in-out h-screen pt-16 fixed top-0 left-0 z-40 flex flex-col",
+        "transition-all duration-300 ease-in-out h-[100dvh] pt-16 fixed top-0 left-0 z-40 flex flex-col",
         largeText ? "text-lg" : "text-base",
         collapsed && "w-0 overflow-hidden",
         !collapsed && isMobile && "w-[100vw]  px-4",

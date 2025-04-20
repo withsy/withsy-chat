@@ -23,7 +23,7 @@ type Props = {
 
 export default function SignInPage({ providers }: Props) {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+    <div className="min-h-[100dvh] flex items-center justify-center bg-gray-50 px-4">
       <div className="max-w-md w-full space-y-8 p-10 bg-white shadow-xl rounded-xl">
         <div className="text-center">
           <img

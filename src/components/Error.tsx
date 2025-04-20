@@ -8,7 +8,7 @@ export function FullPageError({
   message = "Something went wrong.",
 }: ErrorProps) {
   return (
-    <div className="flex h-screen w-screen flex-col items-center justify-center text-center space-y-4">
+    <div className="flex h-[100dvh] w-screen flex-col items-center justify-center text-center space-y-4">
       <Activity className="w-10 h-10" />
       <p className="text-muted-foreground">ERROR: {message.toUpperCase()}</p>
     </div>
