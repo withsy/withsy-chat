@@ -3,6 +3,10 @@ import type { ServiceRegistry } from "../service-registry";
 
 export function createDb(_s: ServiceRegistry) {
   const prisma = new PrismaClient();
+  process.on("SIGTERM", async () => {
+    await prisma.$disconnect();
+  });
+
   return prisma;
 }
 

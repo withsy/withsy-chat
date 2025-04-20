@@ -16,6 +16,10 @@ export function createPgPool(): Pool {
     client.on("error", onError);
   });
 
+  process.on("SIGTERM", async () => {
+    await pool.end();
+  });
+
   return pool;
 }
 
