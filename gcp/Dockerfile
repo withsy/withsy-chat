@@ -23,4 +23,4 @@ COPY --from=builder /app/next.config.ts ./
 COPY --from=builder /app/gcp ./gcp
 ENV NODE_ENV=production
 EXPOSE 3000
-CMD ["node", "--experimental-transform-types", "--disable-warning=ExperimentalWarning", "gcp/run.mts", "npm", "start"]
+CMD ["node", "--experimental-transform-types", "--disable-warning=ExperimentalWarning", "gcp/run.mtss", "npm", "start"]
