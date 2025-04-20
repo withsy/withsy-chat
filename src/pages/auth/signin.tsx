@@ -1,12 +1,9 @@
-// pages/auth/signin.tsx
 import {
   Badge,
-  Bot,
   CircleUserRound,
   Github,
   LogIn,
   Mail,
-  Shield,
   User,
 } from "lucide-react";
 import type { GetServerSideProps } from "next";
