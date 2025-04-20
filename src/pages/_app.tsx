@@ -4,21 +4,29 @@ import { trpc } from "@/lib/trpc";
 import "@/styles/globals.css";
 import type { AppProps, AppType } from "next/app";
 import Head from "next/head";
+import { useRouter } from "next/router";
 import { Toaster as Sonner } from "sonner";
 
 const App: AppType = ({
   Component,
   pageProps: { session, ...pageProps },
 }: AppProps) => {
+  const router = useRouter();
+  const noLayoutPages = ["/auth/signin"];
+  const isLayoutDisabled = noLayoutPages.includes(router.pathname);
   return (
     <AppProviders session={session}>
       <Head>
         <link rel="icon" href="/favicon.ico" />
         <title>Withsy</title>
       </Head>
-      <Layout>
+      {isLayoutDisabled ? (
         <Component {...pageProps} />
-      </Layout>
+      ) : (
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
+      )}
       <Sonner position="bottom-right" />
     </AppProviders>
   );
