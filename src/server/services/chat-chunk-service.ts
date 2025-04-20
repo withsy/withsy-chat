@@ -3,7 +3,6 @@ import {
   type ChatChunkIndex,
   type ReceiveChatChunkStream,
 } from "@/types/chat";
-import { type JsonValue } from "@/types/common";
 import { PgEvent, type PgEventInput } from "@/types/task";
 import type { UserId } from "@/types/user";
 import type { Prisma } from "@prisma/client";

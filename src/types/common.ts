@@ -27,14 +27,6 @@ export const JsonValueSchema: z.ZodType<JsonValue> = z.lazy(() =>
 );
 export const JsonValue = JsonValueSchema;
 
-export function cols<S extends z.ZodObject<any>, Table extends string>(
-  schema: S,
-  table: Table
-): Array<`${Table}.${Extract<keyof S["shape"], string>}`> {
-  const keys = Object.keys(schema.shape) as Extract<keyof S["shape"], string>[];
-  return keys.map((k) => `${table}.${k}` as `${Table}.${typeof k}`);
-}
-
 export function zParseDate() {
   return z.preprocess((x) => {
     if (typeof x === "string" || x instanceof Date) return new Date(x);

@@ -6,7 +6,7 @@ import {
   ChatRole,
   type ChatMessageForHistory,
 } from "@/types/chat";
-import type { JsonValue, MaybePromise } from "@/types/common";
+import type { MaybePromise } from "@/types/common";
 import type { TaskInput } from "@/types/task";
 import type { UserId } from "@/types/user";
 import type { Prisma } from "@prisma/client";

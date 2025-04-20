@@ -1,22 +1,19 @@
 import {
   ChatId,
   ChatMessageId,
-  ChatMessageSchema,
   ChatMessageStatus,
   ChatRole,
-  ChatSchema,
   SendChatMessage,
   UpdateChatMessage,
   type ChatMessageForHistory,
   type ListChatMessages,
 } from "@/types/chat";
-import { cols } from "@/types/common";
 import type { UserId } from "@/types/user";
 import { StatusCodes } from "http-status-codes";
 import { HttpServerError } from "../error";
 import type { ServiceRegistry } from "../service-registry";
 import { ChatMessageFileService } from "./chat-message-file-service";
-import type { Db, Tx } from "./db";
+import type { Tx } from "./db";
 import type { FileInfo } from "./mock-s3-service";
 
 export class ChatMessageService {

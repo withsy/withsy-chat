@@ -1,21 +1,16 @@
 import {
-  Chat,
   ChatDelete,
   ChatListBranches,
-  ChatMessage,
   ChatMessageId,
-  ChatMessageSchema,
-  ChatSchema,
   GetChat,
   StartBranchChat,
   type StartChat,
   type UpdateChat,
 } from "@/types/chat";
-import { cols } from "@/types/common";
 import { UserId } from "@/types/user";
 import type { ServiceRegistry } from "../service-registry";
 import { ChatMessageService } from "./chat-message-service";
-import type { Db, Tx } from "./db";
+import type { Tx } from "./db";
 import { IdempotencyInfoService } from "./idempotency-info-service";
 
 export class ChatService {

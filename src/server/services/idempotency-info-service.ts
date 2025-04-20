@@ -3,7 +3,7 @@ import { Prisma } from "@prisma/client";
 import { StatusCodes } from "http-status-codes";
 import { HttpServerError } from "../error";
 import type { ServiceRegistry } from "../service-registry";
-import type { Db, Tx } from "./db";
+import type { Tx } from "./db";
 
 export class IdempotencyInfoService {
   constructor(private readonly service: ServiceRegistry) {}

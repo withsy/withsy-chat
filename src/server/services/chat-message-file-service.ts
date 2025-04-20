@@ -1,7 +1,7 @@
 import type { ChatMessageId } from "@/types/chat";
 import type { UserId } from "@/types/user";
 import type { ServiceRegistry } from "../service-registry";
-import type { Db, Tx } from "./db";
+import type { Tx } from "./db";
 import type { FileInfo } from "./mock-s3-service";
 
 export class ChatMessageFileService {
