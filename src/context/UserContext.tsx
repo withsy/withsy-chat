@@ -25,9 +25,7 @@ const DEFAULT_USER_PREFS = UserPrefs.parse({});
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export function UserProvider({ children }: { children: ReactNode }) {
-  const { data: session } = useSession({
-    required: true
-  });
+  const { data: session } = useSession();
   const [userSession, setUserSession] = useState<UserSession | null>(null);
   const [userPrefLoadings, setUserPrefLoadings] = useState<UserPrefLoadings>(
     {}

@@ -28,6 +28,9 @@ const providers: Provider[] = [
 if (envConfig.nodeEnv === "development") providers.push(devAuthProvider);
 
 export const authOptions: AuthOptions = {
+  pages: {
+    signIn: "/auth/signin",
+  },
   providers,
   session: {
     strategy: "jwt",
