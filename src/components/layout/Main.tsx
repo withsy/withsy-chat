@@ -15,7 +15,7 @@ export default function Main({ children }: MainProps) {
   const HEADER_HEIGHT = 64;
 
   const mainStyle: React.CSSProperties = {
-    minHeight: `calc(100dvh - ${HEADER_HEIGHT}px)`,
+    minHeight: `calc(90dvh - ${HEADER_HEIGHT}px)`,
     backgroundColor: "white",
     ...(isMobile
       ? {}
