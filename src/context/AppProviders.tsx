@@ -14,7 +14,7 @@ export default function AppProviders({
   return (
     <SessionProvider
       session={session}
-      refetchInterval={5 * 60} // 5 minutes
+      refetchInterval={10 * 60} // 10 minutes
     >
       <UserProvider>
         <SidebarProvider>{children}</SidebarProvider>
