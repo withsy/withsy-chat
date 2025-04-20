@@ -28,6 +28,7 @@ model UserLinkAccounts {
   createdAt         DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
 
   @@unique([provider, providerAccountId])
+  @@index([userId])
   @@map("user_link_accounts")
 }
 
@@ -51,6 +52,7 @@ model Chats {
   chatMessages    ChatMessages[] @relation("chatId")
 
   @@index([userId])
+  @@index([parentMessageId])
   @@map("chats")
 }
 
