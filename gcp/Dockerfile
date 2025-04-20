@@ -10,7 +10,7 @@ RUN npm run build
 FROM base AS prod_deps
 WORKDIR /app
 COPY package*.json ./
-RUN npm install --production --frozen-lockfile
+RUN npm install --omit=dev --frozen-lockfile
 
 FROM base AS runner
 WORKDIR /app
