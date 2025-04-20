@@ -108,7 +108,9 @@ export default function SidebarChatList() {
       /> */}
       {starred.length > 0 && (
         <div>
-          <div className="py-1 px-2 mb-1 text-sm font-semibold">Starred</div>
+          <div className="py-1 px-2 mb-1 text-sm font-semibold select-none">
+            Starred
+          </div>
           <div className="space-y-1 mt-1">
             {starred.map((chat) => (
               <SidebarChatItem
@@ -129,7 +131,7 @@ export default function SidebarChatList() {
 
             return (
               <div key={date}>
-                <div className="py-1 px-2 mb-1 text-sm font-semibold">
+                <div className="py-1 px-2 mb-1 text-sm font-semibold select-none">
                   {date}
                 </div>
                 {chats.map((chat) => (
@@ -163,6 +165,7 @@ export function SidebarChatItem({
   const [editMode, setEditMode] = useState(false);
   const [editedTitle, setEditedTitle] = useState(chat.title);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [isTouchHover, setIsTouchHover] = useState(false);
 
   const { isMobile, setCollapsed } = useSidebar();
   const { userPrefs } = useUser();
@@ -189,6 +192,7 @@ export function SidebarChatItem({
   const iconClassName = `opacity-100 transition-opacity ${
     isDropdownOpen ? "opacity-0" : "group-hover:opacity-0"
   }`;
+  const mobileClassName = isMobile ? "px-2.5 py-3 select-none" : "px-2.5 py-2";
 
   const handleLinkClick = () => {
     if (editMode) return;
@@ -234,10 +238,16 @@ export function SidebarChatItem({
 
   return (
     <div
-      className={`group relative flex items-center gap-2 no-underline px-2.5 py-2 rounded-md transition-colors hover:bg-white cursor-pointer ${isHoveredOrDropdown}`}
+      onTouchStart={() => setIsTouchHover(true)}
+      onTouchEnd={() => setIsTouchHover(false)}
+      className={`group relative flex items-center gap-2 no-underline ${mobileClassName} rounded-md transition-colors hover:bg-white cursor-pointer ${
+        isTouchHover ? "bg-white" : ""
+      } ${isHoveredOrDropdown}`}
     >
       <div
-        className="flex items-center gap-2 flex-1 min-w-0 group-hover:font-semibold"
+        className={`flex items-center gap-2 flex-1 min-w-0 group-hover:font-semibold ${
+          isTouchHover ? "font-semibold" : ""
+        }`}
         onClick={handleLinkClick}
       >
         <div className="w-5 h-5 flex items-center justify-center relative">
@@ -282,7 +292,7 @@ export function SidebarChatItem({
               }
             }}
             onBlur={handleTitleSave}
-            className="flex-1 text-base px-1 py-0.5 border rounded bg-white text-foreground"
+            className="flex-1 px-1 py-0.5 border rounded bg-white text-foreground"
           />
         ) : (
           <span className="truncate text-foreground flex-1">{chat.title}</span>

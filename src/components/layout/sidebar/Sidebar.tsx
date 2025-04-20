@@ -6,13 +6,12 @@ import SidebarChatList from "./SidebarChatList";
 export default function Sidebar() {
   const { isMobile, collapsed } = useSidebar();
   const { userPrefs } = useUser();
-  const { largeText, themeColor, themeOpacity } = userPrefs;
+  const { themeColor, themeOpacity } = userPrefs;
 
   return (
     <div
       className={cn(
         "transition-all duration-300 ease-in-out h-[100dvh] pt-16 fixed top-0 left-0 z-40 flex flex-col",
-        largeText ? "text-lg" : "text-base",
         collapsed && "w-0 overflow-hidden",
         !collapsed && isMobile && "w-[100vw]  px-4",
         !collapsed && !isMobile && "w-[240px] px-4"
@@ -26,7 +25,8 @@ export default function Sidebar() {
       <div
         className={cn(
           "transition-opacity duration-500 delay-200 flex-1 flex flex-col min-h-0 pb-4 relative",
-          collapsed ? "opacity-0 pointer-events-none" : "opacity-100"
+          collapsed ? "opacity-0 pointer-events-none" : "opacity-100",
+          isMobile && "text-lg"
         )}
       >
         {!collapsed && (
