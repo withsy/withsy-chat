@@ -59,19 +59,11 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
   const _receiveChatChunk = trpc.chatChunk.receiveStream.useSubscription(
     streamMessageId != null ? { chatMessageId: streamMessageId } : skipToken,
     {
-      onStarted() {
-        console.log(
-          `Start to receive chunk for chat message id: ${streamMessageId}.`
-        );
-      },
       onComplete() {
         setMessages((prev) =>
           prev.map((x) =>
             x.id === streamMessageId ? { ...x, status: "succeeded" } : x
           )
-        );
-        console.log(
-          `Complete to receive chunk for chat message id: ${streamMessageId}.`
         );
       },
       onError(error) {
@@ -91,7 +83,6 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
               : msg
           )
         );
-        console.log(`TODO: chunk to message. chunk text: ${chunk.text}`);
       },
     }
   );

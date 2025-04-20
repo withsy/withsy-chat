@@ -39,7 +39,7 @@ export const trpc = createTRPCNext<TrpcRouter>({
   config() {
     return {
       links: [
-        loggerLink(),
+        process.env.NODE_ENV !== "production" ? loggerLink() : null,
         splitLink({
           condition: (op) => op.type === "subscription",
           true: httpSubscriptionLink({
@@ -51,7 +51,7 @@ export const trpc = createTRPCNext<TrpcRouter>({
             url: getUrl(),
           }),
         }),
-      ],
+      ].filter((x) => x != null),
     };
   },
   ssr: false,
