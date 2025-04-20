@@ -157,7 +157,7 @@ export const ListChatMessages = z.object({
       z.object({ by: z.literal("chat"), chatId: ChatId }),
     ]),
     order: z.enum(["asc", "desc"]).optional().default("asc"),
-    limit: z.number().int().min(1).max(100).optional().default(20),
+    limit: z.number().int().min(1).max(100).optional().default(100),
     afterId: ChatMessageId.optional(),
     include: z
       .object({
