@@ -15,7 +15,8 @@ type Props = {
 
 const ChatBubbleComponent = ({ message, onToggleSaved }: Props) => {
   const { userSession } = useUser();
-  const { role, text: rawText } = message;
+  const { role, text: rawText, status } = message;
+  // TODO: handle status. streaming (pending, processing) or completed (succeeded, failed)
 
   const text = rawText ?? "";
   const isLongMessage = text.length > 150;
