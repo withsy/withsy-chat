@@ -262,7 +262,7 @@ export function SidebarChatItem({
               }
             }}
             onBlur={handleTitleSave}
-            className="flex-1 text-sm px-1 py-0.5 border rounded bg-white text-foreground"
+            className="flex-1 text-base px-1 py-0.5 border rounded bg-white text-foreground"
           />
         ) : (
           <span className="truncate text-foreground flex-1">{chat.title}</span>
