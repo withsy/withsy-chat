@@ -120,7 +120,11 @@ export default function ChatHeader({
       style={headerStyle}
       ref={containerRef}
     >
-      <SidebarChatItem chat={displayChat} onToggleStar={updateChat} />
+      <SidebarChatItem
+        chat={displayChat}
+        onToggleStar={updateChat}
+        onChatUpdate={(updatedChat) => setDisplayChat(updatedChat)}
+      />
 
       <div className="flex gap-5">
         {buttons.map(({ label, id, icon }) => (
@@ -135,14 +139,6 @@ export default function ChatHeader({
             {!hideLabels && <span>{label}</span>}
           </button>
         ))}
-        {/* <button className={buttonClassName} onClick={() => {}}>
-          <HoverSwitchIcon
-            DefaultIcon={Archive}
-            HoverIcon={Archive}
-            fill={`rgb(${themeColor})`}
-          />
-          {!hideLabels && <span>Archive</span>}
-        </button> */}
         {!isMobile && (
           <button
             className={buttonClassName}

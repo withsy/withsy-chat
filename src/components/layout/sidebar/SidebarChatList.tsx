@@ -157,12 +157,14 @@ export default function SidebarChatList() {
 
 export function SidebarChatItem({
   chat,
-  onToggleStar,
   isSidebar,
+  onToggleStar,
+  onChatUpdate,
 }: {
   chat: Chat;
-  onToggleStar: (chat: Chat) => void;
   isSidebar?: boolean;
+  onToggleStar: (chat: Chat) => void;
+  onChatUpdate?: (chat: Chat) => void;
 }) {
   const router = useRouter();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -207,8 +209,17 @@ export function SidebarChatItem({
   };
 
   const handleTitleSave = () => {
-    if (editedTitle.trim() !== chat.title)
-      updateChatTitle.mutate({ chatId: chat.id, title: editedTitle });
+    if (editedTitle.trim() !== chat.title) {
+      updateChatTitle.mutate(
+        { chatId: chat.id, title: editedTitle },
+        {
+          onSuccess: () => {
+            const updatedChat = { ...chat, title: editedTitle };
+            if (onChatUpdate) onChatUpdate(updatedChat);
+          },
+        }
+      );
+    }
     setEditMode(false);
   };
 
