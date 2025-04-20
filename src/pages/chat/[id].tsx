@@ -7,7 +7,7 @@ export default function Page() {
   const { id } = router.query;
 
   const chatId = typeof id === "string" ? id : null;
-  if (!chatId) return <PartialError message="Invaild chat id" />;
+  if (!chatId) return <PartialError message="Invalid chat id" />;
 
   return <ChatView chatId={chatId} />;
 }
