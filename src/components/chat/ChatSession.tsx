@@ -29,6 +29,7 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
   const [streamMessageId, setStreamMessageId] = useState<number | null>();
   const [selectedModel, setSelectedModel] =
     useState<ChatModel>("gemini-2.0-flash");
+  const stableChat = useMemo(() => chat, [chat]);
 
   const utils = trpc.useUtils();
 
@@ -191,8 +192,7 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
         >
           {(chat || messages.length > 0) && (
             <ChatMessageList
-              key={chat?.id}
-              chat={chat}
+              chat={stableChat}
               messages={messages}
               onToggleSaved={handleToggleSaved}
               shouldAutoScrollRef={shouldAutoScrollRef}

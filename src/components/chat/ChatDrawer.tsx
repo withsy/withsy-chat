@@ -160,7 +160,7 @@ function Branches({
       const messageId = chat.parentMessageId;
       const parentMessageText = chat.parentMessage.text ?? "";
       originalChat = (
-        <div>
+        <div className="m-2">
           <div className="flex gap-2 items-center font-semibold text-sm mb-3 select-none">
             <FolderRoot size={16} />
             Original Chat
@@ -187,7 +187,12 @@ function Branches({
       );
     }
     if (chatListBranches.data.length == 0) {
-      return originalChat;
+      if (originalChat) return originalChat;
+      return (
+        <div className="h-full w-full flex items-center justify-center text-muted-foreground">
+          No Branches Yet.
+        </div>
+      );
     }
     return (
       <div className="overflow-y-auto max-h-[80%] m-2 flex flex-col gap-y-4 bg-transparent">

@@ -1,5 +1,6 @@
 import type { Chat } from "@/types/chat";
 import Link from "next/link";
+import React, { useMemo } from "react";
 
 interface ChatInformationSystemMessageProps {
   chat: Chat;
@@ -12,29 +13,30 @@ const ChatInformationSystemMessage: React.FC<
   const chatId = chat.parentMessage?.chatId;
   const messageId = chat.parentMessageId;
 
-  let content: React.ReactNode = null;
-
-  if (chatType === "chat") {
-    const message = getRandomMessage(newChatMessages);
-    content = (
-      <div className="text-muted-foreground italic text-center select-none">
-        {message}
-      </div>
-    );
-  } else if (chatType === "branch" && chatId && messageId) {
-    const message = getRandomMessage(branchChatMessages);
-    content = (
-      <div className="text-muted-foreground italic text-center select-none">
-        {message.prefix}
-        <Link
-          href={`/chat/${chatId}?messageId=${messageId}`}
-          className="underline text-blue-500"
-        >
-          {message.linkText}
-        </Link>
-      </div>
-    );
-  }
+  const content = useMemo(() => {
+    if (chatType === "chat") {
+      const message = getRandomMessage(newChatMessages);
+      return (
+        <div className="text-muted-foreground italic text-center select-none">
+          {message}
+        </div>
+      );
+    } else if (chatType === "branch" && chatId && messageId) {
+      const message = getRandomMessage(branchChatMessages);
+      return (
+        <div className="text-muted-foreground italic text-center select-none">
+          {message.prefix}
+          <Link
+            href={`/chat/${chatId}?messageId=${messageId}`}
+            className="underline text-blue-500"
+          >
+            {message.linkText}
+          </Link>
+        </div>
+      );
+    }
+    return null;
+  }, [chatType, chatId, messageId]);
 
   return (
     <div key={chat.id} className="flex justify-center my-4 p-4">
@@ -73,4 +75,4 @@ function getRandomMessage<T extends { prefix?: string } | string>(
   return messages[index];
 }
 
-export default ChatInformationSystemMessage;
+export default React.memo(ChatInformationSystemMessage);
