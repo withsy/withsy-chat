@@ -1,6 +1,5 @@
 import { useSidebar } from "@/context/SidebarContext";
 import { useUser } from "@/context/UserContext";
-import { trpc } from "@/lib/trpc";
 import type { Chat } from "@/types/chat";
 import {
   Bookmark,
@@ -27,8 +26,6 @@ export default function ChatHeader({
   const { userPrefs, setUserPrefsAndSave } = useUser();
   const { themeColor, themeOpacity } = userPrefs;
 
-  const updateChatMut = trpc.chat.update.useMutation();
-  const utils = trpc.useUtils();
   const [displayChat, setDisplayChat] = useState<Chat>(chat);
   const [hideLabels, setHideLabels] = useState(false);
 
@@ -52,26 +49,6 @@ export default function ChatHeader({
 
   const handleClick = (id: string) => {
     setOpenDrawer(openDrawer === id ? null : id);
-  };
-
-  const updateChat = () => {
-    const chatId = displayChat.id;
-    const prev = { ...displayChat };
-
-    const newChat = { ...displayChat, isStarred: !displayChat.isStarred };
-    setDisplayChat(newChat);
-
-    updateChatMut.mutate(
-      { chatId, isStarred: newChat.isStarred },
-      {
-        onError: () => {
-          setDisplayChat(prev);
-        },
-        onSuccess: () => {
-          utils.chat.list.invalidate();
-        },
-      }
-    );
   };
 
   const buttons = [
@@ -122,7 +99,6 @@ export default function ChatHeader({
     >
       <SidebarChatItem
         chat={displayChat}
-        onToggleStar={updateChat}
         onChatUpdate={(updatedChat) => setDisplayChat(updatedChat)}
       />
 

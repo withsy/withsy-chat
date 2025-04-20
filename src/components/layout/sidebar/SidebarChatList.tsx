@@ -43,30 +43,24 @@ export default function SidebarChatList() {
     setChats(listChats.data);
   }, [listChats]);
 
-  const updateChat = <K extends keyof Chat>(
-    chatId: string,
-    key: K,
-    value: Chat[K]
-  ) => {
+  const updateChat = (updatedChat: Chat) => {
     const prev = chats;
 
     setChats((prev) =>
-      prev.map((chat) =>
-        chat.id === chatId ? { ...chat, [key]: value } : chat
-      )
+      prev.map((chat) => (chat.id === updatedChat.id ? updatedChat : chat))
     );
 
     updateChatMut.mutate(
-      { chatId, [key]: value },
+      {
+        chatId: updatedChat.id,
+        isStarred: updatedChat.isStarred,
+        title: updatedChat.title,
+      },
       {
         onError: () => setChats(prev),
         onSuccess: () => utils.chat.list.invalidate(),
       }
     );
-  };
-
-  const toggleStar = (chat: Chat) => {
-    updateChat(chat.id, "isStarred", !chat.isStarred);
   };
 
   if (listChats.isLoading) return <PartialLoading />;
@@ -120,8 +114,8 @@ export default function SidebarChatList() {
               <SidebarChatItem
                 key={chat.id}
                 chat={chat}
-                onToggleStar={toggleStar}
                 isSidebar={true}
+                onChatUpdate={updateChat}
               />
             ))}
           </div>
@@ -142,8 +136,8 @@ export default function SidebarChatList() {
                   <SidebarChatItem
                     key={chat.id}
                     chat={chat}
-                    onToggleStar={toggleStar}
                     isSidebar={true}
+                    onChatUpdate={updateChat}
                   />
                 ))}
               </div>
@@ -158,13 +152,11 @@ export default function SidebarChatList() {
 export function SidebarChatItem({
   chat,
   isSidebar,
-  onToggleStar,
   onChatUpdate,
 }: {
   chat: Chat;
   isSidebar?: boolean;
-  onToggleStar: (chat: Chat) => void;
-  onChatUpdate?: (chat: Chat) => void;
+  onChatUpdate: (chat: Chat) => void;
 }) {
   const router = useRouter();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -176,7 +168,7 @@ export function SidebarChatItem({
   const { userPrefs } = useUser();
 
   const utils = trpc.useUtils();
-  const updateChatTitle = trpc.chat.update.useMutation({
+  const updateChatMut = trpc.chat.update.useMutation({
     onMutate: () => utils.chat.list.cancel(),
     onSuccess: () => utils.chat.list.invalidate(),
   });
@@ -210,7 +202,7 @@ export function SidebarChatItem({
 
   const handleTitleSave = () => {
     if (editedTitle.trim() !== chat.title) {
-      updateChatTitle.mutate(
+      updateChatMut.mutate(
         { chatId: chat.id, title: editedTitle },
         {
           onSuccess: () => {
@@ -221,6 +213,23 @@ export function SidebarChatItem({
       );
     }
     setEditMode(false);
+  };
+
+  const handleToggleStar = () => {
+    const updatedChat = { ...chat, isStarred: !chat.isStarred };
+    onChatUpdate(updatedChat);
+
+    updateChatMut.mutate(
+      { chatId: chat.id, isStarred: updatedChat.isStarred },
+      {
+        onError: () => {
+          onChatUpdate(chat);
+        },
+        onSuccess: () => {
+          utils.chat.list.invalidate();
+        },
+      }
+    );
   };
 
   return (
@@ -241,7 +250,7 @@ export function SidebarChatItem({
           <button
             onClick={(e) => {
               e.stopPropagation();
-              onToggleStar(chat);
+              handleToggleStar();
             }}
             className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
           >
@@ -299,7 +308,7 @@ export function SidebarChatItem({
           className="z-[9999]"
           sideOffset={4}
         >
-          <DropdownMenuItem onClick={() => onToggleStar(chat)}>
+          <DropdownMenuItem onClick={() => handleToggleStar()}>
             {chat.isStarred ? (
               <>
                 <StarOff size={14} className="mr-2" />
