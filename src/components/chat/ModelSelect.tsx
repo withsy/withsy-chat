@@ -1,7 +1,7 @@
 import { useSelectedModel } from "@/context/SelectedModelContext";
 import { useSidebar } from "@/context/SidebarContext";
 import type { ChatModel } from "@/types/chat";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { ModelDropdown } from "./ModelDropdown";
 import { ModelSelectButton } from "./ModelSelectButton";
 
@@ -27,7 +27,12 @@ const models: {
   },
 ];
 
-export function ModelSelect() {
+interface ModelSelectProps {
+  button?: ReactNode;
+  onSelectModel?: (model: ChatModel) => void;
+}
+
+export function ModelSelect({ button, onSelectModel }: ModelSelectProps) {
   const { isMobile } = useSidebar();
   const { selectedModel, setSelectedModel } = useSelectedModel();
   const [open, setOpen] = useState(false);
@@ -51,10 +56,14 @@ export function ModelSelect() {
 
   return (
     <div className="relative inline-block" ref={dropdownRef}>
-      <ModelSelectButton
-        selectedLabel={selectedLabel}
-        onClick={() => setOpen((prev) => !prev)}
-      />
+      {button ? (
+        <div onClick={() => setOpen((prev) => !prev)}>{button}</div>
+      ) : (
+        <ModelSelectButton
+          selectedLabel={selectedLabel}
+          onClick={() => setOpen((prev) => !prev)}
+        />
+      )}
       {open && (
         <ModelDropdown
           models={models}
@@ -62,6 +71,7 @@ export function ModelSelect() {
           isMobile={isMobile}
           onSelect={(val) => {
             setSelectedModel(val);
+            onSelectModel?.(val);
             setOpen(false);
           }}
         />

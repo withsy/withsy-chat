@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 import { Bookmark, Copy, GitBranch, RefreshCw } from "lucide-react";
 import { useRouter } from "next/router";
 import { v4 as uuid } from "uuid";
+import { ModelSelect } from "./ModelSelect";
 
 interface ChatBubbleTooltipsProps {
   parentId: number | null;
@@ -59,9 +60,6 @@ export const ChatBubbleTooltips: React.FC<ChatBubbleTooltipsProps> = ({
     });
   };
 
-  const handleSwitchModel = () => {
-    // TODO 모델 선택 하면 유저가 선택한 모델로 답장이 다시 와야 함.
-  };
   return (
     <TooltipProvider>
       <div className={cn("flex gap-2", className)}>
@@ -98,12 +96,20 @@ export const ChatBubbleTooltips: React.FC<ChatBubbleTooltipsProps> = ({
             </Tooltip>
 
             <Tooltip>
-              <TooltipTrigger asChild>
-                <Button size="icon" variant="ghost" onClick={handleSwitchModel}>
-                  <RefreshCw className="w-4 h-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>Switch Model</TooltipContent>
+              <ModelSelect
+                onSelectModel={(model) => {
+                  // TODO 여기서 trpc 에 답변 regenerate 부탁!
+                  console.log(model);
+                }}
+                button={
+                  <TooltipTrigger asChild>
+                    <Button size="icon" variant="ghost">
+                      <RefreshCw className="w-4 h-4" />
+                    </Button>
+                  </TooltipTrigger>
+                }
+              />
+              <TooltipContent>Switch model & regenerate</TooltipContent>
             </Tooltip>
           </>
         )}
