@@ -1,13 +1,8 @@
+import { useSelectedModel } from "@/context/SelectedModelContext";
 import { useSidebar } from "@/context/SidebarContext";
-import type { ChatModel } from "@/types/chat";
 import { AtSign, ChevronDown } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { ModelSelectItem } from "./ModelSelectItem";
-
-type Props = {
-  value: ChatModel;
-  onChange: (model: ChatModel) => void;
-};
 
 const models = [
   { label: "gemini-2.0-flash", value: "gemini-2.0-flash" },
@@ -15,8 +10,9 @@ const models = [
   { label: "gpt-4o", value: "gpt-4o" },
 ];
 
-export function ModelSelect({ value, onChange }: Props) {
+export function ModelSelect() {
   const { isMobile } = useSidebar();
+  const { selectedModel, setSelectedModel } = useSelectedModel();
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -37,11 +33,12 @@ export function ModelSelect({ value, onChange }: Props) {
     <div className="relative inline-block" ref={dropdownRef}>
       <button
         onClick={() => setOpen((prev) => !prev)}
-        className="inline-flex items-center gap-1 rounded px-2 py-[2px] font-semibold text-gray-500 hover:bg-gray-200 active:bg-gray-200 transition"
+        className="inline-flex items-center gap-1 rounded px-2 py-[2px] font-medium text-gray-500 hover:bg-gray-200 active:bg-gray-200 transition"
       >
         <AtSign size={12} />
         <span>
-          {models.find((m) => m.value === value)?.label || "Select model"}
+          {models.find((m) => m.value === selectedModel)?.label ||
+            "Select model"}
         </span>
         <ChevronDown size={12} className="text-gray-400" />
       </button>
@@ -53,11 +50,11 @@ export function ModelSelect({ value, onChange }: Props) {
             <ModelSelectItem
               key={model.value}
               modelValue={model.value}
-              selectedValue={value}
+              selectedValue={selectedModel}
               label={model.label}
               isMobile={isMobile}
               onSelect={(val) => {
-                onChange(val);
+                setSelectedModel(val);
                 setOpen(false);
               }}
             />

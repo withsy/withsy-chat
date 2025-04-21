@@ -1,8 +1,9 @@
+import { useSelectedModel } from "@/context/SelectedModelContext";
 import { useSidebar } from "@/context/SidebarContext";
 import { useUser } from "@/context/UserContext";
 import { trpc } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
-import { Chat, ChatMessage, ChatModel } from "@/types/chat";
+import { Chat, ChatMessage } from "@/types/chat";
 import { skipToken } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -23,12 +24,11 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
   const router = useRouter();
 
   const { isMobile } = useSidebar();
+  const { selectedModel } = useSelectedModel();
   const { userPrefs } = useUser();
   const [messages, setMessages] = useState(initialMessages);
   const [openDrawer, setOpenDrawer] = useState<string | null>(null);
   const [streamMessageId, setStreamMessageId] = useState<number | null>();
-  const [selectedModel, setSelectedModel] =
-    useState<ChatModel>("gemini-2.0-flash");
   const stableChat = useMemo(() => chat, [chat]);
 
   const utils = trpc.useUtils();
@@ -164,9 +164,7 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
     () => messages.filter((msg) => msg.isBookmarked),
     [messages]
   );
-  const handleChangeModel = (newModel: ChatModel) => {
-    setSelectedModel(newModel);
-  };
+
   return (
     <div className="flex h-full relative">
       <div
@@ -201,11 +199,7 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
           {children}
         </div>
         <div className="absolute bottom-[2vh] left-0 right-0 flex justify-center px-4">
-          <ChatInputBox
-            onSendMessage={onSendMessage}
-            selectedModel={selectedModel}
-            onChangeModel={handleChangeModel}
-          />
+          <ChatInputBox onSendMessage={onSendMessage} />
         </div>
       </div>
       <ChatDrawer
