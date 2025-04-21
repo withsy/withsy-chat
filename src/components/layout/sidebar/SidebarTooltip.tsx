@@ -2,7 +2,6 @@ import { IconWithLabel } from "@/components/IconWithLabel";
 import { useSidebar } from "@/context/SidebarContext";
 import { type LucideIcon } from "lucide-react";
 import { useRouter } from "next/router";
-import { useState } from "react";
 
 interface SidebarTooltipProps {
   id: string;
@@ -19,17 +18,15 @@ export function SidebarTooltip({
   fill,
   size = 24,
 }: SidebarTooltipProps) {
-  const [isTouchHover, setIsTouchHover] = useState(false);
   const { isMobile, collapsed, setCollapsed } = useSidebar();
   const router = useRouter();
   const isActive = `/${id}` == router.asPath;
 
   const className = `
               group flex items-center gap-2 px-2.5 py-2 rounded-md transition-colors w-full 
-              hover:bg-white hover:font-semibold cursor-pointer select-none ${
-                isActive || isTouchHover ? "font-semibold" : ""
+              hover:bg-white hover:font-semibold cursor-pointer select-none active:bg-white active:font-semibold ${
+                isActive ? "font-semibold" : ""
               }
-              ${isTouchHover ? "bg-white" : ""}
             `;
   const handleLinkClick = () => {
     if (isMobile) {
@@ -39,12 +36,7 @@ export function SidebarTooltip({
   };
 
   return (
-    <button
-      className={className}
-      onClick={handleLinkClick}
-      onTouchStart={() => setIsTouchHover(true)}
-      onTouchEnd={() => setIsTouchHover(false)}
-    >
+    <button className={className} onClick={handleLinkClick}>
       <IconWithLabel
         icon={Icon}
         label={label}

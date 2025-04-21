@@ -7,12 +7,9 @@ import {
 } from "@radix-ui/react-tooltip";
 import { PanelRightClose, PanelRightOpen, SquarePen } from "lucide-react";
 import { useRouter } from "next/router";
-import { useState } from "react";
 
 export function HeaderTooltipGroup() {
   const { isMobile, setCollapsed, collapsed, toggle } = useSidebar();
-  const [collapseTouch, setCollapseTouch] = useState(false);
-  const [newChatTouch, setNewChatTouch] = useState(false);
   const router = useRouter();
 
   const iconSize = 20;
@@ -30,11 +27,7 @@ export function HeaderTooltipGroup() {
           <TooltipTrigger asChild>
             <button
               onClick={toggle}
-              className={`cursor-pointer rounded-md group w-8 h-8 flex items-center justify-center hover:bg-white  ${
-                collapseTouch ? "bg-white" : ""
-              }`}
-              onTouchStart={() => setCollapseTouch(true)}
-              onTouchEnd={() => setCollapseTouch(false)}
+              className={`cursor-pointer rounded-md group w-8 h-8 flex items-center justify-center hover:bg-white active:bg-white`}
             >
               {collapsed ? (
                 <PanelRightClose
@@ -61,11 +54,7 @@ export function HeaderTooltipGroup() {
           <TooltipTrigger asChild>
             <button
               onClick={handleLinkClick}
-              className={`cursor-pointer rounded-md group w-8 h-8 flex items-center justify-center hover:bg-white ${
-                newChatTouch ? "bg-white" : ""
-              }`}
-              onTouchStart={() => setNewChatTouch(true)}
-              onTouchEnd={() => setNewChatTouch(false)}
+              className={`cursor-pointer rounded-md group w-8 h-8 flex items-center justify-center hover:bg-white active:bg-white`}
             >
               <SquarePen size={iconSize} className="group-hover:text-black" />
             </button>

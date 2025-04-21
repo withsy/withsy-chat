@@ -165,7 +165,6 @@ export function SidebarChatItem({
   const [editMode, setEditMode] = useState(false);
   const [editedTitle, setEditedTitle] = useState(chat.title);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [isTouchHover, setIsTouchHover] = useState(false);
 
   const { isMobile, setCollapsed } = useSidebar();
   const { userPrefs } = useUser();
@@ -268,16 +267,10 @@ export function SidebarChatItem({
 
   return (
     <div
-      onTouchStart={() => setIsTouchHover(true)}
-      onTouchEnd={() => setIsTouchHover(false)}
-      className={`group relative flex items-center gap-2 no-underline ${mobileClassName} rounded-md transition-colors hover:bg-white cursor-pointer ${
-        isTouchHover ? "bg-white" : ""
-      } ${isHoveredOrDropdown}`}
+      className={`group relative flex items-center gap-2 no-underline ${mobileClassName} rounded-md transition-colors hover:bg-white cursor-pointer active:bg-white ${isHoveredOrDropdown}`}
     >
       <div
-        className={`flex items-center gap-2 flex-1 min-w-0 group-hover:font-semibold ${
-          isTouchHover ? "font-semibold" : ""
-        }`}
+        className={`flex items-center gap-2 flex-1 min-w-0 group-hover:font-semibold active:font-semibold`}
         onClick={handleLinkClick}
       >
         <div className="w-5 h-5 flex items-center justify-center relative">
