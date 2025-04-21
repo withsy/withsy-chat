@@ -2,6 +2,7 @@ import { ChatRole } from "@/types/chat";
 import OpenAI from "openai";
 import type {
   ChatCompletionAssistantMessageParam,
+  ChatCompletionChunk,
   ChatCompletionMessageParam,
   ChatCompletionSystemMessageParam,
   ChatCompletionUserMessageParam,
@@ -10,6 +11,8 @@ import { match } from "ts-pattern";
 import { envConfig } from "../env-config";
 import type { ServiceRegistry } from "../service-registry";
 import type { SendChatToAiInput } from "./chat-model-route-service";
+
+const MAX_CHUNK_BUFFER_LENGTH = 64;
 
 export class OpenAiService {
   private openai: OpenAI;
@@ -82,10 +85,24 @@ export class OpenAiService {
       stream: true,
     });
 
-    for await (const chunk of stream) {
-      const text = chunk.choices[0].delta.content ?? "";
-      const rawData = JSON.stringify(chunk);
+    let text = "";
+    let chunks: ChatCompletionChunk[] = [];
+    const callOnChatChunkReceived = async () => {
+      if (chunks.length === 0) return;
+      const rawData = JSON.stringify(chunks);
       await onChatChunkReceived({ text, rawData });
+      text = "";
+      chunks = [];
+    };
+
+    for await (const chunk of stream) {
+      const token = chunk.choices[0].delta.content ?? "";
+      text += token;
+      chunks.push(chunk);
+      if (chunks.length >= MAX_CHUNK_BUFFER_LENGTH) {
+        await callOnChatChunkReceived();
+      }
     }
+    callOnChatChunkReceived();
   }
 }
