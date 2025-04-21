@@ -8,10 +8,7 @@ const compat = new FlatCompat({
 
 export default tseslint.config(
   ...compat.extends("next/core-web-vitals", "next/typescript"),
-  eslint.configs.recommended,
-  tseslint.configs.recommendedTypeChecked,
   {
-    files: ["src/server/**/*.ts"],
     languageOptions: {
       parserOptions: {
         projectService: true,
@@ -29,6 +26,13 @@ export default tseslint.config(
           varsIgnorePattern: "^_",
         },
       ],
+    },
+  },
+  {
+    files: ["src/server/**/*.ts"],
+    rules: {
+      "@typescript-eslint/no-floating-promises": "error",
+      "@typescript-eslint/await-thenable": "error",
     },
   }
 );
