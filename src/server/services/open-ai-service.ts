@@ -19,20 +19,6 @@ export class OpenAiService {
 
   constructor(private readonly service: ServiceRegistry) {
     this.openai = new OpenAI({ apiKey: envConfig.openaiApiKey });
-    this.openai.chat.completions.create({
-      model: "gpt-4o",
-      messages: [
-        {
-          role: "user",
-          content: [{ type: "text", text: "" }],
-        },
-        {
-          role: "assistant",
-          content: [{ type: "text", text: "" }],
-        },
-      ],
-      stream: true,
-    });
   }
 
   async sendChatToAi(input: SendChatToAiInput) {
