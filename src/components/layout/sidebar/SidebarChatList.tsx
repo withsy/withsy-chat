@@ -191,7 +191,7 @@ export function SidebarChatItem({
   const iconClassName = `opacity-100 transition-opacity ${
     isDropdownOpen ? "opacity-0" : "group-hover:opacity-0"
   }`;
-  const mobileClassName = isMobile ? "px-2.5 py-3" : "px-2.5 py-2";
+  const mobileClassName = isMobile ? "py-3" : "py-2";
 
   const handleLinkClick = () => {
     if (isActive) return;
@@ -268,7 +268,7 @@ export function SidebarChatItem({
 
   return (
     <div
-      className={`group relative flex items-center gap-2 no-underline ${mobileClassName} select-none rounded-md transition-colors hover:bg-white cursor-pointer active:bg-white ${isHoveredOrDropdown}`}
+      className={`group relative flex items-center gap-2 no-underline px-2 ${mobileClassName} select-none rounded-md transition-colors hover:bg-white cursor-pointer active:bg-white ${isHoveredOrDropdown}`}
     >
       <div
         className={`flex items-center gap-2 flex-1 min-w-0 group-hover:font-semibold active:font-semibold`}
@@ -319,7 +319,13 @@ export function SidebarChatItem({
             className="flex-1 px-1 py-0.5 border rounded bg-white text-foreground"
           />
         ) : (
-          <span className="truncate text-foreground flex-1">{chat.title}</span>
+          <span className="truncate text-foreground flex-1">
+            {isSidebar
+              ? chat.title
+              : chat.title.length > 10
+              ? `${chat.title.slice(0, 10)}...`
+              : chat.title}
+          </span>
         )}
       </div>
 
