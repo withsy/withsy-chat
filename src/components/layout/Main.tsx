@@ -31,11 +31,8 @@ export default function Main({ children }: MainProps) {
       <div
         className={cn(
           "transition-all h-full",
-
-          "text-sm",
-          largeText && "text-base",
-          "sm:text-base",
-          largeText && "sm:text-lg"
+          "text-base",
+          largeText && "text-lg"
         )}
       >
         {children}

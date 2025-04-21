@@ -44,11 +44,18 @@ function UserMenuItem({
   onClick,
 }: UserMenuItemProps) {
   const { isMobile } = useSidebar();
+  const [isTouchHover, setIsTouchHover] = useState(false);
 
   return (
     <DropdownMenuItem
       onSelect={onClick}
-      className={cn("flex items-center", isMobile ? "py-3 px-2" : "py-2 px-2")}
+      className={cn(
+        "flex items-center",
+        isMobile ? "py-3 px-2" : "py-2 px-2",
+        isTouchHover ? "bg-gray-50" : ""
+      )}
+      onTouchStart={() => setIsTouchHover(true)}
+      onTouchEnd={() => setIsTouchHover(false)}
     >
       <Icon className={cn("mr-2", isMobile ? "h-6 w-6" : "h-4 w-4")} />
       <Label
@@ -67,11 +74,9 @@ function UserMenuItem({
 export default function UserDropdownMenu() {
   const { userPrefs, userSession } = useUser();
 
-  const { largeText } = userPrefs;
   const [themeModalOpen, setThemeModalOpen] = useState(false);
 
   const userMenuItems: MenuItem[] = [
-    // "separator",
     { icon: MessageSquare, label: "Prompts" },
     { icon: Cpu, label: "Models" },
     {
@@ -80,7 +85,6 @@ export default function UserDropdownMenu() {
       onClick: () => setThemeModalOpen(true),
     },
     { icon: Settings, label: "Settings" },
-    // "separator",
     {
       icon: LogOut,
       label: "Log out",
@@ -101,7 +105,10 @@ export default function UserDropdownMenu() {
 
         <DropdownMenuContent
           align="end"
-          className={cn("w-48 p-2", largeText ? "text-lg" : "text-base")}
+          className={cn(
+            "w-48 p-2",
+            userPrefs.largeText ? "text-lg" : "text-base"
+          )}
         >
           {userMenuItems.map((item, idx) =>
             item === "separator" ? (

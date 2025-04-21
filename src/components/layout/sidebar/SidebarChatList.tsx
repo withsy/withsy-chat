@@ -236,6 +236,36 @@ export function SidebarChatItem({
     );
   };
 
+  const dropdownItems = [
+    {
+      label: chat.isStarred ? "StarOff" : "Star",
+      icon: chat.isStarred ? StarOff : Star,
+      className: isMobile ? "text-lg py-2" : "",
+      onClick: handleToggleStar,
+    },
+    {
+      label: "Rename",
+      icon: Pencil,
+      className: isMobile ? "text-lg py-2" : "",
+      onClick: (e: React.MouseEvent) => {
+        e.stopPropagation();
+        setEditMode(true);
+        setIsDropdownOpen(false);
+      },
+    },
+    {
+      label: "Delete",
+      icon: Trash2,
+      className: `text-red-500 ${isMobile ? "text-lg py-2" : ""}`,
+      iconClass: "text-red-500",
+      onClick: (e: React.MouseEvent) => {
+        e.stopPropagation();
+        setIsDropdownOpen(false);
+        setShowDeleteModal(true);
+      },
+    },
+  ];
+
   return (
     <div
       onTouchStart={() => setIsTouchHover(true)}
@@ -318,44 +348,18 @@ export function SidebarChatItem({
           className="z-[9999]"
           sideOffset={4}
         >
-          <DropdownMenuItem
-            onClick={() => handleToggleStar()}
-            className={`${isMobile ? "text-lg py-2" : ""}`}
-          >
-            {chat.isStarred ? (
-              <>
-                <StarOff size={14} className="mr-2" />
-                StarOff
-              </>
-            ) : (
-              <>
-                <Star size={14} className="mr-2" />
-                Star
-              </>
-            )}
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={(e) => {
-              e.stopPropagation();
-              setEditMode(true);
-              setIsDropdownOpen(false);
-            }}
-            className={`${isMobile ? "text-lg py-2" : ""}`}
-          >
-            <Pencil size={14} className="mr-2" />
-            Rename
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            className={`text-red-500 ${isMobile ? "text-lg py-2" : ""}`}
-            onClick={(e) => {
-              e.stopPropagation();
-              setIsDropdownOpen(false);
-              setShowDeleteModal(true);
-            }}
-          >
-            <Trash2 size={14} className="mr-2 text-red-500" />
-            Delete
-          </DropdownMenuItem>
+          {dropdownItems.map(
+            ({ label, icon: Icon, className, iconClass, onClick }) => (
+              <DropdownItem
+                key={label}
+                label={label}
+                Icon={Icon}
+                onClick={onClick}
+                className={className}
+                iconClass={iconClass}
+              />
+            )
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
       {showDeleteModal && (
@@ -369,5 +373,31 @@ export function SidebarChatItem({
         />
       )}
     </div>
+  );
+}
+
+function DropdownItem({
+  label,
+  Icon,
+  onClick,
+  className,
+  iconClass,
+}: {
+  label: string;
+  Icon: React.ElementType;
+  onClick: (e: React.MouseEvent) => void;
+  className?: string;
+  iconClass?: string;
+}) {
+  return (
+    <DropdownMenuItem
+      onClick={(e) => {
+        onClick(e);
+      }}
+      className={`active:bg-gray-50 ${className ?? ""}`}
+    >
+      <Icon size={14} className={`mr-2 ${iconClass ?? ""}`} />
+      {label}
+    </DropdownMenuItem>
   );
 }
