@@ -12,22 +12,9 @@ import superjson from "superjson";
 export type TrpcRouterInput = inferRouterInputs<TrpcRouter>;
 export type TrpcRouterOutput = inferRouterOutputs<TrpcRouter>;
 
-/**
- * If you want to use SSR, you need to use the server's full URL
- * @see https://trpc.io/docs/v11/ssr
- **/
 function getBaseUrl() {
-  if (typeof window !== "undefined")
-    // browser should use relative path
-    return "";
-  if (process.env.VERCEL_URL)
-    // reference for vercel.com
-    return `https://${process.env.VERCEL_URL}`;
-  if (process.env.RENDER_INTERNAL_HOSTNAME)
-    // reference for render.com
-    return `http://${process.env.RENDER_INTERNAL_HOSTNAME}:${process.env.PORT}`;
-  // assume localhost
-  return `http://localhost:${process.env.PORT ?? 3000}`;
+  if (typeof window !== "undefined") return "";
+  return `${process.env.NEXTAUTH_URL ?? "http://localhost:3000"}`;
 }
 
 function getUrl() {
