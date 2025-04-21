@@ -32,7 +32,7 @@ export function ChatMessageList({
   const messageRefs = useRef<Record<number, HTMLDivElement | null>>({});
 
   useEffect(() => {
-    if (messageId) {
+    if (messageId && messageId !== "last") {
       const id = parseInt(messageId as string, 10);
       const targetRef = messageRefs.current[id];
       if (targetRef) {

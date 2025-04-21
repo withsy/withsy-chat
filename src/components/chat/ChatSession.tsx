@@ -29,7 +29,7 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
   const { userPrefs } = useUser();
   const [messages, setMessages] = useState(initialMessages);
   const [openDrawer, setOpenDrawer] = useState<string | null>(null);
-  const [streamMessageId, setStreamMessageId] = useState<number | null>();
+  const [streamMessageId, setStreamMessageId] = useState<number | null>(null);
   const stableChat = useMemo(() => chat, [chat]);
 
   const utils = trpc.useUtils();
@@ -52,7 +52,7 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
   }, [chat?.id]);
 
   useEffect(() => {
-    if (messageId) {
+    if (messageId && messageId !== "last") {
       const id = parseInt(messageId as string, 10);
       setStreamMessageId(id);
     }
