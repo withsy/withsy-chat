@@ -75,6 +75,8 @@ jobs:
 
       - name: "Build and Push Container"
         run: |-
+          gcloud init
+          gcloud auth configure-docker us-central1-docker.pkg.dev
           DOCKER_TAG="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE }}:${{ github.sha }}"
           docker build --tag "${DOCKER_TAG}" -f gcp/Dockerfile .
           docker push "${DOCKER_TAG}"
