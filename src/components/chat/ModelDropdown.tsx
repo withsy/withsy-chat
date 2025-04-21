@@ -6,6 +6,7 @@ interface ModelDropdownProps {
   models: { label: string; value: ChatModel; description: string }[];
   selectedValue: ChatModel;
   isMobile: boolean;
+  messageModel?: ChatModel | null;
   onSelect: (value: ChatModel) => void;
 }
 
@@ -14,6 +15,7 @@ export function ModelDropdown({
   models,
   selectedValue,
   isMobile,
+  messageModel,
   onSelect,
 }: ModelDropdownProps) {
   return (
@@ -27,6 +29,7 @@ export function ModelDropdown({
           modelValue={model.value}
           selectedValue={selectedValue}
           label={model.label}
+          messageModel={messageModel}
           description={model.description}
           isMobile={isMobile}
           onSelect={onSelect}

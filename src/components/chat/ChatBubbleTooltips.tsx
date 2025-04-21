@@ -8,6 +8,7 @@ import {
 import { useUser } from "@/context/UserContext";
 import { trpc } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
+import type { ChatModel } from "@/types/chat";
 import { Bookmark, Copy, GitBranch, RefreshCw } from "lucide-react";
 import { useRouter } from "next/router";
 import { v4 as uuid } from "uuid";
@@ -15,6 +16,7 @@ import { ModelSelect } from "./ModelSelect";
 
 interface ChatBubbleTooltipsProps {
   parentId: number | null;
+  messageModel: ChatModel | null;
   isAi: boolean;
   isSaved: boolean;
   onCopy?: () => void;
@@ -24,6 +26,7 @@ interface ChatBubbleTooltipsProps {
 
 export const ChatBubbleTooltips: React.FC<ChatBubbleTooltipsProps> = ({
   parentId,
+  messageModel,
   isAi,
   isSaved,
   onCopy,
@@ -97,10 +100,11 @@ export const ChatBubbleTooltips: React.FC<ChatBubbleTooltipsProps> = ({
 
             <Tooltip>
               <ModelSelect
+                messageModel={messageModel}
                 description={"Switch model & regenerate"}
-                onSelectModel={(model) => {
+                onSelectModel={(selectedModel) => {
                   // TODO 여기서 trpc 에 답변 regenerate 부탁!
-                  console.log(model);
+                  console.log(selectedModel);
                 }}
                 button={
                   <TooltipTrigger asChild>

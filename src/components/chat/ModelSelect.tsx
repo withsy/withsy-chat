@@ -30,12 +30,14 @@ const models: {
 interface ModelSelectProps {
   description?: string;
   button?: ReactNode;
+  messageModel?: ChatModel | null;
   onSelectModel?: (model: ChatModel) => void;
 }
 
 export function ModelSelect({
   description,
   button,
+  messageModel,
   onSelectModel,
 }: ModelSelectProps) {
   const { isMobile } = useSidebar();
@@ -71,6 +73,7 @@ export function ModelSelect({
       )}
       {open && (
         <ModelDropdown
+          messageModel={messageModel}
           description={description}
           models={models}
           selectedValue={selectedModel}

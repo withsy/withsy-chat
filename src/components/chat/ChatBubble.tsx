@@ -82,6 +82,7 @@ const ChatBubbleComponent = ({ message, onToggleSaved }: Props) => {
           <ChatBubbleTooltips
             parentId={message.id}
             isAi={role == "model"}
+            messageModel={message.model}
             isSaved={message.isBookmarked}
             onCopy={handleCopy}
             onSave={handleSave}
