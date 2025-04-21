@@ -12,6 +12,7 @@ import type { UserId } from "@/types/user";
 import { StatusCodes } from "http-status-codes";
 import { HttpServerError } from "../error";
 import type { ServiceRegistry } from "../service-registry";
+import { ChatChunkService } from "./chat-chunk-service";
 import { ChatMessageFileService } from "./chat-message-file-service";
 import type { Tx } from "./db";
 import type { FileInfo } from "./mock-s3-service";
@@ -269,9 +270,9 @@ export class ChatMessageService {
 
   async transitProcessingToSucceeded(
     userId: UserId,
-    input: { chatMessageId: ChatMessageId; text: string }
+    input: { chatMessageId: ChatMessageId }
   ) {
-    const { chatMessageId, text } = input;
+    const { chatMessageId } = input;
     await this.service.db.$transaction(async (tx) => {
       const res = await ChatMessageService.transit(tx, userId, {
         chatMessageId,
@@ -284,6 +285,11 @@ export class ChatMessageService {
           `Chat message transition failed. chatMessageId: ${chatMessageId} status: processing to succeeded.`
         );
 
+      const { text } = await ChatChunkService.buildText(
+        tx,
+        userId,
+        chatMessageId
+      );
       await tx.chatMessages.update({
         where: {
           chat: {

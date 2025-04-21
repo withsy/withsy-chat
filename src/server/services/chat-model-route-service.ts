@@ -102,13 +102,8 @@ export class ChatModelRouteService {
         .with("open-ai", () => this.service.openAi.sendChatToAi(input))
         .exhaustive();
 
-      const { text } = await this.service.chatChunk.buildText(
-        userId,
-        modelChatMessageId
-      );
       await this.service.chatMessage.transitProcessingToSucceeded(userId, {
         chatMessageId: modelChatMessageId,
-        text,
       });
     } catch (e) {
       console.error("Send chat to ai failed. error:", e);

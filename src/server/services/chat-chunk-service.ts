@@ -8,6 +8,7 @@ import type { UserId } from "@/types/user";
 import type { Prisma } from "@prisma/client";
 import { tracked } from "@trpc/server";
 import type { ServiceRegistry } from "../service-registry";
+import type { Tx } from "./db";
 import { listen } from "./pg";
 
 export class ChatChunkService {
@@ -30,8 +31,8 @@ export class ChatChunkService {
     });
   }
 
-  async buildText(userId: UserId, chatMessageId: ChatMessageId) {
-    const rows = await this.service.db.chatChunks.findMany({
+  static async buildText(tx: Tx, userId: UserId, chatMessageId: ChatMessageId) {
+    const rows = await tx.chatChunks.findMany({
       where: {
         chatMessage: {
           chat: {
