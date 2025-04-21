@@ -6,13 +6,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { useSidebar } from "@/context/SidebarContext";
 import { useUser } from "@/context/UserContext";
 import { cn } from "@/lib/utils";
@@ -36,56 +29,6 @@ interface MenuActionItem {
 }
 
 type MenuItem = "separator" | MenuActionItem;
-
-interface ToggleMenuItemProps {
-  id: string;
-  label: string;
-  checked: boolean;
-  onChange: (checked: boolean) => void;
-  disabled?: boolean;
-  tooltip?: string;
-  largeText?: boolean;
-  themeColor?: string;
-}
-
-export function ToggleMenuItem({
-  id,
-  label,
-  checked,
-  onChange,
-  disabled = false,
-  tooltip,
-  largeText = false,
-  themeColor,
-}: ToggleMenuItemProps) {
-  const content = (
-    <div className="flex items-center justify-between px-2 py-1.5 opacity-100">
-      <Label htmlFor={id} className={cn(largeText && "text-lg", "px-2")}>
-        {label}
-      </Label>
-      <Switch
-        id={id}
-        checked={checked}
-        onCheckedChange={onChange}
-        disabled={disabled}
-        style={{
-          backgroundColor: checked ? `rgb(${themeColor})` : undefined,
-        }}
-      />
-    </div>
-  );
-
-  return tooltip && disabled ? (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger asChild>{content}</TooltipTrigger>
-        <TooltipContent side="left">{tooltip}</TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
-  ) : (
-    content
-  );
-}
 
 interface UserMenuItemProps {
   icon: LucideIcon;
@@ -127,13 +70,6 @@ export default function UserDropdownMenu() {
   const { largeText } = userPrefs;
   const [themeModalOpen, setThemeModalOpen] = useState(false);
 
-  // const toggleItems = [
-  //   {
-  //     id: "largeText",
-  //     label: "Large Text",
-  //   },
-  // ] as const;
-
   const userMenuItems: MenuItem[] = [
     // "separator",
     { icon: MessageSquare, label: "Prompts" },
@@ -167,18 +103,6 @@ export default function UserDropdownMenu() {
           align="end"
           className={cn("w-48 p-2", largeText ? "text-lg" : "text-base")}
         >
-          {/* {toggleItems.map(({ id, label }) => (
-            <ToggleMenuItem
-              key={id}
-              id={`${id}-toggle`}
-              label={label}
-              checked={userPrefs[id]}
-              onChange={(v) => setUserPrefsAndSave({ [id]: v })}
-              disabled={userPrefLoadings[id]}
-              largeText={userPrefs["largeText"]}
-              themeColor={userPrefs.themeColor}
-            />
-          ))} */}
           {userMenuItems.map((item, idx) =>
             item === "separator" ? (
               <DropdownMenuSeparator key={`sep-${idx}`} />
