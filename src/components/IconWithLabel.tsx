@@ -18,7 +18,7 @@ export function IconWithLabel({
 }: IconWithLabelProps) {
   const { userPrefs } = useUser();
   const { themeColor } = userPrefs;
-  const className = `transition-colors hover:text-black group-hover:text-black`;
+  const className = `transition-colors hover:text-black active:text-black group-hover:text-black`;
   return (
     <>
       <Icon size={size} className={className} fill="none" />

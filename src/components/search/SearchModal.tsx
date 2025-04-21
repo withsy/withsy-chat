@@ -96,7 +96,7 @@ function ChatItem({
 }) {
   return (
     <Link href={href}>
-      <div className="flex items-center gap-2 px-2 py-2 hover:bg-gray-100 rounded-md cursor-pointer">
+      <div className="flex items-center gap-2 px-2 py-2 hover:bg-gray-200 active:bg-gray-200 rounded-md cursor-pointer">
         {icon}
         <span>{title}</span>
       </div>

@@ -124,7 +124,7 @@ export function ChatInputBox({
         </div>
         <button
           onClick={handleSend}
-          className="p-2 rounded-md hover:bg-gray-100"
+          className="p-2 rounded-md hover:bg-gray-200 active:bg-gray-200"
           aria-label="Send message"
         >
           <Send className="w-4 h-4 text-muted-foreground" />

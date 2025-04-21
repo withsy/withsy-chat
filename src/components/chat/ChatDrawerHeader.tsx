@@ -29,7 +29,7 @@ export default function ChatDrawerHeader({
       style={headerStyle}
     >
       <button
-        className="group flex items-center gap-1 rounded-md px-1 py-2 hover:bg-white transition-colors text-sm font-medium"
+        className="group flex items-center gap-1 rounded-md px-1 py-2 hover:bg-white active:bg-white transition-colors text-sm font-medium"
         onClick={handleClick}
       >
         <CircleX size={16} />

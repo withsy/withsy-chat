@@ -387,7 +387,7 @@ function DropdownItem({
       onClick={(e) => {
         onClick(e);
       }}
-      className={`active:bg-gray-50 ${className ?? ""}`}
+      className={`active:bg-gray-100 ${className ?? ""}`}
     >
       <Icon size={14} className={`mr-2 ${iconClass ?? ""}`} />
       {label}

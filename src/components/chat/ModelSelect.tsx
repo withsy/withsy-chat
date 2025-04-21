@@ -37,7 +37,7 @@ export function ModelSelect({ value, onChange }: Props) {
     <div className="relative inline-block" ref={dropdownRef}>
       <button
         onClick={() => setOpen((prev) => !prev)}
-        className="inline-flex items-center gap-1 rounded px-2 py-[2px] font-semibold text-gray-500 hover:bg-gray-200 transition"
+        className="inline-flex items-center gap-1 rounded px-2 py-[2px] font-semibold text-gray-500 hover:bg-gray-200 active:bg-gray-200 transition"
       >
         <AtSign size={12} />
         <span>

@@ -14,7 +14,7 @@ export function CollapseToggle({ show, collapsed, setCollapsed }: Props) {
   return (
     <button
       onClick={() => setCollapsed(!collapsed)}
-      className="hover:underline text-sm"
+      className="hover:underline active:underline text-sm"
       style={{ color: `rgb(${themeColor})` }}
     >
       {collapsed ? "Show More" : "Show Less"}

@@ -170,7 +170,7 @@ function Branches({
           </span>
           <div
             key={chat.parentMessageId}
-            className="flex gap-2 p-3 mt-2 items-center select-none border shadow-xs  hover:bg-gray-50 hover:font-semibold"
+            className="flex gap-2 p-3 mt-2 items-center select-none border shadow-xs  hover:bg-gray-100 hover:font-semibold active:bg-gray-100 active:font-semibold"
             onClick={() =>
               router.push(`/chat/${chatId}?messageId=${messageId}`)
             }
@@ -208,7 +208,7 @@ function Branches({
           return (
             <div
               key={x.id}
-              className="flex gap-2 p-3 items-center select-none border shadow-xs hover:bg-gray-50 hover:font-semibold"
+              className="flex gap-2 p-3 items-center select-none border shadow-xs hover:bg-gray-100 hover:font-semibold active:bg-gray-100 active:font-semibold"
               onClick={() => router.push(`/chat/${x.id}?messageId=last`)}
               style={{
                 borderRadius: 10,

@@ -45,7 +45,7 @@ export function CodeBlock({ children, ...props }: CodeBlockProps) {
           variant="ghost"
           size="sm"
           onClick={handleCopy}
-          className="h-auto px-1 py-0 text-muted-foreground hover:bg-gray-200"
+          className="h-auto px-1 py-0 text-muted-foreground hover:bg-gray-200 active:bg-gray-200"
         >
           <Copy className="w-4 h-4" />
           {copied ? "Copied!" : "Copy"}

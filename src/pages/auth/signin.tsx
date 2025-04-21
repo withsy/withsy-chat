@@ -45,7 +45,7 @@ export default function SignInPage({ providers }: Props) {
               <div key={provider.name}>
                 <button
                   onClick={() => signIn(provider.id, { callbackUrl: "/" })}
-                  className="w-full flex items-center justify-center gap-3 py-3 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-100 transition"
+                  className="w-full flex items-center justify-center gap-3 py-3 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-200 active:bg-gray-200 transition"
                 >
                   {iconMap[provider.id] || <LogIn size={18} />}
                   Sign in with {provider.name}

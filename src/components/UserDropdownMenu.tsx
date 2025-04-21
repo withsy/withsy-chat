@@ -49,7 +49,7 @@ function UserMenuItem({
     <DropdownMenuItem
       onSelect={onClick}
       className={cn(
-        "flex items-center active:bg-gray-50",
+        "flex items-center active:bg-gray-100",
         isMobile ? "py-3 px-2" : "py-2 px-2"
       )}
     >

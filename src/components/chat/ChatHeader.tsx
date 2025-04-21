@@ -90,7 +90,7 @@ export default function ChatHeader({
   }
 
   const buttonClassName =
-    "group flex items-center gap-1 rounded-md px-1 py-2 hover:bg-white hover:font-semibold transition-colors text-sm";
+    "group flex items-center gap-1 rounded-md px-1 py-2 hover:bg-white hover:font-semibold active:bg-white active:font-semibold transition-colors text-sm";
   return (
     <div
       className="absolute top-0 left-0 w-full h-[50px] px-4 flex items-center justify-between"
