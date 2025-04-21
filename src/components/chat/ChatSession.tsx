@@ -43,13 +43,6 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
   }, [chat, initialMessages]);
 
   useEffect(() => {
-    const message =
-      messages.find((x) => x.status === "processing") ??
-      messages.find((x) => x.status === "pending");
-    if (message) setStreamMessageId(message.id);
-  }, [messages]);
-
-  useEffect(() => {
     shouldAutoScrollRef.current = true;
   }, [chat?.id]);
 
@@ -66,6 +59,7 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
             x.id === streamMessageId ? { ...x, status: "succeeded" } : x
           )
         );
+        setStreamMessageId(null);
       },
       onError(error) {
         setMessages((prev) =>
@@ -73,6 +67,7 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
             x.id === streamMessageId ? { ...x, status: "failed" } : x
           )
         );
+        setStreamMessageId(null);
         toast.error(`Receive chat message failed. error: ${error}`);
       },
       onData(data) {
@@ -112,6 +107,7 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
               data.userChatMessage,
               data.modelChatMessage,
             ]);
+            setStreamMessageId(data.modelChatMessage.id);
             utils.chat.list.invalidate();
           },
         }
