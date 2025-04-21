@@ -66,17 +66,17 @@ jobs:
       # BEGIN - Docker auth and build
       #
       # If you already have a container image, you can omit these steps.
-      - name: "Docker Auth"
-        uses: "docker/login-action@v3"
-        with:
-          username: "oauth2accesstoken"
-          password: "${{ steps.auth.outputs.auth_token }}"
-          registry: "${{ env.REGION }}-docker.pkg.dev"
+      # - name: "Docker Auth"
+      #   uses: "docker/login-action@v3"
+      #   with:
+      #     username: "oauth2accesstoken"
+      #     password: "${{ steps.auth.outputs.auth_token }}"
+      #     registry: "${{ env.REGION }}-docker.pkg.dev"
 
       - name: "Build and Push Container"
         run: |-
           gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://us-central1-docker.pkg.dev
-          DOCKER_TAG="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE }}:${{ github.sha }}"
+          DOCKER_TAG="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE }}:${{ github.sha }}/withsy"
           docker build --tag "${DOCKER_TAG}" -f gcp/Dockerfile .
           docker push "${DOCKER_TAG}"
       - name: "Deploy to Cloud Run"
