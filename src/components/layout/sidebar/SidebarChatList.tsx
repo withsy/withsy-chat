@@ -99,13 +99,6 @@ export default function SidebarChatList() {
         label={"All Saved"}
         size={16}
       />
-      {/* <SidebarTooltip
-        id={"archive"}
-        icon={Archive}
-        fill={true}
-        label={"Archived"}
-        size={16}
-      /> */}
       {starred.length > 0 && (
         <div>
           <div className="py-1 px-2 mb-1 text-sm font-semibold select-none">
@@ -322,9 +315,12 @@ export function SidebarChatItem({
           <span className="truncate text-foreground flex-1">
             {isSidebar
               ? chat.title
-              : chat.title.length > 10
-              ? `${chat.title.slice(0, 10)}...`
-              : chat.title}
+              : (() => {
+                  const limit = isMobile ? 10 : 20;
+                  return chat.title.length > limit
+                    ? `${chat.title.slice(0, limit)}...`
+                    : chat.title;
+                })()}
           </span>
         )}
       </div>
