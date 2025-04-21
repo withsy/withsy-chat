@@ -103,6 +103,6 @@ export class OpenAiService {
         await callOnChatChunkReceived();
       }
     }
-    callOnChatChunkReceived();
+    await callOnChatChunkReceived();
   }
 }
