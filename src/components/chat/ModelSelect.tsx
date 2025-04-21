@@ -47,7 +47,8 @@ export function ModelSelect({ value, onChange }: Props) {
       </button>
 
       {open && (
-        <ul className="absolute z-10 bottom-full mb-1 w-max min-w-full rounded border border-gray-200 bg-white shadow-md p-1">
+        <ul className="absolute z-10 bottom-full mb-1 w-max min-w-full rounded-lg border border-gray-200 bg-white shadow-md p-2">
+          <div className="text-gray-400 px-2 py-1">Switch model</div>
           {models.map((model) => (
             <ModelSelectItem
               key={model.value}

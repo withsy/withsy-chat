@@ -1,6 +1,6 @@
-import { Copy, ThumbsUp, ThumbsDown, Settings } from "lucide-react";
 import { IconButtonWithTooltip } from "@/components/IconButtonWithTooltip";
 import { MarkdownBox } from "@/components/MarkdownBox";
+import { Copy, Settings, ThumbsDown, ThumbsUp } from "lucide-react";
 
 type Props = {
   content: string;
@@ -27,7 +27,7 @@ export function ChatAnswerBox({ content }: Props) {
         />
         <IconButtonWithTooltip
           icon={<Settings className="w-4 h-4" />}
-          label="Change Model"
+          label="Switch Model"
         />
       </div>
     </div>
