@@ -80,7 +80,11 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
         setMessages((prevMessages) =>
           prevMessages.map((msg) =>
             msg.id === chunk.chatMessageId
-              ? { ...msg, text: (msg.text ?? "") + chunk.text }
+              ? {
+                  ...msg,
+                  text: (msg.text ?? "") + chunk.text,
+                  status: "processing",
+                }
               : msg
           )
         );
