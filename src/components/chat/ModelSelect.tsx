@@ -54,9 +54,14 @@ export function ModelSelect({
         setOpen(false);
       }
     };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+
+    if (!isMobile) {
+      // 바깥 클릭 감지는 데스크탑에서만 적용
+      document.addEventListener("mousedown", handleClickOutside);
+      return () =>
+        document.removeEventListener("mousedown", handleClickOutside);
+    }
+  }, [isMobile]);
 
   const selectedLabel =
     models.find((m) => m.value === selectedModel)?.label || "Select model";
@@ -71,20 +76,19 @@ export function ModelSelect({
           onClick={() => setOpen((prev) => !prev)}
         />
       )}
-      {open && (
-        <ModelDropdown
-          messageModel={messageModel}
-          description={description}
-          models={models}
-          selectedValue={selectedModel}
-          isMobile={isMobile}
-          onSelect={(val) => {
-            setSelectedModel(val);
-            onSelectModel?.(val);
-            setOpen(false);
-          }}
-        />
-      )}
+      <ModelDropdown
+        messageModel={messageModel}
+        description={description}
+        models={models}
+        selectedValue={selectedModel}
+        isOpen={open}
+        onClose={() => setOpen(false)}
+        onSelect={(val) => {
+          setSelectedModel(val);
+          onSelectModel?.(val);
+          setOpen(false);
+        }}
+      />
     </div>
   );
 }

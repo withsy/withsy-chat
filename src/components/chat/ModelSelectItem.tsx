@@ -27,7 +27,7 @@ export function ModelSelectItem({
         onSelect(modelValue as ChatModel);
       }}
       className={cn(
-        "cursor-pointer hover:bg-gray-100 active:bg-gray-100 select-none",
+        "cursor-pointer hover:bg-gray-100 active:bg-gray-100 select-none list-none",
         (messageModel == modelValue ||
           (!messageModel && modelValue === selectedValue)) &&
           "bg-gray-200 font-medium",
