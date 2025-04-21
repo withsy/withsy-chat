@@ -28,11 +28,16 @@ const models: {
 ];
 
 interface ModelSelectProps {
+  description?: string;
   button?: ReactNode;
   onSelectModel?: (model: ChatModel) => void;
 }
 
-export function ModelSelect({ button, onSelectModel }: ModelSelectProps) {
+export function ModelSelect({
+  description,
+  button,
+  onSelectModel,
+}: ModelSelectProps) {
   const { isMobile } = useSidebar();
   const { selectedModel, setSelectedModel } = useSelectedModel();
   const [open, setOpen] = useState(false);
@@ -66,6 +71,7 @@ export function ModelSelect({ button, onSelectModel }: ModelSelectProps) {
       )}
       {open && (
         <ModelDropdown
+          description={description}
           models={models}
           selectedValue={selectedModel}
           isMobile={isMobile}

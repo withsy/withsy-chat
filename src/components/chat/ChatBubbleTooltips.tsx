@@ -97,6 +97,7 @@ export const ChatBubbleTooltips: React.FC<ChatBubbleTooltipsProps> = ({
 
             <Tooltip>
               <ModelSelect
+                description={"Switch model & regenerate"}
                 onSelectModel={(model) => {
                   // TODO 여기서 trpc 에 답변 regenerate 부탁!
                   console.log(model);
