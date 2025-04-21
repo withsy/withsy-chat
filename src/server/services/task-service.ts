@@ -7,18 +7,30 @@ export class TaskService {
 
   constructor(private readonly service: ServiceRegistry) {
     const taskMap: TaskMap = {
-      chat_model_route_send_chat_to_ai: (i) =>
-        service.chatModelRoute.onSendChatToAiTask(i),
+      chat_model_route_send_chat_to_ai: (input) =>
+        service.chatModelRoute.onSendChatToAiTask(input),
       chat_message_cleanup_zombies: () =>
         service.chatMessage.onCleanupZombiesTask(),
     };
     const cronTasks: CronTask[] = [
       { cron: "*/5 * * * *", key: "chat_message_cleanup_zombies" },
     ];
+
     this.runner = (async () => {
       return await run({
         pgPool: service.pgPool,
-        taskList: taskMap as TaskList,
+        taskList: Object.fromEntries(
+          Object.entries(taskMap).map(([key, handler]) => {
+            const wrapper = async (input: any) => {
+              try {
+                await handler(input);
+              } catch (e) {
+                console.error(`Task error occurred. key: ${key} error:`, e);
+              }
+            };
+            return [key, wrapper];
+          })
+        ) as TaskList,
         crontab: cronTasks.map(({ cron, key }) => `${cron} ${key}`).join("\n"),
       });
     })();
