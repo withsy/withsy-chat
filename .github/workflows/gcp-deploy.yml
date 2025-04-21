@@ -37,7 +37,8 @@ env:
   REGION: "us-central1"
   SERVICE: "withsy"
   WORKLOAD_IDENTITY_PROVIDER: "${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}"
-
+  SERVICE_ACCOUNT: "${{ secrets.GCP_SERVICE_ACCOUNT }}"
+  
 jobs:
   deploy:
     runs-on: "ubuntu-latest"
@@ -60,6 +61,7 @@ jobs:
         with:
           workload_identity_provider: "${{ env.WORKLOAD_IDENTITY_PROVIDER }}"
           project_id: "${{ env.PROJECT_ID }}"
+          service_account: "${{ env.SERVICE_ACCOUNT }}"
 
       # BEGIN - Docker auth and build
       #
