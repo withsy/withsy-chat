@@ -21,9 +21,10 @@ export function SidebarTooltip({
   const { isMobile, collapsed, setCollapsed } = useSidebar();
   const router = useRouter();
   const isActive = `/${id}` == router.asPath;
+  const mobileClassName = isMobile ? "px-2.5 py-3 select-none" : "px-2.5 py-2";
 
   const className = `
-              group flex items-center gap-2 px-2.5 py-2 rounded-md transition-colors w-full 
+              group flex items-center gap-2 ${mobileClassName} rounded-md transition-colors w-full 
               hover:bg-white hover:font-semibold cursor-pointer select-none active:bg-white active:font-semibold ${
                 isActive ? "font-semibold" : ""
               }
