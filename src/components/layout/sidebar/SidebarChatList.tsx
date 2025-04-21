@@ -191,9 +191,10 @@ export function SidebarChatItem({
   const iconClassName = `opacity-100 transition-opacity ${
     isDropdownOpen ? "opacity-0" : "group-hover:opacity-0"
   }`;
-  const mobileClassName = isMobile ? "px-2.5 py-3 select-none" : "px-2.5 py-2";
+  const mobileClassName = isMobile ? "px-2.5 py-3" : "px-2.5 py-2";
 
   const handleLinkClick = () => {
+    if (isActive) return;
     if (editMode) return;
     if (isSidebar == true) {
       if (isMobile) {
@@ -267,7 +268,7 @@ export function SidebarChatItem({
 
   return (
     <div
-      className={`group relative flex items-center gap-2 no-underline ${mobileClassName} rounded-md transition-colors hover:bg-white cursor-pointer active:bg-white ${isHoveredOrDropdown}`}
+      className={`group relative flex items-center gap-2 no-underline ${mobileClassName} select-none rounded-md transition-colors hover:bg-white cursor-pointer active:bg-white ${isHoveredOrDropdown}`}
     >
       <div
         className={`flex items-center gap-2 flex-1 min-w-0 group-hover:font-semibold active:font-semibold`}
