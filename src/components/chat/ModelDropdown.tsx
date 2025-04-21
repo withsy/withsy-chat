@@ -2,7 +2,7 @@ import type { ChatModel } from "@/types/chat";
 import { ModelSelectItem } from "./ModelSelectItem";
 
 interface ModelDropdownProps {
-  models: { label: string; value: ChatModel }[];
+  models: { label: string; value: ChatModel; description: string }[];
   selectedValue: ChatModel;
   isMobile: boolean;
   onSelect: (value: ChatModel) => void;
@@ -23,6 +23,7 @@ export function ModelDropdown({
           modelValue={model.value}
           selectedValue={selectedValue}
           label={model.label}
+          description={model.description}
           isMobile={isMobile}
           onSelect={onSelect}
         />

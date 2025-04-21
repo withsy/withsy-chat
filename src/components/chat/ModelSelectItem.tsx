@@ -5,6 +5,7 @@ type ModelSelectItemProps = {
   modelValue: string;
   selectedValue: ChatModel;
   label: string;
+  description: string;
   isMobile: boolean;
   onSelect: (model: ChatModel) => void;
 };
@@ -13,6 +14,7 @@ export function ModelSelectItem({
   modelValue,
   selectedValue,
   label,
+  description,
   isMobile,
   onSelect,
 }: ModelSelectItemProps) {
@@ -28,7 +30,8 @@ export function ModelSelectItem({
         isMobile ? "text-lg px-2 py-3" : "px-2 py-2"
       )}
     >
-      {label}
+      <div className="font-medium">{label}</div>
+      <div className="text-sm text-gray-500">{description}</div>
     </li>
   );
 }

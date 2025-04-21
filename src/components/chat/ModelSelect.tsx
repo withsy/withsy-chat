@@ -5,10 +5,26 @@ import { useEffect, useRef, useState } from "react";
 import { ModelDropdown } from "./ModelDropdown";
 import { ModelSelectButton } from "./ModelSelectButton";
 
-const models: { label: string; value: ChatModel }[] = [
-  { label: "gemini-2.0-flash", value: "gemini-2.0-flash" },
-  { label: "gemini-1.5-pro", value: "gemini-1.5-pro" },
-  { label: "gpt-4o", value: "gpt-4o" },
+const models: {
+  label: string;
+  value: ChatModel;
+  description: string;
+}[] = [
+  {
+    label: "gemini-2.0-flash",
+    value: "gemini-2.0-flash",
+    description: "Fast and lightweight",
+  },
+  {
+    label: "gemini-1.5-pro",
+    value: "gemini-1.5-pro",
+    description: "Strong reasoning, broad context understanding",
+  },
+  {
+    label: "gpt-4o",
+    value: "gpt-4o",
+    description: "High accuracy, multi-modal data processing",
+  },
 ];
 
 export function ModelSelect() {
