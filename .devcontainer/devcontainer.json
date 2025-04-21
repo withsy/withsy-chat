@@ -4,6 +4,7 @@
       "extensions": [
         "bradymholt.pgformatter",
         "dbaeumer.vscode-eslint",
+        "eamodio.gitlens",
         "esbenp.prettier-vscode",
         "ms-azuretools.vscode-docker",
         "Prisma.prisma",
