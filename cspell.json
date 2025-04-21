@@ -25,6 +25,7 @@
     "timestamptz",
     "withsy",
     "autoincrement",
-    "dbgenerated"
+    "dbgenerated",
+    "prepass"
   ]
 }
