@@ -327,9 +327,11 @@ export class ChatMessageService {
   async onCleanupZombiesTask() {
     const res = await this.service.db.chatMessages.updateMany({
       where: {
-        status: "processing",
+        status: {
+          in: ["pending", "processing"],
+        },
         updatedAt: {
-          lt: new Date(Date.now() - 5 * 60_000), // 5 minutes
+          lt: new Date(Date.now() - 10 * 60_000), // 10 minutes
         },
       },
       data: {
