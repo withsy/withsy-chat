@@ -23,7 +23,8 @@
     "src/**/*.ts",
     "src/**/*.tsx",
     "eslint.config.ts",
-    "next.config.ts"
+    "next.config.ts",
+    "gcp/run.mts"
   ],
   "exclude": ["node_modules"]
 }
