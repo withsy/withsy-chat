@@ -1,3 +1,4 @@
+import { useSidebar } from "@/context/SidebarContext";
 import { cn } from "@/lib/utils";
 import type { ChatModel } from "@/types/chat";
 import { AtSign, ChevronDown } from "lucide-react";
@@ -15,6 +16,7 @@ const models = [
 ];
 
 export function ModelSelect({ value, onChange }: Props) {
+  const { isMobile } = useSidebar();
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -35,7 +37,7 @@ export function ModelSelect({ value, onChange }: Props) {
     <div className="relative inline-block" ref={dropdownRef}>
       <button
         onClick={() => setOpen((prev) => !prev)}
-        className="inline-flex items-center gap-1 rounded px-2 py-[2px] text-xs font-semibold text-gray-500 hover:bg-gray-200 transition"
+        className="inline-flex items-center gap-1 rounded px-2 py-[2px] font-semibold text-gray-500 hover:bg-gray-200 transition"
       >
         <AtSign size={12} />
         <span>
@@ -54,8 +56,9 @@ export function ModelSelect({ value, onChange }: Props) {
                 setOpen(false);
               }}
               className={cn(
-                "cursor-pointer px-3 py-2 hover:bg-gray-100",
-                model.value === value && "bg-gray-100 font-semibold"
+                "cursor-pointer  hover:bg-gray-100",
+                model.value === value && "bg-gray-100 font-semibold",
+                isMobile ? "text-lg px-2 py-3" : "px-2 py-2"
               )}
             >
               {model.label}

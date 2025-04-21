@@ -313,12 +313,15 @@ export function SidebarChatItem({
           )}
         </DropdownMenuTrigger>
         <DropdownMenuContent
-          side="top"
+          side="bottom"
           align="start"
           className="z-[9999]"
           sideOffset={4}
         >
-          <DropdownMenuItem onClick={() => handleToggleStar()}>
+          <DropdownMenuItem
+            onClick={() => handleToggleStar()}
+            className={`${isMobile ? "text-lg py-2" : ""}`}
+          >
             {chat.isStarred ? (
               <>
                 <StarOff size={14} className="mr-2" />
@@ -337,12 +340,13 @@ export function SidebarChatItem({
               setEditMode(true);
               setIsDropdownOpen(false);
             }}
+            className={`${isMobile ? "text-lg py-2" : ""}`}
           >
             <Pencil size={14} className="mr-2" />
             Rename
           </DropdownMenuItem>
           <DropdownMenuItem
-            className="text-red-500"
+            className={`text-red-500 ${isMobile ? "text-lg py-2" : ""}`}
             onClick={(e) => {
               e.stopPropagation();
               setIsDropdownOpen(false);
