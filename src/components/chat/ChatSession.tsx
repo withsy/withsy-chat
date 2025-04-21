@@ -79,7 +79,7 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
         const chunk = data.data;
         setMessages((prevMessages) =>
           prevMessages.map((msg) =>
-            msg.id === chunk.chatMessageId
+            msg.id === streamMessageId
               ? {
                   ...msg,
                   text: (msg.text ?? "") + chunk.text,

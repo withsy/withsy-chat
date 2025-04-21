@@ -124,8 +124,6 @@ export class ChatChunkService {
                 },
                 select: {
                   text: true,
-                  chunkIndex: true,
-                  chatMessageId: true,
                 },
               });
 

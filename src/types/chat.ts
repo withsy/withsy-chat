@@ -74,7 +74,7 @@ export const ChatMessageSchema = z.object({
   chatId: ChatId,
   role: ChatRole,
   model: ChatModel.nullable(),
-  text: z.string().nullable(),
+  text: z.string(),
   status: ChatMessageStatus,
   isBookmarked: z.boolean(),
   createdAt: zParseDate(),
@@ -199,8 +199,6 @@ export const ReceiveChatChunkStream = z.object({
 export type ReceiveChatChunkStream = zInfer<typeof ReceiveChatChunkStream>;
 
 export const ChatChunkSchema = z.object({
-  chatMessageId: ChatMessageId,
-  chunkIndex: ChatChunkIndex,
   text: z.string(),
 });
 export type ChatChunkSchema = zInfer<typeof ChatChunkSchema>;
