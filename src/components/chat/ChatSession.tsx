@@ -22,6 +22,7 @@ type Props = {
 
 export function ChatSession({ chat, initialMessages, children }: Props) {
   const router = useRouter();
+  const { messageId } = router.query;
 
   const { isMobile } = useSidebar();
   const { selectedModel } = useSelectedModel();
@@ -49,6 +50,13 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
   useEffect(() => {
     setOpenDrawer(null);
   }, [chat?.id]);
+
+  useEffect(() => {
+    if (messageId) {
+      const id = parseInt(messageId as string, 10);
+      setStreamMessageId(id);
+    }
+  }, [messageId]);
 
   const _receiveChatChunk = trpc.chatChunk.receiveStream.useSubscription(
     streamMessageId != null ? { chatMessageId: streamMessageId } : skipToken,
@@ -119,7 +127,9 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
         {
           onSuccess(data) {
             utils.chat.list.invalidate();
-            router.push(`/chat/${data.chat.id}`);
+            router.push(
+              `/chat/${data.chat.id}?messageId=${data.modelChatMessage.id}`
+            );
           },
         }
       );

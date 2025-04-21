@@ -1,7 +1,7 @@
 import { useUser } from "@/context/UserContext";
 import { cn } from "@/lib/utils";
 import type { ChatMessage } from "@/types/chat";
-import { memo, useEffect, useState } from "react";
+import { memo, useState } from "react";
 import { toast } from "sonner";
 import { CollapseToggle } from "../CollapseToggle";
 import { MarkdownBox } from "../MarkdownBox";
@@ -15,18 +15,15 @@ type Props = {
 
 const ChatBubbleComponent = ({ message, onToggleSaved }: Props) => {
   const { userSession } = useUser();
-  const { role, text: rawText, status } = message;
+  const { role, text: rawText, status: _ } = message;
   // TODO: handle status. streaming (pending, processing) or completed (succeeded, failed)
-  const [showCount, setShowCount] = useState(
-    status === "processing" ? 0 : rawText?.length ?? -1
-  );
 
   const text = rawText ?? "";
   const isLongMessage = text.length > 150;
   const [collapsed, setCollapsed] = useState(role === "user" && isLongMessage);
   const displayedText = collapsed
     ? text.split("\n").slice(0, 5).join("\n") + "..."
-    : text.slice(0, showCount);
+    : text;
 
   const name =
     role === "model"
@@ -52,13 +49,6 @@ const ChatBubbleComponent = ({ message, onToggleSaved }: Props) => {
   const handleSave = () => {
     onToggleSaved?.(message.id, !message.isBookmarked);
   };
-
-  useEffect(() => {
-    if (showCount < text.length) {
-      const timer = setTimeout(() => setShowCount(showCount + 1), 5);
-      return () => clearTimeout(timer);
-    }
-  }, [showCount, text]);
 
   return (
     <div
