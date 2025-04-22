@@ -26,7 +26,7 @@ export class ChatMessageService {
     input: { chatMessageId: ChatMessageId }
   ) {
     const { chatMessageId } = input;
-    const res = await tx.chatMessages.findUniqueOrThrow({
+    const res = await tx.chatMessage.findUniqueOrThrow({
       where: {
         chat: {
           userId,
@@ -42,7 +42,7 @@ export class ChatMessageService {
   async list(userId: UserId, input: ListChatMessages) {
     const { role, isBookmarked, options } = input;
     const { scope, afterId, order, limit, include } = options;
-    const xs = this.service.db.chatMessages.findMany({
+    const xs = this.service.db.chatMessage.findMany({
       where: {
         chat: {
           userId,
@@ -84,7 +84,7 @@ export class ChatMessageService {
     // TODO: Change limit history length
     let remainLength = 10;
     const histories = await this.service.db.$transaction(async (tx) => {
-      const currentHistories = await tx.chatMessages.findMany({
+      const currentHistories = await tx.chatMessage.findMany({
         where: {
           chat: {
             userId,
@@ -111,7 +111,7 @@ export class ChatMessageService {
 
       remainLength -= currentHistories.length;
       if (remainLength > 0) {
-        const chat = await tx.chats.findUniqueOrThrow({
+        const chat = await tx.chat.findUniqueOrThrow({
           where: {
             userId,
             deletedAt: null,
@@ -130,7 +130,7 @@ export class ChatMessageService {
           remainLength -= 1;
 
           if (remainLength > 0) {
-            const parentHistories = await tx.chatMessages.findMany({
+            const parentHistories = await tx.chatMessage.findMany({
               where: {
                 chat: {
                   userId,
@@ -163,7 +163,7 @@ export class ChatMessageService {
 
   async find(userId: UserId, input: { chatMessageId: ChatMessageId }) {
     const { chatMessageId } = input;
-    const res = await this.service.db.chatMessages.findUnique({
+    const res = await this.service.db.chatMessage.findUnique({
       where: {
         chat: {
           userId,
@@ -178,7 +178,7 @@ export class ChatMessageService {
 
   async update(userId: UserId, input: UpdateChatMessage) {
     const { chatMessageId, isBookmarked } = input;
-    const res = await this.service.db.chatMessages.update({
+    const res = await this.service.db.chatMessage.update({
       where: {
         chat: {
           userId,
@@ -199,7 +199,7 @@ export class ChatMessageService {
     input: { chatMessageId: ChatMessageId }
   ) {
     const { chatMessageId } = input;
-    const res = await this.service.db.chatMessages.findUnique({
+    const res = await this.service.db.chatMessage.findUnique({
       where: {
         chat: {
           userId,
@@ -231,7 +231,7 @@ export class ChatMessageService {
     }
   ) {
     const { chatMessageId, expectStatus, nextStatus } = input;
-    const res = await tx.chatMessages.update({
+    const res = await tx.chatMessage.update({
       where: {
         chat: {
           userId,
@@ -290,7 +290,7 @@ export class ChatMessageService {
         userId,
         chatMessageId
       );
-      await tx.chatMessages.update({
+      await tx.chatMessage.update({
         where: {
           chat: {
             userId,
@@ -325,7 +325,7 @@ export class ChatMessageService {
   }
 
   async onCleanupZombiesTask() {
-    const res = await this.service.db.chatMessages.updateMany({
+    const res = await this.service.db.chatMessage.updateMany({
       where: {
         status: {
           in: ["pending", "processing"],
@@ -381,7 +381,7 @@ export class ChatMessageService {
   ) {
     const { chatId, text, model, fileInfos } = input;
 
-    const userChatMessage = await tx.chatMessages.create({
+    const userChatMessage = await tx.chatMessage.create({
       data: {
         chatId,
         text,
@@ -390,7 +390,7 @@ export class ChatMessageService {
       },
     });
 
-    const modelChatMessage = await tx.chatMessages.create({
+    const modelChatMessage = await tx.chatMessage.create({
       data: {
         chatId,
         role: ChatRole.enum.model,

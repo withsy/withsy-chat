@@ -8,7 +8,7 @@ export class UserService {
   constructor(private readonly service: ServiceRegistry) {}
 
   async prefs(userId: UserId) {
-    const { preferences } = await this.service.db.users.findUniqueOrThrow({
+    const { preferences } = await this.service.db.user.findUniqueOrThrow({
       select: {
         preferences: true,
       },

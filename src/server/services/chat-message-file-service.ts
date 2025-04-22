@@ -9,7 +9,7 @@ export class ChatMessageFileService {
 
   async list(userId: UserId, input: { chatMessageId: ChatMessageId }) {
     const { chatMessageId } = input;
-    const res = await this.service.db.chatMessageFiles.findMany({
+    const res = await this.service.db.chatMessageFile.findMany({
       where: {
         chatMessage: {
           chat: {
@@ -42,7 +42,7 @@ export class ChatMessageFileService {
       fileUri: x.fileUri,
       mimeType: x.mimeType,
     }));
-    await tx.chatMessageFiles.createMany({
+    await tx.chatMessageFile.createMany({
       data: files,
     });
   }

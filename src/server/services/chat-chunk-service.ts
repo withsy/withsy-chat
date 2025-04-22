@@ -21,7 +21,7 @@ export class ChatChunkService {
     text: string;
   }) {
     const { chatMessageId, chunkIndex, text, rawData } = input;
-    await this.service.db.chatChunks.create({
+    await this.service.db.chatChunk.create({
       data: {
         chatMessageId,
         chunkIndex,
@@ -32,7 +32,7 @@ export class ChatChunkService {
   }
 
   static async buildText(tx: Tx, userId: UserId, chatMessageId: ChatMessageId) {
-    const rows = await tx.chatChunks.findMany({
+    const rows = await tx.chatChunk.findMany({
       where: {
         chatMessage: {
           chat: {
@@ -70,7 +70,7 @@ export class ChatChunkService {
 
     try {
       let lastChunkIndex = lastEventId ?? -1;
-      const chatChunks = await this.service.db.chatChunks.findMany({
+      const chatChunks = await this.service.db.chatChunk.findMany({
         where: {
           chatMessage: {
             chat: {
@@ -108,8 +108,8 @@ export class ChatChunkService {
 
           const { chunkIndex } = input;
           if (chunkIndex > lastChunkIndex) {
-            const chatChunk =
-              await this.service.db.chatChunks.findUniqueOrThrow({
+            const chatChunk = await this.service.db.chatChunk.findUniqueOrThrow(
+              {
                 where: {
                   chatMessage: {
                     chat: {
@@ -125,7 +125,8 @@ export class ChatChunkService {
                 select: {
                   text: true,
                 },
-              });
+              }
+            );
 
             yield tracked(chunkIndex.toString(), chatChunk);
             lastChunkIndex = chunkIndex;

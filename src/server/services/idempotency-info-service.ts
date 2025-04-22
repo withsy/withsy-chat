@@ -19,7 +19,7 @@ export class IdempotencyInfoService {
 
   static async checkDuplicateRequest(tx: Tx, idempotencyKey: IdempotencyKey) {
     try {
-      const res = await tx.idempotencyInfos.create({
+      const res = await tx.idempotencyInfo.create({
         data: {
           key: idempotencyKey,
         },

@@ -17,7 +17,7 @@ export class ChatService {
   constructor(private readonly service: ServiceRegistry) {}
 
   async list(userId: UserId) {
-    const xs = await this.service.db.chats.findMany({
+    const xs = await this.service.db.chat.findMany({
       where: {
         userId,
         deletedAt: null,
@@ -32,7 +32,7 @@ export class ChatService {
 
   async listBranches(userId: UserId, input: ChatListBranches) {
     const { chatId } = input;
-    const xs = this.service.db.chats.findMany({
+    const xs = this.service.db.chat.findMany({
       where: {
         parentMessage: {
           chatId,
@@ -48,7 +48,7 @@ export class ChatService {
   async get(userId: UserId, input: GetChat) {
     const { chatId, options } = input;
     const { include } = options ?? {};
-    const res = await this.service.db.chats.findUnique({
+    const res = await this.service.db.chat.findUnique({
       where: {
         id: chatId,
         userId,
@@ -64,7 +64,7 @@ export class ChatService {
 
   async update(userId: UserId, input: UpdateChat) {
     const { chatId, title, isStarred } = input;
-    const res = await this.service.db.chats.update({
+    const res = await this.service.db.chat.update({
       where: {
         id: chatId,
         userId,
@@ -81,7 +81,7 @@ export class ChatService {
 
   async delete(userId: UserId, input: ChatDelete) {
     const { chatId } = input;
-    const res = await this.service.db.chats.update({
+    const res = await this.service.db.chat.update({
       where: {
         id: chatId,
         userId,
@@ -157,7 +157,7 @@ export class ChatService {
   static async createChat(tx: Tx, input: { userId: UserId; text: string }) {
     const { userId, text } = input;
     const title = text ? [...text].slice(0, 20).join("") : undefined;
-    const res = await tx.chats.create({
+    const res = await tx.chat.create({
       data: {
         userId,
         title,
@@ -173,7 +173,7 @@ export class ChatService {
     input: { userId: UserId; parentMessageId: ChatMessageId; title?: string }
   ) {
     const { userId, parentMessageId, title } = input;
-    const res = await tx.chats.create({
+    const res = await tx.chat.create({
       data: {
         userId,
         title,
