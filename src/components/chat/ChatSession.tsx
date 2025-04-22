@@ -1,9 +1,9 @@
 import { useSelectedModel } from "@/context/SelectedModelContext";
-import { useSidebar } from "@/context/SidebarContext";
 import { useUser } from "@/context/UserContext";
 import { trpc } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
 import { useDrawerStore } from "@/stores/useDrawerStore";
+import { useSidebarStore } from "@/stores/useSidebarStore";
 import type { ChatMessage } from "@/types/chat";
 import { Chat } from "@/types/chat";
 import { skipToken } from "@tanstack/react-query";
@@ -26,7 +26,7 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
   const router = useRouter();
   const { messageId } = router.query;
 
-  const { isMobile } = useSidebar();
+  const { isMobile } = useSidebarStore();
   const { selectedModel } = useSelectedModel();
   const { userPrefs } = useUser();
   const [messages, setMessages] = useState(initialMessages);

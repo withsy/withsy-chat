@@ -1,5 +1,5 @@
 import { useSelectedModel } from "@/context/SelectedModelContext";
-import { useSidebar } from "@/context/SidebarContext";
+import { useSidebarStore } from "@/stores/useSidebarStore";
 import type { Model } from "@/types/model";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { ModelDropdown } from "./ModelDropdown";
@@ -40,7 +40,7 @@ export function ModelSelect({
   messageModel,
   onSelectModel,
 }: ModelSelectProps) {
-  const { isMobile } = useSidebar();
+  const { isMobile } = useSidebarStore();
   const { selectedModel, setSelectedModel } = useSelectedModel();
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);

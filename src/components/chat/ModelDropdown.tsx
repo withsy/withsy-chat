@@ -1,5 +1,5 @@
 import { Drawer, DrawerContent } from "@/components/ui/drawer";
-import { useSidebar } from "@/context/SidebarContext";
+import { useSidebarStore } from "@/stores/useSidebarStore";
 import type { Model } from "@/types/model";
 import { ModelSelectItem } from "./ModelSelectItem";
 
@@ -22,7 +22,7 @@ export function ModelDropdown({
   isOpen,
   onClose,
 }: ModelDropdownProps) {
-  const { isMobile } = useSidebar();
+  const { isMobile } = useSidebarStore();
 
   const content = (
     <>

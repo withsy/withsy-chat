@@ -6,10 +6,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useSidebar } from "@/context/SidebarContext";
 import { useUser } from "@/context/UserContext";
 import { trpc } from "@/lib/trpc";
 import { useDrawerStore } from "@/stores/useDrawerStore";
+import { useSidebarStore } from "@/stores/useSidebarStore";
 import type { Chat } from "@/types/chat";
 import {
   EllipsisVertical,
@@ -40,7 +40,7 @@ export function SidebarChatItem({
   const [editedTitle, setEditedTitle] = useState(chat.title);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-  const { isMobile, setCollapsed } = useSidebar();
+  const { isMobile, setCollapsed } = useSidebarStore();
   const { userPrefs } = useUser();
 
   const utils = trpc.useUtils();

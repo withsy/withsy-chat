@@ -6,9 +6,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Label } from "@/components/ui/label";
-import { useSidebar } from "@/context/SidebarContext";
 import { useUser } from "@/context/UserContext";
 import { cn } from "@/lib/utils";
+import { useSidebarStore } from "@/stores/useSidebarStore";
 import {
   Cpu,
   LogOut,
@@ -43,7 +43,7 @@ function UserMenuItem({
   largeText = false,
   onClick,
 }: UserMenuItemProps) {
-  const { isMobile } = useSidebar();
+  const { isMobile } = useSidebarStore();
 
   return (
     <DropdownMenuItem

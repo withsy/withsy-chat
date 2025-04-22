@@ -1,5 +1,5 @@
 import { IconWithLabel } from "@/components/IconWithLabel";
-import { useSidebar } from "@/context/SidebarContext";
+import { useSidebarStore } from "@/stores/useSidebarStore";
 import { type LucideIcon } from "lucide-react";
 import { useRouter } from "next/router";
 
@@ -18,7 +18,7 @@ export function SidebarTooltip({
   fill,
   size = 24,
 }: SidebarTooltipProps) {
-  const { isMobile, collapsed, setCollapsed } = useSidebar();
+  const { isMobile, collapsed, setCollapsed } = useSidebarStore();
   const router = useRouter();
   const isActive = `/${id}` == router.asPath;
   const mobileClassName = isMobile ? "px-2.5 py-3 select-none" : "px-2.5 py-2";

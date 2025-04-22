@@ -1,5 +1,5 @@
-import { useSidebar } from "@/context/SidebarContext";
 import { useUser } from "@/context/UserContext";
+import { useSidebarStore } from "@/stores/useSidebarStore";
 import type { Chat } from "@/types/chat";
 import {
   Bookmark,
@@ -22,7 +22,7 @@ export default function ChatHeader({
   setOpenDrawer,
   openDrawer,
 }: ChatHeaderProps) {
-  const { isMobile } = useSidebar();
+  const { isMobile } = useSidebarStore();
   const { userPrefs, setUserPrefsAndSave } = useUser();
   const { themeColor, themeOpacity } = userPrefs;
 

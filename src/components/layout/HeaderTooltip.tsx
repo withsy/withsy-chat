@@ -1,4 +1,4 @@
-import { useSidebar } from "@/context/SidebarContext";
+import { useSidebarStore } from "@/stores/useSidebarStore";
 import {
   Tooltip,
   TooltipContent,
@@ -9,7 +9,7 @@ import { PanelRightClose, PanelRightOpen, SquarePen } from "lucide-react";
 import { useRouter } from "next/router";
 
 export function HeaderTooltipGroup() {
-  const { isMobile, setCollapsed, collapsed, toggle } = useSidebar();
+  const { isMobile, setCollapsed, collapsed, toggle } = useSidebarStore();
   const router = useRouter();
 
   const iconSize = 20;

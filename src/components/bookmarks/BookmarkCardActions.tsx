@@ -5,8 +5,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useSidebar } from "@/context/SidebarContext";
 import { useDrawerStore } from "@/stores/useDrawerStore";
+import { useSidebarStore } from "@/stores/useSidebarStore";
 import { Bookmark as BookmarkIcon, Copy, Footprints } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -26,7 +26,8 @@ export function BookmarkCardActions({
   themeColor,
   hideUnsave,
 }: Props) {
-  const { isMobile } = useSidebar();
+  const { isMobile } = useSidebarStore();
+
   const { setOpenDrawer } = useDrawerStore();
   const router = useRouter();
 

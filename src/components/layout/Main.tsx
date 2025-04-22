@@ -1,6 +1,6 @@
-import { useSidebar } from "@/context/SidebarContext";
 import { useUser } from "@/context/UserContext";
 import { cn } from "@/lib/utils";
+import { useSidebarStore } from "@/stores/useSidebarStore";
 import type { ReactNode } from "react";
 
 type MainProps = {
@@ -8,7 +8,7 @@ type MainProps = {
 };
 
 export default function Main({ children }: MainProps) {
-  const { collapsed, isMobile } = useSidebar();
+  const { collapsed, isMobile } = useSidebarStore();
   const { userPrefs } = useUser();
   const { largeText } = userPrefs;
   const sidebarWidth = !collapsed && !isMobile ? 240 : 0;
