@@ -1,4 +1,5 @@
 import { useUser } from "@/context/UserContext";
+import { useDrawerStore } from "@/stores/useDrawerStore";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 import type { Chat } from "@/types/chat";
 import {
@@ -13,16 +14,11 @@ import { SidebarChatItem } from "../layout/sidebar/SidebarChatItem";
 
 interface ChatHeaderProps {
   chat: Chat;
-  setOpenDrawer: (id: string | null) => void;
-  openDrawer: string | null;
 }
 
-export default function ChatHeader({
-  chat,
-  setOpenDrawer,
-  openDrawer,
-}: ChatHeaderProps) {
+export default function ChatHeader({ chat }: ChatHeaderProps) {
   const { isMobile } = useSidebarStore();
+  const { openDrawer, setOpenDrawer } = useDrawerStore();
   const { userPrefs, setUserPrefsAndSave } = useUser();
   const { themeColor, themeOpacity } = userPrefs;
 
@@ -35,13 +31,13 @@ export default function ChatHeader({
     const handleResize = () => {
       if (!containerRef.current) return;
       const width = containerRef.current.offsetWidth;
-      setHideLabels(width < 640);
+      setHideLabels(width < 640 || openDrawer != null);
     };
 
     handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  }, [openDrawer]);
 
   useEffect(() => {
     setDisplayChat(chat);
