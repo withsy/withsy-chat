@@ -1,5 +1,6 @@
 import Layout from "@/components/layout/Layout";
 import AppProviders from "@/context/AppProviders";
+import { useSidebarInitializer } from "@/hooks/useSidebarInitializer";
 import { trpc } from "@/lib/trpc";
 import "@/styles/globals.css";
 import type { AppProps, AppType } from "next/app";
@@ -11,6 +12,7 @@ const App: AppType = ({
   Component,
   pageProps: { session, ...pageProps },
 }: AppProps) => {
+  useSidebarInitializer();
   const router = useRouter();
   const noLayoutPages = ["/auth/signin"];
   const isLayoutDisabled = noLayoutPages.includes(router.pathname);
