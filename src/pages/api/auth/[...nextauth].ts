@@ -3,7 +3,6 @@ import { envConfig } from "@/server/env-config";
 import { service } from "@/server/service-registry";
 import { UserJwt, UserSession } from "@/types/user";
 import NextAuth, { type AuthOptions } from "next-auth";
-import GithubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
 import type { Provider } from "next-auth/providers/index";
 
@@ -18,10 +17,6 @@ const providers: Provider[] = [
         response_type: "code",
       },
     },
-  }),
-  GithubProvider({
-    clientId: envConfig.githubClientId,
-    clientSecret: envConfig.githubClientSecret,
   }),
 ];
 

@@ -1,3 +1,4 @@
+import { FullPageLoading } from "@/components/Loading";
 import { trpc } from "@/lib/trpc";
 import { UserPrefs, UserSession, type UpdateUserPrefs } from "@/types/user";
 import { skipToken } from "@tanstack/react-query";
@@ -25,13 +26,13 @@ const DEFAULT_USER_PREFS = UserPrefs.parse({});
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export function UserProvider({ children }: { children: ReactNode }) {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const [userSession, setUserSession] = useState<UserSession | null>(null);
   const [userPrefLoadings, setUserPrefLoadings] = useState<UserPrefLoadings>(
     {}
   );
   const utils = trpc.useUtils();
-  const _userPrefsQuery = trpc.user.prefs.useQuery(
+  const userPrefsQuery = trpc.user.prefs.useQuery(
     userSession ? undefined : skipToken
   );
   const updateUserPrefs = trpc.user.updatePrefs.useMutation({
@@ -87,6 +88,8 @@ export function UserProvider({ children }: { children: ReactNode }) {
     }
   ) as UserPrefs;
 
+  const isLoading = status === "loading" || userPrefsQuery.isLoading;
+  if (isLoading) return <FullPageLoading />;
   return (
     <UserContext.Provider
       value={{

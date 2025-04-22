@@ -9,8 +9,6 @@ export const EnvConfig = z.object({
   openaiApiKey: z.string().min(1),
   nextauthUrl: z.string().min(1),
   nextauthSecret: z.string().min(1),
-  githubClientId: z.string().min(1),
-  githubClientSecret: z.string().min(1),
   googleClientId: z.string().min(1),
   googleClientSecret: z.string().min(1),
 });
@@ -25,8 +23,6 @@ function load() {
       openaiApiKey: process.env.OPENAI_API_KEY,
       nextauthUrl: process.env.NEXTAUTH_URL,
       nextauthSecret: process.env.NEXTAUTH_SECRET,
-      githubClientId: process.env.GITHUB_CLIENT_ID,
-      githubClientSecret: process.env.GITHUB_CLIENT_SECRET,
       googleClientId: process.env.GOOGLE_CLIENT_ID,
       googleClientSecret: process.env.GOOGLE_CLIENT_SECRET,
     });
