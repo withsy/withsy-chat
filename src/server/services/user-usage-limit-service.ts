@@ -118,7 +118,9 @@ export class UserUsageLimitService {
     });
   }
 
-  static async acquireAndCompensate(tx: Tx, input: { userId: UserId }) {}
+  static async acquireAndCompensate(tx: Tx, input: { userId: UserId }) {
+    // TODO
+  }
 }
 
 function resetUsageIfExpired(usageLimit: UserUsageLimit, now: Date) {
