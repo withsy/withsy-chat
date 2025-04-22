@@ -1,9 +1,4 @@
-import {
-  Drawer,
-  DrawerContent,
-  DrawerHeader,
-  DrawerTitle,
-} from "@/components/ui/drawer";
+import { Drawer, DrawerContent } from "@/components/ui/drawer";
 import { useSidebar } from "@/context/SidebarContext";
 import type { ChatModel } from "@/types/chat";
 import { ModelSelectItem } from "./ModelSelectItem";

@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import HoverSwitchIcon from "../HoverSwitchIcon";
-import { SidebarChatItem } from "../layout/sidebar/SidebarChatList";
+import { SidebarChatItem } from "../layout/sidebar/SidebarChatItem";
 
 interface ChatHeaderProps {
   chat: Chat;
