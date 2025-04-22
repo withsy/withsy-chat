@@ -17,7 +17,7 @@ export class MessageReplyService {
     const { userMessage, modelMessage } = await this.service.db.$transaction(
       async (tx) => {
         await IdempotencyInfoService.checkDuplicateRequest(tx, idempotencyKey);
-        await UserUsageLimitService.check(tx, { userId });
+        await UserUsageLimitService.acquireAndCheck(tx, { userId });
         const oldModelMessage = await tx.message.findUniqueOrThrow({
           where: {
             chat: {

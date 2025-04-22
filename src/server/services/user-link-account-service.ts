@@ -41,10 +41,8 @@ export class UserLinkAccountService {
             userId: true,
           },
         });
-        const usageLimit = await tx.userUsageLimit.create({
-          data: {
-            userId: user.id,
-          },
+        await tx.userUsageLimit.create({
+          data: { userId: user.id },
         });
       }
 

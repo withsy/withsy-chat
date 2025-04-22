@@ -353,7 +353,7 @@ export class MessageService {
 
     await this.service.db.$transaction(async (tx) => {
       await IdempotencyInfoService.checkDuplicateRequest(tx, idempotencyKey);
-      await UserUsageLimitService.check(tx, { userId });
+      await UserUsageLimitService.acquireAndCheck(tx, { userId });
     });
 
     const { fileInfos } = await this.service.s3.uploads(userId, { files });
