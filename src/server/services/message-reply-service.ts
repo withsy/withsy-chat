@@ -1,5 +1,5 @@
 import { MessageSelect } from "@/types/message";
-import type { ReplyRegenerate } from "@/types/reply";
+import type { MessageReplyRegenerate } from "@/types/message-reply";
 import { Role } from "@/types/role";
 import type { UserId } from "@/types/user";
 import { StatusCodes } from "http-status-codes";
@@ -7,16 +7,17 @@ import { HttpServerError } from "../error";
 import type { ServiceRegistry } from "../service-registry";
 import { IdempotencyInfoService } from "./idempotency-info-service";
 import { MessageService } from "./message-service";
+import { UserUsageLimitService } from "./user-usage-limit-service";
 
-export class ReplyService {
+export class MessageReplyService {
   constructor(private readonly service: ServiceRegistry) {}
 
-  async regenerate(userId: UserId, input: ReplyRegenerate) {
+  async regenerate(userId: UserId, input: MessageReplyRegenerate) {
     const { idempotencyKey, messageId, model } = input;
     const { userMessage, modelMessage } = await this.service.db.$transaction(
       async (tx) => {
         await IdempotencyInfoService.checkDuplicateRequest(tx, idempotencyKey);
-
+        await UserUsageLimitService.check(tx, { userId });
         const oldModelMessage = await tx.message.findUniqueOrThrow({
           where: {
             chat: {
@@ -71,6 +72,8 @@ export class ReplyService {
       userMessageId: userMessage.id,
       modelMessageId: modelMessage.id,
     });
+
+    await UserUsageLimitService.acquireAndUpdate(this.service.db, { userId });
 
     return modelMessage;
   }

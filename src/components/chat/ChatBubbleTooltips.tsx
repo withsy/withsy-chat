@@ -38,14 +38,14 @@ export const ChatBubbleTooltips: React.FC<ChatBubbleTooltipsProps> = ({
   const { userPrefs } = useUser();
   const { themeColor } = userPrefs;
 
-  const branchStart = trpc.branch.start.useMutation({
+  const chatBranchStart = trpc.chatBranch.start.useMutation({
     onSuccess(data) {
       router.push(`/chat/${data.id}`);
       utils.chat.list.invalidate();
     },
   });
 
-  const replyRegenerate = trpc.reply.regenerate.useMutation({
+  const messageReplyRegenerate = trpc.messageReply.regenerate.useMutation({
     onSuccess(data) {
       // TODO: need to handle on chat session.
     },
@@ -53,7 +53,7 @@ export const ChatBubbleTooltips: React.FC<ChatBubbleTooltipsProps> = ({
   const utils = trpc.useUtils();
 
   const handleBranch = () => {
-    branchStart.mutate({
+    chatBranchStart.mutate({
       idempotencyKey: uuid(),
       messageId,
     });
@@ -104,7 +104,7 @@ export const ChatBubbleTooltips: React.FC<ChatBubbleTooltipsProps> = ({
                 messageModel={messageModel}
                 description={"Switch model & regenerate"}
                 onSelectModel={(selectedModel) => {
-                  replyRegenerate.mutate({
+                  messageReplyRegenerate.mutate({
                     idempotencyKey: uuid(),
                     messageId,
                     model: selectedModel,

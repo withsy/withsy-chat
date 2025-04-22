@@ -40,10 +40,10 @@ model UserUsageLimit {
   user          User     @relation("user_usage_limits.user_id", fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
   dailyLimit    Int      @default(10) @map("daily_limit")
   dailyUsed     Int      @default(0) @map("daily_used")
-  dailyResetAt  DateTime @map("daily_reset_at") @db.Timestamptz(6)
+  dailyResetAt  DateTime @default(now()) @map("daily_reset_at") @db.Timestamptz(6)
   minuteLimit   Int      @default(5) @map("minute_limit")
   minuteUsed    Int      @default(0) @map("minute_used")
-  minuteResetAt DateTime @map("minute_reset_at") @db.Timestamptz(6)
+  minuteResetAt DateTime @default(now()) @map("minute_reset_at") @db.Timestamptz(6)
   createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt     DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
 

@@ -26,7 +26,7 @@ export const ChatDrawer = ({ chat, savedMessages }: ChatDrawerProps) => {
   const router = useRouter();
   const isDrawerOpen = !!openDrawer;
   const chatId = chat?.id;
-  const branchList = trpc.branch.list.useQuery(
+  const chatBranchList = trpc.chatBranch.list.useQuery(
     chatId && openDrawer === "branches" ? { chatId } : skipToken
   );
 
@@ -63,7 +63,7 @@ export const ChatDrawer = ({ chat, savedMessages }: ChatDrawerProps) => {
   } else if (openDrawer === "saved") {
     body = <SavedMessages messages={savedMessages ?? []} />;
   } else if (openDrawer === "branches") {
-    body = <Branches branchList={branchList} chat={chat} />;
+    body = <Branches chatBranchList={chatBranchList} chat={chat} />;
   } else {
     body = <div className="text-sm text-muted-foreground">No content</div>;
   }
@@ -140,17 +140,17 @@ function SavedMessages({ messages }: { messages: Message[] }) {
 
 function Branches({
   chat,
-  branchList,
+  chatBranchList,
 }: {
   chat: Chat | null;
-  branchList: any;
+  chatBranchList: any;
 }) {
   const router = useRouter();
-  if (branchList.isLoading) {
+  if (chatBranchList.isLoading) {
     return <PartialLoading />;
-  } else if (branchList.isError) {
+  } else if (chatBranchList.isError) {
     return <PartialError />;
-  } else if (branchList.data) {
+  } else if (chatBranchList.data) {
     let originalChat;
     if (chat && chat.type == "branch" && chat.parentMessage) {
       const chatId = chat.parentMessage.chatId;
@@ -183,7 +183,7 @@ function Branches({
         </div>
       );
     }
-    if (branchList.data.length == 0) {
+    if (chatBranchList.data.length == 0) {
       if (originalChat) return originalChat;
       return (
         <div className="h-full w-full flex items-center justify-center text-muted-foreground">
@@ -201,7 +201,7 @@ function Branches({
         <span className="text-sm select-none">
           Branches created from this chat. Tap to jump to a specific branch.
         </span>
-        {branchList.data.map((x: Chat) => {
+        {chatBranchList.data.map((x: Chat) => {
           return (
             <div
               key={x.id}

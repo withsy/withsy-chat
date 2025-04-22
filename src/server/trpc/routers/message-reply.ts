@@ -1,13 +1,13 @@
 import { Message } from "@/types/message";
-import { ReplyRegenerate } from "@/types/reply";
+import { MessageReplyRegenerate } from "@/types/message-reply";
 import { publicProcedure, t } from "../server";
 
-export const replyRouter = t.router({
+export const messageReplyRouter = t.router({
   regenerate: publicProcedure
-    .input(ReplyRegenerate)
+    .input(MessageReplyRegenerate)
     .output(Message)
     .mutation(async (opts) =>
-      opts.ctx.service.reply
+      opts.ctx.service.messageReply
         .regenerate(opts.ctx.userId, opts.input)
         .then((x) => Message.parse(x))
     ),

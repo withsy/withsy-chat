@@ -1,18 +1,20 @@
 import { t } from "../server";
-import { branchRouter } from "./branch";
 import { chatRouter } from "./chat";
+import { chatBranchRouter } from "./chat-branch";
 import { messageRouter } from "./message";
 import { messageChunkRouter } from "./message-chunk";
-import { replyRouter } from "./reply";
+import { messageReplyRouter } from "./message-reply";
 import { userPrefsRouter } from "./user-prefs";
+import { userUsageLimitRouter } from "./user-usage-limit";
 
 export const appRouter = t.router({
   userPrefs: userPrefsRouter,
+  userUsageLimit: userUsageLimitRouter,
   chat: chatRouter,
-  branch: branchRouter,
+  chatBranch: chatBranchRouter,
   message: messageRouter,
   messageChunk: messageChunkRouter,
-  reply: replyRouter,
+  messageReply: messageReplyRouter,
 });
 
 export type AppRouter = typeof appRouter;

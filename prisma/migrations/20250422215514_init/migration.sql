@@ -33,10 +33,10 @@ CREATE TABLE "user_usage_limits" (
     "user_id" UUID NOT NULL,
     "daily_limit" INTEGER NOT NULL DEFAULT 10,
     "daily_used" INTEGER NOT NULL DEFAULT 0,
-    "daily_reset_at" TIMESTAMPTZ(6) NOT NULL,
+    "daily_reset_at" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "minute_limit" INTEGER NOT NULL DEFAULT 5,
     "minute_used" INTEGER NOT NULL DEFAULT 0,
-    "minute_reset_at" TIMESTAMPTZ(6) NOT NULL,
+    "minute_reset_at" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "created_at" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
