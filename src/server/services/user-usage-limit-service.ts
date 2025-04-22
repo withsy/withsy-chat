@@ -66,7 +66,7 @@ export class UserUsageLimitService {
     }
   }
 
-  static async acquireAndUpdate(tx: Tx, input: { userId: UserId }) {
+  static async acquireAndDeduct(tx: Tx, input: { userId: UserId }) {
     const { userId } = input;
     const affected = await tx.$executeRaw`
       SELECT id FROM user_usage_limits FOR UPDATE

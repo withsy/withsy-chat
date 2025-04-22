@@ -73,7 +73,7 @@ export class MessageReplyService {
       modelMessageId: modelMessage.id,
     });
 
-    await UserUsageLimitService.acquireAndUpdate(this.service.db, { userId });
+    await UserUsageLimitService.acquireAndDeduct(this.service.db, { userId });
 
     return modelMessage;
   }
