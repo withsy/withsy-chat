@@ -1,5 +1,6 @@
 import { useUser } from "@/context/UserContext";
-import type { Chat, ChatMessage } from "@/types/chat";
+import type { Chat } from "@/types/chat";
+import { MessageId, type Message } from "@/types/message";
 import { ChevronsDown } from "lucide-react";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState, type RefObject } from "react";
@@ -8,8 +9,8 @@ import ChatInformationSystemMessage from "./ChatInformationSystemMessage";
 
 type Props = {
   chat: Chat | null;
-  messages: ChatMessage[];
-  onToggleSaved: (id: number, newValue: boolean) => void;
+  messages: Message[];
+  onToggleSaved: (id: string, newValue: boolean) => void;
   shouldAutoScrollRef: RefObject<boolean>;
 };
 
@@ -29,11 +30,11 @@ export function ChatMessageList({
   const listRef = useRef<HTMLDivElement | null>(null);
   const [showScrollToBottom, setShowScrollToBottom] = useState(false);
 
-  const messageRefs = useRef<Record<number, HTMLDivElement | null>>({});
+  const messageRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   useEffect(() => {
     if (messageId && messageId !== "last") {
-      const id = parseInt(messageId as string, 10);
+      const id = MessageId.parse(messageId);
       const targetRef = messageRefs.current[id];
       if (targetRef) {
         targetRef.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -47,7 +48,7 @@ export function ChatMessageList({
         if (messageId == "last") {
           bottomRef.current?.scrollIntoView({ behavior: "smooth" });
         } else {
-          const id = parseInt(messageId as string, 10);
+          const id = MessageId.parse(messageId);
           const targetRef = messageRefs.current[id];
           if (targetRef) {
             targetRef.scrollIntoView({ behavior: "smooth" });

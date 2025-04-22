@@ -26,6 +26,7 @@
     "withsy",
     "autoincrement",
     "dbgenerated",
-    "prepass"
+    "prepass",
+    "uuidv"
   ]
 }

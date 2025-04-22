@@ -1,14 +1,14 @@
-import { ChatMessage } from "@/types/chat";
+import { Message } from "@/types/message";
 import { ReplyRegenerate } from "@/types/reply";
 import { publicProcedure, t } from "../server";
 
 export const replyRouter = t.router({
   regenerate: publicProcedure
     .input(ReplyRegenerate)
-    .output(ChatMessage)
+    .output(Message)
     .mutation(async (opts) =>
       opts.ctx.service.reply
         .regenerate(opts.ctx.userId, opts.input)
-        .then((x) => ChatMessage.parse(x))
+        .then((x) => Message.parse(x))
     ),
 });

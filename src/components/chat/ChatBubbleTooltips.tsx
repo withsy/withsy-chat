@@ -15,7 +15,7 @@ import { v4 as uuid } from "uuid";
 import { ModelSelect } from "./ModelSelect";
 
 interface ChatBubbleTooltipsProps {
-  messageId: number;
+  messageId: string;
   messageModel: Model | null;
   isAi: boolean;
   isSaved: boolean;

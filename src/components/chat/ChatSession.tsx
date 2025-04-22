@@ -4,8 +4,8 @@ import { cn } from "@/lib/utils";
 import { useDrawerStore } from "@/stores/useDrawerStore";
 import { useSelectedModelStore } from "@/stores/useSelectedModelStore";
 import { useSidebarStore } from "@/stores/useSidebarStore";
-import type { ChatMessage } from "@/types/chat";
 import { Chat } from "@/types/chat";
+import { MessageId, type Message } from "@/types/message";
 import { skipToken } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -18,7 +18,7 @@ import { ChatMessageList } from "./ChatMessageList";
 
 type Props = {
   chat: Chat | null;
-  initialMessages: ChatMessage[];
+  initialMessages: Message[];
   children?: React.ReactNode;
 };
 
@@ -30,7 +30,7 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
   const { selectedModel } = useSelectedModelStore();
   const { userPrefs } = useUser();
   const [messages, setMessages] = useState(initialMessages);
-  const [streamMessageId, setStreamMessageId] = useState<number | null>(null);
+  const [streamMessageId, setStreamMessageId] = useState<string | null>(null);
   const stableChat = useMemo(() => chat, [chat]);
 
   const { openDrawer, setOpenDrawer } = useDrawerStore();
@@ -52,8 +52,7 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
 
   useEffect(() => {
     if (messageId && messageId !== "last") {
-      const id = parseInt(messageId as string, 10);
-      setStreamMessageId(id);
+      setStreamMessageId(MessageId.parse(messageId));
     }
   }, [messageId]);
 
@@ -137,7 +136,7 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
 
   const messageUpdate = trpc.message.update.useMutation();
 
-  const handleToggleSaved = (id: number, newValue: boolean) => {
+  const handleToggleSaved = (id: string, newValue: boolean) => {
     shouldAutoScrollRef.current = false;
 
     messageUpdate.mutate(
@@ -182,13 +181,7 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
           isMobile ? "w-full" : openDrawer ? "w-[70%]" : "w-full"
         )}
       >
-        {chat && (
-          <ChatHeader
-            chat={chat}
-            setOpenDrawer={setOpenDrawer}
-            openDrawer={openDrawer}
-          />
-        )}
+        {chat && <ChatHeader chat={chat} />}
         <div
           className={cn(
             "flex-1 overflow-y-auto mt-[50px] mb-[150px] w-full transition-all duration-300",

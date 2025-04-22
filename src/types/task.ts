@@ -1,7 +1,7 @@
 import { z } from "zod";
-import { ChatMessageId } from "./chat-message";
-import { ChatMessageChunkIndex } from "./chat-message-chunk";
 import type { MaybePromise, zInfer } from "./common";
+import { MessageId } from "./message";
+import { MessageChunkIndex } from "./message-chunk";
 import { UserId } from "./user";
 
 //#region Task
@@ -9,8 +9,8 @@ import { UserId } from "./user";
 export const Task = {
   model_route_send_message_to_ai: z.object({
     userId: UserId,
-    userMessageId: ChatMessageId,
-    modelMessageId: ChatMessageId,
+    userMessageId: MessageId,
+    modelMessageId: MessageId,
   }),
   message_cleanup_zombies: z.void(),
 } as const;
@@ -31,12 +31,12 @@ export type CronTask = { cron: string; key: TaskKey };
 export const MessageChunkCreatedInput = z.discriminatedUnion("status", [
   z.object({
     status: z.literal("created"),
-    messageId: ChatMessageId,
-    chunkIndex: ChatMessageChunkIndex,
+    messageId: MessageId,
+    index: MessageChunkIndex,
   }),
   z.object({
     status: z.literal("completed"),
-    messageId: ChatMessageId,
+    messageId: MessageId,
   }),
 ]);
 export type MessageChunkCreatedInput = zInfer<typeof MessageChunkCreatedInput>;

@@ -2,8 +2,8 @@ import { trpc } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
 import { useDrawerStore } from "@/stores/useDrawerStore";
 import { useSidebarStore } from "@/stores/useSidebarStore";
-import type { ChatMessage } from "@/types/chat";
 import { Chat } from "@/types/chat";
+import type { Message } from "@/types/message";
 import { skipToken } from "@tanstack/react-query";
 import { Bookmark, FolderGit2, FolderRoot, GitBranch } from "lucide-react";
 import { useRouter } from "next/router";
@@ -16,7 +16,7 @@ import ChatDrawerHeader from "./ChatDrawerHeader";
 
 type ChatDrawerProps = {
   chat: Chat | null;
-  savedMessages?: ChatMessage[];
+  savedMessages?: Message[];
 };
 
 export const ChatDrawer = ({ chat, savedMessages }: ChatDrawerProps) => {
@@ -106,7 +106,7 @@ export const ChatDrawer = ({ chat, savedMessages }: ChatDrawerProps) => {
   );
 };
 
-function SavedMessages({ messages }: { messages: ChatMessage[] }) {
+function SavedMessages({ messages }: { messages: Message[] }) {
   if (messages.length === 0) {
     return (
       <div className="h-full w-full flex items-center justify-center text-muted-foreground">

@@ -1,8 +1,10 @@
-import { ChatMessage } from "@/types/chat";
-import { type ChatMessageId } from "@/types/chat-message";
-import type { ChatMessageChunkIndex } from "@/types/chat-message-chunk";
 import type { MaybePromise } from "@/types/common";
-import type { MessageForHistory } from "@/types/message";
+import {
+  Message,
+  type MessageForHistory,
+  type MessageId,
+} from "@/types/message";
+import type { MessageChunkIndex } from "@/types/message-chunk";
 import { ModelProviderMap } from "@/types/model";
 import { Role } from "@/types/role";
 import type { TaskInput } from "@/types/task";
@@ -14,13 +16,13 @@ import type { ServiceRegistry } from "../service-registry";
 import { notify } from "./pg";
 
 export type ValidatedModelMessage = Simplify<
-  Omit<ChatMessage, "model"> & {
-    model: NonNullable<ChatMessage["model"]>;
+  Omit<Message, "model"> & {
+    model: NonNullable<Message["model"]>;
   }
 >;
 
 export type SendMessageToAiInput = {
-  userMessage: ChatMessage;
+  userMessage: Message;
   modelMessage: ValidatedModelMessage;
   messagesForHistory: MessageForHistory[];
   onMessageChunkReceived: OnMessageChunkReceived;
@@ -65,22 +67,22 @@ export class ModelRouteService {
     try {
       const modelProviderKey = ModelProviderMap[modelMessage.model];
 
-      let chunkIndex: ChatMessageChunkIndex = 0;
+      let index: MessageChunkIndex = 0;
       const onMessageChunkReceived: OnMessageChunkReceived = async (input) => {
         const { text, rawData } = input;
         await this.service.messageChunk.add({
           messageId: modelMessage.id,
-          chunkIndex,
+          index,
           text,
           rawData,
         });
         await notify(this.service.pgPool, "message_chunk_created", {
           status: "created",
           messageId: modelMessage.id,
-          chunkIndex,
+          index,
         });
 
-        chunkIndex += 1;
+        index += 1;
       };
 
       const input: SendMessageToAiInput = {
@@ -116,7 +118,7 @@ export class ModelRouteService {
 
   private async listForHistory(input: {
     userId: UserId;
-    modelMessage: Simplify<Pick<ChatMessage, "id" | "chatId">>;
+    modelMessage: Simplify<Pick<Message, "id" | "chatId">>;
   }) {
     const { userId, modelMessage } = input;
     const xs = await this.service.message.listForHistory({
@@ -134,8 +136,8 @@ export class ModelRouteService {
 
   private async getInputValues(input: {
     userId: UserId;
-    userMessageId: ChatMessageId;
-    modelMessageId: ChatMessageId;
+    userMessageId: MessageId;
+    modelMessageId: MessageId;
   }) {
     const { userId, userMessageId, modelMessageId } = input;
     const [userMessageRaw, modelMessageRaw] = await Promise.all([
@@ -146,8 +148,8 @@ export class ModelRouteService {
       this.service.message.get({ userId, messageId: modelMessageId }),
     ]);
 
-    const userMessage = ChatMessage.parse(userMessageRaw);
-    const modelMessage = ChatMessage.parse(modelMessageRaw);
+    const userMessage = Message.parse(userMessageRaw);
+    const modelMessage = Message.parse(modelMessageRaw);
     return {
       userMessage,
       modelMessage,
@@ -155,8 +157,8 @@ export class ModelRouteService {
   }
 
   private validateInputValues(input: {
-    userMessage: ChatMessage;
-    modelMessage: ChatMessage;
+    userMessage: Message;
+    modelMessage: Message;
   }):
     | {
         ok: true;

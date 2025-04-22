@@ -1,5 +1,5 @@
-import { ChatMessage } from "@/types/chat";
 import {
+  Message,
   MessageList,
   MessageSend,
   MessageSendOutput,
@@ -10,19 +10,19 @@ import { publicProcedure, t } from "../server";
 export const messageRouter = t.router({
   list: publicProcedure
     .input(MessageList)
-    .output(ChatMessage.array())
+    .output(Message.array())
     .query(async (opts) =>
       opts.ctx.service.message
         .list(opts.ctx.userId, opts.input)
-        .then((xs) => xs.map((x) => ChatMessage.parse(x)))
+        .then((xs) => xs.map((x) => Message.parse(x)))
     ),
   update: publicProcedure
     .input(MessageUpdate)
-    .output(ChatMessage)
+    .output(Message)
     .mutation(async (opts) =>
       opts.ctx.service.message
         .update(opts.ctx.userId, opts.input)
-        .then((x) => ChatMessage.parse(x))
+        .then((x) => Message.parse(x))
     ),
   send: publicProcedure
     .input(MessageSend)

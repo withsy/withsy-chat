@@ -1,8 +1,9 @@
 import type { BranchList, BranchStart } from "@/types/branch";
 import { ChatSelect } from "@/types/chat";
-import type { ChatMessageId } from "@/types/chat-message";
+import type { MessageId } from "@/types/message";
 import type { UserId } from "@/types/user";
 import type { ServiceRegistry } from "../service-registry";
+import { ChatService } from "./chat-service";
 import type { Tx } from "./db";
 import { IdempotencyInfoService } from "./idempotency-info-service";
 import { MessageService } from "./message-service";
@@ -53,11 +54,12 @@ export class BranchService {
 
   static async create(
     tx: Tx,
-    input: { userId: UserId; parentMessageId: ChatMessageId; title?: string }
+    input: { userId: UserId; parentMessageId: MessageId; title?: string }
   ) {
     const { userId, parentMessageId, title } = input;
     const res = await tx.chat.create({
       data: {
+        id: ChatService.generateId(),
         userId,
         title,
         type: "branch",

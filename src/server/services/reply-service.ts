@@ -1,4 +1,4 @@
-import { ChatMessageSelect } from "@/types/chat-message";
+import { MessageSelect } from "@/types/message";
 import type { ReplyRegenerate } from "@/types/reply";
 import { Role } from "@/types/role";
 import type { UserId } from "@/types/user";
@@ -6,6 +6,7 @@ import { StatusCodes } from "http-status-codes";
 import { HttpServerError } from "../error";
 import type { ServiceRegistry } from "../service-registry";
 import { IdempotencyInfoService } from "./idempotency-info-service";
+import { MessageService } from "./message-service";
 
 export class ReplyService {
   constructor(private readonly service: ServiceRegistry) {}
@@ -16,7 +17,7 @@ export class ReplyService {
       async (tx) => {
         await IdempotencyInfoService.checkDuplicateRequest(tx, idempotencyKey);
 
-        const oldModelMessage = await tx.chatMessage.findUniqueOrThrow({
+        const oldModelMessage = await tx.message.findUniqueOrThrow({
           where: {
             chat: {
               userId,
@@ -24,13 +25,13 @@ export class ReplyService {
             },
             id: messageId,
           },
-          select: ChatMessageSelect,
+          select: MessageSelect,
         });
 
-        if (!oldModelMessage.replyToId) {
+        if (!oldModelMessage.parentMessageId) {
           throw new HttpServerError(
             StatusCodes.INTERNAL_SERVER_ERROR,
-            "replyToId must exist.",
+            "parentMessageId must exist.",
             {
               extra: {
                 messageId,
@@ -39,25 +40,26 @@ export class ReplyService {
           );
         }
 
-        const userMessage = await tx.chatMessage.findUniqueOrThrow({
+        const userMessage = await tx.message.findUniqueOrThrow({
           where: {
             chat: {
               userId,
               deletedAt: null,
             },
-            id: oldModelMessage.replyToId,
+            id: oldModelMessage.parentMessageId,
           },
-          select: ChatMessageSelect,
+          select: MessageSelect,
         });
 
-        const modelMessage = await tx.chatMessage.create({
+        const modelMessage = await tx.message.create({
           data: {
+            id: MessageService.generateId(),
             chatId: oldModelMessage.chatId,
             role: Role.enum.model,
             model: model ?? oldModelMessage.model,
             status: "pending",
           },
-          select: ChatMessageSelect,
+          select: MessageSelect,
         });
 
         return { userMessage, modelMessage };

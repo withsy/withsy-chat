@@ -6,6 +6,7 @@ import {
   ChatUpdate,
 } from "@/types/chat";
 import { UserId } from "@/types/user";
+import { uuidv7 } from "uuidv7";
 import type { ServiceRegistry } from "../service-registry";
 import type { Tx } from "./db";
 import { MessageService } from "./message-service";
@@ -123,6 +124,7 @@ export class ChatService {
     const title = text ? [...text].slice(0, 20).join("") : undefined;
     const res = await tx.chat.create({
       data: {
+        id: ChatService.generateId(),
         userId,
         title,
         type: "chat",
@@ -130,5 +132,9 @@ export class ChatService {
     });
 
     return res;
+  }
+
+  static generateId() {
+    return uuidv7();
   }
 }

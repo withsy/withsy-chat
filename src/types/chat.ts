@@ -1,9 +1,8 @@
 import type { Prisma } from "@prisma/client";
 import { z } from "zod";
-import { ChatId } from "./chat-core";
-import { ChatMessageId, ChatMessageSchema } from "./chat-message";
-import { zParseDate, type zInfer } from "./common";
+import { type zInfer } from "./common";
 import { IdempotencyKey } from "./idempotency";
+import { Message, MessageId } from "./message";
 import { Model } from "./model";
 
 export const ChatSelect = {
@@ -15,6 +14,9 @@ export const ChatSelect = {
   updatedAt: true,
 } satisfies Prisma.ChatSelect;
 
+export const ChatId = z.string().uuid();
+export type ChatId = zInfer<typeof ChatId>;
+
 export const ChatType = z.enum(["chat", "branch"]);
 export type ChatType = zInfer<typeof ChatType>;
 
@@ -23,16 +25,26 @@ export const ChatSchema = z.object({
   title: z.string(),
   isStarred: z.boolean(),
   type: ChatType,
-  parentMessageId: ChatMessageId.nullable(),
-  updatedAt: zParseDate(),
+  parentMessageId: z.lazy(() => MessageId.nullable()),
+  updatedAt: z.date(),
 });
 export type ChatSchema = zInfer<typeof ChatSchema>;
 const _ = {} satisfies Omit<ChatSchema, keyof typeof ChatSelect>;
 
-export const Chat = ChatSchema.extend({
-  parentMessage: ChatMessageSchema.nullable().default(null),
-});
-export type Chat = zInfer<typeof Chat>;
+export type Chat = {
+  id: ChatId;
+  title: string;
+  isStarred: boolean;
+  type: ChatType;
+  parentMessageId: MessageId | null;
+  parentMessage?: Message | null;
+  updatedAt: Date;
+};
+export const Chat: z.ZodType<Chat> = z.lazy(() =>
+  ChatSchema.extend({
+    parentMessage: z.lazy(() => Message.nullable().default(null)),
+  })
+);
 
 export const ChatGet = z.object({
   chatId: ChatId,
@@ -60,12 +72,6 @@ export const ChatDelete = z.object({
 });
 export type ChatDelete = zInfer<typeof ChatDelete>;
 
-// NOTE: Define it at this location to avoid circular references.
-export const ChatMessage = ChatMessageSchema.extend({
-  chat: Chat.nullable().default(null),
-});
-export type ChatMessage = zInfer<typeof ChatMessage>;
-
 export const ChatStart = z.object({
   idempotencyKey: IdempotencyKey,
   text: z.string(),
@@ -76,7 +82,7 @@ export type ChatStart = zInfer<typeof ChatStart>;
 
 export const ChatStartOutput = z.object({
   chat: Chat,
-  userMessage: ChatMessage,
-  modelMessage: ChatMessage,
+  userMessage: z.lazy(() => Message),
+  modelMessage: z.lazy(() => Message),
 });
 export type ChatStartOutput = zInfer<typeof ChatStartOutput>;

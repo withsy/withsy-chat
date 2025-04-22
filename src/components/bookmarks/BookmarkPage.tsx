@@ -6,14 +6,14 @@ import { Badge } from "@/components/ui/badge";
 import { useUser } from "@/context/UserContext";
 import { filterMessages } from "@/lib/filter-utils";
 import { trpc } from "@/lib/trpc";
-import { ChatMessage } from "@/types/chat";
+import type { Message } from "@/types/message";
 import { skipToken } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
 
 export default function BookmarkPage() {
   const { userPrefs, userSession } = useUser();
   const { themeColor } = userPrefs;
-  const [data, setData] = useState<ChatMessage[]>([]);
+  const [data, setData] = useState<Message[]>([]);
   const [searchText, setSearchText] = useState("");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const listSaved = trpc.message.list.useQuery(

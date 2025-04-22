@@ -26,10 +26,3 @@ export const JsonValueSchema: z.ZodType<JsonValue> = z.lazy(() =>
   ])
 );
 export const JsonValue = JsonValueSchema;
-
-export function zParseDate() {
-  return z.preprocess((x) => {
-    if (typeof x === "string" || x instanceof Date) return new Date(x);
-    throw new Error("Invalid time format.");
-  }, z.date());
-}
