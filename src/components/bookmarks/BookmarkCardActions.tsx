@@ -42,7 +42,7 @@ export function BookmarkCardActions({
     if (isMobile) {
       setOpenDrawer(null);
     }
-    router.push(link);
+    router.push(link, { scroll: false });
   };
 
   return (

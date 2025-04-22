@@ -8,7 +8,7 @@ import type { ChatMessage } from "@/types/chat";
 import { Chat } from "@/types/chat";
 import { skipToken } from "@tanstack/react-query";
 import { useRouter } from "next/router";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { v4 as uuid } from "uuid";
 import { ChatDrawer } from "./ChatDrawer";
@@ -37,8 +37,6 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
 
   const utils = trpc.useUtils();
 
-  const shouldAutoScrollRef = useRef(true);
-
   const chatStart = trpc.chat.start.useMutation();
   const messageSend = trpc.message.send.useMutation();
 
@@ -47,11 +45,7 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
   }, [chat, initialMessages]);
 
   useEffect(() => {
-    shouldAutoScrollRef.current = true;
-  }, [chat?.id]);
-
-  useEffect(() => {
-    if (messageId && messageId !== "last") {
+    if (messageId) {
       const id = parseInt(messageId as string, 10);
       setStreamMessageId(id);
     }
@@ -96,7 +90,6 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
 
   const onSendMessage = (message: string) => {
     if (chat != null) {
-      shouldAutoScrollRef.current = true;
       messageSend.mutate(
         {
           chatId: chat.id,
@@ -120,7 +113,6 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
         }
       );
     } else {
-      shouldAutoScrollRef.current = true;
       chatStart.mutate(
         { text: message, model: selectedModel, idempotencyKey: uuid() },
         {
@@ -138,8 +130,6 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
   const messageUpdate = trpc.message.update.useMutation();
 
   const handleToggleSaved = (id: number, newValue: boolean) => {
-    shouldAutoScrollRef.current = false;
-
     messageUpdate.mutate(
       { messageId: id, isBookmarked: newValue },
       {
@@ -196,7 +186,6 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
               chat={stableChat}
               messages={messages}
               onToggleSaved={handleToggleSaved}
-              shouldAutoScrollRef={shouldAutoScrollRef}
             />
           )}
           {children}

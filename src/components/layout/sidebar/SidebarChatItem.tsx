@@ -80,7 +80,7 @@ export function SidebarChatItem({
         setCollapsed(true);
       }
       setOpenDrawer(null);
-      router.push(`/chat/${chat.id}?messageId=last`);
+      router.push(`/chat/${chat.id}`);
     }
   };
 

@@ -2,7 +2,7 @@ import { useUser } from "@/context/UserContext";
 import type { Chat, ChatMessage } from "@/types/chat";
 import { ChevronsDown } from "lucide-react";
 import { useRouter } from "next/router";
-import { useEffect, useRef, useState, type RefObject } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ChatBubble } from "./ChatBubble";
 import ChatInformationSystemMessage from "./ChatInformationSystemMessage";
 
@@ -10,30 +10,45 @@ type Props = {
   chat: Chat | null;
   messages: ChatMessage[];
   onToggleSaved: (id: number, newValue: boolean) => void;
-  shouldAutoScrollRef: RefObject<boolean>;
 };
 
-export function ChatMessageList({
-  chat,
-  messages,
-  onToggleSaved,
-  shouldAutoScrollRef,
-}: Props) {
+export function ChatMessageList({ chat, messages, onToggleSaved }: Props) {
   const router = useRouter();
-  const { messageId } = router.query;
-
   const { userPrefs } = useUser();
   const { themeColor } = userPrefs;
 
   const bottomRef = useRef<HTMLDivElement | null>(null);
   const listRef = useRef<HTMLDivElement | null>(null);
+  const messageRefs = useRef<Record<number, HTMLDivElement | null>>({});
   const [showScrollToBottom, setShowScrollToBottom] = useState(false);
 
-  const messageRefs = useRef<Record<number, HTMLDivElement | null>>({});
+  const hasMounted = useRef(false);
+  const prevMessageLength = useRef(messages.length);
+
+  const messageId = router.query.messageId as string | undefined;
 
   useEffect(() => {
-    if (messageId && messageId !== "last") {
-      const id = parseInt(messageId as string, 10);
+    if (!hasMounted.current) {
+      hasMounted.current = true;
+
+      if (!messageId) {
+        bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  }, [messageId]);
+
+  useEffect(() => {
+    const hasNewMessage = messages.length > prevMessageLength.current;
+    prevMessageLength.current = messages.length;
+
+    if (!messageId && hasNewMessage) {
+      bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages, messageId]);
+
+  useEffect(() => {
+    if (messageId) {
+      const id = parseInt(messageId, 10);
       const targetRef = messageRefs.current[id];
       if (targetRef) {
         targetRef.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -44,15 +59,6 @@ export function ChatMessageList({
   useEffect(() => {
     if (messageId) {
       const timeout = setTimeout(() => {
-        if (messageId == "last") {
-          bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-        } else {
-          const id = parseInt(messageId as string, 10);
-          const targetRef = messageRefs.current[id];
-          if (targetRef) {
-            targetRef.scrollIntoView({ behavior: "smooth" });
-          }
-        }
         const { messageId: _, ...rest } = router.query;
         router.replace(
           {
@@ -63,17 +69,9 @@ export function ChatMessageList({
           { shallow: true }
         );
       }, 100);
-
       return () => clearTimeout(timeout);
     }
   }, [messageId, messages, router]);
-
-  useEffect(() => {
-    if (shouldAutoScrollRef.current) {
-      bottomRef.current?.scrollIntoView({ behavior: "auto" });
-    }
-    shouldAutoScrollRef.current = false;
-  }, [messages, shouldAutoScrollRef]);
 
   useEffect(() => {
     const el = listRef.current;
@@ -109,7 +107,7 @@ export function ChatMessageList({
       >
         {chat != null && <ChatInformationSystemMessage chat={chat} />}
         {messages.map((msg) =>
-          msg.role == "system" ? (
+          msg.role === "system" ? (
             <div key={msg.id} className="flex justify-center my-4 py-4">
               <span className="text-muted-foreground italic">{msg.text}</span>
             </div>
@@ -130,6 +128,7 @@ export function ChatMessageList({
         )}
         <div ref={bottomRef} />
       </div>
+
       {showScrollToBottom && (
         <button
           onClick={scrollToBottom}
