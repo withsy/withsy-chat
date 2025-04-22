@@ -1,3 +1,4 @@
+import { RegenerateProvider } from "@/context/RegenerateContext";
 import { useUser } from "@/context/UserContext";
 import { trpc } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
@@ -159,6 +160,12 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
     );
   };
 
+  const handleRegenerateSuccess = (newMessage: ChatMessage) => {
+    setMessages((prev) => [...prev, newMessage]);
+    setStreamMessageId(newMessage.id);
+    utils.chat.list.invalidate();
+  };
+
   const savedMessages = useMemo(
     () => messages.filter((msg) => msg.isBookmarked),
     [messages]
@@ -182,11 +189,13 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
           )}
         >
           {(chat || messages.length > 0) && (
-            <ChatMessageList
-              chat={stableChat}
-              messages={messages}
-              onToggleSaved={handleToggleSaved}
-            />
+            <RegenerateProvider onRegenerateSuccess={handleRegenerateSuccess}>
+              <ChatMessageList
+                chat={stableChat}
+                messages={messages}
+                onToggleSaved={handleToggleSaved}
+              />
+            </RegenerateProvider>
           )}
           {children}
         </div>
