@@ -33,7 +33,7 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
   const [streamMessageId, setStreamMessageId] = useState<number | null>(null);
   const stableChat = useMemo(() => chat, [chat]);
 
-  const { openDrawer, setOpenDrawer } = useDrawerStore();
+  const { openDrawer } = useDrawerStore();
 
   const utils = trpc.useUtils();
 
@@ -182,13 +182,7 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
           isMobile ? "w-full" : openDrawer ? "w-[70%]" : "w-full"
         )}
       >
-        {chat && (
-          <ChatHeader
-            chat={chat}
-            setOpenDrawer={setOpenDrawer}
-            openDrawer={openDrawer}
-          />
-        )}
+        {chat && <ChatHeader chat={chat} />}
         <div
           className={cn(
             "flex-1 overflow-y-auto mt-[50px] mb-[150px] w-full transition-all duration-300",
