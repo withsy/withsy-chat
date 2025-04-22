@@ -40,7 +40,7 @@ export const ChatBubbleTooltips: React.FC<ChatBubbleTooltipsProps> = ({
 
   const branchStart = trpc.branch.start.useMutation();
   const replyRegenerate = trpc.reply.regenerate.useMutation({
-    onSuccess(data, variables, context) {
+    onSuccess(data) {
       // TODO: need to handle on chat session.
     },
   });
