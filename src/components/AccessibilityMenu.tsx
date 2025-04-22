@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useUser } from "@/context/UserContext";
 import { useSidebarStore } from "@/stores/useSidebarStore";
-import { Check, PersonStanding } from "lucide-react";
+import { Check, WandSparkles } from "lucide-react";
 import { useState } from "react";
 
 export function AccessibilityMenu({ hideLabels }: { hideLabels: boolean }) {
@@ -63,7 +63,7 @@ export function AccessibilityMenu({ hideLabels }: { hideLabels: boolean }) {
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogTrigger asChild>
           <button className={buttonClassName} aria-label="Accessibility">
-            <PersonStanding className="w-5 h-5" />
+            <WandSparkles className="w-5 h-5" />
           </button>
         </DialogTrigger>
         <DialogContent className="p-4">
@@ -94,8 +94,8 @@ export function AccessibilityMenu({ hideLabels }: { hideLabels: boolean }) {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button className={buttonClassName} aria-label="Accessibility">
-          <PersonStanding className="w-5 h-5" />
-          {!hideLabels && <span>Accessibility</span>}
+          <WandSparkles className="w-5 h-5" />
+          {!hideLabels && <span>Preferences</span>}
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-48">
