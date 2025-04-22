@@ -68,14 +68,14 @@ export function SidebarChatItem({
   const mobileClassName = isMobile ? "py-3" : "py-2";
 
   const handleLinkClick = () => {
-    if (isActive) {
+    if (editMode || (isActive && isMobile)) {
       if (isMobile) {
         setCollapsed(true);
       }
       return;
     }
-    if (editMode) return;
-    if (isSidebar == true) {
+
+    if (isSidebar) {
       if (isMobile) {
         setCollapsed(true);
       }
