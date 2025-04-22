@@ -1,6 +1,7 @@
 import { trpc } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
 import { useDrawerStore } from "@/stores/useDrawerStore";
+import { useSidebarStore } from "@/stores/useSidebarStore";
 import type { ChatMessage } from "@/types/chat";
 import { Chat } from "@/types/chat";
 import { skipToken } from "@tanstack/react-query";
@@ -15,15 +16,11 @@ import ChatDrawerHeader from "./ChatDrawerHeader";
 
 type ChatDrawerProps = {
   chat: Chat | null;
-  isMobile: boolean;
   savedMessages?: ChatMessage[];
 };
 
-export const ChatDrawer = ({
-  chat,
-  savedMessages,
-  isMobile,
-}: ChatDrawerProps) => {
+export const ChatDrawer = ({ chat, savedMessages }: ChatDrawerProps) => {
+  const { isMobile } = useSidebarStore();
   const { openDrawer, setOpenDrawer } = useDrawerStore();
 
   const router = useRouter();

@@ -211,11 +211,7 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
           <ChatInputBox onSendMessage={onSendMessage} />
         </div>
       </div>
-      <ChatDrawer
-        chat={chat}
-        isMobile={isMobile}
-        savedMessages={savedMessages}
-      />
+      <ChatDrawer chat={chat} savedMessages={savedMessages} />
     </div>
   );
 }
