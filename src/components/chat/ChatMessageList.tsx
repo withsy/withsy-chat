@@ -51,7 +51,7 @@ export function ChatMessageList({ chat, messages, onToggleSaved }: Props) {
       const id = parseInt(messageId, 10);
       const targetRef = messageRefs.current[id];
       if (targetRef) {
-        targetRef.scrollIntoView({ behavior: "smooth", block: "center" });
+        targetRef.scrollIntoView({ behavior: "smooth", block: "start" });
       }
     }
   }, [messageId, messages]);
