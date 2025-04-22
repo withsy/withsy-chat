@@ -3,6 +3,7 @@ import { useSidebar } from "@/context/SidebarContext";
 import { useUser } from "@/context/UserContext";
 import { trpc } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
+import { useDrawerStore } from "@/stores/useDrawerStore";
 import type { ChatMessage } from "@/types/chat";
 import { Chat } from "@/types/chat";
 import { skipToken } from "@tanstack/react-query";
@@ -29,9 +30,10 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
   const { selectedModel } = useSelectedModel();
   const { userPrefs } = useUser();
   const [messages, setMessages] = useState(initialMessages);
-  const [openDrawer, setOpenDrawer] = useState<string | null>(null);
   const [streamMessageId, setStreamMessageId] = useState<number | null>(null);
   const stableChat = useMemo(() => chat, [chat]);
+
+  const { openDrawer, setOpenDrawer } = useDrawerStore();
 
   const utils = trpc.useUtils();
 
@@ -46,10 +48,6 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
 
   useEffect(() => {
     shouldAutoScrollRef.current = true;
-  }, [chat?.id]);
-
-  useEffect(() => {
-    setOpenDrawer(null);
   }, [chat?.id]);
 
   useEffect(() => {
@@ -215,8 +213,6 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
       </div>
       <ChatDrawer
         chat={chat}
-        openDrawer={openDrawer}
-        setOpenDrawer={setOpenDrawer}
         isMobile={isMobile}
         savedMessages={savedMessages}
       />

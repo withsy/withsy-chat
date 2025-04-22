@@ -9,6 +9,7 @@ import {
 import { useSidebar } from "@/context/SidebarContext";
 import { useUser } from "@/context/UserContext";
 import { trpc } from "@/lib/trpc";
+import { useDrawerStore } from "@/stores/useDrawerStore";
 import type { Chat } from "@/types/chat";
 import {
   EllipsisVertical,
@@ -32,6 +33,8 @@ export function SidebarChatItem({
   onChatUpdate: (chat: Chat) => void;
 }) {
   const router = useRouter();
+  const { setOpenDrawer } = useDrawerStore();
+
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [editedTitle, setEditedTitle] = useState(chat.title);
@@ -65,12 +68,18 @@ export function SidebarChatItem({
   const mobileClassName = isMobile ? "py-3" : "py-2";
 
   const handleLinkClick = () => {
-    if (isActive) return;
+    if (isActive) {
+      if (isMobile) {
+        setCollapsed(true);
+      }
+      return;
+    }
     if (editMode) return;
     if (isSidebar == true) {
       if (isMobile) {
         setCollapsed(true);
       }
+      setOpenDrawer(null);
       router.push(`/chat/${chat.id}?messageId=last`);
     }
   };

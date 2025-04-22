@@ -5,6 +5,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useSidebar } from "@/context/SidebarContext";
+import { useDrawerStore } from "@/stores/useDrawerStore";
 import { Bookmark as BookmarkIcon, Copy, Footprints } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -24,6 +26,8 @@ export function BookmarkCardActions({
   themeColor,
   hideUnsave,
 }: Props) {
+  const { isMobile } = useSidebar();
+  const { setOpenDrawer } = useDrawerStore();
   const router = useRouter();
 
   const handleCopy = async () => {
@@ -33,16 +37,19 @@ export function BookmarkCardActions({
     });
   };
 
+  const handleGoToMessage = () => {
+    if (isMobile) {
+      setOpenDrawer(null);
+    }
+    router.push(link);
+  };
+
   return (
     <TooltipProvider>
       <div className="absolute right-2 z-10 transition-opacity flex rounded-md ">
         <Tooltip>
           <TooltipTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => router.push(link)}
-            >
+            <Button variant="ghost" size="icon" onClick={handleGoToMessage}>
               <Footprints className="w-4 h-4" />
             </Button>
           </TooltipTrigger>
