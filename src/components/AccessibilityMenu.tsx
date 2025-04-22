@@ -63,12 +63,12 @@ export function AccessibilityMenu({ hideLabels }: { hideLabels: boolean }) {
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogTrigger asChild>
           <button className={buttonClassName} aria-label="Accessibility">
-            <WandSparkles className="w-5 h-5" />
+            <WandSparkles className="w-4 h-4" />
           </button>
         </DialogTrigger>
         <DialogContent className="p-4">
           <div className="space-y-2">
-            <h2 className="text-lg font-semibold">Accessibility</h2>
+            <h2 className="text-lg font-semibold">Preferences</h2>
             {items.map(({ label, value, onToggle, key }) => (
               <div
                 key={key}
@@ -94,7 +94,7 @@ export function AccessibilityMenu({ hideLabels }: { hideLabels: boolean }) {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button className={buttonClassName} aria-label="Accessibility">
-          <WandSparkles className="w-5 h-5" />
+          <WandSparkles className="w-4 h-4" />
           {!hideLabels && <span>Preferences</span>}
         </button>
       </DropdownMenuTrigger>
