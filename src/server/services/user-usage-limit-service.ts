@@ -36,6 +36,12 @@ export class UserUsageLimitService {
 
     const now = new Date();
     resetUsageIfExpired(usageLimit, now);
+    await tx.userUsageLimit.update({
+      where: {
+        id: usageLimit.id,
+      },
+      data: usageLimit,
+    });
 
     if (usageLimit.dailyUsed >= usageLimit.dailyLimit) {
       throw new HttpServerError(
@@ -89,10 +95,9 @@ export class UserUsageLimitService {
     if (usageLimit.dailyUsed >= usageLimit.dailyLimit) {
       usageLimit.dailyUsed = 0;
 
-      const today = new Date();
-      const year = today.getFullYear();
-      const month = today.getMonth();
-      const day = today.getDate() + 1;
+      const year = now.getFullYear();
+      const month = now.getMonth();
+      const day = now.getDate() + 1;
       const midnightTomorrow = new Date(year, month, day, 0, 0, 0);
       usageLimit.dailyResetAt = midnightTomorrow;
     }
@@ -101,10 +106,16 @@ export class UserUsageLimitService {
     if (usageLimit.minuteUsed >= usageLimit.minuteLimit) {
       usageLimit.minuteUsed = 0;
 
-      const now = new Date();
       const oneMinuteLater = new Date(now.getTime() + 60 * 1000);
       usageLimit.minuteResetAt = oneMinuteLater;
     }
+
+    await tx.userUsageLimit.update({
+      where: {
+        id: usageLimit.id,
+      },
+      data: usageLimit,
+    });
   }
 }
 
