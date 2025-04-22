@@ -37,11 +37,11 @@ export function BookmarkCard({
   const [bookmarked, setBookmarked] = useState(true);
   const link = `/chat/${chatId}?messageId=${messageId}`;
 
-  const updateMessageMutation = trpc.chatMessage.update.useMutation();
+  const updateMessageMutation = trpc.message.update.useMutation();
 
   const handleToggleSaved = () => {
     updateMessageMutation.mutate(
-      { chatMessageId: messageId, isBookmarked: false },
+      { messageId: messageId, isBookmarked: false },
       {
         onSuccess: () => {
           setBookmarked(false);

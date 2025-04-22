@@ -8,15 +8,15 @@ import {
 import { useUser } from "@/context/UserContext";
 import { trpc } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
-import type { ChatModel } from "@/types/chat";
+import type { Model } from "@/types/model";
 import { Bookmark, Copy, GitBranch, RefreshCw } from "lucide-react";
 import { useRouter } from "next/router";
 import { v4 as uuid } from "uuid";
 import { ModelSelect } from "./ModelSelect";
 
 interface ChatBubbleTooltipsProps {
-  parentId: number | null;
-  messageModel: ChatModel | null;
+  messageId: number;
+  messageModel: Model | null;
   isAi: boolean;
   isSaved: boolean;
   onCopy?: () => void;
@@ -25,7 +25,7 @@ interface ChatBubbleTooltipsProps {
 }
 
 export const ChatBubbleTooltips: React.FC<ChatBubbleTooltipsProps> = ({
-  parentId,
+  messageId,
   messageModel,
   isAi,
   isSaved,
@@ -38,16 +38,19 @@ export const ChatBubbleTooltips: React.FC<ChatBubbleTooltipsProps> = ({
   const { userPrefs } = useUser();
   const { themeColor } = userPrefs;
 
-  const startBranchChat = trpc.chat.startBranch.useMutation();
+  const branchStart = trpc.branch.start.useMutation();
+  const replyRegenerate = trpc.reply.regenerate.useMutation({
+    onSuccess(data) {
+      // TODO: need to handle on chat session.
+    },
+  });
   const utils = trpc.useUtils();
 
   const handleBranch = () => {
-    if (!parentId) return;
-
-    startBranchChat.mutate(
+    branchStart.mutate(
       {
         idempotencyKey: uuid(),
-        parentMessageId: parentId,
+        messageId,
       },
       {
         onSuccess(data) {
@@ -59,7 +62,7 @@ export const ChatBubbleTooltips: React.FC<ChatBubbleTooltipsProps> = ({
 
     router.push({
       pathname: router.pathname,
-      query: { ...router.query, parentId: parentId },
+      query: { ...router.query, parentId: messageId },
     });
   };
 
@@ -103,8 +106,12 @@ export const ChatBubbleTooltips: React.FC<ChatBubbleTooltipsProps> = ({
                 messageModel={messageModel}
                 description={"Switch model & regenerate"}
                 onSelectModel={(selectedModel) => {
-                  // TODO 여기서 trpc 에 답변 regenerate 부탁!
-                  console.log(selectedModel);
+                  replyRegenerate.mutate({
+                    idempotencyKey: uuid(),
+                    messageId,
+                    model: selectedModel,
+                  });
+                  // TODO: need to handle on chat session.
                 }}
                 button={
                   <TooltipTrigger asChild>

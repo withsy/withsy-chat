@@ -7,13 +7,12 @@ export class TaskService {
 
   constructor(private readonly service: ServiceRegistry) {
     const taskMap: TaskMap = {
-      chat_model_route_send_chat_to_ai: (input) =>
-        service.chatModelRoute.onSendChatToAiTask(input),
-      chat_message_cleanup_zombies: () =>
-        service.chatMessage.onCleanupZombiesTask(),
+      model_route_send_message_to_ai: (input) =>
+        service.modelRoute.onSendMessageToAiTask(input),
+      message_cleanup_zombies: () => service.message.onCleanupZombiesTask(),
     };
     const cronTasks: CronTask[] = [
-      { cron: "*/5 * * * *", key: "chat_message_cleanup_zombies" },
+      { cron: "*/5 * * * *", key: "message_cleanup_zombies" },
     ];
 
     this.runner = (async () => {

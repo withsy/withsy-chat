@@ -1,14 +1,14 @@
 import { cn } from "@/lib/utils";
-import type { ChatModel } from "@/types/chat";
+import { Model } from "@/types/model";
 
 type ModelSelectItemProps = {
   modelValue: string;
-  selectedValue: ChatModel;
+  selectedValue: Model;
   label: string;
   description: string;
   isMobile: boolean;
-  messageModel?: ChatModel | null;
-  onSelect: (model: ChatModel) => void;
+  messageModel?: Model | null;
+  onSelect: (model: Model) => void;
 };
 
 export function ModelSelectItem({
@@ -24,7 +24,7 @@ export function ModelSelectItem({
     <li
       key={modelValue}
       onClick={() => {
-        onSelect(modelValue as ChatModel);
+        onSelect(Model.parse(modelValue));
       }}
       className={cn(
         "cursor-pointer hover:bg-gray-100 active:bg-gray-100 select-none list-none",

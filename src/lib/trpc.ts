@@ -1,4 +1,4 @@
-import type { TrpcRouter } from "@/server/trpc/router";
+import type { AppRouter } from "@/server/trpc/routers/_app";
 import {
   httpBatchLink,
   httpSubscriptionLink,
@@ -9,8 +9,8 @@ import { createTRPCNext } from "@trpc/next";
 import type { inferRouterInputs, inferRouterOutputs } from "@trpc/server";
 import superjson from "superjson";
 
-export type TrpcRouterInput = inferRouterInputs<TrpcRouter>;
-export type TrpcRouterOutput = inferRouterOutputs<TrpcRouter>;
+export type TrpcRouterInput = inferRouterInputs<AppRouter>;
+export type TrpcRouterOutput = inferRouterOutputs<AppRouter>;
 
 function getBaseUrl() {
   if (typeof window !== "undefined") return "";
@@ -21,7 +21,7 @@ function getUrl() {
   return `${getBaseUrl()}/api/trpc`;
 }
 
-export const trpc = createTRPCNext<TrpcRouter>({
+export const trpc = createTRPCNext<AppRouter>({
   transformer: superjson,
   config() {
     return {

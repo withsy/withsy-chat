@@ -1,4 +1,7 @@
-import { type IdempotencyKey } from "@/types/idempotency";
+import {
+  idempotencyInfoSelect,
+  type IdempotencyKey,
+} from "@/types/idempotency";
 import { Prisma } from "@prisma/client";
 import { StatusCodes } from "http-status-codes";
 import { HttpServerError } from "../error";
@@ -13,19 +16,16 @@ export class IdempotencyInfoService {
       this.service.db,
       idempotencyKey
     );
-
     return res;
   }
 
   static async checkDuplicateRequest(tx: Tx, idempotencyKey: IdempotencyKey) {
     try {
-      const res = await tx.idempotencyInfos.create({
+      const res = await tx.idempotencyInfo.create({
         data: {
           key: idempotencyKey,
         },
-        select: {
-          key: true,
-        },
+        select: idempotencyInfoSelect,
       });
 
       return res;

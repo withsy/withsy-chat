@@ -32,15 +32,15 @@ export function UserProvider({ children }: { children: ReactNode }) {
     {}
   );
   const utils = trpc.useUtils();
-  const userPrefsQuery = trpc.user.prefs.useQuery(
+  const userPrefsQuery = trpc.userPrefs.get.useQuery(
     userSession ? undefined : skipToken
   );
-  const updateUserPrefs = trpc.user.updatePrefs.useMutation({
+  const updateUserPrefs = trpc.userPrefs.update.useMutation({
     onMutate: async (input: UpdateUserPrefs) => {
       const inputs = Object.entries(input).filter(([_, v]) => v !== undefined);
-      await utils.user.prefs.cancel();
-      const previous = utils.user.prefs.getData();
-      utils.user.prefs.setData(undefined, (old) => {
+      await utils.userPrefs.get.cancel();
+      const previous = utils.userPrefs.get.getData();
+      utils.userPrefs.get.setData(undefined, (old) => {
         if (old) inputs.forEach(([k, v]) => Reflect.set(old, k, v));
         return old;
       });
@@ -52,10 +52,10 @@ export function UserProvider({ children }: { children: ReactNode }) {
       return { previous, loadingOns };
     },
     onError(_, __, ctx) {
-      if (ctx?.previous) utils.user.prefs.setData(undefined, ctx.previous);
+      if (ctx?.previous) utils.userPrefs.get.setData(undefined, ctx.previous);
     },
     onSettled(_, __, ___, ctx) {
-      utils.user.prefs.invalidate();
+      utils.userPrefs.get.invalidate();
       if (ctx?.loadingOns) {
         const loadingOffs = Object.fromEntries(
           ctx.loadingOns.map(([k, _]) => [k, false])
@@ -82,7 +82,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
     {},
     {
       get(_, p) {
-        const previous = utils.user.prefs.getData();
+        const previous = utils.userPrefs.get.getData();
         return Reflect.get(previous ?? DEFAULT_USER_PREFS, p);
       },
     }

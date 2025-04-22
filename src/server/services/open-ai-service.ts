@@ -1,4 +1,4 @@
-import { ChatRole } from "@/types/chat";
+import { Role } from "@/types/role";
 import OpenAI from "openai";
 import type {
   ChatCompletionAssistantMessageParam,
@@ -10,7 +10,7 @@ import type {
 import { match } from "ts-pattern";
 import { envConfig } from "../env-config";
 import type { ServiceRegistry } from "../service-registry";
-import type { SendChatToAiInput } from "./chat-model-route-service";
+import type { SendMessageToAiInput } from "./model-route-service";
 
 const MAX_CHUNK_BUFFER_LENGTH = 64;
 
@@ -21,16 +21,16 @@ export class OpenAiService {
     this.openai = new OpenAI({ apiKey: envConfig.openaiApiKey });
   }
 
-  async sendChatToAi(input: SendChatToAiInput) {
+  async sendMessageToAi(input: SendMessageToAiInput) {
     const {
-      userChatMessage,
-      modelChatMessage,
-      chatMessagesForHistory,
-      onChatChunkReceived,
+      userMessage,
+      modelMessage,
+      messagesForHistory,
+      onMessageChunkReceived,
     } = input;
 
-    const histories = chatMessagesForHistory.map((x) =>
-      match(ChatRole.parse(x.role))
+    const histories = messagesForHistory.map((x) =>
+      match(Role.parse(x.role))
         .with(
           "user",
           () =>
@@ -61,12 +61,12 @@ export class OpenAiService {
       ...histories,
       {
         role: "user",
-        content: [{ type: "text", text: userChatMessage.text }],
+        content: [{ type: "text", text: userMessage.text }],
       },
     ];
 
     const stream = await this.openai.chat.completions.create({
-      model: modelChatMessage.model,
+      model: modelMessage.model,
       messages,
       stream: true,
     });
@@ -76,7 +76,7 @@ export class OpenAiService {
     const callOnChatChunkReceived = async () => {
       if (chunks.length === 0) return;
       const rawData = JSON.stringify(chunks);
-      await onChatChunkReceived({ text, rawData });
+      await onMessageChunkReceived({ text, rawData });
       text = "";
       chunks = [];
     };

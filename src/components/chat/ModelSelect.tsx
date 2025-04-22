@@ -1,13 +1,13 @@
 import { useSelectedModel } from "@/context/SelectedModelContext";
 import { useSidebar } from "@/context/SidebarContext";
-import type { ChatModel } from "@/types/chat";
+import type { Model } from "@/types/model";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { ModelDropdown } from "./ModelDropdown";
 import { ModelSelectButton } from "./ModelSelectButton";
 
 const models: {
   label: string;
-  value: ChatModel;
+  value: Model;
   description: string;
 }[] = [
   {
@@ -30,8 +30,8 @@ const models: {
 interface ModelSelectProps {
   description?: string;
   button?: ReactNode;
-  messageModel?: ChatModel | null;
-  onSelectModel?: (model: ChatModel) => void;
+  messageModel?: Model | null;
+  onSelectModel?: (model: Model) => void;
 }
 
 export function ModelSelect({

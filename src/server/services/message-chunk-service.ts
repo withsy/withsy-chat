@@ -1,8 +1,9 @@
+import type { ChatMessageId } from "@/types/chat-message";
 import {
-  ChatMessageId,
-  type ChatChunkIndex,
-  type ReceiveChatChunkStream,
-} from "@/types/chat";
+  ChatMessageChunkSelect,
+  type ChatMessageChunkIndex,
+} from "@/types/chat-message-chunk";
+import type { MessageChunkReceive } from "@/types/message-chunk";
 import { PgEvent, type PgEventInput } from "@/types/task";
 import type { UserId } from "@/types/user";
 import type { Prisma } from "@prisma/client";
@@ -11,28 +12,33 @@ import type { ServiceRegistry } from "../service-registry";
 import type { Tx } from "./db";
 import { listen } from "./pg";
 
-export class ChatChunkService {
+export class MessageChunkService {
   constructor(private readonly service: ServiceRegistry) {}
 
   async add(input: {
-    chatMessageId: ChatMessageId;
-    chunkIndex: ChatChunkIndex;
+    messageId: ChatMessageId;
+    chunkIndex: ChatMessageChunkIndex;
     rawData: Prisma.InputJsonValue;
     text: string;
   }) {
-    const { chatMessageId, chunkIndex, text, rawData } = input;
-    await this.service.db.chatChunks.create({
+    const { messageId, chunkIndex, text, rawData } = input;
+    await this.service.db.chatMessageChunk.create({
       data: {
-        chatMessageId,
+        chatMessageId: messageId,
         chunkIndex,
         text,
         rawData,
       },
+      select: ChatMessageChunkSelect,
     });
   }
 
-  static async buildText(tx: Tx, userId: UserId, chatMessageId: ChatMessageId) {
-    const rows = await tx.chatChunks.findMany({
+  static async buildText(
+    tx: Tx,
+    input: { userId: UserId; messageId: ChatMessageId }
+  ) {
+    const { userId, messageId } = input;
+    const rows = await tx.chatMessageChunk.findMany({
       where: {
         chatMessage: {
           chat: {
@@ -40,11 +46,9 @@ export class ChatChunkService {
             deletedAt: null,
           },
         },
-        chatMessageId,
+        chatMessageId: messageId,
       },
-      select: {
-        text: true,
-      },
+      select: ChatMessageChunkSelect,
       orderBy: {
         chunkIndex: "asc",
       },
@@ -54,23 +58,23 @@ export class ChatChunkService {
     return { text };
   }
 
-  async *receiveStream(userId: UserId, input: ReceiveChatChunkStream) {
-    const { chatMessageId, lastEventId } = input;
-    const q: PgEventInput<"chat_chunk_created">[] = [];
+  async *receive(userId: UserId, input: MessageChunkReceive) {
+    const { messageId, lastEventId } = input;
+    const q: PgEventInput<"message_chunk_created">[] = [];
 
     const unlisten = await listen(
       this.service.pgPool,
-      "chat_chunk_created",
-      PgEvent.chat_chunk_created,
+      "message_chunk_created",
+      PgEvent.message_chunk_created,
       (input) => {
-        if (input.chatMessageId !== chatMessageId) return;
+        if (input.messageId !== messageId) return;
         q.push(input);
       }
     );
 
     try {
       let lastChunkIndex = lastEventId ?? -1;
-      const chatChunks = await this.service.db.chatChunks.findMany({
+      const chunks = await this.service.db.chatMessageChunk.findMany({
         where: {
           chatMessage: {
             chat: {
@@ -78,7 +82,7 @@ export class ChatChunkService {
               deletedAt: null,
             },
           },
-          chatMessageId,
+          chatMessageId: messageId,
           chunkIndex: {
             gt: lastChunkIndex,
           },
@@ -87,15 +91,14 @@ export class ChatChunkService {
           chunkIndex: "asc",
         },
         select: {
-          text: true,
+          ...ChatMessageChunkSelect,
           chunkIndex: true,
-          chatMessageId: true,
         },
       });
 
-      for (const chatChunk of chatChunks) {
-        yield tracked(chatChunk.chunkIndex.toString(), chatChunk);
-        lastChunkIndex = chatChunk.chunkIndex;
+      for (const chunk of chunks) {
+        yield tracked(chunk.chunkIndex.toString(), { text: chunk.text });
+        lastChunkIndex = chunk.chunkIndex;
       }
 
       while (true) {
@@ -108,8 +111,8 @@ export class ChatChunkService {
 
           const { chunkIndex } = input;
           if (chunkIndex > lastChunkIndex) {
-            const chatChunk =
-              await this.service.db.chatChunks.findUniqueOrThrow({
+            const chunk =
+              await this.service.db.chatMessageChunk.findUniqueOrThrow({
                 where: {
                   chatMessage: {
                     chat: {
@@ -118,22 +121,21 @@ export class ChatChunkService {
                     },
                   },
                   chatMessageId_chunkIndex: {
-                    chatMessageId,
+                    chatMessageId: messageId,
                     chunkIndex,
                   },
                 },
-                select: {
-                  text: true,
-                },
+                select: ChatMessageChunkSelect,
               });
 
-            yield tracked(chunkIndex.toString(), chatChunk);
+            yield tracked(chunkIndex.toString(), chunk);
             lastChunkIndex = chunkIndex;
           }
         } else {
           if (
-            await this.service.chatMessage.isStaleCompleted(userId, {
-              chatMessageId,
+            await this.service.message.isStaleCompleted({
+              userId,
+              messageId,
             })
           ) {
             return;

@@ -1,9 +1,10 @@
-import { SendChatMessage, StartChat } from "@/types/chat";
+import { ChatStart } from "@/types/chat";
+import { MessageSend } from "@/types/message";
 import { serveStatic } from "@hono/node-server/serve-static";
 import { Hono } from "hono";
 import { logger } from "hono/logger";
 import { envConfig } from "../env-config";
-import { trpcRouter } from "../trpc/router";
+import { appRouter } from "../trpc/routers/_app";
 import {
   handleErrorMiddleware,
   parseServerContextMiddleware,
@@ -19,7 +20,7 @@ const chats = new Hono()
     const files = formData.getAll("files");
     const serverContext = c.get("serverContext");
 
-    const input = StartChat.parse({
+    const input = ChatStart.parse({
       idempotencyKey,
       text,
       model,
@@ -41,7 +42,7 @@ const chats = new Hono()
     const files = formData.getAll("files");
     const parentId = formData.get("parentId");
 
-    const input = SendChatMessage.parse({
+    const input = MessageSend.parse({
       chatId,
       idempotencyKey,
       text,
@@ -49,7 +50,7 @@ const chats = new Hono()
       parentId,
       files,
     });
-    const res = await serverContext.service.chatMessage.send(
+    const res = await serverContext.service.message.send(
       serverContext.userId,
       input
     );
@@ -68,7 +69,7 @@ if (envConfig.nodeEnv === "development") {
   restServer.get("/trpc-ui", async (c) => {
     const { renderTrpcPanel } = await import("trpc-ui");
     return c.html(
-      renderTrpcPanel(trpcRouter, {
+      renderTrpcPanel(appRouter, {
         url: "/api/trpc",
         transformer: "superjson",
       })

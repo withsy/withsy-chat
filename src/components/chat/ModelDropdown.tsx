@@ -1,16 +1,16 @@
 import { Drawer, DrawerContent } from "@/components/ui/drawer";
 import { useSidebar } from "@/context/SidebarContext";
-import type { ChatModel } from "@/types/chat";
+import type { Model } from "@/types/model";
 import { ModelSelectItem } from "./ModelSelectItem";
 
 interface ModelDropdownProps {
   description?: string;
-  models: { label: string; value: ChatModel; description: string }[];
-  selectedValue: ChatModel;
-  messageModel?: ChatModel | null;
+  models: { label: string; value: Model; description: string }[];
+  selectedValue: Model;
+  messageModel?: Model | null;
   isOpen: boolean;
   onClose: () => void;
-  onSelect: (value: ChatModel) => void;
+  onSelect: (value: Model) => void;
 }
 
 export function ModelDropdown({

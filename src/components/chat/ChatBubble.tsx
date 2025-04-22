@@ -82,7 +82,7 @@ const ChatBubbleComponent = ({ message, onToggleSaved }: Props) => {
         </div>
         <div className="flex justify-between w-full mt-2">
           <ChatBubbleTooltips
-            parentId={message.id}
+            messageId={message.id}
             isAi={role == "model"}
             messageModel={message.model}
             isSaved={message.isBookmarked}

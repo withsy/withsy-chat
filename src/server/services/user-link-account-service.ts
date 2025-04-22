@@ -10,7 +10,7 @@ export class UserLinkAccountService {
   }) {
     const { provider, providerAccountId, refreshToken } = input;
     const res = await this.service.db.$transaction(async (tx) => {
-      let ula = await tx.userLinkAccounts.findFirst({
+      let ula = await tx.userLinkAccount.findFirst({
         select: {
           id: true,
           userId: true,
@@ -22,7 +22,7 @@ export class UserLinkAccountService {
       });
 
       if (!ula) {
-        const user = await tx.users.create({
+        const user = await tx.user.create({
           data: {
             preferences: {},
           },
@@ -30,7 +30,7 @@ export class UserLinkAccountService {
             id: true,
           },
         });
-        ula = await tx.userLinkAccounts.create({
+        ula = await tx.userLinkAccount.create({
           data: {
             userId: user.id,
             provider,
@@ -44,7 +44,7 @@ export class UserLinkAccountService {
       }
 
       if (refreshToken)
-        await tx.userLinkAccounts.update({
+        await tx.userLinkAccount.update({
           data: {
             refreshToken,
           },

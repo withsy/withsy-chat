@@ -7,21 +7,21 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Users {
-  id                 String             @id @default(dbgenerated("gen_random_uuid()")) @map("id") @db.Uuid
-  preferences        Json               @default("{}") @map("preferences")
-  createdAt          DateTime           @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt          DateTime           @default(now()) @map("updated_at") @db.Timestamptz(6)
-  user_link_accounts UserLinkAccounts[]
-  chats              Chats[]
+model User {
+  id                 String            @id @default(dbgenerated("gen_random_uuid()")) @map("id") @db.Uuid
+  preferences        Json              @default("{}") @map("preferences")
+  createdAt          DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime          @default(now()) @map("updated_at") @db.Timestamptz(6)
+  user_link_accounts UserLinkAccount[]
+  chats              Chat[]
 
   @@map("users")
 }
 
-model UserLinkAccounts {
+model UserLinkAccount {
   id                Int      @id @default(autoincrement()) @map("id")
   userId            String   @map("user_id") @db.Uuid
-  user              Users    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
   provider          String   @map("provider")
   providerAccountId String   @map("provider_account_id")
   refreshToken      String?  @map("refresh_token")
@@ -37,19 +37,19 @@ enum ChatType {
   branch
 }
 
-model Chats {
-  id              String         @id @default(dbgenerated("gen_random_uuid()")) @map("id") @db.Uuid
-  userId          String         @map("user_id") @db.Uuid
-  user            Users          @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  title           String         @default("New chat") @map("title")
-  isStarred       Boolean        @default(false) @map("is_starred")
-  type            ChatType       @default(chat) @map("type")
-  parentMessageId Int?           @map("parent_message_id")
-  parentMessage   ChatMessages?  @relation("parentMessageId", fields: [parentMessageId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  createdAt       DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt       DateTime       @default(now()) @map("updated_at") @db.Timestamptz(6)
-  deletedAt       DateTime?      @map("deleted_at") @db.Timestamptz(6)
-  chatMessages    ChatMessages[] @relation("chatId")
+model Chat {
+  id              String        @id @default(dbgenerated("gen_random_uuid()")) @map("id") @db.Uuid
+  userId          String        @map("user_id") @db.Uuid
+  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  title           String        @default("New chat") @map("title")
+  isStarred       Boolean       @default(false) @map("is_starred")
+  type            ChatType      @default(chat) @map("type")
+  parentMessageId Int?          @map("parent_message_id")
+  parentMessage   ChatMessage?  @relation("parentMessageId", fields: [parentMessageId], references: [id], onDelete: SetNull, onUpdate: NoAction)
+  createdAt       DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime      @default(now()) @map("updated_at") @db.Timestamptz(6)
+  deletedAt       DateTime?     @map("deleted_at") @db.Timestamptz(6)
+  chatMessages    ChatMessage[] @relation("chatId")
 
   @@index([userId])
   @@index([parentMessageId])
@@ -63,51 +63,55 @@ enum ChatMessageStatus {
   failed
 }
 
-model ChatMessages {
-  id               Int                @id @default(autoincrement()) @map("id")
-  chatId           String             @map("chat_id") @db.Uuid
-  chat             Chats              @relation("chatId", fields: [chatId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  role             String             @map("role")
-  model            String?            @map("model")
-  text             String             @default("") @map("text")
-  status           ChatMessageStatus  @default(pending) @map("status")
-  isBookmarked     Boolean            @default(false) @map("is_bookmarked")
-  createdAt        DateTime           @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt        DateTime           @default(now()) @map("updated_at") @db.Timestamptz(6)
-  childChats       Chats[]            @relation("parentMessageId")
-  chatChunks       ChatChunks[]
-  chatMessageFiles ChatMessageFiles[]
+model ChatMessage {
+  id                Int                @id @default(autoincrement()) @map("id")
+  chatId            String             @map("chat_id") @db.Uuid
+  chat              Chat               @relation("chatId", fields: [chatId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  role              String             @map("role")
+  model             String?            @map("model")
+  text              String             @default("") @map("text")
+  status            ChatMessageStatus  @default(pending) @map("status")
+  isBookmarked      Boolean            @default(false) @map("is_bookmarked")
+  replyToId         Int?               @map("reply_to_id")
+  replyTo           ChatMessage?       @relation("replyToId", fields: [replyToId], references: [id], onDelete: SetNull, onUpdate: NoAction)
+  createdAt         DateTime           @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime           @default(now()) @map("updated_at") @db.Timestamptz(6)
+  childChats        Chat[]             @relation("parentMessageId")
+  chatMessageChunks ChatMessageChunk[]
+  chatMessageFiles  ChatMessageFile[]
+  promptFrom        ChatMessage[]      @relation("replyToId")
 
+  @@index([replyToId])
   @@index([chatId])
   @@map("chat_messages")
 }
 
-model ChatChunks {
-  chatMessageId Int          @map("chat_message_id")
-  chatMessage   ChatMessages @relation(fields: [chatMessageId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  chunkIndex    Int          @map("chunk_index")
-  text          String       @map("text")
-  rawData       Json         @map("raw_data")
-  createdAt     DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt     DateTime     @default(now()) @map("updated_at") @db.Timestamptz(6)
+model ChatMessageChunk {
+  chatMessageId Int         @map("chat_message_id")
+  chatMessage   ChatMessage @relation(fields: [chatMessageId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  chunkIndex    Int         @map("chunk_index")
+  text          String      @map("text")
+  rawData       Json        @map("raw_data")
+  createdAt     DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt     DateTime    @default(now()) @map("updated_at") @db.Timestamptz(6)
 
   @@id([chatMessageId, chunkIndex])
-  @@map("chat_chunks")
+  @@map("chat_message_chunks")
 }
 
-model ChatMessageFiles {
-  id            Int          @id @default(autoincrement()) @map("id")
-  chatMessageId Int          @map("chat_message_id")
-  chatMessage   ChatMessages @relation(fields: [chatMessageId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  fileUri       String       @map("file_uri")
-  mimeType      String       @map("mime_type")
-  createdAt     DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
+model ChatMessageFile {
+  id            Int         @id @default(autoincrement()) @map("id")
+  chatMessageId Int         @map("chat_message_id")
+  chatMessage   ChatMessage @relation(fields: [chatMessageId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  fileUri       String      @map("file_uri")
+  mimeType      String      @map("mime_type")
+  createdAt     DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
 
   @@index([chatMessageId])
   @@map("chat_message_files")
 }
 
-model IdempotencyInfos {
+model IdempotencyInfo {
   key       String   @id @map("key") @db.Uuid
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
 
