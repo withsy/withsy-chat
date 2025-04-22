@@ -134,7 +134,7 @@ export function ChatMessageList({
       {showScrollToBottom && (
         <button
           onClick={scrollToBottom}
-          className="absolute left-1/2 bottom-2 transform -translate-x-1/2 text-white p-2 rounded-full shadow-md transition"
+          className="absolute left-1/2 bottom-10 transform -translate-x-1/2 text-white p-2 rounded-full shadow-md transition"
           style={{ backgroundColor: `rgb(${themeColor})` }}
         >
           <ChevronsDown size={16} />
