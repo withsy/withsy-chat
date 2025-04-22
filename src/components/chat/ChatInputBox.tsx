@@ -1,17 +1,9 @@
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { useUser } from "@/context/UserContext";
 import { cn } from "@/lib/utils";
 import { Send } from "lucide-react";
 import { useState } from "react";
 import TextareaAutosize from "react-textarea-autosize";
-
+import { EnterToSendToggle } from "./EnterToSendToggle";
 import { ModelSelect } from "./ModelSelect";
 
 type Props = {
@@ -19,12 +11,11 @@ type Props = {
 };
 
 export function ChatInputBox({ onSendMessage }: Props) {
-  const { userPrefs, setUserPrefsAndSave, userPrefLoadings } = useUser();
+  const { userPrefs } = useUser();
   const [message, setMessage] = useState("");
   const [isComposing, setIsComposing] = useState(false);
 
   const enterToSend = userPrefs["enterToSend"];
-  const isLoading = userPrefLoadings["enterToSend"];
 
   const inputBoxClass = cn(
     "relative max-w-screen-md w-full px-4 py-3 border rounded-xl bg-white",
@@ -52,69 +43,22 @@ export function ChatInputBox({ onSendMessage }: Props) {
     }
   };
 
-  const handleCompositionStart = () => {
-    setIsComposing(true);
-  };
-
-  const handleCompositionEnd = () => {
-    setIsComposing(false);
-  };
   return (
     <div className={inputBoxClass}>
-      <div className="mb-3">
+      <div className="mb-3 flex items-center justify-between">
         <ModelSelect />
+        <EnterToSendToggle />
       </div>
       <TextareaAutosize
         value={message}
         onChange={(e) => setMessage(e.target.value)}
         onKeyDown={handleKeyDown}
         placeholder="Type a message..."
-        className="w-full resize-none text-[16px] focus:outline-none bg-transparent mb-10 max-h-[40vh]"
-        onCompositionStart={handleCompositionStart}
-        onCompositionEnd={handleCompositionEnd}
+        className="w-full resize-none text-[16px] focus:outline-none bg-transparent mb-5 max-h-[40vh]"
+        onCompositionStart={() => setIsComposing(true)}
+        onCompositionEnd={() => setIsComposing(false)}
       />
-      <div className="absolute bottom-2 left-4 right-4 flex items-center justify-between">
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <Switch
-            id="enter-toggle"
-            checked={enterToSend ?? false}
-            onCheckedChange={(v) => setUserPrefsAndSave({ enterToSend: v })}
-            disabled={isLoading}
-            style={{
-              backgroundColor: enterToSend
-                ? `rgb(${userPrefs.themeColor})`
-                : undefined,
-            }}
-          />
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Label htmlFor="enter-toggle" className="cursor-help">
-                  {enterToSend ? (
-                    <>
-                      <KeyCap>↩︎</KeyCap>
-                      <span className="text-xs text-gray-500">send</span>
-                      <KeyCap>⇧↩︎</KeyCap>
-                      <span className="text-xs text-gray-500">new line</span>
-                    </>
-                  ) : (
-                    <>
-                      <KeyCap>⇧↩︎</KeyCap>
-                      <span className="text-xs text-gray-500">send</span>
-                      <KeyCap>↩︎</KeyCap>
-                      <span className="text-xs text-gray-500">new line</span>
-                    </>
-                  )}
-                </Label>
-              </TooltipTrigger>
-              <TooltipContent side="top">
-                {enterToSend
-                  ? "Press Enter to send message, Shift + Enter for a new line"
-                  : "Press Shift + Enter to send message, Enter for a new line"}
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        </div>
+      <div className="absolute bottom-2 left-4 right-4 flex items-center justify-end">
         <button
           onClick={handleSend}
           className="p-2 rounded-md hover:bg-gray-200 active:bg-gray-200"
@@ -124,13 +68,5 @@ export function ChatInputBox({ onSendMessage }: Props) {
         </button>
       </div>
     </div>
-  );
-}
-
-function KeyCap({ children }: { children: React.ReactNode }) {
-  return (
-    <span className="inline-block px-1 py-0.5 bg-gray-100 rounded border text-xs mx-1">
-      {children}
-    </span>
   );
 }
