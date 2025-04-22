@@ -3,7 +3,6 @@ import { cn } from "@/lib/utils";
 import { Send } from "lucide-react";
 import { useState } from "react";
 import TextareaAutosize from "react-textarea-autosize";
-import { EnterToSendToggle } from "./EnterToSendToggle";
 import { ModelSelect } from "./ModelSelect";
 
 type Props = {
@@ -47,7 +46,6 @@ export function ChatInputBox({ onSendMessage }: Props) {
     <div className={inputBoxClass}>
       <div className="mb-3 flex items-center justify-between">
         <ModelSelect />
-        <EnterToSendToggle />
       </div>
       <TextareaAutosize
         value={message}

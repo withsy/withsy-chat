@@ -2,13 +2,9 @@ import { useUser } from "@/context/UserContext";
 import { useDrawerStore } from "@/stores/useDrawerStore";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 import type { Chat } from "@/types/chat";
-import {
-  Bookmark,
-  ChevronsLeftRight,
-  ChevronsRightLeft,
-  FolderGit2,
-} from "lucide-react";
+import { Bookmark, FolderGit2 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { AccessibilityMenu } from "../AccessibilityMenu";
 import HoverSwitchIcon from "../HoverSwitchIcon";
 import { SidebarChatItem } from "../layout/sidebar/SidebarChatItem";
 
@@ -19,7 +15,7 @@ interface ChatHeaderProps {
 export default function ChatHeader({ chat }: ChatHeaderProps) {
   const { isMobile } = useSidebarStore();
   const { openDrawer, setOpenDrawer } = useDrawerStore();
-  const { userPrefs, setUserPrefsAndSave } = useUser();
+  const { userPrefs } = useUser();
   const { themeColor, themeOpacity } = userPrefs;
 
   const [displayChat, setDisplayChat] = useState<Chat>(chat);
@@ -86,7 +82,7 @@ export default function ChatHeader({ chat }: ChatHeaderProps) {
   }
 
   const buttonClassName =
-    "group flex items-center gap-1 rounded-md px-1 py-2 hover:bg-white hover:font-semibold active:bg-white active:font-semibold transition-colors text-sm";
+    "group flex items-center gap-1 rounded-md px-1 py-2 hover:bg-white hover:font-semibold active:bg-white active:font-semibold transition-colors";
   return (
     <div
       className="absolute top-0 left-0 w-full h-[50px] px-4 flex items-center justify-between"
@@ -99,6 +95,7 @@ export default function ChatHeader({ chat }: ChatHeaderProps) {
       />
 
       <div className="flex gap-5">
+        <AccessibilityMenu hideLabels={hideLabels} />
         {buttons.map(({ label, id, icon }) => (
           <button
             key={id}
@@ -111,26 +108,6 @@ export default function ChatHeader({ chat }: ChatHeaderProps) {
             {!hideLabels && <span>{label}</span>}
           </button>
         ))}
-        {!isMobile && (
-          <button
-            className={buttonClassName}
-            onClick={() => {
-              setUserPrefsAndSave({ wideView: !userPrefs.wideView });
-            }}
-          >
-            {userPrefs.wideView ? (
-              <>
-                <ChevronsLeftRight size={16} />
-                {!hideLabels && <span>Wide</span>}
-              </>
-            ) : (
-              <>
-                <ChevronsRightLeft size={16} />
-                {!hideLabels && <span>Compact</span>}
-              </>
-            )}
-          </button>
-        )}
       </div>
     </div>
   );
