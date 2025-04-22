@@ -1,45 +1,48 @@
+import type { ChatId } from "@/types/chat-core";
 import {
-  ChatId,
-  ChatMessageId,
+  ChatMessageSelect,
   ChatMessageStatus,
-  ChatRole,
-  SendChatMessage,
-  UpdateChatMessage,
-  type ChatMessageForHistory,
-  type ListChatMessages,
-} from "@/types/chat";
+  type ChatMessageId,
+} from "@/types/chat-message";
+import type {
+  MessageForHistory,
+  MessageList,
+  MessageSend,
+  MessageUpdate,
+} from "@/types/message";
+import { Role } from "@/types/role";
 import type { UserId } from "@/types/user";
 import { StatusCodes } from "http-status-codes";
 import { HttpServerError } from "../error";
 import type { ServiceRegistry } from "../service-registry";
-import { ChatChunkService } from "./chat-chunk-service";
-import { ChatMessageFileService } from "./chat-message-file-service";
 import type { Tx } from "./db";
+import { MessageChunkService } from "./message-chunk-service";
+import { MessageFileService } from "./message-file-service";
 import type { FileInfo } from "./mock-s3-service";
 
-export class ChatMessageService {
+export class MessageService {
   constructor(private readonly service: ServiceRegistry) {}
 
-  static async find(
+  static async get(
     tx: Tx,
-    userId: UserId,
-    input: { chatMessageId: ChatMessageId }
+    input: { userId: UserId; messageId: ChatMessageId }
   ) {
-    const { chatMessageId } = input;
+    const { userId, messageId } = input;
     const res = await tx.chatMessage.findUniqueOrThrow({
       where: {
         chat: {
           userId,
           deletedAt: null,
         },
-        id: chatMessageId,
+        id: messageId,
       },
+      select: ChatMessageSelect,
     });
 
     return res;
   }
 
-  async list(userId: UserId, input: ListChatMessages) {
+  async list(userId: UserId, input: MessageList) {
     const { role, isBookmarked, options } = input;
     const { scope, afterId, order, limit, include } = options;
     const xs = this.service.db.chatMessage.findMany({
@@ -70,16 +73,14 @@ export class ChatMessageService {
     return xs;
   }
 
-  async listForHistory(
-    userId: UserId,
-    input: {
-      modelChatMessage: {
-        id: ChatMessageId;
-        chatId: ChatId;
-      };
-    }
-  ) {
-    const { modelChatMessage } = input;
+  async listForHistory(input: {
+    userId: UserId;
+    modelMessage: {
+      id: ChatMessageId;
+      chatId: ChatId;
+    };
+  }) {
+    const { userId, modelMessage } = input;
 
     // TODO: Change limit history length
     let remainLength = 10;
@@ -90,10 +91,10 @@ export class ChatMessageService {
             userId,
             deletedAt: null,
           },
-          chatId: modelChatMessage.chatId,
+          chatId: modelMessage.chatId,
           status: "succeeded",
           id: {
-            lte: modelChatMessage.id,
+            lte: modelMessage.id,
           },
         },
         select: {
@@ -106,7 +107,7 @@ export class ChatMessageService {
         },
       });
 
-      const histories: ChatMessageForHistory[] = [];
+      const histories: MessageForHistory[] = [];
       histories.push(...currentHistories);
 
       remainLength -= currentHistories.length;
@@ -115,7 +116,7 @@ export class ChatMessageService {
           where: {
             userId,
             deletedAt: null,
-            id: modelChatMessage.chatId,
+            id: modelMessage.chatId,
           },
           include: {
             parentMessage: true,
@@ -161,51 +162,50 @@ export class ChatMessageService {
     return histories;
   }
 
-  async find(userId: UserId, input: { chatMessageId: ChatMessageId }) {
-    const { chatMessageId } = input;
+  async get(input: { userId: UserId; messageId: ChatMessageId }) {
+    const { userId, messageId } = input;
     const res = await this.service.db.chatMessage.findUnique({
       where: {
         chat: {
           userId,
           deletedAt: null,
         },
-        id: chatMessageId,
+        id: messageId,
       },
+      select: ChatMessageSelect,
     });
 
     return res;
   }
 
-  async update(userId: UserId, input: UpdateChatMessage) {
-    const { chatMessageId, isBookmarked } = input;
+  async update(userId: UserId, input: MessageUpdate) {
+    const { messageId, isBookmarked } = input;
     const res = await this.service.db.chatMessage.update({
       where: {
         chat: {
           userId,
           deletedAt: null,
         },
-        id: chatMessageId,
+        id: messageId,
       },
       data: {
         isBookmarked,
       },
+      select: ChatMessageSelect,
     });
 
     return res;
   }
 
-  async isStaleCompleted(
-    userId: UserId,
-    input: { chatMessageId: ChatMessageId }
-  ) {
-    const { chatMessageId } = input;
+  async isStaleCompleted(input: { userId: UserId; messageId: ChatMessageId }) {
+    const { userId, messageId } = input;
     const res = await this.service.db.chatMessage.findUnique({
       where: {
         chat: {
           userId,
           deletedAt: null,
         },
-        id: chatMessageId,
+        id: messageId,
         updatedAt: {
           lt: new Date(Date.now() - 5 * 60_000), // 5 minutes
         },
@@ -223,21 +223,21 @@ export class ChatMessageService {
 
   static async transit(
     tx: Tx,
-    userId: UserId,
     input: {
-      chatMessageId: ChatMessageId;
+      userId: UserId;
+      messageId: ChatMessageId;
       expectStatus: ChatMessageStatus;
       nextStatus: ChatMessageStatus;
     }
   ) {
-    const { chatMessageId, expectStatus, nextStatus } = input;
+    const { userId, messageId, expectStatus, nextStatus } = input;
     const res = await tx.chatMessage.update({
       where: {
         chat: {
           userId,
           deletedAt: null,
         },
-        id: chatMessageId,
+        id: messageId,
         status: expectStatus,
       },
       data: {
@@ -251,52 +251,58 @@ export class ChatMessageService {
     return res;
   }
 
-  async transitPendingToProcessing(
-    userId: UserId,
-    input: { chatMessageId: ChatMessageId }
-  ) {
-    const { chatMessageId } = input;
-    const res = await this.service.db.$transaction(async (tx) => {
-      const res = await ChatMessageService.transit(tx, userId, {
-        chatMessageId,
-        expectStatus: "pending",
-        nextStatus: "processing",
-      });
-      return res;
+  async transitPendingToProcessing(input: {
+    userId: UserId;
+    messageId: ChatMessageId;
+  }) {
+    const { userId, messageId } = input;
+    const res = await MessageService.transit(this.service.db, {
+      userId,
+      messageId,
+      expectStatus: "pending",
+      nextStatus: "processing",
     });
 
     return res;
   }
 
-  async transitProcessingToSucceeded(
-    userId: UserId,
-    input: { chatMessageId: ChatMessageId }
-  ) {
-    const { chatMessageId } = input;
+  async transitProcessingToSucceeded(input: {
+    userId: UserId;
+    messageId: ChatMessageId;
+  }) {
+    const { userId, messageId } = input;
     await this.service.db.$transaction(async (tx) => {
-      const res = await ChatMessageService.transit(tx, userId, {
-        chatMessageId,
+      const res = await MessageService.transit(tx, {
+        userId,
+        messageId,
         expectStatus: "processing",
         nextStatus: "succeeded",
       });
+
       if (!res)
         throw new HttpServerError(
           StatusCodes.INTERNAL_SERVER_ERROR,
-          `Chat message transition failed. chatMessageId: ${chatMessageId} status: processing to succeeded.`
+          `Chat message transition failed.`,
+          {
+            extra: {
+              messageId,
+              expectStatus: "processing",
+              nextStatus: "succeeded",
+            },
+          }
         );
 
-      const { text } = await ChatChunkService.buildText(
-        tx,
+      const { text } = await MessageChunkService.buildText(tx, {
         userId,
-        chatMessageId
-      );
+        messageId,
+      });
       await tx.chatMessage.update({
         where: {
           chat: {
             userId,
             deletedAt: null,
           },
-          id: chatMessageId,
+          id: messageId,
         },
         data: {
           text,
@@ -305,22 +311,20 @@ export class ChatMessageService {
     });
   }
 
-  async tryTransitProcessingToFailed(
-    userId: UserId,
-    input: { chatMessageId: ChatMessageId }
-  ) {
-    const { chatMessageId } = input;
-    const res = await this.service.db.$transaction(async (tx) => {
-      const res = await ChatMessageService.transit(tx, userId, {
-        chatMessageId,
-        expectStatus: "processing",
-        nextStatus: "failed",
-      });
-      return res;
+  async tryTransitProcessingToFailed(input: {
+    userId: UserId;
+    messageId: ChatMessageId;
+  }) {
+    const { userId, messageId } = input;
+    const res = await MessageService.transit(this.service.db, {
+      userId,
+      messageId,
+      expectStatus: "processing",
+      nextStatus: "failed",
     });
     if (!res)
       console.warn(
-        `Chat message transition failed. chatMessageId: ${chatMessageId} status: processing to failed.`
+        `Chat message transition failed. messageId: ${messageId} status: processing to failed.`
       );
   }
 
@@ -339,10 +343,10 @@ export class ChatMessageService {
       },
     });
     if (res.count > 0)
-      console.warn(`Marked ${res.count} zombie chat messages as failed.`);
+      console.warn(`Marked ${res.count} zombie messages as failed.`);
   }
 
-  async send(userId: UserId, input: SendChatMessage) {
+  async send(userId: UserId, input: MessageSend) {
     const { idempotencyKey, chatId, model, text } = input;
     const files = input.files ?? [];
 
@@ -350,63 +354,65 @@ export class ChatMessageService {
 
     const { fileInfos } = await this.service.s3.uploads(userId, { files });
 
-    const { userChatMessage, modelChatMessage } =
-      await this.service.db.$transaction(async (tx) => {
-        const res = await ChatMessageService.createInfo(tx, {
+    const { userMessage, modelMessage } = await this.service.db.$transaction(
+      async (tx) => {
+        const res = await MessageService.createInfo(tx, {
           chatId,
           model,
           text,
           fileInfos,
         });
         return res;
-      });
+      }
+    );
 
-    await this.service.task.add("chat_model_route_send_chat_to_ai", {
+    await this.service.task.add("model_route_send_message_to_ai", {
       userId,
-      userChatMessageId: userChatMessage.id,
-      modelChatMessageId: modelChatMessage.id,
+      userMessageId: userMessage.id,
+      modelMessageId: modelMessage.id,
     });
 
     return {
-      userChatMessage,
-      modelChatMessage,
+      userMessage,
+      modelMessage,
     };
   }
 
   static async createInfo(
     tx: Tx,
-    input: Omit<SendChatMessage, "idempotencyKey" | "files"> & {
+    input: Omit<MessageSend, "idempotencyKey" | "files"> & {
       fileInfos: FileInfo[];
     }
   ) {
     const { chatId, text, model, fileInfos } = input;
 
-    const userChatMessage = await tx.chatMessage.create({
+    const userMessage = await tx.chatMessage.create({
       data: {
         chatId,
         text,
-        role: ChatRole.enum.user,
+        role: Role.enum.user,
         status: "succeeded",
       },
     });
 
-    const modelChatMessage = await tx.chatMessage.create({
+    const modelMessage = await tx.chatMessage.create({
       data: {
         chatId,
-        role: ChatRole.enum.model,
+        role: Role.enum.model,
         model,
         status: "pending",
+        replyToId: userMessage.id,
       },
     });
 
-    await ChatMessageFileService.createAll(tx, {
-      chatMessageId: userChatMessage.id,
+    await MessageFileService.createAll(tx, {
+      messageId: userMessage.id,
       fileInfos,
     });
 
     return {
-      userChatMessage,
-      modelChatMessage,
+      userMessage,
+      modelMessage,
     };
   }
 }

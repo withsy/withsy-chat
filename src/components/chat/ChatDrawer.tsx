@@ -1,6 +1,7 @@
 import { trpc } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
-import { Chat, type ChatMessage } from "@/types/chat";
+import type { ChatMessage } from "@/types/chat";
+import { Chat } from "@/types/chat";
 import { skipToken } from "@tanstack/react-query";
 import { Bookmark, FolderGit2, FolderRoot, GitBranch } from "lucide-react";
 import { useRouter } from "next/router";
@@ -29,7 +30,7 @@ export const ChatDrawer = ({
   const router = useRouter();
   const isDrawerOpen = !!openDrawer;
   const chatId = chat?.id;
-  const chatListBranches = trpc.chat.listBranches.useQuery(
+  const branchList = trpc.branch.list.useQuery(
     chatId && openDrawer === "branches" ? { chatId } : skipToken
   );
 
@@ -66,7 +67,7 @@ export const ChatDrawer = ({
   } else if (openDrawer === "saved") {
     body = <SavedMessages messages={savedMessages ?? []} />;
   } else if (openDrawer === "branches") {
-    body = <Branches chatListBranches={chatListBranches} chat={chat} />;
+    body = <Branches branchList={branchList} chat={chat} />;
   } else {
     body = <div className="text-sm text-muted-foreground">No content</div>;
   }
@@ -143,17 +144,17 @@ function SavedMessages({ messages }: { messages: ChatMessage[] }) {
 
 function Branches({
   chat,
-  chatListBranches,
+  branchList,
 }: {
   chat: Chat | null;
-  chatListBranches: any;
+  branchList: any;
 }) {
   const router = useRouter();
-  if (chatListBranches.isLoading) {
+  if (branchList.isLoading) {
     return <PartialLoading />;
-  } else if (chatListBranches.isError) {
+  } else if (branchList.isError) {
     return <PartialError />;
-  } else if (chatListBranches.data) {
+  } else if (branchList.data) {
     let originalChat;
     if (chat && chat.type == "branch" && chat.parentMessage) {
       const chatId = chat.parentMessage.chatId;
@@ -186,7 +187,7 @@ function Branches({
         </div>
       );
     }
-    if (chatListBranches.data.length == 0) {
+    if (branchList.data.length == 0) {
       if (originalChat) return originalChat;
       return (
         <div className="h-full w-full flex items-center justify-center text-muted-foreground">
@@ -204,7 +205,7 @@ function Branches({
         <span className="text-sm select-none">
           Branches created from this chat. Tap to jump to a specific branch.
         </span>
-        {chatListBranches.data.map((x: Chat) => {
+        {branchList.data.map((x: Chat) => {
           return (
             <div
               key={x.id}

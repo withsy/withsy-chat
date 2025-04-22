@@ -3,7 +3,8 @@ import { useSidebar } from "@/context/SidebarContext";
 import { useUser } from "@/context/UserContext";
 import { trpc } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
-import { Chat, ChatMessage } from "@/types/chat";
+import type { ChatMessage } from "@/types/chat";
+import { Chat } from "@/types/chat";
 import { skipToken } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -36,8 +37,8 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
 
   const shouldAutoScrollRef = useRef(true);
 
-  const startChat = trpc.chat.start.useMutation();
-  const sendChatMessage = trpc.chatMessage.send.useMutation();
+  const chatStart = trpc.chat.start.useMutation();
+  const messageSend = trpc.message.send.useMutation();
 
   useEffect(() => {
     setMessages(initialMessages);
@@ -58,8 +59,8 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
     }
   }, [messageId]);
 
-  const _receiveChatChunk = trpc.chatChunk.receiveStream.useSubscription(
-    streamMessageId != null ? { chatMessageId: streamMessageId } : skipToken,
+  const _messageChunkReceive = trpc.messageChunk.receive.useSubscription(
+    streamMessageId != null ? { messageId: streamMessageId } : skipToken,
     {
       onComplete() {
         setMessages((prev) =>
@@ -98,7 +99,7 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
   const onSendMessage = (message: string) => {
     if (chat != null) {
       shouldAutoScrollRef.current = true;
-      sendChatMessage.mutate(
+      messageSend.mutate(
         {
           chatId: chat.id,
           text: message,
@@ -112,23 +113,23 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
           onSuccess(data) {
             setMessages((prev) => [
               ...prev,
-              data.userChatMessage,
-              data.modelChatMessage,
+              data.userMessage,
+              data.modelMessage,
             ]);
-            setStreamMessageId(data.modelChatMessage.id);
+            setStreamMessageId(data.modelMessage.id);
             utils.chat.list.invalidate();
           },
         }
       );
     } else {
       shouldAutoScrollRef.current = true;
-      startChat.mutate(
+      chatStart.mutate(
         { text: message, model: selectedModel, idempotencyKey: uuid() },
         {
           onSuccess(data) {
             utils.chat.list.invalidate();
             router.push(
-              `/chat/${data.chat.id}?messageId=${data.modelChatMessage.id}`
+              `/chat/${data.chat.id}?messageId=${data.modelMessage.id}`
             );
           },
         }
@@ -136,13 +137,13 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
     }
   };
 
-  const updateMessageMutation = trpc.chatMessage.update.useMutation();
+  const messageUpdate = trpc.message.update.useMutation();
 
   const handleToggleSaved = (id: number, newValue: boolean) => {
     shouldAutoScrollRef.current = false;
 
-    updateMessageMutation.mutate(
-      { chatMessageId: id, isBookmarked: newValue },
+    messageUpdate.mutate(
+      { messageId: id, isBookmarked: newValue },
       {
         onSuccess: () => {
           setMessages((prev) =>

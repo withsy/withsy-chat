@@ -1,17 +1,14 @@
 import {
   ChatDelete,
-  ChatListBranches,
-  ChatMessageId,
-  GetChat,
-  StartBranchChat,
-  type StartChat,
-  type UpdateChat,
+  ChatGet,
+  ChatSelect,
+  ChatStart,
+  ChatUpdate,
 } from "@/types/chat";
 import { UserId } from "@/types/user";
 import type { ServiceRegistry } from "../service-registry";
-import { ChatMessageService } from "./chat-message-service";
 import type { Tx } from "./db";
-import { IdempotencyInfoService } from "./idempotency-info-service";
+import { MessageService } from "./message-service";
 
 export class ChatService {
   constructor(private readonly service: ServiceRegistry) {}
@@ -25,27 +22,13 @@ export class ChatService {
       orderBy: {
         createdAt: "asc",
       },
+      select: ChatSelect,
     });
 
     return xs;
   }
 
-  async listBranches(userId: UserId, input: ChatListBranches) {
-    const { chatId } = input;
-    const xs = this.service.db.chat.findMany({
-      where: {
-        parentMessage: {
-          chatId,
-        },
-        userId,
-        deletedAt: null,
-      },
-    });
-
-    return xs;
-  }
-
-  async get(userId: UserId, input: GetChat) {
+  async get(userId: UserId, input: ChatGet) {
     const { chatId, options } = input;
     const { include } = options ?? {};
     const res = await this.service.db.chat.findUnique({
@@ -54,7 +37,8 @@ export class ChatService {
         userId,
         deletedAt: null,
       },
-      include: {
+      select: {
+        ...ChatSelect,
         parentMessage: include?.parentMessage ?? false,
       },
     });
@@ -62,7 +46,7 @@ export class ChatService {
     return res;
   }
 
-  async update(userId: UserId, input: UpdateChat) {
+  async update(userId: UserId, input: ChatUpdate) {
     const { chatId, title, isStarred } = input;
     const res = await this.service.db.chat.update({
       where: {
@@ -74,6 +58,7 @@ export class ChatService {
         title,
         isStarred,
       },
+      select: ChatSelect,
     });
 
     return res;
@@ -90,12 +75,13 @@ export class ChatService {
       data: {
         deletedAt: new Date(),
       },
+      select: ChatSelect,
     });
 
     return res;
   }
 
-  async start(userId: UserId, input: StartChat) {
+  async start(userId: UserId, input: ChatStart) {
     const { model, text, idempotencyKey } = input;
     const files = input.files ?? [];
 
@@ -103,58 +89,36 @@ export class ChatService {
 
     const { fileInfos } = await this.service.s3.uploads(userId, { files });
 
-    const { chat, userChatMessage, modelChatMessage } =
+    const { chat, userMessage, modelMessage } =
       await this.service.db.$transaction(async (tx) => {
-        const chat = await ChatService.createChat(tx, { userId, text });
-        const { userChatMessage, modelChatMessage } =
-          await ChatMessageService.createInfo(tx, {
+        const chat = await ChatService.create(tx, { userId, text });
+        const { userMessage, modelMessage } = await MessageService.createInfo(
+          tx,
+          {
             chatId: chat.id,
             model,
             text,
             fileInfos,
-          });
+          }
+        );
 
-        return { chat, userChatMessage, modelChatMessage };
+        return { chat, userMessage, modelMessage };
       });
 
-    await this.service.task.add("chat_model_route_send_chat_to_ai", {
+    await this.service.task.add("model_route_send_message_to_ai", {
       userId,
-      userChatMessageId: userChatMessage.id,
-      modelChatMessageId: modelChatMessage.id,
+      userMessageId: userMessage.id,
+      modelMessageId: modelMessage.id,
     });
 
     return {
       chat,
-      userChatMessage,
-      modelChatMessage,
+      userMessage,
+      modelMessage,
     };
   }
 
-  async startBranch(userId: UserId, input: StartBranchChat) {
-    const { idempotencyKey, parentMessageId } = input;
-
-    const res = await this.service.db.$transaction(async (tx) => {
-      await IdempotencyInfoService.checkDuplicateRequest(tx, idempotencyKey);
-
-      const parentMessage = await ChatMessageService.find(tx, userId, {
-        chatMessageId: parentMessageId,
-      });
-      const title = parentMessage.text
-        ? [...parentMessage.text].slice(0, 20).join("")
-        : undefined;
-      const chat = await ChatService.createBranchChat(tx, {
-        userId,
-        parentMessageId,
-        title,
-      });
-
-      return chat;
-    });
-
-    return res;
-  }
-
-  static async createChat(tx: Tx, input: { userId: UserId; text: string }) {
+  static async create(tx: Tx, input: { userId: UserId; text: string }) {
     const { userId, text } = input;
     const title = text ? [...text].slice(0, 20).join("") : undefined;
     const res = await tx.chat.create({
@@ -162,23 +126,6 @@ export class ChatService {
         userId,
         title,
         type: "chat",
-      },
-    });
-
-    return res;
-  }
-
-  static async createBranchChat(
-    tx: Tx,
-    input: { userId: UserId; parentMessageId: ChatMessageId; title?: string }
-  ) {
-    const { userId, parentMessageId, title } = input;
-    const res = await tx.chat.create({
-      data: {
-        userId,
-        title,
-        type: "branch",
-        parentMessageId,
       },
     });
 

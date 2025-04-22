@@ -64,29 +64,29 @@ enum ChatMessageStatus {
 }
 
 model ChatMessage {
-  id               Int               @id @default(autoincrement()) @map("id")
-  chatId           String            @map("chat_id") @db.Uuid
-  chat             Chat              @relation("chatId", fields: [chatId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  role             String            @map("role")
-  model            String?           @map("model")
-  text             String            @default("") @map("text")
-  status           ChatMessageStatus @default(pending) @map("status")
-  isBookmarked     Boolean           @default(false) @map("is_bookmarked")
-  replyToId        Int?              @map("reply_to_id")
-  replyTo          ChatMessage?      @relation("replyToId", fields: [replyToId], references: [id], onDelete: SetNull, onUpdate: NoAction)
-  createdAt        DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt        DateTime          @default(now()) @map("updated_at") @db.Timestamptz(6)
-  childChats       Chat[]            @relation("parentMessageId")
-  chatChunks       ChatChunk[]
-  chatMessageFiles ChatMessageFile[]
-  promptFrom       ChatMessage[]     @relation("replyToId")
+  id                Int                @id @default(autoincrement()) @map("id")
+  chatId            String             @map("chat_id") @db.Uuid
+  chat              Chat               @relation("chatId", fields: [chatId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  role              String             @map("role")
+  model             String?            @map("model")
+  text              String             @default("") @map("text")
+  status            ChatMessageStatus  @default(pending) @map("status")
+  isBookmarked      Boolean            @default(false) @map("is_bookmarked")
+  replyToId         Int?               @map("reply_to_id")
+  replyTo           ChatMessage?       @relation("replyToId", fields: [replyToId], references: [id], onDelete: SetNull, onUpdate: NoAction)
+  createdAt         DateTime           @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime           @default(now()) @map("updated_at") @db.Timestamptz(6)
+  childChats        Chat[]             @relation("parentMessageId")
+  chatMessageChunks ChatMessageChunk[]
+  chatMessageFiles  ChatMessageFile[]
+  promptFrom        ChatMessage[]      @relation("replyToId")
 
   @@index([replyToId])
   @@index([chatId])
   @@map("chat_messages")
 }
 
-model ChatChunk {
+model ChatMessageChunk {
   chatMessageId Int         @map("chat_message_id")
   chatMessage   ChatMessage @relation(fields: [chatMessageId], references: [id], onDelete: Cascade, onUpdate: NoAction)
   chunkIndex    Int         @map("chunk_index")
@@ -96,7 +96,7 @@ model ChatChunk {
   updatedAt     DateTime    @default(now()) @map("updated_at") @db.Timestamptz(6)
 
   @@id([chatMessageId, chunkIndex])
-  @@map("chat_chunks")
+  @@map("chat_message_chunks")
 }
 
 model ChatMessageFile {

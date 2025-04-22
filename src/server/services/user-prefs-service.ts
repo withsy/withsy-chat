@@ -4,10 +4,10 @@ import { StatusCodes } from "http-status-codes";
 import { HttpServerError } from "../error";
 import type { ServiceRegistry } from "../service-registry";
 
-export class UserService {
+export class UserPrefsService {
   constructor(private readonly service: ServiceRegistry) {}
 
-  async prefs(userId: UserId) {
+  async get(userId: UserId) {
     const { preferences } = await this.service.db.user.findUniqueOrThrow({
       select: {
         preferences: true,
@@ -19,7 +19,7 @@ export class UserService {
     return preferences;
   }
 
-  async updatePrefs(userId: UserId, input: UpdateUserPrefs) {
+  async update(userId: UserId, input: UpdateUserPrefs) {
     const patch = Object.fromEntries(
       Object.entries(input).filter(([_, value]) => value !== undefined)
     );

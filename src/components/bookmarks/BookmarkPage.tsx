@@ -16,7 +16,7 @@ export default function BookmarkPage() {
   const [data, setData] = useState<ChatMessage[]>([]);
   const [searchText, setSearchText] = useState("");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
-  const listSaved = trpc.chatMessage.list.useQuery(
+  const listSaved = trpc.message.list.useQuery(
     userSession
       ? {
           options: {

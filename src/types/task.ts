@@ -1,17 +1,18 @@
 import { z } from "zod";
-import { ChatChunkIndex, ChatMessageId } from "./chat";
+import { ChatMessageId } from "./chat-message";
+import { ChatMessageChunkIndex } from "./chat-message-chunk";
 import type { MaybePromise, zInfer } from "./common";
 import { UserId } from "./user";
 
 //#region Task
 
 export const Task = {
-  chat_model_route_send_chat_to_ai: z.object({
+  model_route_send_message_to_ai: z.object({
     userId: UserId,
-    userChatMessageId: ChatMessageId,
-    modelChatMessageId: ChatMessageId,
+    userMessageId: ChatMessageId,
+    modelMessageId: ChatMessageId,
   }),
-  chat_message_cleanup_zombies: z.void(),
+  message_cleanup_zombies: z.void(),
 } as const;
 
 export type TaskKey = keyof typeof Task;
@@ -27,21 +28,21 @@ export type CronTask = { cron: string; key: TaskKey };
 
 //#region PgEvent
 
-export const ChatChunkCreatedInput = z.discriminatedUnion("status", [
+export const MessageChunkCreatedInput = z.discriminatedUnion("status", [
   z.object({
     status: z.literal("created"),
-    chatMessageId: ChatMessageId,
-    chunkIndex: ChatChunkIndex,
+    messageId: ChatMessageId,
+    chunkIndex: ChatMessageChunkIndex,
   }),
   z.object({
     status: z.literal("completed"),
-    chatMessageId: ChatMessageId,
+    messageId: ChatMessageId,
   }),
 ]);
-export type ChatChunkCreatedInput = zInfer<typeof ChatChunkCreatedInput>;
+export type MessageChunkCreatedInput = zInfer<typeof MessageChunkCreatedInput>;
 
 export const PgEvent = {
-  chat_chunk_created: ChatChunkCreatedInput,
+  message_chunk_created: MessageChunkCreatedInput,
 } as const;
 
 export const PgEventKey = z.enum(

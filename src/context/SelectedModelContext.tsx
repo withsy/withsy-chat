@@ -1,11 +1,11 @@
-import { ChatModel } from "@/types/chat";
+import { Model } from "@/types/model";
 import { createContext, useContext, useEffect, useState } from "react";
 
 const STORAGE_KEY = "selectedChatModel";
 
 type SelectedModelContextType = {
-  selectedModel: ChatModel;
-  setSelectedModel: (model: ChatModel) => void;
+  selectedModel: Model;
+  setSelectedModel: (model: Model) => void;
 };
 
 const SelectedModelContext = createContext<
@@ -18,16 +18,16 @@ export const SelectedModelProvider = ({
   children: React.ReactNode;
 }) => {
   const [selectedModel, setSelectedModelState] =
-    useState<ChatModel>("gemini-2.0-flash");
+    useState<Model>("gemini-2.0-flash");
 
   useEffect(() => {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
-      setSelectedModelState(stored as ChatModel);
+      setSelectedModelState(Model.parse(stored));
     }
   }, []);
 
-  const setSelectedModel = (model: ChatModel) => {
+  const setSelectedModel = (model: Model) => {
     setSelectedModelState(model);
     localStorage.setItem(STORAGE_KEY, model);
   };
