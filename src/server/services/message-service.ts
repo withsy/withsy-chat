@@ -58,7 +58,8 @@ export class MessageService {
       orderBy: {
         id: order,
       },
-      include: {
+      select: {
+        ...ChatMessageSelect,
         chat: include?.chat,
       },
       take: limit,
