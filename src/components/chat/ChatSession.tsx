@@ -201,8 +201,11 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
           )}
           {children}
         </div>
-        <div className="absolute bottom-[2vh] left-0 right-0 flex justify-center px-4">
+        <div className="absolute bottom-[2vh] left-0 right-0 flex flex-col items-center justify-center px-4">
           <ChatInputBox onSendMessage={onSendMessage} />
+          <div className="text-xs text-gray-500 mt-1">
+            AI can make mistakes — please double-check
+          </div>
         </div>
       </div>
       <ChatDrawer chat={chat} savedMessages={savedMessages} />
