@@ -1,8 +1,8 @@
-import { useSelectedModel } from "@/context/SelectedModelContext";
 import { useUser } from "@/context/UserContext";
 import { trpc } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
 import { useDrawerStore } from "@/stores/useDrawerStore";
+import { useSelectedModelStore } from "@/stores/useSelectedModelStore";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 import type { ChatMessage } from "@/types/chat";
 import { Chat } from "@/types/chat";
@@ -27,7 +27,7 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
   const { messageId } = router.query;
 
   const { isMobile } = useSidebarStore();
-  const { selectedModel } = useSelectedModel();
+  const { selectedModel } = useSelectedModelStore();
   const { userPrefs } = useUser();
   const [messages, setMessages] = useState(initialMessages);
   const [streamMessageId, setStreamMessageId] = useState<number | null>(null);

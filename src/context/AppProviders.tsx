@@ -1,7 +1,6 @@
 import type { Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 import type { ReactNode } from "react";
-import { SelectedModelProvider } from "./SelectedModelContext";
 import { UserProvider } from "./UserContext";
 
 export default function AppProviders({
@@ -16,9 +15,7 @@ export default function AppProviders({
       session={session}
       refetchInterval={10 * 60} // 10 minutes
     >
-      <SelectedModelProvider>
-        <UserProvider>{children}</UserProvider>
-      </SelectedModelProvider>
+      <UserProvider>{children}</UserProvider>
     </SessionProvider>
   );
 }
