@@ -4,9 +4,11 @@ import {
   rateLimitRpm,
   UserUsageLimit,
   UserUsageLimitSelect,
+  type UserUsageLimitErrorInput,
 } from "@/types/user-usage-limit";
+import { TRPCError } from "@trpc/server";
 import { StatusCodes } from "http-status-codes";
-import { HttpServerError } from "../error";
+import { HttpServerError, TrpcDataError } from "../error";
 import type { ServiceRegistry } from "../service-registry";
 import type { Tx } from "./db";
 
@@ -162,30 +164,26 @@ export class UserUsageLimitService {
   }
 
   static createDailyLimitError(usageLimit: UserUsageLimit) {
-    return new HttpServerError(
-      StatusCodes.TOO_MANY_REQUESTS,
-      "Daily usage limit reached.",
-      {
-        extra: {
-          type: "daily",
-          dailyRemaining: usageLimit.dailyRemaining,
-          dailyResetAt: usageLimit.dailyResetAt.toISOString(),
-        },
-      }
-    );
+    return new TRPCError({
+      code: "TOO_MANY_REQUESTS",
+      message: "Daily usage limit reached.",
+      cause: new TrpcDataError({
+        type: "rate-limit-daily",
+        dailyRemaining: usageLimit.dailyRemaining,
+        dailyResetAt: usageLimit.dailyResetAt.toISOString(),
+      } satisfies UserUsageLimitErrorInput),
+    });
   }
 
   static createMinuteLimitError(usageLimit: UserUsageLimit) {
-    return new HttpServerError(
-      StatusCodes.TOO_MANY_REQUESTS,
-      "Minute usage limit reached.",
-      {
-        extra: {
-          type: "minute",
-          minuteRemaining: usageLimit.minuteRemaining,
-          minuteResetAt: usageLimit.minuteResetAt.toISOString(),
-        },
-      }
-    );
+    return new TRPCError({
+      code: "TOO_MANY_REQUESTS",
+      message: "Daily usage limit reached.",
+      cause: new TrpcDataError({
+        type: "rate-limit-minute",
+        minuteRemaining: usageLimit.minuteRemaining,
+        minuteResetAt: usageLimit.minuteResetAt.toISOString(),
+      } satisfies UserUsageLimitErrorInput),
+    });
   }
 }

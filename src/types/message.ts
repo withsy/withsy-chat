@@ -6,6 +6,7 @@ import { IdempotencyKey } from "./idempotency";
 import { Model } from "./model";
 import { Role } from "./role";
 import { UserId } from "./user";
+import { UserUsageLimitError } from "./user-usage-limit";
 
 export const MessageSelect = {
   id: true,
@@ -104,6 +105,8 @@ export const MessageSendOutput = z.object({
   modelMessage: Message,
 });
 export type MessageSendOutput = zInfer<typeof MessageSendOutput>;
+
+export const MessageSendError = UserUsageLimitError;
 
 export const MessageUpdate = z.object({
   messageId: MessageId,

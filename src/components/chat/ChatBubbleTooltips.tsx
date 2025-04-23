@@ -9,9 +9,11 @@ import { useRegenerate } from "@/context/RegenerateContext";
 import { useUser } from "@/context/UserContext";
 import { trpc } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
+import { MessageReplyRegenerateError } from "@/types/message-reply";
 import type { Model } from "@/types/model";
 import { Bookmark, Copy, GitBranch, RefreshCw } from "lucide-react";
 import { useRouter } from "next/router";
+import { toast } from "sonner";
 import { v4 as uuid } from "uuid";
 import { ModelSelect } from "./ModelSelect";
 
@@ -51,6 +53,15 @@ export const ChatBubbleTooltips: React.FC<ChatBubbleTooltipsProps> = ({
   const messageReplyRegenerate = trpc.messageReply.regenerate.useMutation({
     onSuccess(data) {
       onRegenerateSuccess(data);
+    },
+    onError(error) {
+      const res = MessageReplyRegenerateError.safeParse(error.data);
+      // console.error("TODO: handle error data:", res.data);
+      toast.error(
+        `Message reply regenerating failed. error data: ${JSON.stringify(
+          res.data
+        )}`
+      );
     },
   });
   const utils = trpc.useUtils();

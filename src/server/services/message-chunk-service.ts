@@ -1,11 +1,13 @@
 import type { MessageId } from "@/types/message";
 import {
+  MessageChunkReceiveData,
   MessageChunkSelect,
   type MessageChunkIndex,
   type MessageChunkReceive,
 } from "@/types/message-chunk";
 import { PgEvent, type PgEventInput } from "@/types/task";
 import type { UserId } from "@/types/user";
+import type { UserUsageLimit } from "@/types/user-usage-limit";
 import type { Prisma } from "@prisma/client";
 import { tracked } from "@trpc/server";
 import type { ServiceRegistry } from "../service-registry";
@@ -97,7 +99,12 @@ export class MessageChunkService {
       });
 
       for (const chunk of chunks) {
-        yield tracked(chunk.index.toString(), { text: chunk.text });
+        yield tracked(chunk.index.toString(), {
+          type: "chunk",
+          chunk: {
+            text: chunk.text,
+          },
+        } satisfies MessageChunkReceiveData);
         lastIndex = chunk.index;
       }
 
@@ -106,6 +113,17 @@ export class MessageChunkService {
         if (input) {
           const { status } = input;
           if (status === "completed") {
+            let usageLimit: UserUsageLimit | null = null;
+            try {
+              usageLimit = await this.service.userUsageLimit.get(userId);
+            } catch (e) {
+              console.error("User usage limit getting failed. userId:", userId);
+            }
+
+            yield tracked("usageLimit", {
+              type: "usageLimit",
+              usageLimit,
+            } satisfies MessageChunkReceiveData);
             return;
           }
 
@@ -127,7 +145,10 @@ export class MessageChunkService {
               select: MessageChunkSelect,
             });
 
-            yield tracked(index.toString(), chunk);
+            yield tracked(index.toString(), {
+              type: "chunk",
+              chunk,
+            } satisfies MessageChunkReceiveData);
             lastIndex = index;
           }
         } else {

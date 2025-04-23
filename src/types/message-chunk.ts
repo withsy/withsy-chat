@@ -2,6 +2,7 @@ import type { Prisma } from "@prisma/client";
 import { z } from "zod";
 import type { zInfer } from "./common";
 import { MessageId } from "./message";
+import { UserUsageLimit } from "./user-usage-limit";
 
 export const MessageChunkSelect = {
   text: true,
@@ -27,3 +28,15 @@ export const MessageChunkReceive = z.object({
   lastEventId: MessageChunkIndex.optional(),
 });
 export type MessageChunkReceive = zInfer<typeof MessageChunkReceive>;
+
+export const MessageChunkReceiveData = z.discriminatedUnion("type", [
+  z.object({
+    type: z.literal("chunk"),
+    chunk: MessageChunk,
+  }),
+  z.object({
+    type: z.literal("usageLimit"),
+    usageLimit: UserUsageLimit.nullable(),
+  }),
+]);
+export type MessageChunkReceiveData = zInfer<typeof MessageChunkReceiveData>;

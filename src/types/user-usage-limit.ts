@@ -1,6 +1,6 @@
 import type { Prisma } from "@prisma/client";
 import { z } from "zod";
-import type { zInfer } from "./common";
+import type { zInfer, zInput } from "./common";
 
 export const UserUsageLimitSelect = {
   dailyRemaining: true,
@@ -28,3 +28,18 @@ export type UserUsageLimit = zInfer<typeof UserUsageLimit>;
 export const rateLimitRpm = 15; // requests per minute
 export const rateLimitRpd = 10; // requests per day
 export const rateLimitTpm = 0; // tokens per minute, NOT used.
+
+export const UserUsageLimitError = z.discriminatedUnion("type", [
+  z.object({
+    type: z.literal("rate-limit-daily"),
+    dailyRemaining: z.number().int(),
+    dailyResetAt: z.string().transform((x) => new Date(x)),
+  }),
+  z.object({
+    type: z.literal("rate-limit-minute"),
+    minuteRemaining: z.number().int(),
+    minuteResetAt: z.string().transform((x) => new Date(x)),
+  }),
+]);
+export type UserUsageLimitError = zInfer<typeof UserUsageLimitError>;
+export type UserUsageLimitErrorInput = zInput<typeof UserUsageLimitError>;

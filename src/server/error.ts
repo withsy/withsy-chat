@@ -1,5 +1,6 @@
 import type { Extra, ServerErrorData } from "@/types/error";
 import { StatusCodes, getReasonPhrase } from "http-status-codes";
+import type { JsonObject } from "type-fest";
 import { envConfig } from "./env-config";
 
 export type ServerErrorOptions<TExtra extends Extra = Extra> = {
@@ -60,4 +61,10 @@ export function parseMessageFromUnknown(x: unknown) {
   if (typeof x === "object" && x !== null && "message" in x)
     return String(x.message);
   return String(x);
+}
+
+export class TrpcDataError extends Error {
+  constructor(readonly data: JsonObject) {
+    super();
+  }
 }

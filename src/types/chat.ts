@@ -4,6 +4,7 @@ import { type zInfer } from "./common";
 import { IdempotencyKey } from "./idempotency";
 import { Message, MessageId } from "./message";
 import { Model } from "./model";
+import { UserUsageLimitError } from "./user-usage-limit";
 
 export const ChatSelect = {
   id: true,
@@ -86,3 +87,5 @@ export const ChatStartOutput = z.object({
   modelMessage: z.lazy(() => Message),
 });
 export type ChatStartOutput = zInfer<typeof ChatStartOutput>;
+
+export const ChatStartError = UserUsageLimitError;
