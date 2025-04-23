@@ -1,3 +1,4 @@
+import type { UserUsageLimit } from "@/types/user-usage-limit";
 import React from "react";
 
 type Props = {
@@ -71,7 +72,7 @@ export const UsageLimitNotice: React.FC<Props> = ({
     message = buildMessage("daily", { minutesLeft, resetAt: dailyResetAt });
   } else if (minuteRemaining === 0) {
     const minutesLeft = getMinutesLeft(minuteResetAt);
-    message = buildMessage("minute", { minutesLeft, resetAt: dailyResetAt });
+    message = buildMessage("minute", { minutesLeft, resetAt: minuteResetAt });
   } else if (dailyRemaining <= 3) {
     message = buildMessage("low", {
       remaining: dailyRemaining,
@@ -87,4 +88,29 @@ export const UsageLimitNotice: React.FC<Props> = ({
       {message}
     </span>
   ) : null;
+};
+
+export const getUsageLimitMessage = (limit: UserUsageLimit): string | null => {
+  const { dailyRemaining, dailyResetAt, minuteRemaining, minuteResetAt } =
+    limit;
+
+  if (dailyRemaining === 0) {
+    const minutesLeft = getMinutesLeft(dailyResetAt);
+    return `Daily limit reached. Please wait ${minutesLeft} minute${
+      minutesLeft !== 1 ? "s" : ""
+    } (until ${dailyResetAt.toLocaleString()}).`;
+  }
+
+  if (minuteRemaining === 0) {
+    const minutesLeft = getMinutesLeft(minuteResetAt);
+    return `Too many requests. Try again in ${minutesLeft} minute${
+      minutesLeft !== 1 ? "s" : ""
+    } (until ${minuteResetAt.toLocaleString()}).`;
+  }
+
+  if (dailyRemaining <= 3) {
+    return `Remaining uses today: ${dailyRemaining} (Resets at ${dailyResetAt.toLocaleString()}).`;
+  }
+
+  return null;
 };
