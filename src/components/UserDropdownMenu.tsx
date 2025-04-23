@@ -10,9 +10,8 @@ import { useUser } from "@/context/UserContext";
 import { cn } from "@/lib/utils";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 import {
-  Cpu,
+  BookText,
   LogOut,
-  MessageSquare,
   Palette,
   Settings,
   type LucideIcon,
@@ -73,8 +72,7 @@ export default function UserDropdownMenu() {
   const [themeModalOpen, setThemeModalOpen] = useState(false);
 
   const userMenuItems: MenuItem[] = [
-    { icon: MessageSquare, label: "Prompts" },
-    { icon: Cpu, label: "Models" },
+    { icon: BookText, label: "Guide" },
     {
       icon: Palette,
       label: "Theme",
