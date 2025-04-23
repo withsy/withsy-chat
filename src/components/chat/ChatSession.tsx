@@ -41,7 +41,6 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
   const utils = trpc.useUtils();
 
   const handleRateLimitError = (data: any) => {
-    console.log("in??", data);
     if (!data) return;
 
     setUsageLimit((prev) => {
@@ -64,7 +63,6 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
       }
       return prev;
     });
-    console.log("updated?", usageLimit);
   };
 
   const chatStart = trpc.chat.start.useMutation({
