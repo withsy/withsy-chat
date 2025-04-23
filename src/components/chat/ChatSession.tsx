@@ -212,7 +212,7 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
             shouldFocus={shouldFocusInput}
           />
           <div className="text-xs text-gray-500 mt-1">
-            AI can make mistakes — please double-check
+            AI can make mistakes — please double-check.
           </div>
         </div>
       </div>
