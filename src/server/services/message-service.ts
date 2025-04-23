@@ -140,7 +140,9 @@ export class MessageService {
                 },
                 chatId: parentMessage.chatId,
                 status: "succeeded",
-                id: parentMessage.id,
+                id: {
+                  lt: parentMessage.id,
+                },
               },
               select: {
                 role: true,

@@ -111,7 +111,7 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
     if (streamMessageId) {
       setStreamMessageId(MessageId.parse(streamMessageId));
     }
-  }, [router.query.streamMessageId]);
+  }, [router.query, router.query.streamMessageId]);
 
   const _messageChunkReceive = trpc.messageChunk.receive.useSubscription(
     streamMessageId != null ? { messageId: streamMessageId } : skipToken,
