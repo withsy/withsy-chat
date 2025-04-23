@@ -1,8 +1,8 @@
-import type { ChatMessage } from "@/types/chat";
+import type { Message } from "@/types/message";
 import { createContext, useContext } from "react";
 
 interface RegenerateContextType {
-  onRegenerateSuccess: (newMessage: ChatMessage) => void;
+  onRegenerateSuccess: (newMessage: Message) => void;
 }
 
 const RegenerateContext = createContext<RegenerateContextType | null>(null);
@@ -12,7 +12,7 @@ export const RegenerateProvider = ({
   onRegenerateSuccess,
 }: {
   children: React.ReactNode;
-  onRegenerateSuccess: (newMessages: ChatMessage) => void;
+  onRegenerateSuccess: (newMessages: Message) => void;
 }) => (
   <RegenerateContext.Provider value={{ onRegenerateSuccess }}>
     {children}
