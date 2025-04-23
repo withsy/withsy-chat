@@ -1,6 +1,6 @@
 import { useUser } from "@/context/UserContext";
 import type { Chat } from "@/types/chat";
-import { type Message } from "@/types/message";
+import { MessageId, type Message } from "@/types/message";
 import { ChevronsDown } from "lucide-react";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
@@ -49,7 +49,7 @@ export function ChatMessageList({ chat, messages, onToggleSaved }: Props) {
 
   useEffect(() => {
     if (messageId) {
-      const id = parseInt(messageId, 10);
+      const id = MessageId.parse(messageId);
       const targetRef = messageRefs.current[id];
       if (targetRef) {
         targetRef.scrollIntoView({ behavior: "smooth", block: "start" });

@@ -25,7 +25,6 @@ type Props = {
 
 export function ChatSession({ chat, initialMessages, children }: Props) {
   const router = useRouter();
-  const { messageId } = router.query;
 
   const { isMobile } = useSidebarStore();
   const { selectedModel } = useSelectedModelStore();
@@ -49,9 +48,12 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
     },
     onSuccess(data) {
       utils.chat.list.invalidate();
-      router.push(`/chat/${data.chat.id}?messageId=${data.modelMessage.id}`);
+      router.push(
+        `/chat/${data.chat.id}?streamMessageId=${data.modelMessage.id}`
+      );
     },
   });
+
   const messageSend = trpc.message.send.useMutation({
     onError(error) {
       const res = MessageSendError.safeParse(error.data);
@@ -78,10 +80,11 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
   }, [chat?.id]);
 
   useEffect(() => {
-    if (messageId) {
-      setStreamMessageId(MessageId.parse(messageId));
+    const { streamMessageId } = router.query;
+    if (streamMessageId) {
+      setStreamMessageId(MessageId.parse(streamMessageId));
     }
-  }, [messageId]);
+  }, [router.query.streamMessageId]);
 
   const _messageChunkReceive = trpc.messageChunk.receive.useSubscription(
     streamMessageId != null ? { messageId: streamMessageId } : skipToken,

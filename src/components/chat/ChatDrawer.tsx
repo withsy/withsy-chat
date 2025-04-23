@@ -155,7 +155,7 @@ function Branches({
     if (chat && chat.type == "branch" && chat.parentMessage) {
       const chatId = chat.parentMessage.chatId;
       const messageId = chat.parentMessageId;
-      const parentMessageText = chat.parentMessage.text ?? "";
+      const parentMessageText = chat.parentMessage.text;
       originalChat = (
         <div className="m-2">
           <div className="flex gap-2 items-center font-semibold text-sm mb-3 select-none">
