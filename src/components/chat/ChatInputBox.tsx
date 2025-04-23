@@ -92,7 +92,7 @@ export function ChatInputBox({
         onCompositionStart={() => setIsComposing(true)}
         onCompositionEnd={() => setIsComposing(false)}
       />
-      <div className="absolute bottom-2 left-4 right-4 flex items-center justify-between">
+      <div className="absolute bottom-0 left-4 right-4 flex items-center justify-between">
         <div>
           {usageLimit && (
             <UsageLimitNotice
