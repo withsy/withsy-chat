@@ -5,7 +5,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useRegenerate } from "@/context/RegenerateContext";
+import { useChatSession } from "@/context/ChatSessionContext";
 import { useUser } from "@/context/UserContext";
 import { trpc } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
@@ -36,7 +36,7 @@ export const ChatBubbleTooltips: React.FC<ChatBubbleTooltipsProps> = ({
   onSave,
   className,
 }) => {
-  const { onRegenerateSuccess } = useRegenerate();
+  const { onRegenerateSuccess } = useChatSession();
 
   const router = useRouter();
 

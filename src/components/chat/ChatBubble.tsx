@@ -1,7 +1,8 @@
+import { useChatSession } from "@/context/ChatSessionContext";
 import { useUser } from "@/context/UserContext";
 import { cn } from "@/lib/utils";
 import type { Message } from "@/types/message";
-import { memo, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { CollapseToggle } from "../CollapseToggle";
 import { MarkdownBox } from "../MarkdownBox";
@@ -16,8 +17,9 @@ type Props = {
 
 const ChatBubbleComponent = ({ message, onToggleSaved }: Props) => {
   const { userSession } = useUser();
+  const { setStatus } = useChatSession();
+
   const { role, text: rawText, status } = message;
-  // TODO: handle status. streaming (pending, processing) or completed (succeeded, failed)
 
   const text = rawText ?? "";
   const isLongMessage = text.length > 150;
@@ -51,6 +53,11 @@ const ChatBubbleComponent = ({ message, onToggleSaved }: Props) => {
     onToggleSaved?.(message.id, !message.isBookmarked);
   };
 
+  useEffect(() => {
+    if (role === "model") {
+      setStatus(status);
+    }
+  }, [role, status]);
   return (
     <div
       className={cn(

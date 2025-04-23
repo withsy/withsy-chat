@@ -1,4 +1,4 @@
-import { RegenerateProvider } from "@/context/RegenerateContext";
+import { ChatSessionProvider } from "@/context/ChatSessionContext";
 import { useUser } from "@/context/UserContext";
 import { trpc } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
@@ -208,45 +208,45 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
   );
 
   return (
-    <div className="flex h-full relative">
-      <div
-        className={cn(
-          "flex flex-col h-full relative items-center transition-all duration-300",
-          isMobile ? "w-full" : openDrawer ? "w-[70%]" : "w-full"
-        )}
-      >
-        {chat && <ChatHeader chat={chat} />}
+    <ChatSessionProvider onRegenerateSuccess={handleRegenerateSuccess}>
+      <div className="flex h-full relative">
         <div
           className={cn(
-            "flex-1 overflow-y-auto mt-[50px] mb-[150px] w-full transition-all duration-300",
-            userPrefs.wideView
-              ? "md:w-[95%] md:mx-auto"
-              : "md:w-[80%] md:mx-auto"
+            "flex flex-col h-full relative items-center transition-all duration-300",
+            isMobile ? "w-full" : openDrawer ? "w-[70%]" : "w-full"
           )}
         >
-          {(chat || messages.length > 0) && (
-            <RegenerateProvider onRegenerateSuccess={handleRegenerateSuccess}>
+          {chat && <ChatHeader chat={chat} />}
+          <div
+            className={cn(
+              "flex-1 overflow-y-auto mt-[50px] mb-[150px] w-full transition-all duration-300",
+              userPrefs.wideView
+                ? "md:w-[95%] md:mx-auto"
+                : "md:w-[80%] md:mx-auto"
+            )}
+          >
+            {(chat || messages.length > 0) && (
               <ChatMessageList
                 chat={stableChat}
                 messages={messages}
                 onToggleSaved={handleToggleSaved}
               />
-            </RegenerateProvider>
-          )}
-          {children}
-        </div>
-        <div className="absolute bottom-[2vh] left-0 right-0 flex flex-col items-center justify-center px-4">
-          <ChatInputBox
-            onSendMessage={onSendMessage}
-            shouldFocus={shouldFocusInput}
-            usageLimit={usageLimit}
-          />
-          <div className="text-xs text-gray-500 mt-1">
-            AI can make mistakes — please double-check.
+            )}
+            {children}
+          </div>
+          <div className="absolute bottom-[2vh] left-0 right-0 flex flex-col items-center justify-center px-4">
+            <ChatInputBox
+              onSendMessage={onSendMessage}
+              shouldFocus={shouldFocusInput}
+              usageLimit={usageLimit}
+            />
+            <div className="text-xs text-gray-500 mt-1">
+              AI can make mistakes — please double-check.
+            </div>
           </div>
         </div>
+        <ChatDrawer chat={chat} savedMessages={savedMessages} />
       </div>
-      <ChatDrawer chat={chat} savedMessages={savedMessages} />
-    </div>
+    </ChatSessionProvider>
   );
 }

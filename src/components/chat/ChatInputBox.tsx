@@ -1,3 +1,4 @@
+import { useChatSession } from "@/context/ChatSessionContext";
 import { useUser } from "@/context/UserContext";
 import { cn } from "@/lib/utils";
 import type { UserUsageLimit } from "@/types/user-usage-limit";
@@ -19,6 +20,7 @@ export function ChatInputBox({
   shouldFocus = false,
 }: Props) {
   const { userPrefs } = useUser();
+  const { status } = useChatSession();
   const [message, setMessage] = useState("");
   const [isComposing, setIsComposing] = useState(false);
 
@@ -104,10 +106,23 @@ export function ChatInputBox({
         </div>
         <button
           onClick={handleSend}
-          className="p-2 rounded-md hover:bg-gray-200 active:bg-gray-200"
+          className="group p-2 rounded-md"
           aria-label="Send message"
+          style={{
+            ["--theme-color" as any]: `rgb(${userPrefs.themeColor})`,
+          }}
         >
-          <Send className="w-4 h-4 text-muted-foreground" />
+          <div
+            className="
+      bg-[var(--theme-color)]
+      opacity-100
+      group-hover:opacity-80
+      group-active:opacity-80
+      rounded-md p-2 transition-all
+    "
+          >
+            <Send className="w-4 h-4 text-white" />
+          </div>
         </button>
       </div>
     </div>
