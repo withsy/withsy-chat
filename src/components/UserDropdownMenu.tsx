@@ -15,11 +15,12 @@ import {
   LogOut,
   MailOpen,
   Palette,
-  Settings,
+  // Settings,
   SquareTerminal,
   type LucideIcon,
 } from "lucide-react";
 import { signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { ModelAvatar } from "./ModelAvatar";
 import { ThemeSettingsModal } from "./modal/ThemeSettingsModal";
@@ -70,22 +71,47 @@ function UserMenuItem({
 }
 
 export default function UserDropdownMenu() {
+  const router = useRouter();
   const { userPrefs, userSession } = useUser();
 
   const [themeModalOpen, setThemeModalOpen] = useState(false);
 
   const userMenuItems: MenuItem[] = [
-    { icon: Image, label: "Models" },
-    { icon: SquareTerminal, label: "Prompts" },
+    {
+      icon: Image,
+      label: "Models",
+      onClick() {
+        router.push("/preferences?tab=models");
+      },
+    },
+    {
+      icon: SquareTerminal,
+      label: "Prompts",
+      onClick() {
+        router.push("/preferences?tab=prompts");
+      },
+    },
     {
       icon: Palette,
       label: "Theme",
       onClick: () => setThemeModalOpen(true),
     },
-    { icon: Settings, label: "Settings" },
+    // { icon: Settings, label: "Settings" },
     "separator",
-    { icon: BookText, label: "Guide" },
-    { icon: MailOpen, label: "Contact" },
+    {
+      icon: BookText,
+      label: "Guide",
+      onClick() {
+        router.push("/guide");
+      },
+    },
+    {
+      icon: MailOpen,
+      label: "Contact",
+      onClick() {
+        router.push("/contact");
+      },
+    },
     "separator",
     {
       icon: LogOut,
