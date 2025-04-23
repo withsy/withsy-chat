@@ -23,7 +23,7 @@ const ChatBubbleComponent = ({ message, onToggleSaved }: Props) => {
   const isLongMessage = text.length > 150;
   const [collapsed, setCollapsed] = useState(role === "user" && isLongMessage);
   const displayedText = collapsed
-    ? text.split("\n").slice(0, 5).join("\n") + "..."
+    ? text.split("\n").slice(0, 3).join("\n")
     : text;
 
   const name =
