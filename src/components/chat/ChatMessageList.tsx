@@ -1,5 +1,6 @@
 import { useUser } from "@/context/UserContext";
-import type { Chat, ChatMessage } from "@/types/chat";
+import type { Chat } from "@/types/chat";
+import { type Message } from "@/types/message";
 import { ChevronsDown } from "lucide-react";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
@@ -8,8 +9,8 @@ import ChatInformationSystemMessage from "./ChatInformationSystemMessage";
 
 type Props = {
   chat: Chat | null;
-  messages: ChatMessage[];
-  onToggleSaved: (id: number, newValue: boolean) => void;
+  messages: Message[];
+  onToggleSaved: (id: string, newValue: boolean) => void;
 };
 
 export function ChatMessageList({ chat, messages, onToggleSaved }: Props) {
@@ -19,7 +20,7 @@ export function ChatMessageList({ chat, messages, onToggleSaved }: Props) {
 
   const bottomRef = useRef<HTMLDivElement | null>(null);
   const listRef = useRef<HTMLDivElement | null>(null);
-  const messageRefs = useRef<Record<number, HTMLDivElement | null>>({});
+  const messageRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const [showScrollToBottom, setShowScrollToBottom] = useState(false);
 
   const hasMounted = useRef(false);

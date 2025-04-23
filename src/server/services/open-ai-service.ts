@@ -12,7 +12,7 @@ import { envConfig } from "../env-config";
 import type { ServiceRegistry } from "../service-registry";
 import type { SendMessageToAiInput } from "./model-route-service";
 
-const MAX_CHUNK_BUFFER_LENGTH = 64;
+const MAX_CHUNK_BUFFER_LENGTH = 16;
 
 export class OpenAiService {
   private openai: OpenAI;

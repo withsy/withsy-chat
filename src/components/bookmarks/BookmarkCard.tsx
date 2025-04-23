@@ -11,7 +11,7 @@ import { BookmarkCardActions } from "./BookmarkCardActions";
 
 interface BookmarkCardProps {
   title?: string;
-  messageId: number;
+  messageId: string;
   chatId: string;
   text: string | null;
   createdAt: Date;

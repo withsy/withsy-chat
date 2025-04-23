@@ -8,12 +8,13 @@ datasource db {
 }
 
 model User {
-  id                 String            @id @default(dbgenerated("gen_random_uuid()")) @map("id") @db.Uuid
-  preferences        Json              @default("{}") @map("preferences")
-  createdAt          DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt          DateTime          @default(now()) @map("updated_at") @db.Timestamptz(6)
-  user_link_accounts UserLinkAccount[]
-  chats              Chat[]
+  id           String            @id @default(dbgenerated("gen_random_uuid()")) @map("id") @db.Uuid
+  preferences  Json              @default("{}") @map("preferences")
+  createdAt    DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt    DateTime          @default(now()) @map("updated_at") @db.Timestamptz(6)
+  linkAccounts UserLinkAccount[] @relation("user_link_accounts.user_id")
+  usageLimits  UserUsageLimit[]  @relation("user_usage_limits.user_id")
+  chats        Chat[]            @relation("chats.user_id")
 
   @@map("users")
 }
@@ -21,15 +22,31 @@ model User {
 model UserLinkAccount {
   id                Int      @id @default(autoincrement()) @map("id")
   userId            String   @map("user_id") @db.Uuid
-  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  user              User     @relation("user_link_accounts.user_id", fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
   provider          String   @map("provider")
   providerAccountId String   @map("provider_account_id")
   refreshToken      String?  @map("refresh_token")
   createdAt         DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
 
   @@unique([provider, providerAccountId])
   @@index([userId])
   @@map("user_link_accounts")
+}
+
+model UserUsageLimit {
+  id              Int      @id @default(autoincrement()) @map("id")
+  userId          String   @map("user_id") @db.Uuid
+  user            User     @relation("user_usage_limits.user_id", fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  dailyRemaining  Int      @map("daily_remaining")
+  dailyResetAt    DateTime @map("daily_reset_at") @db.Timestamptz(6)
+  minuteRemaining Int      @map("minute_remaining")
+  minuteResetAt   DateTime @map("minute_reset_at") @db.Timestamptz(6)
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
+
+  @@index([userId])
+  @@map("user_usage_limits")
 }
 
 enum ChatType {
@@ -38,82 +55,84 @@ enum ChatType {
 }
 
 model Chat {
-  id              String        @id @default(dbgenerated("gen_random_uuid()")) @map("id") @db.Uuid
-  userId          String        @map("user_id") @db.Uuid
-  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  title           String        @default("New chat") @map("title")
-  isStarred       Boolean       @default(false) @map("is_starred")
-  type            ChatType      @default(chat) @map("type")
-  parentMessageId Int?          @map("parent_message_id")
-  parentMessage   ChatMessage?  @relation("parentMessageId", fields: [parentMessageId], references: [id], onDelete: SetNull, onUpdate: NoAction)
-  createdAt       DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt       DateTime      @default(now()) @map("updated_at") @db.Timestamptz(6)
-  deletedAt       DateTime?     @map("deleted_at") @db.Timestamptz(6)
-  chatMessages    ChatMessage[] @relation("chatId")
+  id              String    @id @map("id") @db.Uuid
+  userId          String    @map("user_id") @db.Uuid
+  user            User      @relation("chats.user_id", fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  title           String    @default("New chat") @map("title")
+  isStarred       Boolean   @default(false) @map("is_starred")
+  type            ChatType  @default(chat) @map("type")
+  parentMessageId String?   @map("parent_message_id") @db.Uuid
+  parentMessage   Message?  @relation("chats.parent_message_id", fields: [parentMessageId], references: [id], onDelete: SetNull, onUpdate: NoAction)
+  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime  @default(now()) @map("updated_at") @db.Timestamptz(6)
+  deletedAt       DateTime? @map("deleted_at") @db.Timestamptz(6)
+  messages        Message[] @relation("messages.chat_id")
 
   @@index([userId])
   @@index([parentMessageId])
   @@map("chats")
 }
 
-enum ChatMessageStatus {
+enum MessageStatus {
   pending
   processing
   succeeded
   failed
 }
 
-model ChatMessage {
-  id                Int                @id @default(autoincrement()) @map("id")
-  chatId            String             @map("chat_id") @db.Uuid
-  chat              Chat               @relation("chatId", fields: [chatId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  role              String             @map("role")
-  model             String?            @map("model")
-  text              String             @default("") @map("text")
-  status            ChatMessageStatus  @default(pending) @map("status")
-  isBookmarked      Boolean            @default(false) @map("is_bookmarked")
-  replyToId         Int?               @map("reply_to_id")
-  replyTo           ChatMessage?       @relation("replyToId", fields: [replyToId], references: [id], onDelete: SetNull, onUpdate: NoAction)
-  createdAt         DateTime           @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt         DateTime           @default(now()) @map("updated_at") @db.Timestamptz(6)
-  childChats        Chat[]             @relation("parentMessageId")
-  chatMessageChunks ChatMessageChunk[]
-  chatMessageFiles  ChatMessageFile[]
-  promptFrom        ChatMessage[]      @relation("replyToId")
+model Message {
+  id              String         @id @map("id") @db.Uuid
+  chatId          String         @map("chat_id") @db.Uuid
+  chat            Chat           @relation("messages.chat_id", fields: [chatId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  role            String         @map("role")
+  model           String?        @map("model")
+  text            String         @default("") @map("text")
+  status          MessageStatus  @default(pending) @map("status")
+  isBookmarked    Boolean        @default(false) @map("is_bookmarked")
+  parentMessageId String?        @map("parent_message_id") @db.Uuid
+  parentMessage   Message?       @relation("messages.parent_message_id", fields: [parentMessageId], references: [id], onDelete: SetNull, onUpdate: NoAction)
+  createdAt       DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime       @default(now()) @map("updated_at") @db.Timestamptz(6)
+  chunks          MessageChunk[] @relation("message_chunks.message_id")
+  files           MessageFile[]  @relation("message_files.message_id")
+  childChats      Chat[]         @relation("chats.parent_message_id")
+  childMessages   Message[]      @relation("messages.parent_message_id")
 
-  @@index([replyToId])
+  @@index([parentMessageId])
   @@index([chatId])
-  @@map("chat_messages")
+  @@map("messages")
 }
 
-model ChatMessageChunk {
-  chatMessageId Int         @map("chat_message_id")
-  chatMessage   ChatMessage @relation(fields: [chatMessageId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  chunkIndex    Int         @map("chunk_index")
-  text          String      @map("text")
-  rawData       Json        @map("raw_data")
-  createdAt     DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt     DateTime    @default(now()) @map("updated_at") @db.Timestamptz(6)
+model MessageChunk {
+  messageId String   @map("message_id") @db.Uuid
+  message   Message  @relation("message_chunks.message_id", fields: [messageId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  index     Int      @map("index")
+  text      String   @map("text")
+  rawData   Json     @map("raw_data")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
 
-  @@id([chatMessageId, chunkIndex])
-  @@map("chat_message_chunks")
+  @@id([messageId, index])
+  @@map("message_chunks")
 }
 
-model ChatMessageFile {
-  id            Int         @id @default(autoincrement()) @map("id")
-  chatMessageId Int         @map("chat_message_id")
-  chatMessage   ChatMessage @relation(fields: [chatMessageId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  fileUri       String      @map("file_uri")
-  mimeType      String      @map("mime_type")
-  createdAt     DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
+model MessageFile {
+  id        Int      @id @default(autoincrement()) @map("id")
+  messageId String   @map("message_id") @db.Uuid
+  message   Message  @relation("message_files.message_id", fields: [messageId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  fileUri   String   @map("file_uri")
+  mimeType  String   @map("mime_type")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
 
-  @@index([chatMessageId])
-  @@map("chat_message_files")
+  @@index([messageId])
+  @@map("message_files")
 }
 
 model IdempotencyInfo {
   key       String   @id @map("key") @db.Uuid
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
 
   @@map("idempotency_infos")
 }

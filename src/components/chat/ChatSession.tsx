@@ -5,8 +5,8 @@ import { cn } from "@/lib/utils";
 import { useDrawerStore } from "@/stores/useDrawerStore";
 import { useSelectedModelStore } from "@/stores/useSelectedModelStore";
 import { useSidebarStore } from "@/stores/useSidebarStore";
-import type { ChatMessage } from "@/types/chat";
-import { Chat } from "@/types/chat";
+import { Chat, ChatStartError } from "@/types/chat";
+import { MessageId, MessageSendError, type Message } from "@/types/message";
 import { skipToken } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { useEffect, useMemo, useState } from "react";
@@ -19,7 +19,7 @@ import { ChatMessageList } from "./ChatMessageList";
 
 type Props = {
   chat: Chat | null;
-  initialMessages: ChatMessage[];
+  initialMessages: Message[];
   children?: React.ReactNode;
 };
 
@@ -31,7 +31,7 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
   const { selectedModel } = useSelectedModelStore();
   const { userPrefs } = useUser();
   const [messages, setMessages] = useState(initialMessages);
-  const [streamMessageId, setStreamMessageId] = useState<number | null>(null);
+  const [streamMessageId, setStreamMessageId] = useState<string | null>(null);
   const [shouldFocusInput, setShouldFocusInput] = useState(false);
   const stableChat = useMemo(() => chat, [chat]);
 
@@ -39,8 +39,33 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
 
   const utils = trpc.useUtils();
 
-  const chatStart = trpc.chat.start.useMutation();
-  const messageSend = trpc.message.send.useMutation();
+  const chatStart = trpc.chat.start.useMutation({
+    onError(error) {
+      const res = ChatStartError.safeParse(error.data);
+      // console.error("TODO: handle error data:", res.data);
+      toast.error(
+        `Chat starting failed. error data: ${JSON.stringify(res.data)}`
+      );
+    },
+    onSuccess(data) {
+      utils.chat.list.invalidate();
+      router.push(`/chat/${data.chat.id}?messageId=${data.modelMessage.id}`);
+    },
+  });
+  const messageSend = trpc.message.send.useMutation({
+    onError(error) {
+      const res = MessageSendError.safeParse(error.data);
+      // console.error("TODO: handle error data:", res.data);
+      toast.error(
+        `Message sending failed. error data: ${JSON.stringify(res.data)}`
+      );
+    },
+    onSuccess(data) {
+      setMessages((prev) => [...prev, data.userMessage, data.modelMessage]);
+      setStreamMessageId(data.modelMessage.id);
+      utils.chat.list.invalidate();
+    },
+  });
 
   useEffect(() => {
     setMessages(initialMessages);
@@ -54,14 +79,26 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
 
   useEffect(() => {
     if (messageId) {
-      const id = parseInt(messageId as string, 10);
-      setStreamMessageId(id);
+      setStreamMessageId(MessageId.parse(messageId));
     }
   }, [messageId]);
 
   const _messageChunkReceive = trpc.messageChunk.receive.useSubscription(
     streamMessageId != null ? { messageId: streamMessageId } : skipToken,
     {
+      onStarted() {
+        setMessages((prevMessages) =>
+          prevMessages.map((msg) =>
+            msg.id === streamMessageId
+              ? {
+                  ...msg,
+                  text: "",
+                  status: "processing",
+                }
+              : msg
+          )
+        );
+      },
       onComplete() {
         setMessages((prev) =>
           prev.map((x) =>
@@ -80,64 +117,53 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
         toast.error(`Receive chat message failed. error: ${error}`);
       },
       onData(data) {
-        const chunk = data.data;
-        setMessages((prevMessages) =>
-          prevMessages.map((msg) =>
-            msg.id === streamMessageId
-              ? {
-                  ...msg,
-                  text: (msg.text ?? "") + chunk.text,
-                  status: "processing",
-                }
-              : msg
-          )
-        );
+        if (data.data.type === "chunk") {
+          const chunk = data.data.chunk;
+          setMessages((prevMessages) =>
+            prevMessages.map((msg) =>
+              msg.id === streamMessageId
+                ? {
+                    ...msg,
+                    text: msg.text + chunk.text,
+                  }
+                : msg
+            )
+          );
+        } else if (data.data.type === "usageLimit") {
+          const usageLimit = data.data.usageLimit;
+          if (usageLimit) {
+            // console.error("TODO: handle usage limit:", usageLimit);
+            toast.error(
+              `Message chunk receiving completed. usage limit: ${JSON.stringify(
+                usageLimit
+              )}`
+            );
+          }
+        }
       },
     }
   );
 
   const onSendMessage = (message: string) => {
     if (chat != null) {
-      messageSend.mutate(
-        {
-          chatId: chat.id,
-          text: message,
-          model: selectedModel,
-          idempotencyKey: uuid(),
-        },
-        {
-          onError(error) {
-            toast.error(`Send message failed. error: ${error}`);
-          },
-          onSuccess(data) {
-            setMessages((prev) => [
-              ...prev,
-              data.userMessage,
-              data.modelMessage,
-            ]);
-            setStreamMessageId(data.modelMessage.id);
-            utils.chat.list.invalidate();
-          },
-        }
-      );
+      messageSend.mutate({
+        chatId: chat.id,
+        text: message,
+        model: selectedModel,
+        idempotencyKey: uuid(),
+      });
     } else {
-      chatStart.mutate(
-        { text: message, model: selectedModel, idempotencyKey: uuid() },
-        {
-          onSuccess(data) {
-            utils.chat.list.invalidate();
-            router.push(
-              `/chat/${data.chat.id}?messageId=${data.modelMessage.id}`
-            );
-          },
-        }
-      );
+      chatStart.mutate({
+        text: message,
+        model: selectedModel,
+        idempotencyKey: uuid(),
+      });
     }
   };
 
   const messageUpdate = trpc.message.update.useMutation();
 
-  const handleToggleSaved = (id: number, newValue: boolean) => {
+  const handleToggleSaved = (id: string, newValue: boolean) => {
     messageUpdate.mutate(
       { messageId: id, isBookmarked: newValue },
       {
@@ -167,7 +193,7 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
     );
   };
 
-  const handleRegenerateSuccess = (newMessage: ChatMessage) => {
+  const handleRegenerateSuccess = (newMessage: Message) => {
     setMessages((prev) => [...prev, newMessage]);
     setStreamMessageId(newMessage.id);
     utils.chat.list.invalidate();

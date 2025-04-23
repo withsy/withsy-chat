@@ -9,14 +9,16 @@ import { useRegenerate } from "@/context/RegenerateContext";
 import { useUser } from "@/context/UserContext";
 import { trpc } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
+import { MessageReplyRegenerateError } from "@/types/message-reply";
 import type { Model } from "@/types/model";
 import { Bookmark, Copy, GitBranch, RefreshCw } from "lucide-react";
 import { useRouter } from "next/router";
+import { toast } from "sonner";
 import { v4 as uuid } from "uuid";
 import { ModelSelect } from "./ModelSelect";
 
 interface ChatBubbleTooltipsProps {
-  messageId: number;
+  messageId: string;
   messageModel: Model | null;
   isAi: boolean;
   isSaved: boolean;
@@ -41,22 +43,31 @@ export const ChatBubbleTooltips: React.FC<ChatBubbleTooltipsProps> = ({
   const { userPrefs } = useUser();
   const { themeColor } = userPrefs;
 
-  const branchStart = trpc.branch.start.useMutation({
+  const chatBranchStart = trpc.chatBranch.start.useMutation({
     onSuccess(data) {
       router.push(`/chat/${data.id}`);
       utils.chat.list.invalidate();
     },
   });
 
-  const replyRegenerate = trpc.reply.regenerate.useMutation({
+  const messageReplyRegenerate = trpc.messageReply.regenerate.useMutation({
     onSuccess(data) {
       onRegenerateSuccess(data);
+    },
+    onError(error) {
+      const res = MessageReplyRegenerateError.safeParse(error.data);
+      // console.error("TODO: handle error data:", res.data);
+      toast.error(
+        `Message reply regenerating failed. error data: ${JSON.stringify(
+          res.data
+        )}`
+      );
     },
   });
   const utils = trpc.useUtils();
 
   const handleBranch = () => {
-    branchStart.mutate({
+    chatBranchStart.mutate({
       idempotencyKey: uuid(),
       messageId,
     });
@@ -107,7 +118,7 @@ export const ChatBubbleTooltips: React.FC<ChatBubbleTooltipsProps> = ({
                 messageModel={messageModel}
                 description={"Switch model & regenerate"}
                 onSelectModel={(selectedModel) => {
-                  replyRegenerate.mutate({
+                  messageReplyRegenerate.mutate({
                     idempotencyKey: uuid(),
                     messageId,
                     model: selectedModel,

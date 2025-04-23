@@ -1,4 +1,5 @@
 import type { ServiceRegistry } from "../service-registry";
+import { UserUsageLimitService } from "./user-usage-limit-service";
 
 export class UserLinkAccountService {
   constructor(private readonly service: ServiceRegistry) {}
@@ -41,6 +42,7 @@ export class UserLinkAccountService {
             userId: true,
           },
         });
+        await UserUsageLimitService.create(tx, { userId: user.id });
       }
 
       if (refreshToken)

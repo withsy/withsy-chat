@@ -1,6 +1,6 @@
 import { useUser } from "@/context/UserContext";
 import { cn } from "@/lib/utils";
-import type { ChatMessage } from "@/types/chat";
+import type { Message } from "@/types/message";
 import { memo, useState } from "react";
 import { toast } from "sonner";
 import { CollapseToggle } from "../CollapseToggle";
@@ -10,8 +10,8 @@ import { ChatBubbleTooltips } from "./ChatBubbleTooltips";
 import { StatusIndicator } from "./StatusIndicator";
 
 type Props = {
-  message: ChatMessage;
-  onToggleSaved?: (id: number, newValue: boolean) => void;
+  message: Message;
+  onToggleSaved?: (id: string, newValue: boolean) => void;
 };
 
 const ChatBubbleComponent = ({ message, onToggleSaved }: Props) => {

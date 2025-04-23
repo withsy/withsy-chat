@@ -1,34 +1,30 @@
-import type { ChatId } from "@/types/chat-core";
-import {
-  ChatMessageSelect,
-  ChatMessageStatus,
-  type ChatMessageId,
-} from "@/types/chat-message";
+import { ChatId, ChatSelect } from "@/types/chat";
 import type {
   MessageForHistory,
   MessageList,
   MessageSend,
   MessageUpdate,
 } from "@/types/message";
+import { MessageSelect, MessageStatus, type MessageId } from "@/types/message";
 import { Role } from "@/types/role";
 import type { UserId } from "@/types/user";
 import { StatusCodes } from "http-status-codes";
+import { uuidv7 } from "uuidv7";
 import { HttpServerError } from "../error";
 import type { ServiceRegistry } from "../service-registry";
 import type { Tx } from "./db";
+import { IdempotencyInfoService } from "./idempotency-info-service";
 import { MessageChunkService } from "./message-chunk-service";
 import { MessageFileService } from "./message-file-service";
 import type { FileInfo } from "./mock-s3-service";
+import { UserUsageLimitService } from "./user-usage-limit-service";
 
 export class MessageService {
   constructor(private readonly service: ServiceRegistry) {}
 
-  static async get(
-    tx: Tx,
-    input: { userId: UserId; messageId: ChatMessageId }
-  ) {
+  static async get(tx: Tx, input: { userId: UserId; messageId: MessageId }) {
     const { userId, messageId } = input;
-    const res = await tx.chatMessage.findUniqueOrThrow({
+    const res = await tx.message.findUniqueOrThrow({
       where: {
         chat: {
           userId,
@@ -36,7 +32,7 @@ export class MessageService {
         },
         id: messageId,
       },
-      select: ChatMessageSelect,
+      select: MessageSelect,
     });
 
     return res;
@@ -45,7 +41,7 @@ export class MessageService {
   async list(userId: UserId, input: MessageList) {
     const { role, isBookmarked, options } = input;
     const { scope, afterId, order, limit, include } = options;
-    const xs = this.service.db.chatMessage.findMany({
+    const xs = this.service.db.message.findMany({
       where: {
         chat: {
           userId,
@@ -59,8 +55,12 @@ export class MessageService {
         id: order,
       },
       select: {
-        ...ChatMessageSelect,
-        chat: include?.chat,
+        ...MessageSelect,
+        chat: include?.chat
+          ? {
+              select: ChatSelect,
+            }
+          : undefined,
       },
       take: limit,
       ...(afterId && {
@@ -77,7 +77,7 @@ export class MessageService {
   async listForHistory(input: {
     userId: UserId;
     modelMessage: {
-      id: ChatMessageId;
+      id: MessageId;
       chatId: ChatId;
     };
   }) {
@@ -86,7 +86,7 @@ export class MessageService {
     // TODO: Change limit history length
     let remainLength = 10;
     const histories = await this.service.db.$transaction(async (tx) => {
-      const currentHistories = await tx.chatMessage.findMany({
+      const currentHistories = await tx.message.findMany({
         where: {
           chat: {
             userId,
@@ -132,7 +132,7 @@ export class MessageService {
           remainLength -= 1;
 
           if (remainLength > 0) {
-            const parentHistories = await tx.chatMessage.findMany({
+            const parentHistories = await tx.message.findMany({
               where: {
                 chat: {
                   userId,
@@ -163,9 +163,9 @@ export class MessageService {
     return histories;
   }
 
-  async get(input: { userId: UserId; messageId: ChatMessageId }) {
+  async get(input: { userId: UserId; messageId: MessageId }) {
     const { userId, messageId } = input;
-    const res = await this.service.db.chatMessage.findUnique({
+    const res = await this.service.db.message.findUnique({
       where: {
         chat: {
           userId,
@@ -173,7 +173,7 @@ export class MessageService {
         },
         id: messageId,
       },
-      select: ChatMessageSelect,
+      select: MessageSelect,
     });
 
     return res;
@@ -181,7 +181,7 @@ export class MessageService {
 
   async update(userId: UserId, input: MessageUpdate) {
     const { messageId, isBookmarked } = input;
-    const res = await this.service.db.chatMessage.update({
+    const res = await this.service.db.message.update({
       where: {
         chat: {
           userId,
@@ -192,15 +192,15 @@ export class MessageService {
       data: {
         isBookmarked,
       },
-      select: ChatMessageSelect,
+      select: MessageSelect,
     });
 
     return res;
   }
 
-  async isStaleCompleted(input: { userId: UserId; messageId: ChatMessageId }) {
+  async isStaleCompleted(input: { userId: UserId; messageId: MessageId }) {
     const { userId, messageId } = input;
-    const res = await this.service.db.chatMessage.findUnique({
+    const res = await this.service.db.message.findUnique({
       where: {
         chat: {
           userId,
@@ -226,13 +226,13 @@ export class MessageService {
     tx: Tx,
     input: {
       userId: UserId;
-      messageId: ChatMessageId;
-      expectStatus: ChatMessageStatus;
-      nextStatus: ChatMessageStatus;
+      messageId: MessageId;
+      expectStatus: MessageStatus;
+      nextStatus: MessageStatus;
     }
   ) {
     const { userId, messageId, expectStatus, nextStatus } = input;
-    const res = await tx.chatMessage.update({
+    const res = await tx.message.update({
       where: {
         chat: {
           userId,
@@ -254,7 +254,7 @@ export class MessageService {
 
   async transitPendingToProcessing(input: {
     userId: UserId;
-    messageId: ChatMessageId;
+    messageId: MessageId;
   }) {
     const { userId, messageId } = input;
     const res = await MessageService.transit(this.service.db, {
@@ -269,7 +269,7 @@ export class MessageService {
 
   async transitProcessingToSucceeded(input: {
     userId: UserId;
-    messageId: ChatMessageId;
+    messageId: MessageId;
   }) {
     const { userId, messageId } = input;
     await this.service.db.$transaction(async (tx) => {
@@ -297,7 +297,7 @@ export class MessageService {
         userId,
         messageId,
       });
-      await tx.chatMessage.update({
+      await tx.message.update({
         where: {
           chat: {
             userId,
@@ -312,12 +312,15 @@ export class MessageService {
     });
   }
 
-  async tryTransitProcessingToFailed(input: {
-    userId: UserId;
-    messageId: ChatMessageId;
-  }) {
+  static async tryTransitProcessingToFailed(
+    tx: Tx,
+    input: {
+      userId: UserId;
+      messageId: MessageId;
+    }
+  ) {
     const { userId, messageId } = input;
-    const res = await MessageService.transit(this.service.db, {
+    const res = await MessageService.transit(tx, {
       userId,
       messageId,
       expectStatus: "processing",
@@ -330,7 +333,7 @@ export class MessageService {
   }
 
   async onCleanupZombiesTask() {
-    const res = await this.service.db.chatMessage.updateMany({
+    const res = await this.service.db.message.updateMany({
       where: {
         status: {
           in: ["pending", "processing"],
@@ -351,7 +354,10 @@ export class MessageService {
     const { idempotencyKey, chatId, model, text } = input;
     const files = input.files ?? [];
 
-    await this.service.idempotencyInfo.checkDuplicateRequest(idempotencyKey);
+    await this.service.db.$transaction(async (tx) => {
+      await IdempotencyInfoService.checkDuplicateRequest(tx, idempotencyKey);
+      await UserUsageLimitService.lockAndCheck(tx, { userId });
+    });
 
     const { fileInfos } = await this.service.s3.uploads(userId, { files });
 
@@ -373,6 +379,8 @@ export class MessageService {
       modelMessageId: modelMessage.id,
     });
 
+    await UserUsageLimitService.lockAndDecrease(this.service.db, { userId });
+
     return {
       userMessage,
       modelMessage,
@@ -387,8 +395,9 @@ export class MessageService {
   ) {
     const { chatId, text, model, fileInfos } = input;
 
-    const userMessage = await tx.chatMessage.create({
+    const userMessage = await tx.message.create({
       data: {
+        id: MessageService.generateId(),
         chatId,
         text,
         role: Role.enum.user,
@@ -396,13 +405,14 @@ export class MessageService {
       },
     });
 
-    const modelMessage = await tx.chatMessage.create({
+    const modelMessage = await tx.message.create({
       data: {
+        id: MessageService.generateId(),
         chatId,
         role: Role.enum.model,
         model,
         status: "pending",
-        replyToId: userMessage.id,
+        parentMessageId: userMessage.id,
       },
     });
 
@@ -415,5 +425,9 @@ export class MessageService {
       userMessage,
       modelMessage,
     };
+  }
+
+  static generateId() {
+    return uuidv7();
   }
 }

@@ -1,10 +1,10 @@
-import type { ChatMessage } from "@/types/chat";
+import type { Message } from "@/types/message";
 
 export function filterMessages({
   messages,
   sortOrder,
 }: {
-  messages: ChatMessage[];
+  messages: Message[];
   sortOrder: "asc" | "desc";
 }) {
   return messages.sort((a, b) => {

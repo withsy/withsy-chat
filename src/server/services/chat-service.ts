@@ -6,9 +6,12 @@ import {
   ChatUpdate,
 } from "@/types/chat";
 import { UserId } from "@/types/user";
+import { uuidv7 } from "uuidv7";
 import type { ServiceRegistry } from "../service-registry";
 import type { Tx } from "./db";
+import { IdempotencyInfoService } from "./idempotency-info-service";
 import { MessageService } from "./message-service";
+import { UserUsageLimitService } from "./user-usage-limit-service";
 
 export class ChatService {
   constructor(private readonly service: ServiceRegistry) {}
@@ -85,7 +88,10 @@ export class ChatService {
     const { model, text, idempotencyKey } = input;
     const files = input.files ?? [];
 
-    await this.service.idempotencyInfo.checkDuplicateRequest(idempotencyKey);
+    await this.service.db.$transaction(async (tx) => {
+      await IdempotencyInfoService.checkDuplicateRequest(tx, idempotencyKey);
+      await UserUsageLimitService.lockAndCheck(tx, { userId });
+    });
 
     const { fileInfos } = await this.service.s3.uploads(userId, { files });
 
@@ -111,6 +117,8 @@ export class ChatService {
       modelMessageId: modelMessage.id,
     });
 
+    await UserUsageLimitService.lockAndDecrease(this.service.db, { userId });
+
     return {
       chat,
       userMessage,
@@ -123,6 +131,7 @@ export class ChatService {
     const title = text ? [...text].slice(0, 20).join("") : undefined;
     const res = await tx.chat.create({
       data: {
+        id: ChatService.generateId(),
         userId,
         title,
         type: "chat",
@@ -130,5 +139,9 @@ export class ChatService {
     });
 
     return res;
+  }
+
+  static generateId() {
+    return uuidv7();
   }
 }

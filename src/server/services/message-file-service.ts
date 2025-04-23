@@ -1,5 +1,5 @@
-import type { ChatMessageId } from "@/types/chat-message";
-import { ChatMessageFileSelect } from "@/types/chat-message-file";
+import type { MessageId } from "@/types/message";
+import { MessageFileSelect } from "@/types/message-file";
 import type { UserId } from "@/types/user";
 import type { ServiceRegistry } from "../service-registry";
 import type { Tx } from "./db";
@@ -8,22 +8,22 @@ import type { FileInfo } from "./mock-s3-service";
 export class MessageFileService {
   constructor(private readonly service: ServiceRegistry) {}
 
-  async list(input: { userId: UserId; messageId: ChatMessageId }) {
+  async list(input: { userId: UserId; messageId: MessageId }) {
     const { userId, messageId } = input;
-    const res = await this.service.db.chatMessageFile.findMany({
+    const res = await this.service.db.messageFile.findMany({
       where: {
-        chatMessage: {
+        message: {
           chat: {
             userId,
             deletedAt: null,
           },
         },
-        chatMessageId: messageId,
+        messageId: messageId,
       },
       orderBy: {
         id: "asc",
       },
-      select: ChatMessageFileSelect,
+      select: MessageFileSelect,
     });
 
     return res;
@@ -31,17 +31,17 @@ export class MessageFileService {
 
   static async createAll(
     tx: Tx,
-    input: { messageId: ChatMessageId; fileInfos: FileInfo[] }
+    input: { messageId: MessageId; fileInfos: FileInfo[] }
   ) {
     const { messageId, fileInfos } = input;
     if (fileInfos.length === 0) return;
 
     const files = fileInfos.map((x) => ({
-      chatMessageId: messageId,
+      messageId,
       fileUri: x.fileUri,
       mimeType: x.mimeType,
     }));
-    await tx.chatMessageFile.createMany({
+    await tx.messageFile.createMany({
       data: files,
     });
   }

@@ -1,11 +1,13 @@
-import type { ChatMessageId } from "@/types/chat-message";
+import type { MessageId } from "@/types/message";
 import {
-  ChatMessageChunkSelect,
-  type ChatMessageChunkIndex,
-} from "@/types/chat-message-chunk";
-import type { MessageChunkReceive } from "@/types/message-chunk";
+  MessageChunkReceiveData,
+  MessageChunkSelect,
+  type MessageChunkIndex,
+  type MessageChunkReceive,
+} from "@/types/message-chunk";
 import { PgEvent, type PgEventInput } from "@/types/task";
 import type { UserId } from "@/types/user";
+import type { UserUsageLimit } from "@/types/user-usage-limit";
 import type { Prisma } from "@prisma/client";
 import { tracked } from "@trpc/server";
 import type { ServiceRegistry } from "../service-registry";
@@ -16,41 +18,41 @@ export class MessageChunkService {
   constructor(private readonly service: ServiceRegistry) {}
 
   async add(input: {
-    messageId: ChatMessageId;
-    chunkIndex: ChatMessageChunkIndex;
+    messageId: MessageId;
+    index: MessageChunkIndex;
     rawData: Prisma.InputJsonValue;
     text: string;
   }) {
-    const { messageId, chunkIndex, text, rawData } = input;
-    await this.service.db.chatMessageChunk.create({
+    const { messageId, index, text, rawData } = input;
+    await this.service.db.messageChunk.create({
       data: {
-        chatMessageId: messageId,
-        chunkIndex,
+        messageId,
+        index,
         text,
         rawData,
       },
-      select: ChatMessageChunkSelect,
+      select: MessageChunkSelect,
     });
   }
 
   static async buildText(
     tx: Tx,
-    input: { userId: UserId; messageId: ChatMessageId }
+    input: { userId: UserId; messageId: MessageId }
   ) {
     const { userId, messageId } = input;
-    const rows = await tx.chatMessageChunk.findMany({
+    const rows = await tx.messageChunk.findMany({
       where: {
-        chatMessage: {
+        message: {
           chat: {
             userId,
             deletedAt: null,
           },
         },
-        chatMessageId: messageId,
+        messageId,
       },
-      select: ChatMessageChunkSelect,
+      select: MessageChunkSelect,
       orderBy: {
-        chunkIndex: "asc",
+        index: "asc",
       },
     });
 
@@ -73,32 +75,37 @@ export class MessageChunkService {
     );
 
     try {
-      let lastChunkIndex = lastEventId ?? -1;
-      const chunks = await this.service.db.chatMessageChunk.findMany({
+      let lastIndex = lastEventId ?? -1;
+      const chunks = await this.service.db.messageChunk.findMany({
         where: {
-          chatMessage: {
+          message: {
             chat: {
               userId,
               deletedAt: null,
             },
           },
-          chatMessageId: messageId,
-          chunkIndex: {
-            gt: lastChunkIndex,
+          messageId,
+          index: {
+            gt: lastIndex,
           },
         },
         orderBy: {
-          chunkIndex: "asc",
+          index: "asc",
         },
         select: {
-          ...ChatMessageChunkSelect,
-          chunkIndex: true,
+          ...MessageChunkSelect,
+          index: true,
         },
       });
 
       for (const chunk of chunks) {
-        yield tracked(chunk.chunkIndex.toString(), { text: chunk.text });
-        lastChunkIndex = chunk.chunkIndex;
+        yield tracked(chunk.index.toString(), {
+          type: "chunk",
+          chunk: {
+            text: chunk.text,
+          },
+        } satisfies MessageChunkReceiveData);
+        lastIndex = chunk.index;
       }
 
       while (true) {
@@ -106,30 +113,43 @@ export class MessageChunkService {
         if (input) {
           const { status } = input;
           if (status === "completed") {
+            let usageLimit: UserUsageLimit | null = null;
+            try {
+              usageLimit = await this.service.userUsageLimit.get(userId);
+            } catch (e) {
+              console.error("User usage limit getting failed. userId:", userId);
+            }
+
+            yield tracked("usageLimit", {
+              type: "usageLimit",
+              usageLimit,
+            } satisfies MessageChunkReceiveData);
             return;
           }
 
-          const { chunkIndex } = input;
-          if (chunkIndex > lastChunkIndex) {
-            const chunk =
-              await this.service.db.chatMessageChunk.findUniqueOrThrow({
-                where: {
-                  chatMessage: {
-                    chat: {
-                      userId,
-                      deletedAt: null,
-                    },
-                  },
-                  chatMessageId_chunkIndex: {
-                    chatMessageId: messageId,
-                    chunkIndex,
+          const { index } = input;
+          if (index > lastIndex) {
+            const chunk = await this.service.db.messageChunk.findUniqueOrThrow({
+              where: {
+                message: {
+                  chat: {
+                    userId,
+                    deletedAt: null,
                   },
                 },
-                select: ChatMessageChunkSelect,
-              });
+                messageId_index: {
+                  messageId,
+                  index,
+                },
+              },
+              select: MessageChunkSelect,
+            });
 
-            yield tracked(chunkIndex.toString(), chunk);
-            lastChunkIndex = chunkIndex;
+            yield tracked(index.toString(), {
+              type: "chunk",
+              chunk,
+            } satisfies MessageChunkReceiveData);
+            lastIndex = index;
           }
         } else {
           if (
