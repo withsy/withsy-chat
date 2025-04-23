@@ -16,10 +16,22 @@ export class UserUsageLimitService {
   constructor(private readonly service: ServiceRegistry) {}
 
   async get(userId: UserId) {
-    const res = await this.service.db.userUsageLimit.findFirstOrThrow({
-      where: { userId },
-      select: UserUsageLimitSelect,
+    const res = await this.service.db.$transaction(async (tx) => {
+      const usageLimit = await tx.userUsageLimit.findFirstOrThrow({
+        where: { userId },
+        select: { id: true, ...UserUsageLimitSelect },
+      });
+
+      const now = new Date();
+      UserUsageLimitService.resetIfExpired(usageLimit, now);
+      await tx.userUsageLimit.update({
+        where: { id: usageLimit.id },
+        data: usageLimit,
+      });
+
+      return usageLimit;
     });
+
     return res;
   }
 
@@ -72,11 +84,16 @@ export class UserUsageLimitService {
       throw UserUsageLimitService.createDailyLimitError(usageLimit);
 
     usageLimit.dailyRemaining -= 1;
+    if (usageLimit.dailyRemaining === 0)
+      usageLimit.dailyResetAt = UserUsageLimitService.calculateDailyLimit(now);
 
     if (usageLimit.minuteRemaining < 1)
       throw UserUsageLimitService.createMinuteLimitError(usageLimit);
 
     usageLimit.minuteRemaining -= 1;
+    if (usageLimit.minuteRemaining === 0)
+      usageLimit.minuteResetAt =
+        UserUsageLimitService.calculateMinuteLimit(now);
 
     await tx.userUsageLimit.update({
       where: { id: usageLimit.id },
@@ -118,17 +135,17 @@ export class UserUsageLimitService {
 
   static resetIfExpired(usageLimit: UserUsageLimit, now: Date) {
     if (usageLimit.dailyResetAt < now) {
-      usageLimit = {
-        ...usageLimit,
-        ...UserUsageLimitService.getDailyLimit(now),
-      };
+      const { dailyRemaining, dailyResetAt } =
+        UserUsageLimitService.getDailyLimit(now);
+      usageLimit.dailyRemaining = dailyRemaining;
+      usageLimit.dailyResetAt = dailyResetAt;
     }
 
     if (usageLimit.minuteResetAt < now) {
-      usageLimit = {
-        ...usageLimit,
-        ...UserUsageLimitService.getMinuteLimit(now),
-      };
+      const { minuteRemaining, minuteResetAt } =
+        UserUsageLimitService.getMinuteLimit(now);
+      usageLimit.minuteRemaining = minuteRemaining;
+      usageLimit.minuteResetAt = minuteResetAt;
     }
   }
 
