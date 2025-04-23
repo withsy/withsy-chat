@@ -11,9 +11,12 @@ import { cn } from "@/lib/utils";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 import {
   BookText,
+  Image,
   LogOut,
+  MailOpen,
   Palette,
   Settings,
+  SquareTerminal,
   type LucideIcon,
 } from "lucide-react";
 import { signOut } from "next-auth/react";
@@ -72,13 +75,18 @@ export default function UserDropdownMenu() {
   const [themeModalOpen, setThemeModalOpen] = useState(false);
 
   const userMenuItems: MenuItem[] = [
-    { icon: BookText, label: "Guide" },
+    { icon: Image, label: "Models" },
+    { icon: SquareTerminal, label: "Prompts" },
     {
       icon: Palette,
       label: "Theme",
       onClick: () => setThemeModalOpen(true),
     },
     { icon: Settings, label: "Settings" },
+    "separator",
+    { icon: BookText, label: "Guide" },
+    { icon: MailOpen, label: "Contact" },
+    "separator",
     {
       icon: LogOut,
       label: "Log out",
