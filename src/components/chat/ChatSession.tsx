@@ -1,3 +1,4 @@
+import { RegenerateProvider } from "@/context/RegenerateContext";
 import { useUser } from "@/context/UserContext";
 import { trpc } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
@@ -8,7 +9,7 @@ import { Chat } from "@/types/chat";
 import { MessageId, type Message } from "@/types/message";
 import { skipToken } from "@tanstack/react-query";
 import { useRouter } from "next/router";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { v4 as uuid } from "uuid";
 import { ChatDrawer } from "./ChatDrawer";
@@ -31,13 +32,12 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
   const { userPrefs } = useUser();
   const [messages, setMessages] = useState(initialMessages);
   const [streamMessageId, setStreamMessageId] = useState<string | null>(null);
+  const [shouldFocusInput, setShouldFocusInput] = useState(false);
   const stableChat = useMemo(() => chat, [chat]);
 
-  const { openDrawer, setOpenDrawer } = useDrawerStore();
+  const { openDrawer } = useDrawerStore();
 
   const utils = trpc.useUtils();
-
-  const shouldAutoScrollRef = useRef(true);
 
   const chatStart = trpc.chat.start.useMutation();
   const messageSend = trpc.message.send.useMutation();
@@ -47,11 +47,13 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
   }, [chat, initialMessages]);
 
   useEffect(() => {
-    shouldAutoScrollRef.current = true;
+    setShouldFocusInput(true);
+    const timer = setTimeout(() => setShouldFocusInput(false), 500);
+    return () => clearTimeout(timer);
   }, [chat?.id]);
 
   useEffect(() => {
-    if (messageId && messageId !== "last") {
+    if (messageId) {
       setStreamMessageId(MessageId.parse(messageId));
     }
   }, [messageId]);
@@ -95,7 +97,6 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
 
   const onSendMessage = (message: string) => {
     if (chat != null) {
-      shouldAutoScrollRef.current = true;
       messageSend.mutate(
         {
           chatId: chat.id,
@@ -119,7 +120,6 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
         }
       );
     } else {
-      shouldAutoScrollRef.current = true;
       chatStart.mutate(
         { text: message, model: selectedModel, idempotencyKey: uuid() },
         {
@@ -137,8 +137,6 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
   const messageUpdate = trpc.message.update.useMutation();
 
   const handleToggleSaved = (id: string, newValue: boolean) => {
-    shouldAutoScrollRef.current = false;
-
     messageUpdate.mutate(
       { messageId: id, isBookmarked: newValue },
       {
@@ -168,6 +166,12 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
     );
   };
 
+  const handleRegenerateSuccess = (newMessage: Message) => {
+    setMessages((prev) => [...prev, newMessage]);
+    setStreamMessageId(newMessage.id);
+    utils.chat.list.invalidate();
+  };
+
   const savedMessages = useMemo(
     () => messages.filter((msg) => msg.isBookmarked),
     [messages]
@@ -191,17 +195,24 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
           )}
         >
           {(chat || messages.length > 0) && (
-            <ChatMessageList
-              chat={stableChat}
-              messages={messages}
-              onToggleSaved={handleToggleSaved}
-              shouldAutoScrollRef={shouldAutoScrollRef}
-            />
+            <RegenerateProvider onRegenerateSuccess={handleRegenerateSuccess}>
+              <ChatMessageList
+                chat={stableChat}
+                messages={messages}
+                onToggleSaved={handleToggleSaved}
+              />
+            </RegenerateProvider>
           )}
           {children}
         </div>
-        <div className="absolute bottom-[2vh] left-0 right-0 flex justify-center px-4">
-          <ChatInputBox onSendMessage={onSendMessage} />
+        <div className="absolute bottom-[2vh] left-0 right-0 flex flex-col items-center justify-center px-4">
+          <ChatInputBox
+            onSendMessage={onSendMessage}
+            shouldFocus={shouldFocusInput}
+          />
+          <div className="text-xs text-gray-500 mt-1">
+            AI can make mistakes — please double-check.
+          </div>
         </div>
       </div>
       <ChatDrawer chat={chat} savedMessages={savedMessages} />

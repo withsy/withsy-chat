@@ -206,7 +206,7 @@ function Branches({
             <div
               key={x.id}
               className="flex gap-2 p-3 items-center select-none border shadow-xs hover:bg-gray-100 hover:font-semibold active:bg-gray-100 active:font-semibold"
-              onClick={() => router.push(`/chat/${x.id}?messageId=last`)}
+              onClick={() => router.push(`/chat/${x.id}`)}
               style={{
                 borderRadius: 10,
               }}

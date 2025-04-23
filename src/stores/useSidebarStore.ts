@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { subscribeWithSelector } from "zustand/middleware";
 
 type SidebarState = {
   collapsed: boolean;
@@ -10,12 +11,14 @@ type SidebarState = {
   setHydrated: (value: boolean) => void;
 };
 
-export const useSidebarStore = create<SidebarState>((set) => ({
-  collapsed: true,
-  hydrated: false,
-  isMobile: false,
-  toggle: () => set((state) => ({ collapsed: !state.collapsed })),
-  setCollapsed: (value) => set({ collapsed: value }),
-  setIsMobile: (value) => set({ isMobile: value }),
-  setHydrated: (value) => set({ hydrated: value }),
-}));
+export const useSidebarStore = create(
+  subscribeWithSelector<SidebarState>((set) => ({
+    collapsed: true,
+    hydrated: false,
+    isMobile: false,
+    toggle: () => set((state) => ({ collapsed: !state.collapsed })),
+    setCollapsed: (value) => set({ collapsed: value }),
+    setIsMobile: (value) => set({ isMobile: value }),
+    setHydrated: (value) => set({ hydrated: value }),
+  }))
+);

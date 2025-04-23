@@ -5,6 +5,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useRegenerate } from "@/context/RegenerateContext";
 import { useUser } from "@/context/UserContext";
 import { trpc } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
@@ -33,6 +34,8 @@ export const ChatBubbleTooltips: React.FC<ChatBubbleTooltipsProps> = ({
   onSave,
   className,
 }) => {
+  const { onRegenerateSuccess } = useRegenerate();
+
   const router = useRouter();
 
   const { userPrefs } = useUser();
@@ -47,7 +50,7 @@ export const ChatBubbleTooltips: React.FC<ChatBubbleTooltipsProps> = ({
 
   const messageReplyRegenerate = trpc.messageReply.regenerate.useMutation({
     onSuccess(data) {
-      // TODO: need to handle on chat session.
+      onRegenerateSuccess(data);
     },
   });
   const utils = trpc.useUtils();
