@@ -1,6 +1,12 @@
 import { ConfirmDeleteModal } from "@/components/modal/ConfirmDeleteModal";
 import { Button } from "@/components/ui/button";
 import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -214,47 +220,91 @@ export function SidebarChatItem({
               ? chat.title
               : (() => {
                   const limit = isMobile ? 10 : 20;
-                  return chat.title.length > limit
-                    ? `${chat.title.slice(0, limit)}...`
-                    : chat.title;
+                  const title =
+                    chat.title.length > limit
+                      ? `${chat.title.slice(0, limit)}...`
+                      : chat.title;
+                  return title;
                 })()}
           </span>
         )}
       </div>
 
-      <DropdownMenu onOpenChange={(open) => setIsDropdownOpen(open)}>
-        <DropdownMenuTrigger asChild>
-          {!editMode && (
+      {!editMode &&
+        (isMobile ? (
+          <>
             <Button
               variant="ghost"
               size="icon"
               className="h-5 w-5 p-0 transition-opacity bg-transparent hover:bg-transparent"
-              onClick={(e) => e.stopPropagation()}
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsDropdownOpen(true);
+              }}
             >
               <EllipsisVertical size={14} />
             </Button>
-          )}
-        </DropdownMenuTrigger>
-        <DropdownMenuContent
-          side="bottom"
-          align="start"
-          className="z-[9999]"
-          sideOffset={4}
-        >
-          {dropdownItems.map(
-            ({ label, icon: Icon, className, iconClass, onClick }) => (
-              <DropdownItem
-                key={label}
-                label={label}
-                Icon={Icon}
-                onClick={onClick}
-                className={className}
-                iconClass={iconClass}
-              />
-            )
-          )}
-        </DropdownMenuContent>
-      </DropdownMenu>
+            <Dialog open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
+              <DialogContent className="w-[90%] max-w-xs">
+                <DialogHeader>
+                  <DialogTitle>Chat Options</DialogTitle>
+                </DialogHeader>
+                <div className="flex flex-col gap-2">
+                  {dropdownItems.map(
+                    ({ label, icon: Icon, onClick, className, iconClass }) => (
+                      <button
+                        key={label}
+                        onClick={(e) => {
+                          onClick(e);
+                          setIsDropdownOpen(false);
+                        }}
+                        className={`flex items-center px-3 py-2 rounded-md text-left hover:bg-gray-100 ${
+                          className ?? ""
+                        }`}
+                      >
+                        <Icon size={16} className={`mr-2 ${iconClass ?? ""}`} />
+                        {label}
+                      </button>
+                    )
+                  )}
+                </div>
+              </DialogContent>
+            </Dialog>
+          </>
+        ) : (
+          <DropdownMenu onOpenChange={(open) => setIsDropdownOpen(open)}>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-5 w-5 p-0 transition-opacity bg-transparent hover:bg-transparent"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <EllipsisVertical size={14} />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              side="bottom"
+              align="start"
+              className="z-[9999]"
+              sideOffset={4}
+            >
+              {dropdownItems.map(
+                ({ label, icon: Icon, className, iconClass, onClick }) => (
+                  <DropdownItem
+                    key={label}
+                    label={label}
+                    Icon={Icon}
+                    onClick={onClick}
+                    className={className}
+                    iconClass={iconClass}
+                  />
+                )
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ))}
+
       {showDeleteModal && (
         <ConfirmDeleteModal
           open={showDeleteModal}
