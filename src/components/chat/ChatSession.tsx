@@ -7,6 +7,7 @@ import { useSelectedModelStore } from "@/stores/useSelectedModelStore";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 import { Chat, ChatStartError } from "@/types/chat";
 import { MessageId, MessageSendError, type Message } from "@/types/message";
+import type { UserUsageLimit } from "@/types/user-usage-limit";
 import { skipToken } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { useEffect, useMemo, useState } from "react";
@@ -32,19 +33,47 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
   const [messages, setMessages] = useState(initialMessages);
   const [streamMessageId, setStreamMessageId] = useState<string | null>(null);
   const [shouldFocusInput, setShouldFocusInput] = useState(false);
+  const [usageLimit, setUsageLimit] = useState<UserUsageLimit | null>(null);
   const stableChat = useMemo(() => chat, [chat]);
 
   const { openDrawer } = useDrawerStore();
 
   const utils = trpc.useUtils();
 
+  const handleRateLimitError = (data: any) => {
+    console.log("in??", data);
+    if (!data) return;
+
+    setUsageLimit((prev) => {
+      if (data.type === "rate-limit-daily") {
+        return {
+          ...prev,
+          dailyRemaining: data.dailyRemaining,
+          dailyResetAt: new Date(data.dailyResetAt),
+          minuteRemaining: prev?.minuteRemaining ?? Infinity,
+          minuteResetAt: prev?.minuteResetAt ?? new Date(0),
+        };
+      } else if (data.type === "rate-limit-minute") {
+        return {
+          ...prev,
+          minuteRemaining: data.minuteRemaining,
+          minuteResetAt: new Date(data.minuteResetAt),
+          dailyRemaining: prev?.dailyRemaining ?? Infinity,
+          dailyResetAt: prev?.dailyResetAt ?? new Date(0),
+        };
+      }
+      return prev;
+    });
+    console.log("updated?", usageLimit);
+  };
+
   const chatStart = trpc.chat.start.useMutation({
     onError(error) {
       const res = ChatStartError.safeParse(error.data);
-      // console.error("TODO: handle error data:", res.data);
-      toast.error(
-        `Chat starting failed. error data: ${JSON.stringify(res.data)}`
-      );
+      if (res.success && res.data?.type?.startsWith("rate-limit")) {
+        handleRateLimitError(res.data);
+      }
+      toast.error(`Chat starting failed.`);
     },
     onSuccess(data) {
       utils.chat.list.invalidate();
@@ -57,10 +86,10 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
   const messageSend = trpc.message.send.useMutation({
     onError(error) {
       const res = MessageSendError.safeParse(error.data);
-      // console.error("TODO: handle error data:", res.data);
-      toast.error(
-        `Message sending failed. error data: ${JSON.stringify(res.data)}`
-      );
+      if (res.success && res.data?.type?.startsWith("rate-limit")) {
+        handleRateLimitError(res.data);
+      }
+      toast.error(`Message sending failed.`);
     },
     onSuccess(data) {
       setMessages((prev) => [...prev, data.userMessage, data.modelMessage]);
@@ -135,12 +164,12 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
         } else if (data.data.type === "usageLimit") {
           const usageLimit = data.data.usageLimit;
           if (usageLimit) {
-            // console.error("TODO: handle usage limit:", usageLimit);
-            toast.error(
-              `Message chunk receiving completed. usage limit: ${JSON.stringify(
-                usageLimit
-              )}`
-            );
+            setUsageLimit(usageLimit);
+            // toast.error(
+            //   `Message chunk receiving completed. usage limit: ${JSON.stringify(
+            //     usageLimit
+            //   )}`
+            // );
           }
         }
       },
@@ -239,6 +268,7 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
           <ChatInputBox
             onSendMessage={onSendMessage}
             shouldFocus={shouldFocusInput}
+            usageLimit={usageLimit}
           />
           <div className="text-xs text-gray-500 mt-1">
             AI can make mistakes — please double-check.
