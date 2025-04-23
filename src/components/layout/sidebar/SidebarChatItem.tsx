@@ -12,6 +12,7 @@ import { useDrawerStore } from "@/stores/useDrawerStore";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 import type { Chat } from "@/types/chat";
 import {
+  Archive,
   EllipsisVertical,
   FolderRoot,
   GitBranch,
@@ -66,6 +67,7 @@ export function SidebarChatItem({
     isDropdownOpen ? "opacity-0" : "group-hover:opacity-0"
   }`;
   const mobileClassName = isMobile ? "py-3" : "py-2";
+  const dropdownItemClassName = isMobile ? "text-lg py-2" : "";
 
   const handleLinkClick = () => {
     if (editMode || (isActive && isMobile)) {
@@ -120,13 +122,13 @@ export function SidebarChatItem({
     {
       label: chat.isStarred ? "StarOff" : "Star",
       icon: chat.isStarred ? StarOff : Star,
-      className: isMobile ? "text-lg py-2" : "",
+      className: dropdownItemClassName,
       onClick: handleToggleStar,
     },
     {
       label: "Rename",
       icon: Pencil,
-      className: isMobile ? "text-lg py-2" : "",
+      className: dropdownItemClassName,
       onClick: (e: React.MouseEvent) => {
         e.stopPropagation();
         setEditMode(true);
@@ -134,9 +136,17 @@ export function SidebarChatItem({
       },
     },
     {
+      label: "Archive",
+      icon: Archive,
+      className: dropdownItemClassName,
+      onClick: (e: React.MouseEvent) => {
+        e.stopPropagation();
+      },
+    },
+    {
       label: "Delete",
       icon: Trash2,
-      className: `text-red-500 ${isMobile ? "text-lg py-2" : ""}`,
+      className: `text-red-500 ${dropdownItemClassName}`,
       iconClass: "text-red-500",
       onClick: (e: React.MouseEvent) => {
         e.stopPropagation();
