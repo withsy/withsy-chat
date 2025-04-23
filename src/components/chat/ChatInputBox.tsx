@@ -1,25 +1,37 @@
 import { useUser } from "@/context/UserContext";
 import { cn } from "@/lib/utils";
 import { Send } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import TextareaAutosize from "react-textarea-autosize";
 import { ModelSelect } from "./ModelSelect";
 
 type Props = {
   onSendMessage: (message: string) => void;
+  shouldFocus?: boolean;
 };
 
-export function ChatInputBox({ onSendMessage }: Props) {
+export function ChatInputBox({ onSendMessage, shouldFocus = false }: Props) {
   const { userPrefs } = useUser();
   const [message, setMessage] = useState("");
   const [isComposing, setIsComposing] = useState(false);
 
   const enterToSend = userPrefs["enterToSend"];
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const inputBoxClass = cn(
     "relative max-w-screen-md w-full px-4 py-3 border rounded-xl bg-white",
     "transition-all"
   );
+
+  useEffect(() => {
+    textareaRef.current?.focus();
+  }, []);
+
+  useEffect(() => {
+    if (shouldFocus) {
+      textareaRef.current?.focus();
+    }
+  }, [shouldFocus]);
 
   const handleSend = () => {
     if (!message.trim()) return;
@@ -48,6 +60,7 @@ export function ChatInputBox({ onSendMessage }: Props) {
         <ModelSelect />
       </div>
       <TextareaAutosize
+        ref={textareaRef}
         value={message}
         onChange={(e) => setMessage(e.target.value)}
         onKeyDown={handleKeyDown}

@@ -32,6 +32,7 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
   const { userPrefs } = useUser();
   const [messages, setMessages] = useState(initialMessages);
   const [streamMessageId, setStreamMessageId] = useState<number | null>(null);
+  const [shouldFocusInput, setShouldFocusInput] = useState(false);
   const stableChat = useMemo(() => chat, [chat]);
 
   const { openDrawer } = useDrawerStore();
@@ -44,6 +45,12 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
   useEffect(() => {
     setMessages(initialMessages);
   }, [chat, initialMessages]);
+
+  useEffect(() => {
+    setShouldFocusInput(true);
+    const timer = setTimeout(() => setShouldFocusInput(false), 500);
+    return () => clearTimeout(timer);
+  }, [chat?.id]);
 
   useEffect(() => {
     if (messageId) {
@@ -200,7 +207,10 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
           {children}
         </div>
         <div className="absolute bottom-[2vh] left-0 right-0 flex flex-col items-center justify-center px-4">
-          <ChatInputBox onSendMessage={onSendMessage} />
+          <ChatInputBox
+            onSendMessage={onSendMessage}
+            shouldFocus={shouldFocusInput}
+          />
           <div className="text-xs text-gray-500 mt-1">
             AI can make mistakes — please double-check
           </div>
