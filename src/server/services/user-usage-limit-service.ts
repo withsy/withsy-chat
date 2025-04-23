@@ -105,9 +105,10 @@ export class UserUsageLimitService {
   static async lock(tx: Tx, input: { userId: UserId }) {
     const { userId } = input;
     const affected = await tx.$executeRaw`
-      SELECT id FROM user_usage_limits FOR UPDATE
+      SELECT id FROM user_usage_limits
       WHERE user_id = ${userId} ::uuid
-      LIMIT 1;
+      LIMIT 1
+      FOR UPDATE;
     `;
     if (affected === 0)
       throw new HttpServerError(StatusCodes.NOT_FOUND, `User not found.`);
