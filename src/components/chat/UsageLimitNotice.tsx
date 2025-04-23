@@ -42,8 +42,17 @@ const buildMessage = (
             (until {data.resetAt.toLocaleString()})
           </span>
           .
+          {data.minutesLeft && data.minutesLeft <= 1 && (
+            <button
+              onClick={() => window.location.reload()}
+              className="ml-2 inline-block rounded py-0.5 text-xs underline hover:bg-gray-200"
+            >
+              Refresh
+            </button>
+          )}
         </>
       );
+
     case "low":
       return (
         <>
