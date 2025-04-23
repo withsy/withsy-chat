@@ -95,9 +95,9 @@ export function ChatInputBox({
           {usageLimit && (
             <UsageLimitNotice
               dailyRemaining={usageLimit.dailyRemaining}
-              dailyResetAt={new Date(usageLimit.dailyResetAt)}
+              dailyResetAt={usageLimit.dailyResetAt}
               minuteRemaining={usageLimit.minuteRemaining}
-              minuteResetAt={new Date(usageLimit.minuteResetAt)}
+              minuteResetAt={usageLimit.minuteResetAt}
               themeColor={userPrefs.themeColor}
             />
           )}

@@ -12,7 +12,7 @@
     "db:reset": "psql -h 127.0.0.1 -U postgres -f dev/reset.sql",
     "db:seed": "psql -h 127.0.0.1 -U postgres -f dev/seed.sql",
     "db:setup": "npm run db:reset && npm run db:migrate && npm run db:seed && npm run build:prisma",
-    "dev": "next dev --turbopack",
+    "dev": "TZ=UTC next dev --turbopack",
     "lint": "next lint",
     "start": "next start",
     "typecheck": "tsc"
