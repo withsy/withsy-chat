@@ -13,7 +13,9 @@ import type { Prisma } from "@prisma/client";
 import { match } from "ts-pattern";
 import type { Simplify } from "type-fest";
 import type { ServiceRegistry } from "../service-registry";
+import { MessageService } from "./message-service";
 import { notify } from "./pg";
+import { UserUsageLimitService } from "./user-usage-limit-service";
 
 export type ValidatedModelMessage = Simplify<
   Omit<Message, "model"> & {
@@ -104,9 +106,12 @@ export class ModelRouteService {
       });
     } catch (e) {
       console.error("Send chat to ai failed. error:", e);
-      await this.service.message.tryTransitProcessingToFailed({
-        userId,
-        messageId: modelMessageId,
+      await this.service.db.$transaction(async (tx) => {
+        await MessageService.tryTransitProcessingToFailed(tx, {
+          userId,
+          messageId: modelMessageId,
+        });
+        await UserUsageLimitService.lockAndCompensate(tx, { userId });
       });
     } finally {
       await notify(this.service.pgPool, "message_chunk_created", {

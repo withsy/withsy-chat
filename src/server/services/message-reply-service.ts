@@ -17,7 +17,7 @@ export class MessageReplyService {
     const { userMessage, modelMessage } = await this.service.db.$transaction(
       async (tx) => {
         await IdempotencyInfoService.checkDuplicateRequest(tx, idempotencyKey);
-        await UserUsageLimitService.acquireAndCheck(tx, { userId });
+        await UserUsageLimitService.lockAndCheck(tx, { userId });
         const oldModelMessage = await tx.message.findUniqueOrThrow({
           where: {
             chat: {
@@ -73,7 +73,7 @@ export class MessageReplyService {
       modelMessageId: modelMessage.id,
     });
 
-    await UserUsageLimitService.acquireAndDeduct(this.service.db, { userId });
+    await UserUsageLimitService.lockAndDecrease(this.service.db, { userId });
 
     return modelMessage;
   }

@@ -312,12 +312,15 @@ export class MessageService {
     });
   }
 
-  async tryTransitProcessingToFailed(input: {
-    userId: UserId;
-    messageId: MessageId;
-  }) {
+  static async tryTransitProcessingToFailed(
+    tx: Tx,
+    input: {
+      userId: UserId;
+      messageId: MessageId;
+    }
+  ) {
     const { userId, messageId } = input;
-    const res = await MessageService.transit(this.service.db, {
+    const res = await MessageService.transit(tx, {
       userId,
       messageId,
       expectStatus: "processing",
@@ -353,7 +356,7 @@ export class MessageService {
 
     await this.service.db.$transaction(async (tx) => {
       await IdempotencyInfoService.checkDuplicateRequest(tx, idempotencyKey);
-      await UserUsageLimitService.acquireAndCheck(tx, { userId });
+      await UserUsageLimitService.lockAndCheck(tx, { userId });
     });
 
     const { fileInfos } = await this.service.s3.uploads(userId, { files });
@@ -376,7 +379,7 @@ export class MessageService {
       modelMessageId: modelMessage.id,
     });
 
-    await UserUsageLimitService.acquireAndDeduct(this.service.db, { userId });
+    await UserUsageLimitService.lockAndDecrease(this.service.db, { userId });
 
     return {
       userMessage,

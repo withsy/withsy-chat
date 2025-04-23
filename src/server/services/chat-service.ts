@@ -6,9 +6,7 @@ import {
   ChatUpdate,
 } from "@/types/chat";
 import { UserId } from "@/types/user";
-import { StatusCodes } from "http-status-codes";
 import { uuidv7 } from "uuidv7";
-import { HttpServerError } from "../error";
 import type { ServiceRegistry } from "../service-registry";
 import type { Tx } from "./db";
 import { IdempotencyInfoService } from "./idempotency-info-service";
@@ -92,7 +90,7 @@ export class ChatService {
 
     await this.service.db.$transaction(async (tx) => {
       await IdempotencyInfoService.checkDuplicateRequest(tx, idempotencyKey);
-      await UserUsageLimitService.acquireAndCheck(tx, { userId });
+      await UserUsageLimitService.lockAndCheck(tx, { userId });
     });
 
     const { fileInfos } = await this.service.s3.uploads(userId, { files });
@@ -119,7 +117,7 @@ export class ChatService {
       modelMessageId: modelMessage.id,
     });
 
-    await UserUsageLimitService.acquireAndDeduct(this.service.db, { userId });
+    await UserUsageLimitService.lockAndDecrease(this.service.db, { userId });
 
     return {
       chat,

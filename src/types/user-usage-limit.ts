@@ -3,20 +3,16 @@ import { z } from "zod";
 import type { zInfer } from "./common";
 
 export const UserUsageLimitSelect = {
-  dailyLimit: true,
-  dailyUsed: true,
+  dailyRemaining: true,
   dailyResetAt: true,
-  minuteLimit: true,
-  minuteUsed: true,
+  minuteRemaining: true,
   minuteResetAt: true,
 } satisfies Prisma.UserUsageLimitSelect;
 
 export const UserUsageLimitSchema = z.object({
-  dailyLimit: z.number().int(),
-  dailyUsed: z.number().int(),
+  dailyRemaining: z.number().int(),
   dailyResetAt: z.date(),
-  minuteLimit: z.number().int(),
-  minuteUsed: z.number().int(),
+  minuteRemaining: z.number().int(),
   minuteResetAt: z.date(),
 });
 export type UserUsageLimitSchema = zInfer<typeof UserUsageLimitSchema>;
@@ -27,3 +23,9 @@ const _ = {} satisfies Omit<
 
 export const UserUsageLimit = UserUsageLimitSchema.extend({});
 export type UserUsageLimit = zInfer<typeof UserUsageLimit>;
+
+// TODO: Add usage limiting feature per model.
+export const rateLimitRpm = 15; // requests per minute
+// export const rateLimitRpd = 10; // requests per day
+export const rateLimitRpd = 1; // TEST
+export const rateLimitTpm = 0; // tokens per minute, NOT used.
