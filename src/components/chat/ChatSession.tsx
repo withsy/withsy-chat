@@ -39,38 +39,13 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
   const { openDrawer } = useDrawerStore();
 
   const utils = trpc.useUtils();
-
-  const handleRateLimitError = (data: any) => {
-    if (!data) return;
-
-    setUsageLimit((prev) => {
-      if (data.type === "rate-limit-daily") {
-        return {
-          ...prev,
-          dailyRemaining: data.dailyRemaining,
-          dailyResetAt: new Date(data.dailyResetAt),
-          minuteRemaining: prev?.minuteRemaining ?? Infinity,
-          minuteResetAt: prev?.minuteResetAt ?? new Date(0),
-        };
-      } else if (data.type === "rate-limit-minute") {
-        return {
-          ...prev,
-          minuteRemaining: data.minuteRemaining,
-          minuteResetAt: new Date(data.minuteResetAt),
-          dailyRemaining: prev?.dailyRemaining ?? Infinity,
-          dailyResetAt: prev?.dailyResetAt ?? new Date(0),
-        };
-      }
-      return prev;
-    });
-  };
+  const usageQuery = trpc.userUsageLimit.get.useQuery(undefined, {
+    enabled: !!chat?.id,
+  });
 
   const chatStart = trpc.chat.start.useMutation({
     onError(error) {
       const res = ChatStartError.safeParse(error.data);
-      if (res.success && res.data?.type?.startsWith("rate-limit")) {
-        handleRateLimitError(res.data);
-      }
       toast.error(`Chat starting failed.`);
     },
     onSuccess(data) {
@@ -84,9 +59,6 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
   const messageSend = trpc.message.send.useMutation({
     onError(error) {
       const res = MessageSendError.safeParse(error.data);
-      if (res.success && res.data?.type?.startsWith("rate-limit")) {
-        handleRateLimitError(res.data);
-      }
       toast.error(`Message sending failed.`);
     },
     onSuccess(data) {
@@ -112,6 +84,12 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
       setStreamMessageId(MessageId.parse(streamMessageId));
     }
   }, [router.query.streamMessageId]);
+
+  useEffect(() => {
+    if (usageQuery.isSuccess && usageQuery.data) {
+      setUsageLimit(usageQuery.data);
+    }
+  }, [chat?.id, usageQuery.isSuccess, usageQuery.data]);
 
   const _messageChunkReceive = trpc.messageChunk.receive.useSubscription(
     streamMessageId != null ? { messageId: streamMessageId } : skipToken,
@@ -163,11 +141,6 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
           const usageLimit = data.data.usageLimit;
           if (usageLimit) {
             setUsageLimit(usageLimit);
-            // toast.error(
-            //   `Message chunk receiving completed. usage limit: ${JSON.stringify(
-            //     usageLimit
-            //   )}`
-            // );
           }
         }
       },

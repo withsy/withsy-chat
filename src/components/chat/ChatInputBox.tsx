@@ -5,6 +5,7 @@ import { Send } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import TextareaAutosize from "react-textarea-autosize";
 import { ModelSelect } from "./ModelSelect";
+import { UsageLimitNotice } from "./UsageLimitNotice";
 
 type Props = {
   onSendMessage: (message: string) => void;
@@ -92,21 +93,13 @@ export function ChatInputBox({
       <div className="absolute bottom-2 left-4 right-4 flex items-center justify-between">
         <div>
           {usageLimit && (
-            <span
-              className="select-none text-xs text-gray-500"
-              style={{ color: `rgb(${userPrefs.themeColor})` }}
-            >
-              {usageLimit.dailyRemaining <= 3 &&
-                (usageLimit.dailyRemaining > 0
-                  ? `Remaining uses today: ${
-                      usageLimit.dailyRemaining
-                    } (Resets at ${new Date(
-                      usageLimit.dailyResetAt
-                    ).toLocaleTimeString()})`
-                  : `No remaining uses today. Please wait until ${new Date(
-                      usageLimit.dailyResetAt
-                    ).toLocaleTimeString()} to continue.`)}
-            </span>
+            <UsageLimitNotice
+              dailyRemaining={usageLimit.dailyRemaining}
+              dailyResetAt={new Date(usageLimit.dailyResetAt)}
+              minuteRemaining={usageLimit.minuteRemaining}
+              minuteResetAt={new Date(usageLimit.minuteResetAt)}
+              themeColor={userPrefs.themeColor}
+            />
           )}
         </div>
         <button
