@@ -7,6 +7,7 @@ import { CollapseToggle } from "../CollapseToggle";
 import { MarkdownBox } from "../MarkdownBox";
 import { ModelAvatar } from "../ModelAvatar";
 import { ChatBubbleTooltips } from "./ChatBubbleTooltips";
+import { StatusIndicator } from "./StatusIndicator";
 
 type Props = {
   message: ChatMessage;
@@ -15,7 +16,7 @@ type Props = {
 
 const ChatBubbleComponent = ({ message, onToggleSaved }: Props) => {
   const { userSession } = useUser();
-  const { role, text: rawText, status: _ } = message;
+  const { role, text: rawText, status } = message;
   // TODO: handle status. streaming (pending, processing) or completed (succeeded, failed)
 
   const text = rawText ?? "";
@@ -79,6 +80,7 @@ const ChatBubbleComponent = ({ message, onToggleSaved }: Props) => {
           )}
         >
           <MarkdownBox content={displayedText} />
+          <StatusIndicator status={status} />
         </div>
         <div className="flex justify-between w-full mt-2">
           <ChatBubbleTooltips
@@ -90,7 +92,7 @@ const ChatBubbleComponent = ({ message, onToggleSaved }: Props) => {
             onSave={handleSave}
           />
           <CollapseToggle
-            show={isLongMessage}
+            show={isLongMessage && status == "succeeded"}
             collapsed={collapsed}
             setCollapsed={setCollapsed}
           />
