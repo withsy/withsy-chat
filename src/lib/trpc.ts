@@ -26,7 +26,9 @@ export const trpc = createTRPCNext<AppRouter>({
   config() {
     return {
       links: [
-        process.env.NODE_ENV !== "production" ? loggerLink() : null,
+        loggerLink({
+          enabled: () => process.env.NODE_ENV !== "production",
+        }),
         splitLink({
           condition: (op) => op.type === "subscription",
           true: httpSubscriptionLink({
@@ -38,7 +40,7 @@ export const trpc = createTRPCNext<AppRouter>({
             url: getUrl(),
           }),
         }),
-      ].filter((x) => x != null),
+      ],
     };
   },
   ssr: false,

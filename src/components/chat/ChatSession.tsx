@@ -83,7 +83,7 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
     if (streamMessageId) {
       setStreamMessageId(MessageId.parse(streamMessageId));
     }
-  }, [router.query.streamMessageId]);
+  }, [router.query, router.query.streamMessageId]);
 
   useEffect(() => {
     if (usageQuery.isSuccess && usageQuery.data) {
