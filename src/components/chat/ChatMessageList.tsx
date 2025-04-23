@@ -1,6 +1,6 @@
 import { useUser } from "@/context/UserContext";
 import type { Chat } from "@/types/chat";
-import { MessageId, type Message } from "@/types/message";
+import { type Message } from "@/types/message";
 import { ChevronsDown } from "lucide-react";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
