@@ -18,7 +18,6 @@ import { useDrawerStore } from "@/stores/useDrawerStore";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 import type { Chat } from "@/types/chat";
 import {
-  Archive,
   EllipsisVertical,
   FolderRoot,
   GitBranch,
@@ -139,14 +138,6 @@ export function SidebarChatItem({
         e.stopPropagation();
         setEditMode(true);
         setIsDropdownOpen(false);
-      },
-    },
-    {
-      label: "Archive",
-      icon: Archive,
-      className: dropdownItemClassName,
-      onClick: (e: React.MouseEvent) => {
-        e.stopPropagation();
       },
     },
     {

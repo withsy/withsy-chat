@@ -5,7 +5,7 @@ import { formatDateLabel, toNewest } from "@/lib/date-utils";
 import { trpc } from "@/lib/trpc";
 import type { Chat } from "@/types/chat";
 import { skipToken } from "@tanstack/react-query";
-import { Archive, Bookmark } from "lucide-react";
+import { Bookmark } from "lucide-react";
 import { useEffect, useState } from "react";
 import { SidebarChatItem } from "./SidebarChatItem";
 import { SidebarTooltip } from "./SidebarTooltip";
@@ -80,13 +80,6 @@ export default function SidebarChatList() {
         label={"All Saved"}
         size={16}
       />
-      <SidebarTooltip
-        id={"archived"}
-        icon={Archive}
-        fill={true}
-        label={"Archived"}
-        size={16}
-      />
       {starred.length > 0 && (
         <div>
           <div className="py-1 px-2 mb-1 text-sm font-semibold select-none">
@@ -104,7 +97,6 @@ export default function SidebarChatList() {
           </div>
         </div>
       )}
-
       <div>
         <div className="space-y-4 mt-1">
           {orderedEntries.map(([date, chats]) => {
