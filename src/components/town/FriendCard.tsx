@@ -52,10 +52,9 @@ export function FriendCard({ friend }: { friend: Friend }) {
       />
 
       <h2 className="text-lg font-semibold">{friend.name}</h2>
-      <p className="italic text-xs text-zinc-500 mb-1">{friend.role}</p>
       <Button
-        variant="outline"
-        className="rounded-2xl text-sm text-zinc-800 flex items-center gap-1 mt-5 whitespace-normal"
+        variant="ghost"
+        className="rounded-2xl text-sm text-zinc-800 flex bg-gray items-center mt-5 whitespace-normal"
       >
         {getSpecialtyIcon(friend.specialty)}
         {friend.specialty}
