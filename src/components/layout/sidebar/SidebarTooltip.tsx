@@ -44,6 +44,7 @@ export function SidebarTooltip({
         collapsed={collapsed}
         fill={fill}
         size={size}
+        isActive={isActive}
       />
     </button>
   );

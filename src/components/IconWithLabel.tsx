@@ -7,6 +7,7 @@ interface IconWithLabelProps {
   collapsed?: boolean;
   fill?: boolean;
   size?: number;
+  isActive: boolean;
 }
 
 export function IconWithLabel({
@@ -15,17 +16,21 @@ export function IconWithLabel({
   collapsed = false,
   fill = false,
   size = 16,
+  isActive,
 }: IconWithLabelProps) {
   const { userPrefs } = useUser();
   const { themeColor } = userPrefs;
   const className = `transition-colors hover:text-black active:text-black group-hover:text-black`;
+
   return (
     <>
       <Icon size={size} className={className} fill="none" />
       {fill && (
         <Icon
           size={size}
-          className="absolute opacity-0 group-hover:opacity-100 text-black transition-all"
+          className={`absolute text-black transition-all ${
+            isActive ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+          }`}
           style={{
             fill: `rgb(${themeColor})`,
           }}
