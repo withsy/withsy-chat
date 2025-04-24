@@ -85,6 +85,7 @@ export class PromptService {
 
   async start(userId: UserId, input: PromptStart) {
     const { idempotencyKey, promptId } = input;
+
     const { chat, userMessage, modelMessage } =
       await this.service.db.$transaction(async (tx) => {
         await IdempotencyInfoService.checkDuplicateRequest(tx, idempotencyKey);
@@ -98,17 +99,9 @@ export class PromptService {
           select: PromptSelect,
         });
 
-        const chat = await tx.chat.create({
-          data: {
-            id: ChatService.generateId(),
-            userId,
-            type: "chat",
-            title: prompt.title,
-          },
-          select: {
-            ...ChatSelect,
-            chatPrompts: { select: ChatPromptSelect },
-          },
+        const chat = await ChatService.createPromptChat(tx, {
+          userId,
+          title: prompt.title,
         });
 
         const chatPrompt = await tx.chatPrompt.create({
