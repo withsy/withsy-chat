@@ -1,12 +1,11 @@
-import { Chat } from "@/types/chat";
 import {
   Prompt,
   PromptCreate,
   PromptGet,
   PromptList,
   PromptMeta,
-  PromptStartChat,
-  PromptStartChatOutput,
+  PromptStart,
+  PromptStartOutput,
   PromptUpdate,
 } from "@/types/prompt";
 import { publicProcedure, t } from "../server";
@@ -44,12 +43,12 @@ export const promptRouter = t.router({
         .update(opts.ctx.userId, opts.input)
         .then((x) => Prompt.parse(x))
     ),
-  startChat: publicProcedure
-    .input(PromptStartChat)
-    .output(PromptStartChatOutput)
+  start: publicProcedure
+    .input(PromptStart)
+    .output(PromptStartOutput)
     .mutation(async (opts) =>
       opts.ctx.service.prompt
-        .startChat(opts.ctx.userId, opts.input)
-        .then((x) => PromptStartChatOutput.parse(x))
+        .start(opts.ctx.userId, opts.input)
+        .then((x) => PromptStartOutput.parse(x))
     ),
 });

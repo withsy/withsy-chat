@@ -1,6 +1,7 @@
 import { t } from "../server";
 import { chatRouter } from "./chat";
 import { chatBranchRouter } from "./chat-branch";
+import { gratitudeJournalRouter } from "./gratitude-journal";
 import { messageRouter } from "./message";
 import { messageChunkRouter } from "./message-chunk";
 import { messageReplyRouter } from "./message-reply";
@@ -17,6 +18,7 @@ export const appRouter = t.router({
   messageChunk: messageChunkRouter,
   messageReply: messageReplyRouter,
   prompt: promptRouter,
+  gratitudeJournal: gratitudeJournalRouter,
 });
 
 export type AppRouter = typeof appRouter;

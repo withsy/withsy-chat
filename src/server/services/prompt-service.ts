@@ -4,7 +4,7 @@ import {
   PromptCreate,
   PromptMetaSelect,
   PromptSelect,
-  PromptStartChat,
+  PromptStart,
   type PromptGet,
   type PromptList,
   type PromptUpdate,
@@ -83,13 +83,13 @@ export class PromptService {
     return res;
   }
 
-  async startChat(userId: UserId, input: PromptStartChat) {
+  async start(userId: UserId, input: PromptStart) {
     const { idempotencyKey, promptId } = input;
     const { chat, userMessage, modelMessage } =
       await this.service.db.$transaction(async (tx) => {
         await IdempotencyInfoService.checkDuplicateRequest(tx, idempotencyKey);
 
-        const prompt = await this.service.db.prompt.findUniqueOrThrow({
+        const prompt = await tx.prompt.findUniqueOrThrow({
           where: {
             userId,
             deletedAt: null,
@@ -98,7 +98,7 @@ export class PromptService {
           select: PromptSelect,
         });
 
-        const chat = await this.service.db.chat.create({
+        const chat = await tx.chat.create({
           data: {
             id: ChatService.generateId(),
             userId,
@@ -111,13 +111,7 @@ export class PromptService {
           },
         });
 
-        if (chat.chatPrompts.length > 0)
-          throw new TRPCError({
-            code: "INTERNAL_SERVER_ERROR",
-            message: "Invalid chat prompt.",
-          });
-
-        const chatPrompt = await this.service.db.chatPrompt.create({
+        const chatPrompt = await tx.chatPrompt.create({
           data: {
             chatId: chat.id,
             parentPromptId: prompt.id,
@@ -127,16 +121,17 @@ export class PromptService {
         });
         chat.chatPrompts.push(chatPrompt);
 
-        const { userMessage, modelMessage } = await MessageService.createInfo(
-          tx,
-          {
-            chatId: chat.id,
-            model: "gemini-1.5-pro",
-            text: "Talk to me first.",
-            fileInfos: [],
-            isPublicUserMessage: false,
-          }
-        );
+        const userMessage = await MessageService.createUserMessage(tx, {
+          chatId: chat.id,
+          text: "Talk to me first.",
+          isPublic: false,
+        });
+
+        const modelMessage = await MessageService.createModelMessage(tx, {
+          chatId: chat.id,
+          model: "gemini-1.5-pro",
+          parentMessageId: userMessage.id,
+        });
 
         return { chat, userMessage, modelMessage };
       });

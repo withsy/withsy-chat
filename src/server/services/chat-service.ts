@@ -10,6 +10,7 @@ import { uuidv7 } from "uuidv7";
 import type { ServiceRegistry } from "../service-registry";
 import type { Tx } from "./db";
 import { IdempotencyInfoService } from "./idempotency-info-service";
+import { MessageFileService } from "./message-file-service";
 import { MessageService } from "./message-service";
 import { UserUsageLimitService } from "./user-usage-limit-service";
 
@@ -98,16 +99,23 @@ export class ChatService {
     const { chat, userMessage, modelMessage } =
       await this.service.db.$transaction(async (tx) => {
         const chat = await ChatService.create(tx, { userId, text });
-        const { userMessage, modelMessage } = await MessageService.createInfo(
-          tx,
-          {
-            chatId: chat.id,
-            model,
-            text,
-            fileInfos,
-            isPublicUserMessage: true,
-          }
-        );
+
+        const userMessage = await MessageService.createUserMessage(tx, {
+          chatId: chat.id,
+          text,
+          isPublic: true,
+        });
+
+        const modelMessage = await MessageService.createModelMessage(tx, {
+          chatId: chat.id,
+          model,
+          parentMessageId: userMessage.id,
+        });
+
+        await MessageFileService.createAll(tx, {
+          messageId: userMessage.id,
+          fileInfos,
+        });
 
         return { chat, userMessage, modelMessage };
       });

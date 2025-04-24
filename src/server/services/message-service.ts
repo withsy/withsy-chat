@@ -1,4 +1,4 @@
-import { ChatSelect } from "@/types/chat";
+import { ChatId, ChatSelect } from "@/types/chat";
 import { ChatPromptSelect } from "@/types/chat-prompt";
 import type {
   Message,
@@ -8,6 +8,7 @@ import type {
   MessageUpdate,
 } from "@/types/message";
 import { MessageSelect, MessageStatus, type MessageId } from "@/types/message";
+import type { Model } from "@/types/model";
 import { Role } from "@/types/role";
 import type { UserId } from "@/types/user";
 import { StatusCodes } from "http-status-codes";
@@ -414,14 +415,24 @@ export class MessageService {
 
     const { userMessage, modelMessage } = await this.service.db.$transaction(
       async (tx) => {
-        const res = await MessageService.createInfo(tx, {
+        const userMessage = await MessageService.createUserMessage(tx, {
+          chatId,
+          text,
+          isPublic: true,
+        });
+
+        const modelMessage = await MessageService.createModelMessage(tx, {
           chatId,
           model,
-          text,
-          fileInfos,
-          isPublicUserMessage: true,
+          parentMessageId: userMessage.id,
         });
-        return res;
+
+        await MessageFileService.createAll(tx, {
+          messageId: userMessage.id,
+          fileInfos,
+        });
+
+        return { userMessage, modelMessage };
       }
     );
 
@@ -439,47 +450,43 @@ export class MessageService {
     };
   }
 
-  static async createInfo(
+  static async createUserMessage(
     tx: Tx,
-    input: Omit<MessageSend, "idempotencyKey" | "files"> & {
-      fileInfos: FileInfo[];
-      isPublicUserMessage: boolean;
-    }
+    input: { chatId: ChatId; text: string; isPublic: boolean }
   ) {
-    const { chatId, text, model, fileInfos, isPublicUserMessage } = input;
-
-    const userMessage = await tx.message.create({
+    const { chatId, text, isPublic } = input;
+    const res = await tx.message.create({
       data: {
         id: MessageService.generateId(),
         chatId,
         text,
         role: Role.enum.user,
         status: "succeeded",
-        isPublic: isPublicUserMessage,
+        isPublic,
       },
     });
 
-    const modelMessage = await tx.message.create({
+    return res;
+  }
+
+  static async createModelMessage(
+    tx: Tx,
+    input: { chatId: ChatId; model: Model; parentMessageId: MessageId }
+  ) {
+    const { chatId, model, parentMessageId } = input;
+    const res = await tx.message.create({
       data: {
         id: MessageService.generateId(),
         chatId,
         role: Role.enum.model,
         model,
         status: "pending",
-        parentMessageId: userMessage.id,
+        parentMessageId,
         isPublic: true,
       },
     });
 
-    await MessageFileService.createAll(tx, {
-      messageId: userMessage.id,
-      fileInfos,
-    });
-
-    return {
-      userMessage,
-      modelMessage,
-    };
+    return res;
   }
 
   static generateId() {
