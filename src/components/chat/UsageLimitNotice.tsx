@@ -23,13 +23,18 @@ const buildMessage = (
     case "daily":
       return (
         <>
-          Daily limit reached. Please wait {data.minutesLeft} minute
-          {data.minutesLeft !== 1 ? "s" : ""}
+          Daily limit reached. Please wait{" "}
+          {data.minutesLeft && data.minutesLeft >= 60
+            ? `${Math.floor(data.minutesLeft / 60)} hour${
+                Math.floor(data.minutesLeft / 60) !== 1 ? "s" : ""
+              } ${data.minutesLeft % 60} minute${
+                data.minutesLeft % 60 !== 1 ? "s" : ""
+              }`
+            : `${data.minutesLeft} minute${data.minutesLeft !== 1 ? "s" : ""}`}
           <span className="hidden sm:inline">
             {" "}
             (until {data.resetAt.toLocaleString()})
           </span>
-          .
         </>
       );
     case "minute":
