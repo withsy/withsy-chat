@@ -1,5 +1,7 @@
-import { ChatId, ChatSelect } from "@/types/chat";
+import { ChatSelect } from "@/types/chat";
+import { ChatPromptSelect } from "@/types/chat-prompt";
 import type {
+  Message,
   MessageForHistory,
   MessageList,
   MessageSend,
@@ -18,6 +20,9 @@ import { MessageChunkService } from "./message-chunk-service";
 import { MessageFileService } from "./message-file-service";
 import type { FileInfo } from "./mock-s3-service";
 import { UserUsageLimitService } from "./user-usage-limit-service";
+
+// TODO: Change limit history length
+const DEFAULT_REMAIN_LENGTH = 10;
 
 export class MessageService {
   constructor(private readonly service: ServiceRegistry) {}
@@ -74,18 +79,26 @@ export class MessageService {
     return xs;
   }
 
-  async listForHistory(input: {
-    userId: UserId;
-    modelMessage: {
-      id: MessageId;
-      chatId: ChatId;
-    };
-  }) {
+  async listForHistory(input: { userId: UserId; modelMessage: Message }) {
     const { userId, modelMessage } = input;
 
-    // TODO: Change limit history length
-    let remainLength = 10;
-    const histories = await this.service.db.$transaction(async (tx) => {
+    const history = {
+      olds: [] as MessageForHistory[], // old to less old
+      news: [] as MessageForHistory[], // new to less new
+      remainLength(): number {
+        return DEFAULT_REMAIN_LENGTH - (this.olds.length + this.news.length);
+      },
+    };
+
+    await this.service.db.$transaction(async (tx) => {
+      const chatPromptText = modelMessage.chat?.chatPrompts?.at(0)?.text;
+      if (chatPromptText) {
+        history.olds.push({
+          role: Role.enum.system,
+          text: chatPromptText,
+        });
+      }
+
       const currentHistories = await tx.message.findMany({
         where: {
           chat: {
@@ -102,17 +115,14 @@ export class MessageService {
           role: true,
           text: true,
         },
-        take: remainLength,
+        take: history.remainLength(),
         orderBy: {
           id: "desc",
         },
       });
+      history.news.push(...currentHistories);
 
-      const histories: MessageForHistory[] = [];
-      histories.push(...currentHistories);
-
-      remainLength -= currentHistories.length;
-      if (remainLength > 0) {
+      if (history.remainLength() > 0) {
         const chat = await tx.chat.findUniqueOrThrow({
           where: {
             userId,
@@ -125,13 +135,12 @@ export class MessageService {
         });
         const { parentMessage } = chat;
         if (parentMessage && parentMessage.status === "succeeded") {
-          histories.push({
+          history.news.push({
             role: parentMessage.role,
             text: parentMessage.text,
           });
-          remainLength -= 1;
 
-          if (remainLength > 0) {
+          if (history.remainLength() > 0) {
             const parentHistories = await tx.message.findMany({
               where: {
                 chat: {
@@ -151,22 +160,27 @@ export class MessageService {
               orderBy: {
                 id: "desc",
               },
-              take: remainLength,
+              take: history.remainLength(),
             });
-            histories.push(...parentHistories);
+            history.news.push(...parentHistories);
           }
         }
       }
-
-      return histories;
     });
 
-    histories.reverse(); // to oldest
+    history.news.reverse();
+    const histories = [...history.olds, ...history.news];
     return histories;
   }
 
-  async get(input: { userId: UserId; messageId: MessageId }) {
-    const { userId, messageId } = input;
+  async get(input: {
+    userId: UserId;
+    messageId: MessageId;
+    include?: {
+      chat?: boolean;
+    };
+  }) {
+    const { userId, messageId, include } = input;
     const res = await this.service.db.message.findUnique({
       where: {
         chat: {
@@ -175,7 +189,22 @@ export class MessageService {
         },
         id: messageId,
       },
-      select: MessageSelect,
+      select: {
+        ...MessageSelect,
+        chat: include?.chat
+          ? {
+              select: {
+                ...ChatSelect,
+                chatPrompts: {
+                  select: {
+                    ...ChatPromptSelect,
+                    text: true,
+                  },
+                },
+              },
+            }
+          : undefined,
+      },
     });
 
     return res;
