@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { ChatSession } from "./ChatSession";
 
 type Prompt = {
+  id: string;
   title: string;
   content: string;
   createdAt: string;
