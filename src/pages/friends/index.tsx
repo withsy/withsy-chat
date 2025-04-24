@@ -109,7 +109,6 @@ export default function Page() {
               message={message}
             />
           </TabsContent>
-
           <TabsContent value="withsy">
             <div className="grid gap-4 sm:grid-cols-3 gap-y-5 p-5 place-items-center">
               {withsyFriends.map((friend) => (
