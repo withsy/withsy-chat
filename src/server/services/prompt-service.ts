@@ -132,7 +132,7 @@ export class PromptService {
           {
             chatId: chat.id,
             model: "gemini-1.5-pro",
-            text: "먼저 말 걸어줘.",
+            text: "Talk to me first.",
             fileInfos: [],
             isShowUserMessage: false,
           }
