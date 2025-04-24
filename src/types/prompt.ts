@@ -1,5 +1,6 @@
 import type { Prisma } from "@prisma/client";
 import { z } from "zod";
+import { ChatStartOutput } from "./chat";
 import type { zInfer } from "./common";
 import { IdempotencyKey } from "./idempotency";
 
@@ -70,3 +71,6 @@ export const PromptStartChat = z.object({
   promptId: PromptId,
 });
 export type PromptStartChat = zInfer<typeof PromptStartChat>;
+
+export const PromptStartChatOutput = z.lazy(() => ChatStartOutput);
+export type PromptStartChatOutput = zInfer<typeof PromptStartChatOutput>;

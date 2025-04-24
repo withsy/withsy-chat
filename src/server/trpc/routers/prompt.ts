@@ -6,6 +6,7 @@ import {
   PromptList,
   PromptMeta,
   PromptStartChat,
+  PromptStartChatOutput,
   PromptUpdate,
 } from "@/types/prompt";
 import { publicProcedure, t } from "../server";
@@ -45,10 +46,10 @@ export const promptRouter = t.router({
     ),
   startChat: publicProcedure
     .input(PromptStartChat)
-    .output(Chat)
+    .output(PromptStartChatOutput)
     .mutation(async (opts) =>
       opts.ctx.service.prompt
         .startChat(opts.ctx.userId, opts.input)
-        .then((x) => Chat.parse(x))
+        .then((x) => PromptStartChatOutput.parse(x))
     ),
 });

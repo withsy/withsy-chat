@@ -59,6 +59,7 @@ export class MessageReplyService {
             role: Role.enum.model,
             model: model ?? oldModelMessage.model,
             status: "pending",
+            isShow: true,
           },
           select: MessageSelect,
         });

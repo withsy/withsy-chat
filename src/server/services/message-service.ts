@@ -56,6 +56,7 @@ export class MessageService {
         chatId: scope.by === "chat" ? scope.chatId : undefined,
         role,
         isBookmarked,
+        isShow: true,
       },
       orderBy: {
         id: order,
@@ -418,6 +419,7 @@ export class MessageService {
           model,
           text,
           fileInfos,
+          isShowUserMessage: true,
         });
         return res;
       }
@@ -441,9 +443,10 @@ export class MessageService {
     tx: Tx,
     input: Omit<MessageSend, "idempotencyKey" | "files"> & {
       fileInfos: FileInfo[];
+      isShowUserMessage: boolean;
     }
   ) {
-    const { chatId, text, model, fileInfos } = input;
+    const { chatId, text, model, fileInfos, isShowUserMessage } = input;
 
     const userMessage = await tx.message.create({
       data: {
@@ -452,6 +455,7 @@ export class MessageService {
         text,
         role: Role.enum.user,
         status: "succeeded",
+        isShow: isShowUserMessage,
       },
     });
 
@@ -463,6 +467,7 @@ export class MessageService {
         model,
         status: "pending",
         parentMessageId: userMessage.id,
+        isShow: true,
       },
     });
 
