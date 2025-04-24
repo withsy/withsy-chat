@@ -1,8 +1,6 @@
 import { BookmarkCard } from "@/components/bookmarks/BookmarkCard";
 import { BookmarkFilters } from "@/components/bookmarks/BookmarkFilters";
-import { Bookmark } from "lucide-react";
 
-import { Badge } from "@/components/ui/badge";
 import { useUser } from "@/context/UserContext";
 import { filterMessages } from "@/lib/filter-utils";
 import { trpc } from "@/lib/trpc";
@@ -11,8 +9,7 @@ import { skipToken } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
 
 export default function BookmarkPage() {
-  const { userPrefs, userSession } = useUser();
-  const { themeColor } = userPrefs;
+  const { userSession } = useUser();
   const [data, setData] = useState<Message[]>([]);
   const [searchText, setSearchText] = useState("");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
