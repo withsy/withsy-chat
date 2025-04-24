@@ -1,6 +1,7 @@
 import EmptyChatView from "@/components/chat/EmptyChatView";
 
 type Prompt = {
+  id?: string;
   title: string;
   content: string;
   createdAt: string;
