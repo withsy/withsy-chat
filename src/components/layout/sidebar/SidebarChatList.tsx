@@ -5,7 +5,7 @@ import { formatDateLabel, toNewest } from "@/lib/date-utils";
 import { trpc } from "@/lib/trpc";
 import type { Chat } from "@/types/chat";
 import { skipToken } from "@tanstack/react-query";
-import { Bookmark } from "lucide-react";
+import { Bookmark, Heart } from "lucide-react";
 import { useEffect, useState } from "react";
 import { SidebarChatItem } from "./SidebarChatItem";
 import { SidebarTooltip } from "./SidebarTooltip";
@@ -78,6 +78,13 @@ export default function SidebarChatList() {
         icon={Bookmark}
         fill={true}
         label={"All Saved"}
+        size={16}
+      />
+      <SidebarTooltip
+        id={"town"}
+        icon={Heart}
+        fill={true}
+        label={"Withsy Friends"}
         size={16}
       />
       {starred.length > 0 && (
