@@ -123,7 +123,7 @@ export class ModelRouteService {
 
   private async listForHistory(input: {
     userId: UserId;
-    modelMessage: Simplify<Pick<Message, "id" | "chatId">>;
+    modelMessage: Message;
   }) {
     const { userId, modelMessage } = input;
     const xs = await this.service.message.listForHistory({
@@ -150,7 +150,13 @@ export class ModelRouteService {
         userId,
         messageId: userMessageId,
       }),
-      this.service.message.get({ userId, messageId: modelMessageId }),
+      this.service.message.get({
+        userId,
+        messageId: modelMessageId,
+        include: {
+          chat: true,
+        },
+      }),
     ]);
 
     const userMessage = Message.parse(userMessageRaw);
