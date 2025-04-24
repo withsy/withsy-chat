@@ -1,5 +1,7 @@
-import { ChatId, ChatSelect } from "@/types/chat";
+import { ChatSelect } from "@/types/chat";
+import { ChatPromptSelect } from "@/types/chat-prompt";
 import type {
+  Message,
   MessageForHistory,
   MessageList,
   MessageSend,
@@ -10,6 +12,7 @@ import { Role } from "@/types/role";
 import type { UserId } from "@/types/user";
 import { StatusCodes } from "http-status-codes";
 import { uuidv7 } from "uuidv7";
+import { envConfig } from "../env-config";
 import { HttpServerError } from "../error";
 import type { ServiceRegistry } from "../service-registry";
 import type { Tx } from "./db";
@@ -18,6 +21,9 @@ import { MessageChunkService } from "./message-chunk-service";
 import { MessageFileService } from "./message-file-service";
 import type { FileInfo } from "./mock-s3-service";
 import { UserUsageLimitService } from "./user-usage-limit-service";
+
+// TODO: Change limit history length
+const DEFAULT_REMAIN_LENGTH = 10;
 
 export class MessageService {
   constructor(private readonly service: ServiceRegistry) {}
@@ -50,6 +56,7 @@ export class MessageService {
         chatId: scope.by === "chat" ? scope.chatId : undefined,
         role,
         isBookmarked,
+        isShow: true,
       },
       orderBy: {
         id: order,
@@ -74,18 +81,46 @@ export class MessageService {
     return xs;
   }
 
-  async listForHistory(input: {
-    userId: UserId;
-    modelMessage: {
-      id: MessageId;
-      chatId: ChatId;
-    };
-  }) {
+  async listForHistory(input: { userId: UserId; modelMessage: Message }) {
     const { userId, modelMessage } = input;
 
-    // TODO: Change limit history length
-    let remainLength = 10;
-    const histories = await this.service.db.$transaction(async (tx) => {
+    const history = {
+      _olds: [] as MessageForHistory[], // old to less old
+      pushOlds(...xs: MessageForHistory[]) {
+        if (envConfig.nodeEnv === "development") console.log("@ push olds", xs);
+        this._olds.push(...xs);
+      },
+      _news: [] as MessageForHistory[], // new to less new
+      pushNews(...xs: MessageForHistory[]) {
+        if (envConfig.nodeEnv === "development") console.log("@ push news", xs);
+        this._news.push(...xs);
+      },
+      remainLength() {
+        return DEFAULT_REMAIN_LENGTH - (this._olds.length + this._news.length);
+      },
+      resolve() {
+        this._news.reverse();
+        const histories = [...this._olds, ...this._news];
+        this._olds = [];
+        this._news = [];
+        if (envConfig.nodeEnv === "development")
+          console.log("@ histories", histories);
+        return histories;
+      },
+    };
+
+    await this.service.db.$transaction(async (tx) => {
+      const chatPromptText = modelMessage.chat?.chatPrompts?.at(0)?.text;
+      if (chatPromptText) {
+        history.pushOlds(
+          {
+            role: Role.enum.user,
+            text: chatPromptText,
+          },
+          { role: Role.enum.model, text: "ok" }
+        );
+      }
+
       const currentHistories = await tx.message.findMany({
         where: {
           chat: {
@@ -102,17 +137,14 @@ export class MessageService {
           role: true,
           text: true,
         },
-        take: remainLength,
+        take: history.remainLength(),
         orderBy: {
           id: "desc",
         },
       });
+      history.pushNews(...currentHistories);
 
-      const histories: MessageForHistory[] = [];
-      histories.push(...currentHistories);
-
-      remainLength -= currentHistories.length;
-      if (remainLength > 0) {
+      if (history.remainLength() > 0) {
         const chat = await tx.chat.findUniqueOrThrow({
           where: {
             userId,
@@ -125,13 +157,12 @@ export class MessageService {
         });
         const { parentMessage } = chat;
         if (parentMessage && parentMessage.status === "succeeded") {
-          histories.push({
+          history.pushNews({
             role: parentMessage.role,
             text: parentMessage.text,
           });
-          remainLength -= 1;
 
-          if (remainLength > 0) {
+          if (history.remainLength() > 0) {
             const parentHistories = await tx.message.findMany({
               where: {
                 chat: {
@@ -151,22 +182,25 @@ export class MessageService {
               orderBy: {
                 id: "desc",
               },
-              take: remainLength,
+              take: history.remainLength(),
             });
-            histories.push(...parentHistories);
+            history.pushNews(...parentHistories);
           }
         }
       }
-
-      return histories;
     });
 
-    histories.reverse(); // to oldest
-    return histories;
+    return history.resolve();
   }
 
-  async get(input: { userId: UserId; messageId: MessageId }) {
-    const { userId, messageId } = input;
+  async get(input: {
+    userId: UserId;
+    messageId: MessageId;
+    include?: {
+      chat?: boolean;
+    };
+  }) {
+    const { userId, messageId, include } = input;
     const res = await this.service.db.message.findUnique({
       where: {
         chat: {
@@ -175,7 +209,22 @@ export class MessageService {
         },
         id: messageId,
       },
-      select: MessageSelect,
+      select: {
+        ...MessageSelect,
+        chat: include?.chat
+          ? {
+              select: {
+                ...ChatSelect,
+                chatPrompts: {
+                  select: {
+                    ...ChatPromptSelect,
+                    text: true,
+                  },
+                },
+              },
+            }
+          : undefined,
+      },
     });
 
     return res;
@@ -370,6 +419,7 @@ export class MessageService {
           model,
           text,
           fileInfos,
+          isShowUserMessage: true,
         });
         return res;
       }
@@ -393,9 +443,10 @@ export class MessageService {
     tx: Tx,
     input: Omit<MessageSend, "idempotencyKey" | "files"> & {
       fileInfos: FileInfo[];
+      isShowUserMessage: boolean;
     }
   ) {
-    const { chatId, text, model, fileInfos } = input;
+    const { chatId, text, model, fileInfos, isShowUserMessage } = input;
 
     const userMessage = await tx.message.create({
       data: {
@@ -404,6 +455,7 @@ export class MessageService {
         text,
         role: Role.enum.user,
         status: "succeeded",
+        isShow: isShowUserMessage,
       },
     });
 
@@ -415,6 +467,7 @@ export class MessageService {
         model,
         status: "pending",
         parentMessageId: userMessage.id,
+        isShow: true,
       },
     });
 

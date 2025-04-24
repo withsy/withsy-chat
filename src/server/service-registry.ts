@@ -13,6 +13,7 @@ import { MockS3Service } from "./services/mock-s3-service";
 import { ModelRouteService } from "./services/model-route-service";
 import { OpenAiService } from "./services/open-ai-service";
 import { createPgPool } from "./services/pg";
+import { PromptService } from "./services/prompt-service";
 import { TaskService } from "./services/task-service";
 import { UserLinkAccountService } from "./services/user-link-account-service";
 import { UserPrefsService } from "./services/user-prefs-service";
@@ -36,6 +37,7 @@ type ServiceDefinition = {
   task: TaskService;
   idempotencyInfo: IdempotencyInfoService;
   s3: MockS3Service;
+  prompt: PromptService;
 };
 
 export type ServiceRegistry = LazyRegistryProxy<ServiceDefinition>;
@@ -59,6 +61,7 @@ function createServiceRegistry() {
     idempotencyInfo: (s) => new IdempotencyInfoService(s),
     task: (s) => new TaskService(s),
     s3: (s) => new MockS3Service(s),
+    prompt: (s) => new PromptService(s),
   });
 }
 

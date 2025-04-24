@@ -105,6 +105,7 @@ export class ChatService {
             model,
             text,
             fileInfos,
+            isShowUserMessage: true,
           }
         );
 
