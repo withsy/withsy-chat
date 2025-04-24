@@ -1,6 +1,7 @@
 import type { Prisma } from "@prisma/client";
 import { z } from "zod";
 import type { zInfer } from "./common";
+import { IdempotencyKey } from "./idempotency";
 
 export const PromptSelect = {
   id: true,
@@ -25,6 +26,12 @@ const _ = {} satisfies Omit<PromptSchema, keyof typeof PromptSelect>;
 
 export const Prompt = PromptSchema.extend({});
 export type Prompt = zInfer<typeof Prompt>;
+
+export const PromptCreate = z.object({
+  title: z.string(),
+  text: z.string(),
+});
+export type PromptCreate = zInfer<typeof PromptCreate>;
 
 export const PromptGet = z.object({
   promptId: PromptId,
@@ -57,3 +64,9 @@ export const PromptUpdate = z.object({
   isStarred: z.boolean().optional(),
 });
 export type PromptUpdate = zInfer<typeof PromptUpdate>;
+
+export const PromptStartChat = z.object({
+  idempotencyKey: IdempotencyKey,
+  promptId: PromptId,
+});
+export type PromptStartChat = zInfer<typeof PromptStartChat>;

@@ -1,5 +1,6 @@
 import type { Prisma } from "@prisma/client";
 import { z } from "zod";
+import { ChatPrompt } from "./chat-prompt";
 import { type zInfer } from "./common";
 import { IdempotencyKey } from "./idempotency";
 import { Message, MessageId } from "./message";
@@ -40,10 +41,12 @@ export type Chat = {
   parentMessageId: MessageId | null;
   parentMessage?: Message | null;
   updatedAt: Date;
+  chatPrompts?: ChatPrompt[] | null;
 };
 export const Chat: z.ZodType<Chat> = z.lazy(() =>
   ChatSchema.extend({
     parentMessage: z.lazy(() => Message.nullable().default(null)),
+    chatPrompts: ChatPrompt.array().nullable().default(null),
   })
 );
 
