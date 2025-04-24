@@ -15,6 +15,7 @@ export default function Main({ children }: MainProps) {
   const HEADER_HEIGHT = 64;
 
   const mainStyle: React.CSSProperties = {
+    overflow: "hidden",
     minHeight: `calc(90dvh - ${HEADER_HEIGHT}px)`,
     backgroundColor: "white",
     ...(isMobile

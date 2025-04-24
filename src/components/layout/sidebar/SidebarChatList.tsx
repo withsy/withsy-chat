@@ -81,10 +81,10 @@ export default function SidebarChatList() {
         size={16}
       />
       <SidebarTooltip
-        id={"town"}
+        id={"friends"}
         icon={Heart}
         fill={true}
-        label={"Withsy Friends"}
+        label={"Friends"}
         size={16}
       />
       {starred.length > 0 && (
