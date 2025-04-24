@@ -1,11 +1,11 @@
 /*
   Warnings:
 
-  - Added the required column `is_show` to the `messages` table without a default value. This is not possible if the table is not empty.
+  - Added the required column `is_public` to the `messages` table without a default value. This is not possible if the table is not empty.
 
 */
 -- AlterTable
-ALTER TABLE "messages" ADD COLUMN     "is_show" BOOLEAN NOT NULL;
+ALTER TABLE "messages" ADD COLUMN     "is_public" BOOLEAN NOT NULL;
 
 -- CreateTable
 CREATE TABLE "chat_prompts" (

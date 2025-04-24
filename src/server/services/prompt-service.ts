@@ -134,7 +134,7 @@ export class PromptService {
             model: "gemini-1.5-pro",
             text: "Talk to me first.",
             fileInfos: [],
-            isShowUserMessage: false,
+            isPublicUserMessage: false,
           }
         );
 

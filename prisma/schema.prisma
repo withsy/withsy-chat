@@ -106,7 +106,7 @@ model Message {
   text            String         @default("") @map("text")
   status          MessageStatus  @default(pending) @map("status")
   isBookmarked    Boolean        @default(false) @map("is_bookmarked")
-  isShow          Boolean        @map("is_show")
+  isPublic        Boolean        @map("is_public")
   parentMessageId String?        @map("parent_message_id") @db.Uuid
   parentMessage   Message?       @relation("messages.parent_message_id", fields: [parentMessageId], references: [id], onDelete: SetNull, onUpdate: NoAction)
   createdAt       DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
