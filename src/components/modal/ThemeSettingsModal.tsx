@@ -14,8 +14,8 @@ const recommendedThemes = [
   { name: "Sunset Orange", color: "255,87,34", opacity: 0.2 },
   { name: "Mint Green", color: "0,200,150", opacity: 0.2 },
   { name: "Cotton Pink", color: "255,105,180", opacity: 0.2 },
-  { name: "Purple", color: "128,90,213", opacity: 0.2 },
-  { name: "Dark", color: "30,30,30", opacity: 0.2 },
+  { name: "Lavender Haze", color: "128,90,213", opacity: 0.2 },
+  { name: "Moonlight Shadow", color: "30,30,30", opacity: 0.0 },
   { name: "Ocean Blue", color: "0,123,255", opacity: 0.2 },
 ];
 

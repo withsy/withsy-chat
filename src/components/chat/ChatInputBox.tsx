@@ -1,4 +1,3 @@
-import { useChatSession } from "@/context/ChatSessionContext";
 import { useUser } from "@/context/UserContext";
 import { cn } from "@/lib/utils";
 import type { UserUsageLimit } from "@/types/user-usage-limit";
@@ -20,12 +19,15 @@ export function ChatInputBox({
   shouldFocus = false,
 }: Props) {
   const { userPrefs } = useUser();
-  const { status } = useChatSession();
   const [message, setMessage] = useState("");
   const [isComposing, setIsComposing] = useState(false);
 
   const enterToSend = userPrefs["enterToSend"];
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const isSendDisabled =
+    usageLimit !== null &&
+    (usageLimit.dailyRemaining === 0 || usageLimit.minuteRemaining === 0);
 
   const inputBoxClass = cn(
     "relative max-w-screen-md w-full px-4 py-3 border rounded-xl bg-white",
@@ -108,18 +110,19 @@ export function ChatInputBox({
           onClick={handleSend}
           className="group p-2 rounded-md"
           aria-label="Send message"
+          disabled={isSendDisabled}
           style={{
             ["--theme-color" as any]: `rgb(${userPrefs.themeColor})`,
+            cursor: isSendDisabled ? "not-allowed" : "pointer",
           }}
         >
           <div
-            className="
-      bg-[var(--theme-color)]
-      opacity-100
-      group-hover:opacity-80
-      group-active:opacity-80
-      rounded-md p-2 transition-all
-    "
+            className={cn(
+              "rounded-md p-2 transition-all",
+              isSendDisabled
+                ? "bg-gray-500 opacity-50"
+                : "bg-[var(--theme-color)] opacity-100 group-hover:opacity-80 group-active:opacity-80"
+            )}
           >
             <Send className="w-4 h-4 text-white" />
           </div>
