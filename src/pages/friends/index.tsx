@@ -52,12 +52,26 @@ export default function Page() {
           defaultValue="discover"
           className="w-full max-w-6xl mx-auto px-4 pt-4"
         >
-          <TabsList className="flex justify-center gap-2">
-            <TabsTrigger value="discover">Discover</TabsTrigger>
-            <TabsTrigger value="withsy">Withsy Friends</TabsTrigger>
-            <TabsTrigger value="custom">Your Own</TabsTrigger>
+          <TabsList className="flex justify-center gap-2 bg-transparent">
+            <TabsTrigger
+              value="discover"
+              className="text-2xl font-semibold text-gray-400 data-[state=active]:text-black data-[state=active]:shadow-none"
+            >
+              Discover
+            </TabsTrigger>
+            <TabsTrigger
+              value="withsy"
+              className="text-2xl font-semibold text-gray-400 data-[state=active]:text-black data-[state=active]:shadow-none"
+            >
+              Withsy
+            </TabsTrigger>
+            <TabsTrigger
+              value="custom"
+              className="text-2xl font-semibold text-gray-400 data-[state=active]:text-black data-[state=active]:shadow-none"
+            >
+              Yours
+            </TabsTrigger>
           </TabsList>
-
           <TabsContent value="discover">
             <div className="grid gap-4 sm:grid-cols-3 gap-y-5 p-5 place-items-center">
               {allFriends.map((friend) => (
@@ -65,7 +79,6 @@ export default function Page() {
               ))}
             </div>
           </TabsContent>
-
           <TabsContent value="withsy">
             <div className="grid gap-4 sm:grid-cols-3 gap-y-5 p-5 place-items-center">
               {withsyFriends.map((friend) => (
@@ -73,7 +86,6 @@ export default function Page() {
               ))}
             </div>
           </TabsContent>
-
           <TabsContent value="custom">
             <div className="grid gap-4 sm:grid-cols-3 gap-y-5 p-5 place-items-center">
               {customFriends.map((friend) => (
