@@ -5,7 +5,7 @@ import { getModelAvatar } from "@/lib/avatar-utils";
 
 type Props = {
   name: string;
-  size?: "sm" | "md" | "lg";
+  size?: "sm" | "md" | "lg" | "xl";
 };
 
 export function ModelAvatar({ name, size = "md" }: Props) {
@@ -20,6 +20,7 @@ export function ModelAvatar({ name, size = "md" }: Props) {
     sm: "w-6 h-6 text-xs",
     md: "w-8 h-8 text-sm",
     lg: "w-10 h-10 text-base",
+    xl: "w-20 h-20 text-lg",
   }[size];
 
   const className = `${sizeClass} select-none`;
