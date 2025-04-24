@@ -63,7 +63,7 @@ export default function Page() {
               value="withsy"
               className="text-2xl font-semibold text-gray-400 data-[state=active]:text-black data-[state=active]:shadow-none"
             >
-              Withsy
+              Friends
             </TabsTrigger>
             <TabsTrigger
               value="custom"

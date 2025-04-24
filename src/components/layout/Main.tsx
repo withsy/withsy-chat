@@ -21,14 +21,19 @@ export default function Main({ children }: MainProps) {
     ...(isMobile
       ? {}
       : {
-          borderRadius: 30,
           marginRight: 10,
           marginBottom: 10,
           marginLeft: 10 + sidebarWidth,
         }),
   };
   return (
-    <main className="flex-1 transition-all duration-300" style={mainStyle}>
+    <main
+      className={cn(
+        `flex-1 transition-all duration-300`,
+        !isMobile && "rounded-xl"
+      )}
+      style={mainStyle}
+    >
       <div
         className={cn(
           "transition-all h-full",

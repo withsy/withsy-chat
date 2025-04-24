@@ -90,17 +90,8 @@ export const ChatDrawer = ({ chat, savedMessages }: ChatDrawerProps) => {
         "h-full transition-all duration-300",
         isDrawerOpen ? "w-[30%] border-l" : "w-0 overflow-hidden"
       )}
-      style={{
-        ...(isDrawerOpen && {
-          borderTopRightRadius: 30,
-          borderBottomRightRadius: 30,
-        }),
-      }}
     >
-      <ChatDrawerHeader
-        openDrawer={openDrawer}
-        setOpenDrawer={handleCloseDrawer}
-      />
+      <ChatDrawerHeader setOpenDrawer={handleCloseDrawer} />
       {body}
     </div>
   );
