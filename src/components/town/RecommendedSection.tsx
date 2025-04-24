@@ -53,7 +53,7 @@ export function RecommendedSection({
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full px-4 py-6 select-none">
       <div
-        className="col-span-2 rounded-xl"
+        className="rounded-xl md:col-span-2"
         style={{
           backgroundColor: friendStyle.backgroundColor,
           color: friendStyle.textColor,
