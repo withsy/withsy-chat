@@ -12,6 +12,7 @@ import { Role } from "@/types/role";
 import type { UserId } from "@/types/user";
 import { StatusCodes } from "http-status-codes";
 import { uuidv7 } from "uuidv7";
+import { envConfig } from "../env-config";
 import { HttpServerError } from "../error";
 import type { ServiceRegistry } from "../service-registry";
 import type { Tx } from "./db";
@@ -83,20 +84,40 @@ export class MessageService {
     const { userId, modelMessage } = input;
 
     const history = {
-      olds: [] as MessageForHistory[], // old to less old
-      news: [] as MessageForHistory[], // new to less new
-      remainLength(): number {
-        return DEFAULT_REMAIN_LENGTH - (this.olds.length + this.news.length);
+      _olds: [] as MessageForHistory[], // old to less old
+      pushOlds(...xs: MessageForHistory[]) {
+        if (envConfig.nodeEnv === "development") console.log("@ push olds", xs);
+        this._olds.push(...xs);
+      },
+      _news: [] as MessageForHistory[], // new to less new
+      pushNews(...xs: MessageForHistory[]) {
+        if (envConfig.nodeEnv === "development") console.log("@ push news", xs);
+        this._news.push(...xs);
+      },
+      remainLength() {
+        return DEFAULT_REMAIN_LENGTH - (this._olds.length + this._news.length);
+      },
+      resolve() {
+        this._news.reverse();
+        const histories = [...this._olds, ...this._news];
+        this._olds = [];
+        this._news = [];
+        if (envConfig.nodeEnv === "development")
+          console.log("@ histories", histories);
+        return histories;
       },
     };
 
     await this.service.db.$transaction(async (tx) => {
       const chatPromptText = modelMessage.chat?.chatPrompts?.at(0)?.text;
       if (chatPromptText) {
-        history.olds.push({
-          role: Role.enum.system,
-          text: chatPromptText,
-        });
+        history.pushOlds(
+          {
+            role: Role.enum.user,
+            text: chatPromptText,
+          },
+          { role: Role.enum.model, text: "ok" }
+        );
       }
 
       const currentHistories = await tx.message.findMany({
@@ -120,7 +141,7 @@ export class MessageService {
           id: "desc",
         },
       });
-      history.news.push(...currentHistories);
+      history.pushNews(...currentHistories);
 
       if (history.remainLength() > 0) {
         const chat = await tx.chat.findUniqueOrThrow({
@@ -135,7 +156,7 @@ export class MessageService {
         });
         const { parentMessage } = chat;
         if (parentMessage && parentMessage.status === "succeeded") {
-          history.news.push({
+          history.pushNews({
             role: parentMessage.role,
             text: parentMessage.text,
           });
@@ -162,15 +183,13 @@ export class MessageService {
               },
               take: history.remainLength(),
             });
-            history.news.push(...parentHistories);
+            history.pushNews(...parentHistories);
           }
         }
       }
     });
 
-    history.news.reverse();
-    const histories = [...history.olds, ...history.news];
-    return histories;
+    return history.resolve();
   }
 
   async get(input: {
