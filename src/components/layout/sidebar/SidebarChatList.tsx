@@ -1,5 +1,6 @@
 import { PartialError } from "@/components/Error";
 import { PartialLoading } from "@/components/Loading";
+import UserDropdownMenu from "@/components/UserDropdownMenu";
 import { useUser } from "@/context/UserContext";
 import { formatDateLabel, toNewest } from "@/lib/date-utils";
 import { trpc } from "@/lib/trpc";
@@ -73,6 +74,7 @@ export default function SidebarChatList() {
 
   return (
     <div className="mt-4 space-y-2 ">
+      <UserDropdownMenu />
       <SidebarTooltip
         id={"home"}
         icon={House}

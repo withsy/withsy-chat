@@ -72,6 +72,7 @@ function UserMenuItem({
 
 export default function UserDropdownMenu() {
   const router = useRouter();
+  const { isMobile } = useSidebarStore();
   const { userPrefs, userSession } = useUser();
 
   const [themeModalOpen, setThemeModalOpen] = useState(false);
@@ -96,7 +97,6 @@ export default function UserDropdownMenu() {
       label: "Theme",
       onClick: () => setThemeModalOpen(true),
     },
-    // { icon: Settings, label: "Settings" },
     "separator",
     {
       icon: BookText,
@@ -122,19 +122,24 @@ export default function UserDropdownMenu() {
     },
   ];
 
+  const mobileClassName = isMobile ? "px-2.5 py-3 select-none" : "px-2.5 py-2";
+
   return (
     <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <button type="button" className="cursor-pointer">
-            <ModelAvatar name={userSession?.user?.name ?? ""} />
+          <button
+            type="button"
+            className={`cursor-pointer flex items-center rounded-md w-full gap-2 ${mobileClassName} hover:bg-white active:bg-white font-semibold`}
+          >
+            <ModelAvatar name={userSession?.user?.name ?? ""} size="sm" />
+            <span>{userSession?.user.name}</span>
           </button>
         </DropdownMenuTrigger>
-
         <DropdownMenuContent
           align="end"
           className={cn(
-            "w-48 p-2",
+            "w-48 p-2 m-2",
             userPrefs.largeText ? "text-lg" : "text-base"
           )}
         >

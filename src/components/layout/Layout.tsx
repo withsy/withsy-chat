@@ -25,7 +25,7 @@ export default function Layout({ children }: LayoutProps) {
       style={isChatPage ? { backgroundColor } : {}}
     >
       <Sidebar isChatPage={isChatPage} />
-      <div className="flex flex-col flex-1 h-full pt-16">
+      <div className="flex flex-col flex-1 h-full ">
         <Header />
         <Main>{children}</Main>
       </div>
