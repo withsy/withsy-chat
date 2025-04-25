@@ -6,7 +6,7 @@ import { formatDateLabel, toNewest } from "@/lib/date-utils";
 import { trpc } from "@/lib/trpc";
 import type { Chat } from "@/types/chat";
 import { skipToken } from "@tanstack/react-query";
-import { Bookmark, Heart, House, MessageSquareText } from "lucide-react";
+import { Bookmark, Heart, MessageSquareText } from "lucide-react";
 import { useEffect, useState } from "react";
 import { SidebarChatItem } from "./SidebarChatItem";
 import { SidebarTooltip } from "./SidebarTooltip";
