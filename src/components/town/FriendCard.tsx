@@ -1,16 +1,9 @@
-import { ModelAvatar } from "@/components/ModelAvatar";
-import { Button } from "@/components/ui/button";
-import {
-  Heart,
-  HelpingHand,
-  History,
-  NotebookPen,
-  Palette,
-  Target,
-} from "lucide-react";
+import { Heart, HelpingHand, NotebookPen, Palette, Target } from "lucide-react";
+import { getCharacterStyle, type CharacterName } from "./characterStyles";
+import { HoverInvertButton } from "./HoverInvertButton";
 
 export interface Friend {
-  name: string;
+  name: CharacterName;
   role: string;
   specialty: string;
 }
@@ -33,32 +26,47 @@ function getSpecialtyIcon(specialty: string) {
 }
 
 export function FriendCard({ friend }: { friend: Friend }) {
+  const friendStyle = getCharacterStyle(friend.name);
+
   return (
     <div
-      key={friend.name}
-      className="relative w-full max-w-sm min-h-[220px] rounded-2xl border p-5 pt-10 flex flex-col items-center text-center"
+      className="rounded-xl h-full flex flex-col justify-between select-none"
+      style={{
+        backgroundColor: friendStyle.backgroundColor,
+        color: friendStyle.textColor,
+      }}
     >
-      <Button
-        variant="ghost"
-        className="absolute top-2 right-2 rounded-2xl text-sm text-zinc-800 flex items-center gap-1"
-      >
-        <History size={14} />
-      </Button>
-
-      <ModelAvatar
-        name={friend.name}
-        path={`/characters/${friend.name.toLowerCase()}.svg`}
-        size="xl"
-      />
-
-      <h2 className="text-lg font-semibold">{friend.name}</h2>
-      <Button
-        variant="ghost"
-        className="rounded-2xl text-sm text-zinc-800 flex bg-gray items-center mt-5 whitespace-normal"
-      >
-        {getSpecialtyIcon(friend.specialty)}
-        {friend.specialty}
-      </Button>
+      <div className="p-6 pb-0">
+        <div className="mb-4 text-sm font-semibold opacity-80 inline-flex items-center gap-1">
+          {getSpecialtyIcon(friend.specialty)}
+          {friend.name.charAt(0).toUpperCase() + friend.name.slice(1)}
+        </div>
+        <h2 className="text-2xl font-bold mb-2 min-h-[56px]">{friend.role}</h2>
+      </div>
+      <div className="flex items-center justify-between mt-4">
+        {friendStyle.position === "left" && (
+          <img
+            src={`/characters/${friend.name}.svg`}
+            alt={friend.name}
+            className="w-24 h-24 rounded-xl"
+          />
+        )}
+        <div className={friendStyle.position === "left" ? "pr-6" : "pl-6"}>
+          <HoverInvertButton
+            textColor={friendStyle.textColor}
+            onClick={() => console.log(`${friend.name} clicked!`)}
+          >
+            {friend.specialty}
+          </HoverInvertButton>
+        </div>
+        {friendStyle.position === "right" && (
+          <img
+            src={`/characters/${friend.name}.svg`}
+            alt={friend.name}
+            className="w-24 h-24 rounded-xl"
+          />
+        )}
+      </div>
     </div>
   );
 }

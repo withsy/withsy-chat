@@ -34,3 +34,14 @@ export const characterStyles: Record<
 };
 
 export type CharacterName = keyof typeof characterStyles;
+
+export function getCharacterStyle(name: string) {
+  const key = name.toLowerCase();
+  return characterStyles[key] ?? defaultStyle;
+}
+
+const defaultStyle = {
+  backgroundColor: "rgb(229, 231, 235)",
+  textColor: "black" as const,
+  position: "left" as const,
+};

@@ -30,19 +30,6 @@ const withsyFriends = [
   },
 ];
 
-const customFriends = [
-  {
-    name: "Echo",
-    role: "Let’s build your own path.",
-    specialty: "Productivity & Focus",
-  },
-  {
-    name: "Nova",
-    role: "Shine your way through challenges.",
-    specialty: "Motivational Talk",
-  },
-];
-
 function getRecommendedFriends() {
   const hour = new Date().getHours();
 
@@ -110,7 +97,7 @@ export default function Page() {
             />
           </TabsContent>
           <TabsContent value="withsy">
-            <div className="grid gap-4 sm:grid-cols-3 gap-y-5 p-5 place-items-center">
+            <div className="grid gap-4 sm:grid-cols-3 gap-y-5 p-5 items-stretch">
               {withsyFriends.map((friend) => (
                 <FriendCard key={friend.name} friend={friend} />
               ))}
@@ -118,9 +105,7 @@ export default function Page() {
           </TabsContent>
           <TabsContent value="custom">
             <div className="grid gap-4 sm:grid-cols-3 gap-y-5 p-5 place-items-center">
-              {customFriends.map((friend) => (
-                <FriendCard key={friend.name} friend={friend} />
-              ))}
+              support soon
             </div>
           </TabsContent>
         </Tabs>
