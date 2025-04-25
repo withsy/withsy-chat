@@ -18,7 +18,7 @@ export default function Page() {
   return (
     <div className="flex flex-col h-screen">
       <div className="w-full bg-white sticky top-0 z-50">
-        <div className="max-w-6xl mx-auto p-2 flex justify-end select-none">
+        <div className="max-w-6xl mx-auto p-2 flex justify-end select-none border-b">
           {user ? (
             <div
               className="flex items-center gap-2 underline underline-offset-8 p-2 hover:bg-gray-200 active:bg-gray-200 rounded-md"
