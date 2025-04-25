@@ -6,7 +6,7 @@ import { formatDateLabel, toNewest } from "@/lib/date-utils";
 import { trpc } from "@/lib/trpc";
 import type { Chat } from "@/types/chat";
 import { skipToken } from "@tanstack/react-query";
-import { Bookmark, House, MessageSquareText } from "lucide-react";
+import { Bookmark, Heart, House, MessageSquareText } from "lucide-react";
 import { useEffect, useState } from "react";
 import { SidebarChatItem } from "./SidebarChatItem";
 import { SidebarTooltip } from "./SidebarTooltip";
@@ -76,10 +76,10 @@ export default function SidebarChatList() {
     <div className="mt-4 space-y-2 ">
       <UserDropdownMenu />
       <SidebarTooltip
-        id={"home"}
-        icon={House}
+        id={"friends"}
+        icon={Heart}
         fill={true}
-        label={"Home"}
+        label={"Friends"}
         size={16}
       />
       <SidebarTooltip
