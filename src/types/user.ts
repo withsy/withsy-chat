@@ -45,8 +45,13 @@ export const UserEnsure = z.object({
 });
 export type UserEnsure = zInfer<typeof UserEnsure>;
 
-export const UpdateUserPrefs = UserPrefs.partial();
-export type UpdateUserPrefs = zInfer<typeof UpdateUserPrefs>;
+export const UserUpdatePrefs = UserPrefs.partial();
+export type UserUpdatePrefs = zInfer<typeof UserUpdatePrefs>;
+
+export const UserUpdatePrefsOutput = User.pick({
+  preferences: true,
+});
+export type UserUpdatePrefsOutput = zInfer<typeof UserUpdatePrefsOutput>;
 
 export const UserLinkAccountId = z.number().int();
 export type UserLinkAccountId = zInfer<typeof UserLinkAccountId>;

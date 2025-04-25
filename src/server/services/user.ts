@@ -1,9 +1,25 @@
-import { UserSelect, type UserEnsure, type UserId } from "@/types/user";
+import {
+  UserSelect,
+  UserUpdatePrefs,
+  type UserEnsure,
+  type UserId,
+} from "@/types/user";
+import type { Prisma } from "@prisma/client";
+import { TRPCError } from "@trpc/server";
 import type { ServiceRegistry } from "../service-registry";
 import type { Tx } from "./db";
 
 export class UserService {
   constructor(private readonly service: ServiceRegistry) {}
+
+  async get(userId: UserId) {
+    const res = await this.service.db.user.findUniqueOrThrow({
+      where: { id: userId },
+      select: UserSelect,
+    });
+
+    return res;
+  }
 
   async ensure(userId: UserId, input: UserEnsure) {
     const { language, timezone } = input;
@@ -23,6 +39,44 @@ export class UserService {
       });
 
       return updated;
+    });
+
+    return res;
+  }
+
+  async updatePrefs(userId: UserId, input: UserUpdatePrefs) {
+    const patch = Object.fromEntries(
+      Object.entries(input).filter(([_, value]) => value !== undefined)
+    );
+
+    const res = await this.service.db.$transaction(async (tx) => {
+      {
+        const affected =
+          await tx.$executeRaw`SELECT id FROM users WHERE id = ${userId} ::uuid FOR UPDATE`;
+        if (affected === 0)
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "User not found.",
+          });
+      }
+      {
+        const affected = await tx.$executeRaw`
+          UPDATE users 
+          SET preferences = preferences || ${patch} ::jsonb 
+          WHERE id = ${userId} ::uuid`;
+        if (affected === 0)
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "User not found.",
+          });
+      }
+
+      const user = tx.user.findUniqueOrThrow({
+        where: { id: userId },
+        select: { preferences: true },
+      });
+
+      return user;
     });
 
     return res;

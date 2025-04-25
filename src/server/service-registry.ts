@@ -18,14 +18,12 @@ import { PromptService } from "./services/prompt-service";
 import { TaskService } from "./services/task-service";
 import { UserService } from "./services/user";
 import { UserLinkAccountService } from "./services/user-link-account-service";
-import { UserPrefsService } from "./services/user-prefs-service";
 import { UserUsageLimitService } from "./services/user-usage-limit-service";
 
 type ServiceDefinition = {
   pgPool: Pool;
   db: Db;
   user: UserService;
-  userPrefs: UserPrefsService;
   userLinkAccount: UserLinkAccountService;
   userUsageLimit: UserUsageLimitService;
   chat: ChatService;
@@ -51,7 +49,6 @@ function createServiceRegistry() {
     pgPool: () => createPgPool(),
     db: (s) => createDb(s),
     user: (s) => new UserService(s),
-    userPrefs: (s) => new UserPrefsService(s),
     userLinkAccount: (s) => new UserLinkAccountService(s),
     userUsageLimit: (s) => new UserUsageLimitService(s),
     chat: (s) => new ChatService(s),
