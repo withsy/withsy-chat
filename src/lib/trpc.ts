@@ -30,7 +30,10 @@ export const trpcOptions: createTrpcOptions = {
     return {
       links: [
         loggerLink({
-          enabled: () => process.env.NODE_ENV !== "production",
+          enabled: (opts) =>
+            (process.env.NODE_ENV === "development" &&
+              typeof window !== "undefined") ||
+            (opts.direction === "down" && opts.result instanceof Error),
         }),
         splitLink({
           condition: (op) => op.type === "subscription",
