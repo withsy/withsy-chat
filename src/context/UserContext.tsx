@@ -1,4 +1,3 @@
-import { FullPageLoading } from "@/components/Loading";
 import { trpc } from "@/lib/trpc";
 import { User, UserPrefs, type UserUpdatePrefs } from "@/types/user";
 import { useSession } from "next-auth/react";
@@ -23,7 +22,7 @@ type UserContextType = {
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export function UserProvider({ children }: { children: ReactNode }) {
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
   const [userPrefLoadings, setUserPrefLoadings] = useState<UserPrefLoadings>(
     {}
   );
@@ -50,23 +49,21 @@ export function UserProvider({ children }: { children: ReactNode }) {
       }));
       return { previous, loadings };
     },
-    onError(_, __, ctx) {
-      if (!user) throw new Error("User is not set.");
-
-      if (ctx?.previous)
-        setUser({
-          ...user,
-          preferences: ctx.previous,
-        });
-    },
-    onSettled(data, __, ___, ctx) {
-      if (!user) throw new Error("User is not set.");
+    onSettled(data, error, ___, ctx) {
+      if (!user) return;
 
       if (data)
         setUser({
           ...user,
           preferences: data.preferences,
         });
+
+      if (error && ctx?.previous) {
+        setUser({
+          ...user,
+          preferences: ctx.previous,
+        });
+      }
 
       if (ctx?.loadings) {
         setUserPrefLoadings((p) => ({
@@ -101,14 +98,15 @@ export function UserProvider({ children }: { children: ReactNode }) {
     updateUserPrefs.mutate(input);
   };
 
-  const isLoading = status === "loading" || userEnsure.isPending;
-  if (isLoading) return <FullPageLoading />;
+  const onSignOut = () => {
+    setUser(null);
+  };
 
   return (
     <UserContext.Provider
       value={{
         user,
-        onSignOut: () => setUser(null),
+        onSignOut,
         setUserPrefsAndSave,
         userPrefLoadings,
       }}

@@ -4,16 +4,25 @@ import { RecommendedSection } from "@/components/town/RecommendedSection";
 import {
   getRecommendedFriends,
   withsyFriends,
+  type RecommendedFriends,
 } from "@/components/town/withsyFriends";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useUser } from "@/context/UserContext";
+import type { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 
-export default function Page() {
-  const router = useRouter();
+type Props = {
+  recommendedFriends: RecommendedFriends;
+};
 
+export const getServerSideProps: GetServerSideProps<Props> = async () => {
+  const recommendedFriends = getRecommendedFriends();
+  return { props: { recommendedFriends } };
+};
+
+export default function Page({ recommendedFriends }: Props) {
+  const router = useRouter();
   const { user } = useUser();
-  const { message, bestFriend, extraFriend } = getRecommendedFriends();
 
   return (
     <div className="flex flex-col h-screen">
@@ -75,11 +84,7 @@ export default function Page() {
           </TabsList>
 
           <TabsContent value="discover">
-            <RecommendedSection
-              bestFriend={bestFriend}
-              extraFriend={extraFriend ?? withsyFriends[0]}
-              message={message}
-            />
+            <RecommendedSection recommendedFriends={recommendedFriends} />
             <div className="text-start px-6 py-16 max-w-3xl mx-auto select-none">
               <h2 className="text-3xl font-semibold mb-2">
                 Withsy Friends are always here — quiet when you need space, warm

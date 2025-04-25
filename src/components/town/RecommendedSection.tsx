@@ -1,24 +1,15 @@
 import { Gem, Gift } from "lucide-react";
 import { HoverInvertButton } from "./HoverInvertButton";
 import { characterStyles, type CharacterName } from "./characterStyles";
+import { type RecommendedFriends } from "./withsyFriends";
 
-interface Friend {
-  name: string;
-  role: string;
-  specialty: string;
-}
+type Props = {
+  recommendedFriends: RecommendedFriends;
+};
 
-interface RecommendedSectionProps {
-  bestFriend: Friend;
-  extraFriend: Friend;
-  message: string;
-}
+export function RecommendedSection({ recommendedFriends }: Props) {
+  const { message, bestFriend, extraFriend } = recommendedFriends;
 
-export function RecommendedSection({
-  bestFriend,
-  extraFriend,
-  message,
-}: RecommendedSectionProps) {
   const key = bestFriend.name.toLowerCase() as CharacterName;
   const friendStyle = characterStyles[key];
 

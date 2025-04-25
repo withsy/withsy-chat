@@ -4,7 +4,7 @@ import { ChevronsLeft, ChevronsRight } from "lucide-react";
 export function CollapseButton({
   hoverColor = "bg-white",
 }: {
-  hoverColor: string;
+  hoverColor?: string;
 }) {
   const { collapsed, toggle } = useSidebarStore();
 
