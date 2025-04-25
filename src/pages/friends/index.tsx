@@ -1,15 +1,32 @@
+import { CollapseButton } from "@/components/CollapseButton";
 import { FriendCard } from "@/components/town/FriendCard";
 import { RecommendedSection } from "@/components/town/RecommendedSection";
 import {
   getRecommendedFriends,
   withsyFriends,
+  type RecommendedFriends,
 } from "@/components/town/withsyFriends";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useSidebarStore } from "@/stores/useSidebarStore";
+import type { GetServerSideProps } from "next";
 
-export default function Page() {
-  const { message, bestFriend, extraFriend } = getRecommendedFriends();
+type Props = {
+  recommendedFriends: RecommendedFriends;
+};
+
+export const getServerSideProps: GetServerSideProps<Props> = async () => {
+  const recommendedFriends = getRecommendedFriends();
+  return { props: { recommendedFriends } };
+};
+
+export default function Page({ recommendedFriends }: Props) {
+  const { collapsed } = useSidebarStore();
   return (
     <div className="flex flex-col h-screen">
+      <div className="w-full sticky top-0 z-50 max-w-6xl mx-auto p-2 flex justify-between items-center select-none">
+        <div>{collapsed && <CollapseButton hoverColor="bg-gray-100" />}</div>
+        <div></div>
+      </div>
       <div className="flex-1 overflow-y-auto pb-30">
         <Tabs
           defaultValue="discover"
@@ -36,11 +53,7 @@ export default function Page() {
             </TabsTrigger>
           </TabsList>
           <TabsContent value="discover">
-            <RecommendedSection
-              bestFriend={bestFriend}
-              extraFriend={extraFriend ?? withsyFriends[0]}
-              message={message}
-            />
+            <RecommendedSection recommendedFriends={recommendedFriends} />
             <div className="grid gap-4 sm:grid-cols-3 gap-y-5 p-5 items-stretch">
               {withsyFriends.map((friend) => (
                 <FriendCard key={friend.name} friend={friend} />

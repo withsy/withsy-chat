@@ -1,13 +1,10 @@
 import { PartialError } from "@/components/Error";
 import { PartialLoading } from "@/components/Loading";
-import UserDropdownMenu from "@/components/UserDropdownMenu";
 import { formatDateLabel, toNewest } from "@/lib/date-utils";
 import { trpc } from "@/lib/trpc";
 import type { Chat } from "@/types/chat";
-import { Bookmark, Heart, SquarePen } from "lucide-react";
 import { useEffect, useState } from "react";
 import { SidebarChatItem } from "./SidebarChatItem";
-import { SidebarTooltip } from "./SidebarTooltip";
 
 export default function SidebarChatList() {
   const utils = trpc.useUtils();
@@ -68,29 +65,7 @@ export default function SidebarChatList() {
   });
 
   return (
-    <div className="mt-4 space-y-2 ">
-      <UserDropdownMenu />
-      <SidebarTooltip
-        id={"friends"}
-        icon={Heart}
-        fill={true}
-        label={"Friends"}
-        size={16}
-      />
-      <SidebarTooltip
-        id={"chat"}
-        icon={SquarePen}
-        fill={true}
-        label={"New Chat"}
-        size={16}
-      />
-      <SidebarTooltip
-        id={"saved"}
-        icon={Bookmark}
-        fill={true}
-        label={"All Saved"}
-        size={16}
-      />
+    <div className="space-y-4">
       {starred.length > 0 && (
         <div>
           <div className="py-1 px-2 mb-1 text-sm font-semibold select-none">

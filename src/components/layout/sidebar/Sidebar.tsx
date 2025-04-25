@@ -1,8 +1,8 @@
 import { useUser } from "@/context/UserContext";
 import { cn } from "@/lib/utils";
 import { useSidebarStore } from "@/stores/useSidebarStore";
-import { HeaderTooltipGroup } from "../HeaderTooltip";
 import SidebarChatList from "./SidebarChatList";
+import SidebarTooltipList from "./SidebarTooltipList";
 
 export default function Sidebar({ isChatPage }: { isChatPage: boolean }) {
   const { isMobile, collapsed } = useSidebarStore();
@@ -27,33 +27,32 @@ export default function Sidebar({ isChatPage }: { isChatPage: boolean }) {
   };
 
   return (
-    <>
-      <div className="fixed top-4 left-4 z-50">
-        <HeaderTooltipGroup />
-      </div>
+    <div
+      className={cn(
+        "transition-all duration-300 ease-in-out h-[100dvh] fixed top-0 left-0 z-40 flex flex-col",
+        collapsed && "w-0 overflow-hidden",
+        !collapsed && isMobile && "w-[100vw] px-4",
+        !collapsed && !isMobile && "w-[240px] px-4",
+        "relative"
+      )}
+      style={bgStyle()}
+    >
       <div
         className={cn(
-          "transition-all duration-300 ease-in-out h-[100dvh] pt-10 fixed top-0 left-0 z-40 flex flex-col",
-          collapsed && "w-0 overflow-hidden",
-          !collapsed && isMobile && "w-[100vw] px-4",
-          !collapsed && !isMobile && "w-[240px] px-4"
+          "transition-opacity duration-500 delay-200 flex-1 flex flex-col min-h-0 pt-4 pb-4 relative space-y-4",
+          collapsed ? "opacity-0 pointer-events-none" : "opacity-100",
+          isMobile && "text-lg"
         )}
-        style={bgStyle()}
       >
-        <div
-          className={cn(
-            "transition-opacity duration-500 delay-200 flex-1 flex flex-col min-h-0 pb-4 relative",
-            collapsed ? "opacity-0 pointer-events-none" : "opacity-100",
-            isMobile && "text-lg"
-          )}
-        >
-          {!collapsed && (
+        {!collapsed && (
+          <>
+            <SidebarTooltipList />
             <div className="flex-1 overflow-y-auto">
               <SidebarChatList />
             </div>
-          )}
-        </div>
+          </>
+        )}
       </div>
-    </>
+    </div>
   );
 }

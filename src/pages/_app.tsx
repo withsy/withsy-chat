@@ -8,7 +8,7 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { Toaster as Sonner } from "sonner";
 
-const App: AppType = ({
+const MyApp: AppType = ({
   Component,
   pageProps: { session, ...pageProps },
 }: AppProps) => {
@@ -37,4 +37,4 @@ const App: AppType = ({
   );
 };
 
-export default trpc.withTRPC(App);
+export default trpc.withTRPC(MyApp);

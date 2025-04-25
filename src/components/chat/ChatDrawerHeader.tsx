@@ -15,7 +15,7 @@ export default function ChatDrawerHeader({ setOpenDrawer }: ChatHeaderProps) {
   };
 
   const headerStyle: React.CSSProperties = {
-    backgroundColor: `rgba(${themeColor}, ${themeOpacity - 0.1})`,
+    backgroundColor: `rgba(${themeColor}, ${themeOpacity / 2})`,
   };
 
   return (

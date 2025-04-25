@@ -1,4 +1,5 @@
 import {
+  User,
   UserSelect,
   UserUpdatePrefs,
   type UserEnsure,
@@ -15,13 +16,13 @@ const FALLBACK_LANGUAGE = "en-US";
 export class UserService {
   constructor(private readonly service: ServiceRegistry) {}
 
-  async get(userId: UserId) {
+  async get(userId: UserId): Promise<User> {
     const res = await this.service.db.user.findUniqueOrThrow({
       where: { id: userId },
       select: UserSelect,
     });
 
-    return res;
+    return User.parse(res);
   }
 
   async ensure(userId: UserId, input: UserEnsure) {

@@ -1,17 +1,16 @@
 import { BookmarkCard } from "@/components/bookmarks/BookmarkCard";
 import { BookmarkFilters } from "@/components/bookmarks/BookmarkFilters";
 
-import { useUser } from "@/context/UserContext";
 import { filterMessages } from "@/lib/filter-utils";
 import { trpc } from "@/lib/trpc";
 import type { Message } from "@/types/message";
+import type { User } from "@/types/user";
 import { useEffect, useMemo, useState } from "react";
+import { PartialEmpty } from "../Empty";
+import { PartialLoading } from "../Loading";
 
-export default function BookmarkPage() {
-  const { user } = useUser();
-  if (!user) throw new Error("User must exist.");
-
-  const { themeColor } = user.preferences;
+export default function BookmarkPage({ user }: { user: User }) {
+  const [loading, setLoading] = useState(true);
   const [data, setData] = useState<Message[]>([]);
   const [searchText, setSearchText] = useState("");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
@@ -30,6 +29,7 @@ export default function BookmarkPage() {
   useEffect(() => {
     if (!listSaved.data) return;
     setData(listSaved.data);
+    setLoading(false);
   }, [listSaved.data]);
 
   const filteredMessages = useMemo(() => {
@@ -43,6 +43,7 @@ export default function BookmarkPage() {
     });
   }, [sortOrder, searchText, data]);
 
+  if (loading) return <PartialLoading />;
   return (
     <div className="h-full w-full flex flex-col p-6">
       <BookmarkFilters
@@ -52,16 +53,20 @@ export default function BookmarkPage() {
         setSearchText={setSearchText}
       />
       <div className="flex-1 overflow-y-auto space-y-4">
-        {filteredMessages.map((message) => (
-          <BookmarkCard
-            key={message.id}
-            chatId={message.chatId}
-            messageId={message.id}
-            title={message?.chat?.title}
-            text={message.text}
-            createdAt={message.createdAt}
-          />
-        ))}
+        {filteredMessages.length === 0 ? (
+          <PartialEmpty message="You haven’t saved any items yet." />
+        ) : (
+          filteredMessages.map((message) => (
+            <BookmarkCard
+              key={message.id}
+              chatId={message.chatId}
+              messageId={message.id}
+              title={message?.chat?.title}
+              text={message.text}
+              createdAt={message.createdAt}
+            />
+          ))
+        )}
       </div>
     </div>
   );

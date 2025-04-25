@@ -1,21 +1,20 @@
 import { useUser } from "@/context/UserContext";
 import { useDrawerStore } from "@/stores/useDrawerStore";
-import type { Chat } from "@/types/chat";
-import { Bookmark, FolderGit2 } from "lucide-react";
+import { useSidebarStore } from "@/stores/useSidebarStore";
+import { Bookmark, FolderGit2, PenLine } from "lucide-react";
+import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import { AccessibilityMenu } from "../AccessibilityMenu";
+import { CollapseButton } from "../CollapseButton";
 import HoverSwitchIcon from "../HoverSwitchIcon";
-import { SidebarChatItem } from "../layout/sidebar/SidebarChatItem";
+import { IconWithLabel } from "../IconWithLabel";
 
-interface ChatHeaderProps {
-  chat: Chat;
-}
-
-export default function ChatHeader({ chat }: ChatHeaderProps) {
+export default function ChatHeader() {
+  const router = useRouter();
+  const { collapsed } = useSidebarStore();
   const { openDrawer, setOpenDrawer } = useDrawerStore();
   const { user } = useUser();
 
-  const [displayChat, setDisplayChat] = useState<Chat>(chat);
   const [hideLabels, setHideLabels] = useState(false);
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -31,10 +30,6 @@ export default function ChatHeader({ chat }: ChatHeaderProps) {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, [openDrawer]);
-
-  useEffect(() => {
-    setDisplayChat(chat);
-  }, [chat]);
 
   const handleClick = (id: string) => {
     setOpenDrawer(openDrawer === id ? null : id);
@@ -72,22 +67,30 @@ export default function ChatHeader({ chat }: ChatHeaderProps) {
   ];
 
   const headerStyle: React.CSSProperties = {
-    backgroundColor: `rgba(${themeColor}, ${themeOpacity - 0.1})`,
+    backgroundColor: `rgba(${themeColor}, ${themeOpacity / 2})`,
   };
 
   const buttonClassName =
-    "group flex items-center gap-1 rounded-md px-1 py-2 hover:bg-white hover:font-semibold active:bg-white active:font-semibold transition-colors";
+    "group flex items-center gap-1 rounded-md px-2 py-2 hover:bg-white hover:font-semibold active:bg-white active:font-semibold transition-colors";
+  const handleLinkClick = () => {
+    router.push(`/chat`);
+  };
   return (
     <div
       className="absolute top-0 left-0 w-full h-[50px] px-4 flex items-center justify-between"
       style={headerStyle}
       ref={containerRef}
     >
-      <SidebarChatItem
-        chat={displayChat}
-        onChatUpdate={(updatedChat) => setDisplayChat(updatedChat)}
-      />
-
+      <div className="flex flex-row gap-4 items-center">
+        {collapsed && (
+          <>
+            <CollapseButton />
+            <button onClick={handleLinkClick} className={buttonClassName}>
+              <IconWithLabel icon={PenLine} fill={true} />
+            </button>
+          </>
+        )}
+      </div>
       <div className="flex gap-5">
         <AccessibilityMenu hideLabels={hideLabels} />
         {buttons.map(({ label, id, icon }) => (

@@ -96,7 +96,12 @@ export const UsageLimitNotice: React.FC<Props> = ({
   return message ? (
     <span
       className="select-none text-xs text-gray-500"
-      style={{ color: `rgb(${themeColor})` }}
+      style={{
+        color: `rgb(${themeColor})`,
+        overflow: "hidden",
+        whiteSpace: "nowrap",
+        textOverflow: "ellipsis",
+      }}
     >
       {message}
     </span>

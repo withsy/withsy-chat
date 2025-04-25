@@ -212,7 +212,7 @@ function Branches({
   }
   return (
     <div className="h-full w-full flex items-center justify-center text-muted-foreground">
-      Unknown Error. Please Report.
+      No Branches Yet.
     </div>
   );
 }

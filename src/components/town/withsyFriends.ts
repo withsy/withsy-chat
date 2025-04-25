@@ -1,4 +1,10 @@
-export const withsyFriends = [
+export type WithsyFriend = {
+  name: string;
+  role: string;
+  specialty: string;
+};
+
+export const withsyFriends: WithsyFriend[] = [
   {
     name: "Skye",
     role: "Got something on your mind? Let’s chat!",
@@ -31,7 +37,13 @@ export const withsyFriends = [
   },
 ];
 
-export function getRecommendedFriends() {
+export type RecommendedFriends = {
+  message: string;
+  bestFriend: WithsyFriend;
+  extraFriend: WithsyFriend;
+};
+
+export function getRecommendedFriends(): RecommendedFriends {
   const hour = new Date().getHours();
 
   if (hour >= 5 && hour < 11) {
