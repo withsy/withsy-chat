@@ -104,7 +104,7 @@ export default function UserDropdownMenu() {
     },
   ];
 
-  const mobileClassName = isMobile ? "px-2.5 py-3 select-none" : "px-2.5 py-2";
+  const mobileClassName = isMobile ? "px-2.5 py-3" : "px-2.5 py-2";
 
   return (
     <>
@@ -112,7 +112,7 @@ export default function UserDropdownMenu() {
         <DropdownMenuTrigger asChild>
           <button
             type="button"
-            className={`cursor-pointer flex items-center rounded-md w-full gap-2 ${mobileClassName} hover:bg-white active:bg-white font-semibold`}
+            className={`cursor-pointer flex items-center rounded-md w-full gap-2 ${mobileClassName} hover:bg-white active:bg-white font-semibold select-none`}
           >
             <ModelAvatar name={user?.name ?? ""} size="sm" />
             <span>{user?.name}</span>

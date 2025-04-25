@@ -22,7 +22,7 @@ export function SidebarTooltip({
   const router = useRouter();
   const isActive =
     id == "home" ? `/` == router.asPath : `/${id}` == router.asPath;
-  const mobileClassName = isMobile ? "px-2.5 py-3 select-none" : "px-2.5 py-2";
+  const mobileClassName = isMobile ? "px-2.5 py-3" : "px-2.5 py-1.5";
 
   const className = `
               group flex items-center gap-2 ${mobileClassName} rounded-md transition-colors w-full 

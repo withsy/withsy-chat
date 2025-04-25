@@ -65,10 +65,10 @@ export default function SidebarChatList() {
   });
 
   return (
-    <div className="space-y-2 ">
+    <div className="space-y-4">
       {starred.length > 0 && (
         <div>
-          <div className="py-0.5 px-2 mb-1 text-sm font-semibold select-none">
+          <div className="py-1 px-2 mb-1 text-sm font-semibold select-none">
             Starred
           </div>
           <div className="space-y-1 mt-1">
@@ -84,13 +84,13 @@ export default function SidebarChatList() {
         </div>
       )}
       <div>
-        <div className="space-y-2 mt-1">
+        <div className="space-y-4 mt-1">
           {orderedEntries.map(([date, chats]) => {
             if (chats.length === 0) return null;
 
             return (
               <div key={date}>
-                <div className="py-0.5 px-2 mb-1 text-sm font-semibold select-none">
+                <div className="py-1 px-2 mb-1 text-sm font-semibold select-none">
                   {date}
                 </div>
                 {chats.map((chat) => (

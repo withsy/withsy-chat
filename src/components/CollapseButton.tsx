@@ -1,5 +1,5 @@
 import { useSidebarStore } from "@/stores/useSidebarStore";
-import { PanelRightClose, PanelRightOpen } from "lucide-react";
+import { ChevronsLeft, ChevronsRight } from "lucide-react";
 
 export function CollapseButton() {
   const { collapsed, toggle } = useSidebarStore();
@@ -10,9 +10,9 @@ export function CollapseButton() {
   return (
     <button onClick={toggle} className={buttonClassName}>
       {collapsed ? (
-        <PanelRightClose size={iconSize} className="group-hover:text-black" />
+        <ChevronsRight size={iconSize} className="group-hover:text-black" />
       ) : (
-        <PanelRightOpen size={iconSize} className="group-hover:text-black" />
+        <ChevronsLeft size={iconSize} className="group-hover:text-black" />
       )}
     </button>
   );

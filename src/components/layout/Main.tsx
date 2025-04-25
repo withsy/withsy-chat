@@ -8,10 +8,9 @@ type MainProps = {
 };
 
 export default function Main({ children }: MainProps) {
-  const { collapsed, isMobile } = useSidebarStore();
+  const { isMobile } = useSidebarStore();
   const { user } = useUser();
 
-  const sidebarWidth = !collapsed && !isMobile ? 240 : 0;
   const HEADER_HEIGHT = 64;
 
   const mainStyle: React.CSSProperties = {
@@ -21,10 +20,7 @@ export default function Main({ children }: MainProps) {
     ...(isMobile
       ? {}
       : {
-          marginTop: 10,
-          marginRight: 10,
-          marginBottom: 10,
-          marginLeft: 10 + sidebarWidth,
+          margin: 10,
         }),
   };
   return (

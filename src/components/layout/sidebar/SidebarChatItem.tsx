@@ -72,7 +72,7 @@ export function SidebarChatItem({
   const iconClassName = `opacity-100 transition-opacity ${
     isDropdownOpen ? "opacity-0" : "group-hover:opacity-0"
   }`;
-  const mobileClassName = isMobile ? "py-2" : "py-1";
+  const mobileClassName = isMobile ? "px-2.5 py-3" : "px-2.5 py-1.5";
   const dropdownItemClassName = isMobile ? "text-lg py-2" : "";
 
   const handleLinkClick = () => {

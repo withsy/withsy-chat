@@ -1,11 +1,15 @@
+import { CollapseButton } from "@/components/CollapseButton";
 import UserDropdownMenu from "@/components/UserDropdownMenu";
 import { Bookmark, Heart, PenLine } from "lucide-react";
 import { SidebarTooltip } from "./SidebarTooltip";
 
 export default function SidebarTooltipList() {
   return (
-    <div className="space-y-2 ">
-      <UserDropdownMenu />
+    <div className="space-y-2">
+      <div className="flex justify-between items-center">
+        <UserDropdownMenu />
+        <CollapseButton />
+      </div>
       <SidebarTooltip
         id={"friends"}
         icon={Heart}
