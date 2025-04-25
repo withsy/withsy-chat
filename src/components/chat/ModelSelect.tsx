@@ -56,7 +56,6 @@ export function ModelSelect({
     };
 
     if (!isMobile) {
-      // 바깥 클릭 감지는 데스크탑에서만 적용
       document.addEventListener("mousedown", handleClickOutside);
       return () =>
         document.removeEventListener("mousedown", handleClickOutside);
