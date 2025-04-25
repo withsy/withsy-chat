@@ -18,7 +18,15 @@ export default function Page() {
   return (
     <div className="flex flex-col h-screen">
       <div className="w-full bg-white sticky top-0 z-50">
-        <div className="max-w-6xl mx-auto p-2 flex justify-end select-none border-b">
+        <div className="max-w-6xl mx-auto p-2 flex justify-between items-center select-none border-b">
+          <div
+            className="flex items-center gap-2 p-2"
+            onClick={() => {
+              router.push("/");
+            }}
+          >
+            <div className="text-xl font-semibold">Withsy</div>
+          </div>
           {user ? (
             <div
               className="flex items-center gap-2 underline underline-offset-8 p-2 hover:bg-gray-200 active:bg-gray-200 rounded-md"
@@ -33,6 +41,7 @@ export default function Page() {
           )}
         </div>
       </div>
+
       <div className="flex-1 overflow-y-auto pb-30">
         <div className="text-start px-6 py-16 max-w-3xl mx-auto select-none">
           <h2 className="text-3xl font-semibold mb-2">The friends who stay.</h2>
