@@ -1,4 +1,5 @@
 import { Gem, Gift } from "lucide-react";
+import { HoverInvertButton } from "./HoverInvertButton";
 
 interface Friend {
   name: string;
@@ -12,7 +13,14 @@ interface RecommendedSectionProps {
   message: string;
 }
 
-const characterStyles = {
+const characterStyles: Record<
+  string,
+  {
+    backgroundColor: string;
+    textColor: "black" | "white";
+    position: "left" | "right";
+  }
+> = {
   maddy: {
     backgroundColor: "rgb(241, 244, 220)",
     textColor: "black",
@@ -67,30 +75,49 @@ export function RecommendedSection({
           <h2 className="text-2xl font-bold mb-2">{message}</h2>
           <p className="text-sm mb-4">Your best match for this moment</p>
         </div>
-        {friendStyle.position && (
-          <div
-            className={`flex ${
-              friendStyle.position === "left" ? "justify-start" : "justify-end"
-            }`}
-          >
+        <div className="flex items-center justify-between mt-4">
+          {friendStyle.position === "left" && (
             <img
               src={`/characters/${bestFriend.name.toLowerCase()}.svg`}
               alt={bestFriend.name}
-              className="w-24 h-24 mt-4 rounded-xl"
+              className="w-24 h-24 rounded-xl"
             />
+          )}
+          <div className="px-6">
+            <HoverInvertButton
+              textColor={friendStyle.textColor}
+              onClick={() => console.log(`${bestFriend.name} clicked!`)}
+            >
+              {bestFriend.specialty}
+            </HoverInvertButton>
           </div>
-        )}
-      </div>
-      <div className="bg-gray-100 p-6 rounded-xl">
-        <div className="text-sm font-semibold text-gray-500 mb-2 inline-flex items-center gap-1">
-          <Gem />
-          Another Good Choice
+          {friendStyle.position === "right" && (
+            <img
+              src={`/characters/${bestFriend.name.toLowerCase()}.svg`}
+              alt={bestFriend.name}
+              className="w-24 h-24 rounded-xl"
+            />
+          )}
         </div>
-        <p className="text-lg font-semibold text-black mb-4">
-          {extraFriend.name}
-        </p>
-        <p className="text-sm text-gray-600 mb-2">{extraFriend.role}</p>
-        <p className="text-xs text-gray-400">{extraFriend.specialty}</p>
+      </div>
+      <div className="bg-gray-100 p-6 rounded-xl flex flex-col justify-between items-start">
+        <div>
+          <div className="text-sm font-semibold text-gray-500 mb-2 inline-flex items-center gap-1">
+            <Gem />
+            Another Good Choice
+          </div>
+          <p className="text-lg font-semibold text-black mb-4">
+            {extraFriend.name}
+          </p>
+          <p className="text-sm text-gray-600 mb-2">{extraFriend.role}</p>
+        </div>
+
+        <HoverInvertButton
+          textColor={friendStyle.textColor}
+          onClick={() => console.log(`${extraFriend.name} clicked!`)}
+        >
+          {extraFriend.specialty}
+        </HoverInvertButton>
       </div>
     </div>
   );
