@@ -7,8 +7,10 @@ type Props = {
 };
 
 export function CollapseToggle({ show, collapsed, setCollapsed }: Props) {
-  const { userPrefs } = useUser();
-  const { themeColor } = userPrefs;
+  const { user } = useUser();
+  if (!user) return null;
+
+  const { themeColor } = user.preferences;
 
   if (!show) return null;
   return (

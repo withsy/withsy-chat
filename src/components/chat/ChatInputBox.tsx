@@ -18,11 +18,10 @@ export function ChatInputBox({
   usageLimit,
   shouldFocus = false,
 }: Props) {
-  const { userPrefs } = useUser();
+  const { user } = useUser();
   const [message, setMessage] = useState("");
   const [isComposing, setIsComposing] = useState(false);
 
-  const enterToSend = userPrefs["enterToSend"];
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const isSendDisabled =
@@ -65,11 +64,16 @@ export function ChatInputBox({
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (enterToSend && e.key === "Enter" && !e.shiftKey && !isComposing) {
+    if (
+      user?.preferences.enterToSend &&
+      e.key === "Enter" &&
+      !e.shiftKey &&
+      !isComposing
+    ) {
       e.preventDefault();
       handleSend();
     } else if (
-      !enterToSend &&
+      !user?.preferences.enterToSend &&
       e.key === "Enter" &&
       e.shiftKey &&
       !isComposing
@@ -78,6 +82,8 @@ export function ChatInputBox({
       handleSend();
     }
   };
+
+  if (!user) return null;
 
   return (
     <div className={inputBoxClass}>
@@ -102,7 +108,7 @@ export function ChatInputBox({
               dailyResetAt={usageLimit.dailyResetAt}
               minuteRemaining={usageLimit.minuteRemaining}
               minuteResetAt={usageLimit.minuteResetAt}
-              themeColor={userPrefs.themeColor}
+              themeColor={user.preferences.themeColor}
             />
           )}
         </div>
@@ -112,7 +118,7 @@ export function ChatInputBox({
           aria-label="Send message"
           disabled={isSendDisabled}
           style={{
-            ["--theme-color" as any]: `rgb(${userPrefs.themeColor})`,
+            ["--theme-color" as any]: `rgb(${user.preferences.themeColor})`,
             cursor: isSendDisabled ? "not-allowed" : "pointer",
           }}
         >

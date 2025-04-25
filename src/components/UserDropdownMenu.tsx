@@ -72,7 +72,7 @@ function UserMenuItem({
 
 export default function UserDropdownMenu() {
   const router = useRouter();
-  const { userPrefs, userSession } = useUser();
+  const { user, onSignOut } = useUser();
 
   const [themeModalOpen, setThemeModalOpen] = useState(false);
 
@@ -117,17 +117,20 @@ export default function UserDropdownMenu() {
       icon: LogOut,
       label: "Log out",
       onClick: async () => {
+        onSignOut();
         signOut({ callbackUrl: "/" });
       },
     },
   ];
+
+  if (!user) return null;
 
   return (
     <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <button type="button" className="cursor-pointer">
-            <ModelAvatar name={userSession?.user?.name ?? ""} />
+            <ModelAvatar name={user.name} />
           </button>
         </DropdownMenuTrigger>
 
@@ -135,7 +138,7 @@ export default function UserDropdownMenu() {
           align="end"
           className={cn(
             "w-48 p-2",
-            userPrefs.largeText ? "text-lg" : "text-base"
+            user.preferences.largeText ? "text-lg" : "text-base"
           )}
         >
           {userMenuItems.map((item, idx) =>
@@ -146,7 +149,7 @@ export default function UserDropdownMenu() {
                 key={item.label}
                 icon={item.icon}
                 label={item.label}
-                largeText={userPrefs["largeText"]}
+                largeText={user.preferences.largeText}
                 onClick={item.onClick}
               />
             )
@@ -157,7 +160,7 @@ export default function UserDropdownMenu() {
               withsy with{" "}
               <span
                 style={{
-                  color: `rgb(${userPrefs.themeColor})`,
+                  color: `rgb(${user.preferences.themeColor})`,
                 }}
               >
                 ♥

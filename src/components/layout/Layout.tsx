@@ -9,10 +9,11 @@ type LayoutProps = {
 };
 
 export default function Layout({ children }: LayoutProps) {
-  const { userPrefs } = useUser();
-  const themeColor = userPrefs.themeColor;
-  const themeOpacity = userPrefs.themeOpacity;
-  const backgroundColor = `rgba(${themeColor}, ${themeOpacity})`;
+  const { user } = useUser();
+
+  const backgroundColor = `rgba(${
+    user?.preferences.themeColor ?? "255,87,34"
+  }, ${user?.preferences.themeOpacity ?? 0.2})`;
   return (
     <div
       className="flex overflow-hidden h-[100dvh]"

@@ -9,8 +9,8 @@ type MainProps = {
 
 export default function Main({ children }: MainProps) {
   const { collapsed, isMobile } = useSidebarStore();
-  const { userPrefs } = useUser();
-  const { largeText } = userPrefs;
+  const { user } = useUser();
+
   const sidebarWidth = !collapsed && !isMobile ? 240 : 0;
   const HEADER_HEIGHT = 64;
 
@@ -32,7 +32,7 @@ export default function Main({ children }: MainProps) {
         className={cn(
           "transition-all h-full",
           "text-base",
-          largeText && "text-lg"
+          user?.preferences.largeText && "text-lg"
         )}
       >
         {children}

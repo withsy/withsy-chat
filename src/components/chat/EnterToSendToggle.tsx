@@ -9,8 +9,10 @@ import {
 import { useUser } from "@/context/UserContext";
 
 export function EnterToSendToggle() {
-  const { userPrefs, setUserPrefsAndSave, userPrefLoadings } = useUser();
-  const enterToSend = userPrefs["enterToSend"];
+  const { user, setUserPrefsAndSave, userPrefLoadings } = useUser();
+  if (!user) return null;
+
+  const enterToSend = user.preferences.enterToSend;
   const isLoading = userPrefLoadings["enterToSend"];
 
   return (
@@ -22,7 +24,7 @@ export function EnterToSendToggle() {
         disabled={isLoading}
         style={{
           backgroundColor: enterToSend
-            ? `rgb(${userPrefs.themeColor})`
+            ? `rgb(${user.preferences.themeColor})`
             : undefined,
         }}
       />

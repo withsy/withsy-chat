@@ -23,7 +23,9 @@ export function ConfirmDeleteModal({
   onCancel: () => void;
   onConfirm: () => void;
 }) {
-  const { userPrefs } = useUser();
+  const { user } = useUser();
+  if (!user) return null;
+
   return (
     <Dialog open={open} onOpenChange={onCancel}>
       <DialogPortal>
@@ -40,7 +42,7 @@ export function ConfirmDeleteModal({
               variant="destructive"
               onClick={onConfirm}
               style={{
-                background: `rgb(${userPrefs.themeColor})`,
+                background: `rgb(${user.preferences.themeColor})`,
               }}
             >
               Confirm

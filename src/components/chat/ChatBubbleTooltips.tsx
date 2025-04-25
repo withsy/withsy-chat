@@ -40,8 +40,7 @@ export const ChatBubbleTooltips: React.FC<ChatBubbleTooltipsProps> = ({
 
   const router = useRouter();
 
-  const { userPrefs } = useUser();
-  const { themeColor } = userPrefs;
+  const { user } = useUser();
 
   const chatBranchStart = trpc.chatBranch.start.useMutation({
     onSuccess(data) {
@@ -78,6 +77,9 @@ export const ChatBubbleTooltips: React.FC<ChatBubbleTooltipsProps> = ({
     });
   };
 
+  if (!user) return null;
+
+  const { themeColor } = user.preferences;
   return (
     <TooltipProvider>
       <div className={cn("flex gap-2", className)}>

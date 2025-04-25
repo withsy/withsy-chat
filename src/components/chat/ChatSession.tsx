@@ -29,7 +29,7 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
 
   const { isMobile } = useSidebarStore();
   const { selectedModel } = useSelectedModelStore();
-  const { userPrefs } = useUser();
+  const { user } = useUser();
   const [messages, setMessages] = useState(initialMessages);
   const [streamMessageId, setStreamMessageId] = useState<string | null>(null);
   const [shouldFocusInput, setShouldFocusInput] = useState(false);
@@ -207,6 +207,8 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
     [messages]
   );
 
+  if (!user) return null;
+
   return (
     <div className="flex h-full relative">
       <div
@@ -219,7 +221,7 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
         <div
           className={cn(
             "flex-1 overflow-y-auto mt-[50px] mb-[150px] w-full transition-all duration-300",
-            userPrefs.wideView
+            user.preferences.wideView
               ? "md:w-[95%] md:mx-auto"
               : "md:w-[80%] md:mx-auto"
           )}

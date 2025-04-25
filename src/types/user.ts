@@ -3,6 +3,7 @@ import { z } from "zod";
 import { type zInfer } from "./common";
 
 export const UserSelect = {
+  id: true,
   name: true,
   email: true,
   image: true,
@@ -11,7 +12,11 @@ export const UserSelect = {
   preferences: true,
 } satisfies Prisma.UserSelect;
 
+export const UserId = z.string().uuid();
+export type UserId = zInfer<typeof UserId>;
+
 export const UserSchema = z.object({
+  id: UserId,
   name: z.string(),
   email: z.string(),
   image: z.string(),
@@ -35,9 +40,6 @@ export const User = UserSchema.extend({
   preferences: UserPrefs,
 });
 export type User = zInfer<typeof User>;
-
-export const UserId = z.string().uuid();
-export type UserId = zInfer<typeof UserId>;
 
 export const UserEnsure = z.object({
   language: z.string().optional(),

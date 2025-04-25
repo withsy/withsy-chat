@@ -14,7 +14,8 @@ type UserPrefLoadings = Partial<Record<keyof UserUpdatePrefs, boolean>>;
 type SetUserPrefsAndSave = (input: UserUpdatePrefs) => void;
 
 type UserContextType = {
-  user: User;
+  user: User | null;
+  onSignOut: () => void;
   setUserPrefsAndSave: SetUserPrefsAndSave;
   userPrefLoadings: UserPrefLoadings;
 };
@@ -100,13 +101,14 @@ export function UserProvider({ children }: { children: ReactNode }) {
     updateUserPrefs.mutate(input);
   };
 
-  const isLoading = status === "loading" || !user;
+  const isLoading = status === "loading" || userEnsure.isPending;
   if (isLoading) return <FullPageLoading />;
 
   return (
     <UserContext.Provider
       value={{
         user,
+        onSignOut: () => setUser(null),
         setUserPrefsAndSave,
         userPrefLoadings,
       }}

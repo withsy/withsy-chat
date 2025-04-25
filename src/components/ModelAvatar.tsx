@@ -9,12 +9,14 @@ type Props = {
 };
 
 export function ModelAvatar({ name, size = "md", path }: Props) {
-  const { userSession } = useUser();
+  const { user } = useUser();
+
+  if (!user) return <></>;
 
   const src = path
     ? path
-    : name === userSession?.user?.name
-    ? userSession?.user?.image ?? getModelAvatar(name)
+    : name === user.name
+    ? user.image ?? getModelAvatar(name)
     : getModelAvatar(name);
 
   const sizeClass = {
