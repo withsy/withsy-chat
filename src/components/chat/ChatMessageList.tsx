@@ -32,7 +32,7 @@ export function ChatMessageList({ chat, messages, onToggleSaved }: Props) {
       hasMounted.current = true;
 
       if (!messageId) {
-        bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+        bottomRef.current?.scrollIntoView({ behavior: "auto" });
       }
     }
   }, [messageId]);
@@ -42,7 +42,7 @@ export function ChatMessageList({ chat, messages, onToggleSaved }: Props) {
     prevMessageLength.current = messages.length;
 
     if (!messageId && hasNewMessage) {
-      bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+      bottomRef.current?.scrollIntoView({ behavior: "auto" });
     }
   }, [messages, messageId]);
 
@@ -51,7 +51,7 @@ export function ChatMessageList({ chat, messages, onToggleSaved }: Props) {
       const id = MessageId.parse(messageId);
       const targetRef = messageRefs.current[id];
       if (targetRef) {
-        targetRef.scrollIntoView({ behavior: "smooth", block: "start" });
+        targetRef.scrollIntoView({ behavior: "auto", block: "start" });
       }
     }
   }, [messageId, messages]);
@@ -96,7 +96,7 @@ export function ChatMessageList({ chat, messages, onToggleSaved }: Props) {
   }, []);
 
   const scrollToBottom = () => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    bottomRef.current?.scrollIntoView({ behavior: "auto" });
   };
 
   if (!user) return null;
