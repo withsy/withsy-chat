@@ -4,10 +4,13 @@ import {
   type UserEnsure,
   type UserId,
 } from "@/types/user";
-import type { Prisma } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import type { ServiceRegistry } from "../service-registry";
+import { isValidLanguage, isValidTimezone } from "../utils";
 import type { Tx } from "./db";
+
+const FALLBACK_TIMEZONE = "UTC";
+const FALLBACK_LANGUAGE = "en-US";
 
 export class UserService {
   constructor(private readonly service: ServiceRegistry) {}
@@ -22,18 +25,33 @@ export class UserService {
   }
 
   async ensure(userId: UserId, input: UserEnsure) {
-    const { language, timezone } = input;
     const res = await this.service.db.$transaction(async (tx) => {
       const user = await tx.user.findUniqueOrThrow({
         where: { id: userId },
         select: UserSelect,
       });
 
+      let timezone: string | undefined = undefined;
+      if (user.timezone.length === 0) {
+        timezone =
+          input.timezone && isValidTimezone(input.timezone)
+            ? input.timezone
+            : FALLBACK_TIMEZONE;
+      }
+
+      let language: string | undefined = undefined;
+      if (user.language.length === 0) {
+        language =
+          input.language && isValidLanguage(input.language)
+            ? input.language
+            : FALLBACK_LANGUAGE;
+      }
+
       const updated = tx.user.update({
         where: { id: userId },
         data: {
-          language: user.language.length === 0 ? language : undefined,
-          timezone: user.timezone.length === 0 ? timezone : undefined,
+          language,
+          timezone,
         },
         select: UserSelect,
       });
@@ -99,5 +117,27 @@ export class UserService {
     });
 
     return res;
+  }
+
+  static async getTimezone(tx: Tx, input: { userId: UserId }) {
+    const { userId } = input;
+    const { timezone } = await tx.user.findUniqueOrThrow({
+      where: { id: userId },
+      select: { timezone: true },
+    });
+
+    if (isValidTimezone(timezone)) return timezone;
+    return FALLBACK_TIMEZONE;
+  }
+
+  static async getLanguage(tx: Tx, input: { userId: UserId }) {
+    const { userId } = input;
+    const { language } = await tx.user.findUniqueOrThrow({
+      where: { id: userId },
+      select: { language: true },
+    });
+
+    if (isValidLanguage(language)) return language;
+    return FALLBACK_LANGUAGE;
   }
 }

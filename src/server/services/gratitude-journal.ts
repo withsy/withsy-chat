@@ -4,10 +4,14 @@ import {
   type GratitudeJournalStart,
 } from "@/types/gratitude-journal";
 import type { UserId } from "@/types/user";
+import { TRPCError } from "@trpc/server";
+import { endOfDay, format, startOfDay } from "date-fns";
+import { fromZonedTime, toZonedTime } from "date-fns-tz";
 import type { ServiceRegistry } from "../service-registry";
 import { ChatService } from "./chat";
 import { IdempotencyInfoService } from "./idempotency-info";
 import { MessageService } from "./message";
+import { UserService } from "./user";
 
 export class GratitudeJournalService {
   constructor(private readonly service: ServiceRegistry) {}
@@ -30,21 +34,35 @@ export class GratitudeJournalService {
       await this.service.db.$transaction(async (tx) => {
         await IdempotencyInfoService.checkDuplicateRequest(tx, idempotencyKey);
 
+        const timezone = await UserService.getTimezone(tx, { userId });
+        const utcNow = new Date();
+        const zonedNow = toZonedTime(utcNow, timezone);
+        const zonedTodayStart = startOfDay(zonedNow);
+        const zonedTodayEnd = endOfDay(zonedNow);
+        const utcTodayStart = fromZonedTime(zonedTodayStart, timezone);
+        const utcTodayEnd = fromZonedTime(zonedTodayEnd, timezone);
+
+        const existingJournal = await tx.gratitudeJournal.findFirst({
+          where: {
+            userId,
+            createdAt: {
+              gte: utcTodayStart,
+              lte: utcTodayEnd,
+            },
+          },
+        });
+
+        if (existingJournal) {
+          throw new TRPCError({
+            code: "CONFLICT",
+            message: "Today's Gratitude Journal already exists.",
+          });
+        }
+
+        const title = `Gratitude Journal - ${format(zonedNow, "yyyy-MM-dd")}`;
         const chat = await ChatService.createChat(tx, {
           userId,
-          title: "Gratitude Journal",
-        });
-
-        const userMessage = await MessageService.createUserMessage(tx, {
-          chatId: chat.id,
-          text: "TODO: prompt",
-          isPublic: false,
-        });
-
-        const modelMessage = await MessageService.createModelMessage(tx, {
-          chatId: chat.id,
-          model: "gemini-1.5-pro",
-          parentMessageId: userMessage.id,
+          title,
         });
 
         const gratitudeJournal = await tx.gratitudeJournal.create({
