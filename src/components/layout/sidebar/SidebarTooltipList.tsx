@@ -18,17 +18,17 @@ export default function SidebarTooltipList() {
         size={16}
       />
       <SidebarTooltip
-        id={"chat"}
-        icon={PenLine}
-        fill={true}
-        label={"New Chat"}
-        size={16}
-      />
-      <SidebarTooltip
         id={"saved"}
         icon={Bookmark}
         fill={true}
         label={"All Saved"}
+        size={16}
+      />
+      <SidebarTooltip
+        id={"chat"}
+        icon={PenLine}
+        fill={true}
+        label={"New Chat"}
         size={16}
       />
     </div>
