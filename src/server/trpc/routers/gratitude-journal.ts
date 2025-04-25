@@ -1,3 +1,4 @@
+import { ChatStartOutput } from "@/types/chat";
 import {
   GratitudeJournal,
   GratitudeJournalList,
@@ -14,12 +15,12 @@ export const gratitudeJournalRouter = t.router({
         .list(opts.ctx.userId, opts.input)
         .then((xs) => xs.map((x) => GratitudeJournal.parse(x)))
     ),
-  start: publicProcedure
+  startChat: publicProcedure
     .input(GratitudeJournalStart)
-    .output(GratitudeJournal)
+    .output(ChatStartOutput)
     .mutation(async (opts) =>
       opts.ctx.service.gratitudeJournal
-        .start(opts.ctx.userId, opts.input)
-        .then((x) => GratitudeJournal.parse(x))
+        .startChat(opts.ctx.userId, opts.input)
+        .then((x) => ChatStartOutput.parse(x))
     ),
 });
