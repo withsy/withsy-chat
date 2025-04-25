@@ -7,11 +7,13 @@ import { trpc } from "@/lib/trpc";
 import type { Message } from "@/types/message";
 import { useEffect, useMemo, useState } from "react";
 import { PartialEmpty } from "../Empty";
+import { PartialLoading } from "../Loading";
 
 export default function BookmarkPage() {
   const { user } = useUser();
   if (!user) throw new Error("User must exist.");
 
+  const [loading, setLoading] = useState(true);
   const [data, setData] = useState<Message[]>([]);
   const [searchText, setSearchText] = useState("");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
@@ -30,6 +32,7 @@ export default function BookmarkPage() {
   useEffect(() => {
     if (!listSaved.data) return;
     setData(listSaved.data);
+    setLoading(false);
   }, [listSaved.data]);
 
   const filteredMessages = useMemo(() => {
@@ -43,6 +46,7 @@ export default function BookmarkPage() {
     });
   }, [sortOrder, searchText, data]);
 
+  if (loading) return <PartialLoading />;
   return (
     <div className="h-full w-full flex flex-col p-6">
       <BookmarkFilters
