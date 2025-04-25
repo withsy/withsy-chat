@@ -7,22 +7,34 @@ import {
   type RecommendedFriends,
 } from "@/components/town/withsyFriends";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useUser } from "@/context/UserContext";
+import { service } from "@/server/service-registry";
+import { User, UserSession } from "@/types/user";
 import type { GetServerSideProps } from "next";
+import { getServerSession, type Session } from "next-auth";
 import { useRouter } from "next/router";
+import { authOptions } from "./api/auth/[...nextauth]";
 
 type Props = {
+  user: User | null;
   recommendedFriends: RecommendedFriends;
 };
 
-export const getServerSideProps: GetServerSideProps<Props> = async () => {
+export const getServerSideProps: GetServerSideProps<Props> = async (
+  context
+) => {
+  const session = await getServerSession(context.req, context.res, authOptions);
+  let user: User | null = null;
+  if (session) {
+    const userSession = UserSession.parse(session);
+    user = await service.user.get(userSession.user.id);
+  }
+
   const recommendedFriends = getRecommendedFriends();
-  return { props: { recommendedFriends } };
+  return { props: { recommendedFriends, user } };
 };
 
-export default function Page({ recommendedFriends }: Props) {
+export default function Page({ recommendedFriends, user }: Props) {
   const router = useRouter();
-  const { user } = useUser();
 
   return (
     <div className="flex flex-col h-screen">

@@ -1,10 +1,10 @@
 import {
+  User,
   UserSelect,
   UserUpdatePrefs,
   type UserEnsure,
   type UserId,
 } from "@/types/user";
-import type { Prisma } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import type { ServiceRegistry } from "../service-registry";
 import type { Tx } from "./db";
@@ -12,13 +12,13 @@ import type { Tx } from "./db";
 export class UserService {
   constructor(private readonly service: ServiceRegistry) {}
 
-  async get(userId: UserId) {
+  async get(userId: UserId): Promise<User> {
     const res = await this.service.db.user.findUniqueOrThrow({
       where: { id: userId },
       select: UserSelect,
     });
 
-    return res;
+    return User.parse(res);
   }
 
   async ensure(userId: UserId, input: UserEnsure) {

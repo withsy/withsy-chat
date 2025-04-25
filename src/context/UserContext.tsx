@@ -14,7 +14,6 @@ type SetUserPrefsAndSave = (input: UserUpdatePrefs) => void;
 
 type UserContextType = {
   user: User | null;
-  onSignOut: () => void;
   setUserPrefsAndSave: SetUserPrefsAndSave;
   userPrefLoadings: UserPrefLoadings;
 };
@@ -98,15 +97,10 @@ export function UserProvider({ children }: { children: ReactNode }) {
     updateUserPrefs.mutate(input);
   };
 
-  const onSignOut = () => {
-    setUser(null);
-  };
-
   return (
     <UserContext.Provider
       value={{
         user,
-        onSignOut,
         setUserPrefsAndSave,
         userPrefLoadings,
       }}

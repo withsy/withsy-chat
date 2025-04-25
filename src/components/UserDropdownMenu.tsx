@@ -70,7 +70,7 @@ function UserMenuItem({
 export default function UserDropdownMenu() {
   const router = useRouter();
   const { isMobile } = useSidebarStore();
-  const { user, onSignOut } = useUser();
+  const { user } = useUser();
 
   const [themeModalOpen, setThemeModalOpen] = useState(false);
 
@@ -98,7 +98,6 @@ export default function UserDropdownMenu() {
       icon: LogOut,
       label: "Log out",
       onClick: async () => {
-        onSignOut();
         signOut({ callbackUrl: "/" });
       },
     },
