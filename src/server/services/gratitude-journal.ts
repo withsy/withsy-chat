@@ -18,17 +18,6 @@ import { UserService } from "./user";
 export class GratitudeJournalService {
   constructor(private readonly service: ServiceRegistry) {}
 
-  async list(userId: UserId) {
-    const res = await this.service.db.gratitudeJournal.findMany({
-      where: {
-        userId,
-      },
-      select: GratitudeJournal.Select,
-    });
-
-    return res;
-  }
-
   async getTodayJournal(userId: UserId) {
     const res = await this.service.db.$transaction(async (tx) => {
       const now = new Date();
@@ -58,6 +47,18 @@ export class GratitudeJournalService {
     });
 
     return res;
+  }
+
+  async getStats(userId: UserId) {}
+
+  async getGrassCalendar(userId: UserId) {
+    const res = await this.service.db.$transaction(async (tx) => {
+      const now = new Date();
+      const a = await GratitudeJournalService.getTimezoneInfo(tx, {
+        userId,
+        now,
+      });
+    });
   }
 
   async startChat(userId: UserId, input: GratitudeJournal.StartChat) {
