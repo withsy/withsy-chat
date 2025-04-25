@@ -4,7 +4,7 @@ import UserDropdownMenu from "@/components/UserDropdownMenu";
 import { formatDateLabel, toNewest } from "@/lib/date-utils";
 import { trpc } from "@/lib/trpc";
 import type { Chat } from "@/types/chat";
-import { Bookmark, Heart, SquarePen } from "lucide-react";
+import { Bookmark, Heart, PenLine } from "lucide-react";
 import { useEffect, useState } from "react";
 import { SidebarChatItem } from "./SidebarChatItem";
 import { SidebarTooltip } from "./SidebarTooltip";
@@ -79,7 +79,7 @@ export default function SidebarChatList() {
       />
       <SidebarTooltip
         id={"chat"}
-        icon={SquarePen}
+        icon={PenLine}
         fill={true}
         label={"New Chat"}
         size={16}

@@ -1,5 +1,5 @@
 import { useSidebarStore } from "@/stores/useSidebarStore";
-import { PanelRightClose, PanelRightOpen, SquarePen } from "lucide-react";
+import { PanelRightClose, PanelRightOpen, PenLine } from "lucide-react";
 import { useRouter } from "next/router";
 
 export function HeaderTooltipGroup() {
@@ -30,7 +30,7 @@ export function HeaderTooltipGroup() {
         onClick={handleLinkClick}
         className={`cursor-pointer rounded-md group w-8 h-8 flex items-center justify-center hover:bg-white active:bg-white`}
       >
-        <SquarePen size={iconSize} className="group-hover:text-black" />
+        <PenLine size={iconSize} className="group-hover:text-black" />
       </button>
     </div>
   );
