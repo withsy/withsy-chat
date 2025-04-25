@@ -15,19 +15,19 @@ ADD COLUMN     "name" TEXT NOT NULL DEFAULT 'Buddy',
 ADD COLUMN     "timezone" TEXT NOT NULL DEFAULT '';
 
 -- CreateTable
-CREATE TABLE "chat_prompts" (
+CREATE TABLE "prompts" (
     "id" SERIAL NOT NULL,
     "chat_id" UUID NOT NULL,
-    "parent_prompt_id" UUID,
+    "prompt_template_id" UUID,
     "text" TEXT NOT NULL,
     "created_at" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    CONSTRAINT "chat_prompts_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "prompts_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "prompts" (
+CREATE TABLE "prompt_templates" (
     "id" UUID NOT NULL,
     "user_id" UUID NOT NULL,
     "title" TEXT NOT NULL,
@@ -37,7 +37,7 @@ CREATE TABLE "prompts" (
     "updated_at" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "deleted_at" TIMESTAMPTZ(6),
 
-    CONSTRAINT "prompts_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "prompt_templates_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -52,13 +52,13 @@ CREATE TABLE "gratitude_journal" (
 );
 
 -- CreateIndex
-CREATE INDEX "chat_prompts_chat_id_idx" ON "chat_prompts"("chat_id");
+CREATE INDEX "prompts_chat_id_idx" ON "prompts"("chat_id");
 
 -- CreateIndex
-CREATE INDEX "chat_prompts_parent_prompt_id_idx" ON "chat_prompts"("parent_prompt_id");
+CREATE INDEX "prompts_prompt_template_id_idx" ON "prompts"("prompt_template_id");
 
 -- CreateIndex
-CREATE INDEX "prompts_user_id_idx" ON "prompts"("user_id");
+CREATE INDEX "prompt_templates_user_id_idx" ON "prompt_templates"("user_id");
 
 -- CreateIndex
 CREATE INDEX "gratitude_journal_user_id_idx" ON "gratitude_journal"("user_id");
@@ -67,13 +67,13 @@ CREATE INDEX "gratitude_journal_user_id_idx" ON "gratitude_journal"("user_id");
 CREATE INDEX "gratitude_journal_chat_id_idx" ON "gratitude_journal"("chat_id");
 
 -- AddForeignKey
-ALTER TABLE "chat_prompts" ADD CONSTRAINT "chat_prompts_chat_id_fkey" FOREIGN KEY ("chat_id") REFERENCES "chats"("id") ON DELETE CASCADE ON UPDATE NO ACTION;
+ALTER TABLE "prompts" ADD CONSTRAINT "prompts_chat_id_fkey" FOREIGN KEY ("chat_id") REFERENCES "chats"("id") ON DELETE CASCADE ON UPDATE NO ACTION;
 
 -- AddForeignKey
-ALTER TABLE "chat_prompts" ADD CONSTRAINT "chat_prompts_parent_prompt_id_fkey" FOREIGN KEY ("parent_prompt_id") REFERENCES "prompts"("id") ON DELETE SET NULL ON UPDATE NO ACTION;
+ALTER TABLE "prompts" ADD CONSTRAINT "prompts_prompt_template_id_fkey" FOREIGN KEY ("prompt_template_id") REFERENCES "prompt_templates"("id") ON DELETE SET NULL ON UPDATE NO ACTION;
 
 -- AddForeignKey
-ALTER TABLE "prompts" ADD CONSTRAINT "prompts_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE NO ACTION;
+ALTER TABLE "prompt_templates" ADD CONSTRAINT "prompt_templates_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE NO ACTION;
 
 -- AddForeignKey
 ALTER TABLE "gratitude_journal" ADD CONSTRAINT "gratitude_journal_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE NO ACTION;
