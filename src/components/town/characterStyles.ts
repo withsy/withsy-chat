@@ -45,8 +45,8 @@ export function getCharacterStyle(name: string) {
   return characterStyles[key] ?? defaultStyle;
 }
 
-const defaultStyle = {
-  backgroundColor: "rgb(229, 231, 235)",
+export const defaultStyle = {
+  backgroundColor: "rgb(248, 248, 247)",
   textColor: "black" as const,
   position: "left" as const,
 };

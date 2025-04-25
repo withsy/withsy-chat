@@ -64,7 +64,12 @@ export function RecommendedSection({
           )}
         </div>
       </div>
-      <div className="bg-gray-100 p-6 rounded-xl flex flex-col justify-between items-start">
+      <div
+        className="p-6 rounded-xl flex flex-col justify-between items-start"
+        style={{
+          backgroundColor: "rgb(248, 248, 247)",
+        }}
+      >
         <div>
           <div className="text-sm font-semibold text-gray-500 mb-2 inline-flex items-center gap-1">
             <Gem />

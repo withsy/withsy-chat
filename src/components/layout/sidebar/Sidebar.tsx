@@ -3,10 +3,19 @@ import { cn } from "@/lib/utils";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 import SidebarChatList from "./SidebarChatList";
 
-export default function Sidebar() {
+export default function Sidebar({ isChatPage }: { isChatPage: boolean }) {
   const { isMobile, collapsed } = useSidebarStore();
   const { userPrefs } = useUser();
   const { themeColor, themeOpacity } = userPrefs;
+  const bgStyle = isChatPage
+    ? {
+        backgroundColor: "white",
+        backgroundImage: `linear-gradient(rgba(${themeColor}, ${themeOpacity}), rgba(${themeColor}, ${themeOpacity}))`,
+        backgroundBlendMode: "multiply",
+      }
+    : {
+        backgroundColor: "rgb(248, 248, 247)",
+      };
 
   return (
     <div
@@ -16,11 +25,7 @@ export default function Sidebar() {
         !collapsed && isMobile && "w-[100vw]  px-4",
         !collapsed && !isMobile && "w-[240px] px-4"
       )}
-      style={{
-        backgroundColor: "white",
-        backgroundImage: `linear-gradient(rgba(${themeColor}, ${themeOpacity}), rgba(${themeColor}, ${themeOpacity}))`,
-        backgroundBlendMode: "multiply",
-      }}
+      style={bgStyle}
     >
       <div
         className={cn(
