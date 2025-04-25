@@ -24,12 +24,12 @@ export function FriendCard({ friend }: { friend: Friend }) {
         </div>
         <h2 className="text-2xl font-bold mb-2 min-h-[56px]">{friend.role}</h2>
       </div>
-      <div className="flex items-center justify-between mt-4">
+      <div className="flex items-center justify-between mt-4 rounded-xl overflow-hidden">
         {friendStyle.position === "left" && (
           <img
             src={`/characters/${friend.name}.svg`}
             alt={friend.name}
-            className="w-24 h-24 rounded-xl"
+            className="w-24 h-24"
           />
         )}
         <div className={friendStyle.position === "left" ? "pr-6" : "pl-6"}>
@@ -44,7 +44,7 @@ export function FriendCard({ friend }: { friend: Friend }) {
           <img
             src={`/characters/${friend.name}.svg`}
             alt={friend.name}
-            className="w-24 h-24 rounded-xl"
+            className="w-24 h-24"
           />
         )}
       </div>
