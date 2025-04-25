@@ -1,7 +1,6 @@
 import { useUser } from "@/context/UserContext";
 import { usePathname } from "next/navigation";
 import { type ReactNode } from "react";
-import Header from "./Header";
 import Main from "./Main";
 import Sidebar from "./sidebar/Sidebar";
 
@@ -18,7 +17,6 @@ export default function Layout({ children }: LayoutProps) {
 
   const isChatPage =
     pathname.startsWith("/chat") || pathname.startsWith("/saved");
-
   return (
     <div
       className="flex overflow-hidden h-[100dvh]"
@@ -26,7 +24,6 @@ export default function Layout({ children }: LayoutProps) {
     >
       <Sidebar isChatPage={isChatPage} />
       <div className="flex flex-col flex-1 h-full ">
-        <Header />
         <Main>{children}</Main>
       </div>
     </div>
