@@ -93,14 +93,16 @@ export default function SidebarChatList() {
                 <div className="py-1 px-2 mb-1 text-sm font-semibold select-none">
                   {date}
                 </div>
-                {chats.map((chat) => (
-                  <SidebarChatItem
-                    key={chat.id}
-                    chat={chat}
-                    isSidebar={true}
-                    onChatUpdate={updateChat}
-                  />
-                ))}
+                <div className="space-y-1 mt-1">
+                  {chats.map((chat) => (
+                    <SidebarChatItem
+                      key={chat.id}
+                      chat={chat}
+                      isSidebar={true}
+                      onChatUpdate={updateChat}
+                    />
+                  ))}
+                </div>
               </div>
             );
           })}
