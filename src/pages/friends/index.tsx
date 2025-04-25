@@ -1,3 +1,4 @@
+import { CollapseButton } from "@/components/CollapseButton";
 import { FriendCard } from "@/components/town/FriendCard";
 import { RecommendedSection } from "@/components/town/RecommendedSection";
 import {
@@ -5,12 +6,18 @@ import {
   withsyFriends,
 } from "@/components/town/withsyFriends";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useSidebarStore } from "@/stores/useSidebarStore";
 
 export default function Page() {
+  const { collapsed } = useSidebarStore();
   const { message, bestFriend, extraFriend } = getRecommendedFriends();
   return (
     <div className="flex flex-col h-screen">
-      <div className="flex-1 overflow-y-auto pt-10 pb-30">
+      <div className="w-full sticky top-0 z-50 max-w-6xl mx-auto p-2 flex justify-between items-center select-none">
+        <div>{collapsed && <CollapseButton hoverColor="bg-gray-100" />}</div>
+        <div></div>
+      </div>
+      <div className="flex-1 overflow-y-auto pb-30">
         <Tabs
           defaultValue="discover"
           className="w-full max-w-6xl mx-auto px-4 pt-4"
