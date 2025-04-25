@@ -27,7 +27,7 @@ export function SidebarTooltip({
   const className = `
               group flex items-center gap-2 ${mobileClassName} rounded-md transition-colors w-full 
               hover:bg-white hover:font-semibold cursor-pointer select-none active:bg-white active:font-semibold ${
-                isActive ? "font-semibold" : ""
+                isActive ? "bg-white" : ""
               }
             `;
   const handleLinkClick = () => {

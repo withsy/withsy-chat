@@ -65,9 +65,9 @@ export function SidebarChatItem({
   const isActive = router.asPath === `/chat/${chat.id}`;
   const chatType = chat.type;
 
-  const isHoveredOrDropdown = `${
-    isDropdownOpen || isActive || isSidebar == undefined ? "font-semibold" : ""
-  } ${isDropdownOpen && "bg-white"}`;
+  const isHoveredOrDropdown = `${isActive && isSidebar && "bg-white"} ${
+    isDropdownOpen && "bg-white"
+  }`;
   const iconClassName = `opacity-100 transition-opacity ${
     isDropdownOpen ? "opacity-0" : "group-hover:opacity-0"
   }`;
