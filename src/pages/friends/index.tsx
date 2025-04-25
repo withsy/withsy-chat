@@ -4,21 +4,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const withsyFriends = [
   {
-    name: "Milo",
-    role: "Let’s write something beautiful together.",
-    specialty: "Gratitude Journaling",
-  },
-  {
-    name: "Maddy",
-    role: "Tell me everything. I’m listening.",
-    specialty: "Emotional Venting",
-  },
-  {
-    name: "Sunny",
-    role: "You’re stronger than you think!",
-    specialty: "Goals & Habits",
-  },
-  {
     name: "Skye",
     role: "Got something on your mind? Let’s chat!",
     specialty: "Creative Expression",
@@ -27,6 +12,26 @@ const withsyFriends = [
     name: "Luna",
     role: "I’ll be right here when you need me.",
     specialty: "Soft Support",
+  },
+  {
+    name: "Tali",
+    role: "Your thoughts matter—let’s write them down.",
+    specialty: "Book Notes",
+  },
+  {
+    name: "Milo",
+    role: "Let’s write something beautiful together.",
+    specialty: "Gratitude Journaling",
+  },
+  {
+    name: "Sunny",
+    role: "You’re stronger than you think!",
+    specialty: "Goals & Habits",
+  },
+  {
+    name: "Maddy",
+    role: "Tell me everything. I’m listening.",
+    specialty: "Emotional Venting",
   },
 ];
 

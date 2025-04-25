@@ -31,6 +31,11 @@ export const characterStyles: Record<
     textColor: "black",
     position: "left",
   },
+  tali: {
+    backgroundColor: "rgb(189, 175, 218)",
+    textColor: "black",
+    position: "left",
+  },
 };
 
 export type CharacterName = keyof typeof characterStyles;
