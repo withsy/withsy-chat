@@ -12,7 +12,6 @@ export default function BookmarkPage() {
   const { user } = useUser();
   if (!user) throw new Error("User must exist.");
 
-  const { themeColor } = user.preferences;
   const [data, setData] = useState<Message[]>([]);
   const [searchText, setSearchText] = useState("");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
