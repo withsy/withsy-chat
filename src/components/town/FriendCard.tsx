@@ -1,4 +1,3 @@
-import { Heart, HelpingHand, NotebookPen, Palette, Target } from "lucide-react";
 import { getCharacterStyle, type CharacterName } from "./characterStyles";
 import { HoverInvertButton } from "./HoverInvertButton";
 
