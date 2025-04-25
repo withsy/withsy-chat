@@ -11,13 +11,17 @@ import { useUser } from "@/context/UserContext";
 export default function Page() {
   const { userSession } = useUser();
   const { message, bestFriend, extraFriend } = getRecommendedFriends();
+
   return (
     <div className="flex flex-col h-screen">
-      {!userSession && (
-        <div className="absolute top-4 right-4 z-50">
-          <LoginButton />
+      {/* ✅ 헤더 영역 */}
+      <div className="w-full bg-white shadow-sm sticky top-0 z-50">
+        <div className="max-w-6xl mx-auto px-4 py-3 flex justify-end">
+          {!userSession && <LoginButton />}
         </div>
-      )}
+      </div>
+
+      {/* ✅ 콘텐츠 영역 */}
       <div className="flex-1 overflow-y-auto pb-30">
         <Tabs
           defaultValue="discover"
@@ -43,6 +47,7 @@ export default function Page() {
               Yours
             </TabsTrigger>
           </TabsList>
+
           <TabsContent value="discover">
             <RecommendedSection
               bestFriend={bestFriend}
@@ -55,6 +60,7 @@ export default function Page() {
               ))}
             </div>
           </TabsContent>
+
           <TabsContent value="withsy">
             <div className="grid gap-4 sm:grid-cols-3 gap-y-5 p-5 items-stretch">
               {withsyFriends.map((friend) => (
@@ -62,6 +68,7 @@ export default function Page() {
               ))}
             </div>
           </TabsContent>
+
           <TabsContent value="custom">
             <div className="grid gap-4 sm:grid-cols-3 gap-y-5 p-5 place-items-center">
               support soon
