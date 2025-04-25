@@ -31,7 +31,7 @@ export default function Sidebar({ isChatPage }: { isChatPage: boolean }) {
       </div>
       <div
         className={cn(
-          "transition-all duration-300 ease-in-out h-[100dvh] pt-16 fixed top-0 left-0 z-40 flex flex-col",
+          "transition-all duration-300 ease-in-out h-[100dvh] pt-10 fixed top-0 left-0 z-40 flex flex-col",
           collapsed && "w-0 overflow-hidden",
           !collapsed && isMobile && "w-[100vw] px-4",
           !collapsed && !isMobile && "w-[240px] px-4"
