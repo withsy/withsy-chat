@@ -28,6 +28,9 @@ export const Data: z.ZodType<Data> = Schema.extend({
   chat: z.lazy(() => Chat),
 });
 
+export const GetTodayJournalOutput = Data.nullable();
+export type GetTodayJournalOutput = zInfer<typeof GetTodayJournalOutput>;
+
 export const StartChat = z.object({
   idempotencyKey: IdempotencyKey,
 });

@@ -11,11 +11,11 @@ export const gratitudeJournalRouter = t.router({
         .then((xs) => xs.map((x) => GratitudeJournal.Data.parse(x)))
     ),
   getTodayJournal: publicProcedure
-    .output(GratitudeJournal.Data)
+    .output(GratitudeJournal.GetTodayJournalOutput)
     .query(async (opts) =>
       opts.ctx.service.gratitudeJournal
         .getTodayJournal(opts.ctx.userId)
-        .then((x) => GratitudeJournal.Data.parse(x))
+        .then((x) => GratitudeJournal.GetTodayJournalOutput.parse(x))
     ),
   startChat: publicProcedure
     .input(GratitudeJournal.StartChat)
