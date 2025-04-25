@@ -1,6 +1,6 @@
 import type { ServiceRegistry } from "../service-registry";
 import { UserService } from "./user";
-import { UserUsageLimitService } from "./user-usage-limit-service";
+import { UserUsageLimitService } from "./user-usage-limit";
 
 export class UserLinkAccountService {
   constructor(private readonly service: ServiceRegistry) {}

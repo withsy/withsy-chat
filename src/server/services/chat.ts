@@ -11,10 +11,10 @@ import { UserId } from "@/types/user";
 import { uuidv7 } from "uuidv7";
 import type { ServiceRegistry } from "../service-registry";
 import type { Tx } from "./db";
-import { IdempotencyInfoService } from "./idempotency-info-service";
-import { MessageFileService } from "./message-file-service";
-import { MessageService } from "./message-service";
-import { UserUsageLimitService } from "./user-usage-limit-service";
+import { IdempotencyInfoService } from "./idempotency-info";
+import { MessageService } from "./message";
+import { MessageFileService } from "./message-file";
+import { UserUsageLimitService } from "./user-usage-limit";
 
 export class ChatService {
   constructor(private readonly service: ServiceRegistry) {}

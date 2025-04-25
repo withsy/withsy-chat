@@ -17,11 +17,10 @@ import { envConfig } from "../env-config";
 import { HttpServerError } from "../error";
 import type { ServiceRegistry } from "../service-registry";
 import type { Tx } from "./db";
-import { IdempotencyInfoService } from "./idempotency-info-service";
-import { MessageChunkService } from "./message-chunk-service";
-import { MessageFileService } from "./message-file-service";
-import type { FileInfo } from "./mock-s3-service";
-import { UserUsageLimitService } from "./user-usage-limit-service";
+import { IdempotencyInfoService } from "./idempotency-info";
+import { MessageChunkService } from "./message-chunk";
+import { MessageFileService } from "./message-file";
+import { UserUsageLimitService } from "./user-usage-limit";
 
 // TODO: Change limit history length
 const DEFAULT_REMAIN_LENGTH = 10;

@@ -1,4 +1,3 @@
-import { ChatSelect } from "@/types/chat";
 import { ChatPromptSelect } from "@/types/chat-prompt";
 import {
   PromptCreate,
@@ -10,12 +9,11 @@ import {
   type PromptUpdate,
 } from "@/types/prompt";
 import type { UserId } from "@/types/user";
-import { TRPCError } from "@trpc/server";
 import { uuidv7 } from "uuidv7";
 import type { ServiceRegistry } from "../service-registry";
-import { ChatService } from "./chat-service";
-import { IdempotencyInfoService } from "./idempotency-info-service";
-import { MessageService } from "./message-service";
+import { ChatService } from "./chat";
+import { IdempotencyInfoService } from "./idempotency-info";
+import { MessageService } from "./message";
 
 export class PromptService {
   constructor(private readonly service: ServiceRegistry) {}

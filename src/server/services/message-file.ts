@@ -3,7 +3,7 @@ import { MessageFileSelect } from "@/types/message-file";
 import type { UserId } from "@/types/user";
 import type { ServiceRegistry } from "../service-registry";
 import type { Tx } from "./db";
-import type { FileInfo } from "./mock-s3-service";
+import type { FileInfo } from "./mock-s3";
 
 export class MessageFileService {
   constructor(private readonly service: ServiceRegistry) {}

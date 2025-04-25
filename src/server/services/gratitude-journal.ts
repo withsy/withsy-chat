@@ -5,9 +5,9 @@ import {
 } from "@/types/gratitude-journal";
 import type { UserId } from "@/types/user";
 import type { ServiceRegistry } from "../service-registry";
-import { ChatService } from "./chat-service";
-import { IdempotencyInfoService } from "./idempotency-info-service";
-import { MessageService } from "./message-service";
+import { ChatService } from "./chat";
+import { IdempotencyInfoService } from "./idempotency-info";
+import { MessageService } from "./message";
 
 export class GratitudeJournalService {
   constructor(private readonly service: ServiceRegistry) {}

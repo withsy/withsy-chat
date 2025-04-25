@@ -10,7 +10,7 @@ import type {
 import { match } from "ts-pattern";
 import { envConfig } from "../env-config";
 import type { ServiceRegistry } from "../service-registry";
-import type { SendMessageToAiInput } from "./model-route-service";
+import type { SendMessageToAiInput } from "./model-route";
 
 const MAX_CHUNK_BUFFER_LENGTH = 16;
 
