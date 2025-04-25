@@ -3,8 +3,8 @@ import { signIn } from "next-auth/react";
 
 export default function LoginButton() {
   return (
-    <Button size="sm" onClick={() => signIn()}>
-      Log in
+    <Button size="lg" onClick={() => signIn()} className="text-lg">
+      Sign in
     </Button>
   );
 }

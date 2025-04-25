@@ -7,16 +7,30 @@ import {
 } from "@/components/town/withsyFriends";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useUser } from "@/context/UserContext";
+import { useRouter } from "next/router";
 
 export default function Page() {
+  const router = useRouter();
+
   const { user } = useUser();
   const { message, bestFriend, extraFriend } = getRecommendedFriends();
 
   return (
     <div className="flex flex-col h-screen">
-      <div className="w-full bg-white shadow-sm sticky top-0 z-50">
-        <div className="max-w-6xl mx-auto px-4 py-3 flex justify-end">
-          {!user && <LoginButton />}
+      <div className="w-full bg-white sticky top-0 z-50">
+        <div className="max-w-6xl mx-auto p-2 flex justify-end select-none">
+          {user ? (
+            <div
+              className="flex items-center gap-2 underline underline-offset-8 p-2 hover:bg-gray-200 active:bg-gray-200 rounded-md"
+              onClick={() => {
+                router.push("/friends");
+              }}
+            >
+              <div className="text-xl font-semibold">Return to chat</div>
+            </div>
+          ) : (
+            <LoginButton />
+          )}
         </div>
       </div>
       <div className="flex-1 overflow-y-auto pb-30">
