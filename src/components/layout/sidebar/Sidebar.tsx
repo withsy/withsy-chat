@@ -1,8 +1,9 @@
 import { useUser } from "@/context/UserContext";
 import { cn } from "@/lib/utils";
 import { useSidebarStore } from "@/stores/useSidebarStore";
-import { FloatTools } from "../FloatTools";
+import { CollapseButton } from "../../CollapseButton";
 import SidebarChatList from "./SidebarChatList";
+import SidebarTooltipList from "./SidebarTooltipList";
 
 export default function Sidebar({ isChatPage }: { isChatPage: boolean }) {
   const { isMobile, collapsed } = useSidebarStore();
@@ -28,18 +29,18 @@ export default function Sidebar({ isChatPage }: { isChatPage: boolean }) {
 
   return (
     <>
-      <div className="fixed top-4 left-4 z-50">
-        <FloatTools />
-      </div>
       <div
         className={cn(
-          "transition-all duration-300 ease-in-out h-[100dvh] pt-10 fixed top-0 left-0 z-40 flex flex-col",
+          "transition-all duration-300 ease-in-out h-[100dvh] fixed top-0 left-0 z-40 flex flex-col",
           collapsed && "w-0 overflow-hidden",
           !collapsed && isMobile && "w-[100vw] px-4",
           !collapsed && !isMobile && "w-[240px] px-4"
         )}
         style={bgStyle()}
       >
+        <div className="flex justify-end">
+          <CollapseButton />
+        </div>
         <div
           className={cn(
             "transition-opacity duration-500 delay-200 flex-1 flex flex-col min-h-0 pb-4 relative",
@@ -48,9 +49,12 @@ export default function Sidebar({ isChatPage }: { isChatPage: boolean }) {
           )}
         >
           {!collapsed && (
-            <div className="flex-1 overflow-y-auto">
-              <SidebarChatList />
-            </div>
+            <>
+              <SidebarTooltipList />
+              <div className="flex-1 overflow-y-auto">
+                <SidebarChatList />
+              </div>
+            </>
           )}
         </div>
       </div>
