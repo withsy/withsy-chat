@@ -44,23 +44,30 @@ function getRecommendedFriends() {
       bestFriend: withsyFriends.find((f) => f.name === "Sunny")!,
       extraFriend: withsyFriends.find((f) => f.name === "Skye")!,
     };
-  } else if (hour >= 11 && hour < 17) {
+  } else if (hour >= 11 && hour < 15) {
     return {
-      message: "Afternoons are perfect for creativity. Let's express yourself!",
+      message:
+        "The sun is high—perfect time to get creative and express yourself!",
       bestFriend: withsyFriends.find((f) => f.name === "Skye")!,
       extraFriend: withsyFriends.find((f) => f.name === "Milo")!,
     };
-  } else if (hour >= 17 && hour < 22) {
+  } else if (hour >= 15 && hour < 19) {
     return {
-      message: "Evening is a great time to reflect and be thankful.",
-      bestFriend: withsyFriends.find((f) => f.name === "Milo")!,
+      message: "A cozy afternoon is perfect for reading and reflection.",
+      bestFriend: withsyFriends.find((f) => f.name === "Tali")!,
+      extraFriend: withsyFriends.find((f) => f.name === "Milo")!,
+    };
+  } else if (hour >= 19 && hour < 23) {
+    return {
+      message: "Evenings are for winding down and appreciating the day.",
+      bestFriend: withsyFriends.find((f) => f.name === "Maddy")!,
       extraFriend: withsyFriends.find((f) => f.name === "Sunny")!,
     };
   } else {
     return {
-      message: "Late night thoughts? I'm here for you with comfort and care.",
+      message: "Late night thoughts? I’m here for you with comfort and care.",
       bestFriend: withsyFriends.find((f) => f.name === "Luna")!,
-      extraFriend: withsyFriends.find((f) => f.name === "Maddy")!,
+      extraFriend: withsyFriends.find((f) => f.name === "Tali")!,
     };
   }
 }
