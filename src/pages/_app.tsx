@@ -14,7 +14,7 @@ const App: AppType = ({
 }: AppProps) => {
   useSidebarInitializer();
   const router = useRouter();
-  const noLayoutPages = ["/auth/signin"];
+  const noLayoutPages = ["/auth/signin", "/"];
   const isLayoutDisabled = noLayoutPages.includes(router.pathname);
   let title = "Withsy";
   if (process.env.NODE_ENV === "development") title = `[DEV] ${title}`;

@@ -1,3 +1,4 @@
+import LoginButton from "@/components/login/LoginButton";
 import { FriendCard } from "@/components/town/FriendCard";
 import { RecommendedSection } from "@/components/town/RecommendedSection";
 import {
@@ -5,11 +6,18 @@ import {
   withsyFriends,
 } from "@/components/town/withsyFriends";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useUser } from "@/context/UserContext";
 
 export default function Page() {
+  const { userSession } = useUser();
   const { message, bestFriend, extraFriend } = getRecommendedFriends();
   return (
     <div className="flex flex-col h-screen">
+      {!userSession && (
+        <div className="absolute top-4 right-4 z-50">
+          <LoginButton />
+        </div>
+      )}
       <div className="flex-1 overflow-y-auto pb-30">
         <Tabs
           defaultValue="discover"
