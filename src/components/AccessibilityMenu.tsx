@@ -9,6 +9,7 @@ import { useUser } from "@/context/UserContext";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 import { Check, WandSparkles } from "lucide-react";
 import { useState } from "react";
+import { IconWithLabel } from "./IconWithLabel";
 
 export function AccessibilityMenu({ hideLabels }: { hideLabels: boolean }) {
   const { user, setUserPrefsAndSave } = useUser();
@@ -98,7 +99,7 @@ export function AccessibilityMenu({ hideLabels }: { hideLabels: boolean }) {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button className={buttonClassName} aria-label="Accessibility">
-          <WandSparkles className="w-4 h-4" />
+          <IconWithLabel icon={WandSparkles} fill={true} />
           {!hideLabels && <span>Preferences</span>}
         </button>
       </DropdownMenuTrigger>

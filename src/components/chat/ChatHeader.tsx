@@ -1,10 +1,12 @@
 import { useUser } from "@/context/UserContext";
 import { useDrawerStore } from "@/stores/useDrawerStore";
 import type { Chat } from "@/types/chat";
-import { Bookmark, FolderGit2 } from "lucide-react";
+import { Bookmark, FolderGit2, PenLine } from "lucide-react";
+import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import { AccessibilityMenu } from "../AccessibilityMenu";
 import HoverSwitchIcon from "../HoverSwitchIcon";
+import { IconWithLabel } from "../IconWithLabel";
 import { SidebarChatItem } from "../layout/sidebar/SidebarChatItem";
 
 interface ChatHeaderProps {
@@ -12,6 +14,7 @@ interface ChatHeaderProps {
 }
 
 export default function ChatHeader({ chat }: ChatHeaderProps) {
+  const router = useRouter();
   const { openDrawer, setOpenDrawer } = useDrawerStore();
   const { user } = useUser();
 
@@ -77,17 +80,24 @@ export default function ChatHeader({ chat }: ChatHeaderProps) {
 
   const buttonClassName =
     "group flex items-center gap-1 rounded-md px-1 py-2 hover:bg-white hover:font-semibold active:bg-white active:font-semibold transition-colors";
+  const handleLinkClick = () => {
+    router.push(`/chat`);
+  };
   return (
     <div
       className="absolute top-0 left-0 w-full h-[50px] px-4 flex items-center justify-between"
       style={headerStyle}
       ref={containerRef}
     >
-      <SidebarChatItem
-        chat={displayChat}
-        onChatUpdate={(updatedChat) => setDisplayChat(updatedChat)}
-      />
-
+      <div className="flex flex-row gap-2">
+        <button onClick={handleLinkClick} className={buttonClassName}>
+          <IconWithLabel icon={PenLine} fill={true} />
+        </button>
+        <SidebarChatItem
+          chat={displayChat}
+          onChatUpdate={(updatedChat) => setDisplayChat(updatedChat)}
+        />
+      </div>
       <div className="flex gap-5">
         <AccessibilityMenu hideLabels={hideLabels} />
         {buttons.map(({ label, id, icon }) => (

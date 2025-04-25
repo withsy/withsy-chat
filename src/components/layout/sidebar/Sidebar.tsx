@@ -1,7 +1,7 @@
 import { useUser } from "@/context/UserContext";
 import { cn } from "@/lib/utils";
 import { useSidebarStore } from "@/stores/useSidebarStore";
-import { HeaderTooltipGroup } from "../HeaderTooltip";
+import { FloatTools } from "../FloatTools";
 import SidebarChatList from "./SidebarChatList";
 
 export default function Sidebar({ isChatPage }: { isChatPage: boolean }) {
@@ -29,7 +29,7 @@ export default function Sidebar({ isChatPage }: { isChatPage: boolean }) {
   return (
     <>
       <div className="fixed top-4 left-4 z-50">
-        <HeaderTooltipGroup />
+        <FloatTools />
       </div>
       <div
         className={cn(

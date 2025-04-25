@@ -10,7 +10,7 @@ export default function Page() {
   const { message, bestFriend, extraFriend } = getRecommendedFriends();
   return (
     <div className="flex flex-col h-screen">
-      <div className="flex-1 overflow-y-auto pb-30">
+      <div className="flex-1 overflow-y-auto pt-10 pb-30">
         <Tabs
           defaultValue="discover"
           className="w-full max-w-6xl mx-auto px-4 pt-4"
