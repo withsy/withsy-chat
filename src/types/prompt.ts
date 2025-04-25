@@ -2,7 +2,7 @@ import type { Prisma } from "@prisma/client";
 import { z } from "zod";
 import type { zInfer } from "./common";
 
-export const PromptSelect = {} satisfies Prisma.PromptSelect;
+export const PromptSelect = { id: true } satisfies Prisma.PromptSelect;
 
 export const PromptSchema = z.object({});
 export type PromptSchema = zInfer<typeof PromptSchema>;

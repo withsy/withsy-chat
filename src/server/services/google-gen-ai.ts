@@ -15,23 +15,23 @@ export class GoogleGenAiService {
     const {
       userMessage,
       modelMessage,
+      promptText,
       messagesForHistory,
       onMessageChunkReceived,
     } = input;
 
-    const history = messagesForHistory.map((x) => ({
+    const contents = messagesForHistory.map((x) => ({
       role: RoleGoogleGenAiMap[Role.parse(x.role)],
       parts: [{ text: x.text }],
     }));
-    const parts: Part[] = [{ text: userMessage.text }];
+    contents.push({ role: "user", parts: [{ text: userMessage.text }] });
 
-    const chat = this.ai.chats.create({
+    const stream = await this.ai.models.generateContentStream({
       model: modelMessage.model,
-      history,
-    });
-
-    const stream = await chat.sendMessageStream({
-      message: parts,
+      config: {
+        systemInstruction: promptText,
+      },
+      contents,
     });
 
     for await (const chunk of stream) {

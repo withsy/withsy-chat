@@ -1,6 +1,7 @@
 import type { AppRouter } from "@/server/trpc/routers/_app";
 import {
   httpBatchLink,
+  httpLink,
   httpSubscriptionLink,
   loggerLink,
   splitLink,
@@ -21,7 +22,9 @@ function getUrl() {
   return `${getBaseUrl()}/api/trpc`;
 }
 
-export const trpc = createTRPCNext<AppRouter>({
+type createTrpcOptions = Parameters<typeof createTRPCNext<AppRouter>>[0];
+
+export const trpcOptions: createTrpcOptions = {
   transformer: superjson,
   config() {
     return {
@@ -35,13 +38,22 @@ export const trpc = createTRPCNext<AppRouter>({
             transformer: superjson,
             url: getUrl(),
           }),
-          false: httpBatchLink({
-            transformer: superjson,
-            url: getUrl(),
+          false: splitLink({
+            condition: (op) => op.context.skipBatch === true,
+            true: httpLink({
+              transformer: superjson,
+              url: getUrl(),
+            }),
+            false: httpBatchLink({
+              transformer: superjson,
+              url: getUrl(),
+            }),
           }),
         }),
       ],
     };
   },
   ssr: false,
-});
+};
+
+export const trpc = createTRPCNext<AppRouter>(trpcOptions);

@@ -3,8 +3,9 @@ import { z } from "zod";
 import type { zInfer } from "./common";
 import { IdempotencyKey } from "./idempotency";
 
-export const GratitudeJournalSelect =
-  {} satisfies Prisma.GratitudeJournalSelect;
+export const GratitudeJournalSelect = {
+  id: true,
+} satisfies Prisma.GratitudeJournalSelect;
 
 export const GratitudeJournalId = z.number().int();
 export type GratitudeJournalId = zInfer<typeof GratitudeJournalId>;

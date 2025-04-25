@@ -110,17 +110,6 @@ export class MessageService {
     };
 
     await this.service.db.$transaction(async (tx) => {
-      const promptText = modelMessage.chat?.prompts?.at(0)?.text;
-      if (promptText) {
-        history.pushOlds(
-          {
-            role: Role.enum.user,
-            text: promptText,
-          },
-          { role: Role.enum.model, text: "ok" }
-        );
-      }
-
       const currentHistories = await tx.message.findMany({
         where: {
           chat: {

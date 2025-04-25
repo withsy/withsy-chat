@@ -26,6 +26,7 @@ export type ValidatedModelMessage = Simplify<
 export type SendMessageToAiInput = {
   userMessage: Message;
   modelMessage: ValidatedModelMessage;
+  promptText?: string;
   messagesForHistory: MessageForHistory[];
   onMessageChunkReceived: OnMessageChunkReceived;
 };
@@ -61,6 +62,8 @@ export class ModelRouteService {
     if (!validateRes.ok) return;
     const { modelMessage } = validateRes;
 
+    const promptText = modelMessage.chat?.prompts?.at(0)?.text;
+
     const messagesForHistory = await this.listForHistory({
       userId,
       modelMessage,
@@ -90,6 +93,7 @@ export class ModelRouteService {
       const input: SendMessageToAiInput = {
         userMessage,
         modelMessage,
+        promptText,
         messagesForHistory,
         onMessageChunkReceived,
       };

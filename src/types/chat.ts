@@ -1,4 +1,4 @@
-import type { Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { z } from "zod";
 import { type zInfer } from "./common";
 import { GratitudeJournal } from "./gratitude-journal";
@@ -20,7 +20,7 @@ export const ChatSelect = {
 export const ChatId = z.string().uuid();
 export type ChatId = zInfer<typeof ChatId>;
 
-export const ChatType = z.enum(["chat", "branch"]);
+export const ChatType = z.enum(["chat", "branch", "gratitudeJournal"]);
 export type ChatType = zInfer<typeof ChatType>;
 
 export const ChatSchema = z.object({

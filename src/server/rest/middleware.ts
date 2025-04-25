@@ -1,3 +1,4 @@
+import { UserSession } from "@/types/user";
 import { TRPCError } from "@trpc/server";
 import type { Context, Next } from "hono";
 import { StatusCodes } from "http-status-codes";
@@ -45,7 +46,10 @@ function getSessionFromHonoContext(c: Context) {
 
 export async function parseServerContextMiddleware(c: Context, next: Next) {
   const session = getSessionFromHonoContext(c);
-  const serverContext = await createServerContext(session);
+  const userSession = UserSession.parse(session);
+  const serverContext = await createServerContext({
+    userId: userSession.user.id,
+  });
   c.set("serverContext", serverContext);
   await next();
 }
