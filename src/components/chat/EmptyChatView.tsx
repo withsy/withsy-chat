@@ -1,5 +1,3 @@
-import { PromptBadge } from "@/components/PromptBadge";
-import { Button } from "@/components/ui/button";
 import { useUser } from "@/context/UserContext";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 import { useEffect, useState } from "react";
@@ -50,49 +48,6 @@ export default function EmptyChatView({
           {greeting}
           {name && `, ${name}`}
         </h1>
-
-        {!isMobile ? (
-          <div className="flex items-center justify-center gap-3 flex-wrap w-full max-w-4xl px-4 mb-5">
-            <span className="text-sm font-bold">Prompts</span>
-            {prompts.slice(0, 5).map((prompt, index) => (
-              <PromptBadge
-                key={index}
-                title={prompt.title}
-                isStar={prompt.isStar}
-                color={user.preferences.themeColor}
-              />
-            ))}
-            <Button
-              variant="link"
-              className="h-auto px-1 py-0 text-xs active:underline hover:underline"
-            >
-              View all
-            </Button>
-          </div>
-        ) : (
-          <>
-            <div className="flex items-center justify-between w-full max-w-4xl px-4 mb-5">
-              <span className="text-sm font-bold">Prompts</span>
-              <Button
-                variant="link"
-                className="h-auto px-1 py-0 text-xs active:underline hover:underline"
-              >
-                View all
-              </Button>
-            </div>
-
-            <div className="flex flex-wrap justify-center gap-x-2 gap-y-5 w-full max-w-4xl px-4">
-              {prompts.slice(0, 5).map((prompt, index) => (
-                <PromptBadge
-                  key={index}
-                  title={prompt.title}
-                  isStar={prompt.isStar}
-                  color={user.preferences.themeColor}
-                />
-              ))}
-            </div>
-          </>
-        )}
       </div>
     </ChatSession>
   );
