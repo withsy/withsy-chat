@@ -11,6 +11,7 @@ import type { ServiceRegistry } from "../service-registry";
 import { ChatService } from "./chat";
 import { IdempotencyInfoService } from "./idempotency-info";
 import { MessageService } from "./message";
+import { PromptService } from "./prompt";
 import { UserService } from "./user";
 
 export class GratitudeJournalService {
@@ -30,7 +31,7 @@ export class GratitudeJournalService {
   async start(userId: UserId, input: GratitudeJournalStart) {
     const { idempotencyKey } = input;
 
-    const { chat, userMessage, modelMessage, gratitudeJournal } =
+    const { chat, userMessage, modelMessage } =
       await this.service.db.$transaction(async (tx) => {
         await IdempotencyInfoService.checkDuplicateRequest(tx, idempotencyKey);
 
@@ -59,10 +60,34 @@ export class GratitudeJournalService {
           });
         }
 
-        const title = `Gratitude Journal - ${format(zonedNow, "yyyy-MM-dd")}`;
-        const chat = await ChatService.createChat(tx, {
+        const zonedDate = format(zonedNow, "yyyy-MM-dd");
+        const title = `Gratitude Journal - ${zonedDate}`;
+        const chat = await ChatService.createGratitudeJournalChat(tx, {
           userId,
           title,
+        });
+
+        const user = await UserService.getForGratitudeJournal(tx, { userId });
+        const promptText = GratitudeJournalService.createPromptText({
+          userName: user.name,
+          userLanguage: user.language,
+          zonedDate,
+        });
+        const prompt = await PromptService.create(tx, {
+          chatId: chat.id,
+          text: promptText,
+        });
+        chat.prompts.push(prompt);
+
+        const userMessage = await MessageService.createUserMessage(tx, {
+          chatId: chat.id,
+          text: "",
+          isPublic: false,
+        });
+        const modelMessage = await MessageService.createModelMessage(tx, {
+          chatId: chat.id,
+          model: "gemini-2.0-flash",
+          parentMessageId: userMessage.id,
         });
 
         const gratitudeJournal = await tx.gratitudeJournal.create({
@@ -72,8 +97,9 @@ export class GratitudeJournalService {
           },
           select: GratitudeJournalSelect,
         });
+        chat.gratitudeJournals.push(gratitudeJournal);
 
-        return { chat, userMessage, modelMessage, gratitudeJournal };
+        return { chat, userMessage, modelMessage };
       });
 
     await this.service.task.add("model_route_send_message_to_ai", {
@@ -83,5 +109,20 @@ export class GratitudeJournalService {
     });
 
     return { chat, userMessage, modelMessage };
+  }
+
+  static createPromptText(input: {
+    userName: string;
+    userLanguage: string;
+    zonedDate: string;
+  }) {
+    const { userName, userLanguage, zonedDate } = input;
+    return `You will answer all questions in ${userLanguage}.
+The user's name is ${userName}.
+You are my friend Milo, and we write a gratitude journal together every day.
+**As Milo, please start by greeting the user warmly.**
+You are here to listen to my thoughts and experiences.
+When I share three things I am grateful for today, our conversation for the day will conclude.
+Your name is Milo, and from now on, the user will refer to you as Milo.`;
   }
 }

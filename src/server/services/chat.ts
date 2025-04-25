@@ -1,12 +1,14 @@
 import {
+  Chat,
   ChatDelete,
   ChatGet,
   ChatSelect,
   ChatStart,
   ChatUpdate,
 } from "@/types/chat";
-import { ChatPromptSelect } from "@/types/chat-prompt";
+import { GratitudeJournalSelect } from "@/types/gratitude-journal";
 import type { MessageId } from "@/types/message";
+import { PromptSelect } from "@/types/prompt";
 import { UserId } from "@/types/user";
 import { uuidv7 } from "uuidv7";
 import type { ServiceRegistry } from "../service-registry";
@@ -153,6 +155,28 @@ export class ChatService {
     return res;
   }
 
+  static async createGratitudeJournalChat(
+    tx: Tx,
+    input: { userId: UserId; title: string }
+  ) {
+    const { userId, title } = input;
+    const res = await tx.chat.create({
+      data: {
+        id: ChatService.generateId(),
+        userId,
+        title,
+        type: "gratitudeJournal",
+      },
+      select: {
+        ...ChatSelect,
+        prompts: { select: PromptSelect },
+        gratitudeJournals: { select: GratitudeJournalSelect },
+      },
+    });
+
+    return res;
+  }
+
   static async createBranchChat(
     tx: Tx,
     input: { userId: UserId; parentMessageId: MessageId; title: string }
@@ -167,27 +191,6 @@ export class ChatService {
         parentMessageId,
       },
       select: ChatSelect,
-    });
-
-    return res;
-  }
-
-  static async createPromptChat(
-    tx: Tx,
-    input: { userId: UserId; title: string }
-  ) {
-    const { userId, title } = input;
-    const res = await tx.chat.create({
-      data: {
-        id: ChatService.generateId(),
-        userId,
-        type: "chat",
-        title,
-      },
-      select: {
-        ...ChatSelect,
-        chatPrompts: { select: ChatPromptSelect },
-      },
     });
 
     return res;

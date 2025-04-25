@@ -1,5 +1,4 @@
 import { ChatId, ChatSelect } from "@/types/chat";
-import { ChatPromptSelect } from "@/types/chat-prompt";
 import type {
   Message,
   MessageForHistory,
@@ -9,6 +8,7 @@ import type {
 } from "@/types/message";
 import { MessageSelect, MessageStatus, type MessageId } from "@/types/message";
 import type { Model } from "@/types/model";
+import { PromptSelect } from "@/types/prompt";
 import { Role } from "@/types/role";
 import type { UserId } from "@/types/user";
 import { StatusCodes } from "http-status-codes";
@@ -110,12 +110,12 @@ export class MessageService {
     };
 
     await this.service.db.$transaction(async (tx) => {
-      const chatPromptText = modelMessage.chat?.chatPrompts?.at(0)?.text;
-      if (chatPromptText) {
+      const promptText = modelMessage.chat?.prompts?.at(0)?.text;
+      if (promptText) {
         history.pushOlds(
           {
             role: Role.enum.user,
-            text: chatPromptText,
+            text: promptText,
           },
           { role: Role.enum.model, text: "ok" }
         );
@@ -215,9 +215,9 @@ export class MessageService {
           ? {
               select: {
                 ...ChatSelect,
-                chatPrompts: {
+                prompts: {
                   select: {
-                    ...ChatPromptSelect,
+                    ...PromptSelect,
                     text: true,
                   },
                 },

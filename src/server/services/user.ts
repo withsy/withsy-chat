@@ -119,6 +119,19 @@ export class UserService {
     return res;
   }
 
+  static async getForGratitudeJournal(tx: Tx, input: { userId: UserId }) {
+    const { userId } = input;
+    const res = await tx.user.findUniqueOrThrow({
+      where: { id: userId },
+      select: {
+        name: true,
+        language: true,
+      },
+    });
+
+    return res;
+  }
+
   static async getTimezone(tx: Tx, input: { userId: UserId }) {
     const { userId } = input;
     const { timezone } = await tx.user.findUniqueOrThrow({

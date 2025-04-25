@@ -5,7 +5,6 @@ import { gratitudeJournalRouter } from "./gratitude-journal";
 import { messageRouter } from "./message";
 import { messageChunkRouter } from "./message-chunk";
 import { messageReplyRouter } from "./message-reply";
-import { promptRouter } from "./prompt";
 import { userRouter } from "./user";
 import { userUsageLimitRouter } from "./user-usage-limit";
 
@@ -17,7 +16,6 @@ export const appRouter = t.router({
   message: messageRouter,
   messageChunk: messageChunkRouter,
   messageReply: messageReplyRouter,
-  prompt: promptRouter,
   gratitudeJournal: gratitudeJournalRouter,
 });
 
