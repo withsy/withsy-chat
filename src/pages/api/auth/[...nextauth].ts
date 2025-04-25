@@ -44,7 +44,7 @@ export const authOptions: AuthOptions = {
         picture?: string;
       };
 
-      const { userId } = await service.userLinkAccount.processJwt({
+      const { userId } = await service.userLinkAccount.ensure({
         provider,
         providerAccountId,
         refreshToken: refresh_token,

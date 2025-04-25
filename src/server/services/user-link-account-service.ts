@@ -1,11 +1,11 @@
 import type { ServiceRegistry } from "../service-registry";
-import { UserService } from "./user-service";
+import { UserService } from "./user";
 import { UserUsageLimitService } from "./user-usage-limit-service";
 
 export class UserLinkAccountService {
   constructor(private readonly service: ServiceRegistry) {}
 
-  async processJwt(input: {
+  async ensure(input: {
     provider: string;
     providerAccountId: string;
     refreshToken?: string;
