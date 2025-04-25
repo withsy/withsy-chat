@@ -19,7 +19,7 @@ export default function Layout({ children }: LayoutProps) {
   const backgroundColor = `rgba(${themeColor}, ${themeOpacity})`;
 
   const isChatPage =
-    pathname.startsWith("/chat") || pathname.startsWith("/saved");
+    pathname?.startsWith("/chat") || pathname?.startsWith("/saved");
 
   return (
     <div
