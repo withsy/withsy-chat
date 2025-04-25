@@ -1,16 +1,6 @@
 import { useUser } from "@/context/UserContext";
-import { useSidebarStore } from "@/stores/useSidebarStore";
 import { useEffect, useState } from "react";
 import { ChatSession } from "./ChatSession";
-
-type Prompt = {
-  id?: string;
-  title: string;
-  content: string;
-  createdAt: string;
-  updatedAt: string;
-  isStar: boolean;
-};
 
 function getGreeting() {
   const hour = new Date().getHours();
@@ -20,14 +10,7 @@ function getGreeting() {
   return "Good evening";
 }
 
-export default function EmptyChatView({
-  name = "",
-  prompts = [],
-}: {
-  name?: string;
-  prompts?: Prompt[];
-}) {
-  const { isMobile } = useSidebarStore();
+export default function EmptyChatView({ name = "" }: { name?: string }) {
   const { user } = useUser();
   const [greeting, setGreeting] = useState("Good day");
 
