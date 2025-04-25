@@ -6,6 +6,7 @@ import { filterMessages } from "@/lib/filter-utils";
 import { trpc } from "@/lib/trpc";
 import type { Message } from "@/types/message";
 import { useEffect, useMemo, useState } from "react";
+import { PartialEmpty } from "../Empty";
 
 export default function BookmarkPage() {
   const { user } = useUser();
@@ -52,16 +53,20 @@ export default function BookmarkPage() {
         setSearchText={setSearchText}
       />
       <div className="flex-1 overflow-y-auto space-y-4">
-        {filteredMessages.map((message) => (
-          <BookmarkCard
-            key={message.id}
-            chatId={message.chatId}
-            messageId={message.id}
-            title={message?.chat?.title}
-            text={message.text}
-            createdAt={message.createdAt}
-          />
-        ))}
+        {filteredMessages.length === 0 ? (
+          <PartialEmpty message="You haven’t saved any items yet." />
+        ) : (
+          filteredMessages.map((message) => (
+            <BookmarkCard
+              key={message.id}
+              chatId={message.chatId}
+              messageId={message.id}
+              title={message?.chat?.title}
+              text={message.text}
+              createdAt={message.createdAt}
+            />
+          ))
+        )}
       </div>
     </div>
   );
