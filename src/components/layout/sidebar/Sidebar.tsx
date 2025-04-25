@@ -7,15 +7,25 @@ export default function Sidebar({ isChatPage }: { isChatPage: boolean }) {
   const { isMobile, collapsed } = useSidebarStore();
   const { userPrefs } = useUser();
   const { themeColor, themeOpacity } = userPrefs;
-  const bgStyle = isChatPage
-    ? {
+
+  const bgStyle = () => {
+    if (isChatPage) {
+      if (themeColor == "30,30,30" && themeOpacity == 0) {
+        return {
+          backgroundColor: "rgb(248, 248, 247)",
+        };
+      }
+      return {
         backgroundColor: "white",
         backgroundImage: `linear-gradient(rgba(${themeColor}, ${themeOpacity}), rgba(${themeColor}, ${themeOpacity}))`,
         backgroundBlendMode: "multiply",
-      }
-    : {
+      };
+    } else {
+      return {
         backgroundColor: "rgb(248, 248, 247)",
       };
+    }
+  };
 
   return (
     <div
@@ -25,7 +35,7 @@ export default function Sidebar({ isChatPage }: { isChatPage: boolean }) {
         !collapsed && isMobile && "w-[100vw]  px-4",
         !collapsed && !isMobile && "w-[240px] px-4"
       )}
-      style={bgStyle}
+      style={bgStyle()}
     >
       <div
         className={cn(

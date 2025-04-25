@@ -76,8 +76,15 @@ const ChatBubbleComponent = ({ message, onToggleSaved }: Props) => {
         <div
           className={cn(
             "inline-block rounded-md mx-4 py-2 px-2 whitespace-pre-wrap break-words",
-            role === "user" ? "self-end bg-muted " : "self-start"
+            role === "user" ? "self-end " : "self-start"
           )}
+          style={
+            role == "user"
+              ? {
+                  backgroundColor: "rgb(248, 248, 247)",
+                }
+              : {}
+          }
         >
           <MarkdownBox content={displayedText} />
           <StatusIndicator status={status} />
