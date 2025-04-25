@@ -95,7 +95,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
     }
 
     userEnsure.mutate({ language, timezone });
-  }, [session, userEnsure]);
+  }, [session]);
 
   const setUserPrefsAndSave: SetUserPrefsAndSave = (input) => {
     updateUserPrefs.mutate(input);

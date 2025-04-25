@@ -38,11 +38,12 @@ export const authOptions: AuthOptions = {
       if (!account) return token;
 
       const { provider, providerAccountId, refresh_token } = account;
-      const { email, name, picture } = profile as {
-        name?: string;
-        email?: string;
-        picture?: string;
-      };
+      const name = profile?.name;
+      const email = profile?.email;
+      let image: string | undefined = undefined;
+      if (profile && provider === "google") {
+        image = Reflect.get(profile, "picture");
+      }
 
       const { userId } = await service.userLinkAccount.ensure({
         provider,
@@ -50,7 +51,7 @@ export const authOptions: AuthOptions = {
         refreshToken: refresh_token,
         name,
         email,
-        image: picture,
+        image,
       });
 
       const userJwt = UserJwt.parse({ sub: userId });
