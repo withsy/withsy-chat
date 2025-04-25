@@ -1,29 +1,34 @@
 import type { Prisma } from "@prisma/client";
 import { z } from "zod";
+import { Chat, ChatId } from "./chat";
 import type { zInfer } from "./common";
 import { IdempotencyKey } from "./idempotency";
 
-export const GratitudeJournalSelect = {
+export const Select = {
   id: true,
+  chatId: true,
 } satisfies Prisma.GratitudeJournalSelect;
 
-export const GratitudeJournalId = z.number().int();
-export type GratitudeJournalId = zInfer<typeof GratitudeJournalId>;
+export const Id = z.string().uuid();
+export type Id = zInfer<typeof Id>;
 
-export const GratitudeJournalSchema = z.object({});
-export type GratitudeJournalSchema = zInfer<typeof GratitudeJournalSchema>;
-const _ = {} satisfies Omit<
-  GratitudeJournalSchema,
-  keyof typeof GratitudeJournalSelect
->;
+export const Schema = z.object({
+  id: Id,
+  chatId: z.lazy(() => ChatId),
+});
+export type Schema = zInfer<typeof Schema>;
+const _ = {} satisfies Omit<Schema, keyof typeof Select>;
 
-export const GratitudeJournal = GratitudeJournalSchema.extend({});
-export type GratitudeJournal = zInfer<typeof GratitudeJournal>;
+export type Data = {
+  id: Id;
+  chatId: ChatId | null;
+  chat?: Chat;
+};
+export const Data: z.ZodType<Data> = Schema.extend({
+  chat: z.lazy(() => Chat),
+});
 
-export const GratitudeJournalList = z.object({});
-export type GratitudeJournalList = zInfer<typeof GratitudeJournalList>;
-
-export const GratitudeJournalStart = z.object({
+export const StartChat = z.object({
   idempotencyKey: IdempotencyKey,
 });
-export type GratitudeJournalStart = zInfer<typeof GratitudeJournalStart>;
+export type StartChat = zInfer<typeof StartChat>;

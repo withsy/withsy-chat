@@ -67,7 +67,7 @@ export class MessageService {
           ? {
               select: ChatSelect,
             }
-          : undefined,
+          : false,
       },
       take: limit,
       ...(afterId && {
@@ -212,7 +212,7 @@ export class MessageService {
                 },
               },
             }
-          : undefined,
+          : false,
       },
     });
 

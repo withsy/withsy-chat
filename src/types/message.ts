@@ -48,7 +48,7 @@ const _ = {} satisfies Omit<MessageSchema, keyof typeof MessageSelect>;
 export type Message = {
   id: MessageId;
   chatId: ChatId;
-  chat?: Chat | null;
+  chat?: Chat;
   role: Role;
   model: Model | null;
   text: string;
@@ -56,12 +56,12 @@ export type Message = {
   isBookmarked: boolean;
   createdAt: Date;
   parentMessageId: MessageId | null;
-  parentMessage?: Message | null;
+  parentMessage?: Message;
 };
 export const MessageBase: z.ZodType<Message> = z.lazy(() =>
   MessageSchema.extend({
-    chat: z.lazy(() => Chat.nullable().default(null)),
-    parentMessage: z.lazy(() => MessageBase.nullable().default(null)),
+    chat: z.lazy(() => Chat),
+    parentMessage: z.lazy(() => MessageBase),
   })
 );
 export const Message = MessageBase;

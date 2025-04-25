@@ -1,7 +1,7 @@
 import { Prisma } from "@prisma/client";
 import { z } from "zod";
+import { GratitudeJournal } from ".";
 import { type zInfer } from "./common";
-import { GratitudeJournal } from "./gratitude-journal";
 import { IdempotencyKey } from "./idempotency";
 import { Message, MessageId } from "./message";
 import { Model } from "./model";
@@ -40,30 +40,21 @@ export type Chat = {
   isStarred: boolean;
   type: ChatType;
   parentMessageId: MessageId | null;
-  parentMessage?: Message | null;
+  parentMessage?: Message;
   updatedAt: Date;
   prompts?: Prompt[];
-  gratitudeJournals?: GratitudeJournal[];
+  gratitudeJournals?: GratitudeJournal.Data[];
 };
 export const Chat: z.ZodType<Chat> = z.lazy(() =>
   ChatSchema.extend({
-    parentMessage: z.lazy(() => Message.nullable().default(null)),
+    parentMessage: z.lazy(() => Message),
     prompts: Prompt.array().default([]),
-    gratitudeJournals: GratitudeJournal.array().default([]),
+    gratitudeJournals: GratitudeJournal.Data.array().default([]),
   })
 );
 
 export const ChatGet = z.object({
   chatId: ChatId,
-  options: z
-    .object({
-      include: z
-        .object({
-          parentMessage: z.boolean().default(false),
-        })
-        .optional(),
-    })
-    .optional(),
 });
 export type ChatGet = zInfer<typeof ChatGet>;
 

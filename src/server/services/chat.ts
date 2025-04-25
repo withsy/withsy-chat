@@ -1,3 +1,4 @@
+import { GratitudeJournal } from "@/types";
 import {
   Chat,
   ChatDelete,
@@ -6,8 +7,7 @@ import {
   ChatStart,
   ChatUpdate,
 } from "@/types/chat";
-import { GratitudeJournalSelect } from "@/types/gratitude-journal";
-import type { MessageId } from "@/types/message";
+import { MessageSelect, type MessageId } from "@/types/message";
 import { PromptSelect } from "@/types/prompt";
 import { UserId } from "@/types/user";
 import { uuidv7 } from "uuidv7";
@@ -37,8 +37,7 @@ export class ChatService {
   }
 
   async get(userId: UserId, input: ChatGet) {
-    const { chatId, options } = input;
-    const { include } = options ?? {};
+    const { chatId } = input;
     const res = await this.service.db.chat.findUnique({
       where: {
         id: chatId,
@@ -47,7 +46,7 @@ export class ChatService {
       },
       select: {
         ...ChatSelect,
-        parentMessage: include?.parentMessage ?? false,
+        parentMessage: { select: MessageSelect },
       },
     });
 
@@ -170,7 +169,7 @@ export class ChatService {
       select: {
         ...ChatSelect,
         prompts: { select: PromptSelect },
-        gratitudeJournals: { select: GratitudeJournalSelect },
+        gratitudeJournals: { select: GratitudeJournal.Select },
       },
     });
 

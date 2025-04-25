@@ -30,7 +30,7 @@ CREATE TABLE "prompts" (
 
 -- CreateTable
 CREATE TABLE "gratitude_journal" (
-    "id" SERIAL NOT NULL,
+    "id" UUID NOT NULL,
     "user_id" UUID NOT NULL,
     "chat_id" UUID,
     "created_at" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
