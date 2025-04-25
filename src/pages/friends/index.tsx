@@ -107,6 +107,11 @@ export default function Page() {
               extraFriend={extraFriend ?? withsyFriends[0]}
               message={message}
             />
+            <div className="grid gap-4 sm:grid-cols-3 gap-y-5 p-5 items-stretch">
+              {withsyFriends.map((friend) => (
+                <FriendCard key={friend.name} friend={friend} />
+              ))}
+            </div>
           </TabsContent>
           <TabsContent value="withsy">
             <div className="grid gap-4 sm:grid-cols-3 gap-y-5 p-5 items-stretch">
