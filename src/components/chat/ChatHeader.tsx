@@ -1,6 +1,5 @@
 import { useUser } from "@/context/UserContext";
 import { useDrawerStore } from "@/stores/useDrawerStore";
-import { useSidebarStore } from "@/stores/useSidebarStore";
 import type { Chat } from "@/types/chat";
 import { Bookmark, FolderGit2 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
@@ -13,7 +12,6 @@ interface ChatHeaderProps {
 }
 
 export default function ChatHeader({ chat }: ChatHeaderProps) {
-  const { isMobile } = useSidebarStore();
   const { openDrawer, setOpenDrawer } = useDrawerStore();
   const { user } = useUser();
 
@@ -76,13 +74,6 @@ export default function ChatHeader({ chat }: ChatHeaderProps) {
   const headerStyle: React.CSSProperties = {
     backgroundColor: `rgba(${themeColor}, ${themeOpacity - 0.1})`,
   };
-
-  if (!isMobile) {
-    headerStyle.borderTopLeftRadius = 30;
-    if (!openDrawer) {
-      headerStyle.borderTopRightRadius = 30;
-    }
-  }
 
   const buttonClassName =
     "group flex items-center gap-1 rounded-md px-1 py-2 hover:bg-white hover:font-semibold active:bg-white active:font-semibold transition-colors";

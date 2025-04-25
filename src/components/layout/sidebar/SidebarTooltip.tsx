@@ -20,20 +20,25 @@ export function SidebarTooltip({
 }: SidebarTooltipProps) {
   const { isMobile, collapsed, setCollapsed } = useSidebarStore();
   const router = useRouter();
-  const isActive = `/${id}` == router.asPath;
+  const isActive =
+    id == "home" ? `/` == router.asPath : `/${id}` == router.asPath;
   const mobileClassName = isMobile ? "px-2.5 py-3 select-none" : "px-2.5 py-2";
 
   const className = `
               group flex items-center gap-2 ${mobileClassName} rounded-md transition-colors w-full 
               hover:bg-white hover:font-semibold cursor-pointer select-none active:bg-white active:font-semibold ${
-                isActive ? "font-semibold" : ""
+                isActive ? "bg-white" : ""
               }
             `;
   const handleLinkClick = () => {
     if (isMobile) {
       setCollapsed(true);
     }
-    router.push(`/${id}`);
+    if (id == "home") {
+      router.push("/");
+    } else {
+      router.push(`/${id}`);
+    }
   };
 
   return (

@@ -72,6 +72,7 @@ function UserMenuItem({
 
 export default function UserDropdownMenu() {
   const router = useRouter();
+  const { isMobile } = useSidebarStore();
   const { user, onSignOut } = useUser();
 
   const [themeModalOpen, setThemeModalOpen] = useState(false);
@@ -96,7 +97,6 @@ export default function UserDropdownMenu() {
       label: "Theme",
       onClick: () => setThemeModalOpen(true),
     },
-    // { icon: Settings, label: "Settings" },
     "separator",
     {
       icon: BookText,
@@ -123,22 +123,25 @@ export default function UserDropdownMenu() {
     },
   ];
 
-  if (!user) return null;
+  const mobileClassName = isMobile ? "px-2.5 py-3 select-none" : "px-2.5 py-2";
 
   return (
     <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <button type="button" className="cursor-pointer">
-            <ModelAvatar name={user.name} />
+          <button
+            type="button"
+            className={`cursor-pointer flex items-center rounded-md w-full gap-2 ${mobileClassName} hover:bg-white active:bg-white font-semibold`}
+          >
+            <ModelAvatar name={user?.name ?? ""} size="sm" />
+            <span>{user?.name}</span>
           </button>
         </DropdownMenuTrigger>
-
         <DropdownMenuContent
           align="end"
           className={cn(
-            "w-48 p-2",
-            user.preferences.largeText ? "text-lg" : "text-base"
+            "w-48 p-2 m-2",
+            user?.preferences.largeText ? "text-lg" : "text-base"
           )}
         >
           {userMenuItems.map((item, idx) =>
@@ -149,7 +152,7 @@ export default function UserDropdownMenu() {
                 key={item.label}
                 icon={item.icon}
                 label={item.label}
-                largeText={user.preferences.largeText}
+                largeText={user?.preferences.largeText}
                 onClick={item.onClick}
               />
             )
@@ -160,7 +163,7 @@ export default function UserDropdownMenu() {
               withsy with{" "}
               <span
                 style={{
-                  color: `rgb(${user.preferences.themeColor})`,
+                  color: `rgb(${user?.preferences.themeColor})`,
                 }}
               >
                 ♥

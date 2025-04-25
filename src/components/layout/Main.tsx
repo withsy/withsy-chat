@@ -15,19 +15,26 @@ export default function Main({ children }: MainProps) {
   const HEADER_HEIGHT = 64;
 
   const mainStyle: React.CSSProperties = {
+    overflow: "hidden",
     minHeight: `calc(90dvh - ${HEADER_HEIGHT}px)`,
     backgroundColor: "white",
     ...(isMobile
       ? {}
       : {
-          borderRadius: 30,
+          marginTop: 10,
           marginRight: 10,
           marginBottom: 10,
           marginLeft: 10 + sidebarWidth,
         }),
   };
   return (
-    <main className="flex-1 transition-all duration-300" style={mainStyle}>
+    <main
+      className={cn(
+        `flex-1 transition-all duration-300`,
+        !isMobile && "rounded-xl"
+      )}
+      style={mainStyle}
+    >
       <div
         className={cn(
           "transition-all h-full",

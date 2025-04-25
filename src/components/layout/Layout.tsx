@@ -1,6 +1,6 @@
 import { useUser } from "@/context/UserContext";
+import { usePathname } from "next/navigation";
 import { type ReactNode } from "react";
-import Header from "./Header";
 import Main from "./Main";
 import Sidebar from "./sidebar/Sidebar";
 
@@ -10,18 +10,20 @@ type LayoutProps = {
 
 export default function Layout({ children }: LayoutProps) {
   const { user } = useUser();
+  const pathname = usePathname();
+  const themeColor = user?.preferences.themeColor ?? "255,87,34";
+  const themeOpacity = user?.preferences.themeOpacity ?? 0.2;
+  const backgroundColor = `rgba(${themeColor}, ${themeOpacity})`;
 
-  const backgroundColor = `rgba(${
-    user?.preferences.themeColor ?? "255,87,34"
-  }, ${user?.preferences.themeOpacity ?? 0.2})`;
+  const isChatPage =
+    pathname.startsWith("/chat") || pathname.startsWith("/saved");
   return (
     <div
       className="flex overflow-hidden h-[100dvh]"
-      style={{ backgroundColor }}
+      style={isChatPage ? { backgroundColor } : {}}
     >
-      <Sidebar />
-      <div className="flex flex-col flex-1 h-full pt-16">
-        <Header />
+      <Sidebar isChatPage={isChatPage} />
+      <div className="flex flex-col flex-1 h-full ">
         <Main>{children}</Main>
       </div>
     </div>

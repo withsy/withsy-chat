@@ -1,8 +1,6 @@
 import { BookmarkCard } from "@/components/bookmarks/BookmarkCard";
 import { BookmarkFilters } from "@/components/bookmarks/BookmarkFilters";
-import { Bookmark } from "lucide-react";
 
-import { Badge } from "@/components/ui/badge";
 import { useUser } from "@/context/UserContext";
 import { filterMessages } from "@/lib/filter-utils";
 import { trpc } from "@/lib/trpc";
@@ -47,20 +45,6 @@ export default function BookmarkPage() {
 
   return (
     <div className="h-full w-full flex flex-col p-6">
-      <div className="flex items-center gap-2">
-        <Bookmark size={22} fill={`rgb(${themeColor})`} />
-        <h1 className="text-xl font-semibold">All Saved</h1>
-        <Badge
-          variant="secondary"
-          className="text-xs font-semibold rounded-md h-5 px-1.5 py-0.5 font-semibold"
-          style={{
-            backgroundColor: `rgb(${themeColor})`,
-            color: "white",
-          }}
-        >
-          {filteredMessages.length}/{data.length}
-        </Badge>
-      </div>
       <BookmarkFilters
         sortOrder={sortOrder}
         setSortOrder={setSortOrder}
