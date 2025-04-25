@@ -1,18 +1,15 @@
 import { BookmarkCard } from "@/components/bookmarks/BookmarkCard";
 import { BookmarkFilters } from "@/components/bookmarks/BookmarkFilters";
 
-import { useUser } from "@/context/UserContext";
 import { filterMessages } from "@/lib/filter-utils";
 import { trpc } from "@/lib/trpc";
 import type { Message } from "@/types/message";
+import type { User } from "@/types/user";
 import { useEffect, useMemo, useState } from "react";
 import { PartialEmpty } from "../Empty";
 import { PartialLoading } from "../Loading";
 
-export default function BookmarkPage() {
-  const { user } = useUser();
-  if (!user) throw new Error("User must exist.");
-
+export default function BookmarkPage({ user }: { user: User }) {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<Message[]>([]);
   const [searchText, setSearchText] = useState("");
