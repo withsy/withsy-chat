@@ -1,22 +1,17 @@
 import { PartialError } from "@/components/Error";
 import { PartialLoading } from "@/components/Loading";
 import UserDropdownMenu from "@/components/UserDropdownMenu";
-import { useUser } from "@/context/UserContext";
 import { formatDateLabel, toNewest } from "@/lib/date-utils";
 import { trpc } from "@/lib/trpc";
 import type { Chat } from "@/types/chat";
-import { skipToken } from "@tanstack/react-query";
 import { Bookmark, Heart, MessageSquareText } from "lucide-react";
 import { useEffect, useState } from "react";
 import { SidebarChatItem } from "./SidebarChatItem";
 import { SidebarTooltip } from "./SidebarTooltip";
 
 export default function SidebarChatList() {
-  const { userSession } = useUser();
   const utils = trpc.useUtils();
-  const listChats = trpc.chat.list.useQuery(
-    userSession ? undefined : skipToken
-  );
+  const listChats = trpc.chat.list.useQuery();
   const updateChatMut = trpc.chat.update.useMutation();
   const [chats, setChats] = useState<Chat[]>([]);
 

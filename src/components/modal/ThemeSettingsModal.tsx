@@ -26,9 +26,13 @@ export function ThemeSettingsModal({
   open: boolean;
   onClose: () => void;
 }) {
-  const { userPrefs, setUserPrefsAndSave } = useUser();
-  const [customColor, setCustomColor] = useState(userPrefs.themeColor);
-  const [customOpacity, setCustomOpacity] = useState(userPrefs.themeOpacity);
+  const { user, setUserPrefsAndSave } = useUser();
+  if (!user) throw new Error("User must exist.");
+
+  const [customColor, setCustomColor] = useState(user.preferences.themeColor);
+  const [customOpacity, setCustomOpacity] = useState(
+    user.preferences.themeOpacity
+  );
 
   const handleApply = () => {
     setUserPrefsAndSave({
@@ -111,7 +115,7 @@ export function ThemeSettingsModal({
             onClick={handleApply}
             className="w-full mt-4 "
             style={{
-              backgroundColor: `rgba(${userPrefs.themeColor}`,
+              backgroundColor: `rgba(${user.preferences.themeColor}`,
             }}
           >
             SAVE

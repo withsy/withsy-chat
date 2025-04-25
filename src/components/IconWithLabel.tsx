@@ -16,8 +16,10 @@ export function IconWithLabel({
   fill = false,
   size = 16,
 }: IconWithLabelProps) {
-  const { userPrefs } = useUser();
-  const { themeColor } = userPrefs;
+  const { user } = useUser();
+  if (!user) throw new Error("User must exist.");
+
+  const { themeColor } = user.preferences;
   const className = `transition-colors hover:text-black active:text-black group-hover:text-black`;
   return (
     <>

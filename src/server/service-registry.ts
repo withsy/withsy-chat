@@ -4,6 +4,7 @@ import { ChatBranchService } from "./services/chat-branch-service";
 import { ChatService } from "./services/chat-service";
 import { createDb, type Db } from "./services/db";
 import { GoogleGenAiService } from "./services/google-gen-ai-service";
+import { GratitudeJournalService } from "./services/gratitude-journal-service";
 import { IdempotencyInfoService } from "./services/idempotency-info-service";
 import { MessageChunkService } from "./services/message-chunk-service";
 import { MessageFileService } from "./services/message-file-service";
@@ -15,14 +16,14 @@ import { OpenAiService } from "./services/open-ai-service";
 import { createPgPool } from "./services/pg";
 import { PromptService } from "./services/prompt-service";
 import { TaskService } from "./services/task-service";
+import { UserService } from "./services/user";
 import { UserLinkAccountService } from "./services/user-link-account-service";
-import { UserPrefsService } from "./services/user-prefs-service";
 import { UserUsageLimitService } from "./services/user-usage-limit-service";
 
 type ServiceDefinition = {
   pgPool: Pool;
   db: Db;
-  userPrefs: UserPrefsService;
+  user: UserService;
   userLinkAccount: UserLinkAccountService;
   userUsageLimit: UserUsageLimitService;
   chat: ChatService;
@@ -38,6 +39,7 @@ type ServiceDefinition = {
   idempotencyInfo: IdempotencyInfoService;
   s3: MockS3Service;
   prompt: PromptService;
+  gratitudeJournal: GratitudeJournalService;
 };
 
 export type ServiceRegistry = LazyRegistryProxy<ServiceDefinition>;
@@ -46,7 +48,7 @@ function createServiceRegistry() {
   return createLazyRegistry<ServiceDefinition>({
     pgPool: () => createPgPool(),
     db: (s) => createDb(s),
-    userPrefs: (s) => new UserPrefsService(s),
+    user: (s) => new UserService(s),
     userLinkAccount: (s) => new UserLinkAccountService(s),
     userUsageLimit: (s) => new UserUsageLimitService(s),
     chat: (s) => new ChatService(s),
@@ -62,6 +64,7 @@ function createServiceRegistry() {
     task: (s) => new TaskService(s),
     s3: (s) => new MockS3Service(s),
     prompt: (s) => new PromptService(s),
+    gratitudeJournal: (s) => new GratitudeJournalService(s),
   });
 }
 

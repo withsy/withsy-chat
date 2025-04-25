@@ -15,8 +15,7 @@ type Props = {
 
 export function ChatMessageList({ chat, messages, onToggleSaved }: Props) {
   const router = useRouter();
-  const { userPrefs } = useUser();
-  const { themeColor } = userPrefs;
+  const { user } = useUser();
 
   const bottomRef = useRef<HTMLDivElement | null>(null);
   const listRef = useRef<HTMLDivElement | null>(null);
@@ -100,6 +99,8 @@ export function ChatMessageList({ chat, messages, onToggleSaved }: Props) {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
+  if (!user) return null;
+
   return (
     <div className="relative h-full">
       <div
@@ -134,7 +135,7 @@ export function ChatMessageList({ chat, messages, onToggleSaved }: Props) {
         <button
           onClick={scrollToBottom}
           className="absolute left-1/2 bottom-5 transform -translate-x-1/2 text-white p-2 rounded-full shadow-md transition"
-          style={{ backgroundColor: `rgb(${themeColor})` }}
+          style={{ backgroundColor: `rgb(${user.preferences.themeColor})` }}
         >
           <ChevronsDown size={16} />
         </button>

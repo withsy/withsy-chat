@@ -66,11 +66,11 @@ export const PromptUpdate = z.object({
 });
 export type PromptUpdate = zInfer<typeof PromptUpdate>;
 
-export const PromptStartChat = z.object({
+export const PromptStart = z.object({
   idempotencyKey: IdempotencyKey,
   promptId: PromptId,
 });
-export type PromptStartChat = zInfer<typeof PromptStartChat>;
+export type PromptStart = zInfer<typeof PromptStart>;
 
-export const PromptStartChatOutput = z.lazy(() => ChatStartOutput);
-export type PromptStartChatOutput = zInfer<typeof PromptStartChatOutput>;
+export const PromptStartOutput = z.lazy(() => ChatStartOutput);
+export type PromptStartOutput = zInfer<typeof PromptStartOutput>;

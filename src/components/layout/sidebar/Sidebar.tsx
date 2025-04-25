@@ -6,8 +6,10 @@ import SidebarChatList from "./SidebarChatList";
 
 export default function Sidebar({ isChatPage }: { isChatPage: boolean }) {
   const { isMobile, collapsed } = useSidebarStore();
-  const { userPrefs } = useUser();
-  const { themeColor, themeOpacity } = userPrefs;
+  const { user } = useUser();
+  if (!user) return null;
+
+  const { themeColor, themeOpacity } = user.preferences;
 
   const bgStyle = () => {
     if (isChatPage) {

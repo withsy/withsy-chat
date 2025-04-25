@@ -5,29 +5,27 @@ import { useUser } from "@/context/UserContext";
 import { filterMessages } from "@/lib/filter-utils";
 import { trpc } from "@/lib/trpc";
 import type { Message } from "@/types/message";
-import { skipToken } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
 
 export default function BookmarkPage() {
-  const { userSession } = useUser();
+  const { user } = useUser();
+  if (!user) throw new Error("User must exist.");
+
+  const { themeColor } = user.preferences;
   const [data, setData] = useState<Message[]>([]);
   const [searchText, setSearchText] = useState("");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
-  const listSaved = trpc.message.list.useQuery(
-    userSession
-      ? {
-          options: {
-            scope: {
-              by: "user",
-              userId: userSession.user.id,
-            },
-            order: sortOrder,
-            include: { chat: true },
-          },
-          isBookmarked: true,
-        }
-      : skipToken
-  );
+  const listSaved = trpc.message.list.useQuery({
+    options: {
+      scope: {
+        by: "user",
+        userId: user.id,
+      },
+      order: sortOrder,
+      include: { chat: true },
+    },
+    isBookmarked: true,
+  });
 
   useEffect(() => {
     if (!listSaved.data) return;

@@ -11,7 +11,9 @@ import { Check, WandSparkles } from "lucide-react";
 import { useState } from "react";
 
 export function AccessibilityMenu({ hideLabels }: { hideLabels: boolean }) {
-  const { userPrefs, setUserPrefsAndSave } = useUser();
+  const { user, setUserPrefsAndSave } = useUser();
+  if (!user) throw new Error("User must exist.");
+
   const { isMobile } = useSidebarStore();
 
   const [modalOpen, setModalOpen] = useState(false);
@@ -20,21 +22,23 @@ export function AccessibilityMenu({ hideLabels }: { hideLabels: boolean }) {
     {
       label: "Enter to send",
       key: "enterToSend",
-      value: userPrefs.enterToSend,
+      value: user.preferences.enterToSend,
       onToggle: () =>
-        setUserPrefsAndSave({ enterToSend: !userPrefs.enterToSend }),
+        setUserPrefsAndSave({ enterToSend: !user.preferences.enterToSend }),
     },
     {
       label: "Large text",
       key: "largeText",
-      value: userPrefs.largeText,
-      onToggle: () => setUserPrefsAndSave({ largeText: !userPrefs.largeText }),
+      value: user.preferences.largeText,
+      onToggle: () =>
+        setUserPrefsAndSave({ largeText: !user.preferences.largeText }),
     },
     {
       label: "Wide view (PC only)",
       key: "wideView",
-      value: userPrefs.wideView,
-      onToggle: () => setUserPrefsAndSave({ wideView: !userPrefs.wideView }),
+      value: user.preferences.wideView,
+      onToggle: () =>
+        setUserPrefsAndSave({ wideView: !user.preferences.wideView }),
     },
   ];
 
@@ -52,7 +56,7 @@ export function AccessibilityMenu({ hideLabels }: { hideLabels: boolean }) {
         {value && (
           <Check
             className="w-4 h-4"
-            style={{ color: `rgb(${userPrefs.themeColor})` }}
+            style={{ color: `rgb(${user.preferences.themeColor})` }}
           />
         )}
       </DropdownMenuItem>
@@ -79,7 +83,7 @@ export function AccessibilityMenu({ hideLabels }: { hideLabels: boolean }) {
                 {value && (
                   <Check
                     className="w-4 h-4"
-                    style={{ color: `rgb(${userPrefs.themeColor})` }}
+                    style={{ color: `rgb(${user.preferences.themeColor})` }}
                   />
                 )}
               </div>

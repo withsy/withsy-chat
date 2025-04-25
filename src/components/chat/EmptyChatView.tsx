@@ -30,7 +30,7 @@ export default function EmptyChatView({
   prompts?: Prompt[];
 }) {
   const { isMobile } = useSidebarStore();
-  const { userPrefs } = useUser();
+  const { user } = useUser();
   const [greeting, setGreeting] = useState("Good day");
 
   useEffect(() => {
@@ -40,6 +40,8 @@ export default function EmptyChatView({
     }, 1000 * 60 * 10);
     return () => clearInterval(interval);
   }, []);
+
+  if (!user) return null;
 
   return (
     <ChatSession chat={null} initialMessages={[]}>
@@ -57,7 +59,7 @@ export default function EmptyChatView({
                 key={index}
                 title={prompt.title}
                 isStar={prompt.isStar}
-                color={userPrefs.themeColor}
+                color={user.preferences.themeColor}
               />
             ))}
             <Button
@@ -85,7 +87,7 @@ export default function EmptyChatView({
                   key={index}
                   title={prompt.title}
                   isStar={prompt.isStar}
-                  color={userPrefs.themeColor}
+                  color={user.preferences.themeColor}
                 />
               ))}
             </div>

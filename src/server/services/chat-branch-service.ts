@@ -36,36 +36,14 @@ export class ChatBranchService {
         messageId,
       });
 
-      const title = parentMessage.text
-        ? [...parentMessage.text].slice(0, 20).join("")
-        : undefined;
-
-      const chat = await ChatBranchService.create(tx, {
+      const title = [...parentMessage.text].slice(0, 20).join("");
+      const chat = await ChatService.createBranchChat(tx, {
         userId,
         parentMessageId: parentMessage.id,
         title,
       });
 
       return chat;
-    });
-
-    return res;
-  }
-
-  static async create(
-    tx: Tx,
-    input: { userId: UserId; parentMessageId: MessageId; title?: string }
-  ) {
-    const { userId, parentMessageId, title } = input;
-    const res = await tx.chat.create({
-      data: {
-        id: ChatService.generateId(),
-        userId,
-        title,
-        type: "branch",
-        parentMessageId,
-      },
-      select: ChatSelect,
     });
 
     return res;

@@ -9,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useUser } from "@/context/UserContext";
 
 export default function Page() {
-  const { userSession } = useUser();
+  const { user } = useUser();
   const { message, bestFriend, extraFriend } = getRecommendedFriends();
 
   return (
@@ -17,7 +17,7 @@ export default function Page() {
       {/* ✅ 헤더 영역 */}
       <div className="w-full bg-white shadow-sm sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-4 py-3 flex justify-end">
-          {!userSession && <LoginButton />}
+          {!user && <LoginButton />}
         </div>
       </div>
 

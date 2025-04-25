@@ -6,8 +6,10 @@ interface ChatHeaderProps {
 }
 
 export default function ChatDrawerHeader({ setOpenDrawer }: ChatHeaderProps) {
-  const { userPrefs } = useUser();
-  const { themeColor, themeOpacity } = userPrefs;
+  const { user } = useUser();
+  if (!user) return null;
+
+  const { themeColor, themeOpacity } = user?.preferences;
   const handleClick = () => {
     setOpenDrawer(null);
   };

@@ -9,10 +9,10 @@ type LayoutProps = {
 };
 
 export default function Layout({ children }: LayoutProps) {
-  const { userPrefs } = useUser();
+  const { user } = useUser();
   const pathname = usePathname();
-  const themeColor = userPrefs.themeColor;
-  const themeOpacity = userPrefs.themeOpacity;
+  const themeColor = user?.preferences.themeColor ?? "255,87,34";
+  const themeOpacity = user?.preferences.themeOpacity ?? 0.2;
   const backgroundColor = `rgba(${themeColor}, ${themeOpacity})`;
 
   const isChatPage =

@@ -13,8 +13,7 @@ interface ChatHeaderProps {
 
 export default function ChatHeader({ chat }: ChatHeaderProps) {
   const { openDrawer, setOpenDrawer } = useDrawerStore();
-  const { userPrefs } = useUser();
-  const { themeColor, themeOpacity } = userPrefs;
+  const { user } = useUser();
 
   const [displayChat, setDisplayChat] = useState<Chat>(chat);
   const [hideLabels, setHideLabels] = useState(false);
@@ -40,6 +39,10 @@ export default function ChatHeader({ chat }: ChatHeaderProps) {
   const handleClick = (id: string) => {
     setOpenDrawer(openDrawer === id ? null : id);
   };
+
+  if (!user) return null;
+
+  const { themeColor, themeOpacity } = user.preferences;
 
   const buttons = [
     {

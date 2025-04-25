@@ -15,7 +15,7 @@ type Props = {
 };
 
 const ChatBubbleComponent = ({ message, onToggleSaved }: Props) => {
-  const { userSession } = useUser();
+  const { user } = useUser();
 
   const { role, text: rawText, status } = message;
 
@@ -25,13 +25,6 @@ const ChatBubbleComponent = ({ message, onToggleSaved }: Props) => {
   const displayedText = collapsed
     ? text.split("\n").slice(0, 3).join("\n")
     : text;
-
-  const name =
-    role === "model"
-      ? message.model
-        ? message.model
-        : "AI"
-      : userSession?.user?.name ?? "username";
 
   const handleCopy = async () => {
     try {
@@ -50,6 +43,15 @@ const ChatBubbleComponent = ({ message, onToggleSaved }: Props) => {
   const handleSave = () => {
     onToggleSaved?.(message.id, !message.isBookmarked);
   };
+
+  if (!user) return null;
+
+  const name =
+    role === "model"
+      ? message.model
+        ? message.model
+        : "AI"
+      : user.name ?? "username";
 
   return (
     <div

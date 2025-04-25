@@ -26,8 +26,10 @@ export function BookmarkCard({
   createdAt,
   hideUnsave,
 }: BookmarkCardProps) {
-  const { userPrefs } = useUser();
-  const { themeColor } = userPrefs;
+  const { user } = useUser();
+  if (!user) throw new Error("User must exist.");
+
+  const { themeColor } = user.preferences;
   const isLongMessage = text ? text.length > 150 : false;
 
   const [collapsed, setCollapsed] = useState(isLongMessage);

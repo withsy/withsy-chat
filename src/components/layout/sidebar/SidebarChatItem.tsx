@@ -47,7 +47,8 @@ export function SidebarChatItem({
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const { isMobile, setCollapsed } = useSidebarStore();
-  const { userPrefs } = useUser();
+  const { user } = useUser();
+  if (!user) throw new Error("User must exist.");
 
   const utils = trpc.useUtils();
   const updateChatMut = trpc.chat.update.useMutation({
@@ -181,7 +182,7 @@ export function SidebarChatItem({
               style={
                 chat.isStarred
                   ? {
-                      fill: `rgb(${userPrefs.themeColor})`,
+                      fill: `rgb(${user.preferences.themeColor})`,
                     }
                   : {}
               }

@@ -29,29 +29,41 @@ export const authOptions: AuthOptions = {
   providers,
   session: {
     strategy: "jwt",
-    maxAge: 24 * 60 * 60, // 24 hours
-    updateAge: 60 * 60, // 1 hours
+    maxAge: 7 * 24 * 60 * 60, // 7 days
+    updateAge: 6 * 60 * 60, // 6 hours
   },
   callbacks: {
     async jwt(params) {
-      const { token, account } = params;
+      const { token, account, profile } = params;
       if (!account) return token;
+
       const { provider, providerAccountId, refresh_token } = account;
-      const { userId } = await service.userLinkAccount.ensureUserByAccount({
+      const { email, name, picture } = profile as {
+        name?: string;
+        email?: string;
+        picture?: string;
+      };
+
+      const { userId } = await service.userLinkAccount.ensure({
         provider,
         providerAccountId,
         refreshToken: refresh_token,
+        name,
+        email,
+        image: picture,
       });
-      const userJwt = UserJwt.parse({ ...token, sub: userId });
+
+      const userJwt = UserJwt.parse({ sub: userId });
       return userJwt;
     },
-    async session(params) {
+    session(params) {
       const { token, session } = params;
       const userJwt = UserJwt.parse(token);
       const userSession = UserSession.parse({
         ...session,
         user: { ...(session.user ?? {}), id: userJwt.sub },
       });
+
       return userSession;
     },
   },

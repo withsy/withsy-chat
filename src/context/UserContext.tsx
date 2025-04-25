@@ -1,7 +1,6 @@
 import { FullPageLoading } from "@/components/Loading";
 import { trpc } from "@/lib/trpc";
-import { UserPrefs, UserSession, type UpdateUserPrefs } from "@/types/user";
-import { skipToken } from "@tanstack/react-query";
+import { User, UserPrefs, type UserUpdatePrefs } from "@/types/user";
 import { useSession } from "next-auth/react";
 import {
   createContext,
@@ -11,58 +10,68 @@ import {
   type ReactNode,
 } from "react";
 
-type UserPrefLoadings = Partial<Record<keyof UpdateUserPrefs, boolean>>;
-type SetUserPrefsAndSave = (input: UpdateUserPrefs) => void;
+type UserPrefLoadings = Partial<Record<keyof UserUpdatePrefs, boolean>>;
+type SetUserPrefsAndSave = (input: UserUpdatePrefs) => void;
 
 type UserContextType = {
-  userSession: UserSession | null;
-  userPrefs: UserPrefs;
+  user: User | null;
+  onSignOut: () => void;
   setUserPrefsAndSave: SetUserPrefsAndSave;
   userPrefLoadings: UserPrefLoadings;
 };
-
-const DEFAULT_USER_PREFS = UserPrefs.parse({});
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export function UserProvider({ children }: { children: ReactNode }) {
   const { data: session, status } = useSession();
-  const [userSession, setUserSession] = useState<UserSession | null>(null);
   const [userPrefLoadings, setUserPrefLoadings] = useState<UserPrefLoadings>(
     {}
   );
-  const utils = trpc.useUtils();
-  const userPrefsQuery = trpc.userPrefs.get.useQuery(
-    userSession ? undefined : skipToken
-  );
-  const updateUserPrefs = trpc.userPrefs.update.useMutation({
-    onMutate: async (input: UpdateUserPrefs) => {
+  const [user, setUser] = useState<User | null>(null);
+
+  const userEnsure = trpc.user.ensure.useMutation({
+    onSuccess: (data) => setUser(data),
+  });
+
+  const updateUserPrefs = trpc.user.updatePrefs.useMutation({
+    onMutate: async (input: UserUpdatePrefs) => {
+      if (!user) throw new Error("User is not set.");
+      const previous = UserPrefs.parse(
+        JSON.parse(JSON.stringify(user.preferences))
+      );
+
       const inputs = Object.entries(input).filter(([_, v]) => v !== undefined);
-      await utils.userPrefs.get.cancel();
-      const previous = utils.userPrefs.get.getData();
-      utils.userPrefs.get.setData(undefined, (old) => {
-        if (old) inputs.forEach(([k, v]) => Reflect.set(old, k, v));
-        return old;
-      });
-      const loadingOns = inputs.map(([k, _]) => [k, true]);
+      inputs.forEach(([k, v]) => Reflect.set(user.preferences, k, v));
+
+      const loadings = inputs.map(([k, _]) => [k, true]);
       setUserPrefLoadings((p) => ({
         ...p,
-        ...Object.fromEntries(loadingOns),
+        ...Object.fromEntries(loadings),
       }));
-      return { previous, loadingOns };
+      return { previous, loadings };
     },
     onError(_, __, ctx) {
-      if (ctx?.previous) utils.userPrefs.get.setData(undefined, ctx.previous);
+      if (!user) throw new Error("User is not set.");
+
+      if (ctx?.previous)
+        setUser({
+          ...user,
+          preferences: ctx.previous,
+        });
     },
-    onSettled(_, __, ___, ctx) {
-      utils.userPrefs.get.invalidate();
-      if (ctx?.loadingOns) {
-        const loadingOffs = Object.fromEntries(
-          ctx.loadingOns.map(([k, _]) => [k, false])
-        );
+    onSettled(data, __, ___, ctx) {
+      if (!user) throw new Error("User is not set.");
+
+      if (data)
+        setUser({
+          ...user,
+          preferences: data.preferences,
+        });
+
+      if (ctx?.loadings) {
         setUserPrefLoadings((p) => ({
           ...p,
-          ...loadingOffs,
+          ...Object.fromEntries(ctx.loadings.map(([k, _]) => [k, false])),
         }));
       }
     },
@@ -70,31 +79,36 @@ export function UserProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!session) return;
-    const userSession = UserSession.parse(session);
-    setUserSession(userSession);
-  }, [session]);
+
+    let language: string | undefined = undefined;
+    try {
+      language = navigator.language;
+    } catch (e) {
+      void e;
+    }
+
+    let timezone: string | undefined = undefined;
+    try {
+      timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    } catch (e) {
+      void e;
+    }
+
+    userEnsure.mutate({ language, timezone });
+  }, [session, userEnsure]);
 
   const setUserPrefsAndSave: SetUserPrefsAndSave = (input) => {
     updateUserPrefs.mutate(input);
   };
 
-  const userPrefs = new Proxy(
-    {},
-    {
-      get(_, p) {
-        const previous = utils.userPrefs.get.getData();
-        return Reflect.get(previous ?? DEFAULT_USER_PREFS, p);
-      },
-    }
-  ) as UserPrefs;
-
-  const isLoading = status === "loading" || userPrefsQuery.isLoading;
+  const isLoading = status === "loading" || userEnsure.isPending;
   if (isLoading) return <FullPageLoading />;
+
   return (
     <UserContext.Provider
       value={{
-        userSession,
-        userPrefs,
+        user,
+        onSignOut: () => setUser(null),
         setUserPrefsAndSave,
         userPrefLoadings,
       }}

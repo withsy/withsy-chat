@@ -5,11 +5,14 @@ import {
   ChatStart,
   ChatUpdate,
 } from "@/types/chat";
+import { ChatPromptSelect } from "@/types/chat-prompt";
+import type { MessageId } from "@/types/message";
 import { UserId } from "@/types/user";
 import { uuidv7 } from "uuidv7";
 import type { ServiceRegistry } from "../service-registry";
 import type { Tx } from "./db";
 import { IdempotencyInfoService } from "./idempotency-info-service";
+import { MessageFileService } from "./message-file-service";
 import { MessageService } from "./message-service";
 import { UserUsageLimitService } from "./user-usage-limit-service";
 
@@ -97,17 +100,25 @@ export class ChatService {
 
     const { chat, userMessage, modelMessage } =
       await this.service.db.$transaction(async (tx) => {
-        const chat = await ChatService.create(tx, { userId, text });
-        const { userMessage, modelMessage } = await MessageService.createInfo(
-          tx,
-          {
-            chatId: chat.id,
-            model,
-            text,
-            fileInfos,
-            isShowUserMessage: true,
-          }
-        );
+        const title = [...text].slice(0, 20).join("");
+        const chat = await ChatService.createChat(tx, { userId, title });
+
+        const userMessage = await MessageService.createUserMessage(tx, {
+          chatId: chat.id,
+          text,
+          isPublic: true,
+        });
+
+        const modelMessage = await MessageService.createModelMessage(tx, {
+          chatId: chat.id,
+          model,
+          parentMessageId: userMessage.id,
+        });
+
+        await MessageFileService.createAll(tx, {
+          messageId: userMessage.id,
+          fileInfos,
+        });
 
         return { chat, userMessage, modelMessage };
       });
@@ -127,15 +138,55 @@ export class ChatService {
     };
   }
 
-  static async create(tx: Tx, input: { userId: UserId; text: string }) {
-    const { userId, text } = input;
-    const title = text ? [...text].slice(0, 20).join("") : undefined;
+  static async createChat(tx: Tx, input: { userId: UserId; title: string }) {
+    const { userId, title } = input;
     const res = await tx.chat.create({
       data: {
         id: ChatService.generateId(),
         userId,
         title,
         type: "chat",
+      },
+      select: ChatSelect,
+    });
+
+    return res;
+  }
+
+  static async createBranchChat(
+    tx: Tx,
+    input: { userId: UserId; parentMessageId: MessageId; title: string }
+  ) {
+    const { userId, parentMessageId, title } = input;
+    const res = await tx.chat.create({
+      data: {
+        id: ChatService.generateId(),
+        userId,
+        title,
+        type: "branch",
+        parentMessageId,
+      },
+      select: ChatSelect,
+    });
+
+    return res;
+  }
+
+  static async createPromptChat(
+    tx: Tx,
+    input: { userId: UserId; title: string }
+  ) {
+    const { userId, title } = input;
+    const res = await tx.chat.create({
+      data: {
+        id: ChatService.generateId(),
+        userId,
+        type: "chat",
+        title,
+      },
+      select: {
+        ...ChatSelect,
+        chatPrompts: { select: ChatPromptSelect },
       },
     });
 

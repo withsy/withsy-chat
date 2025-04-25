@@ -7,7 +7,9 @@ interface StatusIndicatorProps {
 }
 
 export const StatusIndicator = ({ status }: StatusIndicatorProps) => {
-  const { userPrefs } = useUser();
+  const { user } = useUser();
+  if (!user) return null;
+
   if (status === "succeeded") return null;
   if (status === "failed") {
     return (
@@ -29,7 +31,7 @@ export const StatusIndicator = ({ status }: StatusIndicatorProps) => {
       <span className="flex items-center gap-1 text-muted-foreground text-sm mt-5 justify-end">
         <Badge
           className="animate-bounce"
-          fill={`rgb(${userPrefs.themeColor})`}
+          fill={`rgb(${user.preferences.themeColor})`}
           color="none"
         />
       </span>

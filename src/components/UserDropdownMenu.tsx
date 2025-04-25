@@ -73,7 +73,7 @@ function UserMenuItem({
 export default function UserDropdownMenu() {
   const router = useRouter();
   const { isMobile } = useSidebarStore();
-  const { userPrefs, userSession } = useUser();
+  const { user, onSignOut } = useUser();
 
   const [themeModalOpen, setThemeModalOpen] = useState(false);
 
@@ -117,6 +117,7 @@ export default function UserDropdownMenu() {
       icon: LogOut,
       label: "Log out",
       onClick: async () => {
+        onSignOut();
         signOut({ callbackUrl: "/" });
       },
     },
@@ -132,15 +133,15 @@ export default function UserDropdownMenu() {
             type="button"
             className={`cursor-pointer flex items-center rounded-md w-full gap-2 ${mobileClassName} hover:bg-white active:bg-white font-semibold`}
           >
-            <ModelAvatar name={userSession?.user?.name ?? ""} size="sm" />
-            <span>{userSession?.user.name}</span>
+            <ModelAvatar name={user?.name ?? ""} size="sm" />
+            <span>{user?.name}</span>
           </button>
         </DropdownMenuTrigger>
         <DropdownMenuContent
           align="end"
           className={cn(
             "w-48 p-2 m-2",
-            userPrefs.largeText ? "text-lg" : "text-base"
+            user?.preferences.largeText ? "text-lg" : "text-base"
           )}
         >
           {userMenuItems.map((item, idx) =>
@@ -151,7 +152,7 @@ export default function UserDropdownMenu() {
                 key={item.label}
                 icon={item.icon}
                 label={item.label}
-                largeText={userPrefs["largeText"]}
+                largeText={user?.preferences.largeText}
                 onClick={item.onClick}
               />
             )
@@ -162,7 +163,7 @@ export default function UserDropdownMenu() {
               withsy with{" "}
               <span
                 style={{
-                  color: `rgb(${userPrefs.themeColor})`,
+                  color: `rgb(${user?.preferences.themeColor})`,
                 }}
               >
                 ♥
