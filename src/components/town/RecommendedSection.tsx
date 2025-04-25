@@ -82,7 +82,7 @@ export function RecommendedSection({
         </div>
 
         <HoverInvertButton
-          textColor={friendStyle.textColor}
+          textColor="black"
           onClick={() => console.log(`${extraFriend.name} clicked!`)}
         >
           {extraFriend.specialty}
