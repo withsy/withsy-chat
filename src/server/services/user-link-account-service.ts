@@ -1,37 +1,36 @@
 import type { ServiceRegistry } from "../service-registry";
+import { UserService } from "./user-service";
 import { UserUsageLimitService } from "./user-usage-limit-service";
 
 export class UserLinkAccountService {
   constructor(private readonly service: ServiceRegistry) {}
 
-  async ensureUserByAccount(input: {
+  async processJwt(input: {
     provider: string;
     providerAccountId: string;
     refreshToken?: string;
+    name?: string;
+    email?: string;
+    image?: string;
   }) {
-    const { provider, providerAccountId, refreshToken } = input;
+    const { provider, providerAccountId, refreshToken, name, email, image } =
+      input;
+
     const res = await this.service.db.$transaction(async (tx) => {
-      let ula = await tx.userLinkAccount.findFirst({
-        select: {
-          id: true,
-          userId: true,
-        },
+      let linkAccount = await tx.userLinkAccount.findFirst({
         where: {
           provider,
           providerAccountId,
         },
+        select: {
+          id: true,
+          userId: true,
+        },
       });
 
-      if (!ula) {
-        const user = await tx.user.create({
-          data: {
-            preferences: {},
-          },
-          select: {
-            id: true,
-          },
-        });
-        ula = await tx.userLinkAccount.create({
+      if (!linkAccount) {
+        const user = await UserService.create(tx, { name, email, image });
+        linkAccount = await tx.userLinkAccount.create({
           data: {
             userId: user.id,
             provider,
@@ -51,12 +50,12 @@ export class UserLinkAccountService {
             refreshToken,
           },
           where: {
-            id: ula.id,
+            id: linkAccount.id,
           },
         });
 
       return {
-        userId: ula.userId,
+        userId: linkAccount.userId,
       };
     });
 

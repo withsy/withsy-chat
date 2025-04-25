@@ -9,6 +9,11 @@ datasource db {
 
 model User {
   id                String             @id @default(dbgenerated("gen_random_uuid()")) @map("id") @db.Uuid
+  name              String             @default("Buddy") @map("name")
+  email             String             @default("") @map("email")
+  image             String             @default("") @map("image")
+  language          String             @default("") @map("language")
+  timezone          String             @default("") @map("timezone")
   preferences       Json               @default("{}") @map("preferences")
   createdAt         DateTime           @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt         DateTime           @default(now()) @map("updated_at") @db.Timestamptz(6)

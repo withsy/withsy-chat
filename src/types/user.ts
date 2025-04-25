@@ -34,9 +34,6 @@ export const UserLinkAccount = z.object({
 export type UserLinkAccount = zInfer<typeof UserLinkAccount>;
 
 export const UserJwt = z.object({
-  name: z.string().nullish(),
-  email: z.string().nullish(),
-  picture: z.string().nullish(),
   sub: z.string(),
 });
 export type UserJwt = zInfer<typeof UserJwt>;
