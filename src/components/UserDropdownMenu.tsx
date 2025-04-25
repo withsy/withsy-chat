@@ -11,12 +11,9 @@ import { cn } from "@/lib/utils";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 import {
   BookText,
-  Image,
   LogOut,
   MailOpen,
   Palette,
-  // Settings,
-  SquareTerminal,
   type LucideIcon,
 } from "lucide-react";
 import { signOut } from "next-auth/react";
@@ -79,25 +76,10 @@ export default function UserDropdownMenu() {
 
   const userMenuItems: MenuItem[] = [
     {
-      icon: Image,
-      label: "Models",
-      onClick() {
-        router.push("/preferences?tab=models");
-      },
-    },
-    {
-      icon: SquareTerminal,
-      label: "Prompts",
-      onClick() {
-        router.push("/preferences?tab=prompts");
-      },
-    },
-    {
       icon: Palette,
       label: "Theme",
       onClick: () => setThemeModalOpen(true),
     },
-    "separator",
     {
       icon: BookText,
       label: "Guide",
@@ -112,7 +94,6 @@ export default function UserDropdownMenu() {
         router.push("/contact");
       },
     },
-    "separator",
     {
       icon: LogOut,
       label: "Log out",
