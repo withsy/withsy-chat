@@ -76,9 +76,9 @@ export function UserProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!session) return;
 
-    let language: string | undefined = undefined;
+    let aiLanguage: string | undefined = undefined;
     try {
-      language = navigator.language;
+      aiLanguage = navigator.language.split("-")[0];
     } catch (e) {
       void e;
     }
@@ -90,7 +90,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
       void e;
     }
 
-    userEnsure.mutate({ language, timezone });
+    userEnsure.mutate({ aiLanguage, timezone });
   }, [session]);
 
   const setUserPrefsAndSave: SetUserPrefsAndSave = (input) => {

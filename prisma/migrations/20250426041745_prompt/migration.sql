@@ -11,9 +11,9 @@ ALTER TYPE "ChatType" ADD VALUE 'gratitudeJournal';
 ALTER TABLE "messages" ADD COLUMN     "is_public" BOOLEAN NOT NULL;
 
 -- AlterTable
-ALTER TABLE "users" ADD COLUMN     "email" TEXT NOT NULL DEFAULT '',
+ALTER TABLE "users" ADD COLUMN     "ai_language" TEXT NOT NULL DEFAULT '',
+ADD COLUMN     "email" TEXT NOT NULL DEFAULT '',
 ADD COLUMN     "image" TEXT NOT NULL DEFAULT '',
-ADD COLUMN     "language" TEXT NOT NULL DEFAULT '',
 ADD COLUMN     "name" TEXT NOT NULL DEFAULT 'Buddy',
 ADD COLUMN     "timezone" TEXT NOT NULL DEFAULT '';
 

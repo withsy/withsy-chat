@@ -1,6 +1,7 @@
 import {
   User,
   UserEnsure,
+  UserUpdate,
   UserUpdatePrefs,
   UserUpdatePrefsOutput,
 } from "@/types/user";
@@ -27,5 +28,13 @@ export const userRouter = t.router({
       opts.ctx.service.user
         .updatePrefs(opts.ctx.userId, opts.input)
         .then((x) => UserUpdatePrefsOutput.parse(x))
+    ),
+  update: publicProcedure
+    .input(UserUpdate)
+    .output(User)
+    .mutation(async (opts) =>
+      opts.ctx.service.user
+        .update(opts.ctx.userId, opts.input)
+        .then((x) => User.parse(x))
     ),
 });

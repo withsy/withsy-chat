@@ -1,17 +1,19 @@
+import { isValidAiLanguage } from "@/types/languages";
 import {
   User,
   UserSelect,
+  UserUpdate,
   UserUpdatePrefs,
   type UserEnsure,
   type UserId,
 } from "@/types/user";
 import { TRPCError } from "@trpc/server";
 import type { ServiceRegistry } from "../service-registry";
-import { isValidLanguage, isValidTimezone } from "../utils";
+import { isValidTimezone } from "../utils";
 import type { Tx } from "./db";
 
 const FALLBACK_TIMEZONE = "UTC";
-const FALLBACK_LANGUAGE = "en-US";
+const FALLBACK_AI_LANGUAGE = "en";
 
 export class UserService {
   constructor(private readonly service: ServiceRegistry) {}
@@ -40,18 +42,18 @@ export class UserService {
             : FALLBACK_TIMEZONE;
       }
 
-      let language: string | undefined = undefined;
-      if (user.language.length === 0) {
-        language =
-          input.language && isValidLanguage(input.language)
-            ? input.language
-            : FALLBACK_LANGUAGE;
+      let aiLanguage: string | undefined = undefined;
+      if (user.aiLanguage.length === 0) {
+        aiLanguage =
+          input.aiLanguage && isValidAiLanguage(input.aiLanguage)
+            ? input.aiLanguage
+            : FALLBACK_AI_LANGUAGE;
       }
 
       const updated = tx.user.update({
         where: { id: userId },
         data: {
-          language,
+          aiLanguage,
           timezone,
         },
         select: UserSelect,
@@ -101,6 +103,32 @@ export class UserService {
     return res;
   }
 
+  async update(userId: UserId, input: UserUpdate) {
+    const { aiLanguage, timezone } = input;
+    if (aiLanguage && !isValidAiLanguage(aiLanguage))
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "Invalid aiLanguage.",
+      });
+
+    if (timezone && !isValidTimezone(timezone))
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "Invalid timezone.",
+      });
+
+    const res = await this.service.db.user.update({
+      where: { id: userId },
+      data: {
+        aiLanguage,
+        timezone,
+      },
+      select: UserSelect,
+    });
+
+    return res;
+  }
+
   static async create(
     tx: Tx,
     input: { name?: string; email?: string; image?: string }
@@ -126,7 +154,7 @@ export class UserService {
       where: { id: userId },
       select: {
         name: true,
-        language: true,
+        aiLanguage: true,
       },
     });
 
@@ -144,14 +172,14 @@ export class UserService {
     return FALLBACK_TIMEZONE;
   }
 
-  static async getLanguage(tx: Tx, input: { userId: UserId }) {
+  static async getAiLanguage(tx: Tx, input: { userId: UserId }) {
     const { userId } = input;
-    const { language } = await tx.user.findUniqueOrThrow({
+    const { aiLanguage } = await tx.user.findUniqueOrThrow({
       where: { id: userId },
-      select: { language: true },
+      select: { aiLanguage: true },
     });
 
-    if (isValidLanguage(language)) return language;
-    return FALLBACK_LANGUAGE;
+    if (isValidAiLanguage(aiLanguage)) return aiLanguage;
+    return FALLBACK_AI_LANGUAGE;
   }
 }
