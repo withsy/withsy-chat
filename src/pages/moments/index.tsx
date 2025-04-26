@@ -1,3 +1,3 @@
 export default function Page() {
-  return <div>prefs</div>;
+  return <div>moments</div>;
 }

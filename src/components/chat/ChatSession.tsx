@@ -217,7 +217,7 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
           isMobile ? "w-full" : openDrawer ? "w-[70%]" : "w-full"
         )}
       >
-        {chat && <ChatHeader chatType={chat?.type} />}
+        <ChatHeader chatType={chat?.type} />
         <div
           className={cn(
             "flex-1 overflow-y-auto mt-[50px] mb-[150px] w-full transition-all duration-300",

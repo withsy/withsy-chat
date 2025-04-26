@@ -1,5 +1,6 @@
 import { useUser } from "@/context/UserContext";
 import { cn } from "@/lib/utils";
+import type { ChatType } from "@/types/chat";
 import type { Message } from "@/types/message";
 import { memo, useState } from "react";
 import { toast } from "sonner";
@@ -11,10 +12,11 @@ import { StatusIndicator } from "./StatusIndicator";
 
 type Props = {
   message: Message;
+  chatType: ChatType | undefined;
   onToggleSaved?: (id: string, newValue: boolean) => void;
 };
 
-const ChatBubbleComponent = ({ message, onToggleSaved }: Props) => {
+const ChatBubbleComponent = ({ message, chatType, onToggleSaved }: Props) => {
   const { user } = useUser();
 
   const { role, text: rawText, status } = message;
@@ -52,6 +54,34 @@ const ChatBubbleComponent = ({ message, onToggleSaved }: Props) => {
         ? message.model
         : "AI"
       : user.name ?? "username";
+
+  const collapseToggleProps = {
+    show: isLongMessage && status === "succeeded",
+    collapsed,
+    setCollapsed,
+  };
+
+  // ChatBubbleTooltips용 props
+  const tooltipsProps = {
+    chatType,
+    messageId: message.id,
+    isAi: role === "model",
+    messageModel: message.model,
+    isSaved: message.isBookmarked,
+    onCopy: handleCopy,
+    onSave: handleSave,
+  };
+
+  const items =
+    role === "model"
+      ? [
+          <ChatBubbleTooltips key="tooltips" {...tooltipsProps} />,
+          <CollapseToggle key="collapse" {...collapseToggleProps} />,
+        ]
+      : [
+          <CollapseToggle key="collapse" {...collapseToggleProps} />,
+          <ChatBubbleTooltips key="tooltips" {...tooltipsProps} />,
+        ];
 
   return (
     <div
@@ -91,21 +121,7 @@ const ChatBubbleComponent = ({ message, onToggleSaved }: Props) => {
           <MarkdownBox content={displayedText} />
           <StatusIndicator status={status} />
         </div>
-        <div className="flex justify-between w-full mt-2">
-          <ChatBubbleTooltips
-            messageId={message.id}
-            isAi={role == "model"}
-            messageModel={message.model}
-            isSaved={message.isBookmarked}
-            onCopy={handleCopy}
-            onSave={handleSave}
-          />
-          <CollapseToggle
-            show={isLongMessage && status == "succeeded"}
-            collapsed={collapsed}
-            setCollapsed={setCollapsed}
-          />
-        </div>
+        <div className="flex justify-between w-full mt-2">{items}</div>
       </div>
     </div>
   );
