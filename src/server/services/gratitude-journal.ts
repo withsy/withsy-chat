@@ -1,10 +1,17 @@
 import { GratitudeJournal } from "@/types";
 import { ChatSelect } from "@/types/chat";
-import {} from "@/types/gratitude-journal";
+import { RecentJournal } from "@/types/gratitude-journal";
 import type { UserId } from "@/types/user";
 import type { Prisma } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
-import { endOfDay, format, startOfDay } from "date-fns";
+import {
+  endOfDay,
+  format,
+  isSameDay,
+  startOfDay,
+  subDays,
+  subMonths,
+} from "date-fns";
 import { fromZonedTime, toZonedTime } from "date-fns-tz";
 import { uuidv7 } from "uuidv7";
 import type { ServiceRegistry } from "../service-registry";
@@ -18,47 +25,74 @@ import { UserService } from "./user";
 export class GratitudeJournalService {
   constructor(private readonly service: ServiceRegistry) {}
 
-  async getTodayJournal(userId: UserId) {
+  async getStats(userId: UserId) {
     const res = await this.service.db.$transaction(async (tx) => {
       const now = new Date();
-      const { utcTodayStart, utcTodayEnd } =
+      const { timezone, zonedTodayStart, utcTodayStart, utcTodayEnd } =
         await GratitudeJournalService.getTimezoneInfo(tx, {
           userId,
           now,
         });
 
-      const where = GratitudeJournalService.getTodayJournalWhere({
-        userId,
-        utcTodayStart,
-        utcTodayEnd,
+      const zonedOldStart = subMonths(zonedTodayStart, 3);
+      const utcOldStart = fromZonedTime(zonedOldStart, timezone);
+
+      const xs = await tx.gratitudeJournal.findMany({
+        where: {
+          userId,
+          createdAt: {
+            gte: utcOldStart,
+            lte: utcTodayEnd,
+          },
+        },
+        select: {
+          id: true,
+          createdAt: true,
+        },
+        orderBy: {
+          id: "asc",
+        },
       });
+
       const todayJournal = await tx.gratitudeJournal.findFirst({
-        where,
+        where: GratitudeJournalService.getTodayJournalWhere({
+          userId,
+          utcTodayStart,
+          utcTodayEnd,
+        }),
         select: { ...GratitudeJournal.Select, chat: { select: ChatSelect } },
       });
 
-      if (todayJournal && !todayJournal.chat)
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Chat must exist.",
-        });
+      let currentStreak = todayJournal ? 1 : 0;
+      let zonedCheckStart = subDays(zonedTodayStart, 1);
+      let isCurrentStreakDone = false;
+      const recentJournals: RecentJournal[] = [];
+      for (let i = xs.length - 1; i >= 0; --i) {
+        const x = xs[i];
+        const zonedTime = toZonedTime(x.createdAt, timezone);
 
-      return todayJournal;
+        if (!isCurrentStreakDone && isSameDay(zonedTime, zonedCheckStart)) {
+          currentStreak += 1;
+          zonedCheckStart = subDays(zonedCheckStart, 1);
+        } else {
+          isCurrentStreakDone = true;
+        }
+
+        const zonedDate = GratitudeJournalService.formatDate(zonedTime);
+        return {
+          zonedDate,
+          gratitudeJournalId: x.id,
+        };
+      }
+
+      return {
+        recentJournals,
+        currentStreak,
+        todayJournal,
+      };
     });
 
     return res;
-  }
-
-  async getStats(userId: UserId) {}
-
-  async getGrassCalendar(userId: UserId) {
-    const res = await this.service.db.$transaction(async (tx) => {
-      const now = new Date();
-      const a = await GratitudeJournalService.getTimezoneInfo(tx, {
-        userId,
-        now,
-      });
-    });
   }
 
   async startChat(userId: UserId, input: GratitudeJournal.StartChat) {
@@ -69,7 +103,7 @@ export class GratitudeJournalService {
         await IdempotencyInfoService.checkDuplicateRequest(tx, idempotencyKey);
 
         const now = new Date();
-        const { utcTodayStart, utcTodayEnd, zonedNow } =
+        const { utcTodayStart, utcTodayEnd, zonedTodayDate } =
           await GratitudeJournalService.getTimezoneInfo(tx, {
             userId,
             now,
@@ -91,8 +125,7 @@ export class GratitudeJournalService {
           });
         }
 
-        const zonedDate = format(zonedNow, "yyyy-MM-dd");
-        const title = `Gratitude Journal - ${zonedDate}`;
+        const title = `Gratitude Journal - ${zonedTodayDate}`;
         const chat = await ChatService.createGratitudeJournalChat(tx, {
           userId,
           title,
@@ -102,7 +135,7 @@ export class GratitudeJournalService {
         const promptText = GratitudeJournalService.createPromptText({
           userName: user.name,
           userLanguage: user.language,
-          zonedDate,
+          zonedDate: zonedTodayDate,
         });
         const prompt = await PromptService.create(tx, {
           chatId: chat.id,
@@ -168,6 +201,7 @@ Help ${userName} reflect on positive experiences and express gratitude.`;
     const { userId, now } = input;
     const timezone = await UserService.getTimezone(tx, { userId });
     const zonedNow = toZonedTime(now, timezone);
+    const zonedTodayDate = GratitudeJournalService.formatDate(zonedNow);
     const zonedTodayStart = startOfDay(zonedNow);
     const zonedTodayEnd = endOfDay(zonedNow);
     const utcTodayStart = fromZonedTime(zonedTodayStart, timezone);
@@ -175,6 +209,7 @@ Help ${userName} reflect on positive experiences and express gratitude.`;
     return {
       timezone,
       zonedNow,
+      zonedTodayDate,
       zonedTodayStart,
       zonedTodayEnd,
       utcTodayStart,
@@ -195,5 +230,9 @@ Help ${userName} reflect on positive experiences and express gratitude.`;
         lte: utcTodayEnd,
       },
     } satisfies Prisma.GratitudeJournalWhereInput;
+  }
+
+  static formatDate(date: Date) {
+    return format(date, "yyyy-MM-dd");
   }
 }
