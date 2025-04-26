@@ -11,7 +11,6 @@ export function FullPageEmpty() {
 export function PartialEmpty({ message }: { message: string }) {
   return (
     <div className="flex flex-col items-center justify-center w-full h-full select-none">
-      <PackageOpen size={50} />
       <p className="text-2xl font-semibold p-4">{message}</p>
     </div>
   );
