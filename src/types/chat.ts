@@ -40,14 +40,14 @@ export type Chat = {
   isStarred: boolean;
   type: ChatType;
   parentMessageId: MessageId | null;
-  parentMessage?: Message;
+  parentMessage?: Message | null;
   updatedAt: Date;
   prompts?: Prompt[];
   gratitudeJournals?: GratitudeJournal.Data[];
 };
 export const Chat: z.ZodType<Chat> = z.lazy(() =>
   ChatSchema.extend({
-    parentMessage: z.lazy(() => Message),
+    parentMessage: z.lazy(() => Message.nullable().default(null)),
     prompts: Prompt.array().default([]),
     gratitudeJournals: GratitudeJournal.Data.array().default([]),
   })

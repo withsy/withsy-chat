@@ -22,10 +22,10 @@ const _ = {} satisfies Omit<Schema, keyof typeof Select>;
 export type Data = {
   id: Id;
   chatId: ChatId | null;
-  chat?: Chat;
+  chat?: Chat | null;
 };
 export const Data: z.ZodType<Data> = Schema.extend({
-  chat: z.lazy(() => Chat),
+  chat: z.lazy(() => Chat.nullable().default(null)),
 });
 
 export const StartChat = z.object({

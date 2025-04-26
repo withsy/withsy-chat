@@ -66,7 +66,7 @@ export class GratitudeJournalService {
       let currentStreak = todayJournal ? 1 : 0;
       let zonedCheckStart = subDays(zonedTodayStart, 1);
       let isCurrentStreakDone = false;
-      const recentJournals: RecentJournal[] = [];
+      const recentJournals: RecentJournal[] = new Array(xs.length);
       for (let i = xs.length - 1; i >= 0; --i) {
         const x = xs[i];
         const zonedTime = toZonedTime(x.createdAt, timezone);
@@ -79,7 +79,7 @@ export class GratitudeJournalService {
         }
 
         const zonedDate = GratitudeJournalService.formatDate(zonedTime);
-        return {
+        recentJournals[i] = {
           zonedDate,
           gratitudeJournalId: x.id,
         };

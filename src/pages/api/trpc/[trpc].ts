@@ -20,8 +20,10 @@ export default trpcNext.createNextApiHandler({
 
     if (!userId) {
       const token = await getToken({ req });
-      const userJwt = UserJwt.parse(token);
-      userId = userJwt.sub;
+      if (token) {
+        const userJwt = UserJwt.parse(token);
+        userId = userJwt.sub;
+      }
     }
 
     if (!userId)

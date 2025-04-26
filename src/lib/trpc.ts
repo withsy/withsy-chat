@@ -18,9 +18,7 @@ function getUrl() {
   return `${getBaseUrl()}/api/trpc`;
 }
 
-type createTrpcOptions = Parameters<typeof createTRPCNext<AppRouter>>[0];
-
-export const trpcOptions: createTrpcOptions = {
+export const trpc = createTRPCNext<AppRouter>({
   transformer: superjson,
   config() {
     return {
@@ -53,6 +51,4 @@ export const trpcOptions: createTrpcOptions = {
     };
   },
   ssr: false,
-};
-
-export const trpc = createTRPCNext<AppRouter>(trpcOptions);
+});
