@@ -1,10 +1,11 @@
-import type { Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { z } from "zod";
-import { ChatPrompt } from "./chat-prompt";
+import { GratitudeJournal } from ".";
 import { type zInfer } from "./common";
 import { IdempotencyKey } from "./idempotency";
 import { Message, MessageId } from "./message";
 import { Model } from "./model";
+import { Prompt } from "./prompt";
 import { UserUsageLimitError } from "./user-usage-limit";
 
 export const ChatSelect = {
@@ -19,7 +20,7 @@ export const ChatSelect = {
 export const ChatId = z.string().uuid();
 export type ChatId = zInfer<typeof ChatId>;
 
-export const ChatType = z.enum(["chat", "branch"]);
+export const ChatType = z.enum(["chat", "branch", "gratitudeJournal"]);
 export type ChatType = zInfer<typeof ChatType>;
 
 export const ChatSchema = z.object({
@@ -41,26 +42,19 @@ export type Chat = {
   parentMessageId: MessageId | null;
   parentMessage?: Message | null;
   updatedAt: Date;
-  chatPrompts?: ChatPrompt[] | null;
+  prompts?: Prompt[];
+  gratitudeJournals?: GratitudeJournal.Data[];
 };
 export const Chat: z.ZodType<Chat> = z.lazy(() =>
   ChatSchema.extend({
     parentMessage: z.lazy(() => Message.nullable().default(null)),
-    chatPrompts: ChatPrompt.array().nullable().default(null),
+    prompts: Prompt.array().default([]),
+    gratitudeJournals: GratitudeJournal.Data.array().default([]),
   })
 );
 
 export const ChatGet = z.object({
   chatId: ChatId,
-  options: z
-    .object({
-      include: z
-        .object({
-          parentMessage: z.boolean().default(false),
-        })
-        .optional(),
-    })
-    .optional(),
 });
 export type ChatGet = zInfer<typeof ChatGet>;
 

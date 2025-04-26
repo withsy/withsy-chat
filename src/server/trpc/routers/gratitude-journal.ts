@@ -1,25 +1,21 @@
-import {
-  GratitudeJournal,
-  GratitudeJournalList,
-  GratitudeJournalStart,
-} from "@/types/gratitude-journal";
+import { GratitudeJournal } from "@/types";
+import { ChatStartOutput } from "@/types/chat";
 import { publicProcedure, t } from "../server";
 
 export const gratitudeJournalRouter = t.router({
-  list: publicProcedure
-    .input(GratitudeJournalList)
-    .output(GratitudeJournal.array())
+  getStats: publicProcedure
+    .output(GratitudeJournal.Stats)
     .query(async (opts) =>
       opts.ctx.service.gratitudeJournal
-        .list(opts.ctx.userId, opts.input)
-        .then((xs) => xs.map((x) => GratitudeJournal.parse(x)))
+        .getStats(opts.ctx.userId)
+        .then((x) => GratitudeJournal.Stats.parse(x))
     ),
-  start: publicProcedure
-    .input(GratitudeJournalStart)
-    .output(GratitudeJournal)
+  startChat: publicProcedure
+    .input(GratitudeJournal.StartChat)
+    .output(ChatStartOutput)
     .mutation(async (opts) =>
       opts.ctx.service.gratitudeJournal
-        .start(opts.ctx.userId, opts.input)
-        .then((x) => GratitudeJournal.parse(x))
+        .startChat(opts.ctx.userId, opts.input)
+        .then((x) => ChatStartOutput.parse(x))
     ),
 });

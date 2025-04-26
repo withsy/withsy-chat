@@ -1,20 +1,22 @@
+import { GratitudeJournal } from "@/types";
 import {
+  Chat,
   ChatDelete,
   ChatGet,
   ChatSelect,
   ChatStart,
   ChatUpdate,
 } from "@/types/chat";
-import { ChatPromptSelect } from "@/types/chat-prompt";
-import type { MessageId } from "@/types/message";
+import { MessageSelect, type MessageId } from "@/types/message";
+import { PromptSelect } from "@/types/prompt";
 import { UserId } from "@/types/user";
 import { uuidv7 } from "uuidv7";
 import type { ServiceRegistry } from "../service-registry";
 import type { Tx } from "./db";
-import { IdempotencyInfoService } from "./idempotency-info-service";
-import { MessageFileService } from "./message-file-service";
-import { MessageService } from "./message-service";
-import { UserUsageLimitService } from "./user-usage-limit-service";
+import { IdempotencyInfoService } from "./idempotency-info";
+import { MessageService } from "./message";
+import { MessageFileService } from "./message-file";
+import { UserUsageLimitService } from "./user-usage-limit";
 
 export class ChatService {
   constructor(private readonly service: ServiceRegistry) {}
@@ -35,8 +37,7 @@ export class ChatService {
   }
 
   async get(userId: UserId, input: ChatGet) {
-    const { chatId, options } = input;
-    const { include } = options ?? {};
+    const { chatId } = input;
     const res = await this.service.db.chat.findUnique({
       where: {
         id: chatId,
@@ -45,7 +46,7 @@ export class ChatService {
       },
       select: {
         ...ChatSelect,
-        parentMessage: include?.parentMessage ?? false,
+        parentMessage: { select: MessageSelect },
       },
     });
 
@@ -153,6 +154,28 @@ export class ChatService {
     return res;
   }
 
+  static async createGratitudeJournalChat(
+    tx: Tx,
+    input: { userId: UserId; title: string }
+  ) {
+    const { userId, title } = input;
+    const res = await tx.chat.create({
+      data: {
+        id: ChatService.generateId(),
+        userId,
+        title,
+        type: "gratitudeJournal",
+      },
+      select: {
+        ...ChatSelect,
+        prompts: { select: PromptSelect },
+        gratitudeJournals: { select: GratitudeJournal.Select },
+      },
+    });
+
+    return res;
+  }
+
   static async createBranchChat(
     tx: Tx,
     input: { userId: UserId; parentMessageId: MessageId; title: string }
@@ -167,27 +190,6 @@ export class ChatService {
         parentMessageId,
       },
       select: ChatSelect,
-    });
-
-    return res;
-  }
-
-  static async createPromptChat(
-    tx: Tx,
-    input: { userId: UserId; title: string }
-  ) {
-    const { userId, title } = input;
-    const res = await tx.chat.create({
-      data: {
-        id: ChatService.generateId(),
-        userId,
-        type: "chat",
-        title,
-      },
-      select: {
-        ...ChatSelect,
-        chatPrompts: { select: ChatPromptSelect },
-      },
     });
 
     return res;

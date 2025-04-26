@@ -1,5 +1,4 @@
 import { ChatId, ChatSelect } from "@/types/chat";
-import { ChatPromptSelect } from "@/types/chat-prompt";
 import type {
   Message,
   MessageForHistory,
@@ -9,6 +8,7 @@ import type {
 } from "@/types/message";
 import { MessageSelect, MessageStatus, type MessageId } from "@/types/message";
 import type { Model } from "@/types/model";
+import { PromptSelect } from "@/types/prompt";
 import { Role } from "@/types/role";
 import type { UserId } from "@/types/user";
 import { StatusCodes } from "http-status-codes";
@@ -17,11 +17,10 @@ import { envConfig } from "../env-config";
 import { HttpServerError } from "../error";
 import type { ServiceRegistry } from "../service-registry";
 import type { Tx } from "./db";
-import { IdempotencyInfoService } from "./idempotency-info-service";
-import { MessageChunkService } from "./message-chunk-service";
-import { MessageFileService } from "./message-file-service";
-import type { FileInfo } from "./mock-s3-service";
-import { UserUsageLimitService } from "./user-usage-limit-service";
+import { IdempotencyInfoService } from "./idempotency-info";
+import { MessageChunkService } from "./message-chunk";
+import { MessageFileService } from "./message-file";
+import { UserUsageLimitService } from "./user-usage-limit";
 
 // TODO: Change limit history length
 const DEFAULT_REMAIN_LENGTH = 10;
@@ -68,7 +67,7 @@ export class MessageService {
           ? {
               select: ChatSelect,
             }
-          : undefined,
+          : false,
       },
       take: limit,
       ...(afterId && {
@@ -111,17 +110,6 @@ export class MessageService {
     };
 
     await this.service.db.$transaction(async (tx) => {
-      const chatPromptText = modelMessage.chat?.chatPrompts?.at(0)?.text;
-      if (chatPromptText) {
-        history.pushOlds(
-          {
-            role: Role.enum.user,
-            text: chatPromptText,
-          },
-          { role: Role.enum.model, text: "ok" }
-        );
-      }
-
       const currentHistories = await tx.message.findMany({
         where: {
           chat: {
@@ -216,15 +204,15 @@ export class MessageService {
           ? {
               select: {
                 ...ChatSelect,
-                chatPrompts: {
+                prompts: {
                   select: {
-                    ...ChatPromptSelect,
+                    ...PromptSelect,
                     text: true,
                   },
                 },
               },
             }
-          : undefined,
+          : false,
       },
     });
 

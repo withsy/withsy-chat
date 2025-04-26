@@ -43,6 +43,7 @@ next-env.d.ts
 
 # temporary files
 /temp/
+/src/server/temp/
 
 # vscode
 /.vscode/

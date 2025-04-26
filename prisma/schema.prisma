@@ -20,7 +20,6 @@ model User {
   linkAccounts      UserLinkAccount[]  @relation("user_link_accounts.user_id")
   usageLimits       UserUsageLimit[]   @relation("user_usage_limits.user_id")
   chats             Chat[]             @relation("chats.user_id")
-  prompts           Prompt[]           @relation("prompts.user_id")
   gratitudeJournals GratitudeJournal[] @relation("gratitude_journal.user_id")
 
   @@map("users")
@@ -59,6 +58,7 @@ model UserUsageLimit {
 enum ChatType {
   chat
   branch
+  gratitudeJournal
 }
 
 model Chat {
@@ -74,7 +74,7 @@ model Chat {
   updatedAt         DateTime           @default(now()) @map("updated_at") @db.Timestamptz(6)
   deletedAt         DateTime?          @map("deleted_at") @db.Timestamptz(6)
   messages          Message[]          @relation("messages.chat_id")
-  chatPrompts       ChatPrompt[]       @relation("chat_prompts.chat_id")
+  prompts           Prompt[]           @relation("prompts.chat_id")
   gratitudeJournals GratitudeJournal[] @relation("gratitude_journal.chat_id")
 
   @@index([userId])
@@ -82,19 +82,16 @@ model Chat {
   @@map("chats")
 }
 
-model ChatPrompt {
-  id             Int      @id @default(autoincrement()) @map("id")
-  chatId         String   @map("chat_id") @db.Uuid
-  chat           Chat     @relation("chat_prompts.chat_id", fields: [chatId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  parentPromptId String?  @map("parent_prompt_id") @db.Uuid
-  parentPrompt   Prompt?  @relation("chat_prompts.parent_prompt_id", fields: [parentPromptId], references: [id], onDelete: SetNull, onUpdate: NoAction)
-  text           String   @map("text")
-  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt      DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
+model Prompt {
+  id        Int      @id @default(autoincrement()) @map("id")
+  chatId    String   @map("chat_id") @db.Uuid
+  chat      Chat     @relation("prompts.chat_id", fields: [chatId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  text      String   @map("text")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
 
   @@index([chatId])
-  @@index([parentPromptId])
-  @@map("chat_prompts")
+  @@map("prompts")
 }
 
 enum MessageStatus {
@@ -162,24 +159,8 @@ model IdempotencyInfo {
   @@map("idempotency_infos")
 }
 
-model Prompt {
-  id               String       @id @map("id") @db.Uuid
-  userId           String       @map("user_id") @db.Uuid
-  user             User         @relation("prompts.user_id", fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  title            String       @map("title")
-  text             String       @map("text")
-  isStarred        Boolean      @default(false) @map("is_starred")
-  createdAt        DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt        DateTime     @default(now()) @map("updated_at") @db.Timestamptz(6)
-  deletedAt        DateTime?    @map("deleted_at") @db.Timestamptz(6)
-  childChatPrompts ChatPrompt[] @relation("chat_prompts.parent_prompt_id")
-
-  @@index([userId])
-  @@map("prompts")
-}
-
 model GratitudeJournal {
-  id        Int      @id @default(autoincrement()) @map("id")
+  id        String   @id @map("id") @db.Uuid
   userId    String   @map("user_id") @db.Uuid
   user      User     @relation("gratitude_journal.user_id", fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
   chatId    String?  @map("chat_id") @db.Uuid

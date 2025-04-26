@@ -3,8 +3,8 @@ import {
   type IdempotencyKey,
 } from "@/types/idempotency";
 import { Prisma } from "@prisma/client";
-import { StatusCodes } from "http-status-codes";
-import { HttpServerError } from "../error";
+import { TRPCError } from "@trpc/server";
+import { TrpcDataError } from "../error";
 import type { ServiceRegistry } from "../service-registry";
 import type { Tx } from "./db";
 
@@ -34,10 +34,12 @@ export class IdempotencyInfoService {
         e instanceof Prisma.PrismaClientKnownRequestError &&
         e.code === "P2002"
       ) {
-        throw new HttpServerError(StatusCodes.CONFLICT, "Duplicate request", {
-          extra: {
+        throw new TRPCError({
+          code: "CONFLICT",
+          message: "Duplicate request.",
+          cause: new TrpcDataError({
             idempotencyKey,
-          },
+          }),
         });
       }
 

@@ -2,7 +2,7 @@ import { Role, RoleGoogleGenAiMap } from "@/types/role";
 import { GoogleGenAI, type Part } from "@google/genai";
 import { envConfig } from "../env-config";
 import type { ServiceRegistry } from "../service-registry";
-import type { SendMessageToAiInput } from "./model-route-service";
+import type { SendMessageToAiInput } from "./model-route";
 
 export class GoogleGenAiService {
   private ai: GoogleGenAI;
@@ -15,23 +15,23 @@ export class GoogleGenAiService {
     const {
       userMessage,
       modelMessage,
+      promptText,
       messagesForHistory,
       onMessageChunkReceived,
     } = input;
 
-    const history = messagesForHistory.map((x) => ({
+    const contents = messagesForHistory.map((x) => ({
       role: RoleGoogleGenAiMap[Role.parse(x.role)],
       parts: [{ text: x.text }],
     }));
-    const parts: Part[] = [{ text: userMessage.text }];
+    contents.push({ role: "user", parts: [{ text: userMessage.text }] });
 
-    const chat = this.ai.chats.create({
+    const stream = await this.ai.models.generateContentStream({
       model: modelMessage.model,
-      history,
-    });
-
-    const stream = await chat.sendMessageStream({
-      message: parts,
+      config: {
+        systemInstruction: promptText,
+      },
+      contents,
     });
 
     for await (const chunk of stream) {

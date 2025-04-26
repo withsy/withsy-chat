@@ -13,7 +13,7 @@ export default function AppProviders({
   return (
     <SessionProvider
       session={session}
-      refetchInterval={10 * 60} // 10 minutes
+      refetchInterval={18 * 60 * 60} // 18 hours
     >
       <UserProvider>{children}</UserProvider>
     </SessionProvider>

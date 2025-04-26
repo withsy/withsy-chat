@@ -8,14 +8,7 @@ type Props = {
 };
 
 export default function ChatView({ chatId }: Props) {
-  const chatGet = trpc.chat.get.useQuery({
-    chatId,
-    options: {
-      include: {
-        parentMessage: true,
-      },
-    },
-  });
+  const chatGet = trpc.chat.get.useQuery({ chatId });
   const messageList = trpc.message.list.useQuery({
     options: { scope: { by: "chat", chatId } },
   });

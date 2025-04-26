@@ -7,9 +7,9 @@ export type ServerContext = {
   userId: UserId;
 };
 
-export async function createServerContext(
-  session: Session
-): Promise<ServerContext> {
-  const userSession = UserSession.parse(session);
-  return { service, userId: userSession.user.id };
+export async function createServerContext(input: {
+  userId: UserId;
+}): Promise<ServerContext> {
+  const { userId } = input;
+  return { service, userId };
 }
