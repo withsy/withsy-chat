@@ -1,4 +1,5 @@
 import { useUser } from "@/context/UserContext";
+import { capitalizeFirstLetter } from "@/lib/string-utils";
 import { CircleX } from "lucide-react";
 
 interface ChatHeaderProps {
@@ -13,7 +14,7 @@ export default function ChatDrawerHeader({
   const { user } = useUser();
   if (!user) return null;
 
-  const title = openDrawer == "saved" ? "Saved Messages" : "Branches";
+  const title = capitalizeFirstLetter(openDrawer);
   const { themeColor, themeOpacity } = user?.preferences;
   const handleClick = () => {
     setOpenDrawer(null);

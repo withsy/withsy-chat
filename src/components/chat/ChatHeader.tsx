@@ -8,7 +8,7 @@ import { useUser } from "@/context/UserContext";
 import { useDrawerStore } from "@/stores/useDrawerStore";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 import type { ChatType } from "@/types/chat";
-import { Bookmark, FolderGit2, PenLine } from "lucide-react";
+import { Bookmark, FolderGit2, PenLine, TableProperties } from "lucide-react";
 import { useRouter } from "next/router";
 import { CollapseButton } from "../CollapseButton";
 import HoverSwitchIcon from "../HoverSwitchIcon";
@@ -33,6 +33,18 @@ export default function ChatHeader({
   const { themeColor, themeOpacity } = user.preferences;
 
   const buttons = [
+    {
+      label: "Prompt",
+      id: "prompt",
+      icon: (
+        <HoverSwitchIcon
+          DefaultIcon={TableProperties}
+          HoverIcon={TableProperties}
+          fill={`rgb(${themeColor})`}
+          isActive={openDrawer == "prompt"}
+        />
+      ),
+    },
     {
       label: "Saved",
       id: "saved",
