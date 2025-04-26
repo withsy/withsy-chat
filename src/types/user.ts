@@ -31,8 +31,8 @@ export const UserPrefs = z.object({
   wideView: z.boolean().default(false),
   largeText: z.boolean().default(false),
   enterToSend: z.boolean().default(true),
-  themeColor: z.string().default("255,87,34"),
-  themeOpacity: z.number().default(0.2),
+  themeColor: z.string().default("30,30,30"),
+  themeOpacity: z.number().default(0),
 });
 export type UserPrefs = zInfer<typeof UserPrefs>;
 
