@@ -3,6 +3,7 @@ import { PartialLoading } from "@/components/Loading";
 import { formatDateLabel, toNewest } from "@/lib/date-utils";
 import { trpc } from "@/lib/trpc";
 import type { Chat } from "@/types/chat";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import { useEffect, useState } from "react";
 import { SidebarChatItem } from "./SidebarChatItem";
 
@@ -11,6 +12,7 @@ export default function SidebarChatList() {
   const listChats = trpc.chat.list.useQuery();
   const updateChatMut = trpc.chat.update.useMutation();
   const [chats, setChats] = useState<Chat[]>([]);
+  const [starredOpen, setStarredOpen] = useState(true);
 
   useEffect(() => {
     if (!listChats.data) return;
@@ -68,19 +70,31 @@ export default function SidebarChatList() {
     <div className="space-y-4">
       {starred.length > 0 && (
         <div>
-          <div className="py-1 px-2 mb-1 text-sm font-semibold select-none">
-            Starred
-          </div>
-          <div className="space-y-1 mt-1">
-            {starred.map((chat) => (
-              <SidebarChatItem
-                key={chat.id}
-                chat={chat}
-                isSidebar={true}
-                onChatUpdate={updateChat}
-              />
-            ))}
-          </div>
+          <button
+            onClick={() => setStarredOpen(!starredOpen)}
+            className="w-full flex items-center justify-between py-2 px-2 mb-1 text-sm rounded-md font-semibold select-none hover:bg-white active:bg-white"
+          >
+            <span>Starred</span>
+            <span>
+              {starredOpen ? (
+                <ChevronUp size={16} />
+              ) : (
+                <ChevronDown size={16} />
+              )}
+            </span>
+          </button>
+          {starredOpen && (
+            <div className="space-y-1 mt-1">
+              {starred.map((chat) => (
+                <SidebarChatItem
+                  key={chat.id}
+                  chat={chat}
+                  isSidebar={true}
+                  onChatUpdate={updateChat}
+                />
+              ))}
+            </div>
+          )}
         </div>
       )}
       <div>
@@ -93,14 +107,16 @@ export default function SidebarChatList() {
                 <div className="py-1 px-2 mb-1 text-sm font-semibold select-none">
                   {date}
                 </div>
-                {chats.map((chat) => (
-                  <SidebarChatItem
-                    key={chat.id}
-                    chat={chat}
-                    isSidebar={true}
-                    onChatUpdate={updateChat}
-                  />
-                ))}
+                <div className="space-y-1 mt-1">
+                  {chats.map((chat) => (
+                    <SidebarChatItem
+                      key={chat.id}
+                      chat={chat}
+                      isSidebar={true}
+                      onChatUpdate={updateChat}
+                    />
+                  ))}
+                </div>
               </div>
             );
           })}
