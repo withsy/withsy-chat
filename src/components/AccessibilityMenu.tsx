@@ -11,7 +11,7 @@ import { Check, WandSparkles } from "lucide-react";
 import { useState } from "react";
 import { IconWithLabel } from "./IconWithLabel";
 
-export function AccessibilityMenu({ hideLabels }: { hideLabels: boolean }) {
+export function AccessibilityMenu() {
   const { user, setUserPrefsAndSave } = useUser();
   if (!user) throw new Error("User must exist.");
 
@@ -100,7 +100,6 @@ export function AccessibilityMenu({ hideLabels }: { hideLabels: boolean }) {
       <DropdownMenuTrigger asChild>
         <button className={buttonClassName} aria-label="Accessibility">
           <IconWithLabel icon={WandSparkles} fill={true} />
-          {!hideLabels && <span className="select-none">Preferences</span>}
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-48">

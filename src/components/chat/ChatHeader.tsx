@@ -1,10 +1,15 @@
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useUser } from "@/context/UserContext";
 import { useDrawerStore } from "@/stores/useDrawerStore";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 import type { ChatType } from "@/types/chat";
 import { Bookmark, FolderGit2, PenLine } from "lucide-react";
 import { useRouter } from "next/router";
-import { useEffect, useRef, useState } from "react";
 import { AccessibilityMenu } from "../AccessibilityMenu";
 import { CollapseButton } from "../CollapseButton";
 import HoverSwitchIcon from "../HoverSwitchIcon";
@@ -19,22 +24,6 @@ export default function ChatHeader({
   const { collapsed } = useSidebarStore();
   const { openDrawer, setOpenDrawer } = useDrawerStore();
   const { user } = useUser();
-
-  const [hideLabels, setHideLabels] = useState(false);
-
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handleResize = () => {
-      if (!containerRef.current) return;
-      const width = containerRef.current.offsetWidth;
-      setHideLabels(width < 640 || openDrawer != null);
-    };
-
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, [openDrawer]);
 
   const handleClick = (id: string) => {
     setOpenDrawer(openDrawer === id ? null : id);
@@ -88,31 +77,42 @@ export default function ChatHeader({
     <div
       className="absolute top-0 left-0 w-full h-[50px] px-4 flex items-center justify-between"
       style={headerStyle}
-      ref={containerRef}
     >
       <div className="flex flex-row gap-4 items-center">
         {collapsed && (
           <>
             <CollapseButton />
-            <button onClick={handleLinkClick} className={buttonClassName}>
-              <IconWithLabel icon={PenLine} fill={true} />
-            </button>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button onClick={handleLinkClick} className={buttonClassName}>
+                    <IconWithLabel icon={PenLine} fill={true} />
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent side="bottom">Start New Chat</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </>
         )}
       </div>
       <div className="flex gap-5">
-        <AccessibilityMenu hideLabels={hideLabels} />
+        <AccessibilityMenu />
         {buttons.map(({ label, id, icon }) => (
-          <button
-            key={id}
-            className={`${buttonClassName} ${
-              openDrawer === id ? "font-semibold" : ""
-            }`}
-            onClick={() => handleClick(id)}
-          >
-            {icon}
-            {!hideLabels && <span className="select-none">{label}</span>}
-          </button>
+          <TooltipProvider key={id}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  className={`${buttonClassName} ${
+                    openDrawer === id ? "font-semibold" : ""
+                  }`}
+                  onClick={() => handleClick(id)}
+                >
+                  {icon}
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="bottom">{label}</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         ))}
       </div>
     </div>
