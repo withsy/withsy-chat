@@ -7,7 +7,7 @@ export const UserSelect = {
   name: true,
   email: true,
   image: true,
-  language: true,
+  aiLanguage: true,
   timezone: true,
   preferences: true,
 } satisfies Prisma.UserSelect;
@@ -20,7 +20,7 @@ export const UserSchema = z.object({
   name: z.string(),
   email: z.string(),
   image: z.string(),
-  language: z.string(),
+  aiLanguage: z.string(),
   timezone: z.string(),
   preferences: z.any(),
 });
@@ -42,7 +42,7 @@ export const User = UserSchema.extend({
 export type User = zInfer<typeof User>;
 
 export const UserEnsure = z.object({
-  language: z.string().optional(),
+  aiLanguage: z.string().optional(),
   timezone: z.string().optional(),
 });
 export type UserEnsure = zInfer<typeof UserEnsure>;
@@ -54,6 +54,12 @@ export const UserUpdatePrefsOutput = User.pick({
   preferences: true,
 });
 export type UserUpdatePrefsOutput = zInfer<typeof UserUpdatePrefsOutput>;
+
+export const UserUpdate = User.pick({
+  aiLanguage: true,
+  timezone: true,
+}).partial();
+export type UserUpdate = zInfer<typeof UserUpdate>;
 
 export const UserLinkAccountId = z.number().int();
 export type UserLinkAccountId = zInfer<typeof UserLinkAccountId>;

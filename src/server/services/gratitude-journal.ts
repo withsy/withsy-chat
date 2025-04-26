@@ -152,7 +152,7 @@ export class GratitudeJournalService {
         const user = await UserService.getForGratitudeJournal(tx, { userId });
         const promptText = GratitudeJournalService.createPromptText({
           userName: user.name,
-          userLanguage: user.language,
+          userAiLanguage: user.aiLanguage,
           zonedDate: zonedTodayDate,
         });
         const prompt = await PromptService.create(tx, {
@@ -200,11 +200,11 @@ export class GratitudeJournalService {
 
   static createPromptText(input: {
     userName: string;
-    userLanguage: string;
+    userAiLanguage: string;
     zonedDate: string;
   }) {
-    const { userName, userLanguage, zonedDate } = input;
-    return `You will answer all questions in ${userLanguage}.
+    const { userName, userAiLanguage, zonedDate } = input;
+    return `You will answer all questions in ${userAiLanguage}.
 The user's name is ${userName}.
 Today's date is ${zonedDate}.
 You are the user's friend named Milo, and you write a gratitude journal together every day.
