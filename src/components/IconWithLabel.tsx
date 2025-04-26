@@ -20,7 +20,7 @@ export function IconWithLabel({
   if (!user) throw new Error("User must exist.");
 
   const { themeColor } = user.preferences;
-  const className = `transition-colors hover:text-black active:text-black group-hover:text-black`;
+  const className = `transition-colors hover:text-black active:text-black group-hover:text-black select-none`;
   return (
     <>
       <Icon size={size} className={className} fill="none" />
@@ -33,7 +33,9 @@ export function IconWithLabel({
           }}
         />
       )}
-      {!collapsed && label && <span className="relative z-10">{label}</span>}
+      {!collapsed && label && (
+        <span className="relative z-10 select-none">{label}</span>
+      )}
     </>
   );
 }

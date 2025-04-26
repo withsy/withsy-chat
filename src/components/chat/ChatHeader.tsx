@@ -102,7 +102,7 @@ export default function ChatHeader() {
             onClick={() => handleClick(id)}
           >
             {icon}
-            {!hideLabels && <span>{label}</span>}
+            {!hideLabels && <span className="select-none">{label}</span>}
           </button>
         ))}
       </div>

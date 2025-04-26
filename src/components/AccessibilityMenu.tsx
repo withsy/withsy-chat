@@ -100,7 +100,7 @@ export function AccessibilityMenu({ hideLabels }: { hideLabels: boolean }) {
       <DropdownMenuTrigger asChild>
         <button className={buttonClassName} aria-label="Accessibility">
           <IconWithLabel icon={WandSparkles} fill={true} />
-          {!hideLabels && <span>Preferences</span>}
+          {!hideLabels && <span className="select-none">Preferences</span>}
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-48">
