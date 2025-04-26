@@ -16,8 +16,9 @@ import { useUser } from "@/context/UserContext";
 import { trpc } from "@/lib/trpc";
 import { useDrawerStore } from "@/stores/useDrawerStore";
 import { useSidebarStore } from "@/stores/useSidebarStore";
-import type { Chat } from "@/types/chat";
+import type { Chat, ChatType } from "@/types/chat";
 import {
+  BookHeart,
   EllipsisVertical,
   FolderRoot,
   GitBranch,
@@ -28,6 +29,18 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/router";
 import { useState } from "react";
+
+const iconMap = {
+  chat: FolderRoot,
+  branch: GitBranch,
+  gratitudeJournal: BookHeart,
+};
+
+function getChatTypeIcon(chatType: ChatType, iconClassName?: string) {
+  const IconComponent = iconMap[chatType];
+  if (!IconComponent) return null;
+  return <IconComponent size={16} className={iconClassName} />;
+}
 
 export function SidebarChatItem({
   chat,
@@ -163,12 +176,7 @@ export function SidebarChatItem({
         onClick={handleLinkClick}
       >
         <div className="w-5 h-5 flex items-center justify-center relative">
-          {chatType == "chat" ? (
-            <FolderRoot size={16} className={iconClassName} />
-          ) : (
-            <GitBranch size={16} className={iconClassName} />
-          )}
-
+          {getChatTypeIcon(chatType, iconClassName)}
           <button
             onClick={(e) => {
               e.stopPropagation();
