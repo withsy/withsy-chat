@@ -55,6 +55,34 @@ const ChatBubbleComponent = ({ message, chatType, onToggleSaved }: Props) => {
         : "AI"
       : user.name ?? "username";
 
+  const collapseToggleProps = {
+    show: isLongMessage && status === "succeeded",
+    collapsed,
+    setCollapsed,
+  };
+
+  // ChatBubbleTooltips용 props
+  const tooltipsProps = {
+    chatType,
+    messageId: message.id,
+    isAi: role === "model",
+    messageModel: message.model,
+    isSaved: message.isBookmarked,
+    onCopy: handleCopy,
+    onSave: handleSave,
+  };
+
+  const items =
+    role === "model"
+      ? [
+          <ChatBubbleTooltips key="tooltips" {...tooltipsProps} />,
+          <CollapseToggle key="collapse" {...collapseToggleProps} />,
+        ]
+      : [
+          <CollapseToggle key="collapse" {...collapseToggleProps} />,
+          <ChatBubbleTooltips key="tooltips" {...tooltipsProps} />,
+        ];
+
   return (
     <div
       className={cn(
@@ -93,22 +121,7 @@ const ChatBubbleComponent = ({ message, chatType, onToggleSaved }: Props) => {
           <MarkdownBox content={displayedText} />
           <StatusIndicator status={status} />
         </div>
-        <div className="flex justify-between w-full mt-2">
-          <ChatBubbleTooltips
-            chatType={chatType}
-            messageId={message.id}
-            isAi={role == "model"}
-            messageModel={message.model}
-            isSaved={message.isBookmarked}
-            onCopy={handleCopy}
-            onSave={handleSave}
-          />
-          <CollapseToggle
-            show={isLongMessage && status == "succeeded"}
-            collapsed={collapsed}
-            setCollapsed={setCollapsed}
-          />
-        </div>
+        <div className="flex justify-between w-full mt-2">{items}</div>
       </div>
     </div>
   );

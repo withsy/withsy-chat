@@ -12,7 +12,7 @@ export function CollapseToggle({ show, collapsed, setCollapsed }: Props) {
 
   const { themeColor } = user.preferences;
 
-  if (!show) return null;
+  if (!show) return <div />;
   return (
     <button
       onClick={() => setCollapsed(!collapsed)}
