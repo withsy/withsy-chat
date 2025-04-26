@@ -122,6 +122,7 @@ export function ChatMessageList({ chat, messages, onToggleSaved }: Props) {
             >
               <ChatBubble
                 key={msg.id}
+                chatType={chat?.type}
                 message={msg}
                 onToggleSaved={onToggleSaved}
               />

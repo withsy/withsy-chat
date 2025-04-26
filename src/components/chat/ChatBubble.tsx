@@ -1,5 +1,6 @@
 import { useUser } from "@/context/UserContext";
 import { cn } from "@/lib/utils";
+import type { ChatType } from "@/types/chat";
 import type { Message } from "@/types/message";
 import { memo, useState } from "react";
 import { toast } from "sonner";
@@ -11,10 +12,11 @@ import { StatusIndicator } from "./StatusIndicator";
 
 type Props = {
   message: Message;
+  chatType: ChatType | undefined;
   onToggleSaved?: (id: string, newValue: boolean) => void;
 };
 
-const ChatBubbleComponent = ({ message, onToggleSaved }: Props) => {
+const ChatBubbleComponent = ({ message, chatType, onToggleSaved }: Props) => {
   const { user } = useUser();
 
   const { role, text: rawText, status } = message;
@@ -93,6 +95,7 @@ const ChatBubbleComponent = ({ message, onToggleSaved }: Props) => {
         </div>
         <div className="flex justify-between w-full mt-2">
           <ChatBubbleTooltips
+            chatType={chatType}
             messageId={message.id}
             isAi={role == "model"}
             messageModel={message.model}

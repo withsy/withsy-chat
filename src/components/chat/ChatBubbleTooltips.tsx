@@ -9,6 +9,7 @@ import { useChatSession } from "@/context/ChatSessionContext";
 import { useUser } from "@/context/UserContext";
 import { trpc } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
+import type { ChatType } from "@/types/chat";
 import { MessageReplyRegenerateError } from "@/types/message-reply";
 import type { Model } from "@/types/model";
 import { Bookmark, Copy, GitBranch, RefreshCw } from "lucide-react";
@@ -18,6 +19,7 @@ import { v4 as uuid } from "uuid";
 import { ModelSelect } from "./ModelSelect";
 
 interface ChatBubbleTooltipsProps {
+  chatType: ChatType | undefined;
   messageId: string;
   messageModel: Model | null;
   isAi: boolean;
@@ -28,6 +30,7 @@ interface ChatBubbleTooltipsProps {
 }
 
 export const ChatBubbleTooltips: React.FC<ChatBubbleTooltipsProps> = ({
+  chatType,
   messageId,
   messageModel,
   isAi,
@@ -104,7 +107,7 @@ export const ChatBubbleTooltips: React.FC<ChatBubbleTooltipsProps> = ({
           <TooltipContent>Save</TooltipContent>
         </Tooltip>
 
-        {isAi && (
+        {isAi && (chatType == "chat" || chatType == "branch") && (
           <>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -125,7 +128,6 @@ export const ChatBubbleTooltips: React.FC<ChatBubbleTooltipsProps> = ({
                     messageId,
                     model: selectedModel,
                   });
-                  // TODO: need to handle on chat session.
                 }}
                 button={
                   <TooltipTrigger asChild>
