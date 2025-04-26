@@ -1,7 +1,16 @@
+export type ActionName =
+  | "creativeExpression"
+  | "softSupport"
+  | "bookNotes"
+  | "gratitudeJournaling"
+  | "goalsHabits"
+  | "emotionalVenting";
+
 export type WithsyFriend = {
   name: string;
   role: string;
   specialty: string;
+  action: ActionName;
 };
 
 export const withsyFriends: WithsyFriend[] = [
@@ -9,31 +18,37 @@ export const withsyFriends: WithsyFriend[] = [
     name: "Skye",
     role: "Got something on your mind? Let’s chat!",
     specialty: "Creative Expression",
+    action: "creativeExpression",
   },
   {
     name: "Luna",
     role: "I’ll be right here when you need me.",
     specialty: "Soft Support",
+    action: "softSupport",
   },
   {
     name: "Tali",
     role: "Your thoughts matter—let’s write them down.",
     specialty: "Book Notes",
+    action: "bookNotes",
   },
   {
     name: "Milo",
     role: "Let’s write something beautiful together.",
     specialty: "Gratitude Journaling",
+    action: "gratitudeJournaling",
   },
   {
     name: "Sunny",
     role: "You’re stronger than you think!",
     specialty: "Goals & Habits",
+    action: "goalsHabits",
   },
   {
     name: "Maddy",
     role: "Tell me everything. I’m listening.",
     specialty: "Emotional Venting",
+    action: "emotionalVenting",
   },
 ];
 

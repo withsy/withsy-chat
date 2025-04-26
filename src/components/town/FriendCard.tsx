@@ -1,15 +1,81 @@
-import { getCharacterStyle, type CharacterName } from "./characterStyles";
+import { trpc } from "@/lib/trpc";
+import type { ChatStartOutput } from "@/types/chat";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { toast } from "sonner";
+import { v4 as uuid } from "uuid";
+import { getCharacterStyle } from "./characterStyles";
 import { HoverInvertButton } from "./HoverInvertButton";
+import type { ActionName, WithsyFriend } from "./withsyFriends";
 
-export interface Friend {
-  name: CharacterName;
-  role: string;
-  specialty: string;
-}
+const actionHandlers: Record<ActionName, () => void> = {
+  creativeExpression: () =>
+    trpc.gratitudeJournal.startChat
+      .useMutation()
+      .mutate({ idempotencyKey: uuid() }),
+  softSupport: () =>
+    trpc.gratitudeJournal.startChat
+      .useMutation()
+      .mutate({ idempotencyKey: uuid() }),
+  bookNotes: () =>
+    trpc.gratitudeJournal.startChat
+      .useMutation()
+      .mutate({ idempotencyKey: uuid() }),
+  gratitudeJournaling: () =>
+    trpc.gratitudeJournal.startChat
+      .useMutation()
+      .mutate({ idempotencyKey: uuid() }),
+  goalsHabits: () =>
+    trpc.gratitudeJournal.startChat
+      .useMutation()
+      .mutate({ idempotencyKey: uuid() }),
+  emotionalVenting: () =>
+    trpc.gratitudeJournal.startChat
+      .useMutation()
+      .mutate({ idempotencyKey: uuid() }),
+};
 
-export function FriendCard({ friend }: { friend: Friend }) {
+export function FriendCard({ friend }: { friend: WithsyFriend }) {
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
   const friendStyle = getCharacterStyle(friend.name);
 
+  const { mutateAsync: startCreativeExpression } =
+    trpc.gratitudeJournal.startChat.useMutation();
+  const { mutateAsync: startSoftSupport } =
+    trpc.gratitudeJournal.startChat.useMutation();
+  const { mutateAsync: startBookNotes } =
+    trpc.gratitudeJournal.startChat.useMutation();
+  const { mutateAsync: startGratitudeJournaling } =
+    trpc.gratitudeJournal.startChat.useMutation();
+  const { mutateAsync: startGoalsHabits } =
+    trpc.gratitudeJournal.startChat.useMutation();
+  const { mutateAsync: startEmotionalVenting } =
+    trpc.gratitudeJournal.startChat.useMutation();
+
+  const actionHandlers: Record<ActionName, () => Promise<ChatStartOutput>> = {
+    creativeExpression: () =>
+      startCreativeExpression({ idempotencyKey: uuid() }),
+    softSupport: () => startSoftSupport({ idempotencyKey: uuid() }),
+    bookNotes: () => startBookNotes({ idempotencyKey: uuid() }),
+    gratitudeJournaling: () =>
+      startGratitudeJournaling({ idempotencyKey: uuid() }),
+    goalsHabits: () => startGoalsHabits({ idempotencyKey: uuid() }),
+    emotionalVenting: () => startEmotionalVenting({ idempotencyKey: uuid() }),
+  };
+
+  const handleClick = async (action: ActionName) => {
+    try {
+      setIsLoading(true);
+      const result = await actionHandlers[action]();
+      router.push(`/chat/${result.chat.id}`);
+    } catch (error) {
+      console.error(error);
+      toast.error("Something went wrong. Please try again!");
+    } finally {
+      setIsLoading(false);
+    }
+  };
   return (
     <div
       className="rounded-xl h-full flex flex-col justify-between select-none"
@@ -35,9 +101,10 @@ export function FriendCard({ friend }: { friend: Friend }) {
         <div className={friendStyle.position === "left" ? "pr-6" : "pl-6"}>
           <HoverInvertButton
             textColor={friendStyle.textColor}
-            onClick={() => console.log(`${friend.name} clicked!`)}
+            onClick={() => handleClick(friend.action)}
+            disabled={isLoading}
           >
-            {friend.specialty}
+            {isLoading ? "Loading..." : friend.specialty}
           </HoverInvertButton>
         </div>
         {friendStyle.position === "right" && (
