@@ -33,7 +33,7 @@ export default function Page({ recommendedFriends }: Props) {
       <div className="flex-1 h-full overflow-y-auto pb-30">
         <Tabs
           defaultValue="discover"
-          className="w-full max-w-6xl mx-auto px-4 pt-4 h-full"
+          className="w-full max-w-6xl mx-auto px-4 pt-4 h-full select-none"
         >
           <TabsList className="flex justify-center gap-2 bg-transparent">
             <TabsTrigger
