@@ -85,11 +85,11 @@ export default function CustomFriendModal() {
         Invite
       </Button>
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-2xl max-h-[80%] overflow-y-auto">
+        <DialogContent className="max-w-2xl h-[80vh] flex flex-col">
           <DialogHeader>
             <DialogTitle>{"Let's Meet Your New Friend!"}</DialogTitle>
           </DialogHeader>
-          <div className="space-y-6 mt-4">
+          <div className="flex-1 overflow-y-auto space-y-6 mt-4">
             {fields.map((field) => (
               <div key={field.title}>
                 <h3 className="text-lg font-semibold mb-2">{field.title}</h3>
