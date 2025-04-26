@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -82,12 +83,16 @@ export default function CustomFriendModal() {
   return (
     <>
       <Button onClick={() => setOpen(true)} className="text-lg">
-        Invite
+        Start an Invite
       </Button>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="max-w-2xl h-[80vh] flex flex-col">
           <DialogHeader>
-            <DialogTitle>{"Let's Meet Your New Friend!"}</DialogTitle>
+            <DialogTitle>{"Create Your Invitation"}</DialogTitle>
+            <DialogDescription className="mt-2 text-gray-500">
+              Share a little about yourself and meet someone who fits just
+              right.
+            </DialogDescription>
           </DialogHeader>
           <div className="flex-1 overflow-y-auto space-y-6 mt-4">
             {fields.map((field) => (
@@ -98,7 +103,7 @@ export default function CustomFriendModal() {
                     <Badge
                       key={option}
                       variant="outline"
-                      className={`cursor-pointer ${
+                      className={`cursor-pointer text-md ${
                         selections[field.title]?.includes(option)
                           ? "border-primary text-primary"
                           : "border-muted text-muted-foreground"
@@ -127,7 +132,7 @@ export default function CustomFriendModal() {
             ))}
           </div>
           <DialogFooter className="mt-6">
-            <Button onClick={() => setOpen(false)}>Save</Button>
+            <Button onClick={() => setOpen(false)}>Send Invite</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

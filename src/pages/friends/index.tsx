@@ -30,10 +30,10 @@ export default function Page({ recommendedFriends }: Props) {
           <CustomFriendModal />
         </div>
       </div>
-      <div className="flex-1 overflow-y-auto pb-30">
+      <div className="flex-1 h-full overflow-y-auto pb-30">
         <Tabs
           defaultValue="discover"
-          className="w-full max-w-6xl mx-auto px-4 pt-4"
+          className="w-full max-w-6xl mx-auto px-4 pt-4 h-full"
         >
           <TabsList className="flex justify-center gap-2 bg-transparent">
             <TabsTrigger
@@ -70,9 +70,11 @@ export default function Page({ recommendedFriends }: Props) {
               ))}
             </div>
           </TabsContent>
-          <TabsContent value="custom">
-            <div className="grid gap-4 sm:grid-cols-3 gap-y-5 p-5 place-items-center">
-              support soon
+          <TabsContent value="custom" className="h-full">
+            <div className="flex flex-col items-center justify-center h-full text-center">
+              <p className="text-2xl font-semibold mb-4">
+                Invite your new friend!
+              </p>
             </div>
           </TabsContent>
         </Tabs>
