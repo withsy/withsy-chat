@@ -1,6 +1,7 @@
 import { useUser } from "@/context/UserContext";
 import { useDrawerStore } from "@/stores/useDrawerStore";
 import { useSidebarStore } from "@/stores/useSidebarStore";
+import type { ChatType } from "@/types/chat";
 import { Bookmark, FolderGit2, PenLine } from "lucide-react";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
@@ -9,7 +10,11 @@ import { CollapseButton } from "../CollapseButton";
 import HoverSwitchIcon from "../HoverSwitchIcon";
 import { IconWithLabel } from "../IconWithLabel";
 
-export default function ChatHeader() {
+export default function ChatHeader({
+  chatType,
+}: {
+  chatType: ChatType | undefined;
+}) {
   const router = useRouter();
   const { collapsed } = useSidebarStore();
   const { openDrawer, setOpenDrawer } = useDrawerStore();
@@ -52,18 +57,22 @@ export default function ChatHeader() {
         />
       ),
     },
-    {
-      label: "Branches",
-      id: "branches",
-      icon: (
-        <HoverSwitchIcon
-          DefaultIcon={FolderGit2}
-          HoverIcon={FolderGit2}
-          fill={`rgb(${themeColor})`}
-          isActive={openDrawer == "branches"}
-        />
-      ),
-    },
+    ...(chatType === "chat" || chatType === "branch"
+      ? [
+          {
+            label: "Branches",
+            id: "branches",
+            icon: (
+              <HoverSwitchIcon
+                DefaultIcon={FolderGit2}
+                HoverIcon={FolderGit2}
+                fill={`rgb(${themeColor})`}
+                isActive={openDrawer == "branches"}
+              />
+            ),
+          },
+        ]
+      : []),
   ];
 
   const headerStyle: React.CSSProperties = {
