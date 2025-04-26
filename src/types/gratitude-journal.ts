@@ -45,3 +45,8 @@ export const Stats = z.object({
   todayJournal: Data.nullable(),
 });
 export type Stats = zInfer<typeof Stats>;
+
+export const GetJournal = z.object({
+  gratitudeJournalId: Id,
+});
+export type GetJournal = zInfer<typeof GetJournal>;

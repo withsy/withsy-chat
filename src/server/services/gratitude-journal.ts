@@ -95,6 +95,24 @@ export class GratitudeJournalService {
     return res;
   }
 
+  async getJournal(userId: UserId, input: GratitudeJournal.GetJournal) {
+    const { gratitudeJournalId } = input;
+    const res = await this.service.db.gratitudeJournal.findUniqueOrThrow({
+      where: {
+        userId,
+        id: gratitudeJournalId,
+      },
+      select: {
+        ...GratitudeJournal.Select,
+        chat: {
+          select: ChatSelect,
+        },
+      },
+    });
+
+    return res;
+  }
+
   async startChat(userId: UserId, input: GratitudeJournal.StartChat) {
     const { idempotencyKey } = input;
 
