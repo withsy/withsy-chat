@@ -5,7 +5,7 @@ import { useSidebarStore } from "@/stores/useSidebarStore";
 import { Chat } from "@/types/chat";
 import type { Message } from "@/types/message";
 import { skipToken } from "@tanstack/react-query";
-import { Bookmark, FolderGit2, FolderRoot, GitBranch } from "lucide-react";
+import { FolderGit2, FolderRoot, GitBranch } from "lucide-react";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { BookmarkCard } from "../bookmarks/BookmarkCard";
@@ -91,7 +91,10 @@ export const ChatDrawer = ({ chat, savedMessages }: ChatDrawerProps) => {
         isDrawerOpen ? "w-[30%] border-l" : "w-0 overflow-hidden"
       )}
     >
-      <ChatDrawerHeader setOpenDrawer={handleCloseDrawer} />
+      <ChatDrawerHeader
+        openDrawer={openDrawer}
+        setOpenDrawer={handleCloseDrawer}
+      />
       {body}
     </div>
   );
@@ -108,10 +111,6 @@ function SavedMessages({ messages }: { messages: Message[] }) {
 
   return (
     <div className="overflow-y-auto max-h-[80%] m-2 flex flex-col gap-y-4 bg-transparent">
-      <div className="flex gap-2 items-center font-semibold text-sm select-none">
-        <Bookmark size={16} />
-        Saved Messages
-      </div>
       <span className="text-sm select-none">
         {"Here you can find the messages you've saved from this chat."}
       </span>
