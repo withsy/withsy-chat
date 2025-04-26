@@ -1,4 +1,5 @@
 import { CollapseButton } from "@/components/CollapseButton";
+import CustomFriendModal from "@/components/town/CustomFriendModal";
 import { FriendCard } from "@/components/town/FriendCard";
 import { RecommendedSection } from "@/components/town/RecommendedSection";
 import {
@@ -25,7 +26,9 @@ export default function Page({ recommendedFriends }: Props) {
     <div className="flex flex-col h-screen">
       <div className="w-full sticky top-0 z-50 max-w-6xl mx-auto p-2 flex justify-between items-center select-none">
         <div>{collapsed && <CollapseButton hoverColor="bg-gray-100" />}</div>
-        <div></div>
+        <div>
+          <CustomFriendModal />
+        </div>
       </div>
       <div className="flex-1 overflow-y-auto pb-30">
         <Tabs
