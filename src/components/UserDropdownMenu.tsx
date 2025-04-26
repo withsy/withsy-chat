@@ -11,9 +11,13 @@ import { cn } from "@/lib/utils";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 import {
   BookText,
+  Check,
+  CornerDownLeft,
+  Layout,
   LogOut,
   MailOpen,
   Palette,
+  Text,
   type LucideIcon,
 } from "lucide-react";
 import { signOut } from "next-auth/react";
@@ -26,6 +30,7 @@ interface MenuActionItem {
   icon: LucideIcon;
   label: string;
   onClick?: () => void;
+  checked?: boolean;
 }
 
 type MenuItem = "separator" | MenuActionItem;
@@ -35,6 +40,8 @@ interface UserMenuItemProps {
   label: string;
   largeText?: boolean;
   onClick?: () => void;
+  checked?: boolean;
+  preventClose?: boolean;
 }
 
 function UserMenuItem({
@@ -42,27 +49,42 @@ function UserMenuItem({
   label,
   largeText = false,
   onClick,
+  checked = false,
+  preventClose = false,
 }: UserMenuItemProps) {
   const { isMobile } = useSidebarStore();
 
   return (
     <DropdownMenuItem
-      onSelect={onClick}
+      onSelect={(e) => {
+        if (preventClose) {
+          e.preventDefault();
+        }
+        onClick?.();
+      }}
       className={cn(
-        "flex items-center active:bg-gray-100",
+        "flex items-center justify-between active:bg-gray-100",
         isMobile ? "py-3 px-2" : "py-2 px-2"
       )}
     >
-      <Icon className={cn("mr-2", isMobile ? "h-6 w-6" : "h-4 w-4")} />
-      <Label
-        className={cn(
-          "text-black",
-          isMobile ? "text-lg" : "",
-          largeText && "text-lg"
-        )}
-      >
-        {label}
-      </Label>
+      <div className="flex items-center">
+        <Icon className={cn("mr-2", isMobile ? "h-6 w-6" : "h-4 w-4")} />
+        <Label
+          className={cn(
+            "text-black",
+            isMobile ? "text-lg" : "",
+            largeText && "text-lg"
+          )}
+        >
+          {label}
+        </Label>
+      </div>
+      {checked && (
+        <Check
+          className="h-4 w-4"
+          style={{ color: `rgb(var(--theme-color))` }}
+        />
+      )}
     </DropdownMenuItem>
   );
 }
@@ -70,9 +92,11 @@ function UserMenuItem({
 export default function UserDropdownMenu() {
   const router = useRouter();
   const { isMobile } = useSidebarStore();
-  const { user } = useUser();
+  const { user, setUserPrefsAndSave } = useUser();
 
   const [themeModalOpen, setThemeModalOpen] = useState(false);
+
+  if (!user) return null;
 
   const userMenuItems: MenuItem[] = [
     {
@@ -80,26 +104,40 @@ export default function UserDropdownMenu() {
       label: "Theme",
       onClick: () => setThemeModalOpen(true),
     },
+    "separator",
     {
       icon: BookText,
       label: "Guide",
-      onClick() {
-        router.push("/guide");
-      },
+      onClick: () => router.push("/guide"),
     },
     {
       icon: MailOpen,
       label: "Contact",
-      onClick() {
-        router.push("/contact");
-      },
+      onClick: () => router.push("/contact"),
+    },
+  ];
+
+  const preferenceItems: MenuActionItem[] = [
+    {
+      icon: CornerDownLeft,
+      label: "Enter to send",
+      checked: user.preferences.enterToSend,
+      onClick: () =>
+        setUserPrefsAndSave({ enterToSend: !user.preferences.enterToSend }),
     },
     {
-      icon: LogOut,
-      label: "Log out",
-      onClick: async () => {
-        signOut({ callbackUrl: "/" });
-      },
+      icon: Text,
+      label: "Large text",
+      checked: user.preferences.largeText,
+      onClick: () =>
+        setUserPrefsAndSave({ largeText: !user.preferences.largeText }),
+    },
+    {
+      icon: Layout,
+      label: "Wide view",
+      checked: user.preferences.wideView,
+      onClick: () =>
+        setUserPrefsAndSave({ wideView: !user.preferences.wideView }),
     },
   ];
 
@@ -111,19 +149,34 @@ export default function UserDropdownMenu() {
         <DropdownMenuTrigger asChild>
           <button
             type="button"
-            className={`cursor-pointer flex items-center rounded-md w-full gap-2 ${mobileClassName} hover:bg-white active:bg-white font-semibold select-none`}
+            className={cn(
+              "cursor-pointer flex items-center rounded-md w-full gap-2",
+              mobileClassName,
+              "hover:bg-white active:bg-white font-semibold select-none"
+            )}
           >
-            <ModelAvatar name={user?.name ?? ""} size="sm" />
-            <span>{user?.name}</span>
+            <ModelAvatar name={user.name ?? ""} size="sm" />
+            <span>{user.name}</span>
           </button>
         </DropdownMenuTrigger>
         <DropdownMenuContent
           align="end"
           className={cn(
             "w-48 p-2 m-2",
-            user?.preferences.largeText ? "text-lg" : "text-base"
+            user.preferences.largeText ? "text-lg" : "text-base"
           )}
         >
+          {preferenceItems.map((item) => (
+            <UserMenuItem
+              key={item.label}
+              icon={item.icon}
+              label={item.label}
+              largeText={user.preferences.largeText}
+              onClick={item.onClick}
+              checked={item.checked}
+              preventClose
+            />
+          ))}
           {userMenuItems.map((item, idx) =>
             item === "separator" ? (
               <DropdownMenuSeparator key={`sep-${idx}`} />
@@ -132,18 +185,30 @@ export default function UserDropdownMenu() {
                 key={item.label}
                 icon={item.icon}
                 label={item.label}
-                largeText={user?.preferences.largeText}
+                largeText={user.preferences.largeText}
                 onClick={item.onClick}
               />
             )
           )}
-          <DropdownMenuSeparator key={`sep-text`} />
+          <UserMenuItem
+            key="Log out"
+            icon={LogOut}
+            label="Log out"
+            largeText={user.preferences.largeText}
+            onClick={async () => {
+              signOut({ callbackUrl: "/" });
+            }}
+          />
+
+          <DropdownMenuSeparator />
+
+          {/* Footer */}
           <div className="flex justify-center p-2">
             <span className="text-xs text-muted-foreground select-none">
               withsy with{" "}
               <span
                 style={{
-                  color: `rgb(${user?.preferences.themeColor})`,
+                  color: `rgb(${user.preferences.themeColor})`,
                 }}
               >
                 ♥
@@ -152,6 +217,7 @@ export default function UserDropdownMenu() {
           </div>
         </DropdownMenuContent>
       </DropdownMenu>
+
       <ThemeSettingsModal
         open={themeModalOpen}
         onClose={() => setThemeModalOpen(false)}

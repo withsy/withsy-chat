@@ -10,7 +10,6 @@ import { useSidebarStore } from "@/stores/useSidebarStore";
 import type { ChatType } from "@/types/chat";
 import { Bookmark, FolderGit2, PenLine } from "lucide-react";
 import { useRouter } from "next/router";
-import { AccessibilityMenu } from "../AccessibilityMenu";
 import { CollapseButton } from "../CollapseButton";
 import HoverSwitchIcon from "../HoverSwitchIcon";
 import { IconWithLabel } from "../IconWithLabel";
@@ -96,7 +95,6 @@ export default function ChatHeader({
         )}
       </div>
       <div className="flex gap-5">
-        <AccessibilityMenu />
         {buttons.map(({ label, id, icon }) => (
           <TooltipProvider key={id}>
             <Tooltip>
