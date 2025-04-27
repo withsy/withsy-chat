@@ -22,12 +22,8 @@ export class OpenAiService {
   }
 
   async sendMessageToAi(input: SendMessageToAiInput) {
-    const {
-      userMessage,
-      modelMessage,
-      messagesForHistory,
-      onMessageChunkReceived,
-    } = input;
+    const { model, promptText, messagesForHistory, onMessageChunkReceived } =
+      input;
 
     const histories = messagesForHistory.map((x) =>
       match(Role.parse(x.role))
@@ -57,16 +53,13 @@ export class OpenAiService {
         )
         .exhaustive()
     );
-    const messages: ChatCompletionMessageParam[] = [
-      ...histories,
-      {
-        role: "user",
-        content: [{ type: "text", text: userMessage.text }],
-      },
-    ];
+    const messages: ChatCompletionMessageParam[] = [];
+    if (promptText.length > 0)
+      messages.push({ role: "system", content: promptText });
+    messages.push(...histories);
 
     const stream = await this.openai.chat.completions.create({
-      model: modelMessage.model,
+      model,
       messages,
       stream: true,
     });
