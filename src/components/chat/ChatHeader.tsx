@@ -108,11 +108,13 @@ export default function ChatHeader({
         </div>
       )}
       {collapsed ? (
-        <div className="flex-1 text-center truncate px-2 select-none">
+        <div className="flex-1 text-center truncate px-2 select-none font-semibold">
           {chatTitle}
         </div>
       ) : (
-        <div className="text-left truncate select-none">{chatTitle}</div>
+        <div className="text-left truncate select-none font-semibold">
+          {chatTitle}
+        </div>
       )}
       <div className="flex gap-5">
         {buttons.map(({ label, id, icon }) => (
