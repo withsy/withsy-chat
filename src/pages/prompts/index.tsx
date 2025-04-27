@@ -15,16 +15,14 @@ const samplePrompts = [
     id: "1",
     title: "Email Reply Template",
     text: "Write a polite and professional reply to the email below.",
-    isStar: true,
-    createdAt: new Date("2025-03-01T10:00:00Z"),
+    isStarred: true,
     updatedAt: new Date("2025-03-01T10:00:00Z"),
   },
   {
     id: "2",
     title: "Brainstorm Ideas",
     text: "Help me brainstorm 10 creative ideas.",
-    isStar: false,
-    createdAt: new Date("2025-03-05T14:30:00Z"),
+    isStarred: false,
     updatedAt: new Date("2025-03-05T14:30:00Z"),
   },
 ];
@@ -49,13 +47,13 @@ export default function PromptsPage() {
         <TabsList className="flex justify-center gap-2 bg-transparent">
           <TabsTrigger
             value="manage"
-            className="text-xl font-semibold text-gray-400 data-[state=active]:text-black"
+            className="text-xl font-semibold text-gray-400 data-[state=active]:text-black data-[state=active]:shadow-none"
           >
             Manage
           </TabsTrigger>
           <TabsTrigger
             value="add"
-            className="text-xl font-semibold text-gray-400 data-[state=active]:text-black"
+            className="text-xl font-semibold text-gray-400 data-[state=active]:text-black data-[state=active]:shadow-none"
           >
             Add
           </TabsTrigger>
@@ -78,7 +76,7 @@ export default function PromptsPage() {
               onToggleStar={(id) => {
                 setPrompts((prev) =>
                   prev.map((p) =>
-                    p.id === id ? { ...p, isStar: !p.isStar } : p
+                    p.id === id ? { ...p, isStar: !p.isStarred } : p
                   )
                 );
               }}
