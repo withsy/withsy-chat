@@ -33,7 +33,7 @@ export default function Layout({ children }: LayoutProps) {
         />
       )}
 
-      <div className="flex flex-col flex-1 h-full z-20">
+      <div className="flex flex-col flex-1 h-full z-20 min-w-0">
         <Main>{children}</Main>
       </div>
     </div>

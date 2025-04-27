@@ -28,7 +28,7 @@ export default function Sidebar() {
         "transition-all duration-300 ease-in-out h-[100dvh] fixed top-0 left-0 z-40 flex flex-col",
         collapsed && "w-0 overflow-hidden",
         !collapsed && isMobile && "w-[100vw] px-4",
-        !collapsed && !isMobile && "w-[240px] px-4",
+        !collapsed && !isMobile && "w-[240px] px-4 flex-shrink-0",
         "relative"
       )}
       style={bgStyle()}

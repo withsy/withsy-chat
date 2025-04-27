@@ -42,7 +42,7 @@ export default function PromptsPage() {
   }
 
   return (
-    <div className="p-6 select-none">
+    <div className="p-6 select-none ">
       <Tabs value={tab} onValueChange={(v) => setTab(v as "manage" | "add")}>
         <TabsList className="flex justify-center gap-2 bg-transparent">
           <TabsTrigger
