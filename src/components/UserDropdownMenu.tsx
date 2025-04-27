@@ -165,7 +165,7 @@ export default function UserDropdownMenu() {
           ))}
           {userMenuItems.map((item, idx) =>
             item === "separator" ? (
-              <DropdownMenuSeparator key={`sep-${idx}`} />
+              <DropdownMenuSeparator className="px-4" key={`sep-${idx}`} />
             ) : (
               <UserMenuItem
                 key={item.label}
@@ -186,7 +186,7 @@ export default function UserDropdownMenu() {
             }}
           />
 
-          <DropdownMenuSeparator />
+          <DropdownMenuSeparator className="px-4" />
 
           {/* Footer */}
           <div className="flex justify-center p-2">
