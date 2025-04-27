@@ -89,12 +89,10 @@ export class MessageService {
     const history = {
       _olds: [] as MessageForHistory[], // old to less old
       pushOlds(...xs: MessageForHistory[]) {
-        if (envConfig.nodeEnv === "development") console.log("@ push olds", xs);
         this._olds.push(...xs);
       },
       _news: [] as MessageForHistory[], // new to less new
       pushNews(...xs: MessageForHistory[]) {
-        if (envConfig.nodeEnv === "development") console.log("@ push news", xs);
         this._news.push(...xs);
       },
       remainLength() {
@@ -114,24 +112,14 @@ export class MessageService {
     await this.service.db.$transaction(async (tx) => {
       const currentHistories = await tx.message.findMany({
         where: {
-          chat: {
-            userId,
-            deletedAt: null,
-          },
+          chat: { userId, deletedAt: null },
           chatId: modelMessage.chatId,
           status: "succeeded",
-          id: {
-            lte: modelMessage.id,
-          },
+          id: { lte: modelMessage.id },
         },
-        select: {
-          role: true,
-          text: true,
-        },
+        select: { role: true, text: true },
         take: history.remainLength(),
-        orderBy: {
-          id: "desc",
-        },
+        orderBy: { id: "desc" },
       });
       history.pushNews(...currentHistories);
 

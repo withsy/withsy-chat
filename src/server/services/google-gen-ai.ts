@@ -1,5 +1,6 @@
 import { Role, RoleGoogleGenAiMap } from "@/types/role";
-import { GoogleGenAI, type Part } from "@google/genai";
+import { GoogleGenAI } from "@google/genai";
+import { inspect } from "node:util";
 import { envConfig } from "../env-config";
 import type { ServiceRegistry } from "../service-registry";
 import type { SendMessageToAiInput } from "./model-route";
@@ -12,24 +13,28 @@ export class GoogleGenAiService {
   }
 
   async sendMessageToAi(input: SendMessageToAiInput) {
-    const {
-      userMessage,
-      modelMessage,
-      promptText,
-      messagesForHistory,
-      onMessageChunkReceived,
-    } = input;
+    const { model, promptText, messagesForHistory, onMessageChunkReceived } =
+      input;
 
     const contents = messagesForHistory.map((x) => ({
       role: RoleGoogleGenAiMap[Role.parse(x.role)],
       parts: [{ text: x.text }],
     }));
-    contents.push({ role: "user", parts: [{ text: userMessage.text }] });
+
+    if (envConfig.nodeEnv === "development")
+      console.log(
+        "GoogleGenAiService.sendMessageToAi. model:",
+        model,
+        " promptText: ",
+        promptText,
+        " contents:",
+        inspect(contents, { depth: null })
+      );
 
     const stream = await this.ai.models.generateContentStream({
-      model: modelMessage.model,
+      model,
       config: {
-        systemInstruction: promptText,
+        systemInstruction: promptText.length > 0 ? promptText : undefined,
       },
       contents,
     });
