@@ -22,7 +22,10 @@ export type Data = {
   chat?: Chat | null;
 };
 export const Data: z.ZodType<Data> = Schema.extend({
-  chat: Chat.nullable().default(null),
+  chat: z
+    .lazy(() => Chat)
+    .nullable()
+    .default(null),
 });
 
 export const StartChat = z.object({
