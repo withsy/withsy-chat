@@ -66,7 +66,7 @@ export function PromptsTable({
                     className="flex items-center justify-center hover:text-yellow-500 transition-colors w-5 h-5"
                     data-ignore-row-click
                   >
-                    {prompt.isStar ? (
+                    {prompt.isStarred ? (
                       <Star
                         className="w-4 h-4 text-black"
                         style={{ fill: `rgb(${themeColor})` }}
