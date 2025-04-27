@@ -13,10 +13,13 @@ import { useRouter } from "next/router";
 import { CollapseButton } from "../CollapseButton";
 import HoverSwitchIcon from "../HoverSwitchIcon";
 import { IconWithLabel } from "../IconWithLabel";
+import { getChatTypeIcon } from "./ChatTypeIcon";
 
 export default function ChatHeader({
+  chatTitle,
   chatType,
 }: {
+  chatTitle: string | undefined;
   chatType: ChatType | undefined;
 }) {
   const router = useRouter();
@@ -84,28 +87,38 @@ export default function ChatHeader({
   const handleLinkClick = () => {
     router.push(`/chat`);
   };
+
   return (
     <div
       className="absolute top-0 left-0 w-full h-[50px] px-4 flex items-center justify-between"
       style={headerStyle}
     >
-      <div className="flex flex-row gap-4 items-center">
-        {collapsed && (
-          <>
-            <CollapseButton />
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <button onClick={handleLinkClick} className={buttonClassName}>
-                    <IconWithLabel icon={PenLine} fill={true} />
-                  </button>
-                </TooltipTrigger>
-                <TooltipContent side="bottom">Start New Chat</TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </>
-        )}
-      </div>
+      {collapsed && (
+        <div className="flex items-center gap-5 min-w-0">
+          <CollapseButton />
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button onClick={handleLinkClick} className={buttonClassName}>
+                  <IconWithLabel icon={PenLine} fill={true} />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="bottom">Start New Chat</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
+      )}
+      {collapsed ? (
+        <div className="flex items-center text-center truncate px-2 select-none font-semibold">
+          {chatType && getChatTypeIcon(chatType, "")}
+          <span className="ml-2">{chatTitle}</span>
+        </div>
+      ) : (
+        <div className="flex items-center text-left truncate select-none font-semibold">
+          {chatType && getChatTypeIcon(chatType, "")}
+          <span className="ml-2">{chatTitle}</span>
+        </div>
+      )}
       <div className="flex gap-5">
         {buttons.map(({ label, id, icon }) => (
           <TooltipProvider key={id}>

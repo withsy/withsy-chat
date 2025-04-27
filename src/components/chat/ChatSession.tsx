@@ -18,6 +18,7 @@ import { ChatDrawer } from "./ChatDrawer";
 import ChatHeader from "./ChatHeader";
 import { ChatInputBox } from "./ChatInputBox";
 import { ChatMessageList } from "./ChatMessageList";
+import MobileChatHeader from "./MobileChatHeader";
 
 type Props = {
   chat: Chat | null;
@@ -218,7 +219,11 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
           isMobile ? "w-full" : openDrawer ? "w-[70%]" : "w-full"
         )}
       >
-        <ChatHeader chatType={chat?.type} />
+        {isMobile ? (
+          <MobileChatHeader chatTitle={chat?.title} chatType={chat?.type} />
+        ) : (
+          <ChatHeader chatTitle={chat?.title} chatType={chat?.type} />
+        )}
         <div
           className={cn(
             "flex-1 overflow-y-auto mt-[50px] mb-[150px] w-full transition-all duration-300",

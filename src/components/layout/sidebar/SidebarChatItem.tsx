@@ -1,3 +1,4 @@
+import { getChatTypeIcon } from "@/components/chat/ChatTypeIcon";
 import { ConfirmDeleteModal } from "@/components/modal/ConfirmDeleteModal";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,31 +17,10 @@ import { useUser } from "@/context/UserContext";
 import { trpc } from "@/lib/trpc";
 import { useDrawerStore } from "@/stores/useDrawerStore";
 import { useSidebarStore } from "@/stores/useSidebarStore";
-import type { Chat, ChatType } from "@/types/chat";
-import {
-  BookHeart,
-  EllipsisVertical,
-  FolderRoot,
-  GitBranch,
-  Pencil,
-  Star,
-  StarOff,
-  Trash2,
-} from "lucide-react";
+import type { Chat } from "@/types/chat";
+import { EllipsisVertical, Pencil, Star, StarOff, Trash2 } from "lucide-react";
 import { useRouter } from "next/router";
 import { useState } from "react";
-
-const iconMap = {
-  chat: FolderRoot,
-  branch: GitBranch,
-  gratitudeJournal: BookHeart,
-};
-
-function getChatTypeIcon(chatType: ChatType, iconClassName?: string) {
-  const IconComponent = iconMap[chatType];
-  if (!IconComponent) return null;
-  return <IconComponent size={16} className={iconClassName} />;
-}
 
 export function SidebarChatItem({
   chat,
