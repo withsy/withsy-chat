@@ -25,6 +25,7 @@ ADD COLUMN     "timezone" TEXT NOT NULL DEFAULT '';
 CREATE TABLE "user_prompts" (
     "id" UUID NOT NULL,
     "user_id" UUID NOT NULL,
+    "title" TEXT NOT NULL,
     "text" TEXT NOT NULL,
     "created_at" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,

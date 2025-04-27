@@ -1,8 +1,8 @@
 import type { Prisma } from "@prisma/client";
 import { z } from "zod";
-import { Chat, ChatId } from "./chat";
+import { Chat } from "./chat";
 import { type zInfer } from "./common";
-import { IdempotencyKey } from "./idempotency";
+import { ChatId, IdempotencyKey, MessageId } from "./id";
 import { Model } from "./model";
 import { Role } from "./role";
 import { UserId } from "./user";
@@ -20,9 +20,6 @@ export const MessageSelect = {
   createdAt: true,
 } satisfies Prisma.MessageSelect;
 
-export const MessageId = z.string().uuid();
-export type MessageId = zInfer<typeof MessageId>;
-
 export const MessageStatus = z.enum([
   "pending",
   "processing",
@@ -33,7 +30,7 @@ export type MessageStatus = zInfer<typeof MessageStatus>;
 
 export const MessageSchema = z.object({
   id: MessageId,
-  chatId: z.lazy(() => ChatId),
+  chatId: ChatId,
   role: Role,
   model: Model.nullable(),
   text: z.string(),
@@ -58,12 +55,13 @@ export type Message = {
   parentMessageId: MessageId | null;
   parentMessage?: Message | null;
 };
-export const MessageBase: z.ZodType<Message> = z.lazy(() =>
-  MessageSchema.extend({
-    chat: z.lazy(() => Chat.nullable().default(null)),
-    parentMessage: z.lazy(() => MessageBase.nullable().default(null)),
-  })
-);
+export const MessageBase: z.ZodType<Message> = MessageSchema.extend({
+  chat: z.lazy(() => Chat.nullable().default(null)),
+  parentMessage: z
+    .lazy(() => MessageBase)
+    .nullable()
+    .default(null),
+});
 export const Message = MessageBase;
 
 export const MessageList = z.object({
@@ -72,7 +70,7 @@ export const MessageList = z.object({
   options: z.object({
     scope: z.discriminatedUnion("by", [
       z.object({ by: z.literal("user"), userId: UserId }),
-      z.object({ by: z.literal("chat"), chatId: z.lazy(() => ChatId) }),
+      z.object({ by: z.literal("chat"), chatId: ChatId }),
     ]),
     order: z.enum(["asc", "desc"]).optional().default("asc"),
     limit: z.number().int().min(1).max(100).optional().default(100),
@@ -93,7 +91,7 @@ export type MessageForHistory = {
 
 export const MessageSend = z.object({
   idempotencyKey: IdempotencyKey,
-  chatId: z.lazy(() => ChatId),
+  chatId: ChatId,
   text: z.string(),
   model: Model,
   files: z.array(z.instanceof(File)).optional(),

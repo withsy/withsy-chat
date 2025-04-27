@@ -1,8 +1,7 @@
-import type { MessageId } from "@/types/message";
+import type { MessageChunkIndex, MessageId } from "@/types/id";
 import {
   MessageChunkReceiveData,
   MessageChunkSelect,
-  type MessageChunkIndex,
   type MessageChunkReceive,
 } from "@/types/message-chunk";
 import { PgEvent, type PgEventInput } from "@/types/task";
@@ -117,7 +116,12 @@ export class MessageChunkService {
             try {
               usageLimit = await this.service.userUsageLimit.get(userId);
             } catch (e) {
-              console.error("User usage limit getting failed. userId:", userId);
+              console.error(
+                "User usage limit getting failed. userId:",
+                userId,
+                " error:",
+                e
+              );
             }
 
             yield tracked("usageLimit", {

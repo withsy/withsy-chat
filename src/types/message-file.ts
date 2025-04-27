@@ -7,9 +7,6 @@ export const MessageFileSelect = {
   mimeType: true,
 } satisfies Prisma.MessageFileSelect;
 
-export const MessageFileId = z.number().int();
-export type MessageFileId = zInfer<typeof MessageFileId>;
-
 export const MessageFileSchema = z.object({
   fileUri: z.string(),
   mimeType: z.string(),

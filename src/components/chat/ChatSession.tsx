@@ -6,7 +6,8 @@ import { useDrawerStore } from "@/stores/useDrawerStore";
 import { useSelectedModelStore } from "@/stores/useSelectedModelStore";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 import { Chat, ChatStartError } from "@/types/chat";
-import { MessageId, MessageSendError, type Message } from "@/types/message";
+import { MessageId } from "@/types/id";
+import { MessageSendError, type Message } from "@/types/message";
 import type { UserUsageLimit } from "@/types/user-usage-limit";
 import { skipToken } from "@tanstack/react-query";
 import { useRouter } from "next/router";
@@ -45,7 +46,7 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
 
   const chatStart = trpc.chat.start.useMutation({
     onError(error) {
-      const res = ChatStartError.safeParse(error.data);
+      const _res = ChatStartError.safeParse(error.data);
       toast.error(`Chat starting failed.`);
     },
     onSuccess(data) {
@@ -58,7 +59,7 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
 
   const messageSend = trpc.message.send.useMutation({
     onError(error) {
-      const res = MessageSendError.safeParse(error.data);
+      const _res = MessageSendError.safeParse(error.data);
       toast.error(`Message sending failed.`);
     },
     onSuccess(data) {

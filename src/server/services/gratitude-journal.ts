@@ -16,10 +16,10 @@ import { fromZonedTime, toZonedTime } from "date-fns-tz";
 import { uuidv7 } from "uuidv7";
 import type { ServiceRegistry } from "../service-registry";
 import { ChatService } from "./chat";
+import { ChatPromptService } from "./chat-prompt";
 import type { Tx } from "./db";
 import { IdempotencyInfoService } from "./idempotency-info";
 import { MessageService } from "./message";
-import { PromptService } from "./prompt";
 import { UserService } from "./user";
 
 export class GratitudeJournalService {
@@ -155,7 +155,7 @@ export class GratitudeJournalService {
           userAiLanguage: user.aiLanguage,
           zonedDate: zonedTodayDate,
         });
-        const prompt = await PromptService.create(tx, {
+        const prompt = await ChatPromptService.create(tx, {
           chatId: chat.id,
           text: promptText,
         });

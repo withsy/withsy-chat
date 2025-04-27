@@ -1,10 +1,8 @@
 import { ChatSelect } from "@/types/chat";
 import type { ChatBranchList, ChatBranchStart } from "@/types/chat-branch";
-import type { MessageId } from "@/types/message";
 import type { UserId } from "@/types/user";
 import type { ServiceRegistry } from "../service-registry";
 import { ChatService } from "./chat";
-import type { Tx } from "./db";
 import { IdempotencyInfoService } from "./idempotency-info";
 import { MessageService } from "./message";
 

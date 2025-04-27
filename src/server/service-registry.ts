@@ -2,6 +2,7 @@ import type { Pool } from "pg";
 import { createLazyRegistry, type LazyRegistryProxy } from "./lazy-registry";
 import { ChatService } from "./services/chat";
 import { ChatBranchService } from "./services/chat-branch";
+import { ChatPromptService } from "./services/chat-prompt";
 import { createDb, type Db } from "./services/db";
 import { GoogleGenAiService } from "./services/google-gen-ai";
 import { GratitudeJournalService } from "./services/gratitude-journal";
@@ -14,10 +15,11 @@ import { MockS3Service } from "./services/mock-s3";
 import { ModelRouteService } from "./services/model-route";
 import { OpenAiService } from "./services/open-ai";
 import { createPgPool } from "./services/pg";
-import { PromptService } from "./services/prompt";
 import { TaskService } from "./services/task";
 import { UserService } from "./services/user";
+import { UserDefaultPromptService } from "./services/user-default-prompt";
 import { UserLinkAccountService } from "./services/user-link-account";
+import { UserPromptService } from "./services/user-prompt";
 import { UserUsageLimitService } from "./services/user-usage-limit";
 
 type ServiceDefinition = {
@@ -26,6 +28,8 @@ type ServiceDefinition = {
   user: UserService;
   userLinkAccount: UserLinkAccountService;
   userUsageLimit: UserUsageLimitService;
+  userPrompt: UserPromptService;
+  userDefaultPrompt: UserDefaultPromptService;
   chat: ChatService;
   chatBranch: ChatBranchService;
   message: MessageService;
@@ -38,7 +42,7 @@ type ServiceDefinition = {
   task: TaskService;
   idempotencyInfo: IdempotencyInfoService;
   s3: MockS3Service;
-  prompt: PromptService;
+  chatPrompt: ChatPromptService;
   gratitudeJournal: GratitudeJournalService;
 };
 
@@ -51,6 +55,8 @@ function createServiceRegistry() {
     user: (s) => new UserService(s),
     userLinkAccount: (s) => new UserLinkAccountService(s),
     userUsageLimit: (s) => new UserUsageLimitService(s),
+    userPrompt: (s) => new UserPromptService(s),
+    userDefaultPrompt: (s) => new UserDefaultPromptService(s),
     chat: (s) => new ChatService(s),
     chatBranch: (s) => new ChatBranchService(s),
     message: (s) => new MessageService(s),
@@ -63,7 +69,7 @@ function createServiceRegistry() {
     idempotencyInfo: (s) => new IdempotencyInfoService(s),
     task: (s) => new TaskService(s),
     s3: (s) => new MockS3Service(s),
-    prompt: (s) => new PromptService(s),
+    chatPrompt: (s) => new ChatPromptService(s),
     gratitudeJournal: (s) => new GratitudeJournalService(s),
   });
 }

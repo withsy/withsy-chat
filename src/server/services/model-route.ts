@@ -1,10 +1,6 @@
 import type { MaybePromise } from "@/types/common";
-import {
-  Message,
-  type MessageForHistory,
-  type MessageId,
-} from "@/types/message";
-import type { MessageChunkIndex } from "@/types/message-chunk";
+import type { MessageChunkIndex, MessageId } from "@/types/id";
+import { Message, type MessageForHistory } from "@/types/message";
 import { ModelProviderMap } from "@/types/model";
 import { Role } from "@/types/role";
 import type { TaskInput } from "@/types/task";

@@ -1,4 +1,6 @@
-import { ChatId, ChatSelect } from "@/types/chat";
+import { ChatSelect } from "@/types/chat";
+import { ChatPromptSelect } from "@/types/chat-prompt";
+import type { ChatId, MessageId } from "@/types/id";
 import type {
   Message,
   MessageForHistory,
@@ -6,9 +8,8 @@ import type {
   MessageSend,
   MessageUpdate,
 } from "@/types/message";
-import { MessageSelect, MessageStatus, type MessageId } from "@/types/message";
+import { MessageSelect, MessageStatus } from "@/types/message";
 import type { Model } from "@/types/model";
-import { PromptSelect } from "@/types/prompt";
 import { Role } from "@/types/role";
 import type { UserId } from "@/types/user";
 import { StatusCodes } from "http-status-codes";
@@ -206,7 +207,7 @@ export class MessageService {
                 ...ChatSelect,
                 prompts: {
                   select: {
-                    ...PromptSelect,
+                    ...ChatPromptSelect,
                     text: true,
                   },
                 },

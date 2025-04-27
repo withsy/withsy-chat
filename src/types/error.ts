@@ -12,14 +12,12 @@ export type ServerErrorData = {
   errors?: ServerErrorData[];
 };
 
-const ServerErrorDataSchema: z.ZodSchema<ServerErrorData> = z.lazy(() =>
-  z.object({
-    code: z.number().int(),
-    name: z.string(),
-    message: z.string(),
-    stack: z.string().optional(),
-    extra: z.record(JsonValue).optional(),
-    errors: z.array(ServerErrorDataSchema).optional(),
-  })
-);
+const ServerErrorDataSchema: z.ZodSchema<ServerErrorData> = z.object({
+  code: z.number().int(),
+  name: z.string(),
+  message: z.string(),
+  stack: z.string().optional(),
+  extra: z.record(JsonValue).optional(),
+  errors: z.lazy(() => ServerErrorDataSchema.array()).optional(),
+});
 export const ServerErrorData = ServerErrorDataSchema;

@@ -1,7 +1,5 @@
-import {
-  idempotencyInfoSelect,
-  type IdempotencyKey,
-} from "@/types/idempotency";
+import type { IdempotencyKey } from "@/types/id";
+import { idempotencyInfoSelect } from "@/types/idempotency";
 import { Prisma } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { TrpcDataError } from "../error";
