@@ -13,6 +13,7 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import { CollapseButton } from "../CollapseButton";
 import { IconWithLabel } from "../IconWithLabel";
+import { getChatTypeIcon } from "./ChatTypeIcon";
 
 export default function MobileChatHeader({
   chatTitle,
@@ -62,6 +63,7 @@ export default function MobileChatHeader({
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
               <button className="flex flex-row items-center truncate font-semibold px-2 py-1 gap-3 rounded-md hover:bg-white active:bg-white select-none">
+                {chatType && getChatTypeIcon(chatType, "")}
                 {chatTitle}
                 <ChevronDown size={16} />
               </button>
