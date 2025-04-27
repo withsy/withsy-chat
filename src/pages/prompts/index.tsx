@@ -1,32 +1,20 @@
 import { PartialLoading } from "@/components/Loading";
+import { EditPromptModal } from "@/components/prompts/EditPromptModal";
+import { PromptsTable } from "@/components/prompts/PromptsTable";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { useUser } from "@/context/UserContext";
-import { MoreVertical, Star } from "lucide-react";
 import { useState } from "react";
+import type { Schema } from "@/types/user-prompt";
 
-const samplePrompts: Prompt[] = [
+const samplePrompts = [
   {
     id: "1",
     title: "Email Reply Template",
-    text: "Write a polite and professional reply to the email below. Write a polite and professional reply to the email below.",
+    text: "Write a polite and professional reply to the email below.",
     isStar: true,
     createdAt: new Date("2025-03-01T10:00:00Z"),
     updatedAt: new Date("2025-03-01T10:00:00Z"),
@@ -34,45 +22,12 @@ const samplePrompts: Prompt[] = [
   {
     id: "2",
     title: "Brainstorm Ideas",
-    text: "Help me brainstorm 10 creative ideas about the following topic.",
+    text: "Help me brainstorm 10 creative ideas.",
     isStar: false,
     createdAt: new Date("2025-03-05T14:30:00Z"),
     updatedAt: new Date("2025-03-05T14:30:00Z"),
   },
-  {
-    id: "3",
-    title: "Summarize Article",
-    text: "Summarize this article in a concise and clear way.",
-    isStar: false,
-    createdAt: new Date("2025-03-10T09:15:00Z"),
-    updatedAt: new Date("2025-03-10T09:15:00Z"),
-  },
-  {
-    id: "4",
-    title: "Daily Motivation",
-    text: "Give me a short motivational quote for today.",
-    isStar: true,
-    createdAt: new Date("2025-04-01T08:00:00Z"),
-    updatedAt: new Date("2025-04-01T08:00:00Z"),
-  },
-  {
-    id: "5",
-    title: "Translate into French",
-    text: "Translate the following text into natural French.",
-    isStar: false,
-    createdAt: new Date("2025-04-15T12:45:00Z"),
-    updatedAt: new Date("2025-04-15T12:45:00Z"),
-  },
 ];
-
-type Prompt = {
-  id: string;
-  title: string;
-  text: string;
-  isStar: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-};
 
 export default function PromptsPage() {
   const { user } = useUser();
@@ -80,8 +35,9 @@ export default function PromptsPage() {
 
   const { themeColor } = user.preferences;
   const [tab, setTab] = useState<"manage" | "add">("manage");
-  const [prompts, setPrompts] = useState<Prompt[]>(samplePrompts);
-  const [filter, setFilter] = useState<string>("");
+  const [prompts, setPrompts] = useState(samplePrompts);
+  const [filter, setFilter] = useState("");
+  const [editPrompt, setEditPrompt] = useState<Schema | null>(null);
 
   if (!user) {
     return <PartialLoading />;
@@ -89,172 +45,83 @@ export default function PromptsPage() {
 
   return (
     <div className="p-6 select-none">
-      <Tabs
-        defaultValue="manage"
-        value={tab}
-        onValueChange={(v) => setTab(v as "manage" | "add")}
-      >
+      <Tabs value={tab} onValueChange={(v) => setTab(v as "manage" | "add")}>
         <TabsList className="flex justify-center gap-2 bg-transparent">
           <TabsTrigger
             value="manage"
-            className="text-xl font-semibold text-gray-400 data-[state=active]:text-black data-[state=active]:shadow-none"
+            className="text-xl font-semibold text-gray-400 data-[state=active]:text-black"
           >
             Manage
           </TabsTrigger>
           <TabsTrigger
             value="add"
-            className="text-xl font-semibold text-gray-400 data-[state=active]:text-black data-[state=active]:shadow-none"
+            className="text-xl font-semibold text-gray-400 data-[state=active]:text-black"
           >
             Add
           </TabsTrigger>
         </TabsList>
-        {/* Manage Tab */}
+
+        {/* Manage */}
         <TabsContent value="manage">
           <div className="space-y-4 mt-4">
             <Input
-              placeholder="Search by title or content..."
+              placeholder="Search by title or prompt..."
               value={filter}
               onChange={(e) => setFilter(e.target.value)}
             />
-
-            <div className="border rounded-md overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="font-semibold">Title</TableHead>
-                    <TableHead className="font-semibold">Prompt</TableHead>
-                    <TableHead className="font-semibold">Updated At</TableHead>
-                    <TableHead className="font-semibold"></TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {prompts
-                    .filter(
-                      (p) =>
-                        p.title.toLowerCase().includes(filter.toLowerCase()) ||
-                        p.text.toLowerCase().includes(filter.toLowerCase())
-                    )
-                    .map((prompt) => (
-                      <TableRow key={prompt.id}>
-                        <TableCell className="flex items-center gap-2">
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setPrompts((prev) =>
-                                prev.map((p) =>
-                                  p.id === prompt.id
-                                    ? { ...p, isStar: !p.isStar }
-                                    : p
-                                )
-                              );
-                            }}
-                            className="hover:text-yellow-500 transition-colors"
-                          >
-                            {prompt.isStar ? (
-                              <Star
-                                className="w-4 h-4 text-black"
-                                style={{
-                                  fill: `rgb(${themeColor})`,
-                                }}
-                              />
-                            ) : (
-                              <Star className="w-4 h-4 text-black" />
-                            )}
-                          </button>
-                          {prompt.title}
-                        </TableCell>
-                        <TableCell className="max-w-[400px] truncate">
-                          {prompt.text}
-                        </TableCell>
-                        <TableCell>
-                          {prompt.updatedAt.toLocaleString()}
-                        </TableCell>
-                        <TableCell>
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="h-8 w-8"
-                              >
-                                <MoreVertical className="w-4 h-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuItem
-                                onClick={() => {
-                                  console.log(`Edit ${prompt.title}`);
-                                }}
-                              >
-                                Edit
-                              </DropdownMenuItem>
-                              <DropdownMenuItem
-                                onClick={() => {
-                                  setPrompts((prev) =>
-                                    prev.filter((p) => p.id !== prompt.id)
-                                  );
-                                }}
-                              >
-                                Delete
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                </TableBody>
-              </Table>
-            </div>
+            <PromptsTable
+              prompts={prompts.filter(
+                (p) =>
+                  p.title.toLowerCase().includes(filter.toLowerCase()) ||
+                  p.text.toLowerCase().includes(filter.toLowerCase())
+              )}
+              onToggleStar={(id) => {
+                setPrompts((prev) =>
+                  prev.map((p) =>
+                    p.id === id ? { ...p, isStar: !p.isStar } : p
+                  )
+                );
+              }}
+              onDelete={(id) => {
+                setPrompts((prev) => prev.filter((p) => p.id !== id));
+              }}
+              onEdit={(id) => {
+                const found = prompts.find((p) => p.id === id);
+                if (found) setEditPrompt(found);
+              }}
+              themeColor={themeColor}
+            />
           </div>
         </TabsContent>
 
-        {/* Add Tab */}
+        {/* Add */}
         <TabsContent value="add">
-          <form
-            className="space-y-4 mt-4"
-            onSubmit={(e) => {
-              e.preventDefault();
-              // handle add logic here
-            }}
-          >
+          <form className="space-y-4 mt-4" onSubmit={(e) => e.preventDefault()}>
             <div>
               <Label>Title</Label>
-              <Input
-                placeholder="Enter title"
-                required
-                // connect to your state
-              />
+              <Input placeholder="Enter title" required />
             </div>
             <div>
               <Label>Content</Label>
-              <Textarea
-                placeholder="Enter prompt content"
-                required
-                // connect to your state
-              />
-            </div>
-            <div>
-              <Label>Preferred Model (Optional)</Label>
-              <Input
-                placeholder="Enter preferred model"
-                // connect to your state
-              />
-            </div>
-            <div className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                id="isStar"
-                // connect to your state
-                className="w-4 h-4"
-              />
-              <Label htmlFor="isStar" className="cursor-pointer">
-                Mark as Starred
-              </Label>
+              <Textarea placeholder="Enter prompt content" required />
             </div>
             <Button type="submit">Add Prompt</Button>
           </form>
         </TabsContent>
       </Tabs>
+
+      {editPrompt && (
+        <EditPromptModal
+          prompt={editPrompt}
+          onClose={() => setEditPrompt(null)}
+          onSave={(updatedPrompt) => {
+            setPrompts((prev) =>
+              prev.map((p) => (p.id === updatedPrompt.id ? updatedPrompt : p))
+            );
+            setEditPrompt(null);
+          }}
+        />
+      )}
     </div>
   );
 }

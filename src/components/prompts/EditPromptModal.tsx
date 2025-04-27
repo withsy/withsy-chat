@@ -1,0 +1,74 @@
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { useState } from "react";
+
+type Prompt = {
+  id: string;
+  title: string;
+  text: string;
+  isStar: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+interface EditPromptModalProps {
+  prompt: Prompt;
+  onClose: () => void;
+  onSave: (updatedPrompt: Prompt) => void;
+}
+
+export function EditPromptModal({
+  prompt,
+  onClose,
+  onSave,
+}: EditPromptModalProps) {
+  const [title, setTitle] = useState(prompt.title);
+  const [text, setText] = useState(prompt.text);
+
+  return (
+    <Dialog open={true} onOpenChange={onClose}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Edit Prompt</DialogTitle>
+        </DialogHeader>
+        <div className="space-y-4">
+          <Input
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="Title"
+          />
+          <Textarea
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            placeholder="Prompt Content"
+          />
+        </div>
+        <DialogFooter>
+          <Button
+            onClick={() => {
+              onSave({
+                ...prompt,
+                title,
+                text,
+                updatedAt: new Date(),
+              });
+            }}
+          >
+            Save
+          </Button>
+          <Button variant="secondary" onClick={onClose}>
+            Cancel
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
