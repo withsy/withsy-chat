@@ -1,11 +1,11 @@
 import { Prisma } from "@prisma/client";
 import { z } from "zod";
-import { GratitudeJournal } from ".";
+import { GratitudeJournal, UserPrompt } from ".";
+import { ChatPrompt } from "./chat-prompt";
 import { type zInfer } from "./common";
-import { IdempotencyKey } from "./idempotency";
-import { Message, MessageId } from "./message";
+import { ChatId, IdempotencyKey, MessageId, UserPromptId } from "./id";
+import { Message } from "./message";
 import { Model } from "./model";
-import { Prompt } from "./prompt";
 import { UserUsageLimitError } from "./user-usage-limit";
 
 export const ChatSelect = {
@@ -14,11 +14,9 @@ export const ChatSelect = {
   isStarred: true,
   type: true,
   parentMessageId: true,
+  userPromptId: true,
   updatedAt: true,
 } satisfies Prisma.ChatSelect;
-
-export const ChatId = z.string().uuid();
-export type ChatId = zInfer<typeof ChatId>;
 
 export const ChatType = z.enum(["chat", "branch", "gratitudeJournal"]);
 export type ChatType = zInfer<typeof ChatType>;
@@ -28,7 +26,8 @@ export const ChatSchema = z.object({
   title: z.string(),
   isStarred: z.boolean(),
   type: ChatType,
-  parentMessageId: z.lazy(() => MessageId.nullable()),
+  parentMessageId: MessageId.nullable(),
+  userPromptId: UserPromptId.nullable(),
   updatedAt: z.date(),
 });
 export type ChatSchema = zInfer<typeof ChatSchema>;
@@ -42,16 +41,20 @@ export type Chat = {
   parentMessageId: MessageId | null;
   parentMessage?: Message | null;
   updatedAt: Date;
-  prompts?: Prompt[];
+  prompts?: ChatPrompt[];
   gratitudeJournals?: GratitudeJournal.Data[];
+  userPromptId: UserPromptId | null;
+  userPrompt?: UserPrompt.Data | null;
 };
-export const Chat: z.ZodType<Chat> = z.lazy(() =>
-  ChatSchema.extend({
-    parentMessage: z.lazy(() => Message.nullable().default(null)),
-    prompts: Prompt.array().default([]),
-    gratitudeJournals: GratitudeJournal.Data.array().default([]),
-  })
-);
+export const Chat: z.ZodType<Chat> = ChatSchema.extend({
+  parentMessage: Message.nullable().default(null),
+  prompts: ChatPrompt.array().default([]),
+  gratitudeJournals: z
+    .lazy(() => GratitudeJournal.Data)
+    .array()
+    .default([]),
+  userPrompt: UserPrompt.Data.nullable().default(null),
+});
 
 export const ChatGet = z.object({
   chatId: ChatId,
@@ -80,8 +83,8 @@ export type ChatStart = zInfer<typeof ChatStart>;
 
 export const ChatStartOutput = z.object({
   chat: Chat,
-  userMessage: z.lazy(() => Message),
-  modelMessage: z.lazy(() => Message),
+  userMessage: Message,
+  modelMessage: Message,
 });
 export type ChatStartOutput = zInfer<typeof ChatStartOutput>;
 

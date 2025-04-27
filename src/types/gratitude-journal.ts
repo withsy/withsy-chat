@@ -1,31 +1,28 @@
 import type { Prisma } from "@prisma/client";
 import { z } from "zod";
-import { Chat, ChatId } from "./chat";
+import { Chat } from "./chat";
 import type { zInfer } from "./common";
-import { IdempotencyKey } from "./idempotency";
+import { ChatId, GratitudeJournalId, IdempotencyKey } from "./id";
 
 export const Select = {
   id: true,
   chatId: true,
 } satisfies Prisma.GratitudeJournalSelect;
 
-export const Id = z.string().uuid();
-export type Id = zInfer<typeof Id>;
-
 export const Schema = z.object({
-  id: Id,
-  chatId: z.lazy(() => ChatId),
+  id: GratitudeJournalId,
+  chatId: ChatId,
 });
 export type Schema = zInfer<typeof Schema>;
 const _ = {} satisfies Omit<Schema, keyof typeof Select>;
 
 export type Data = {
-  id: Id;
+  id: GratitudeJournalId;
   chatId: ChatId | null;
   chat?: Chat | null;
 };
 export const Data: z.ZodType<Data> = Schema.extend({
-  chat: z.lazy(() => Chat.nullable().default(null)),
+  chat: Chat.nullable().default(null),
 });
 
 export const StartChat = z.object({
@@ -35,7 +32,7 @@ export type StartChat = zInfer<typeof StartChat>;
 
 export const RecentJournal = z.object({
   zonedDate: z.string(),
-  gratitudeJournalId: Id,
+  gratitudeJournalId: GratitudeJournalId,
 });
 export type RecentJournal = zInfer<typeof RecentJournal>;
 
@@ -47,6 +44,6 @@ export const Stats = z.object({
 export type Stats = zInfer<typeof Stats>;
 
 export const GetJournal = z.object({
-  gratitudeJournalId: Id,
+  gratitudeJournalId: GratitudeJournalId,
 });
 export type GetJournal = zInfer<typeof GetJournal>;

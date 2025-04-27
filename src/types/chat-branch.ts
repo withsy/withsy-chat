@@ -1,8 +1,6 @@
 import { z } from "zod";
-import { ChatId } from "./chat";
 import type { zInfer } from "./common";
-import { IdempotencyKey } from "./idempotency";
-import { MessageId } from "./message";
+import { ChatId, IdempotencyKey, MessageId } from "./id";
 
 export const ChatBranchList = z.object({
   chatId: ChatId,

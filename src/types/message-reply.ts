@@ -1,7 +1,6 @@
 import { z } from "zod";
 import type { zInfer } from "./common";
-import { IdempotencyKey } from "./idempotency";
-import { MessageId } from "./message";
+import { IdempotencyKey, MessageId } from "./id";
 import { Model } from "./model";
 import { UserUsageLimitError } from "./user-usage-limit";
 

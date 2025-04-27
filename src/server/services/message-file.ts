@@ -1,4 +1,4 @@
-import type { MessageId } from "@/types/message";
+import type { MessageId } from "@/types/id";
 import { MessageFileSelect } from "@/types/message-file";
 import type { UserId } from "@/types/user";
 import type { ServiceRegistry } from "../service-registry";

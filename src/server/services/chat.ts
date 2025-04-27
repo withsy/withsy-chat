@@ -1,14 +1,14 @@
 import { GratitudeJournal } from "@/types";
 import {
-  Chat,
   ChatDelete,
   ChatGet,
   ChatSelect,
   ChatStart,
   ChatUpdate,
 } from "@/types/chat";
-import { MessageSelect, type MessageId } from "@/types/message";
-import { PromptSelect } from "@/types/prompt";
+import { ChatPromptSelect } from "@/types/chat-prompt";
+import type { MessageId } from "@/types/id";
+import { MessageSelect } from "@/types/message";
 import { UserId } from "@/types/user";
 import { uuidv7 } from "uuidv7";
 import type { ServiceRegistry } from "../service-registry";
@@ -168,7 +168,7 @@ export class ChatService {
       },
       select: {
         ...ChatSelect,
-        prompts: { select: PromptSelect },
+        prompts: { select: ChatPromptSelect },
         gratitudeJournals: { select: GratitudeJournal.Select },
       },
     });

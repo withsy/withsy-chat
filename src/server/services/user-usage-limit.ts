@@ -17,7 +17,7 @@ export class UserUsageLimitService {
 
   async get(userId: UserId) {
     const res = await this.service.db.$transaction(async (tx) => {
-      const usageLimit = await tx.userUsageLimit.findFirstOrThrow({
+      const usageLimit = await tx.userUsageLimit.findUniqueOrThrow({
         where: { userId },
         select: { id: true, ...UserUsageLimitSelect },
       });
@@ -51,7 +51,7 @@ export class UserUsageLimitService {
     const { userId } = input;
     await UserUsageLimitService.lock(tx, { userId });
 
-    const usageLimit = await tx.userUsageLimit.findFirstOrThrow({
+    const usageLimit = await tx.userUsageLimit.findUniqueOrThrow({
       where: { userId },
     });
 
@@ -73,7 +73,7 @@ export class UserUsageLimitService {
     const { userId } = input;
     await UserUsageLimitService.lock(tx, { userId });
 
-    const usageLimit = await tx.userUsageLimit.findFirstOrThrow({
+    const usageLimit = await tx.userUsageLimit.findUniqueOrThrow({
       where: { userId },
     });
 
@@ -105,7 +105,7 @@ export class UserUsageLimitService {
     const { userId } = input;
     await UserUsageLimitService.lock(tx, { userId });
 
-    const usageLimit = await tx.userUsageLimit.findFirstOrThrow({
+    const usageLimit = await tx.userUsageLimit.findUniqueOrThrow({
       where: { userId },
     });
 

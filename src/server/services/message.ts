@@ -1,4 +1,7 @@
-import { ChatId, ChatSelect } from "@/types/chat";
+import { UserPrompt } from "@/types";
+import { ChatSelect } from "@/types/chat";
+import { ChatPromptSelect } from "@/types/chat-prompt";
+import type { ChatId, MessageId } from "@/types/id";
 import type {
   Message,
   MessageForHistory,
@@ -6,9 +9,8 @@ import type {
   MessageSend,
   MessageUpdate,
 } from "@/types/message";
-import { MessageSelect, MessageStatus, type MessageId } from "@/types/message";
+import { MessageSelect, MessageStatus } from "@/types/message";
 import type { Model } from "@/types/model";
-import { PromptSelect } from "@/types/prompt";
 import { Role } from "@/types/role";
 import type { UserId } from "@/types/user";
 import { StatusCodes } from "http-status-codes";
@@ -87,12 +89,10 @@ export class MessageService {
     const history = {
       _olds: [] as MessageForHistory[], // old to less old
       pushOlds(...xs: MessageForHistory[]) {
-        if (envConfig.nodeEnv === "development") console.log("@ push olds", xs);
         this._olds.push(...xs);
       },
       _news: [] as MessageForHistory[], // new to less new
       pushNews(...xs: MessageForHistory[]) {
-        if (envConfig.nodeEnv === "development") console.log("@ push news", xs);
         this._news.push(...xs);
       },
       remainLength() {
@@ -112,24 +112,14 @@ export class MessageService {
     await this.service.db.$transaction(async (tx) => {
       const currentHistories = await tx.message.findMany({
         where: {
-          chat: {
-            userId,
-            deletedAt: null,
-          },
+          chat: { userId, deletedAt: null },
           chatId: modelMessage.chatId,
           status: "succeeded",
-          id: {
-            lte: modelMessage.id,
-          },
+          id: { lte: modelMessage.id },
         },
-        select: {
-          role: true,
-          text: true,
-        },
+        select: { role: true, text: true },
         take: history.remainLength(),
-        orderBy: {
-          id: "desc",
-        },
+        orderBy: { id: "desc" },
       });
       history.pushNews(...currentHistories);
 
@@ -182,7 +172,7 @@ export class MessageService {
     return history.resolve();
   }
 
-  async get(input: {
+  async getForAi(input: {
     userId: UserId;
     messageId: MessageId;
     include?: {
@@ -192,10 +182,7 @@ export class MessageService {
     const { userId, messageId, include } = input;
     const res = await this.service.db.message.findUnique({
       where: {
-        chat: {
-          userId,
-          deletedAt: null,
-        },
+        chat: { userId, deletedAt: null },
         id: messageId,
       },
       select: {
@@ -206,10 +193,11 @@ export class MessageService {
                 ...ChatSelect,
                 prompts: {
                   select: {
-                    ...PromptSelect,
+                    ...ChatPromptSelect,
                     text: true,
                   },
                 },
+                userPrompt: { select: UserPrompt.Select },
               },
             }
           : false,
