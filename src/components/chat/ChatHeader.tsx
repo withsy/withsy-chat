@@ -15,8 +15,10 @@ import HoverSwitchIcon from "../HoverSwitchIcon";
 import { IconWithLabel } from "../IconWithLabel";
 
 export default function ChatHeader({
+  chatTitle,
   chatType,
 }: {
+  chatTitle: string | undefined;
   chatType: ChatType | undefined;
 }) {
   const router = useRouter();
@@ -84,28 +86,34 @@ export default function ChatHeader({
   const handleLinkClick = () => {
     router.push(`/chat`);
   };
+
   return (
     <div
       className="absolute top-0 left-0 w-full h-[50px] px-4 flex items-center justify-between"
       style={headerStyle}
     >
-      <div className="flex flex-row gap-4 items-center">
-        {collapsed && (
-          <>
-            <CollapseButton />
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <button onClick={handleLinkClick} className={buttonClassName}>
-                    <IconWithLabel icon={PenLine} fill={true} />
-                  </button>
-                </TooltipTrigger>
-                <TooltipContent side="bottom">Start New Chat</TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </>
-        )}
-      </div>
+      {collapsed && (
+        <div className="flex items-center gap-5 min-w-0">
+          <CollapseButton />
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button onClick={handleLinkClick} className={buttonClassName}>
+                  <IconWithLabel icon={PenLine} fill={true} />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="bottom">Start New Chat</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
+      )}
+      {collapsed ? (
+        <div className="flex-1 text-center truncate px-2 select-none">
+          {chatTitle}
+        </div>
+      ) : (
+        <div className="text-left truncate select-none">{chatTitle}</div>
+      )}
       <div className="flex gap-5">
         {buttons.map(({ label, id, icon }) => (
           <TooltipProvider key={id}>
