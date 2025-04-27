@@ -1,12 +1,11 @@
 import { PartialLoading } from "@/components/Loading";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"; // shadcn dropdown
+} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -27,50 +26,40 @@ const samplePrompts: Prompt[] = [
   {
     id: "1",
     title: "Email Reply Template",
-    content: "Write a polite and professional reply to the email below.",
-    isDefault: false,
+    text: "Write a polite and professional reply to the email below. Write a polite and professional reply to the email below.",
     isStar: true,
-    preferredModel: "gpt-4o",
     createdAt: new Date("2025-03-01T10:00:00Z"),
     updatedAt: new Date("2025-03-01T10:00:00Z"),
   },
   {
     id: "2",
     title: "Brainstorm Ideas",
-    content: "Help me brainstorm 10 creative ideas about the following topic.",
-    isDefault: true,
+    text: "Help me brainstorm 10 creative ideas about the following topic.",
     isStar: false,
-    preferredModel: "gpt-4-turbo",
     createdAt: new Date("2025-03-05T14:30:00Z"),
     updatedAt: new Date("2025-03-05T14:30:00Z"),
   },
   {
     id: "3",
     title: "Summarize Article",
-    content: "Summarize this article in a concise and clear way.",
-    isDefault: false,
+    text: "Summarize this article in a concise and clear way.",
     isStar: false,
-    preferredModel: "gemini-1.5-pro",
     createdAt: new Date("2025-03-10T09:15:00Z"),
     updatedAt: new Date("2025-03-10T09:15:00Z"),
   },
   {
     id: "4",
     title: "Daily Motivation",
-    content: "Give me a short motivational quote for today.",
-    isDefault: false,
+    text: "Give me a short motivational quote for today.",
     isStar: true,
-    preferredModel: "gpt-4o",
     createdAt: new Date("2025-04-01T08:00:00Z"),
     updatedAt: new Date("2025-04-01T08:00:00Z"),
   },
   {
     id: "5",
     title: "Translate into French",
-    content: "Translate the following text into natural French.",
-    isDefault: false,
+    text: "Translate the following text into natural French.",
     isStar: false,
-    preferredModel: "gpt-3.5-turbo",
     createdAt: new Date("2025-04-15T12:45:00Z"),
     updatedAt: new Date("2025-04-15T12:45:00Z"),
   },
@@ -79,10 +68,8 @@ const samplePrompts: Prompt[] = [
 type Prompt = {
   id: string;
   title: string;
-  content: string;
-  isDefault: boolean;
+  text: string;
   isStar: boolean;
-  preferredModel: string;
   createdAt: Date;
   updatedAt: Date;
 };
@@ -130,12 +117,12 @@ export default function PromptsPage() {
               onChange={(e) => setFilter(e.target.value)}
             />
 
-            <div className="border rounded-md">
+            <div className="border rounded-md overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow>
                     <TableHead className="font-semibold">Title</TableHead>
-                    <TableHead className="font-semibold">Model</TableHead>
+                    <TableHead className="font-semibold">Prompt</TableHead>
                     <TableHead className="font-semibold">Updated At</TableHead>
                     <TableHead className="font-semibold"></TableHead>
                   </TableRow>
@@ -145,7 +132,7 @@ export default function PromptsPage() {
                     .filter(
                       (p) =>
                         p.title.toLowerCase().includes(filter.toLowerCase()) ||
-                        p.content.toLowerCase().includes(filter.toLowerCase())
+                        p.text.toLowerCase().includes(filter.toLowerCase())
                     )
                     .map((prompt) => (
                       <TableRow key={prompt.id}>
@@ -175,9 +162,10 @@ export default function PromptsPage() {
                             )}
                           </button>
                           {prompt.title}
-                          {prompt.isDefault && <Badge>Default</Badge>}
                         </TableCell>
-                        <TableCell>{prompt.preferredModel || "-"}</TableCell>
+                        <TableCell className="max-w-[400px] truncate">
+                          {prompt.text}
+                        </TableCell>
                         <TableCell>
                           {prompt.updatedAt.toLocaleString()}
                         </TableCell>
@@ -195,7 +183,6 @@ export default function PromptsPage() {
                             <DropdownMenuContent align="end">
                               <DropdownMenuItem
                                 onClick={() => {
-                                  // handle edit
                                   console.log(`Edit ${prompt.title}`);
                                 }}
                               >
@@ -210,35 +197,6 @@ export default function PromptsPage() {
                               >
                                 Delete
                               </DropdownMenuItem>
-                              {prompt.isDefault ? (
-                                <DropdownMenuItem
-                                  onClick={() => {
-                                    setPrompts((prev) =>
-                                      prev.map((p) =>
-                                        p.id === prompt.id
-                                          ? { ...p, isDefault: false }
-                                          : p
-                                      )
-                                    );
-                                  }}
-                                >
-                                  Remove Default
-                                </DropdownMenuItem>
-                              ) : (
-                                <DropdownMenuItem
-                                  onClick={() => {
-                                    setPrompts((prev) =>
-                                      prev.map((p) =>
-                                        p.id === prompt.id
-                                          ? { ...p, isDefault: true }
-                                          : p
-                                      )
-                                    );
-                                  }}
-                                >
-                                  Make as Default
-                                </DropdownMenuItem>
-                              )}
                             </DropdownMenuContent>
                           </DropdownMenu>
                         </TableCell>
@@ -281,17 +239,6 @@ export default function PromptsPage() {
                 placeholder="Enter preferred model"
                 // connect to your state
               />
-            </div>
-            <div className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                id="isDefault"
-                // connect to your state
-                className="w-4 h-4"
-              />
-              <Label htmlFor="isDefault" className="cursor-pointer">
-                Always apply to every chat (Default Prompt)
-              </Label>
             </div>
             <div className="flex items-center gap-2">
               <input
