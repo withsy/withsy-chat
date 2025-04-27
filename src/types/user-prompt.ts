@@ -8,6 +8,7 @@ export const Select = {
   title: true,
   text: true,
   isStarred: true,
+  updatedAt: true,
 } satisfies Prisma.UserPromptSelect;
 
 export const Schema = z.object({
@@ -15,6 +16,7 @@ export const Schema = z.object({
   title: z.string(),
   text: z.string(),
   isStarred: z.boolean(),
+  updatedAt: z.date(),
 });
 export type Schema = zInfer<typeof Schema>;
 const _ = {} satisfies Omit<Schema, keyof typeof Select>;
