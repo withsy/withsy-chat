@@ -10,18 +10,15 @@ import { useUser } from "@/context/UserContext";
 import { cn } from "@/lib/utils";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 import {
-  BookText,
   Check,
   CornerDownLeft,
   Layout,
   LogOut,
-  MailOpen,
   Palette,
   Text,
   type LucideIcon,
 } from "lucide-react";
 import { signOut } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { ModelAvatar } from "./ModelAvatar";
 import { ThemeSettingsModal } from "./modal/ThemeSettingsModal";
@@ -90,7 +87,6 @@ function UserMenuItem({
 }
 
 export default function UserDropdownMenu() {
-  const router = useRouter();
   const { isMobile } = useSidebarStore();
   const { user, setUserPrefsAndSave } = useUser();
 
@@ -99,21 +95,11 @@ export default function UserDropdownMenu() {
   if (!user) return null;
 
   const userMenuItems: MenuItem[] = [
+    "separator",
     {
       icon: Palette,
       label: "Theme",
       onClick: () => setThemeModalOpen(true),
-    },
-    "separator",
-    {
-      icon: BookText,
-      label: "Guide",
-      onClick: () => router.push("/guide"),
-    },
-    {
-      icon: MailOpen,
-      label: "Contact",
-      onClick: () => router.push("/contact"),
     },
   ];
 
