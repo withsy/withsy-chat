@@ -27,6 +27,7 @@ CREATE TABLE "user_prompts" (
     "user_id" UUID NOT NULL,
     "title" TEXT NOT NULL,
     "text" TEXT NOT NULL,
+    "is_starred" BOOLEAN NOT NULL DEFAULT false,
     "created_at" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 

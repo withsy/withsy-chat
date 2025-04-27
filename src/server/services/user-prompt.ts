@@ -43,10 +43,10 @@ export class UserPromptService {
   }
 
   async update(userId: UserId, input: UserPrompt.Update) {
-    const { userPromptId, title, text } = input;
+    const { userPromptId, title, text, isStarred } = input;
     const res = await this.service.db.userPrompt.update({
       where: { userId, id: userPromptId },
-      data: { title, text },
+      data: { title, text, isStarred },
       select: UserPrompt.Select,
     });
 
