@@ -1,7 +1,6 @@
 import { useUser } from "@/context/UserContext";
 import { cn } from "@/lib/utils";
 import { useSidebarStore } from "@/stores/useSidebarStore";
-import { usePathname } from "next/navigation";
 import { type ReactNode } from "react";
 import Main from "./Main";
 import Sidebar from "./sidebar/Sidebar";
@@ -13,20 +12,16 @@ type LayoutProps = {
 export default function Layout({ children }: LayoutProps) {
   const { user } = useUser();
   const { collapsed, setCollapsed, isMobile } = useSidebarStore();
-  const pathname = usePathname();
   const themeColor = user?.preferences.themeColor ?? "30,30,30";
   const themeOpacity = user?.preferences.themeOpacity ?? 0;
   const backgroundColor = `rgba(${themeColor}, ${themeOpacity})`;
 
-  const isChatPage =
-    pathname?.startsWith("/chat") || pathname?.startsWith("/saved");
-
   return (
     <div
       className="flex overflow-hidden h-[100dvh] relative"
-      style={isChatPage ? { backgroundColor } : {}}
+      style={{ backgroundColor }}
     >
-      <Sidebar isChatPage={isChatPage} />
+      <Sidebar />
 
       {isMobile && !collapsed && (
         <div

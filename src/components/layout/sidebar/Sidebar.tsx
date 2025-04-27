@@ -4,7 +4,7 @@ import { useSidebarStore } from "@/stores/useSidebarStore";
 import SidebarChatList from "./SidebarChatList";
 import SidebarTooltipList from "./SidebarTooltipList";
 
-export default function Sidebar({ isChatPage }: { isChatPage: boolean }) {
+export default function Sidebar() {
   const { isMobile, collapsed } = useSidebarStore();
   const { user } = useUser();
   if (!user) return null;
@@ -12,18 +12,14 @@ export default function Sidebar({ isChatPage }: { isChatPage: boolean }) {
   const { themeColor, themeOpacity } = user.preferences;
 
   const bgStyle = () => {
-    if (isChatPage) {
-      if (themeColor == "30,30,30" && themeOpacity == 0) {
-        return { backgroundColor: "rgb(248, 248, 247)" };
-      }
-      return {
-        backgroundColor: "white",
-        backgroundImage: `linear-gradient(rgba(${themeColor}, ${themeOpacity}), rgba(${themeColor}, ${themeOpacity}))`,
-        backgroundBlendMode: "multiply",
-      };
-    } else {
+    if (themeColor == "30,30,30" && themeOpacity == 0) {
       return { backgroundColor: "rgb(248, 248, 247)" };
     }
+    return {
+      backgroundColor: "white",
+      backgroundImage: `linear-gradient(rgba(${themeColor}, ${themeOpacity}), rgba(${themeColor}, ${themeOpacity}))`,
+      backgroundBlendMode: "multiply",
+    };
   };
 
   return (
