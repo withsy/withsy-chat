@@ -10,7 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { service } from "@/server/service-registry";
 import { User, UserSession } from "@/types/user";
 import type { GetServerSideProps } from "next";
-import { getServerSession, type Session } from "next-auth";
+import { getServerSession } from "next-auth";
 import { useRouter } from "next/router";
 import { authOptions } from "./api/auth/[...nextauth]";
 

@@ -1,6 +1,6 @@
 import { CollapseButton } from "@/components/CollapseButton";
 import UserDropdownMenu from "@/components/UserDropdownMenu";
-import { Bookmark, PenLine, Smile } from "lucide-react";
+import { Bookmark, PenLine, TableProperties } from "lucide-react";
 import { SidebarTooltip } from "./SidebarTooltip";
 
 export default function SidebarTooltipList() {
@@ -11,10 +11,10 @@ export default function SidebarTooltipList() {
         <CollapseButton />
       </div>
       <SidebarTooltip
-        id={"friends"}
-        icon={Smile}
+        id={"prompts"}
+        icon={TableProperties}
         fill={true}
-        label={"Friends"}
+        label={"Prompts"}
         size={16}
       />
       <SidebarTooltip
