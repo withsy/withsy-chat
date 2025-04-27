@@ -1,3 +1,4 @@
+import { UserPrompt } from "@/types";
 import { ChatSelect } from "@/types/chat";
 import { ChatPromptSelect } from "@/types/chat-prompt";
 import type { ChatId, MessageId } from "@/types/id";
@@ -183,7 +184,7 @@ export class MessageService {
     return history.resolve();
   }
 
-  async get(input: {
+  async getForAi(input: {
     userId: UserId;
     messageId: MessageId;
     include?: {
@@ -193,10 +194,7 @@ export class MessageService {
     const { userId, messageId, include } = input;
     const res = await this.service.db.message.findUnique({
       where: {
-        chat: {
-          userId,
-          deletedAt: null,
-        },
+        chat: { userId, deletedAt: null },
         id: messageId,
       },
       select: {
@@ -211,6 +209,7 @@ export class MessageService {
                     text: true,
                   },
                 },
+                userPrompt: { select: UserPrompt.Select },
               },
             }
           : false,

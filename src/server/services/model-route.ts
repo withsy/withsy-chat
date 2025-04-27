@@ -1,3 +1,4 @@
+import { UserDefaultPrompt } from "@/types";
 import type { MaybePromise } from "@/types/common";
 import type { MessageChunkIndex, MessageId } from "@/types/id";
 import { Message, type MessageForHistory } from "@/types/message";
@@ -48,17 +49,22 @@ export class ModelRouteService {
     });
     if (!chatMessage) return;
 
-    const inputValues = await this.getInputValues({
+    const parseRes = await this.parseInput({
       userId,
       userMessageId,
       modelMessageId,
     });
-    const { userMessage } = inputValues;
-    const validateRes = this.validateInputValues(inputValues);
-    if (!validateRes.ok) return;
-    const { modelMessage } = validateRes;
+    if (!parseRes.ok) return;
 
-    const promptText = modelMessage.chat?.prompts?.at(0)?.text;
+    const { userMessage, modelMessage, userDefaultPrompt } = parseRes;
+    const userDefaultPromptText = userDefaultPrompt?.userPrompt?.text ?? "";
+    const userPromptText = modelMessage.chat?.userPrompt?.text ?? "";
+    const chatPromptText = modelMessage.chat?.prompts?.at(0)?.text ?? "";
+    const promptText = [
+      userDefaultPromptText,
+      userPromptText,
+      chatPromptText,
+    ].join("\n");
 
     const messagesForHistory = await this.listForHistory({
       userId,
@@ -139,44 +145,35 @@ export class ModelRouteService {
     return xs;
   }
 
-  private async getInputValues(input: {
+  private async parseInput(input: {
     userId: UserId;
     userMessageId: MessageId;
     modelMessageId: MessageId;
-  }) {
+  }): Promise<
+    | {
+        ok: true;
+        userMessage: Message;
+        modelMessage: ValidatedModelMessage;
+        userDefaultPrompt: UserDefaultPrompt.GetOutput;
+      }
+    | { ok: false }
+  > {
     const { userId, userMessageId, modelMessageId } = input;
-    const [userMessageRaw, modelMessageRaw] = await Promise.all([
-      this.service.message.get({
-        userId,
-        messageId: userMessageId,
-      }),
-      this.service.message.get({
-        userId,
-        messageId: modelMessageId,
-        include: {
-          chat: true,
-        },
-      }),
-    ]);
+    const [userMessageRaw, modelMessageRaw, userDefaultPromptRaw] =
+      await Promise.all([
+        this.service.message.getForAi({ userId, messageId: userMessageId }),
+        this.service.message.getForAi({
+          userId,
+          messageId: modelMessageId,
+          include: { chat: true },
+        }),
+        this.service.userDefaultPrompt.get(userId),
+      ]);
 
     const userMessage = Message.parse(userMessageRaw);
     const modelMessage = Message.parse(modelMessageRaw);
-    return {
-      userMessage,
-      modelMessage,
-    };
-  }
-
-  private validateInputValues(input: {
-    userMessage: Message;
-    modelMessage: Message;
-  }):
-    | {
-        ok: true;
-        modelMessage: ValidatedModelMessage;
-      }
-    | { ok: false } {
-    const { userMessage, modelMessage } = input;
+    const userDefaultPrompt =
+      UserDefaultPrompt.GetOutput.parse(userDefaultPromptRaw);
     if (modelMessage.model == null) {
       console.error(
         "Model message model must not be null. modelMessageId:",
@@ -192,10 +189,12 @@ export class ModelRouteService {
 
     return {
       ok: true,
+      userMessage,
       modelMessage: {
         ...modelMessage,
         model: modelMessage.model,
       },
+      userDefaultPrompt,
     };
   }
 }

@@ -1,9 +1,9 @@
 import { Prisma } from "@prisma/client";
 import { z } from "zod";
-import { GratitudeJournal } from ".";
+import { GratitudeJournal, UserPrompt } from ".";
 import { ChatPrompt } from "./chat-prompt";
 import { type zInfer } from "./common";
-import { ChatId, IdempotencyKey, MessageId } from "./id";
+import { ChatId, IdempotencyKey, MessageId, UserPromptId } from "./id";
 import { Message } from "./message";
 import { Model } from "./model";
 import { UserUsageLimitError } from "./user-usage-limit";
@@ -14,6 +14,7 @@ export const ChatSelect = {
   isStarred: true,
   type: true,
   parentMessageId: true,
+  userPromptId: true,
   updatedAt: true,
 } satisfies Prisma.ChatSelect;
 
@@ -25,7 +26,8 @@ export const ChatSchema = z.object({
   title: z.string(),
   isStarred: z.boolean(),
   type: ChatType,
-  parentMessageId: MessageId,
+  parentMessageId: MessageId.nullable(),
+  userPromptId: UserPromptId.nullable(),
   updatedAt: z.date(),
 });
 export type ChatSchema = zInfer<typeof ChatSchema>;
@@ -41,6 +43,8 @@ export type Chat = {
   updatedAt: Date;
   prompts?: ChatPrompt[];
   gratitudeJournals?: GratitudeJournal.Data[];
+  userPromptId: UserPromptId | null;
+  userPrompt?: UserPrompt.Data | null;
 };
 export const Chat: z.ZodType<Chat> = ChatSchema.extend({
   parentMessage: Message.nullable().default(null),
@@ -49,6 +53,7 @@ export const Chat: z.ZodType<Chat> = ChatSchema.extend({
     .lazy(() => GratitudeJournal.Data)
     .array()
     .default([]),
+  userPrompt: UserPrompt.Data.nullable().default(null),
 });
 
 export const ChatGet = z.object({
