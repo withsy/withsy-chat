@@ -29,7 +29,7 @@ export function EditPromptModal({
     <Dialog open={true} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Edit Prompt</DialogTitle>
+          <DialogTitle>Edit</DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
           <Input
@@ -37,6 +37,10 @@ export function EditPromptModal({
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Title"
           />
+          <div className="text-sm text-muted-foreground select-none">
+            The prompt will be used as a base guideline for this conversation.
+            AI will reference it in all its responses.
+          </div>
           <Textarea
             value={text}
             onChange={(e) => setText(e.target.value)}
