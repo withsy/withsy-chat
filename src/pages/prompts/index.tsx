@@ -29,9 +29,7 @@ const samplePrompts = [
 
 export default function PromptsPage() {
   const { user } = useUser();
-  if (!user) throw new Error("User must exist.");
 
-  const { themeColor } = user.preferences;
   const [tab, setTab] = useState<"manage" | "add">("manage");
   const [prompts, setPrompts] = useState(samplePrompts);
   const [filter, setFilter] = useState("");
@@ -41,6 +39,7 @@ export default function PromptsPage() {
     return <PartialLoading />;
   }
 
+  const { themeColor } = user.preferences;
   return (
     <div className="p-6 select-none ">
       <Tabs value={tab} onValueChange={(v) => setTab(v as "manage" | "add")}>
