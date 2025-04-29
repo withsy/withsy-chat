@@ -35,48 +35,50 @@ export default function ChatHeader({
 
   const { themeColor, themeOpacity } = user.preferences;
 
-  const buttons = [
-    {
-      label: "Prompt",
-      id: "prompt",
-      icon: (
-        <HoverSwitchIcon
-          DefaultIcon={TableProperties}
-          HoverIcon={TableProperties}
-          fill={`rgb(${themeColor})`}
-          isActive={openDrawer == "prompt"}
-        />
-      ),
-    },
-    {
-      label: "Saved",
-      id: "saved",
-      icon: (
-        <HoverSwitchIcon
-          DefaultIcon={Bookmark}
-          HoverIcon={Bookmark}
-          fill={`rgb(${themeColor})`}
-          isActive={openDrawer == "saved"}
-        />
-      ),
-    },
-    ...(chatType === "chat" || chatType === "branch"
-      ? [
-          {
-            label: "Branches",
-            id: "branches",
-            icon: (
-              <HoverSwitchIcon
-                DefaultIcon={FolderGit2}
-                HoverIcon={FolderGit2}
-                fill={`rgb(${themeColor})`}
-                isActive={openDrawer == "branches"}
-              />
-            ),
-          },
-        ]
-      : []),
-  ];
+  const buttons = chatTitle
+    ? [
+        {
+          label: "Prompt",
+          id: "prompt",
+          icon: (
+            <HoverSwitchIcon
+              DefaultIcon={TableProperties}
+              HoverIcon={TableProperties}
+              fill={`rgb(${themeColor})`}
+              isActive={openDrawer == "prompt"}
+            />
+          ),
+        },
+        {
+          label: "Saved",
+          id: "saved",
+          icon: (
+            <HoverSwitchIcon
+              DefaultIcon={Bookmark}
+              HoverIcon={Bookmark}
+              fill={`rgb(${themeColor})`}
+              isActive={openDrawer == "saved"}
+            />
+          ),
+        },
+        ...(chatType === "chat" || chatType === "branch"
+          ? [
+              {
+                label: "Branches",
+                id: "branches",
+                icon: (
+                  <HoverSwitchIcon
+                    DefaultIcon={FolderGit2}
+                    HoverIcon={FolderGit2}
+                    fill={`rgb(${themeColor})`}
+                    isActive={openDrawer == "branches"}
+                  />
+                ),
+              },
+            ]
+          : []),
+      ]
+    : [];
 
   const headerStyle: React.CSSProperties = {
     backgroundColor: `rgba(${themeColor}, ${themeOpacity / 2})`,
