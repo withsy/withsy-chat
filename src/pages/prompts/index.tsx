@@ -6,7 +6,7 @@ import { useState } from "react";
 import type { Schema } from "@/types/user-prompt";
 import { CollapseButton } from "@/components/CollapseButton";
 import { useSidebarStore } from "@/stores/useSidebarStore";
-import { Star } from "lucide-react";
+import { PromptCard } from "@/components/prompts/PromptCard";
 
 const samplePrompts = [
   {
@@ -64,27 +64,15 @@ function PromptsPage() {
           Add
         </Button>
       </div>
-      <div className="flex-1 p-6 mt-[50px] select-none">
+      <div className="flex-1 p-6 mt-[50px] select-none overflow-y-auto">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           {prompts.map((prompt) => (
-            <div
+            <PromptCard
               key={prompt.id}
-              className="p-4 rounded-lg border shadow-sm hover:shadow-md transition cursor-pointer"
-              onClick={() => setEditPrompt(prompt)}
-            >
-              <div className="h-[120px] overflow-hidden text-sm whitespace-pre-wrap">
-                {prompt.text}
-              </div>
-              <div className="mt-4 font-semibold truncate flex items-center gap-1">
-                {prompt.isStarred && (
-                  <Star size={14} fill={`rgb(${themeColor})`} />
-                )}
-                <span>{prompt.title}</span>
-              </div>
-              <div className="text-xs text-gray-400 mt-1 flex items-center gap-1">
-                {new Date(prompt.updatedAt).toLocaleDateString()}
-              </div>
-            </div>
+              prompt={prompt}
+              themeColor={themeColor}
+              onClick={setEditPrompt}
+            />
           ))}
         </div>
         {editPrompt && (
