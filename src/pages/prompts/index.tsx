@@ -133,17 +133,19 @@ function PromptsPage() {
           </p>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          {prompts?.map((prompt) => (
-            <PromptCard
-              key={prompt.id}
-              prompt={prompt}
-              themeColor={themeColor}
-              onClick={setEditPrompt}
-              // onDelete={(id) => deletePrompt.mutate({ userPromptId: id })}
-              onToggleStar={toggleStarPrompt}
-              onMakeDefault={makeDefaultPrompt}
-            />
-          ))}
+          {prompts
+            ?.slice()
+            .sort((a, b) => (b.isStarred ? 1 : 0) - (a.isStarred ? 1 : 0))
+            .map((prompt) => (
+              <PromptCard
+                key={prompt.id}
+                prompt={prompt}
+                themeColor={themeColor}
+                onClick={setEditPrompt}
+                onToggleStar={toggleStarPrompt}
+                onMakeDefault={makeDefaultPrompt}
+              />
+            ))}
         </div>
 
         {editPrompt && (
