@@ -6,12 +6,13 @@ import { useState } from "react";
 import type { Schema } from "@/types/user-prompt";
 import { CollapseButton } from "@/components/CollapseButton";
 import { useSidebarStore } from "@/stores/useSidebarStore";
+import { Star } from "lucide-react";
 
 const samplePrompts = [
   {
     id: "1",
     title: "Email Reply Template",
-    text: "Write a polite and professional reply to the email below.",
+    text: "Write a polite and professional reply to the email below.Write a polite and professional reply to the email below.Write a polite and professional reply to the email below.Write a polite and professional reply to the email below.Write a polite and professional reply to the email below.Write a polite and professional reply to the email below.Write a polite and professional reply to the email below.Write a polite and professional reply to the email below.Write a polite and professional reply to the email below.Write a polite and professional reply to the email below.Write a polite and professional reply to the email below.Write a polite and professional reply to the email below.Write a polite and professional reply to the email below.Write a polite and professional reply to the email below.Write a polite and professional reply to the email below.",
     isStarred: true,
     updatedAt: new Date("2025-03-01T10:00:00Z"),
   },
@@ -68,21 +69,24 @@ function PromptsPage() {
           {prompts.map((prompt) => (
             <div
               key={prompt.id}
-              className="p-4 rounded-lg border shadow-sm hover:shadow-md transition"
+              className="p-4 rounded-lg border shadow-sm hover:shadow-md transition cursor-pointer"
+              onClick={() => setEditPrompt(prompt)}
             >
               <div className="h-[120px] overflow-hidden text-sm whitespace-pre-wrap">
                 {prompt.text}
               </div>
-              <div className="mt-4 font-semibold truncate">{prompt.title}</div>
+              <div className="mt-4 font-semibold truncate flex items-center gap-1">
+                {prompt.isStarred && (
+                  <Star size={14} fill={`rgb(${themeColor})`} />
+                )}
+                <span>{prompt.title}</span>
+              </div>
               <div className="text-xs text-gray-400 mt-1 flex items-center gap-1">
                 {new Date(prompt.updatedAt).toLocaleDateString()}
-                <span>• Notes</span>
               </div>
             </div>
           ))}
         </div>
-
-        {/* Edit or Add Modal */}
         {editPrompt && (
           <EditPromptModal
             prompt={editPrompt}
@@ -91,12 +95,10 @@ function PromptsPage() {
               setPrompts((prev) => {
                 const existing = prev.find((p) => p.id === savedPrompt.id);
                 if (existing) {
-                  // 수정
                   return prev.map((p) =>
                     p.id === savedPrompt.id ? savedPrompt : p
                   );
                 } else {
-                  // 추가
                   return [...prev, savedPrompt];
                 }
               });
