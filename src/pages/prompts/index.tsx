@@ -1,14 +1,11 @@
 import { PartialLoading } from "@/components/Loading";
 import { EditPromptModal } from "@/components/prompts/EditPromptModal";
-import { PromptsTable } from "@/components/prompts/PromptsTable";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Textarea } from "@/components/ui/textarea";
 import { useUser } from "@/context/UserContext";
 import { useState } from "react";
 import type { Schema } from "@/types/user-prompt";
+import { CollapseButton } from "@/components/CollapseButton";
+import { useSidebarStore } from "@/stores/useSidebarStore";
 
 const samplePrompts = [
   {
@@ -27,98 +24,89 @@ const samplePrompts = [
   },
 ];
 
-export default function PromptsPage() {
+function PromptsPage() {
   const { user } = useUser();
+  const { collapsed } = useSidebarStore();
 
-  const [tab, setTab] = useState<"manage" | "add">("manage");
   const [prompts, setPrompts] = useState(samplePrompts);
-  const [filter, setFilter] = useState("");
   const [editPrompt, setEditPrompt] = useState<Schema | null>(null);
 
   if (!user) {
     return <PartialLoading />;
   }
 
-  const { themeColor } = user.preferences;
+  const { themeColor, themeOpacity } = user.preferences;
+  const headerStyle: React.CSSProperties = {
+    backgroundColor: `rgba(${themeColor}, ${themeOpacity / 2})`,
+  };
+
   return (
-    <div className="p-6 select-none ">
-      <Tabs value={tab} onValueChange={(v) => setTab(v as "manage" | "add")}>
-        <TabsList className="flex justify-center gap-2 bg-transparent">
-          <TabsTrigger
-            value="manage"
-            className="text-xl font-semibold text-gray-400 data-[state=active]:text-black data-[state=active]:shadow-none"
-          >
-            Manage
-          </TabsTrigger>
-          <TabsTrigger
-            value="add"
-            className="text-xl font-semibold text-gray-400 data-[state=active]:text-black data-[state=active]:shadow-none"
-          >
-            Add
-          </TabsTrigger>
-        </TabsList>
-
-        {/* Manage */}
-        <TabsContent value="manage">
-          <div className="space-y-4 mt-4">
-            <Input
-              placeholder="Search by title or prompt..."
-              value={filter}
-              onChange={(e) => setFilter(e.target.value)}
-            />
-            <PromptsTable
-              prompts={prompts.filter(
-                (p) =>
-                  p.title.toLowerCase().includes(filter.toLowerCase()) ||
-                  p.text.toLowerCase().includes(filter.toLowerCase())
-              )}
-              onToggleStar={(id) => {
-                setPrompts((prev) =>
-                  prev.map((p) =>
-                    p.id === id ? { ...p, isStar: !p.isStarred } : p
-                  )
-                );
-              }}
-              onDelete={(id) => {
-                setPrompts((prev) => prev.filter((p) => p.id !== id));
-              }}
-              onEdit={(id) => {
-                const found = prompts.find((p) => p.id === id);
-                if (found) setEditPrompt(found);
-              }}
-              themeColor={themeColor}
-            />
-          </div>
-        </TabsContent>
-
-        {/* Add */}
-        <TabsContent value="add">
-          <form className="space-y-4 mt-4" onSubmit={(e) => e.preventDefault()}>
-            <div>
-              <Label>Title</Label>
-              <Input placeholder="Enter title" required />
+    <div className="flex h-full relative">
+      <div
+        className="absolute top-0 left-0 w-full h-[50px] px-4 flex items-center justify-between"
+        style={headerStyle}
+      >
+        <div>{collapsed && <CollapseButton />}</div>
+        <Button
+          size="sm"
+          onClick={() =>
+            setEditPrompt({
+              id: Date.now().toString(),
+              title: "",
+              text: "",
+              isStarred: false,
+              updatedAt: new Date(),
+            })
+          }
+          className="text-sm"
+        >
+          Add
+        </Button>
+      </div>
+      <div className="flex-1 p-6 mt-[50px] select-none">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+          {prompts.map((prompt) => (
+            <div
+              key={prompt.id}
+              className="p-4 rounded-lg border shadow-sm hover:shadow-md transition"
+            >
+              <div className="h-[120px] overflow-hidden text-sm whitespace-pre-wrap">
+                {prompt.text}
+              </div>
+              <div className="mt-4 font-semibold truncate">{prompt.title}</div>
+              <div className="text-xs text-gray-400 mt-1 flex items-center gap-1">
+                {new Date(prompt.updatedAt).toLocaleDateString()}
+                <span>• Notes</span>
+              </div>
             </div>
-            <div>
-              <Label>Content</Label>
-              <Textarea placeholder="Enter prompt content" required />
-            </div>
-            <Button type="submit">Add Prompt</Button>
-          </form>
-        </TabsContent>
-      </Tabs>
+          ))}
+        </div>
 
-      {editPrompt && (
-        <EditPromptModal
-          prompt={editPrompt}
-          onClose={() => setEditPrompt(null)}
-          onSave={(updatedPrompt) => {
-            setPrompts((prev) =>
-              prev.map((p) => (p.id === updatedPrompt.id ? updatedPrompt : p))
-            );
-            setEditPrompt(null);
-          }}
-        />
-      )}
+        {/* Edit or Add Modal */}
+        {editPrompt && (
+          <EditPromptModal
+            prompt={editPrompt}
+            onClose={() => setEditPrompt(null)}
+            onSave={(savedPrompt) => {
+              setPrompts((prev) => {
+                const existing = prev.find((p) => p.id === savedPrompt.id);
+                if (existing) {
+                  // 수정
+                  return prev.map((p) =>
+                    p.id === savedPrompt.id ? savedPrompt : p
+                  );
+                } else {
+                  // 추가
+                  return [...prev, savedPrompt];
+                }
+              });
+              setEditPrompt(null);
+            }}
+          />
+        )}
+      </div>
     </div>
   );
 }
+
+export default PromptsPage;

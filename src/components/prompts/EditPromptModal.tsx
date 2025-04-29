@@ -25,11 +25,13 @@ export function EditPromptModal({
   const [title, setTitle] = useState(prompt.title);
   const [text, setText] = useState(prompt.text);
 
+  const isEditMode = prompt.title !== "" || prompt.text !== "";
+
   return (
     <Dialog open={true} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Edit</DialogTitle>
+          <DialogTitle>{isEditMode ? "Edit Prompt" : "Add Prompt"}</DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
           <Input
