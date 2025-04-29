@@ -40,9 +40,11 @@ export function PromptCard({
             <DropdownMenuItem onClick={() => onToggleStar?.(prompt)}>
               {prompt.isStarred ? "Unstar" : "Star"}
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => onMakeDefault?.(prompt.id)}>
-              Make Default
-            </DropdownMenuItem>
+            {onMakeDefault && (
+              <DropdownMenuItem onClick={() => onMakeDefault?.(prompt.id)}>
+                Make Default
+              </DropdownMenuItem>
+            )}
             {onDelete && (
               <DropdownMenuItem
                 onClick={() => onDelete?.(prompt.id)}

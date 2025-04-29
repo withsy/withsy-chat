@@ -28,20 +28,32 @@ function PromptsPage() {
   });
 
   const createPrompt = trpc.userPrompt.create.useMutation({
-    onSuccess: () => refetchPrompts(),
+    onSuccess: () => {
+      refetchPrompts();
+      refetchDefaultPrompt();
+    },
   });
 
   const updatePrompt = trpc.userPrompt.update.useMutation({
-    onSuccess: () => refetchPrompts(),
+    onSuccess: () => {
+      refetchPrompts();
+      refetchDefaultPrompt();
+    },
   });
 
   const updateDefaultPrompt = trpc.userDefaultPrompt.update.useMutation({
-    onSuccess: () => refetchDefaultPrompt(),
+    onSuccess: () => {
+      refetchPrompts();
+      refetchDefaultPrompt();
+    },
   });
 
-  // const deletePrompt = trpc.userPrompt..useMutation({
-  //   onSuccess: () => refetchPrompts(),
-  // });
+  const deletePrompt = trpc.userPrompt.delete.useMutation({
+    onSuccess: () => {
+      refetchPrompts();
+      refetchDefaultPrompt();
+    },
+  });
 
   const toggleStarPrompt = (prompt: Schema) => {
     updatePrompt.mutate({
@@ -121,6 +133,11 @@ function PromptsPage() {
                   isDefault: true,
                 })
               }
+              onToggleStar={toggleStarPrompt}
+              // onMakeDefault={makeDefaultPrompt}
+              onDelete={(promptId) => {
+                deletePrompt.mutate({ userPromptId: promptId });
+              }}
             />
           )}
         </div>
@@ -134,7 +151,8 @@ function PromptsPage() {
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           {prompts
-            ?.slice()
+            ?.filter((p) => p.id !== defaultPrompt?.userPrompt?.id)
+            .slice()
             .sort((a, b) => (b.isStarred ? 1 : 0) - (a.isStarred ? 1 : 0))
             .map((prompt) => (
               <PromptCard
@@ -144,6 +162,9 @@ function PromptsPage() {
                 onClick={setEditPrompt}
                 onToggleStar={toggleStarPrompt}
                 onMakeDefault={makeDefaultPrompt}
+                onDelete={(promptId) =>
+                  deletePrompt.mutate({ userPromptId: promptId })
+                }
               />
             ))}
         </div>
