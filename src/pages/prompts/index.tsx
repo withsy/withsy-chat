@@ -8,6 +8,7 @@ import { PromptCard } from "@/components/prompts/PromptCard";
 import { useState } from "react";
 import { trpc } from "@/lib/trpc";
 import { v4 as uuid } from "uuid";
+import type { Schema } from "@/types/user-prompt";
 
 function PromptsPage() {
   const { user } = useUser();
@@ -37,6 +38,23 @@ function PromptsPage() {
   const updateDefaultPrompt = trpc.userDefaultPrompt.update.useMutation({
     onSuccess: () => refetchDefaultPrompt(),
   });
+
+  // const deletePrompt = trpc.userPrompt..useMutation({
+  //   onSuccess: () => refetchPrompts(),
+  // });
+
+  const toggleStarPrompt = (prompt: Schema) => {
+    updatePrompt.mutate({
+      userPromptId: prompt.id,
+      title: prompt.title,
+      text: prompt.text,
+      isStarred: !prompt.isStarred,
+    });
+  };
+
+  const makeDefaultPrompt = (promptId: string) => {
+    updateDefaultPrompt.mutate({ userPromptId: promptId });
+  };
 
   const [editPrompt, setEditPrompt] = useState<{
     id: string;
@@ -121,6 +139,9 @@ function PromptsPage() {
               prompt={prompt}
               themeColor={themeColor}
               onClick={setEditPrompt}
+              // onDelete={(id) => deletePrompt.mutate({ userPromptId: id })}
+              onToggleStar={toggleStarPrompt}
+              onMakeDefault={makeDefaultPrompt}
             />
           ))}
         </div>
