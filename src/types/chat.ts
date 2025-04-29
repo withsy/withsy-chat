@@ -26,8 +26,8 @@ export const ChatSchema = z.object({
   title: z.string(),
   isStarred: z.boolean(),
   type: ChatType,
-  parentMessageId: MessageId.nullable(),
-  userPromptId: UserPromptId.nullable(),
+  parentMessageId: z.nullable(MessageId),
+  userPromptId: z.nullable(UserPromptId),
   updatedAt: z.date(),
 });
 export type ChatSchema = zInfer<typeof ChatSchema>;
@@ -47,13 +47,13 @@ export type Chat = {
   userPrompt?: UserPrompt.Data | null;
 };
 export const Chat: z.ZodType<Chat> = ChatSchema.extend({
-  parentMessage: Message.nullable().default(null),
+  parentMessage: z.nullable(Message).default(null),
   prompts: ChatPrompt.array().default([]),
   gratitudeJournals: z
     .lazy(() => GratitudeJournal.Data)
     .array()
     .default([]),
-  userPrompt: UserPrompt.Data.nullable().default(null),
+  userPrompt: z.nullable(UserPrompt.Data).default(null),
 });
 
 export const ChatGet = z.object({

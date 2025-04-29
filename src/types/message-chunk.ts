@@ -33,7 +33,7 @@ export const MessageChunkReceiveData = z.discriminatedUnion("type", [
   }),
   z.object({
     type: z.literal("usageLimit"),
-    usageLimit: UserUsageLimit.nullable(),
+    usageLimit: z.nullable(UserUsageLimit),
   }),
 ]);
 export type MessageChunkReceiveData = zInfer<typeof MessageChunkReceiveData>;

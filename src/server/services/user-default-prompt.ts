@@ -46,7 +46,7 @@ export class UserDefaultPromptService {
       },
     });
 
-    if (!userDefaultPrompt)
+    if (!userDefaultPrompt) {
       userDefaultPrompt = await tx.userDefaultPrompt.create({
         data: {
           userId,
@@ -57,15 +57,16 @@ export class UserDefaultPromptService {
           userPrompt: { select: UserPrompt.Select },
         },
       });
-
-    userDefaultPrompt = await tx.userDefaultPrompt.update({
-      where: { userId },
-      data: { userPromptId },
-      select: {
-        ...UserDefaultPrompt.Select,
-        userPrompt: { select: UserPrompt.Select },
-      },
-    });
+    } else {
+      userDefaultPrompt = await tx.userDefaultPrompt.update({
+        where: { userId },
+        data: { userPromptId },
+        select: {
+          ...UserDefaultPrompt.Select,
+          userPrompt: { select: UserPrompt.Select },
+        },
+      });
+    }
 
     return userDefaultPrompt;
   }

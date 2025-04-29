@@ -32,11 +32,11 @@ export const MessageSchema = z.object({
   id: MessageId,
   chatId: ChatId,
   role: Role,
-  model: Model.nullable(),
+  model: z.nullable(Model),
   text: z.string(),
   status: MessageStatus,
   isBookmarked: z.boolean(),
-  parentMessageId: MessageId.nullable(),
+  parentMessageId: z.nullable(MessageId),
   createdAt: z.date(),
 });
 export type MessageSchema = zInfer<typeof MessageSchema>;
@@ -56,11 +56,8 @@ export type Message = {
   parentMessage?: Message | null;
 };
 export const MessageBase: z.ZodType<Message> = MessageSchema.extend({
-  chat: z.lazy(() => Chat.nullable().default(null)),
-  parentMessage: z
-    .lazy(() => MessageBase)
-    .nullable()
-    .default(null),
+  chat: z.nullable(z.lazy(() => Chat)).default(null),
+  parentMessage: z.nullable(z.lazy(() => MessageBase)).default(null),
 });
 export const Message = MessageBase;
 

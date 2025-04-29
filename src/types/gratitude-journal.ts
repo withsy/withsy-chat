@@ -22,10 +22,7 @@ export type Data = {
   chat?: Chat | null;
 };
 export const Data: z.ZodType<Data> = Schema.extend({
-  chat: z
-    .lazy(() => Chat)
-    .nullable()
-    .default(null),
+  chat: z.nullable(z.lazy(() => Chat)).default(null),
 });
 
 export const StartChat = z.object({
@@ -42,7 +39,7 @@ export type RecentJournal = zInfer<typeof RecentJournal>;
 export const Stats = z.object({
   recentJournals: RecentJournal.array(),
   currentStreak: z.number(),
-  todayJournal: Data.nullable(),
+  todayJournal: z.nullable(Data),
 });
 export type Stats = zInfer<typeof Stats>;
 
