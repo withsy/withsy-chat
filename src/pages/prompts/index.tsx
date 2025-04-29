@@ -2,37 +2,52 @@ import { PartialLoading } from "@/components/Loading";
 import { EditPromptModal } from "@/components/prompts/EditPromptModal";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@/context/UserContext";
-import { useState } from "react";
-import type { Schema } from "@/types/user-prompt";
 import { CollapseButton } from "@/components/CollapseButton";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 import { PromptCard } from "@/components/prompts/PromptCard";
-
-const samplePrompts = [
-  {
-    id: "1",
-    title: "Email Reply Template",
-    text: "Write a polite and professional reply to the email below.Write a polite and professional reply to the email below.Write a polite and professional reply to the email below.Write a polite and professional reply to the email below.Write a polite and professional reply to the email below.Write a polite and professional reply to the email below.Write a polite and professional reply to the email below.Write a polite and professional reply to the email below.Write a polite and professional reply to the email below.Write a polite and professional reply to the email below.Write a polite and professional reply to the email below.Write a polite and professional reply to the email below.Write a polite and professional reply to the email below.Write a polite and professional reply to the email below.Write a polite and professional reply to the email below.",
-    isStarred: true,
-    updatedAt: new Date("2025-03-01T10:00:00Z"),
-  },
-  {
-    id: "2",
-    title: "Brainstorm Ideas",
-    text: "Help me brainstorm 10 creative ideas.",
-    isStarred: false,
-    updatedAt: new Date("2025-03-05T14:30:00Z"),
-  },
-];
+import { useState } from "react";
+import { trpc } from "@/lib/trpc";
+import { v4 as uuid } from "uuid";
 
 function PromptsPage() {
   const { user } = useUser();
   const { collapsed } = useSidebarStore();
 
-  const [prompts, setPrompts] = useState(samplePrompts);
-  const [editPrompt, setEditPrompt] = useState<Schema | null>(null);
+  const {
+    data: prompts,
+    refetch: refetchPrompts,
+    isLoading: isLoadingPrompts,
+  } = trpc.userPrompt.list.useQuery();
+  const {
+    data: defaultPrompt,
+    refetch: refetchDefaultPrompt,
+    isLoading: isLoadingDefaultPrompt,
+  } = trpc.userDefaultPrompt.get.useQuery(undefined, {
+    retry: false,
+  });
 
-  if (!user) {
+  const createPrompt = trpc.userPrompt.create.useMutation({
+    onSuccess: () => refetchPrompts(),
+  });
+
+  const updatePrompt = trpc.userPrompt.update.useMutation({
+    onSuccess: () => refetchPrompts(),
+  });
+
+  const updateDefaultPrompt = trpc.userDefaultPrompt.update.useMutation({
+    onSuccess: () => refetchDefaultPrompt(),
+  });
+
+  const [editPrompt, setEditPrompt] = useState<{
+    id: string;
+    title: string;
+    text: string;
+    isStarred: boolean;
+    updatedAt: Date;
+    isDefault?: boolean;
+  } | null>(null);
+
+  if (!user || isLoadingPrompts || isLoadingDefaultPrompt) {
     return <PartialLoading />;
   }
 
@@ -73,15 +88,25 @@ function PromptsPage() {
           </p>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          {prompts.map((prompt) => (
+          {defaultPrompt?.userPrompt && (
             <PromptCard
-              key={prompt.id}
-              prompt={prompt}
+              key={defaultPrompt.userPrompt.id}
+              prompt={defaultPrompt.userPrompt}
               themeColor={themeColor}
-              onClick={setEditPrompt}
+              onClick={() =>
+                setEditPrompt({
+                  id: defaultPrompt.userPrompt!.id,
+                  title: defaultPrompt.userPrompt!.title,
+                  text: defaultPrompt.userPrompt!.text,
+                  isStarred: defaultPrompt.userPrompt!.isStarred,
+                  updatedAt: new Date(defaultPrompt.userPrompt!.updatedAt),
+                  isDefault: true,
+                })
+              }
             />
-          ))}
+          )}
         </div>
+
         <div>
           <h1 className="text-2xl font-semibold text-black">Prompts</h1>
           <p className="text-sm text-muted-foreground">
@@ -90,7 +115,7 @@ function PromptsPage() {
           </p>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          {prompts.map((prompt) => (
+          {prompts?.map((prompt) => (
             <PromptCard
               key={prompt.id}
               prompt={prompt}
@@ -99,21 +124,39 @@ function PromptsPage() {
             />
           ))}
         </div>
+
         {editPrompt && (
           <EditPromptModal
             prompt={editPrompt}
             onClose={() => setEditPrompt(null)}
             onSave={(savedPrompt) => {
-              setPrompts((prev) => {
-                const existing = prev.find((p) => p.id === savedPrompt.id);
-                if (existing) {
-                  return prev.map((p) =>
-                    p.id === savedPrompt.id ? savedPrompt : p
-                  );
+              if (editPrompt.isDefault) {
+                updatePrompt.mutate({
+                  userPromptId: savedPrompt.id,
+                  title: savedPrompt.title,
+                  text: savedPrompt.text,
+                  isStarred: savedPrompt.isStarred,
+                });
+                updateDefaultPrompt.mutate({
+                  userPromptId: savedPrompt.id,
+                });
+              } else {
+                const isNew = !prompts?.some((p) => p.id === savedPrompt.id);
+                if (isNew) {
+                  createPrompt.mutate({
+                    title: savedPrompt.title,
+                    text: savedPrompt.text,
+                    idempotencyKey: uuid(),
+                  });
                 } else {
-                  return [...prev, savedPrompt];
+                  updatePrompt.mutate({
+                    userPromptId: savedPrompt.id,
+                    title: savedPrompt.title,
+                    text: savedPrompt.text,
+                    isStarred: savedPrompt.isStarred,
+                  });
                 }
-              });
+              }
               setEditPrompt(null);
             }}
           />
