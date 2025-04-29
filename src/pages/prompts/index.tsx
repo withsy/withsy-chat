@@ -113,7 +113,7 @@ function PromptsPage() {
         <div>
           <h1 className="text-2xl font-semibold text-black">Default</h1>
           <p className="text-sm text-muted-foreground">
-            These prompts are automatically applied to all chats by default, and
+            This prompt is automatically applied to all chats by default, and
             each user can set only one default prompt.
           </p>
         </div>
@@ -134,7 +134,6 @@ function PromptsPage() {
                 })
               }
               onToggleStar={toggleStarPrompt}
-              // onMakeDefault={makeDefaultPrompt}
               onDelete={(promptId) => {
                 deletePrompt.mutate({ userPromptId: promptId });
               }}

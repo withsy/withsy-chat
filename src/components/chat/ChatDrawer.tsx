@@ -13,6 +13,8 @@ import { PartialError } from "../Error";
 import { PartialLoading } from "../Loading";
 import { Drawer, DrawerContent } from "../ui/drawer";
 import ChatDrawerHeader from "./ChatDrawerHeader";
+import { PromptCard } from "../prompts/PromptCard";
+import { Button } from "../ui/button";
 
 type ChatDrawerProps = {
   chat: Chat | null;
@@ -64,6 +66,8 @@ export const ChatDrawer = ({ chat, savedMessages }: ChatDrawerProps) => {
     body = <SavedMessages messages={savedMessages ?? []} />;
   } else if (openDrawer === "branches") {
     body = <Branches chatBranchList={chatBranchList} chat={chat} />;
+  } else if (openDrawer === "prompt") {
+    body = <Prompts chat={chat} />;
   } else {
     body = <div className="text-sm text-muted-foreground">No content</div>;
   }
@@ -77,7 +81,7 @@ export const ChatDrawer = ({ chat, savedMessages }: ChatDrawerProps) => {
           else setOpenDrawer(openDrawer);
         }}
       >
-        <DrawerContent className="h-[80%] rounded-t-2xl p-4">
+        <DrawerContent className="h-full rounded-t-2xl flex flex-col">
           {ready && body}
         </DrawerContent>
       </Drawer>
@@ -87,7 +91,7 @@ export const ChatDrawer = ({ chat, savedMessages }: ChatDrawerProps) => {
   return (
     <div
       className={cn(
-        "h-full transition-all duration-300",
+        "h-full transition-all duration-300 pb-15",
         isDrawerOpen ? "w-[30%] border-l" : "w-0 overflow-hidden"
       )}
     >
@@ -100,6 +104,74 @@ export const ChatDrawer = ({ chat, savedMessages }: ChatDrawerProps) => {
   );
 };
 
+function Prompts({ chat }: { chat: Chat | null }) {
+  const { data: defaultPrompt, isLoading: isLoadingDefaultPrompt } =
+    trpc.userDefaultPrompt.get.useQuery(undefined, {
+      retry: false,
+    });
+  const { data: prompts, isLoading: isLoadingPrompts } =
+    trpc.userPrompt.list.useQuery();
+
+  const [activePromptId, setActivePromptId] = useState<string | null>(null);
+
+  const updateChatPrompt = trpc.chat.update.useMutation({
+    onSuccess: () => {
+      // You can refetch or update any UI state if necessary after the mutation
+    },
+  });
+
+  if (isLoadingDefaultPrompt || isLoadingPrompts) {
+    return <div>Loading...</div>;
+  }
+
+  const handleApplyPrompt = (promptId: string | null) => {
+    if (chat) {
+      updateChatPrompt.mutate({
+        chatId: chat.id,
+        userPromptId: promptId,
+      });
+      setActivePromptId(promptId);
+    }
+  };
+
+  return (
+    <div className="overflow-y-auto max-h-[100%] flex flex-col space-y-4 p-4">
+      <div className="space-y-4">
+        {defaultPrompt?.userPrompt && (
+          <>
+            <p className="text-sm text-muted-foreground">
+              This prompt is automatically applied to all chats by default, and
+              each user can set only one default prompt.
+            </p>
+            <PromptCard
+              key={defaultPrompt.userPromptId}
+              prompt={defaultPrompt.userPrompt}
+              themeColor="black"
+              onClick={() => handleApplyPrompt(defaultPrompt.userPromptId)}
+            />
+          </>
+        )}
+        {prompts && (
+          <p className="text-sm text-muted-foreground">
+            Apply the prompt to this chat by clicking the button.
+          </p>
+        )}
+        {prompts
+          ?.filter((p) => p.id !== defaultPrompt?.userPrompt?.id)
+          .map((prompt) => (
+            <PromptCard
+              key={prompt.id}
+              prompt={prompt}
+              themeColor="black"
+              onClick={() => handleApplyPrompt(prompt.id)}
+              isDrawer={true}
+            />
+          ))}
+      </div>
+    </div>
+  );
+}
+
 function SavedMessages({ messages }: { messages: Message[] }) {
   if (messages.length === 0) {
     return (
@@ -110,7 +182,7 @@ function SavedMessages({ messages }: { messages: Message[] }) {
   }
 
   return (
-    <div className="overflow-y-auto max-h-[80%] m-2 flex flex-col gap-y-4 bg-transparent">
+    <div className="overflow-y-auto max-h-[100%] m-2 flex flex-col gap-y-4 bg-transparent">
       <span className="text-sm select-none">
         {"Here you can find the messages you've saved from this chat."}
       </span>
@@ -182,7 +254,7 @@ function Branches({
       );
     }
     return (
-      <div className="overflow-y-auto max-h-[80%] m-2 flex flex-col gap-y-4 bg-transparent">
+      <div className="overflow-y-auto max-h-[100%] m-2 flex flex-col gap-y-4 bg-transparent">
         {originalChat}
         <div className="flex gap-2 items-center font-semibold text-sm select-none">
           <FolderGit2 size={16} />

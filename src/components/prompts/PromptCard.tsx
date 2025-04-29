@@ -14,6 +14,7 @@ interface PromptCardProps {
   onDelete?: (promptId: string) => void;
   onToggleStar?: (prompt: Schema) => void;
   onMakeDefault?: (promptId: string) => void;
+  isDrawer?: boolean;
 }
 
 export function PromptCard({
@@ -23,6 +24,7 @@ export function PromptCard({
   onDelete,
   onToggleStar,
   onMakeDefault,
+  isDrawer,
 }: PromptCardProps) {
   return (
     <div className="p-4 rounded-lg border shadow-sm hover:shadow-md transition relative group">
@@ -32,14 +34,18 @@ export function PromptCard({
       >
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <button className="p-1 hover:bg-muted rounded">
-              <MoreVertical size={16} />
-            </button>
+            {(onToggleStar || onMakeDefault || onDelete) && (
+              <button className="p-1 hover:bg-muted rounded">
+                <MoreVertical size={16} />
+              </button>
+            )}
           </DropdownMenuTrigger>
           <DropdownMenuContent side="bottom" align="end">
-            <DropdownMenuItem onClick={() => onToggleStar?.(prompt)}>
-              {prompt.isStarred ? "Unstar" : "Star"}
-            </DropdownMenuItem>
+            {onToggleStar && (
+              <DropdownMenuItem onClick={() => onToggleStar?.(prompt)}>
+                {prompt.isStarred ? "Unstar" : "Star"}
+              </DropdownMenuItem>
+            )}
             {onMakeDefault && (
               <DropdownMenuItem onClick={() => onMakeDefault?.(prompt.id)}>
                 Make Default
@@ -58,7 +64,7 @@ export function PromptCard({
       </div>
 
       <div
-        className="h-[120px] overflow-hidden text-sm whitespace-pre-wrap cursor-pointer"
+        className={`h-[120px] overflow-hidden text-sm whitespace-pre-wrap cursor-pointer`}
         onClick={() => onClick(prompt)}
       >
         {prompt.text}
