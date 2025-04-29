@@ -43,12 +43,14 @@ export function PromptCard({
             <DropdownMenuItem onClick={() => onMakeDefault?.(prompt.id)}>
               Make Default
             </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => onDelete?.(prompt.id)}
-              className="text-red-500"
-            >
-              Delete
-            </DropdownMenuItem>
+            {onDelete && (
+              <DropdownMenuItem
+                onClick={() => onDelete?.(prompt.id)}
+                className="text-red-500"
+              >
+                Delete
+              </DropdownMenuItem>
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
