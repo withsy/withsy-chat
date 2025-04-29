@@ -65,7 +65,7 @@ export const ChatUpdate = z.object({
   chatId: ChatId,
   title: z.string().optional(),
   isStarred: z.boolean().optional(),
-  userPromptId: UserPromptId.optional(),
+  userPromptId: z.optional(z.nullable(UserPromptId)),
 });
 export type ChatUpdate = zInfer<typeof ChatUpdate>;
 
