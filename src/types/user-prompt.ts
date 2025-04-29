@@ -43,3 +43,8 @@ export const Update = z.object({
   isStarred: z.boolean(),
 });
 export type Update = zInfer<typeof Update>;
+
+export const Delete = z.object({
+  userPromptId: UserPromptId,
+});
+export type Delete = zInfer<typeof Delete>;

@@ -9,7 +9,7 @@ export const Select = {
 } satisfies Prisma.UserDefaultPromptSelect;
 
 export const Schema = z.object({
-  userPromptId: UserPromptId,
+  userPromptId: UserPromptId.nullable(),
 });
 export type Schema = zInfer<typeof Schema>;
 const _ = {} satisfies Omit<Schema, keyof typeof Select>;

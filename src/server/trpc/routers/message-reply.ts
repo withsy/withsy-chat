@@ -6,7 +6,7 @@ export const messageReplyRouter = t.router({
   regenerate: publicProcedure
     .input(MessageReplyRegenerate)
     .output(Message)
-    .mutation(async (opts) =>
+    .mutation((opts) =>
       opts.ctx.service.messageReply
         .regenerate(opts.ctx.userId, opts.input)
         .then((x) => Message.parse(x))

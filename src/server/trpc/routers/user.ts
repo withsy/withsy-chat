@@ -10,13 +10,13 @@ import { publicProcedure, t } from "../server";
 export const userRouter = t.router({
   get: publicProcedure
     .output(User)
-    .query(async (opts) =>
+    .query((opts) =>
       opts.ctx.service.user.get(opts.ctx.userId).then((x) => User.parse(x))
     ),
   ensure: publicProcedure
     .input(UserEnsure)
     .output(User)
-    .mutation(async (opts) =>
+    .mutation((opts) =>
       opts.ctx.service.user
         .ensure(opts.ctx.userId, opts.input)
         .then((x) => User.parse(x))
@@ -24,7 +24,7 @@ export const userRouter = t.router({
   updatePrefs: publicProcedure
     .input(UserUpdatePrefs)
     .output(UserUpdatePrefsOutput)
-    .mutation(async (opts) =>
+    .mutation((opts) =>
       opts.ctx.service.user
         .updatePrefs(opts.ctx.userId, opts.input)
         .then((x) => UserUpdatePrefsOutput.parse(x))
@@ -32,7 +32,7 @@ export const userRouter = t.router({
   update: publicProcedure
     .input(UserUpdate)
     .output(User)
-    .mutation(async (opts) =>
+    .mutation((opts) =>
       opts.ctx.service.user
         .update(opts.ctx.userId, opts.input)
         .then((x) => User.parse(x))

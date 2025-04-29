@@ -11,7 +11,7 @@ import { publicProcedure, t } from "../server";
 export const chatRouter = t.router({
   list: publicProcedure
     .output(Chat.array())
-    .query(async (opts) =>
+    .query((opts) =>
       opts.ctx.service.chat
         .list(opts.ctx.userId)
         .then((xs) => xs.map((x) => Chat.parse(x)))
@@ -19,7 +19,7 @@ export const chatRouter = t.router({
   get: publicProcedure
     .input(ChatGet)
     .output(Chat)
-    .query(async (opts) =>
+    .query((opts) =>
       opts.ctx.service.chat
         .get(opts.ctx.userId, opts.input)
         .then((x) => Chat.parse(x))
@@ -27,7 +27,7 @@ export const chatRouter = t.router({
   update: publicProcedure
     .input(ChatUpdate)
     .output(Chat)
-    .mutation(async (opts) =>
+    .mutation((opts) =>
       opts.ctx.service.chat
         .update(opts.ctx.userId, opts.input)
         .then((x) => Chat.parse(x))
@@ -35,7 +35,7 @@ export const chatRouter = t.router({
   delete: publicProcedure
     .input(ChatDelete)
     .output(Chat)
-    .mutation(async (opts) =>
+    .mutation((opts) =>
       opts.ctx.service.chat
         .delete(opts.ctx.userId, opts.input)
         .then((x) => Chat.parse(x))
@@ -43,7 +43,7 @@ export const chatRouter = t.router({
   start: publicProcedure
     .input(ChatStart)
     .output(ChatStartOutput)
-    .mutation(async (opts) =>
+    .mutation((opts) =>
       opts.ctx.service.chat
         .start(opts.ctx.userId, opts.input)
         .then((x) => ChatStartOutput.parse(x))

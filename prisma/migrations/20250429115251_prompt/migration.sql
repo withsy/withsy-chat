@@ -30,6 +30,7 @@ CREATE TABLE "user_prompts" (
     "is_starred" BOOLEAN NOT NULL DEFAULT false,
     "created_at" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "deleted_at" TIMESTAMPTZ(6),
 
     CONSTRAINT "user_prompts_pkey" PRIMARY KEY ("id")
 );

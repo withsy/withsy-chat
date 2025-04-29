@@ -3,6 +3,7 @@ import type { UserId } from "@/types/user";
 import { uuidv7 } from "uuidv7";
 import type { ServiceRegistry } from "../service-registry";
 import { IdempotencyInfoService } from "./idempotency-info";
+import { UserDefaultPromptService } from "./user-default-prompt";
 
 export class UserPromptService {
   constructor(private readonly service: ServiceRegistry) {}
@@ -10,7 +11,7 @@ export class UserPromptService {
   async get(userId: UserId, input: UserPrompt.Get) {
     const { userPromptId } = input;
     const res = await this.service.db.userPrompt.findUniqueOrThrow({
-      where: { userId, id: userPromptId },
+      where: { userId, deletedAt: null, id: userPromptId },
       select: UserPrompt.Select,
     });
 
@@ -19,7 +20,7 @@ export class UserPromptService {
 
   async list(userId: UserId) {
     const res = await this.service.db.userPrompt.findMany({
-      where: { userId },
+      where: { userId, deletedAt: null },
       select: UserPrompt.Select,
     });
 
@@ -45,12 +46,23 @@ export class UserPromptService {
   async update(userId: UserId, input: UserPrompt.Update) {
     const { userPromptId, title, text, isStarred } = input;
     const res = await this.service.db.userPrompt.update({
-      where: { userId, id: userPromptId },
+      where: { userId, deletedAt: null, id: userPromptId },
       data: { title, text, isStarred },
       select: UserPrompt.Select,
     });
 
     return res;
+  }
+
+  async delete(userId: UserId, input: UserPrompt.Delete) {
+    const { userPromptId } = input;
+    await this.service.db.$transaction(async (tx) => {
+      await UserDefaultPromptService.update(tx, { userId, userPromptId: null });
+      await tx.userPrompt.update({
+        where: { userId, deletedAt: null, id: userPromptId },
+        data: { deletedAt: new Date() },
+      });
+    });
   }
 
   static generateId() {

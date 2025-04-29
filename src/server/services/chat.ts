@@ -57,7 +57,7 @@ export class ChatService {
     const { chatId, title, isStarred, userPromptId } = input;
     const res = await this.service.db.$transaction(async (tx) => {
       await tx.userPrompt.findUniqueOrThrow({
-        where: { userId, id: userPromptId },
+        where: { userId, deletedAt: null, id: userPromptId },
       });
 
       const chat = await tx.chat.update({

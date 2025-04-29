@@ -11,7 +11,7 @@ export const messageRouter = t.router({
   list: publicProcedure
     .input(MessageList)
     .output(Message.array())
-    .query(async (opts) =>
+    .query((opts) =>
       opts.ctx.service.message
         .list(opts.ctx.userId, opts.input)
         .then((xs) => xs.map((x) => Message.parse(x)))
@@ -19,7 +19,7 @@ export const messageRouter = t.router({
   update: publicProcedure
     .input(MessageUpdate)
     .output(Message)
-    .mutation(async (opts) =>
+    .mutation((opts) =>
       opts.ctx.service.message
         .update(opts.ctx.userId, opts.input)
         .then((x) => Message.parse(x))
@@ -27,7 +27,7 @@ export const messageRouter = t.router({
   send: publicProcedure
     .input(MessageSend)
     .output(MessageSendOutput)
-    .mutation(async (opts) =>
+    .mutation((opts) =>
       opts.ctx.service.message
         .send(opts.ctx.userId, opts.input)
         .then((x) => MessageSendOutput.parse(x))

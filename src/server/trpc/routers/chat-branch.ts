@@ -6,7 +6,7 @@ export const chatBranchRouter = t.router({
   list: publicProcedure
     .input(ChatBranchList)
     .output(Chat.array())
-    .query(async (opts) =>
+    .query((opts) =>
       opts.ctx.service.chatBranch
         .list(opts.ctx.userId, opts.input)
         .then((xs) => xs.map((x) => Chat.parse(x)))
@@ -14,7 +14,7 @@ export const chatBranchRouter = t.router({
   start: publicProcedure
     .input(ChatBranchStart)
     .output(Chat)
-    .mutation(async (opts) =>
+    .mutation((opts) =>
       opts.ctx.service.chatBranch
         .start(opts.ctx.userId, opts.input)
         .then((x) => Chat.parse(x))

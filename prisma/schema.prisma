@@ -66,6 +66,7 @@ model UserPrompt {
   isStarred      Boolean             @default(false) @map("is_starred")
   createdAt      DateTime            @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt      DateTime            @default(now()) @map("updated_at") @db.Timestamptz(6)
+  deletedAt      DateTime?           @map("deleted_at") @db.Timestamptz(6)
   defaultPrompts UserDefaultPrompt[] @relation("user_default_prompts.user_prompt_id")
   chats          Chat[]              @relation("chats.user_prompt_id")
 

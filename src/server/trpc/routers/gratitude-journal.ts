@@ -5,7 +5,7 @@ import { publicProcedure, t } from "../server";
 export const gratitudeJournalRouter = t.router({
   getStats: publicProcedure
     .output(GratitudeJournal.Stats)
-    .query(async (opts) =>
+    .query((opts) =>
       opts.ctx.service.gratitudeJournal
         .getStats(opts.ctx.userId)
         .then((x) => GratitudeJournal.Stats.parse(x))
@@ -13,7 +13,7 @@ export const gratitudeJournalRouter = t.router({
   getJournal: publicProcedure
     .input(GratitudeJournal.GetJournal)
     .output(GratitudeJournal.Data)
-    .query(async (opts) =>
+    .query((opts) =>
       opts.ctx.service.gratitudeJournal
         .getJournal(opts.ctx.userId, opts.input)
         .then((x) => GratitudeJournal.Data.parse(x))
@@ -21,7 +21,7 @@ export const gratitudeJournalRouter = t.router({
   startChat: publicProcedure
     .input(GratitudeJournal.StartChat)
     .output(ChatStartOutput)
-    .mutation(async (opts) =>
+    .mutation((opts) =>
       opts.ctx.service.gratitudeJournal
         .startChat(opts.ctx.userId, opts.input)
         .then((x) => ChatStartOutput.parse(x))
