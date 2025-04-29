@@ -3,6 +3,7 @@ import AppProviders from "@/context/AppProviders";
 import { useSidebarInitializer } from "@/hooks/useSidebarInitializer";
 import { trpc } from "@/lib/trpc";
 import "@/styles/globals.css";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import type { AppProps, AppType } from "next/app";
 import Head from "next/head";
 import { useRouter } from "next/router";
@@ -33,6 +34,7 @@ const MyApp: AppType = ({
         </Layout>
       )}
       <Sonner position="bottom-right" />
+      <ReactQueryDevtools />
     </AppProviders>
   );
 };

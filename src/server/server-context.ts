@@ -1,5 +1,4 @@
-import { UserSession, type UserId } from "@/types/user";
-import type { Session } from "next-auth";
+import { type UserId } from "@/types/user";
 import { service, type ServiceRegistry } from "./service-registry";
 
 export type ServerContext = {

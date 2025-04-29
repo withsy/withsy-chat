@@ -27,7 +27,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
   );
   const [user, setUser] = useState<User | null>(null);
 
-  const userEnsure = trpc.user.ensure.useMutation({
+  const { mutate: userEnsure } = trpc.user.ensure.useMutation({
     onSuccess: (data) => setUser(data),
   });
 
@@ -90,8 +90,8 @@ export function UserProvider({ children }: { children: ReactNode }) {
       void e;
     }
 
-    userEnsure.mutate({ aiLanguage, timezone });
-  }, [session]);
+    userEnsure({ aiLanguage, timezone });
+  }, [session, userEnsure]);
 
   const setUserPrefsAndSave: SetUserPrefsAndSave = (input) => {
     updateUserPrefs.mutate(input);
