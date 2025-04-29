@@ -77,7 +77,7 @@ function PromptsPage() {
   return (
     <div className="flex h-full relative">
       <div
-        className="absolute top-0 left-0 w-full h-[50px] px-4 flex items-center justify-between"
+        className="absolute top-0 left-0 w-full h-[50px] px-4 flex items-center justify-between select-none"
         style={headerStyle}
       >
         <div>{collapsed && <CollapseButton />}</div>
