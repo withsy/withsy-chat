@@ -21,7 +21,7 @@ export function PromptCard({ prompt, themeColor, onClick }: PromptCardProps) {
         {prompt.isStarred && <Star size={14} fill={`rgb(${themeColor})`} />}
         <span>{prompt.title}</span>
       </div>
-      <div className="text-xs text-gray-400 mt-1 flex items-center gap-1">
+      <div className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
         {new Date(prompt.updatedAt).toLocaleDateString()}
       </div>
     </div>

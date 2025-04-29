@@ -64,7 +64,31 @@ function PromptsPage() {
           Add
         </Button>
       </div>
-      <div className="flex-1 p-6 mt-[50px] select-none overflow-y-auto">
+      <div className="flex-1 p-6 mt-[50px] select-none overflow-y-auto space-y-6">
+        <div>
+          <h1 className="text-2xl font-semibold text-black">Default</h1>
+          <p className="text-sm text-muted-foreground">
+            These prompts are automatically applied to all chats by default, and
+            each user can set only one default prompt.
+          </p>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+          {prompts.map((prompt) => (
+            <PromptCard
+              key={prompt.id}
+              prompt={prompt}
+              themeColor={themeColor}
+              onClick={setEditPrompt}
+            />
+          ))}
+        </div>
+        <div>
+          <h1 className="text-2xl font-semibold text-black">Prompts</h1>
+          <p className="text-sm text-muted-foreground">
+            These prompts can be individually selected and applied to specific
+            chats.
+          </p>
+        </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           {prompts.map((prompt) => (
             <PromptCard
