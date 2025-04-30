@@ -99,7 +99,7 @@ export class ModelRouteService {
         .with("google-gen-ai", () =>
           this.service.googleGenAi.sendMessageToAi(input)
         )
-        .with("open-ai", () => this.service.openAi.sendMessageToAi(input))
+        // .with("open-ai", () => this.service.openAi.sendMessageToAi(input))
         .with("x-ai", () => this.service.xAi.sendMessageToAi(input))
         .exhaustive();
 

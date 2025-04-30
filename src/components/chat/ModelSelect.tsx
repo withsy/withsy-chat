@@ -1,31 +1,43 @@
 import { useSelectedModelStore } from "@/stores/useSelectedModelStore";
 import { useSidebarStore } from "@/stores/useSidebarStore";
-import type { Model } from "@/types/model";
+import { Model } from "@/types/model";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { ModelDropdown } from "./ModelDropdown";
 import { ModelSelectButton } from "./ModelSelectButton";
 
-const models: {
-  label: string;
-  value: Model;
-  description: string;
-}[] = [
-  {
+const modelMap = {
+  "gemini-2.0-flash": {
     label: "gemini-2.0-flash",
-    value: "gemini-2.0-flash",
     description: "Fast and lightweight",
   },
-  {
+  "gemini-1.5-pro": {
     label: "gemini-1.5-pro",
-    value: "gemini-1.5-pro",
     description: "Strong reasoning, broad context understanding",
   },
-  {
-    label: "gpt-4o",
-    value: "gpt-4o",
-    description: "High accuracy, multi-modal data processing",
+  // "gpt-4o": {
+  //   label: "gpt-4o",
+  //   description: "High accuracy, multi-modal data processing",
+  // },
+  "grok-3-beta": {
+    label: "grok-3",
+    description: "Latest version with advanced reasoning capabilities",
   },
-];
+  "grok-3-mini-beta": {
+    label: "grok-3-mini",
+    description: "Optimized for efficiency while maintaining quality",
+  },
+  "grok-3-mini-fast-beta": {
+    label: "grok-3-mini-fast",
+    description: "Fastest response times with balanced performance",
+  },
+} satisfies Record<Model, { label: string; description: string }>;
+
+export type ModelInfo = { label: string; value: Model; description: string };
+
+const models: ModelInfo[] = Object.entries(modelMap).map(([k, v]) => ({
+  ...v,
+  value: Model.parse(k),
+}));
 
 interface ModelSelectProps {
   description?: string;
