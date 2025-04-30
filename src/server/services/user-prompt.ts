@@ -79,6 +79,10 @@ export class UserPromptService {
     });
   }
 
+  async onHardDeleteTask() {
+    // TODO
+  }
+
   static generateId() {
     return uuidv7();
   }

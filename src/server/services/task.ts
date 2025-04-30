@@ -10,9 +10,13 @@ export class TaskService {
       model_route_send_message_to_ai: (input) =>
         service.modelRoute.onSendMessageToAiTask(input),
       message_cleanup_zombies: () => service.message.onCleanupZombiesTask(),
+      chat_hard_delete: () => service.chat.onHardDeleteTask(),
+      user_prompt_hard_delete: () => service.userPrompt.onHardDeleteTask(),
     };
     const cronTasks: CronTask[] = [
       { cron: "*/5 * * * *", key: "message_cleanup_zombies" },
+      { cron: "0 0 * * *", key: "chat_hard_delete" },
+      { cron: "0 0 * * *", key: "user_prompt_hard_delete" },
     ];
 
     this.runner = (async () => {

@@ -149,6 +149,10 @@ export class ChatService {
     };
   }
 
+  async onHardDeleteTask() {
+    // TODO
+  }
+
   static async createChat(tx: Tx, input: { userId: UserId; title: string }) {
     const { userId, title } = input;
     const res = await tx.chat.create({
