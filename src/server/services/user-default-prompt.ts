@@ -8,12 +8,9 @@ export class UserDefaultPromptService {
   constructor(private readonly service: ServiceRegistry) {}
 
   async get(userId: UserId) {
-    const res = await this.service.db.userDefaultPrompt.findUnique({
-      where: { userId },
-      select: {
-        ...UserDefaultPrompt.Select,
-        userPrompt: { select: UserPrompt.Select },
-      },
+    const res = await this.service.db.$transaction(async (tx) => {
+      const res = await UserDefaultPromptService.get(tx, { userId });
+      return res;
     });
 
     return res;
@@ -28,6 +25,19 @@ export class UserDefaultPromptService {
       });
 
       return res;
+    });
+
+    return res;
+  }
+
+  static async get(tx: Tx, input: { userId: UserId }) {
+    const { userId } = input;
+    const res = await tx.userDefaultPrompt.findUnique({
+      where: { userId },
+      select: {
+        ...UserDefaultPrompt.Select,
+        userPrompt: { select: UserPrompt.Select },
+      },
     });
 
     return res;

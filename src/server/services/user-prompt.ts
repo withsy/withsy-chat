@@ -57,7 +57,21 @@ export class UserPromptService {
   async delete(userId: UserId, input: UserPrompt.Delete) {
     const { userPromptId } = input;
     await this.service.db.$transaction(async (tx) => {
-      await UserDefaultPromptService.update(tx, { userId, userPromptId: null });
+      const userDefaultPrompt = await UserDefaultPromptService.get(tx, {
+        userId,
+      });
+
+      if (
+        userDefaultPrompt &&
+        userDefaultPrompt.userPromptId &&
+        userDefaultPrompt.userPromptId === userPromptId
+      ) {
+        await UserDefaultPromptService.update(tx, {
+          userId,
+          userPromptId: null,
+        });
+      }
+
       await tx.userPrompt.update({
         where: { userId, deletedAt: null, id: userPromptId },
         data: { deletedAt: new Date() },
