@@ -6,6 +6,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import type { Schema } from "@/types/user-prompt";
+import { trpc } from "@/lib/trpc";
+import { toast } from "sonner";
 
 interface PromptCardProps {
   prompt: Schema;
@@ -14,7 +16,7 @@ interface PromptCardProps {
   onDelete?: (promptId: string) => void;
   onToggleStar?: (prompt: Schema) => void;
   onMakeDefault?: (promptId: string) => void;
-  isDrawer?: boolean;
+  chatId?: string;
 }
 
 export function PromptCard({
@@ -24,8 +26,20 @@ export function PromptCard({
   onDelete,
   onToggleStar,
   onMakeDefault,
-  isDrawer,
+  chatId,
 }: PromptCardProps) {
+  const updateChat = trpc.chat.update.useMutation({
+    onSuccess: () => {
+      toast.success("Prompt applied", {
+        description: "This prompt has been set as active.",
+      });
+    },
+    onError: (error) => {
+      toast.error("Failed to apply prompt", {
+        description: error.message ?? "Something went wrong.",
+      });
+    },
+  });
   return (
     <div className="p-4 rounded-lg border shadow-sm hover:shadow-md transition relative group">
       <div
@@ -64,17 +78,30 @@ export function PromptCard({
       </div>
 
       <div
-        className={`h-[120px] overflow-hidden text-sm whitespace-pre-wrap cursor-pointer`}
+        className="h-[120px] overflow-hidden text-sm whitespace-pre-wrap cursor-pointer"
         onClick={() => onClick(prompt)}
       >
         {prompt.text}
       </div>
-      <div className="mt-4 font-semibold truncate flex items-center gap-1">
-        {prompt.isStarred && <Star size={14} fill={`rgb(${themeColor})`} />}
-        <span>{prompt.title}</span>
-      </div>
-      <div className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
-        {new Date(prompt.updatedAt).toLocaleDateString()}
+      <div className="mt-4 font-semibold flex justify-between items-center gap-1">
+        <div className="truncate flex items-center gap-1">
+          {prompt.isStarred && <Star size={14} fill={`rgb(${themeColor})`} />}
+          <span>{prompt.title}</span>
+        </div>
+        {chatId && (
+          <button
+            className="text-xs font-medium text-primary hover:underline"
+            onClick={(e) => {
+              e.stopPropagation();
+              updateChat.mutate({
+                chatId,
+                userPromptId: prompt.id,
+              });
+            }}
+          >
+            Apply
+          </button>
+        )}
       </div>
     </div>
   );

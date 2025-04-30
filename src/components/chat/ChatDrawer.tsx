@@ -184,7 +184,7 @@ function Prompts({ chat }: { chat: Chat | null }) {
               prompt={prompt}
               themeColor="black"
               onClick={() => handleApplyPrompt(prompt.id)}
-              isDrawer={true}
+              chatId={chat?.id}
             />
           ))}
       </div>
