@@ -6,7 +6,6 @@ export const Model = z.enum([
   "gemini-1.5-pro",
   "gpt-4o",
   "grok-3-beta",
-  "grok-3-fast-beta",
   "grok-3-mini-beta",
   "grok-3-mini-fast-beta",
 ]);
@@ -20,7 +19,6 @@ export const ModelProviderMap = {
   "gemini-1.5-pro": "google-gen-ai",
   "gpt-4o": "open-ai",
   "grok-3-beta": "x-ai",
-  "grok-3-fast-beta": "x-ai",
   "grok-3-mini-beta": "x-ai",
   "grok-3-mini-fast-beta": "x-ai",
 } satisfies Record<Model, ModelProvider>;
