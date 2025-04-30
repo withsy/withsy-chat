@@ -112,6 +112,8 @@ function Prompts({ chat }: { chat: Chat | null }) {
   const { data: prompts, isLoading: isLoadingPrompts } =
     trpc.userPrompt.list.useQuery();
 
+  const [isDefaultPromptCollapsed, setIsDefaultPromptCollapsed] =
+    useState(true);
   const [activePromptId, setActivePromptId] = useState<string | null>(null);
 
   const updateChatPrompt = trpc.chat.update.useMutation({
@@ -138,23 +140,41 @@ function Prompts({ chat }: { chat: Chat | null }) {
     <div className="overflow-y-auto max-h-[100%] flex flex-col space-y-4 p-4">
       <div className="space-y-4">
         {defaultPrompt?.userPrompt && (
-          <>
-            <p className="text-sm text-muted-foreground">
-              This prompt is automatically applied to all chats by default, and
-              each user can set only one default prompt.
-            </p>
-            <PromptCard
-              key={defaultPrompt.userPromptId}
-              prompt={defaultPrompt.userPrompt}
-              themeColor="black"
-              onClick={() => handleApplyPrompt(defaultPrompt.userPromptId)}
-            />
-          </>
+          <div>
+            <div
+              className="flex justify-between items-center cursor-pointer select-none"
+              onClick={() => setIsDefaultPromptCollapsed((prev) => !prev)}
+            >
+              <p className="text-sm text-black font-semibold">Default</p>
+              <Button variant="ghost" className="text-xs" size="sm">
+                {isDefaultPromptCollapsed ? "Show" : "Hide"}
+              </Button>
+            </div>
+
+            {!isDefaultPromptCollapsed && (
+              <>
+                <p className="text-sm text-muted-foreground pb-2">
+                  This prompt is automatically applied to all chats by default,
+                  and each user can set only one default prompt.
+                </p>
+                <PromptCard
+                  key={defaultPrompt.userPromptId}
+                  prompt={defaultPrompt.userPrompt}
+                  themeColor="black"
+                  onClick={() => handleApplyPrompt(defaultPrompt.userPromptId)}
+                />
+              </>
+            )}
+          </div>
         )}
+
         {prompts && (
-          <p className="text-sm text-muted-foreground">
-            Apply the prompt to this chat by clicking the button.
-          </p>
+          <>
+            <p className="text-sm text-black font-semibold">Prompts</p>
+            <p className="text-sm text-muted-foreground">
+              Apply the prompt to this chat by clicking the button.
+            </p>
+          </>
         )}
         {prompts
           ?.filter((p) => p.id !== defaultPrompt?.userPrompt?.id)
