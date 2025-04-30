@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { useDrawerStore } from "@/stores/useDrawerStore";
 import { useSelectedModelStore } from "@/stores/useSelectedModelStore";
 import { useSidebarStore } from "@/stores/useSidebarStore";
-import { Chat, ChatStartError } from "@/types/chat";
+import { ChatStartError } from "@/types/chat";
 import { MessageId } from "@/types/id";
 import { MessageSendError, type Message } from "@/types/message";
 import type { UserUsageLimit } from "@/types/user-usage-limit";
@@ -19,14 +19,15 @@ import ChatHeader from "./ChatHeader";
 import { ChatInputBox } from "./ChatInputBox";
 import { ChatMessageList } from "./ChatMessageList";
 import MobileChatHeader from "./MobileChatHeader";
+import { useChatStore } from "@/stores/useChatStore";
 
 type Props = {
-  chat: Chat | null;
   initialMessages: Message[];
   children?: React.ReactNode;
 };
 
-export function ChatSession({ chat, initialMessages, children }: Props) {
+export function ChatSession({ initialMessages, children }: Props) {
+  const { chat } = useChatStore();
   const router = useRouter();
 
   const { isMobile } = useSidebarStore();
@@ -36,7 +37,6 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
   const [streamMessageId, setStreamMessageId] = useState<string | null>(null);
   const [shouldFocusInput, setShouldFocusInput] = useState(false);
   const [usageLimit, setUsageLimit] = useState<UserUsageLimit | null>(null);
-  const stableChat = useMemo(() => chat, [chat]);
 
   const { openDrawer } = useDrawerStore();
 
@@ -72,7 +72,7 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
 
   useEffect(() => {
     setMessages(initialMessages);
-  }, [chat, initialMessages]);
+  }, [initialMessages]);
 
   useEffect(() => {
     setShouldFocusInput(true);
@@ -235,7 +235,6 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
           {(chat || messages.length > 0) && (
             <ChatSessionProvider onRegenerateSuccess={handleRegenerateSuccess}>
               <ChatMessageList
-                chat={stableChat}
                 messages={messages}
                 onToggleSaved={handleToggleSaved}
               />
@@ -254,7 +253,7 @@ export function ChatSession({ chat, initialMessages, children }: Props) {
           </div>
         </div>
       </div>
-      <ChatDrawer chat={chat} savedMessages={savedMessages} />
+      <ChatDrawer savedMessages={savedMessages} />
     </div>
   );
 }

@@ -2,6 +2,8 @@ import { ChatSession } from "@/components/chat/ChatSession";
 import { trpc } from "@/lib/trpc";
 import { PartialError } from "../Error";
 import { PartialLoading } from "../Loading";
+import { useChatStore } from "@/stores/useChatStore";
+import { useEffect } from "react";
 
 type Props = {
   chatId: string;
@@ -12,6 +14,12 @@ export default function ChatView({ chatId }: Props) {
   const messageList = trpc.message.list.useQuery({
     options: { scope: { by: "chat", chatId } },
   });
+  const setChat = useChatStore((state) => state.setChat);
+  useEffect(() => {
+    if (chatGet.data) {
+      setChat(chatGet.data);
+    }
+  }, [chatGet.data, setChat]);
 
   if (chatGet.isLoading) return <PartialLoading />;
   if (chatGet.isError || !chatGet.data)
@@ -21,5 +29,5 @@ export default function ChatView({ chatId }: Props) {
   if (messageList.isError || !messageList.data)
     return <PartialError message="Loading Messages" />;
 
-  return <ChatSession chat={chatGet.data} initialMessages={messageList.data} />;
+  return <ChatSession initialMessages={messageList.data} />;
 }

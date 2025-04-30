@@ -1,5 +1,4 @@
 import { useUser } from "@/context/UserContext";
-import type { Chat } from "@/types/chat";
 import { MessageId } from "@/types/id";
 import { type Message } from "@/types/message";
 import { ChevronsDown } from "lucide-react";
@@ -7,14 +6,15 @@ import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import { ChatBubble } from "./ChatBubble";
 import ChatInformationSystemMessage from "./ChatInformationSystemMessage";
+import { useChatStore } from "@/stores/useChatStore";
 
 type Props = {
-  chat: Chat | null;
   messages: Message[];
   onToggleSaved: (id: string, newValue: boolean) => void;
 };
 
-export function ChatMessageList({ chat, messages, onToggleSaved }: Props) {
+export function ChatMessageList({ messages, onToggleSaved }: Props) {
+  const { chat } = useChatStore();
   const router = useRouter();
   const { user } = useUser();
 

@@ -15,13 +15,14 @@ import { Drawer, DrawerContent } from "../ui/drawer";
 import ChatDrawerHeader from "./ChatDrawerHeader";
 import { PromptCard } from "../prompts/PromptCard";
 import { Button } from "../ui/button";
+import { useChatStore } from "@/stores/useChatStore";
 
 type ChatDrawerProps = {
-  chat: Chat | null;
   savedMessages?: Message[];
 };
 
-export const ChatDrawer = ({ chat, savedMessages }: ChatDrawerProps) => {
+export const ChatDrawer = ({ savedMessages }: ChatDrawerProps) => {
+  const { chat } = useChatStore();
   const { isMobile } = useSidebarStore();
   const { openDrawer, setOpenDrawer } = useDrawerStore();
 
@@ -65,9 +66,9 @@ export const ChatDrawer = ({ chat, savedMessages }: ChatDrawerProps) => {
   } else if (openDrawer === "saved") {
     body = <SavedMessages messages={savedMessages ?? []} />;
   } else if (openDrawer === "branches") {
-    body = <Branches chatBranchList={chatBranchList} chat={chat} />;
+    body = <Branches chatBranchList={chatBranchList} />;
   } else if (openDrawer === "prompt") {
-    body = <Prompts chat={chat} />;
+    body = <Prompts />;
   } else {
     body = <div className="text-sm text-muted-foreground">No content</div>;
   }
@@ -104,7 +105,8 @@ export const ChatDrawer = ({ chat, savedMessages }: ChatDrawerProps) => {
   );
 };
 
-function Prompts({ chat }: { chat: Chat | null }) {
+function Prompts() {
+  const { chat } = useChatStore();
   const { data: defaultPrompt, isLoading: isLoadingDefaultPrompt } =
     trpc.userDefaultPrompt.get.useQuery(undefined, {
       retry: false,
@@ -187,7 +189,6 @@ function Prompts({ chat }: { chat: Chat | null }) {
               prompt={prompt}
               themeColor="black"
               onClick={() => handleApplyPrompt(prompt.id)}
-              chatId={chat?.id}
               active={prompt.id == chat?.userPromptId}
             />
           ))}
@@ -224,13 +225,8 @@ function SavedMessages({ messages }: { messages: Message[] }) {
   );
 }
 
-function Branches({
-  chat,
-  chatBranchList,
-}: {
-  chat: Chat | null;
-  chatBranchList: any;
-}) {
+function Branches({ chatBranchList }: { chatBranchList: any }) {
+  const { chat } = useChatStore();
   const router = useRouter();
   if (chatBranchList.isLoading) {
     return <PartialLoading />;

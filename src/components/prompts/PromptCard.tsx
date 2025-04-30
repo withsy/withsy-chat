@@ -8,6 +8,7 @@ import {
 import type { Schema } from "@/types/user-prompt";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
+import { useChatStore } from "@/stores/useChatStore";
 
 interface PromptCardProps {
   prompt: Schema;
@@ -16,7 +17,6 @@ interface PromptCardProps {
   onDelete?: (promptId: string) => void;
   onToggleStar?: (prompt: Schema) => void;
   onMakeDefault?: (promptId: string) => void;
-  chatId?: string;
   active?: boolean;
 }
 
@@ -27,14 +27,15 @@ export function PromptCard({
   onDelete,
   onToggleStar,
   onMakeDefault,
-  chatId,
   active,
 }: PromptCardProps) {
+  const { chat, updatePromptId } = useChatStore();
   const updateChat = trpc.chat.update.useMutation({
     onSuccess: () => {
       toast.success("Prompt applied", {
         description: "This prompt has been set as active.",
       });
+      updatePromptId(prompt.id);
     },
     onError: (error) => {
       toast.error("Failed to apply prompt", {
@@ -90,13 +91,13 @@ export function PromptCard({
           {prompt.isStarred && <Star size={14} fill={`rgb(${themeColor})`} />}
           <span>{prompt.title}</span>
         </div>
-        {chatId && (
+        {chat?.id && (
           <button
             className="text-xs font-medium text-primary hover:underline"
             onClick={(e) => {
               e.stopPropagation();
               updateChat.mutate({
-                chatId,
+                chatId: chat.id,
                 userPromptId: prompt.id,
               });
             }}
