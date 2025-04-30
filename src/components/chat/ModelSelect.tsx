@@ -32,6 +32,10 @@ const modelMap = {
   },
 } satisfies Record<Model, { label: string; description: string }>;
 
+export function GetModelLabel(model: Model) {
+  return modelMap[model].label;
+}
+
 export type ModelInfo = { label: string; value: Model; description: string };
 
 const models: ModelInfo[] = Object.entries(modelMap).map(([k, v]) => ({
