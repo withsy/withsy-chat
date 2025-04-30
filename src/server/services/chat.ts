@@ -2,6 +2,7 @@ import { GratitudeJournal } from "@/types";
 import {
   ChatDelete,
   ChatGet,
+  ChatRestore,
   ChatSelect,
   ChatStart,
   ChatUpdate,
@@ -24,13 +25,18 @@ export class ChatService {
 
   async list(userId: UserId) {
     const xs = await this.service.db.chat.findMany({
-      where: {
-        userId,
-        deletedAt: null,
-      },
-      orderBy: {
-        createdAt: "asc",
-      },
+      where: { userId, deletedAt: null },
+      orderBy: { id: "asc" },
+      select: ChatSelect,
+    });
+
+    return xs;
+  }
+
+  async listDeleted(userId: UserId) {
+    const xs = await this.service.db.chat.findMany({
+      where: { userId, deletedAt: { not: null } },
+      orderBy: { id: "asc" },
       select: ChatSelect,
     });
 
@@ -93,6 +99,17 @@ export class ChatService {
       data: {
         deletedAt: new Date(),
       },
+      select: ChatSelect,
+    });
+
+    return res;
+  }
+
+  async restore(userId: UserId, input: ChatRestore) {
+    const { chatId } = input;
+    const res = await this.service.db.chat.update({
+      where: { id: chatId, userId, deletedAt: { not: null } },
+      data: { deletedAt: null },
       select: ChatSelect,
     });
 

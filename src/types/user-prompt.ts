@@ -48,3 +48,8 @@ export const Delete = z.object({
   userPromptId: UserPromptId,
 });
 export type Delete = zInfer<typeof Delete>;
+
+export const Restore = z.object({
+  userPromptId: UserPromptId,
+});
+export type Restore = zInfer<typeof Restore>;

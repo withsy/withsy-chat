@@ -74,6 +74,11 @@ export const ChatDelete = z.object({
 });
 export type ChatDelete = zInfer<typeof ChatDelete>;
 
+export const ChatRestore = z.object({
+  chatId: ChatId,
+});
+export type ChatRestore = zInfer<typeof ChatRestore>;
+
 export const ChatStart = z.object({
   idempotencyKey: IdempotencyKey,
   text: z.string(),

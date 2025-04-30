@@ -20,12 +20,23 @@ export class UserPromptService {
   }
 
   async list(userId: UserId) {
-    const res = await this.service.db.userPrompt.findMany({
+    const xs = await this.service.db.userPrompt.findMany({
       where: { userId, deletedAt: null },
+      orderBy: { id: "asc" },
       select: UserPrompt.Select,
     });
 
-    return res;
+    return xs;
+  }
+
+  async listDeleted(userId: UserId) {
+    const xs = await this.service.db.userPrompt.findMany({
+      where: { userId, deletedAt: { not: null } },
+      orderBy: { id: "asc" },
+      select: UserPrompt.Select,
+    });
+
+    return xs;
   }
 
   async create(userId: UserId, input: UserPrompt.Create) {
@@ -78,6 +89,17 @@ export class UserPromptService {
         data: { deletedAt: new Date() },
       });
     });
+  }
+
+  async restore(userId: UserId, input: UserPrompt.Restore) {
+    const { userPromptId } = input;
+    const res = await this.service.db.userPrompt.update({
+      where: { id: userPromptId, userId, deletedAt: { not: null } },
+      data: { deletedAt: null },
+      select: UserPrompt.Select,
+    });
+
+    return res;
   }
 
   async onHardDeleteTask() {

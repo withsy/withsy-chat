@@ -1,4 +1,5 @@
 import { UserPrompt } from "@/types";
+import { z } from "zod";
 import { publicProcedure, t } from "../server";
 
 export const userPromptRouter = t.router({
@@ -11,10 +12,17 @@ export const userPromptRouter = t.router({
         .then((x) => UserPrompt.Data.parse(x))
     ),
   list: publicProcedure
-    .output(UserPrompt.Data.array())
+    .output(z.array(UserPrompt.Data))
     .query((opts) =>
       opts.ctx.service.userPrompt
         .list(opts.ctx.userId)
+        .then((xs) => xs.map((x) => UserPrompt.Data.parse(x)))
+    ),
+  listDeleted: publicProcedure
+    .output(z.array(UserPrompt.Data))
+    .query((opts) =>
+      opts.ctx.service.userPrompt
+        .listDeleted(opts.ctx.userId)
         .then((xs) => xs.map((x) => UserPrompt.Data.parse(x)))
     ),
   create: publicProcedure
@@ -37,5 +45,10 @@ export const userPromptRouter = t.router({
     .input(UserPrompt.Delete)
     .mutation((opts) =>
       opts.ctx.service.userPrompt.delete(opts.ctx.userId, opts.input)
+    ),
+  restore: publicProcedure
+    .input(UserPrompt.Restore)
+    .mutation((opts) =>
+      opts.ctx.service.userPrompt.restore(opts.ctx.userId, opts.input)
     ),
 });
