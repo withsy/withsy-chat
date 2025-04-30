@@ -114,11 +114,7 @@ function Prompts() {
   const { data: prompts, isLoading: isLoadingPrompts } =
     trpc.userPrompt.list.useQuery();
 
-  const [isDefaultPromptCollapsed, setIsDefaultPromptCollapsed] =
-    useState(true);
-
   const updateChatPrompt = trpc.chat.update.useMutation();
-
   if (isLoadingDefaultPrompt || isLoadingPrompts) {
     return <div>Loading...</div>;
   }
