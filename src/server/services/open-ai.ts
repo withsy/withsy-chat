@@ -22,6 +22,10 @@ export class OpenAiService {
   }
 
   async sendMessageToAi(input: SendMessageToAiInput) {
+    return await OpenAiService.sendMessageToAi(this.openai, input);
+  }
+
+  static async sendMessageToAi(openai: OpenAI, input: SendMessageToAiInput) {
     const { model, promptText, messagesForHistory, onMessageChunkReceived } =
       input;
 
@@ -58,7 +62,7 @@ export class OpenAiService {
       messages.push({ role: "system", content: promptText });
     messages.push(...histories);
 
-    const stream = await this.openai.chat.completions.create({
+    const stream = await openai.chat.completions.create({
       model,
       messages,
       stream: true,

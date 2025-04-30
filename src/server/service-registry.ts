@@ -21,6 +21,7 @@ import { UserDefaultPromptService } from "./services/user-default-prompt";
 import { UserLinkAccountService } from "./services/user-link-account";
 import { UserPromptService } from "./services/user-prompt";
 import { UserUsageLimitService } from "./services/user-usage-limit";
+import { XAiService } from "./services/x-ai";
 
 type ServiceDefinition = {
   pgPool: Pool;
@@ -39,6 +40,7 @@ type ServiceDefinition = {
   modelRoute: ModelRouteService;
   googleGenAi: GoogleGenAiService;
   openAi: OpenAiService;
+  xAi: XAiService;
   task: TaskService;
   idempotencyInfo: IdempotencyInfoService;
   s3: MockS3Service;
@@ -66,6 +68,7 @@ function createServiceRegistry() {
     modelRoute: (s) => new ModelRouteService(s),
     googleGenAi: (s) => new GoogleGenAiService(s),
     openAi: (s) => new OpenAiService(s),
+    xAi: (s) => new XAiService(s),
     idempotencyInfo: (s) => new IdempotencyInfoService(s),
     task: (s) => new TaskService(s),
     s3: (s) => new MockS3Service(s),
