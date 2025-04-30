@@ -1,6 +1,5 @@
 import type { AppRouter } from "@/server/trpc/routers/_app";
 import {
-  createTRPCClient,
   httpBatchLink,
   httpLink,
   httpSubscriptionLink,
