@@ -56,10 +56,3 @@ export const trpc = createTRPCNext<AppRouter>({
   },
   ssr: false,
 });
-
-if (process.env.NODE_ENV === "development" && typeof window !== "undefined") {
-  if (!Reflect.has(window, "_trpc")) {
-    const _trpc = createTRPCClient<AppRouter>({ links });
-    Reflect.set(window, "_trpc", _trpc);
-  }
-}
