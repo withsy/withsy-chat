@@ -2,6 +2,7 @@ import { UserPrompt } from "@/types";
 import type { UserId } from "@/types/user";
 import { uuidv7 } from "uuidv7";
 import type { ServiceRegistry } from "../service-registry";
+import { getHardDeleteCutoffDate } from "../utils";
 import { IdempotencyInfoService } from "./idempotency-info";
 import { UserDefaultPromptService } from "./user-default-prompt";
 
@@ -80,7 +81,28 @@ export class UserPromptService {
   }
 
   async onHardDeleteTask() {
-    // TODO
+    const cutoffDate = getHardDeleteCutoffDate(new Date());
+
+    await this.service.db.$transaction(async (tx) => {
+      const userPromptsToDelete = await tx.userPrompt.findMany({
+        where: { deletedAt: { not: null, lt: cutoffDate } },
+        select: { id: true },
+      });
+
+      if (userPromptsToDelete.length === 0) return;
+
+      const userPromptIds = userPromptsToDelete.map((x) => x.id);
+      console.warn(
+        `Preparing to delete ${
+          userPromptIds.length
+        }. userPrompts: ${userPromptIds.join(", ")}`
+      );
+
+      const res = await tx.userPrompt.deleteMany({
+        where: { id: { in: userPromptIds } },
+      });
+      console.warn(`Successfully hard deleted ${res.count} userPrompts.`);
+    });
   }
 
   static generateId() {

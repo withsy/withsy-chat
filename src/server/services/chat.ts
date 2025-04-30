@@ -12,6 +12,7 @@ import { MessageSelect } from "@/types/message";
 import { UserId } from "@/types/user";
 import { uuidv7 } from "uuidv7";
 import type { ServiceRegistry } from "../service-registry";
+import { getHardDeleteCutoffDate } from "../utils";
 import type { Tx } from "./db";
 import { IdempotencyInfoService } from "./idempotency-info";
 import { MessageService } from "./message";
@@ -150,7 +151,26 @@ export class ChatService {
   }
 
   async onHardDeleteTask() {
-    // TODO
+    const cutoffDate = getHardDeleteCutoffDate(new Date());
+
+    await this.service.db.$transaction(async (tx) => {
+      const chatsToDelete = await tx.chat.findMany({
+        where: { deletedAt: { not: null, lt: cutoffDate } },
+        select: { id: true },
+      });
+
+      if (chatsToDelete.length === 0) return;
+
+      const chatIds = chatsToDelete.map((x) => x.id);
+      console.warn(
+        `Preparing to delete ${chatIds.length}. chats: ${chatIds.join(", ")}`
+      );
+
+      const res = await tx.chat.deleteMany({
+        where: { id: { in: chatIds } },
+      });
+      console.warn(`Successfully hard deleted ${res.count} chats.`);
+    });
   }
 
   static async createChat(tx: Tx, input: { userId: UserId; title: string }) {
