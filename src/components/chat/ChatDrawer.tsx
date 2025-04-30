@@ -116,13 +116,8 @@ function Prompts() {
 
   const [isDefaultPromptCollapsed, setIsDefaultPromptCollapsed] =
     useState(true);
-  const [activePromptId, setActivePromptId] = useState<string | null>(null);
 
-  const updateChatPrompt = trpc.chat.update.useMutation({
-    onSuccess: () => {
-      // You can refetch or update any UI state if necessary after the mutation
-    },
-  });
+  const updateChatPrompt = trpc.chat.update.useMutation();
 
   if (isLoadingDefaultPrompt || isLoadingPrompts) {
     return <div>Loading...</div>;
@@ -134,65 +129,65 @@ function Prompts() {
         chatId: chat.id,
         userPromptId: promptId,
       });
-      setActivePromptId(promptId);
     }
   };
 
+  const appliedPrompt = prompts?.find((p) => p.id === chat?.userPromptId);
+  const remainingPrompts =
+    prompts?.filter(
+      (p) =>
+        p.id !== defaultPrompt?.userPrompt?.id && p.id !== chat?.userPromptId
+    ) ?? [];
+
   return (
-    <div className="overflow-y-auto max-h-[100%] flex flex-col space-y-4 p-4 select-none">
-      <div className="space-y-4">
+    <div className="overflow-y-auto max-h-[100%] flex flex-col space-y-6 p-4 select-none">
+      <div className="space-y-2">
+        <p className="text-sm text-black font-semibold">Applied</p>
+        <p className="text-sm text-muted-foreground">
+          These prompts are currently applied to this chat.
+        </p>
         {defaultPrompt?.userPrompt && (
-          <div>
-            <div
-              className="flex justify-between items-center cursor-pointer"
-              onClick={() => setIsDefaultPromptCollapsed((prev) => !prev)}
-            >
-              <p className="text-sm text-black font-semibold">Default</p>
-              <Button variant="ghost" className="text-xs" size="sm">
-                {isDefaultPromptCollapsed ? "Show" : "Hide"}
-              </Button>
-            </div>
-
-            {!isDefaultPromptCollapsed && (
-              <>
-                <p className="text-sm text-muted-foreground pb-2">
-                  This prompt is automatically applied to all chats by default,
-                  and each user can set only one default prompt.
-                </p>
-                <PromptCard
-                  key={defaultPrompt.userPromptId}
-                  prompt={defaultPrompt.userPrompt}
-                  themeColor="black"
-                  onClick={() => handleApplyPrompt(defaultPrompt.userPromptId)}
-                />
-              </>
-            )}
-          </div>
+          <PromptCard
+            key={defaultPrompt.userPromptId}
+            prompt={defaultPrompt.userPrompt}
+            themeColor="black"
+            onClick={() => handleApplyPrompt(defaultPrompt.userPromptId)}
+            isDefault={true}
+            isActive={defaultPrompt.userPromptId === chat?.userPromptId}
+          />
         )}
+        {appliedPrompt &&
+          appliedPrompt.id !== defaultPrompt?.userPrompt?.id && (
+            <PromptCard
+              key={appliedPrompt.id}
+              prompt={appliedPrompt}
+              themeColor="black"
+              onClick={() => handleApplyPrompt(appliedPrompt.id)}
+              isActive={true}
+            />
+          )}
+      </div>
 
-        {prompts && (
-          <>
-            <p className="text-sm text-black font-semibold">Prompts</p>
-            <p className="text-sm text-muted-foreground">
-              Apply the prompt to this chat by clicking the button. Only one
-              prompt can be applied to a chat at a time (two total, including
-              the default). Applying a different prompt will deselect the
-              currently applied prompt.
-            </p>
-          </>
-        )}
-        {prompts
-          ?.filter((p) => p.id !== defaultPrompt?.userPrompt?.id)
-          .map((prompt) => (
+      {/* Prompts Section */}
+      {remainingPrompts.length > 0 && (
+        <div className="space-y-2">
+          <p className="text-sm text-black font-semibold">Prompts</p>
+          <p className="text-sm text-muted-foreground">
+            Click to apply a new prompt. It will replace the currently applied
+            prompt.
+          </p>
+
+          {remainingPrompts.map((prompt) => (
             <PromptCard
               key={prompt.id}
               prompt={prompt}
               themeColor="black"
               onClick={() => handleApplyPrompt(prompt.id)}
-              active={prompt.id == chat?.userPromptId}
+              isActive={false}
             />
           ))}
-      </div>
+        </div>
+      )}
     </div>
   );
 }
