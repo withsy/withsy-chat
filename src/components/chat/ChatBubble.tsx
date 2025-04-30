@@ -8,6 +8,7 @@ import { CollapseToggle } from "../CollapseToggle";
 import { MarkdownBox } from "../MarkdownBox";
 import { ModelAvatar } from "../ModelAvatar";
 import { ChatBubbleTooltips } from "./ChatBubbleTooltips";
+import { GetModelLabel } from "./ModelSelect";
 import { StatusIndicator } from "./StatusIndicator";
 
 type Props = {
@@ -51,7 +52,7 @@ const ChatBubbleComponent = ({ message, chatType, onToggleSaved }: Props) => {
   const name =
     role === "model"
       ? message.model
-        ? message.model
+        ? GetModelLabel(message.model)
         : "AI"
       : user.name ?? "username";
 
@@ -101,8 +102,12 @@ const ChatBubbleComponent = ({ message, chatType, onToggleSaved }: Props) => {
             role === "user" && "self-end"
           )}
         >
-          {role === "model" ? message.model?.toUpperCase() : "You"} ·{" "}
-          {new Date(message.createdAt).toLocaleTimeString()}
+          {role === "model"
+            ? message.model
+              ? GetModelLabel(message.model)
+              : "AI"
+            : "You"}{" "}
+          · {new Date(message.createdAt).toLocaleTimeString()}
         </div>
 
         <div

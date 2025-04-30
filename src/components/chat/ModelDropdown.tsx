@@ -1,11 +1,12 @@
 import { Drawer, DrawerContent } from "@/components/ui/drawer";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 import type { Model } from "@/types/model";
+import type { ModelInfo } from "./ModelSelect";
 import { ModelSelectItem } from "./ModelSelectItem";
 
 interface ModelDropdownProps {
   description?: string;
-  models: { label: string; value: Model; description: string }[];
+  models: ModelInfo[];
   selectedValue: Model;
   messageModel?: Model | null;
   isOpen: boolean;
