@@ -17,6 +17,7 @@ interface PromptCardProps {
   onToggleStar?: (prompt: Schema) => void;
   onMakeDefault?: (promptId: string) => void;
   chatId?: string;
+  active?: boolean;
 }
 
 export function PromptCard({
@@ -27,6 +28,7 @@ export function PromptCard({
   onToggleStar,
   onMakeDefault,
   chatId,
+  active,
 }: PromptCardProps) {
   const updateChat = trpc.chat.update.useMutation({
     onSuccess: () => {
@@ -99,7 +101,7 @@ export function PromptCard({
               });
             }}
           >
-            Apply
+            {active ? "Applied" : "Apply"}
           </button>
         )}
       </div>

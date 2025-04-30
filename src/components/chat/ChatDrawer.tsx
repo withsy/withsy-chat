@@ -137,12 +137,12 @@ function Prompts({ chat }: { chat: Chat | null }) {
   };
 
   return (
-    <div className="overflow-y-auto max-h-[100%] flex flex-col space-y-4 p-4">
+    <div className="overflow-y-auto max-h-[100%] flex flex-col space-y-4 p-4 select-none">
       <div className="space-y-4">
         {defaultPrompt?.userPrompt && (
           <div>
             <div
-              className="flex justify-between items-center cursor-pointer select-none"
+              className="flex justify-between items-center cursor-pointer"
               onClick={() => setIsDefaultPromptCollapsed((prev) => !prev)}
             >
               <p className="text-sm text-black font-semibold">Default</p>
@@ -172,7 +172,10 @@ function Prompts({ chat }: { chat: Chat | null }) {
           <>
             <p className="text-sm text-black font-semibold">Prompts</p>
             <p className="text-sm text-muted-foreground">
-              Apply the prompt to this chat by clicking the button.
+              Apply the prompt to this chat by clicking the button. Only one
+              prompt can be applied to a chat at a time (two total, including
+              the default). Applying a different prompt will deselect the
+              currently applied prompt.
             </p>
           </>
         )}
@@ -185,6 +188,7 @@ function Prompts({ chat }: { chat: Chat | null }) {
               themeColor="black"
               onClick={() => handleApplyPrompt(prompt.id)}
               chatId={chat?.id}
+              active={prompt.id == chat?.userPromptId}
             />
           ))}
       </div>
