@@ -16,6 +16,7 @@ import { authOptions } from "./api/auth/[...nextauth]";
 import { useHeaderScroll } from "@/hooks/useHeaderScroll";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import ReturnButton from "@/components/home/ReturnButton";
+import Header from "@/components/home/Header";
 
 type Props = {
   user: User | null;
@@ -37,38 +38,9 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
 };
 
 export default function Page({ recommendedFriends, user }: Props) {
-  const router = useRouter();
-  const scrolled = useHeaderScroll();
-
   return (
     <div className="flex flex-col min-h-screen">
-      <div
-        className={`w-full bg-white/70 backdrop-blur-lg sticky top-0 z-50 transition-all duration-300 ${
-          scrolled ? "border-b" : ""
-        }`}
-      >
-        <div className="max-w-6xl mx-auto p-2 px-4 flex justify-between items-center select-none">
-          <div
-            className="flex items-center gap-2 p-2 cursor-pointer"
-            onClick={() => {
-              router.push("/");
-            }}
-          >
-            <Avatar className="mx-auto h-8 w-8">
-              <AvatarImage src="/characters/emery.svg" alt="withsy logo" />
-              <AvatarFallback>W</AvatarFallback>
-            </Avatar>
-            <div
-              className="text-md font-bold"
-              style={{ color: "rgb(40,90,128)" }}
-            >
-              Withsy
-            </div>
-          </div>
-          {user ? <ReturnButton /> : <LoginButton />}
-        </div>
-      </div>
-
+      <Header user={user} />
       <div className="pb-30">
         <div className="text-start px-6 py-16 max-w-3xl mx-auto select-none">
           <h2 className="text-3xl font-semibold mb-2">The friends who stay.</h2>
