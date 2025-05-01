@@ -4,10 +4,28 @@ import { useRouter } from "next/router";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import ReturnButton from "./ReturnButton";
 import LoginButton from "../login/LoginButton";
+import { useSidebarStore } from "@/stores/useSidebarStore";
+import CategoryButton from "./CategoryButton";
 
 export default function Component({ user }: { user: User | null }) {
   const router = useRouter();
   const scrolled = useHeaderScroll();
+  const { isMobile } = useSidebarStore();
+
+  const categories = [
+    {
+      label: "Why?",
+      value: "why",
+    },
+    {
+      label: "Projects",
+      value: "projects",
+    },
+    {
+      label: "Blog",
+      value: "blog",
+    },
+  ];
   return (
     <div
       className={`w-full bg-white/70 backdrop-blur-lg sticky top-0 z-50 transition-all duration-300 ${
@@ -32,7 +50,23 @@ export default function Component({ user }: { user: User | null }) {
             Withsy
           </div>
         </div>
-        {user ? <ReturnButton /> : <LoginButton />}
+        {!isMobile && (
+          <div className="flex gap-8 text-muted-foreground">
+            {categories.map((category) => (
+              <button
+                key={category.value}
+                onClick={() => router.push(`/${category.value}`)}
+                className="hover:text-primary transition-colors"
+              >
+                {category.label}
+              </button>
+            ))}
+          </div>
+        )}
+        <div className="flex items-center gap-2">
+          {user ? <ReturnButton /> : <LoginButton />}
+          {isMobile && <CategoryButton categories={categories} />}
+        </div>
       </div>
     </div>
   );
