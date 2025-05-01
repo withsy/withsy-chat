@@ -61,8 +61,8 @@ model UserPrompt {
   id             String              @id @map("id") @db.Uuid
   userId         String              @map("user_id") @db.Uuid
   user           User                @relation("user_prompts.user_id", fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  title          String              @map("title")
-  text           String              @map("text")
+  titleEncrypted String              @map("title_encrypted")
+  textEncrypted  String              @map("text_encrypted")
   isStarred      Boolean             @default(false) @map("is_starred")
   createdAt      DateTime            @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt      DateTime            @default(now()) @map("updated_at") @db.Timestamptz(6)
@@ -98,7 +98,7 @@ model Chat {
   id                String             @id @map("id") @db.Uuid
   userId            String             @map("user_id") @db.Uuid
   user              User               @relation("chats.user_id", fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  title             String             @default("New chat") @map("title")
+  titleEncrypted    String             @default("New chat") @map("title_encrypted")
   isStarred         Boolean            @default(false) @map("is_starred")
   type              ChatType           @default(chat) @map("type")
   parentMessageId   String?            @map("parent_message_id") @db.Uuid
@@ -118,12 +118,12 @@ model Chat {
 }
 
 model ChatPrompt {
-  id        Int      @id @default(autoincrement()) @map("id")
-  chatId    String   @map("chat_id") @db.Uuid
-  chat      Chat     @relation("chat_prompts.chat_id", fields: [chatId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  text      String   @map("text")
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
+  id            Int      @id @default(autoincrement()) @map("id")
+  chatId        String   @map("chat_id") @db.Uuid
+  chat          Chat     @relation("chat_prompts.chat_id", fields: [chatId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  textEncrypted String   @map("text_encrypted")
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt     DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
 
   @@index([chatId])
   @@map("chat_prompts")
@@ -142,7 +142,7 @@ model Message {
   chat            Chat           @relation("messages.chat_id", fields: [chatId], references: [id], onDelete: Cascade, onUpdate: NoAction)
   role            String         @map("role")
   model           String?        @map("model")
-  text            String         @default("") @map("text")
+  textEncrypted   String         @default("") @map("text_encrypted")
   status          MessageStatus  @default(pending) @map("status")
   isBookmarked    Boolean        @default(false) @map("is_bookmarked")
   isPublic        Boolean        @map("is_public")
@@ -161,13 +161,13 @@ model Message {
 }
 
 model MessageChunk {
-  messageId String   @map("message_id") @db.Uuid
-  message   Message  @relation("message_chunks.message_id", fields: [messageId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  index     Int      @map("index")
-  text      String   @map("text")
-  rawData   Json     @map("raw_data")
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
+  messageId        String   @map("message_id") @db.Uuid
+  message          Message  @relation("message_chunks.message_id", fields: [messageId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  index            Int      @map("index")
+  textEncrypted    String   @map("text_encrypted")
+  rawDataEncrypted String   @map("raw_data_encrypted")
+  createdAt        DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
 
   @@id([messageId, index])
   @@map("message_chunks")
