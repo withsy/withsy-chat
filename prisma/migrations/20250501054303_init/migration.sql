@@ -75,7 +75,7 @@ CREATE TABLE "user_default_prompts" (
 CREATE TABLE "chats" (
     "id" UUID NOT NULL,
     "user_id" UUID NOT NULL,
-    "title_encrypted" TEXT NOT NULL DEFAULT 'New chat',
+    "title_encrypted" TEXT NOT NULL,
     "is_starred" BOOLEAN NOT NULL DEFAULT false,
     "type" "ChatType" NOT NULL DEFAULT 'chat',
     "parent_message_id" UUID,
@@ -104,7 +104,7 @@ CREATE TABLE "messages" (
     "chat_id" UUID NOT NULL,
     "role" TEXT NOT NULL,
     "model" TEXT,
-    "text_encrypted" TEXT NOT NULL DEFAULT '',
+    "text_encrypted" TEXT NOT NULL,
     "status" "MessageStatus" NOT NULL DEFAULT 'pending',
     "is_bookmarked" BOOLEAN NOT NULL DEFAULT false,
     "is_public" BOOLEAN NOT NULL,

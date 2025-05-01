@@ -132,7 +132,8 @@ export class ChatService {
 
     const { fileInfos } = await this.service.s3.uploads(userId, { files });
 
-    const textEncrypted = this.service.encryption.encrypt(text);
+    const modelMessageTextEncrypted = this.service.encryption.encrypt("");
+    const userMessageTextEncrypted = this.service.encryption.encrypt(text);
     const title = [...text].slice(0, 20).join("");
     const titleEncrypted = this.service.encryption.encrypt(title);
 
@@ -145,7 +146,7 @@ export class ChatService {
 
         const userMessage = await MessageService.createUserMessage(tx, {
           chatId: chat.id,
-          textEncrypted,
+          textEncrypted: userMessageTextEncrypted,
           isPublic: true,
         });
 
@@ -153,6 +154,7 @@ export class ChatService {
           chatId: chat.id,
           model,
           parentMessageId: userMessage.id,
+          textEncrypted: modelMessageTextEncrypted,
         });
 
         await MessageFileService.createAll(tx, {

@@ -158,6 +158,7 @@ export class GratitudeJournalService {
     const title = `Gratitude Journal - ${zonedTodayDate}`;
     const titleEncrypted = this.service.encryption.encrypt(title);
     const userMessageTextEncrypted = this.service.encryption.encrypt("");
+    const modelMessageTextEncrypted = this.service.encryption.encrypt("");
     const promptTextEncrypted = this.service.encryption.encrypt(promptText);
 
     const createRes = await this.service.db.$transaction(async (tx) => {
@@ -199,6 +200,7 @@ export class GratitudeJournalService {
         chatId: chat.id,
         model: "gemini-2.0-flash",
         parentMessageId: userMessage.id,
+        textEncrypted: modelMessageTextEncrypted,
       });
 
       const gratitudeJournal = await tx.gratitudeJournal.create({

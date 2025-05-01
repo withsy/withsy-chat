@@ -22,7 +22,7 @@ export class MessageService {
       id: entity.id,
       chatId: entity.chatId,
       role: Role.parse(entity.role),
-      model: Model.parse(entity.model),
+      model: entity.model ? Model.parse(entity.model) : null,
       text,
       status: entity.status,
       isBookmarked: entity.isBookmarked,
@@ -343,13 +343,14 @@ export class MessageService {
     });
 
     const { fileInfos } = await this.service.s3.uploads(userId, { files });
-    const textEncrypted = this.service.encryption.encrypt(text);
+    const userMessageTextEncrypted = this.service.encryption.encrypt(text);
+    const modelMessageTextEncrypted = this.service.encryption.encrypt("");
 
     const { userMessage, modelMessage } = await this.service.db.$transaction(
       async (tx) => {
         const userMessage = await MessageService.createUserMessage(tx, {
           chatId,
-          textEncrypted,
+          textEncrypted: userMessageTextEncrypted,
           isPublic: true,
         });
 
@@ -357,6 +358,7 @@ export class MessageService {
           chatId,
           model,
           parentMessageId: userMessage.id,
+          textEncrypted: modelMessageTextEncrypted,
         });
 
         await MessageFileService.createAll(tx, {
@@ -404,9 +406,14 @@ export class MessageService {
 
   static async createModelMessage(
     tx: Tx,
-    input: { chatId: ChatId; model: Model; parentMessageId: MessageId }
+    input: {
+      chatId: ChatId;
+      model: Model;
+      parentMessageId: MessageId;
+      textEncrypted: string;
+    }
   ) {
-    const { chatId, model, parentMessageId } = input;
+    const { chatId, model, parentMessageId, textEncrypted } = input;
 
     const entity = await tx.message.create({
       data: {
@@ -417,6 +424,7 @@ export class MessageService {
         status: "pending",
         parentMessageId,
         isPublic: true,
+        textEncrypted,
       },
     });
 

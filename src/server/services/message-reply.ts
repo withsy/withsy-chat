@@ -17,6 +17,8 @@ export class MessageReplyService {
   ): Promise<Message.Data> {
     const { idempotencyKey, messageId, model } = input;
 
+    const modelMessageTextEncrypted = this.service.encryption.encrypt("");
+
     const { userMessage, modelMessage } = await this.service.db.$transaction(
       async (tx) => {
         await IdempotencyInfoService.checkDuplicateRequest(tx, idempotencyKey);
@@ -57,6 +59,7 @@ export class MessageReplyService {
             model: model ?? oldModelMessage.model,
             status: "pending",
             isPublic: true,
+            textEncrypted: modelMessageTextEncrypted,
           },
           select: Message.Select,
         });
