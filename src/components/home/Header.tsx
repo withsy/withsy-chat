@@ -1,11 +1,11 @@
 import { useHeaderScroll } from "@/hooks/useHeaderScroll";
+import { useSidebarStore } from "@/stores/useSidebarStore";
 import type { User } from "@/types/user";
 import { useRouter } from "next/router";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import ReturnButton from "./ReturnButton";
 import LoginButton from "../login/LoginButton";
-import { useSidebarStore } from "@/stores/useSidebarStore";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import CategoryModalButton from "./CategoryModalButton";
+import ReturnButton from "./ReturnButton";
 
 export default function Component({ user }: { user: User | null }) {
   const router = useRouter();
@@ -19,7 +19,7 @@ export default function Component({ user }: { user: User | null }) {
     },
     {
       label: "Withsy Chat",
-      value: "whthsy-chat",
+      value: "withsy-chat",
     },
     {
       label: "Blog",
