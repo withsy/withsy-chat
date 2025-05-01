@@ -13,6 +13,7 @@ import type { GetServerSideProps } from "next";
 import { getServerSession } from "next-auth";
 import { useRouter } from "next/router";
 import { authOptions } from "./api/auth/[...nextauth]";
+import { useHeaderScroll } from "@/hooks/useHeaderScroll";
 
 type Props = {
   user: User | null;
@@ -35,11 +36,16 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
 
 export default function Page({ recommendedFriends, user }: Props) {
   const router = useRouter();
+  const scrolled = useHeaderScroll();
 
   return (
-    <div className="flex flex-col h-screen">
-      <div className="w-full bg-white sticky top-0 z-50">
-        <div className="max-w-6xl mx-auto p-2 py-4 flex justify-between items-center select-none border-b">
+    <div className="flex flex-col min-h-screen">
+      <div
+        className={`w-full bg-white/80 backdrop-blur-lg sticky top-0 z-50 transition-all duration-300 ${
+          scrolled ? "border-b" : ""
+        }`}
+      >
+        <div className="max-w-6xl mx-auto p-2 flex justify-between items-center select-none">
           <div
             className="flex items-center gap-2 p-2"
             onClick={() => {
@@ -51,7 +57,7 @@ export default function Page({ recommendedFriends, user }: Props) {
               src="/logo.png"
               alt="withsy logo"
             />
-            <div className="text-xl font-semibold">Withsy</div>
+            <div className="text-md font-bold">Withsy</div>
           </div>
           {user ? (
             <div
@@ -60,7 +66,7 @@ export default function Page({ recommendedFriends, user }: Props) {
                 router.push("/chat");
               }}
             >
-              <div className="text-xl font-semibold">Return to chat</div>
+              <div className="text-md font-semibold">Return to chat</div>
             </div>
           ) : (
             <LoginButton />
@@ -68,7 +74,7 @@ export default function Page({ recommendedFriends, user }: Props) {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto pb-30">
+      <div className="pb-30">
         <div className="text-start px-6 py-16 max-w-3xl mx-auto select-none">
           <h2 className="text-3xl font-semibold mb-2">The friends who stay.</h2>
           <h2 className="text-2xl font-semibold mb-2">

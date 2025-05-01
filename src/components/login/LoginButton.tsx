@@ -6,8 +6,8 @@ export default function LoginButton() {
     <Button
       size="sm"
       onClick={() => signIn()}
-      className="text-lg"
-      style={{ backgroundColor: "rgb(234,146,87)" }}
+      className="text-sm font-semibold"
+      style={{ backgroundColor: "black" }}
     >
       Start Chatting
     </Button>
