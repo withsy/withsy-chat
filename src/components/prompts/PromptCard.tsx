@@ -9,6 +9,7 @@ import { useChatStore } from "@/stores/useChatStore";
 import type { UserPrompt } from "@/types";
 import { MoreVertical, Star } from "lucide-react";
 import { toast } from "sonner";
+import { Badge } from "../ui/badge";
 
 interface PromptCardProps {
   prompt: UserPrompt.Data;
@@ -17,7 +18,8 @@ interface PromptCardProps {
   onDelete?: (promptId: string) => void;
   onToggleStar?: (prompt: UserPrompt.Data) => void;
   onMakeDefault?: (promptId: string) => void;
-  active?: boolean;
+  isActive?: boolean;
+  isDefault?: boolean;
 }
 
 export function PromptCard({
@@ -27,15 +29,23 @@ export function PromptCard({
   onDelete,
   onToggleStar,
   onMakeDefault,
-  active,
+  isActive,
+  isDefault,
 }: PromptCardProps) {
   const { chat, updatePromptId } = useChatStore();
   const updateChat = trpc.chat.update.useMutation({
-    onSuccess: () => {
-      toast.success("Prompt applied", {
-        description: "This prompt has been set as active.",
-      });
-      updatePromptId(prompt.id);
+    onSuccess: (_data, variables) => {
+      if (variables.userPromptId === null) {
+        toast.success("Prompt cleared", {
+          description: "The active prompt has been removed.",
+        });
+        updatePromptId(null);
+      } else {
+        toast.success("Prompt applied", {
+          description: "This prompt has been set as active.",
+        });
+        updatePromptId(variables.userPromptId ?? null);
+      }
     },
     onError: (error) => {
       toast.error("Failed to apply prompt", {
@@ -43,6 +53,41 @@ export function PromptCard({
       });
     },
   });
+
+  const cornerButton = isDefault ? (
+    <Badge>default</Badge>
+  ) : chat != null ? (
+    isActive ? (
+      <button
+        className="text-xs font-medium text-primary hover:underline"
+        onClick={(e) => {
+          e.stopPropagation();
+          updateChat.mutate({
+            chatId: chat.id,
+            userPromptId: null,
+          });
+        }}
+      >
+        Clear
+      </button>
+    ) : (
+      <button
+        className="text-xs font-medium text-primary hover:underline"
+        onClick={(e) => {
+          e.stopPropagation();
+          updateChat.mutate({
+            chatId: chat.id,
+            userPromptId: prompt.id,
+          });
+        }}
+      >
+        Apply
+      </button>
+    )
+  ) : (
+    <div />
+  );
+
   return (
     <div className="p-4 rounded-lg border shadow-sm hover:shadow-md transition relative group">
       <div
@@ -91,20 +136,7 @@ export function PromptCard({
           {prompt.isStarred && <Star size={14} fill={`rgb(${themeColor})`} />}
           <span>{prompt.title}</span>
         </div>
-        {chat?.id && (
-          <button
-            className="text-xs font-medium text-primary hover:underline"
-            onClick={(e) => {
-              e.stopPropagation();
-              updateChat.mutate({
-                chatId: chat.id,
-                userPromptId: prompt.id,
-              });
-            }}
-          >
-            {active ? "Applied" : "Apply"}
-          </button>
-        )}
+        {cornerButton}
       </div>
     </div>
   );

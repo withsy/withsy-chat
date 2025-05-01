@@ -103,6 +103,9 @@ function PromptsPage() {
             })
           }
           className="text-sm"
+          style={{
+            backgroundColor: `rgb(${themeColor})`,
+          }}
         >
           Add
         </Button>

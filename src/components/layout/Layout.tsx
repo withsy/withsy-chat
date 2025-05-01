@@ -7,9 +7,10 @@ import Sidebar from "./sidebar/Sidebar";
 
 type LayoutProps = {
   children: ReactNode;
+  className: string;
 };
 
-export default function Layout({ children }: LayoutProps) {
+export default function Layout({ children, className }: LayoutProps) {
   const { user } = useUser();
   const { collapsed, setCollapsed, isMobile } = useSidebarStore();
   const themeColor = user?.preferences.themeColor ?? "30,30,30";
@@ -18,7 +19,7 @@ export default function Layout({ children }: LayoutProps) {
 
   return (
     <div
-      className="flex overflow-hidden h-[100dvh] relative"
+      className={`flex overflow-hidden h-[100dvh] relative ${className}`}
       style={{ backgroundColor }}
     >
       <Sidebar />

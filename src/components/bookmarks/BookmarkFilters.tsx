@@ -1,12 +1,5 @@
 import { FilterSelect } from "@/components/FilterSelect";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useSidebarStore } from "@/stores/useSidebarStore";
-import { ChevronDown, ChevronUp, RotateCcw } from "lucide-react";
-import { useState } from "react";
-import { toast } from "sonner";
-import { CollapseButton } from "../CollapseButton";
-
 const sortOrderOptions = [
   { label: "Newest First", value: "desc" },
   { label: "Oldest First", value: "asc" },
@@ -25,76 +18,29 @@ export function BookmarkFilters({
   searchText,
   setSearchText,
 }: Props) {
-  const { collapsed } = useSidebarStore();
-  const [isOpen, setIsOpen] = useState(true);
-
-  const reset = () => {
-    setSortOrder("desc");
-    setSearchText("");
-    toast.success("Filters reset");
-  };
-
   return (
-    <div className="pb-4">
-      <div className="flex justify-between items-center mb-2">
-        <div>{collapsed && <CollapseButton hoverColor="bg-gray-100" />}</div>
-        <div className="flex items-center gap-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={reset}
-            className="flex items-center gap-1 text-sm"
-          >
-            <RotateCcw className="w-4 h-4 text-gray-500" />
-            Reset Filters
-          </Button>
+    <div className="flex flex-col gap-4 pb-4">
+      <div className="flex flex-wrap gap-4 items-end">
+        <div className="flex gap-2">
+          <FilterSelect
+            value={sortOrder}
+            onChange={setSortOrder}
+            options={sortOrderOptions}
+            placeholder="Order"
+            className="w-full sm:w-[160px]"
+          />
+        </div>
 
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setIsOpen((prev) => !prev)}
-            className="flex items-center gap-1 text-sm"
-          >
-            {isOpen ? (
-              <>
-                <ChevronUp className="w-4 h-4 text-gray-500" />
-                Hide Filters
-              </>
-            ) : (
-              <>
-                <ChevronDown className="w-4 h-4 text-gray-500" />
-                Show Filters
-              </>
-            )}
-          </Button>
+        <div className="flex-1 min-w-[200px]">
+          <Input
+            type="text"
+            placeholder="Search title or content..."
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
+            className="w-full"
+          />
         </div>
       </div>
-
-      {isOpen && (
-        <div className="flex flex-col gap-4">
-          <div className="flex flex-wrap gap-4 items-end">
-            <div className="flex gap-2">
-              <FilterSelect
-                value={sortOrder}
-                onChange={setSortOrder}
-                options={sortOrderOptions}
-                placeholder="Order"
-                className="w-full sm:w-[160px]"
-              />
-            </div>
-
-            <div className="flex-1 min-w-[200px]">
-              <Input
-                type="text"
-                placeholder="Search title or content..."
-                value={searchText}
-                onChange={(e) => setSearchText(e.target.value)}
-                className="w-full"
-              />
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

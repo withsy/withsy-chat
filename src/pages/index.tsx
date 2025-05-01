@@ -1,4 +1,3 @@
-import LoginButton from "@/components/login/LoginButton";
 import { FriendCard } from "@/components/town/FriendCard";
 import { RecommendedSection } from "@/components/town/RecommendedSection";
 import {
@@ -11,8 +10,8 @@ import { service } from "@/server/service-registry";
 import { User, UserSession } from "@/types/user";
 import type { GetServerSideProps } from "next";
 import { getServerSession } from "next-auth";
-import { useRouter } from "next/router";
 import { authOptions } from "./api/auth/[...nextauth]";
+import Header from "@/components/home/Header";
 
 type Props = {
   user: User | null;
@@ -34,36 +33,10 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
 };
 
 export default function Page({ recommendedFriends, user }: Props) {
-  const router = useRouter();
-
   return (
-    <div className="flex flex-col h-screen">
-      <div className="w-full bg-white sticky top-0 z-50">
-        <div className="max-w-6xl mx-auto p-2 flex justify-between items-center select-none border-b">
-          <div
-            className="flex items-center gap-2 p-2"
-            onClick={() => {
-              router.push("/");
-            }}
-          >
-            <div className="text-xl font-semibold">Withsy</div>
-          </div>
-          {user ? (
-            <div
-              className="flex items-center gap-2 underline underline-offset-8 p-2 hover:bg-gray-200 active:bg-gray-200 rounded-md"
-              onClick={() => {
-                router.push("/friends");
-              }}
-            >
-              <div className="text-xl font-semibold">Return to chat</div>
-            </div>
-          ) : (
-            <LoginButton />
-          )}
-        </div>
-      </div>
-
-      <div className="flex-1 overflow-y-auto pb-30">
+    <div className="flex flex-col min-h-screen">
+      <Header user={user} />
+      <div className="pb-30">
         <div className="text-start px-6 py-16 max-w-3xl mx-auto select-none">
           <h2 className="text-3xl font-semibold mb-2">The friends who stay.</h2>
           <h2 className="text-2xl font-semibold mb-2">
@@ -178,6 +151,12 @@ export default function Page({ recommendedFriends, user }: Props) {
           </TabsContent>
         </Tabs>
       </div>
+      <footer className="text-center text-xs text-muted-foreground p-4 select-none">
+        <div>© {new Date().getFullYear()} Withsy. All rights reserved.</div>
+        <div>
+          Avatars generated using Thumbs by DiceBear, licensed under CC0 1.0.
+        </div>
+      </footer>
     </div>
   );
 }

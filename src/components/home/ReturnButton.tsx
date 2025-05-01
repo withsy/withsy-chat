@@ -1,15 +1,14 @@
 import { Button } from "@/components/ui/button";
-import { signIn } from "next-auth/react";
+import Link from "next/link";
 
-export default function LoginButton() {
+export default function ReturnButton() {
   return (
     <Button
-      variant="outline"
       size="sm"
-      onClick={() => signIn()}
       className="text-sm font-semibold cursor-pointer border-[rgb(40,90,128)] text-[rgb(40,90,128)]"
+      variant="outline"
     >
-      Start Chatting
+      <Link href="/chat">Return to chat</Link>
     </Button>
   );
 }
