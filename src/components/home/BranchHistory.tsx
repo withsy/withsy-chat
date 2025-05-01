@@ -1,6 +1,5 @@
 // components/landing/BranchHistorySection.tsx
-
-import { ExpandableImage } from "../ExpandableImage";
+import Image from "next/image";
 
 export default function BranchHistory() {
   return (
@@ -17,11 +16,12 @@ export default function BranchHistory() {
 
         {/* GIF 미디어 */}
         <div className="text-center">
-          <ExpandableImage
+          <Image
             src="/home/branch-history.gif"
             alt="Branch History"
             width={720}
             height={400}
+            className="rounded-xl shadow-md"
           />
           <p className="mt-2 text-sm text-muted-foreground">
             Explore and branch conversations seamlessly
