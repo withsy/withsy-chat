@@ -5,6 +5,7 @@ import { PromptCard } from "@/components/prompts/PromptCard";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@/context/UserContext";
 import { trpc } from "@/lib/trpc";
+import { useChatStore } from "@/stores/useChatStore";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 import type { UserPrompt } from "@/types";
 import { useState } from "react";
@@ -12,8 +13,12 @@ import { v4 as uuid } from "uuid";
 
 function PromptsPage() {
   const { user } = useUser();
+  const { chat, setChat } = useChatStore();
   const { collapsed } = useSidebarStore();
 
+  if (chat != null) {
+    setChat(null);
+  }
   const {
     data: prompts,
     refetch: refetchPrompts,
@@ -123,7 +128,6 @@ function PromptsPage() {
             <PromptCard
               key={defaultPrompt.userPrompt.id}
               prompt={defaultPrompt.userPrompt}
-              themeColor={themeColor}
               onClick={() =>
                 setEditPrompt({
                   id: defaultPrompt.userPrompt!.id,
@@ -159,7 +163,6 @@ function PromptsPage() {
               <PromptCard
                 key={prompt.id}
                 prompt={prompt}
-                themeColor={themeColor}
                 onClick={setEditPrompt}
                 onToggleStar={toggleStarPrompt}
                 onMakeDefault={makeDefaultPrompt}

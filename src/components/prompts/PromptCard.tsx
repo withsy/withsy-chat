@@ -10,10 +10,10 @@ import type { UserPrompt } from "@/types";
 import { MoreVertical, Star } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "../ui/badge";
+import { useUser } from "@/context/UserContext";
 
 interface PromptCardProps {
   prompt: UserPrompt.Data;
-  themeColor: string;
   onClick: (prompt: UserPrompt.Data) => void;
   onDelete?: (promptId: string) => void;
   onToggleStar?: (prompt: UserPrompt.Data) => void;
@@ -24,7 +24,6 @@ interface PromptCardProps {
 
 export function PromptCard({
   prompt,
-  themeColor,
   onClick,
   onDelete,
   onToggleStar,
@@ -32,6 +31,9 @@ export function PromptCard({
   isActive,
   isDefault,
 }: PromptCardProps) {
+  const { user } = useUser();
+  if (!user) throw new Error("User must exist.");
+
   const { chat, updatePromptId } = useChatStore();
   const updateChat = trpc.chat.update.useMutation({
     onSuccess: (_data, variables) => {
@@ -55,7 +57,9 @@ export function PromptCard({
   });
 
   const cornerButton = isDefault ? (
-    <Badge>default</Badge>
+    <Badge style={{ backgroundColor: `rgb(${user.preferences.themeColor})` }}>
+      default
+    </Badge>
   ) : chat != null ? (
     isActive ? (
       <button
@@ -133,7 +137,9 @@ export function PromptCard({
       </div>
       <div className="mt-4 font-semibold flex justify-between items-center gap-1">
         <div className="truncate flex items-center gap-1">
-          {prompt.isStarred && <Star size={14} fill={`rgb(${themeColor})`} />}
+          {prompt.isStarred && (
+            <Star size={14} fill={`rgb(${user.preferences.themeColor})`} />
+          )}
           <span>{prompt.title}</span>
         </div>
         {cornerButton}

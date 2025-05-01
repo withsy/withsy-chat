@@ -13,7 +13,6 @@ import { BookmarkCard } from "../bookmarks/BookmarkCard";
 import { PartialError } from "../Error";
 import { PartialLoading } from "../Loading";
 import { PromptCard } from "../prompts/PromptCard";
-import { Button } from "../ui/button";
 import { Drawer, DrawerContent } from "../ui/drawer";
 import ChatDrawerHeader from "./ChatDrawerHeader";
 
@@ -146,7 +145,6 @@ function Prompts() {
           <PromptCard
             key={defaultPrompt.userPromptId}
             prompt={defaultPrompt.userPrompt}
-            themeColor="black"
             onClick={() => handleApplyPrompt(defaultPrompt.userPromptId)}
             isDefault={true}
             isActive={defaultPrompt.userPromptId === chat?.userPromptId}
@@ -157,7 +155,6 @@ function Prompts() {
             <PromptCard
               key={appliedPrompt.id}
               prompt={appliedPrompt}
-              themeColor="black"
               onClick={() => handleApplyPrompt(appliedPrompt.id)}
               isActive={true}
             />
@@ -177,7 +174,6 @@ function Prompts() {
             <PromptCard
               key={prompt.id}
               prompt={prompt}
-              themeColor="black"
               onClick={() => handleApplyPrompt(prompt.id)}
               isActive={false}
             />
