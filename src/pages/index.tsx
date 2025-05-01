@@ -57,7 +57,12 @@ export default function Page({ recommendedFriends, user }: Props) {
               <AvatarImage src="/characters/emery.svg" alt="withsy logo" />
               <AvatarFallback>W</AvatarFallback>
             </Avatar>
-            <div className="text-md font-bold">Withsy</div>
+            <div
+              className="text-md font-bold"
+              style={{ color: "rgb(40,90,128)" }}
+            >
+              Withsy
+            </div>
           </div>
           {user ? (
             <div
@@ -66,7 +71,12 @@ export default function Page({ recommendedFriends, user }: Props) {
                 router.push("/chat");
               }}
             >
-              <div className="text-md font-semibold">Return to chat</div>
+              <div
+                className="text-md font-semibold"
+                style={{ backgroundColor: "rgb(40,90,128)" }}
+              >
+                Return to chat
+              </div>
             </div>
           ) : (
             <LoginButton />
