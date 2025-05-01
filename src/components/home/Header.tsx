@@ -5,7 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import ReturnButton from "./ReturnButton";
 import LoginButton from "../login/LoginButton";
 import { useSidebarStore } from "@/stores/useSidebarStore";
-import CategoryButton from "./CategoryButton";
+import CategoryModalButton from "./CategoryModalButton";
 
 export default function Component({ user }: { user: User | null }) {
   const router = useRouter();
@@ -65,7 +65,7 @@ export default function Component({ user }: { user: User | null }) {
         )}
         <div className="flex items-center gap-2">
           {user ? <ReturnButton /> : <LoginButton />}
-          {isMobile && <CategoryButton categories={categories} />}
+          {isMobile && <CategoryModalButton categories={categories} />}
         </div>
       </div>
     </div>
