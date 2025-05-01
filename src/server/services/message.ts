@@ -93,12 +93,15 @@ export class MessageService {
     };
 
     await this.service.db.$transaction(async (tx) => {
+      if (!modelMessage.parentMessageId)
+        throw new Error("parentMessageId must exist.");
+
       const currentHistories = await tx.message.findMany({
         where: {
           chat: { userId, deletedAt: null },
           chatId: modelMessage.chatId,
           status: "succeeded",
-          id: { lte: modelMessage.id },
+          id: { lte: modelMessage.parentMessageId },
         },
         select: { role: true, textEncrypted: true },
         take: history.remainLength(),
