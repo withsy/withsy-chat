@@ -10,6 +10,14 @@ import { PartialEmpty } from "../Empty";
 import { PartialLoading } from "../Loading";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 import { CollapseButton } from "../CollapseButton";
+import { Button } from "../ui/button";
+import { Eye, EyeOff, RotateCcw } from "lucide-react";
+import { toast } from "sonner";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export default function BookmarkPage({
   user,
@@ -22,6 +30,7 @@ export default function BookmarkPage({
   const [data, setData] = useState<Message[]>([]);
   const [searchText, setSearchText] = useState("");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+  const [isFilterOpen, setIsFilterOpen] = useState(true);
 
   const { collapsed } = useSidebarStore();
   const listSaved = trpc.message.list.useQuery({
@@ -52,6 +61,11 @@ export default function BookmarkPage({
       return b.text?.toLowerCase().includes(keyword) ?? false;
     });
   }, [sortOrder, searchText, data]);
+  const reset = () => {
+    setSortOrder("desc");
+    setSearchText("");
+    toast.success("Filters reset");
+  };
 
   if (loading) return <PartialLoading />;
 
@@ -61,14 +75,53 @@ export default function BookmarkPage({
         className="absolute top-0 left-0 w-full h-[50px] px-4 flex items-center justify-between select-none"
         style={headerStyle}
       >
-        <div>{collapsed && <CollapseButton />}</div>
+        <div>{collapsed && <CollapseButton hoverColor="white" />}</div>
+        <div className="flex items-center gap-2">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={reset}
+                className="flex items-center gap-1 text-sm hover:bg-white"
+              >
+                <RotateCcw className="w-4 h-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom">Reset Filters</TooltipContent>
+          </Tooltip>
+
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setIsFilterOpen((prev) => !prev)}
+                className="flex items-center gap-1 text-sm hover:bg-white"
+              >
+                {isFilterOpen ? (
+                  <EyeOff className="w-4 h-4" />
+                ) : (
+                  <Eye className="w-4 h-4" />
+                )}
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom">
+              {isFilterOpen ? "Hide Filters" : "Show Filters"}
+            </TooltipContent>
+          </Tooltip>
+        </div>
       </div>
-      <BookmarkFilters
-        sortOrder={sortOrder}
-        setSortOrder={setSortOrder}
-        searchText={searchText}
-        setSearchText={setSearchText}
-      />
+      <div className="mt-[40px]">
+        {isFilterOpen && (
+          <BookmarkFilters
+            sortOrder={sortOrder}
+            setSortOrder={setSortOrder}
+            searchText={searchText}
+            setSearchText={setSearchText}
+          />
+        )}
+      </div>
       <div className="flex-1 overflow-y-auto space-y-4">
         {filteredMessages.length === 0 ? (
           <PartialEmpty message="You haven’t saved any items yet." />
