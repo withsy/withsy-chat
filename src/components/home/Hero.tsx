@@ -4,7 +4,10 @@ import LoginButton from "../login/LoginButton";
 
 export function Hero({ user }: { user: User | null }) {
   return (
-    <section className="w-full bg-white pt-15 pb-10 text-center">
+    <section className="w-full bg-transparent pt-15 pb-10 text-center relative overflow-hidden z-0">
+      <div className="absolute top-[-100px] left-[-100px] w-[200px] h-[200px] bg-[#EA9257] rounded-full -z-1" />
+      <div className="absolute bottom-[-150px] right-[-150px] w-[400px] h-[400px] bg-[#EA9257] rounded-full -z-1" />
+
       <div className="max-w-3xl mx-auto px-4">
         <div
           className="mb-6 space-y-4 selection:bg-[#EA9257] selection:text-white"

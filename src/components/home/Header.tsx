@@ -37,8 +37,8 @@ export default function Component({ user }: { user: User | null }) {
 
   return (
     <div
-      className={`w-full bg-white/70 backdrop-blur-lg sticky top-0 z-50 transition-all duration-300 ${
-        scrolled ? "border-b" : ""
+      className={`w-full backdrop-blur-lg sticky top-0 z-50 transition-all duration-300 ${
+        scrolled ? "bg-white/70 border-b" : "bg-transparent"
       }`}
     >
       <div className="max-w-6xl mx-auto p-2 px-4 flex justify-between items-center select-none">
