@@ -90,12 +90,14 @@ model UserDefaultPrompt {
 }
 
 model UserAiProfile {
-  id       Int    @id @default(autoincrement()) @map("id")
-  userId   String @unique @map("user_id") @db.Uuid
-  user     User   @relation("user_ai_profiles.user_id", fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  model    String @map("model")
-  name     String @map("name")
-  imageUrl String @map("image_url")
+  id                Int      @id @default(autoincrement()) @map("id")
+  userId            String   @unique @map("user_id") @db.Uuid
+  user              User     @relation("user_ai_profiles.user_id", fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  model             String   @map("model")
+  nameEncrypted     String   @map("name_encrypted")
+  imageUrlEncrypted String   @map("image_url_encrypted")
+  createdAt         DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
 
   @@unique([userId, model])
   @@map("user_ai_profiles")

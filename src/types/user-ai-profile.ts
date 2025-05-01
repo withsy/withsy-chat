@@ -7,25 +7,38 @@ import { Model } from "./model";
 export const Select = {
   id: true,
   model: true,
-  name: true,
-  imageUrl: true,
+  nameEncrypted: true,
+  imageUrlEncrypted: true,
 } satisfies Prisma.UserAiProfileSelect;
 
 export const Entity = z.object({
   id: UserAiProfileId,
   model: z.string(),
-  name: z.string(),
-  imageUrl: z.string(),
+  nameEncrypted: z.string(),
+  imageUrlEncrypted: z.string(),
 });
 export type Entity = zInfer<typeof Entity>;
 const _ = {} satisfies Omit<Entity, keyof typeof Select>;
 
 export const Data = Entity.omit({
+  id: true,
   model: true,
+  nameEncrypted: true,
+  imageUrlEncrypted: true,
 }).extend({
   model: Model,
+  name: z.string(),
+  imageUrl: z.string(),
 });
 export type Data = zInfer<typeof Data>;
+
+export const Get = z.object({
+  model: Model,
+});
+export type Get = zInfer<typeof Get>;
+
+export const GetOutput = z.nullable(Data);
+export type GetOutput = zInfer<typeof GetOutput>;
 
 export const Update = z.object({
   model: Model,
@@ -33,3 +46,8 @@ export const Update = z.object({
   image: z.optional(z.instanceof(File)),
 });
 export type Update = zInfer<typeof Update>;
+
+export const DeleteImage = z.object({
+  model: Model,
+});
+export type DeleteImage = zInfer<typeof DeleteImage>;

@@ -76,8 +76,10 @@ CREATE TABLE "user_ai_profiles" (
     "id" SERIAL NOT NULL,
     "user_id" UUID NOT NULL,
     "model" TEXT NOT NULL,
-    "name" TEXT NOT NULL,
-    "image_url" TEXT NOT NULL,
+    "name_encrypted" TEXT NOT NULL,
+    "image_url_encrypted" TEXT NOT NULL,
+    "created_at" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "user_ai_profiles_pkey" PRIMARY KEY ("id")
 );
