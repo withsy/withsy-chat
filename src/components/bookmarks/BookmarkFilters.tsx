@@ -1,11 +1,9 @@
 import { FilterSelect } from "@/components/FilterSelect";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useSidebarStore } from "@/stores/useSidebarStore";
 import { ChevronDown, ChevronUp, RotateCcw } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-import { CollapseButton } from "../CollapseButton";
 
 const sortOrderOptions = [
   { label: "Newest First", value: "desc" },
@@ -25,7 +23,6 @@ export function BookmarkFilters({
   searchText,
   setSearchText,
 }: Props) {
-  const { collapsed } = useSidebarStore();
   const [isOpen, setIsOpen] = useState(true);
 
   const reset = () => {
@@ -35,9 +32,8 @@ export function BookmarkFilters({
   };
 
   return (
-    <div className="pb-4">
-      <div className="flex justify-between items-center mb-2">
-        <div>{collapsed && <CollapseButton hoverColor="bg-gray-100" />}</div>
+    <div className="mt-[40px]">
+      <div className="flex justify-end items-center mb-2">
         <div className="flex items-center gap-2">
           <Button
             variant="ghost"
@@ -71,7 +67,7 @@ export function BookmarkFilters({
       </div>
 
       {isOpen && (
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 pb-4">
           <div className="flex flex-wrap gap-4 items-end">
             <div className="flex gap-2">
               <FilterSelect

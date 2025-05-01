@@ -7,5 +7,11 @@ export default function BookmarkIndex() {
   if (!user || user == null) {
     return <PartialLoading />;
   }
-  return <BookmarkPage user={user} />;
+
+  const { themeColor, themeOpacity } = user.preferences;
+  const headerStyle: React.CSSProperties = {
+    backgroundColor: `rgba(${themeColor}, ${themeOpacity / 2})`,
+  };
+
+  return <BookmarkPage user={user} headerStyle={headerStyle} />;
 }

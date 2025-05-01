@@ -8,12 +8,22 @@ import type { User } from "@/types/user";
 import { useEffect, useMemo, useState } from "react";
 import { PartialEmpty } from "../Empty";
 import { PartialLoading } from "../Loading";
+import { useSidebarStore } from "@/stores/useSidebarStore";
+import { CollapseButton } from "../CollapseButton";
 
-export default function BookmarkPage({ user }: { user: User }) {
+export default function BookmarkPage({
+  user,
+  headerStyle,
+}: {
+  user: User;
+  headerStyle: React.CSSProperties;
+}) {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<Message[]>([]);
   const [searchText, setSearchText] = useState("");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+
+  const { collapsed } = useSidebarStore();
   const listSaved = trpc.message.list.useQuery({
     options: {
       scope: {
@@ -44,8 +54,15 @@ export default function BookmarkPage({ user }: { user: User }) {
   }, [sortOrder, searchText, data]);
 
   if (loading) return <PartialLoading />;
+
   return (
-    <div className="h-full w-full flex flex-col p-6">
+    <div className="flex flex-col h-full w-full p-6 relative">
+      <div
+        className="absolute top-0 left-0 w-full h-[50px] px-4 flex items-center justify-between select-none"
+        style={headerStyle}
+      >
+        <div>{collapsed && <CollapseButton />}</div>
+      </div>
       <BookmarkFilters
         sortOrder={sortOrder}
         setSortOrder={setSortOrder}
