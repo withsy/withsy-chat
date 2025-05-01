@@ -1,10 +1,10 @@
-import type { Message } from "@/types/message";
+import type { Message } from "@/types";
 
 export function filterMessages({
   messages,
   sortOrder,
 }: {
-  messages: Message[];
+  messages: Message.Data[];
   sortOrder: "asc" | "desc";
 }) {
   return messages.sort((a, b) => {

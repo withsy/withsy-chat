@@ -1,14 +1,14 @@
+import { CollapseButton } from "@/components/CollapseButton";
 import { PartialLoading } from "@/components/Loading";
 import { EditPromptModal } from "@/components/prompts/EditPromptModal";
+import { PromptCard } from "@/components/prompts/PromptCard";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@/context/UserContext";
-import { CollapseButton } from "@/components/CollapseButton";
-import { useSidebarStore } from "@/stores/useSidebarStore";
-import { PromptCard } from "@/components/prompts/PromptCard";
-import { useState } from "react";
 import { trpc } from "@/lib/trpc";
+import { useSidebarStore } from "@/stores/useSidebarStore";
+import type { UserPrompt } from "@/types";
+import { useState } from "react";
 import { v4 as uuid } from "uuid";
-import type { Schema } from "@/types/user-prompt";
 
 function PromptsPage() {
   const { user } = useUser();
@@ -55,11 +55,9 @@ function PromptsPage() {
     },
   });
 
-  const toggleStarPrompt = (prompt: Schema) => {
+  const toggleStarPrompt = (prompt: UserPrompt.Data) => {
     updatePrompt.mutate({
       userPromptId: prompt.id,
-      title: prompt.title,
-      text: prompt.text,
       isStarred: !prompt.isStarred,
     });
   };

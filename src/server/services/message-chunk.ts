@@ -1,65 +1,65 @@
+import { MessageChunk } from "@/types";
 import type { MessageChunkIndex, MessageId } from "@/types/id";
-import {
-  MessageChunkReceiveData,
-  MessageChunkSelect,
-  type MessageChunkReceive,
-} from "@/types/message-chunk";
 import { PgEvent, type PgEventInput } from "@/types/task";
 import type { UserId } from "@/types/user";
 import type { UserUsageLimit } from "@/types/user-usage-limit";
-import type { Prisma } from "@prisma/client";
 import { tracked } from "@trpc/server";
 import type { ServiceRegistry } from "../service-registry";
-import type { Tx } from "./db";
 import { listen } from "./pg";
 
 export class MessageChunkService {
   constructor(private readonly service: ServiceRegistry) {}
 
+  decrypt(entity: MessageChunk.Entity): MessageChunk.Data {
+    const text = this.service.encryption.decrypt(entity.textEncrypted);
+    const data = {
+      text,
+    } satisfies MessageChunk.Data;
+    return data;
+  }
+
   async add(input: {
     messageId: MessageId;
     index: MessageChunkIndex;
-    rawData: Prisma.InputJsonValue;
+    rawData: string;
     text: string;
   }) {
     const { messageId, index, text, rawData } = input;
+
+    const textEncrypted = this.service.encryption.encrypt(text);
+    const rawDataEncrypted = this.service.encryption.encrypt(rawData);
+
     await this.service.db.messageChunk.create({
       data: {
         messageId,
         index,
-        text,
-        rawData,
+        textEncrypted,
+        rawDataEncrypted,
       },
-      select: MessageChunkSelect,
+      select: { index: true },
     });
   }
 
-  static async buildText(
-    tx: Tx,
-    input: { userId: UserId; messageId: MessageId }
-  ) {
+  async buildText(input: {
+    userId: UserId;
+    messageId: MessageId;
+  }): Promise<string> {
     const { userId, messageId } = input;
-    const rows = await tx.messageChunk.findMany({
+
+    const entities = await this.service.db.messageChunk.findMany({
       where: {
-        message: {
-          chat: {
-            userId,
-            deletedAt: null,
-          },
-        },
+        message: { chat: { userId, deletedAt: null } },
         messageId,
       },
-      select: MessageChunkSelect,
-      orderBy: {
-        index: "asc",
-      },
+      select: MessageChunk.Select,
+      orderBy: { index: "asc" },
     });
 
-    const text = rows.map((x) => x.text).join("");
-    return { text };
+    const text = entities.map((x) => this.decrypt(x).text).join("");
+    return text;
   }
 
-  async *receive(userId: UserId, input: MessageChunkReceive) {
+  async *receive(userId: UserId, input: MessageChunk.Receive) {
     const { messageId, lastEventId } = input;
     const q: PgEventInput<"message_chunk_created">[] = [];
 
@@ -75,36 +75,25 @@ export class MessageChunkService {
 
     try {
       let lastIndex = lastEventId ?? -1;
-      const chunks = await this.service.db.messageChunk.findMany({
+      const entities = await this.service.db.messageChunk.findMany({
         where: {
-          message: {
-            chat: {
-              userId,
-              deletedAt: null,
-            },
-          },
+          message: { chat: { userId, deletedAt: null } },
           messageId,
-          index: {
-            gt: lastIndex,
-          },
+          index: { gt: lastIndex },
         },
-        orderBy: {
-          index: "asc",
-        },
-        select: {
-          ...MessageChunkSelect,
-          index: true,
-        },
+        orderBy: { index: "asc" },
+        select: MessageChunk.Select,
       });
 
-      for (const chunk of chunks) {
-        yield tracked(chunk.index.toString(), {
+      for (const entity of entities) {
+        const data = this.decrypt(entity);
+
+        yield tracked(entity.index.toString(), {
           type: "chunk",
-          chunk: {
-            text: chunk.text,
-          },
-        } satisfies MessageChunkReceiveData);
-        lastIndex = chunk.index;
+          chunk: data,
+        } satisfies MessageChunk.ReceiveData);
+
+        lastIndex = entity.index;
       }
 
       while (true) {
@@ -127,32 +116,30 @@ export class MessageChunkService {
             yield tracked("usageLimit", {
               type: "usageLimit",
               usageLimit,
-            } satisfies MessageChunkReceiveData);
+            } satisfies MessageChunk.ReceiveData);
+
             return;
           }
 
           const { index } = input;
           if (index > lastIndex) {
-            const chunk = await this.service.db.messageChunk.findUniqueOrThrow({
-              where: {
-                message: {
-                  chat: {
-                    userId,
-                    deletedAt: null,
-                  },
+            const entity = await this.service.db.messageChunk.findUniqueOrThrow(
+              {
+                where: {
+                  message: { chat: { userId, deletedAt: null } },
+                  messageId_index: { messageId, index },
                 },
-                messageId_index: {
-                  messageId,
-                  index,
-                },
-              },
-              select: MessageChunkSelect,
-            });
+                select: MessageChunk.Select,
+              }
+            );
+
+            const data = this.decrypt(entity);
 
             yield tracked(index.toString(), {
               type: "chunk",
-              chunk,
-            } satisfies MessageChunkReceiveData);
+              chunk: data,
+            } satisfies MessageChunk.ReceiveData);
+
             lastIndex = index;
           }
         } else {

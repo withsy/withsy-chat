@@ -1,4 +1,5 @@
 import { Role } from "@/types/role";
+import { inspect } from "node:util";
 import OpenAI from "openai";
 import type {
   ChatCompletionAssistantMessageParam,
@@ -8,8 +9,8 @@ import type {
   ChatCompletionUserMessageParam,
 } from "openai/resources";
 import { match } from "ts-pattern";
-import { envConfig } from "../env-config";
 import type { ServiceRegistry } from "../service-registry";
+import type { EnvService } from "./env";
 import type { SendMessageToAiInput } from "./model-route";
 
 const MAX_CHUNK_BUFFER_LENGTH = 16;
@@ -18,18 +19,25 @@ export class OpenAiService {
   private openai: OpenAI;
 
   constructor(private readonly service: ServiceRegistry) {
-    this.openai = new OpenAI({ apiKey: envConfig.openaiApiKey });
+    this.openai = new OpenAI({ apiKey: service.env.openaiApiKey });
   }
 
   async sendMessageToAi(input: SendMessageToAiInput) {
-    return await OpenAiService.sendMessageToAi(this.openai, input);
+    return await OpenAiService.sendMessageToAi(
+      this.service,
+      this.openai,
+      input
+    );
   }
 
-  static async sendMessageToAi(openai: OpenAI, input: SendMessageToAiInput) {
-    const { model, promptText, messagesForHistory, onMessageChunkReceived } =
-      input;
+  static async sendMessageToAi(
+    service: ServiceRegistry,
+    openai: OpenAI,
+    input: SendMessageToAiInput
+  ) {
+    const { model, promptText, messagesForAi, onMessageChunkReceived } = input;
 
-    const histories = messagesForHistory.map((x) =>
+    const histories = messagesForAi.map((x) =>
       match(Role.parse(x.role))
         .with(
           "user",
@@ -61,6 +69,14 @@ export class OpenAiService {
     if (promptText.length > 0)
       messages.push({ role: "system", content: promptText });
     messages.push(...histories);
+
+    if (service.env.nodeEnv !== "production")
+      console.log(
+        "OpenAiService.sendMessageToAi. model:",
+        model,
+        "messages:",
+        inspect(messages, { depth: null })
+      );
 
     const stream = await openai.chat.completions.create({
       model,

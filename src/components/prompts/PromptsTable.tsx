@@ -13,11 +13,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import type { Schema } from "@/types/user-prompt";
+import type { UserPrompt } from "@/types";
 import { MoreVertical, Star } from "lucide-react";
 
 interface PromptsTableProps {
-  prompts: Schema[];
+  prompts: UserPrompt.Data[];
   onToggleStar: (id: string) => void;
   onDelete: (id: string) => void;
   onEdit: (id: string) => void;

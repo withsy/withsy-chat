@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/tooltip";
 import { useUser } from "@/context/UserContext";
 import { useDrawerStore } from "@/stores/useDrawerStore";
-import type { ChatType } from "@/types/chat";
+import type { Chat } from "@/types";
 import { ChevronDown, PenLine } from "lucide-react";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -20,7 +20,7 @@ export default function MobileChatHeader({
   chatType,
 }: {
   chatTitle: string | undefined;
-  chatType: ChatType | undefined;
+  chatType: Chat.Type | undefined;
 }) {
   const router = useRouter();
   const { openDrawer, setOpenDrawer } = useDrawerStore();

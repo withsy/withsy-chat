@@ -17,7 +17,7 @@ import { useUser } from "@/context/UserContext";
 import { trpc } from "@/lib/trpc";
 import { useDrawerStore } from "@/stores/useDrawerStore";
 import { useSidebarStore } from "@/stores/useSidebarStore";
-import type { Chat } from "@/types/chat";
+import type { Chat } from "@/types";
 import { EllipsisVertical, Pencil, Star, StarOff, Trash2 } from "lucide-react";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -27,9 +27,9 @@ export function SidebarChatItem({
   isSidebar,
   onChatUpdate,
 }: {
-  chat: Chat;
+  chat: Chat.Data;
   isSidebar?: boolean;
-  onChatUpdate: (chat: Chat) => void;
+  onChatUpdate: (chat: Chat.Data) => void;
 }) {
   const router = useRouter();
   const { setOpenDrawer } = useDrawerStore();

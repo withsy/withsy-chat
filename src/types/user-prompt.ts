@@ -5,29 +5,38 @@ import { IdempotencyKey, UserPromptId } from "./id";
 
 export const Select = {
   id: true,
-  title: true,
-  text: true,
+  titleEncrypted: true,
+  textEncrypted: true,
   isStarred: true,
   updatedAt: true,
 } satisfies Prisma.UserPromptSelect;
 
-export const Schema = z.object({
+export const Entity = z.object({
   id: UserPromptId,
-  title: z.string(),
-  text: z.string(),
+  titleEncrypted: z.string(),
+  textEncrypted: z.string(),
   isStarred: z.boolean(),
   updatedAt: z.date(),
 });
-export type Schema = zInfer<typeof Schema>;
-const _ = {} satisfies Omit<Schema, keyof typeof Select>;
+export type Entity = zInfer<typeof Entity>;
+const _ = {} satisfies Omit<Entity, keyof typeof Select>;
 
-export const Data = Schema.extend({});
+export const Data = Entity.omit({
+  titleEncrypted: true,
+  textEncrypted: true,
+}).extend({
+  title: z.string(),
+  text: z.string(),
+});
 export type Data = zInfer<typeof Data>;
 
 export const Get = z.object({
   userPromptId: UserPromptId,
 });
 export type Get = zInfer<typeof Get>;
+
+export const ListOutput = z.array(Data);
+export type ListOutput = zInfer<typeof ListOutput>;
 
 export const Create = z.object({
   idempotencyKey: IdempotencyKey,
@@ -38,9 +47,9 @@ export type Create = zInfer<typeof Create>;
 
 export const Update = z.object({
   userPromptId: UserPromptId,
-  title: z.string().optional(),
-  text: z.string().optional(),
-  isStarred: z.boolean(),
+  title: z.optional(z.string()),
+  text: z.optional(z.string()),
+  isStarred: z.optional(z.boolean()),
 });
 export type Update = zInfer<typeof Update>;
 

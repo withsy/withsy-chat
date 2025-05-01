@@ -2,7 +2,7 @@ import type { zInfer } from "@/types/common";
 import "dotenv/config";
 import { z } from "zod";
 
-export const EnvConfig = z.object({
+export const EnvService = z.object({
   nodeEnv: z.enum(["development", "production", "test"]),
   databaseUrl: z.string().min(1),
   geminiApiKey: z.string().min(1),
@@ -12,12 +12,13 @@ export const EnvConfig = z.object({
   nextauthSecret: z.string().min(1),
   googleClientId: z.string().min(1),
   googleClientSecret: z.string().min(1),
+  encryptionKey: z.string().min(1),
 });
-export type EnvConfig = zInfer<typeof EnvConfig>;
+export type EnvService = zInfer<typeof EnvService>;
 
-function load() {
+export function loadEnvService() {
   try {
-    return EnvConfig.parse({
+    return EnvService.parse({
       nodeEnv: process.env.NODE_ENV,
       databaseUrl: process.env.DATABASE_URL,
       geminiApiKey: process.env.GEMINI_API_KEY,
@@ -27,11 +28,10 @@ function load() {
       nextauthSecret: process.env.NEXTAUTH_SECRET,
       googleClientId: process.env.GOOGLE_CLIENT_ID,
       googleClientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      encryptionKey: process.env.ENCRYPTION_KEY,
     });
   } catch (e) {
     console.log("Environment variable parsing failed.");
     throw e;
   }
 }
-
-export const envConfig = load();

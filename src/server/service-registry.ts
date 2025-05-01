@@ -1,9 +1,11 @@
 import type { Pool } from "pg";
-import { createLazyRegistry, type LazyRegistryProxy } from "./lazy-registry";
+import { createLazyObject, type LazyObject } from "./lazy-object";
 import { ChatService } from "./services/chat";
 import { ChatBranchService } from "./services/chat-branch";
 import { ChatPromptService } from "./services/chat-prompt";
 import { createDb, type Db } from "./services/db";
+import { EncryptionService } from "./services/encryption";
+import { loadEnvService, type EnvService } from "./services/env";
 import { GoogleGenAiService } from "./services/google-gen-ai";
 import { GratitudeJournalService } from "./services/gratitude-journal";
 import { IdempotencyInfoService } from "./services/idempotency-info";
@@ -24,6 +26,7 @@ import { UserUsageLimitService } from "./services/user-usage-limit";
 import { XAiService } from "./services/x-ai";
 
 type ServiceDefinition = {
+  env: EnvService;
   pgPool: Pool;
   db: Db;
   user: UserService;
@@ -46,13 +49,15 @@ type ServiceDefinition = {
   s3: MockS3Service;
   chatPrompt: ChatPromptService;
   gratitudeJournal: GratitudeJournalService;
+  encryption: EncryptionService;
 };
 
-export type ServiceRegistry = LazyRegistryProxy<ServiceDefinition>;
+export type ServiceRegistry = LazyObject<ServiceDefinition>;
 
 function createServiceRegistry() {
-  return createLazyRegistry<ServiceDefinition>({
-    pgPool: () => createPgPool(),
+  return createLazyObject<ServiceDefinition>({
+    env: () => loadEnvService(),
+    pgPool: (s) => createPgPool(s),
     db: (s) => createDb(s),
     user: (s) => new UserService(s),
     userLinkAccount: (s) => new UserLinkAccountService(s),
@@ -74,6 +79,7 @@ function createServiceRegistry() {
     s3: (s) => new MockS3Service(s),
     chatPrompt: (s) => new ChatPromptService(s),
     gratitudeJournal: (s) => new GratitudeJournalService(s),
+    encryption: (s) => new EncryptionService(s),
   });
 }
 

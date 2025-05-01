@@ -2,12 +2,12 @@ import { ChatSessionProvider } from "@/context/ChatSessionContext";
 import { useUser } from "@/context/UserContext";
 import { trpc } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
+import { useChatStore } from "@/stores/useChatStore";
 import { useDrawerStore } from "@/stores/useDrawerStore";
 import { useSelectedModelStore } from "@/stores/useSelectedModelStore";
 import { useSidebarStore } from "@/stores/useSidebarStore";
-import { ChatStartError } from "@/types/chat";
+import { Chat, Message } from "@/types";
 import { MessageId } from "@/types/id";
-import { MessageSendError, type Message } from "@/types/message";
 import type { UserUsageLimit } from "@/types/user-usage-limit";
 import { skipToken } from "@tanstack/react-query";
 import { useRouter } from "next/router";
@@ -19,10 +19,9 @@ import ChatHeader from "./ChatHeader";
 import { ChatInputBox } from "./ChatInputBox";
 import { ChatMessageList } from "./ChatMessageList";
 import MobileChatHeader from "./MobileChatHeader";
-import { useChatStore } from "@/stores/useChatStore";
 
 type Props = {
-  initialMessages: Message[];
+  initialMessages: Message.Data[];
   children?: React.ReactNode;
 };
 
@@ -47,7 +46,7 @@ export function ChatSession({ initialMessages, children }: Props) {
 
   const chatStart = trpc.chat.start.useMutation({
     onError(error) {
-      const _res = ChatStartError.safeParse(error.data);
+      const _res = Chat.StartError.safeParse(error.data);
       toast.error(`Chat starting failed.`);
     },
     onSuccess(data) {
@@ -60,7 +59,7 @@ export function ChatSession({ initialMessages, children }: Props) {
 
   const messageSend = trpc.message.send.useMutation({
     onError(error) {
-      const _res = MessageSendError.safeParse(error.data);
+      const _res = Message.SendError.safeParse(error.data);
       toast.error(`Message sending failed.`);
     },
     onSuccess(data) {
@@ -198,7 +197,7 @@ export function ChatSession({ initialMessages, children }: Props) {
     );
   };
 
-  const handleRegenerateSuccess = (newMessage: Message) => {
+  const handleRegenerateSuccess = (newMessage: Message.Data) => {
     setMessages((prev) => [...prev, newMessage]);
     setStreamMessageId(newMessage.id);
     utils.chat.list.invalidate();

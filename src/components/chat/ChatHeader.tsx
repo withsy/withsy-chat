@@ -7,7 +7,7 @@ import {
 import { useUser } from "@/context/UserContext";
 import { useDrawerStore } from "@/stores/useDrawerStore";
 import { useSidebarStore } from "@/stores/useSidebarStore";
-import type { ChatType } from "@/types/chat";
+import type { Chat } from "@/types";
 import { Bookmark, FolderGit2, PenLine, TableProperties } from "lucide-react";
 import { useRouter } from "next/router";
 import { CollapseButton } from "../CollapseButton";
@@ -20,7 +20,7 @@ export default function ChatHeader({
   chatType,
 }: {
   chatTitle: string | undefined;
-  chatType: ChatType | undefined;
+  chatType: Chat.Type | undefined;
 }) {
   const router = useRouter();
   const { collapsed } = useSidebarStore();

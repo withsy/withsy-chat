@@ -1,9 +1,8 @@
-import { ChatStart } from "@/types/chat";
-import { MessageSend } from "@/types/message";
+import { Chat, Message } from "@/types";
 import { serveStatic } from "@hono/node-server/serve-static";
 import { Hono } from "hono";
 import { logger } from "hono/logger";
-import { envConfig } from "../env-config";
+import { service } from "../service-registry";
 import { appRouter } from "../trpc/routers/_app";
 import {
   handleErrorMiddleware,
@@ -20,7 +19,7 @@ const chats = new Hono()
     const files = formData.getAll("files");
     const serverContext = c.get("serverContext");
 
-    const input = ChatStart.parse({
+    const input = Chat.Start.parse({
       idempotencyKey,
       text,
       model,
@@ -42,7 +41,7 @@ const chats = new Hono()
     const files = formData.getAll("files");
     const parentId = formData.get("parentId");
 
-    const input = MessageSend.parse({
+    const input = Message.Send.parse({
       chatId,
       idempotencyKey,
       text,
@@ -63,7 +62,7 @@ export const restServer = new Hono()
   .use(handleErrorMiddleware)
   .route("/chats", chats);
 
-if (envConfig.nodeEnv === "development") {
+if (service.env.nodeEnv === "development") {
   console.warn("Development endpoints /trpc-ui and /s3 are opened.");
 
   restServer.get("/trpc-ui", async (c) => {

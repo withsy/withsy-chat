@@ -2,7 +2,7 @@ import { PartialError } from "@/components/Error";
 import { PartialLoading } from "@/components/Loading";
 import { formatDateLabel, toNewest } from "@/lib/date-utils";
 import { trpc } from "@/lib/trpc";
-import type { Chat } from "@/types/chat";
+import type { Chat } from "@/types";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { useEffect, useState } from "react";
 import { SidebarChatItem } from "./SidebarChatItem";
@@ -11,7 +11,7 @@ export default function SidebarChatList() {
   const utils = trpc.useUtils();
   const listChats = trpc.chat.list.useQuery();
   const updateChatMut = trpc.chat.update.useMutation();
-  const [chats, setChats] = useState<Chat[]>([]);
+  const [chats, setChats] = useState<Chat.Data[]>([]);
   const [starredOpen, setStarredOpen] = useState(true);
 
   useEffect(() => {
@@ -19,7 +19,7 @@ export default function SidebarChatList() {
     setChats(listChats.data);
   }, [listChats]);
 
-  const updateChat = (updatedChat: Chat) => {
+  const updateChat = (updatedChat: Chat.Data) => {
     const prev = chats;
 
     setChats((prev) =>
@@ -43,8 +43,8 @@ export default function SidebarChatList() {
   if (listChats.isError) return <PartialError message="loading chat list" />;
   if (!listChats.data) return <></>;
 
-  const starred: Chat[] = [];
-  const nonStarredMap: Map<string, Chat[]> = new Map();
+  const starred: Chat.Data[] = [];
+  const nonStarredMap: Map<string, Chat.Data[]> = new Map();
   listChats.data.forEach((chat) => {
     if (chat.isStarred) {
       starred.push(chat);

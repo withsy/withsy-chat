@@ -1,6 +1,6 @@
 import type { Prisma } from "@prisma/client";
 import { z } from "zod";
-import { Chat } from "./chat";
+import { Chat } from ".";
 import type { zInfer } from "./common";
 import { ChatId, GratitudeJournalId, IdempotencyKey } from "./id";
 
@@ -9,20 +9,20 @@ export const Select = {
   chatId: true,
 } satisfies Prisma.GratitudeJournalSelect;
 
-export const Schema = z.object({
+export const Entity = z.object({
   id: GratitudeJournalId,
-  chatId: ChatId,
+  chatId: z.nullable(ChatId),
 });
-export type Schema = zInfer<typeof Schema>;
-const _ = {} satisfies Omit<Schema, keyof typeof Select>;
+export type Entity = zInfer<typeof Entity>;
+const _ = {} satisfies Omit<Entity, keyof typeof Select>;
 
 export type Data = {
   id: GratitudeJournalId;
   chatId: ChatId | null;
-  chat?: Chat | null;
+  chat?: Chat.Data | null;
 };
-export const Data: z.ZodType<Data> = Schema.extend({
-  chat: z.nullable(z.lazy(() => Chat)).default(null),
+export const Data: z.ZodType<Data> = Entity.extend({
+  chat: z.nullable(z.lazy(() => Chat.Data)).default(null),
 });
 
 export const StartChat = z.object({

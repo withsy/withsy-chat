@@ -7,27 +7,44 @@ import type { Tx } from "./db";
 export class UserDefaultPromptService {
   constructor(private readonly service: ServiceRegistry) {}
 
-  async get(userId: UserId) {
-    const res = await this.service.db.$transaction(async (tx) => {
-      const res = await UserDefaultPromptService.get(tx, { userId });
-      return res;
-    });
-
-    return res;
+  decrypt(
+    entity: UserDefaultPrompt.Entity & { userPrompt?: UserPrompt.Entity | null }
+  ): UserDefaultPrompt.Data {
+    const data = {
+      userPromptId: entity.userPromptId,
+      userPrompt: entity.userPrompt
+        ? this.service.userPrompt.decrypt(entity.userPrompt)
+        : null,
+    } satisfies UserDefaultPrompt.Data;
+    return data;
   }
 
-  async update(userId: UserId, input: UserDefaultPrompt.Update) {
+  async get(userId: UserId): Promise<UserDefaultPrompt.GetOutput> {
+    const entity = await this.service.db.$transaction(async (tx) => {
+      const entity = await UserDefaultPromptService.get(tx, { userId });
+      return entity;
+    });
+
+    const data = entity ? this.decrypt(entity) : entity;
+    return data;
+  }
+
+  async update(
+    userId: UserId,
+    input: UserDefaultPrompt.Update
+  ): Promise<UserDefaultPrompt.Data> {
     const { userPromptId } = input;
-    const res = await this.service.db.$transaction(async (tx) => {
-      const res = await UserDefaultPromptService.update(tx, {
+    const entity = await this.service.db.$transaction(async (tx) => {
+      const entity = await UserDefaultPromptService.update(tx, {
         userId,
         userPromptId,
       });
 
-      return res;
+      return entity;
     });
 
-    return res;
+    const data = this.decrypt(entity);
+    return data;
   }
 
   static async get(tx: Tx, input: { userId: UserId }) {

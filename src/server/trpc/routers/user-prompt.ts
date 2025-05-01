@@ -1,5 +1,4 @@
 import { UserPrompt } from "@/types";
-import { z } from "zod";
 import { publicProcedure, t } from "../server";
 
 export const userPromptRouter = t.router({
@@ -12,14 +11,14 @@ export const userPromptRouter = t.router({
         .then((x) => UserPrompt.Data.parse(x))
     ),
   list: publicProcedure
-    .output(z.array(UserPrompt.Data))
+    .output(UserPrompt.ListOutput)
     .query((opts) =>
       opts.ctx.service.userPrompt
         .list(opts.ctx.userId)
         .then((xs) => xs.map((x) => UserPrompt.Data.parse(x)))
     ),
   listDeleted: publicProcedure
-    .output(z.array(UserPrompt.Data))
+    .output(UserPrompt.ListOutput)
     .query((opts) =>
       opts.ctx.service.userPrompt
         .listDeleted(opts.ctx.userId)

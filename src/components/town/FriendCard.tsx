@@ -1,5 +1,5 @@
 import { trpc } from "@/lib/trpc";
-import type { ChatStartOutput } from "@/types/chat";
+import type { Chat } from "@/types";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -53,7 +53,7 @@ export function FriendCard({ friend }: { friend: WithsyFriend }) {
   const { mutateAsync: startEmotionalVenting } =
     trpc.gratitudeJournal.startChat.useMutation();
 
-  const actionHandlers: Record<ActionName, () => Promise<ChatStartOutput>> = {
+  const actionHandlers: Record<ActionName, () => Promise<Chat.StartOutput>> = {
     creativeExpression: () =>
       startCreativeExpression({ idempotencyKey: uuid() }),
     softSupport: () => startSoftSupport({ idempotencyKey: uuid() }),

@@ -1,22 +1,22 @@
-import { Star, MoreVertical } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import type { Schema } from "@/types/user-prompt";
 import { trpc } from "@/lib/trpc";
-import { toast } from "sonner";
 import { useChatStore } from "@/stores/useChatStore";
+import type { UserPrompt } from "@/types";
+import { MoreVertical, Star } from "lucide-react";
+import { toast } from "sonner";
 import { Badge } from "../ui/badge";
 
 interface PromptCardProps {
-  prompt: Schema;
+  prompt: UserPrompt.Data;
   themeColor: string;
-  onClick: (prompt: Schema) => void;
+  onClick: (prompt: UserPrompt.Data) => void;
   onDelete?: (promptId: string) => void;
-  onToggleStar?: (prompt: Schema) => void;
+  onToggleStar?: (prompt: UserPrompt.Data) => void;
   onMakeDefault?: (promptId: string) => void;
   isActive?: boolean;
   isDefault?: boolean;

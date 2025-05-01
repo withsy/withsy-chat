@@ -1,16 +1,13 @@
 import { zAsyncIterable } from "@/server/z-async-iterable";
-import {
-  MessageChunkReceive,
-  MessageChunkReceiveData,
-} from "@/types/message-chunk";
+import { MessageChunk } from "@/types";
 import { publicProcedure, t } from "../server";
 
 export const messageChunkRouter = t.router({
   receive: publicProcedure
-    .input(MessageChunkReceive)
+    .input(MessageChunk.Receive)
     .output(
       zAsyncIterable({
-        yield: MessageChunkReceiveData,
+        yield: MessageChunk.ReceiveData,
         tracked: true,
       })
     )

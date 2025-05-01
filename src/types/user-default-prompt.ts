@@ -8,13 +8,13 @@ export const Select = {
   userPromptId: true,
 } satisfies Prisma.UserDefaultPromptSelect;
 
-export const Schema = z.object({
+export const Entity = z.object({
   userPromptId: z.nullable(UserPromptId),
 });
-export type Schema = zInfer<typeof Schema>;
-const _ = {} satisfies Omit<Schema, keyof typeof Select>;
+export type Entity = zInfer<typeof Entity>;
+const _ = {} satisfies Omit<Entity, keyof typeof Select>;
 
-export const Data = Schema.extend({
+export const Data = Entity.extend({
   userPrompt: z.nullable(UserPrompt.Data).default(null),
 });
 export type Data = zInfer<typeof Data>;
