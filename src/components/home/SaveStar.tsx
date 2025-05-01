@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-export default function SaveStarSection() {
+export default function SaveStar() {
   return (
     <section className="py-16 px-4 md:px-12 bg-white">
       <div className="max-w-6xl mx-auto flex flex-col items-center gap-12">

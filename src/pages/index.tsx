@@ -3,7 +3,8 @@ import Header from "@/components/home/Header";
 import { Hero } from "@/components/home/Hero";
 import ThemeAndPrefsSection from "@/components/home/ThemeAndPrefs";
 import PromptTransparency from "@/components/home/PromptTransparency";
-import SaveStarSection from "@/components/home/SaveStar";
+import SaveStar from "@/components/home/SaveStar";
+import BranchHistory from "@/components/home/BranchHistory";
 
 type Props = {
   user: User | null;
@@ -17,7 +18,8 @@ export default function Page({ user }: Props) {
         <Hero />
         <ThemeAndPrefsSection />
         <PromptTransparency />
-        <SaveStarSection />
+        <SaveStar />
+        <BranchHistory />
       </div>
       <footer className="text-center text-xs text-muted-foreground p-4 select-none">
         <div>© {new Date().getFullYear()} Withsy. All rights reserved.</div>
