@@ -21,3 +21,6 @@ export type MessageChunkIndex = zInfer<typeof MessageChunkIndex>;
 
 export const UserPromptId = z.string().uuid();
 export type UserPromptId = zInfer<typeof UserPromptId>;
+
+export const UserAiProfileId = z.number().int();
+export type UserAiProfileId = zInfer<typeof UserAiProfileId>;

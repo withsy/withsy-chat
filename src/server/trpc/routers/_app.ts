@@ -7,6 +7,7 @@ import { messageRouter } from "./message";
 import { messageChunkRouter } from "./message-chunk";
 import { messageReplyRouter } from "./message-reply";
 import { userRouter } from "./user";
+import { userAiProfileRouter } from "./user-ai-profile";
 import { userDefaultPromptRouter } from "./user-default-prompt";
 import { userPromptRouter } from "./user-prompt";
 import { userUsageLimitRouter } from "./user-usage-limit";
@@ -16,6 +17,7 @@ export const appRouter = t.router({
   userUsageLimit: userUsageLimitRouter,
   userPrompt: userPromptRouter,
   userDefaultPrompt: userDefaultPromptRouter,
+  userAiProfile: userAiProfileRouter,
   chat: chatRouter,
   chatBranch: chatBranchRouter,
   message: messageRouter,

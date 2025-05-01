@@ -19,6 +19,7 @@ import { OpenAiService } from "./services/open-ai";
 import { createPgPool } from "./services/pg";
 import { TaskService } from "./services/task";
 import { UserService } from "./services/user";
+import { UserAiProfileService } from "./services/user-ai-profile";
 import { UserDefaultPromptService } from "./services/user-default-prompt";
 import { UserLinkAccountService } from "./services/user-link-account";
 import { UserPromptService } from "./services/user-prompt";
@@ -34,6 +35,7 @@ type ServiceDefinition = {
   userUsageLimit: UserUsageLimitService;
   userPrompt: UserPromptService;
   userDefaultPrompt: UserDefaultPromptService;
+  userAiProfile: UserAiProfileService;
   chat: ChatService;
   chatBranch: ChatBranchService;
   message: MessageService;
@@ -64,6 +66,7 @@ function createServiceRegistry() {
     userUsageLimit: (s) => new UserUsageLimitService(s),
     userPrompt: (s) => new UserPromptService(s),
     userDefaultPrompt: (s) => new UserDefaultPromptService(s),
+    userAiProfile: (s) => new UserAiProfileService(s),
     chat: (s) => new ChatService(s),
     chatBranch: (s) => new ChatBranchService(s),
     message: (s) => new MessageService(s),
