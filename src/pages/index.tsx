@@ -15,6 +15,7 @@ import { useRouter } from "next/router";
 import { authOptions } from "./api/auth/[...nextauth]";
 import { useHeaderScroll } from "@/hooks/useHeaderScroll";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import ReturnButton from "@/components/home/ReturnButton";
 
 type Props = {
   user: User | null;
@@ -64,23 +65,7 @@ export default function Page({ recommendedFriends, user }: Props) {
               Withsy
             </div>
           </div>
-          {user ? (
-            <div
-              className="flex items-center gap-2 underline underline-offset-8 p-2 hover:bg-gray-200 active:bg-gray-200 rounded-md cursor-pointer"
-              onClick={() => {
-                router.push("/chat");
-              }}
-            >
-              <div
-                className="text-md font-semibold"
-                style={{ color: "rgb(40,90,128)" }}
-              >
-                Return to chat
-              </div>
-            </div>
-          ) : (
-            <LoginButton />
-          )}
+          {user ? <ReturnButton /> : <LoginButton />}
         </div>
       </div>
 
