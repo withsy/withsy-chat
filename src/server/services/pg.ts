@@ -1,11 +1,11 @@
 import type { PgEventInput, PgEventKey, PgEventSchema } from "@/types/task";
 import type { MaybePromise } from "@trpc/server/unstable-core-do-not-import";
 import { type Notification, Pool } from "pg";
-import { envConfig } from "../env-config";
+import type { ServiceRegistry } from "../service-registry";
 
-export function createPgPool(): Pool {
+export function createPgPool(s: ServiceRegistry): Pool {
   const pool = new Pool({
-    connectionString: envConfig.databaseUrl,
+    connectionString: s.env.databaseUrl,
   });
 
   const onError = (e: unknown) => {

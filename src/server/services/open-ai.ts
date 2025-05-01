@@ -8,7 +8,6 @@ import type {
   ChatCompletionUserMessageParam,
 } from "openai/resources";
 import { match } from "ts-pattern";
-import { envConfig } from "../env-config";
 import type { ServiceRegistry } from "../service-registry";
 import type { SendMessageToAiInput } from "./model-route";
 
@@ -18,7 +17,7 @@ export class OpenAiService {
   private openai: OpenAI;
 
   constructor(private readonly service: ServiceRegistry) {
-    this.openai = new OpenAI({ apiKey: envConfig.openaiApiKey });
+    this.openai = new OpenAI({ apiKey: service.env.openaiApiKey });
   }
 
   async sendMessageToAi(input: SendMessageToAiInput) {

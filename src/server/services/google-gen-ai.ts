@@ -1,7 +1,6 @@
 import { Role, RoleGoogleGenAiMap } from "@/types/role";
 import { GoogleGenAI } from "@google/genai";
 import { inspect } from "node:util";
-import { envConfig } from "../env-config";
 import type { ServiceRegistry } from "../service-registry";
 import type { SendMessageToAiInput } from "./model-route";
 
@@ -9,7 +8,7 @@ export class GoogleGenAiService {
   private ai: GoogleGenAI;
 
   constructor(private readonly service: ServiceRegistry) {
-    this.ai = new GoogleGenAI({ apiKey: envConfig.geminiApiKey });
+    this.ai = new GoogleGenAI({ apiKey: this.service.env.geminiApiKey });
   }
 
   async sendMessageToAi(input: SendMessageToAiInput) {
@@ -21,7 +20,7 @@ export class GoogleGenAiService {
       parts: [{ text: x.text }],
     }));
 
-    if (envConfig.nodeEnv === "development")
+    if (this.service.env.nodeEnv === "development")
       console.log(
         "GoogleGenAiService.sendMessageToAi. model:",
         model,

@@ -2,7 +2,7 @@ import type { zInfer } from "@/types/common";
 import "dotenv/config";
 import { z } from "zod";
 
-export const EnvConfig = z.object({
+export const EnvService = z.object({
   nodeEnv: z.enum(["development", "production", "test"]),
   databaseUrl: z.string().min(1),
   geminiApiKey: z.string().min(1),
@@ -14,11 +14,11 @@ export const EnvConfig = z.object({
   googleClientSecret: z.string().min(1),
   encryptionKey: z.string().min(1),
 });
-export type EnvConfig = zInfer<typeof EnvConfig>;
+export type EnvService = zInfer<typeof EnvService>;
 
-function load() {
+export function loadEnvService() {
   try {
-    return EnvConfig.parse({
+    return EnvService.parse({
       nodeEnv: process.env.NODE_ENV,
       databaseUrl: process.env.DATABASE_URL,
       geminiApiKey: process.env.GEMINI_API_KEY,
@@ -35,5 +35,3 @@ function load() {
     throw e;
   }
 }
-
-export const envConfig = load();

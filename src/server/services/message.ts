@@ -15,7 +15,6 @@ import { Role } from "@/types/role";
 import type { UserId } from "@/types/user";
 import { StatusCodes } from "http-status-codes";
 import { uuidv7 } from "uuidv7";
-import { envConfig } from "../env-config";
 import { HttpServerError } from "../error";
 import type { ServiceRegistry } from "../service-registry";
 import type { Tx } from "./db";
@@ -86,6 +85,7 @@ export class MessageService {
   async listForHistory(input: { userId: UserId; modelMessage: Message }) {
     const { userId, modelMessage } = input;
 
+    const service = this.service;
     const history = {
       _olds: [] as MessageForHistory[], // old to less old
       pushOlds(...xs: MessageForHistory[]) {
@@ -103,7 +103,7 @@ export class MessageService {
         const histories = [...this._olds, ...this._news];
         this._olds = [];
         this._news = [];
-        if (envConfig.nodeEnv === "development")
+        if (service.env.nodeEnv === "development")
           console.log("@ histories", histories);
         return histories;
       },

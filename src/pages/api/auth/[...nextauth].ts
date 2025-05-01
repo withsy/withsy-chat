@@ -1,5 +1,4 @@
 import { devAuthProvider } from "@/server/dev-auth-provider";
-import { envConfig } from "@/server/env-config";
 import { service } from "@/server/service-registry";
 import { UserJwt, UserSession } from "@/types/user";
 import NextAuth, { type AuthOptions } from "next-auth";
@@ -8,8 +7,8 @@ import type { Provider } from "next-auth/providers/index";
 
 const providers: Provider[] = [
   GoogleProvider({
-    clientId: envConfig.googleClientId,
-    clientSecret: envConfig.googleClientSecret,
+    clientId: service.env.googleClientId,
+    clientSecret: service.env.googleClientSecret,
     authorization: {
       params: {
         prompt: "consent",
@@ -20,7 +19,7 @@ const providers: Provider[] = [
   }),
 ];
 
-if (envConfig.nodeEnv === "development") providers.push(devAuthProvider);
+if (service.env.nodeEnv === "development") providers.push(devAuthProvider);
 
 export const authOptions: AuthOptions = {
   pages: {

@@ -1,12 +1,21 @@
+import type { zInfer } from "@/types/common";
 import { createCipheriv, createDecipheriv, randomBytes } from "node:crypto";
-import { envConfig } from "../env-config";
+import { z } from "zod";
 import type { ServiceRegistry } from "../service-registry";
+
+const EncryptionPayload = z.object({
+  algorithm: z.literal("aes-256-gcm"),
+  ivEncoded: z.string(),
+  authTagEncoded: z.string(),
+  encryptedEncoded: z.string(),
+});
+type EncryptionPayload = zInfer<typeof EncryptionPayload>;
 
 export class EncryptionService {
   aes256GcmKey: Buffer;
 
   constructor(private readonly service: ServiceRegistry) {
-    const buffer = Buffer.from(envConfig.encryptionKey, "hex");
+    const buffer = Buffer.from(this.service.env.encryptionKey, "hex");
     if (buffer.length !== 32)
       throw new Error("Invalid encryption key length. Expected 32 bytes.");
 
@@ -17,57 +26,41 @@ export class EncryptionService {
     const iv = randomBytes(12);
     const algorithm = "aes-256-gcm";
     const cipher = createCipheriv(algorithm, this.aes256GcmKey, iv);
-    const buffer = Buffer.concat([cipher.update(text, "utf8"), cipher.final()]);
+    const encrypted = Buffer.concat([
+      cipher.update(text, "utf8"),
+      cipher.final(),
+    ]);
     const authTag = cipher.getAuthTag();
-    const payload = JSON.stringify({
+    const payload = {
       algorithm,
-      iv: iv.toString("base64"),
-      authTag: authTag.toString("base64"),
-      buffer: buffer.toString("base64"),
-    });
-    const encrypted = Buffer.from(payload).toString("base64");
-    return encrypted;
+      ivEncoded: iv.toString("base64"),
+      authTagEncoded: authTag.toString("base64"),
+      encryptedEncoded: encrypted.toString("base64"),
+    } satisfies EncryptionPayload;
+    const payloadString = JSON.stringify(payload);
+    const payloadEncoded = Buffer.from(payloadString).toString("base64");
+    return payloadEncoded;
   }
 
-  /**
-   * decrypt(base64Encoded: string): { text: string } {
-  try {
-    const payload = JSON.parse(Buffer.from(base64Encoded, "base64").toString("utf8"));
-    const { iv, authTag, encrypted } = payload;
-    const decipher = createDecipheriv(
-      payload.algorithm,
-      this.aes256GcmKey,
-      Buffer.from(iv, "base64")
-    );
-    decipher.setAuthTag(Buffer.from(authTag, "base64"));
-    const buffer = Buffer.concat([
-      decipher.update(Buffer.from(encrypted, "base64")),
-      decipher.final(),
-    ]);
-    return { text: buffer.toString("utf8") };
-  } catch (error) {
-    throw new Error("Decryption failed. Invalid data or authentication tag.");
-  }
-}
-   */
-  decrypt(encrypted: string): string {
+  decrypt(payloadEncoded: string): string {
     try {
-      const payload = JSON.parse(
-        Buffer.from(encrypted, "base64").toString("utf8")
+      const payloadString = Buffer.from(payloadEncoded, "base64").toString(
+        "utf8"
       );
-      const { iv, authTag, buffer, algorithm } = payload;
-      const decipher = createDecipheriv(algorithm, this.aes256GcmKey);
-      // const iv = payload.subarray(0, 12);
-      // const authTag = payload.subarray(12, 28);
-      // const encrypted = payload.subarray(28);
-      // const decipher = createDecipheriv("aes-256-gcm", this.aes256GcmKey, iv);
-      // decipher.setAuthTag(authTag);
-      // const buffer = Buffer.concat([
-      //   decipher.update(encrypted),
-      //   decipher.final(),
-      // ]);
-      // const text = buffer.toString("utf8");
-      // return { text };
+      const payloadRaw = JSON.parse(payloadString);
+      const payload = EncryptionPayload.parse(payloadRaw);
+      const { algorithm } = payload;
+      const iv = Buffer.from(payload.ivEncoded, "base64");
+      const authTag = Buffer.from(payload.authTagEncoded, "base64");
+      const encrypted = Buffer.from(payload.encryptedEncoded, "base64");
+      const decipher = createDecipheriv(algorithm, this.aes256GcmKey, iv);
+      decipher.setAuthTag(authTag);
+      const textBuffer = Buffer.concat([
+        decipher.update(encrypted),
+        decipher.final(),
+      ]);
+      const text = textBuffer.toString("utf8");
+      return text;
     } catch (e) {
       console.error("Decryption failed. error:", e);
       throw new Error("Decryption failed.");

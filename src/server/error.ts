@@ -1,7 +1,7 @@
 import type { Extra, ServerErrorData } from "@/types/error";
 import { StatusCodes, getReasonPhrase } from "http-status-codes";
 import type { JsonObject } from "type-fest";
-import { envConfig } from "./env-config";
+import { service } from "./service-registry";
 
 export type ServerErrorOptions<TExtra extends Extra = Extra> = {
   extra?: TExtra;
@@ -34,7 +34,7 @@ export class ServerError<
       name: this.name,
       message: this.message,
     };
-    if (envConfig.nodeEnv === "development")
+    if (service.env.nodeEnv === "development")
       if (this.stack) data.stack = this.stack;
     if (this.extra) data.extra = this.extra;
     if (this.errors) data.errors = this.errors.map((x) => x.toData());

@@ -3,7 +3,7 @@ import { MessageSend } from "@/types/message";
 import { serveStatic } from "@hono/node-server/serve-static";
 import { Hono } from "hono";
 import { logger } from "hono/logger";
-import { envConfig } from "../env-config";
+import { service } from "../service-registry";
 import { appRouter } from "../trpc/routers/_app";
 import {
   handleErrorMiddleware,
@@ -63,7 +63,7 @@ export const restServer = new Hono()
   .use(handleErrorMiddleware)
   .route("/chats", chats);
 
-if (envConfig.nodeEnv === "development") {
+if (service.env.nodeEnv === "development") {
   console.warn("Development endpoints /trpc-ui and /s3 are opened.");
 
   restServer.get("/trpc-ui", async (c) => {
