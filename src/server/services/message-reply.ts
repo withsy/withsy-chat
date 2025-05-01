@@ -1,5 +1,4 @@
-import { MessageSelect } from "@/types/message";
-import type { MessageReplyRegenerate } from "@/types/message-reply";
+import { Message, MessageReply } from "@/types";
 import { Role } from "@/types/role";
 import type { UserId } from "@/types/user";
 import { StatusCodes } from "http-status-codes";
@@ -12,21 +11,22 @@ import { UserUsageLimitService } from "./user-usage-limit";
 export class MessageReplyService {
   constructor(private readonly service: ServiceRegistry) {}
 
-  async regenerate(userId: UserId, input: MessageReplyRegenerate) {
+  async regenerate(
+    userId: UserId,
+    input: MessageReply.Regenerate
+  ): Promise<Message.Data> {
     const { idempotencyKey, messageId, model } = input;
+
     const { userMessage, modelMessage } = await this.service.db.$transaction(
       async (tx) => {
         await IdempotencyInfoService.checkDuplicateRequest(tx, idempotencyKey);
         await UserUsageLimitService.lockAndCheck(tx, { userId });
         const oldModelMessage = await tx.message.findUniqueOrThrow({
           where: {
-            chat: {
-              userId,
-              deletedAt: null,
-            },
+            chat: { userId, deletedAt: null },
             id: messageId,
           },
-          select: MessageSelect,
+          select: Message.Select,
         });
 
         if (!oldModelMessage.parentMessageId) {
@@ -43,13 +43,10 @@ export class MessageReplyService {
 
         const userMessage = await tx.message.findUniqueOrThrow({
           where: {
-            chat: {
-              userId,
-              deletedAt: null,
-            },
+            chat: { userId, deletedAt: null },
             id: oldModelMessage.parentMessageId,
           },
-          select: MessageSelect,
+          select: Message.Select,
         });
 
         const modelMessage = await tx.message.create({
@@ -61,7 +58,7 @@ export class MessageReplyService {
             status: "pending",
             isPublic: true,
           },
-          select: MessageSelect,
+          select: Message.Select,
         });
 
         return { userMessage, modelMessage };
@@ -76,6 +73,7 @@ export class MessageReplyService {
 
     await UserUsageLimitService.lockAndDecrease(this.service.db, { userId });
 
-    return modelMessage;
+    const data = this.service.message.decrypt(modelMessage);
+    return data;
   }
 }

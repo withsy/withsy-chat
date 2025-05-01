@@ -59,6 +59,9 @@ export const Get = z.object({
 });
 export type Get = zInfer<typeof Get>;
 
+export const ListOutout = z.array(Data);
+export type ListOutout = zInfer<typeof ListOutout>;
+
 export const Update = z.object({
   chatId: ChatId,
   title: z.optional(z.string()),

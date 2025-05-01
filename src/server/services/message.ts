@@ -4,13 +4,10 @@ import type { MessageForHistory } from "@/types/message";
 import { Model } from "@/types/model";
 import { Role } from "@/types/role";
 import type { UserId } from "@/types/user";
-import { StatusCodes } from "http-status-codes";
 import { uuidv7 } from "uuidv7";
-import { HttpServerError } from "../error";
 import type { ServiceRegistry } from "../service-registry";
 import type { Tx } from "./db";
 import { IdempotencyInfoService } from "./idempotency-info";
-import { MessageChunkService } from "./message-chunk";
 import { MessageFileService } from "./message-file";
 import { UserUsageLimitService } from "./user-usage-limit";
 
@@ -349,12 +346,13 @@ export class MessageService {
     });
 
     const { fileInfos } = await this.service.s3.uploads(userId, { files });
+    const textEncrypted = this.service.encryption.encrypt(text);
 
     const { userMessage, modelMessage } = await this.service.db.$transaction(
       async (tx) => {
         const userMessage = await MessageService.createUserMessage(tx, {
           chatId,
-          text,
+          textEncrypted,
           isPublic: true,
         });
 
@@ -393,7 +391,7 @@ export class MessageService {
   ) {
     const { chatId, textEncrypted, isPublic } = input;
 
-    const res = await tx.message.create({
+    const entity = await tx.message.create({
       data: {
         id: MessageService.generateId(),
         chatId,
@@ -404,7 +402,7 @@ export class MessageService {
       },
     });
 
-    return res;
+    return entity;
   }
 
   static async createModelMessage(
@@ -412,7 +410,8 @@ export class MessageService {
     input: { chatId: ChatId; model: Model; parentMessageId: MessageId }
   ) {
     const { chatId, model, parentMessageId } = input;
-    const res = await tx.message.create({
+
+    const entity = await tx.message.create({
       data: {
         id: MessageService.generateId(),
         chatId,
@@ -424,7 +423,7 @@ export class MessageService {
       },
     });
 
-    return res;
+    return entity;
   }
 
   static generateId() {

@@ -1,15 +1,5 @@
-import { Chat, GratitudeJournal } from "@/types";
-import {
-  ChatDelete,
-  ChatGet,
-  ChatRestore,
-  ChatSelect,
-  ChatStart,
-  ChatUpdate,
-} from "@/types/chat";
-import { ChatPromptSelect } from "@/types/chat-prompt";
+import { Chat, ChatPrompt, GratitudeJournal, Message } from "@/types";
 import type { MessageId } from "@/types/id";
-import { MessageSelect } from "@/types/message";
 import { UserId } from "@/types/user";
 import { uuidv7 } from "uuidv7";
 import type { ServiceRegistry } from "../service-registry";
@@ -23,7 +13,9 @@ import { UserUsageLimitService } from "./user-usage-limit";
 export class ChatService {
   constructor(private readonly service: ServiceRegistry) {}
 
-  decrypt(entity: Chat.Entity): Chat.Data {
+  decrypt(
+    entity: Chat.Entity & { parentMessage?: Message.Entity | null }
+  ): Chat.Data {
     const title = this.service.encryption.decrypt(entity.titleEncrypted);
     const data = {
       id: entity.id,
@@ -33,104 +25,103 @@ export class ChatService {
       parentMessageId: entity.parentMessageId,
       updatedAt: entity.updatedAt,
       userPromptId: entity.userPromptId,
+      parentMessage: entity.parentMessage
+        ? this.service.message.decrypt(entity.parentMessage)
+        : null,
     } satisfies Chat.Data;
     return data;
   }
 
-  async list(userId: UserId) {
-    const xs = await this.service.db.chat.findMany({
+  async list(userId: UserId): Promise<Chat.ListOutout> {
+    const entities = await this.service.db.chat.findMany({
       where: { userId, deletedAt: null },
       orderBy: { id: "asc" },
-      select: ChatSelect,
+      select: Chat.Select,
     });
 
-    return xs;
+    const datas = entities.map((x) => this.decrypt(x));
+    return datas;
   }
 
-  async listDeleted(userId: UserId) {
-    const xs = await this.service.db.chat.findMany({
+  async listDeleted(userId: UserId): Promise<Chat.ListOutout> {
+    const entities = await this.service.db.chat.findMany({
       where: { userId, deletedAt: { not: null } },
       orderBy: { id: "asc" },
-      select: ChatSelect,
+      select: Chat.Select,
     });
 
-    return xs;
+    const datas = entities.map((x) => this.decrypt(x));
+    return datas;
   }
 
-  async get(userId: UserId, input: ChatGet) {
+  async get(userId: UserId, input: Chat.Get): Promise<Chat.Data> {
     const { chatId } = input;
-    const res = await this.service.db.chat.findUnique({
-      where: {
-        id: chatId,
-        userId,
-        deletedAt: null,
-      },
+
+    const entity = await this.service.db.chat.findUniqueOrThrow({
+      where: { id: chatId, userId, deletedAt: null },
       select: {
-        ...ChatSelect,
-        parentMessage: { select: MessageSelect },
+        ...Chat.Select,
+        parentMessage: { select: Message.Select },
       },
     });
 
-    return res;
+    const data = this.decrypt(entity);
+    return data;
   }
 
-  async update(userId: UserId, input: ChatUpdate) {
+  async update(userId: UserId, input: Chat.Update): Promise<Chat.Data> {
     const { chatId, title, isStarred, userPromptId } = input;
-    const res = await this.service.db.$transaction(async (tx) => {
+
+    const titleEncrypted =
+      title != null ? this.service.encryption.encrypt(title) : undefined;
+
+    const entity = await this.service.db.$transaction(async (tx) => {
       if (userPromptId)
         await tx.userPrompt.findUniqueOrThrow({
           where: { userId, deletedAt: null, id: userPromptId },
         });
 
-      const chat = await tx.chat.update({
-        where: {
-          id: chatId,
-          userId,
-          deletedAt: null,
-        },
+      const entity = await tx.chat.update({
+        where: { id: chatId, userId, deletedAt: null },
         data: {
-          title,
+          titleEncrypted,
           isStarred,
           userPromptId,
         },
-        select: ChatSelect,
+        select: Chat.Select,
       });
 
-      return chat;
+      return entity;
     });
 
-    return res;
+    const data = this.decrypt(entity);
+    return data;
   }
 
-  async delete(userId: UserId, input: ChatDelete) {
+  async delete(userId: UserId, input: Chat.Delete): Promise<void> {
     const { chatId } = input;
-    const res = await this.service.db.chat.update({
-      where: {
-        id: chatId,
-        userId,
-        deletedAt: null,
-      },
-      data: {
-        deletedAt: new Date(),
-      },
-      select: ChatSelect,
+
+    await this.service.db.chat.update({
+      where: { id: chatId, userId, deletedAt: null },
+      data: { deletedAt: new Date() },
+      select: { id: true },
     });
-
-    return res;
   }
 
-  async restore(userId: UserId, input: ChatRestore) {
+  async restore(userId: UserId, input: Chat.Restore): Promise<Chat.Data> {
     const { chatId } = input;
-    const res = await this.service.db.chat.update({
+
+    const entity = await this.service.db.chat.update({
       where: { id: chatId, userId, deletedAt: { not: null } },
       data: { deletedAt: null },
-      select: ChatSelect,
+      select: Chat.Select,
     });
 
-    return res;
+    const data = this.decrypt(entity);
+    return data;
   }
 
-  async start(userId: UserId, input: ChatStart) {
+  async start(userId: UserId, input: Chat.Start): Promise<Chat.StartOutput> {
     const { model, text, idempotencyKey } = input;
     const files = input.files ?? [];
 
@@ -141,14 +132,20 @@ export class ChatService {
 
     const { fileInfos } = await this.service.s3.uploads(userId, { files });
 
+    const textEncrypted = this.service.encryption.encrypt(text);
+    const title = [...text].slice(0, 20).join("");
+    const titleEncrypted = this.service.encryption.encrypt(title);
+
     const { chat, userMessage, modelMessage } =
       await this.service.db.$transaction(async (tx) => {
-        const title = [...text].slice(0, 20).join("");
-        const chat = await ChatService.createChat(tx, { userId, title });
+        const chat = await ChatService.createChat(tx, {
+          userId,
+          titleEncrypted,
+        });
 
         const userMessage = await MessageService.createUserMessage(tx, {
           chatId: chat.id,
-          text,
+          textEncrypted,
           isPublic: true,
         });
 
@@ -174,11 +171,13 @@ export class ChatService {
 
     await UserUsageLimitService.lockAndDecrease(this.service.db, { userId });
 
-    return {
-      chat,
-      userMessage,
-      modelMessage,
-    };
+    const res = {
+      chat: this.decrypt(chat),
+      userMessage: this.service.message.decrypt(userMessage),
+      modelMessage: this.service.message.decrypt(modelMessage),
+    } satisfies Chat.StartOutput;
+
+    return res;
   }
 
   async onHardDeleteTask() {
@@ -204,60 +203,70 @@ export class ChatService {
     });
   }
 
-  static async createChat(tx: Tx, input: { userId: UserId; title: string }) {
-    const { userId, title } = input;
-    const res = await tx.chat.create({
+  static async createChat(
+    tx: Tx,
+    input: { userId: UserId; titleEncrypted: string }
+  ) {
+    const { userId, titleEncrypted } = input;
+
+    const entity = await tx.chat.create({
       data: {
         id: ChatService.generateId(),
         userId,
-        title,
+        titleEncrypted,
         type: "chat",
       },
-      select: ChatSelect,
+      select: Chat.Select,
     });
 
-    return res;
+    return entity;
   }
 
   static async createGratitudeJournalChat(
     tx: Tx,
-    input: { userId: UserId; title: string }
+    input: { userId: UserId; titleEncrypted: string }
   ) {
-    const { userId, title } = input;
-    const res = await tx.chat.create({
+    const { userId, titleEncrypted } = input;
+
+    const entity = await tx.chat.create({
       data: {
         id: ChatService.generateId(),
         userId,
-        title,
+        titleEncrypted,
         type: "gratitudeJournal",
       },
       select: {
-        ...ChatSelect,
-        prompts: { select: ChatPromptSelect },
+        ...Chat.Select,
+        prompts: { select: ChatPrompt.Select },
         gratitudeJournals: { select: GratitudeJournal.Select },
       },
     });
 
-    return res;
+    return entity;
   }
 
   static async createBranchChat(
     tx: Tx,
-    input: { userId: UserId; parentMessageId: MessageId; title: string }
+    input: {
+      userId: UserId;
+      parentMessageId: MessageId;
+      titleEncrypted: string;
+    }
   ) {
-    const { userId, parentMessageId, title } = input;
-    const res = await tx.chat.create({
+    const { userId, parentMessageId, titleEncrypted } = input;
+
+    const entity = await tx.chat.create({
       data: {
         id: ChatService.generateId(),
         userId,
-        title,
+        titleEncrypted,
         type: "branch",
         parentMessageId,
       },
-      select: ChatSelect,
+      select: Chat.Select,
     });
 
-    return res;
+    return entity;
   }
 
   static generateId() {

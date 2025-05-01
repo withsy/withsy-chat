@@ -1,10 +1,9 @@
-import { Message } from "@/types";
-import { MessageReplyRegenerate } from "@/types/message-reply";
+import { Message, MessageReply } from "@/types";
 import { publicProcedure, t } from "../server";
 
 export const messageReplyRouter = t.router({
   regenerate: publicProcedure
-    .input(MessageReplyRegenerate)
+    .input(MessageReply.Regenerate)
     .output(Message.Data)
     .mutation((opts) =>
       opts.ctx.service.messageReply

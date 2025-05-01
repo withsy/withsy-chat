@@ -1,17 +1,17 @@
 import { Chat } from "@/types";
-import { z } from "zod";
+import { ListOutout } from "@/types/chat";
 import { publicProcedure, t } from "../server";
 
 export const chatRouter = t.router({
   list: publicProcedure
-    .output(z.array(Chat.Data))
+    .output(ListOutout)
     .query((opts) =>
       opts.ctx.service.chat
         .list(opts.ctx.userId)
         .then((xs) => xs.map((x) => Chat.Data.parse(x)))
     ),
   listDeleted: publicProcedure
-    .output(z.array(Chat.Data))
+    .output(ListOutout)
     .query((opts) =>
       opts.ctx.service.chat
         .listDeleted(opts.ctx.userId)
@@ -35,11 +35,8 @@ export const chatRouter = t.router({
     ),
   delete: publicProcedure
     .input(Chat.Delete)
-    .output(Chat.Data)
     .mutation((opts) =>
-      opts.ctx.service.chat
-        .delete(opts.ctx.userId, opts.input)
-        .then((x) => Chat.Data.parse(x))
+      opts.ctx.service.chat.delete(opts.ctx.userId, opts.input)
     ),
   restore: publicProcedure
     .input(Chat.Restore)
