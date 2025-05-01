@@ -1,5 +1,6 @@
 import { User } from "@/types/user";
 import Header from "@/components/home/Header";
+import { Hero } from "@/components/prompts/Hero";
 
 type Props = {
   user: User | null;
@@ -9,7 +10,9 @@ export default function Page({ user }: Props) {
   return (
     <div className="flex flex-col min-h-screen">
       <Header user={user} />
-      <div className="pb-30">{/* <Hero /> */}</div>
+      <div className="pb-30">
+        <Hero />
+      </div>
       <footer className="text-center text-xs text-muted-foreground p-4 select-none">
         <div>© {new Date().getFullYear()} Withsy. All rights reserved.</div>
         <div>
