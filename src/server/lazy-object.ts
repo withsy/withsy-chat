@@ -1,15 +1,15 @@
-export type LazyObjectProxy<TObject extends Record<string, unknown>> = {
+export type LazyObject<TObject extends Record<string, unknown>> = {
   [K in keyof TObject]: TObject[K];
 };
 
 export type LazyObjectPropertyFactory<TObject extends Record<string, unknown>> =
   {
-    [K in keyof TObject]: (self: LazyObjectProxy<TObject>) => TObject[K];
+    [K in keyof TObject]: (self: LazyObject<TObject>) => TObject[K];
   };
 
 export function createLazyObject<TObject extends Record<string, unknown>>(
   propertyFactory: LazyObjectPropertyFactory<TObject>
-): LazyObjectProxy<TObject> {
+): LazyObject<TObject> {
   const factoryStack: (keyof TObject)[] = [];
   const target: Partial<TObject> = {};
   const proxy = new Proxy(target, {
@@ -32,7 +32,7 @@ export function createLazyObject<TObject extends Record<string, unknown>>(
       factoryStack.push(p);
 
       try {
-        const value = factoryFn(proxy as LazyObjectProxy<TObject>);
+        const value = factoryFn(proxy as LazyObject<TObject>);
         Reflect.set(t, p, value);
 
         return value;
@@ -46,5 +46,5 @@ export function createLazyObject<TObject extends Record<string, unknown>>(
     },
   });
 
-  return proxy as LazyObjectProxy<TObject>;
+  return proxy as LazyObject<TObject>;
 }

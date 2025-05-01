@@ -1,5 +1,5 @@
 import type { Pool } from "pg";
-import { createLazyObject, type LazyObjectProxy } from "./lazy-object";
+import { createLazyObject, type LazyObject } from "./lazy-object";
 import { ChatService } from "./services/chat";
 import { ChatBranchService } from "./services/chat-branch";
 import { ChatPromptService } from "./services/chat-prompt";
@@ -52,7 +52,7 @@ type ServiceDefinition = {
   encryption: EncryptionService;
 };
 
-export type ServiceRegistry = LazyObjectProxy<ServiceDefinition>;
+export type ServiceRegistry = LazyObject<ServiceDefinition>;
 
 function createServiceRegistry() {
   return createLazyObject<ServiceDefinition>({
