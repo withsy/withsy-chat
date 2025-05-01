@@ -3,8 +3,13 @@ import { signIn } from "next-auth/react";
 
 export default function LoginButton() {
   return (
-    <Button size="sm" onClick={() => signIn()} className="text-lg">
-      Sign in
+    <Button
+      size="sm"
+      onClick={() => signIn()}
+      className="text-lg"
+      style={{ backgroundColor: "rgb(234,146,87)" }}
+    >
+      Start Chatting
     </Button>
   );
 }

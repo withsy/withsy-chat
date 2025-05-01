@@ -8,6 +8,9 @@ import type { AppProps, AppType } from "next/app";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { Toaster as Sonner } from "sonner";
+import { Nunito } from "next/font/google";
+
+const nunito = Nunito({ subsets: ["latin"] });
 
 const MyApp: AppType = ({
   Component,
@@ -27,9 +30,9 @@ const MyApp: AppType = ({
         <title>{title}</title>
       </Head>
       {isLayoutDisabled ? (
-        <Component {...pageProps} />
+        <Component className={nunito.className} {...pageProps} />
       ) : (
-        <Layout>
+        <Layout className={nunito.className}>
           <Component {...pageProps} />
         </Layout>
       )}

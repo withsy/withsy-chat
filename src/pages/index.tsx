@@ -39,20 +39,25 @@ export default function Page({ recommendedFriends, user }: Props) {
   return (
     <div className="flex flex-col h-screen">
       <div className="w-full bg-white sticky top-0 z-50">
-        <div className="max-w-6xl mx-auto p-2 flex justify-between items-center select-none border-b">
+        <div className="max-w-6xl mx-auto p-2 py-4 flex justify-between items-center select-none border-b">
           <div
             className="flex items-center gap-2 p-2"
             onClick={() => {
               router.push("/");
             }}
           >
+            <img
+              className="mx-auto h-8 w-8"
+              src="/logo.png"
+              alt="withsy logo"
+            />
             <div className="text-xl font-semibold">Withsy</div>
           </div>
           {user ? (
             <div
               className="flex items-center gap-2 underline underline-offset-8 p-2 hover:bg-gray-200 active:bg-gray-200 rounded-md"
               onClick={() => {
-                router.push("/friends");
+                router.push("/chat");
               }}
             >
               <div className="text-xl font-semibold">Return to chat</div>
