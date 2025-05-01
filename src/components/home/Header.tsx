@@ -26,6 +26,7 @@ export default function Component({ user }: { user: User | null }) {
       value: "blog",
     },
   ];
+
   return (
     <div
       className={`w-full bg-white/70 backdrop-blur-lg sticky top-0 z-50 transition-all duration-300 ${
@@ -64,7 +65,7 @@ export default function Component({ user }: { user: User | null }) {
           </div>
         )}
         <div className="flex items-center gap-2">
-          {user ? <ReturnButton /> : <LoginButton />}
+          {user != undefined ? <ReturnButton /> : <LoginButton />}
           {isMobile && <CategoryModalButton categories={categories} />}
         </div>
       </div>
