@@ -138,6 +138,7 @@ function PromptsPage() {
               onDelete={(promptId) => {
                 deletePrompt.mutate({ userPromptId: promptId });
               }}
+              isDefault={true}
             />
           )}
         </div>
