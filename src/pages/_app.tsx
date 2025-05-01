@@ -1,4 +1,3 @@
-import Layout from "@/components/layout/Layout";
 import AppProviders from "@/context/AppProviders";
 import { useSidebarInitializer } from "@/hooks/useSidebarInitializer";
 import { trpc } from "@/lib/trpc";
@@ -9,6 +8,8 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { Toaster as Sonner } from "sonner";
 import { Nunito } from "next/font/google";
+import ChatLayout from "@/components/layout/ChatLayout";
+import HomeLayout from "@/components/layout/HomeLayout";
 
 const nunito = Nunito({ subsets: ["latin"] });
 
@@ -30,13 +31,16 @@ const MyApp: AppType = ({
         <title>{title}</title>
       </Head>
       {isLayoutDisabled ? (
-        <main className={nunito.className}>
+        // <main className={nunito.className}>
+        //   <Component {...pageProps} />
+        // </main>
+        <HomeLayout className={nunito.className}>
           <Component {...pageProps} />
-        </main>
+        </HomeLayout>
       ) : (
-        <Layout className={nunito.className}>
+        <ChatLayout className={nunito.className}>
           <Component {...pageProps} />
-        </Layout>
+        </ChatLayout>
       )}
       <Sonner position="bottom-right" />
       <ReactQueryDevtools />

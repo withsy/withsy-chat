@@ -10,7 +10,7 @@ type LayoutProps = {
   className: string;
 };
 
-export default function Layout({ children, className }: LayoutProps) {
+export default function ChatLayout({ children, className }: LayoutProps) {
   const { user } = useUser();
   const { collapsed, setCollapsed, isMobile } = useSidebarStore();
   const themeColor = user?.preferences.themeColor ?? "30,30,30";
