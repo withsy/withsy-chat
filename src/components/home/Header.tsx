@@ -56,7 +56,7 @@ export default function Component({ user }: { user: User | null }) {
               <button
                 key={category.value}
                 onClick={() => router.push(`/${category.value}`)}
-                className="hover:text-primary transition-colors"
+                className="hover:text-primary transition-colors font-semibold"
               >
                 {category.label}
               </button>
