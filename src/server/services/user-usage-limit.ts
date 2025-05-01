@@ -7,7 +7,6 @@ import {
   type UserUsageLimitErrorInput,
 } from "@/types/user-usage-limit";
 import { TRPCError } from "@trpc/server";
-import { startOfDay } from "date-fns";
 import { StatusCodes } from "http-status-codes";
 import { HttpServerError, TrpcDataError } from "../error";
 import type { ServiceRegistry } from "../service-registry";
@@ -15,11 +14,10 @@ import type { Tx } from "./db";
 
 export class UserUsageLimitService {
   constructor(private readonly service: ServiceRegistry) {
-    console.log(
-      `UserUsageLimitService initialized date: ${startOfDay(
-        new Date()
-      ).toISOString()}`
-    );
+    const now = new Date();
+    const offset = now.getTimezoneOffset();
+    if (offset !== 0)
+      throw new Error(`The server's time zone is not UTC. offset: ${offset}`);
   }
 
   async get(userId: UserId) {
