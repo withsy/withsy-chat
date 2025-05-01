@@ -32,7 +32,7 @@ export default function Page({ user }: Props) {
     <div className="flex flex-col min-h-screen">
       <Header user={user} />
       <div className="pb-30">
-        <Hero />
+        <Hero user={user} />
         <ThemeAndPrefsSection />
         <PromptTransparency />
         <SaveStar />

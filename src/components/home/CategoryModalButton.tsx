@@ -24,9 +24,9 @@ export default function CategoryModalButton({
     <Dialog>
       <DialogTrigger asChild>
         <Button
+          variant="outline"
           size="sm"
-          className="text-sm font-semibold cursor-pointer"
-          style={{ backgroundColor: "rgb(40,90,128)" }}
+          className="text-sm font-semibold cursor-pointer border-[rgb(40,90,128)] text-[rgb(40,90,128)] bg-white"
         >
           <AlignJustify />
         </Button>

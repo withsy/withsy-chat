@@ -1,6 +1,10 @@
-export function Hero() {
+import type { User } from "@/types/user";
+import ReturnButton from "./ReturnButton";
+import LoginButton from "../login/LoginButton";
+
+export function Hero({ user }: { user: User | null }) {
   return (
-    <section className="w-full bg-white pt-15 pb-5 text-center">
+    <section className="w-full bg-white pt-15 pb-10 text-center">
       <div className="max-w-3xl mx-auto px-4">
         <div
           className="mb-6 space-y-4 selection:bg-[#EA9257] selection:text-white"
@@ -16,6 +20,11 @@ export function Hero() {
           savable.
         </p>
       </div>
+      {user != undefined ? (
+        <ReturnButton size="lg" />
+      ) : (
+        <LoginButton size="lg" />
+      )}
     </section>
   );
 }

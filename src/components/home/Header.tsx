@@ -14,16 +14,24 @@ export default function Component({ user }: { user: User | null }) {
 
   const categories = [
     {
-      label: "Why?",
-      value: "why",
+      label: "About",
+      value: "about",
     },
     {
-      label: "Withsy Chat",
-      value: "withsy-chat",
+      label: "Docs",
+      value: "docs",
+    },
+    {
+      label: "Roadmap",
+      value: "roadmap",
     },
     {
       label: "Blog",
       value: "blog",
+    },
+    {
+      label: "Contact",
+      value: "contact",
     },
   ];
 
