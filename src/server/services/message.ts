@@ -71,7 +71,6 @@ export class MessageService {
   }): Promise<Message.EntityForAi[]> {
     const { userId, modelMessage } = input;
 
-    const service = this.service;
     const history = {
       _olds: [] as Message.EntityForAi[], // old to less old
       pushOlds(...xs: Message.EntityForAi[]) {
