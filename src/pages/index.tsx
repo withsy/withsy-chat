@@ -2,6 +2,7 @@ import { User } from "@/types/user";
 import Header from "@/components/home/Header";
 import { Hero } from "@/components/home/Hero";
 import ThemeAndPrefsSection from "@/components/home/ThemeAndPrefs";
+import PromptTransparency from "@/components/home/PromptTransparency";
 
 type Props = {
   user: User | null;
@@ -14,6 +15,7 @@ export default function Page({ user }: Props) {
       <div className="pb-30">
         <Hero />
         <ThemeAndPrefsSection />
+        <PromptTransparency />
       </div>
       <footer className="text-center text-xs text-muted-foreground p-4 select-none">
         <div>© {new Date().getFullYear()} Withsy. All rights reserved.</div>
