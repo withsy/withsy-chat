@@ -1,4 +1,3 @@
-import LoginButton from "@/components/login/LoginButton";
 import { FriendCard } from "@/components/town/FriendCard";
 import { RecommendedSection } from "@/components/town/RecommendedSection";
 import {
@@ -11,11 +10,7 @@ import { service } from "@/server/service-registry";
 import { User, UserSession } from "@/types/user";
 import type { GetServerSideProps } from "next";
 import { getServerSession } from "next-auth";
-import { useRouter } from "next/router";
 import { authOptions } from "./api/auth/[...nextauth]";
-import { useHeaderScroll } from "@/hooks/useHeaderScroll";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import ReturnButton from "@/components/home/ReturnButton";
 import Header from "@/components/home/Header";
 
 type Props = {
@@ -156,6 +151,12 @@ export default function Page({ recommendedFriends, user }: Props) {
           </TabsContent>
         </Tabs>
       </div>
+      <footer className="text-center text-xs text-muted-foreground p-4 select-none">
+        <div>© {new Date().getFullYear()} Withsy. All rights reserved.</div>
+        <div>
+          Avatars generated using Thumbs by DiceBear, licensed under CC0 1.0.
+        </div>
+      </footer>
     </div>
   );
 }
