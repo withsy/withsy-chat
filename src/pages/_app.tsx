@@ -19,8 +19,17 @@ const MyApp: AppType = ({
 }: AppProps) => {
   useSidebarInitializer();
   const router = useRouter();
-  const noLayoutPages = ["/auth/signin", "/"];
+  const noLayoutPages = ["/auth/signin"];
+  const homeLayoutPages = [
+    "/",
+    "/about",
+    "/docs",
+    "/roadmap",
+    "/blog",
+    "/contact",
+  ];
   const isLayoutDisabled = noLayoutPages.includes(router.pathname);
+  const isHomeLayout = homeLayoutPages.includes(router.pathname);
   let title = "Withsy";
   if (process.env.NODE_ENV === "development") title = `[DEV] ${title}`;
 
@@ -31,9 +40,10 @@ const MyApp: AppType = ({
         <title>{title}</title>
       </Head>
       {isLayoutDisabled ? (
-        // <main className={nunito.className}>
-        //   <Component {...pageProps} />
-        // </main>
+        <main className={nunito.className}>
+          <Component {...pageProps} />
+        </main>
+      ) : isHomeLayout ? (
         <HomeLayout className={nunito.className}>
           <Component {...pageProps} />
         </HomeLayout>
@@ -42,6 +52,7 @@ const MyApp: AppType = ({
           <Component {...pageProps} />
         </ChatLayout>
       )}
+
       <Sonner position="bottom-right" />
       <ReactQueryDevtools />
     </AppProviders>
