@@ -25,7 +25,7 @@ export const UserUsageLimit = UserUsageLimitSchema.extend({});
 export type UserUsageLimit = zInfer<typeof UserUsageLimit>;
 
 // TODO: Add usage limiting feature per model.
-export const rateLimitRpm = 15; // requests per minute
+export const rateLimitRpm = 6; // requests per minute
 export const rateLimitRpd = 30; // requests per day
 export const rateLimitTpm = 0; // tokens per minute, NOT used.
 

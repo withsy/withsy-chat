@@ -7,13 +7,20 @@ import {
   type UserUsageLimitErrorInput,
 } from "@/types/user-usage-limit";
 import { TRPCError } from "@trpc/server";
+import { startOfDay } from "date-fns";
 import { StatusCodes } from "http-status-codes";
 import { HttpServerError, TrpcDataError } from "../error";
 import type { ServiceRegistry } from "../service-registry";
 import type { Tx } from "./db";
 
 export class UserUsageLimitService {
-  constructor(private readonly service: ServiceRegistry) {}
+  constructor(private readonly service: ServiceRegistry) {
+    console.log(
+      `UserUsageLimitService initialized date: ${startOfDay(
+        new Date()
+      ).toISOString()}`
+    );
+  }
 
   async get(userId: UserId) {
     const res = await this.service.db.$transaction(async (tx) => {
