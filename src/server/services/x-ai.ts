@@ -16,6 +16,10 @@ export class XAiService {
   }
 
   async sendMessageToAi(input: SendMessageToAiInput) {
-    return await OpenAiService.sendMessageToAi(this.openai, input);
+    return await OpenAiService.sendMessageToAi(
+      this.service,
+      this.openai,
+      input
+    );
   }
 }

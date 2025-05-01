@@ -89,8 +89,6 @@ export class MessageService {
         const histories = [...this._olds, ...this._news];
         this._olds = [];
         this._news = [];
-        if (service.env.nodeEnv === "development")
-          console.log("@ histories", histories);
         return histories;
       },
     };
@@ -333,7 +331,7 @@ export class MessageService {
       console.warn(`Marked ${res.count} zombie messages as failed.`);
   }
 
-  async send(userId: UserId, input: Message.Send) {
+  async send(userId: UserId, input: Message.Send): Promise<Message.SendOutput> {
     const { idempotencyKey, chatId, model, text } = input;
     const files = input.files ?? [];
 
@@ -379,8 +377,8 @@ export class MessageService {
     await UserUsageLimitService.lockAndDecrease(this.service.db, { userId });
 
     return {
-      userMessage,
-      modelMessage,
+      userMessage: this.decrypt(userMessage),
+      modelMessage: this.decrypt(modelMessage),
     };
   }
 

@@ -60,6 +60,7 @@ export class MessageReplyService {
             status: "pending",
             isPublic: true,
             textEncrypted: modelMessageTextEncrypted,
+            parentMessageId: oldModelMessage.parentMessageId,
           },
           select: Message.Select,
         });
