@@ -30,7 +30,9 @@ const MyApp: AppType = ({
         <title>{title}</title>
       </Head>
       {isLayoutDisabled ? (
-        <Component className={nunito.className} {...pageProps} />
+        <main className={nunito.className}>
+          <Component {...pageProps} />
+        </main>
       ) : (
         <Layout className={nunito.className}>
           <Component {...pageProps} />
