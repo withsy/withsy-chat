@@ -18,8 +18,8 @@ export default function Component({ user }: { user: User | null }) {
       value: "why",
     },
     {
-      label: "Projects",
-      value: "projects",
+      label: "Withsy Chat",
+      value: "whthsy-chat",
     },
     {
       label: "Blog",
