@@ -1,7 +1,7 @@
-import { UserDefaultPrompt } from "@/types";
+import { Message, UserDefaultPrompt } from "@/types";
 import type { MaybePromise } from "@/types/common";
 import type { MessageChunkIndex, MessageId } from "@/types/id";
-import { Message, type MessageForHistory } from "@/types/message";
+import { type MessageForHistory } from "@/types/message";
 import { Model, ModelProviderMap } from "@/types/model";
 import { Role } from "@/types/role";
 import type { TaskInput } from "@/types/task";
@@ -15,8 +15,8 @@ import { notify } from "./pg";
 import { UserUsageLimitService } from "./user-usage-limit";
 
 export type ValidatedModelMessage = Simplify<
-  Omit<Message, "model"> & {
-    model: NonNullable<Message["model"]>;
+  Omit<Message.Data, "model"> & {
+    model: NonNullable<Message.Data["model"]>;
   }
 >;
 
@@ -126,7 +126,7 @@ export class ModelRouteService {
 
   private async listForHistory(input: {
     userId: UserId;
-    modelMessage: Message;
+    modelMessage: Message.Data;
   }) {
     const { userId, modelMessage } = input;
     const xs = await this.service.message.listForHistory({
@@ -149,7 +149,7 @@ export class ModelRouteService {
   }): Promise<
     | {
         ok: true;
-        userMessage: Message;
+        userMessage: Message.Data;
         modelMessage: ValidatedModelMessage;
         userDefaultPrompt: UserDefaultPrompt.GetOutput;
       }
@@ -167,8 +167,8 @@ export class ModelRouteService {
         this.service.userDefaultPrompt.get(userId),
       ]);
 
-    const userMessage = Message.parse(userMessageRaw);
-    const modelMessage = Message.parse(modelMessageRaw);
+    const userMessage = Message.Data.parse(userMessageRaw);
+    const modelMessage = Message.Data.parse(modelMessageRaw);
     const userDefaultPrompt =
       UserDefaultPrompt.GetOutput.parse(userDefaultPromptRaw);
     if (modelMessage.model == null) {

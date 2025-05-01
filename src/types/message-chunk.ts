@@ -4,36 +4,37 @@ import type { zInfer } from "./common";
 import { MessageChunkIndex, MessageId } from "./id";
 import { UserUsageLimit } from "./user-usage-limit";
 
-export const MessageChunkSelect = {
-  text: true,
+export const Select = {
+  index: true,
+  textEncrypted: true,
 } satisfies Prisma.MessageChunkSelect;
 
-export const MessageChunkSchema = z.object({
+export const Entity = z.object({
+  index: MessageChunkIndex,
+  textEncrypted: z.string(),
+});
+export type Entity = zInfer<typeof Entity>;
+const _ = {} satisfies Omit<Entity, keyof typeof Select>;
+
+export const Data = Entity.omit({ index: true, textEncrypted: true }).extend({
   text: z.string(),
 });
-export type MessageChunkSchema = zInfer<typeof MessageChunkSchema>;
-const _ = {} satisfies Omit<
-  MessageChunkSchema,
-  keyof typeof MessageChunkSelect
->;
+export type Data = zInfer<typeof Data>;
 
-export const MessageChunk = MessageChunkSchema.extend({});
-export type MessageChunk = zInfer<typeof MessageChunk>;
-
-export const MessageChunkReceive = z.object({
+export const Receive = z.object({
   messageId: MessageId,
   lastEventId: MessageChunkIndex.optional(),
 });
-export type MessageChunkReceive = zInfer<typeof MessageChunkReceive>;
+export type Receive = zInfer<typeof Receive>;
 
-export const MessageChunkReceiveData = z.discriminatedUnion("type", [
+export const ReceiveData = z.discriminatedUnion("type", [
   z.object({
     type: z.literal("chunk"),
-    chunk: MessageChunk,
+    chunk: Data,
   }),
   z.object({
     type: z.literal("usageLimit"),
     usageLimit: z.nullable(UserUsageLimit),
   }),
 ]);
-export type MessageChunkReceiveData = zInfer<typeof MessageChunkReceiveData>;
+export type ReceiveData = zInfer<typeof ReceiveData>;

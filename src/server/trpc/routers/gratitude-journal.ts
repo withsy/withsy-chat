@@ -1,5 +1,4 @@
-import { GratitudeJournal } from "@/types";
-import { ChatStartOutput } from "@/types/chat";
+import { Chat, GratitudeJournal } from "@/types";
 import { publicProcedure, t } from "../server";
 
 export const gratitudeJournalRouter = t.router({
@@ -20,10 +19,10 @@ export const gratitudeJournalRouter = t.router({
     ),
   startChat: publicProcedure
     .input(GratitudeJournal.StartChat)
-    .output(ChatStartOutput)
+    .output(Chat.StartOutput)
     .mutation((opts) =>
       opts.ctx.service.gratitudeJournal
         .startChat(opts.ctx.userId, opts.input)
-        .then((x) => ChatStartOutput.parse(x))
+        .then((x) => Chat.StartOutput.parse(x))
     ),
 });

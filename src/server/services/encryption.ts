@@ -12,7 +12,7 @@ const EncryptionPayload = z.object({
 type EncryptionPayload = zInfer<typeof EncryptionPayload>;
 
 export class EncryptionService {
-  aes256GcmKey: Buffer;
+  private aes256GcmKey: Buffer;
 
   constructor(private readonly service: ServiceRegistry) {
     const buffer = Buffer.from(this.service.env.encryptionKey, "hex");

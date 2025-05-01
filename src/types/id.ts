@@ -7,6 +7,9 @@ export type MessageId = zInfer<typeof MessageId>;
 export const ChatId = z.string().uuid();
 export type ChatId = zInfer<typeof ChatId>;
 
+export const ChatPromptId = z.number().int();
+export type ChatPromptId = zInfer<typeof ChatPromptId>;
+
 export const GratitudeJournalId = z.string().uuid();
 export type GratitudeJournalId = zInfer<typeof GratitudeJournalId>;
 

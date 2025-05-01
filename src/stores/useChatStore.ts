@@ -1,13 +1,13 @@
+import type { Chat } from "@/types";
 import { create } from "zustand";
-import type { Chat } from "@/types/chat";
 
 type ChatStore = {
-  chat: Chat | null;
-  setChat: (chat: Chat | null) => void;
+  chat: Chat.Data | null;
+  setChat: (chat: Chat.Data | null) => void;
   updatePromptId: (promptId: string | null) => void;
 };
 
-export const useChatStore = create<ChatStore>((set, get) => ({
+export const useChatStore = create<ChatStore>((set, _get) => ({
   chat: null,
   setChat: (chat) => set({ chat }),
   updatePromptId: (promptId) =>

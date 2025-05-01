@@ -27,6 +27,7 @@
     "autoincrement",
     "dbgenerated",
     "prepass",
-    "uuidv"
+    "uuidv",
+    "datas"
   ]
 }

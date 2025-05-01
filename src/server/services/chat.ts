@@ -1,4 +1,4 @@
-import { GratitudeJournal } from "@/types";
+import { Chat, GratitudeJournal } from "@/types";
 import {
   ChatDelete,
   ChatGet,
@@ -22,6 +22,20 @@ import { UserUsageLimitService } from "./user-usage-limit";
 
 export class ChatService {
   constructor(private readonly service: ServiceRegistry) {}
+
+  decrypt(entity: Chat.Entity): Chat.Data {
+    const title = this.service.encryption.decrypt(entity.titleEncrypted);
+    const data = {
+      id: entity.id,
+      title,
+      isStarred: entity.isStarred,
+      type: entity.type,
+      parentMessageId: entity.parentMessageId,
+      updatedAt: entity.updatedAt,
+      userPromptId: entity.userPromptId,
+    } satisfies Chat.Data;
+    return data;
+  }
 
   async list(userId: UserId) {
     const xs = await this.service.db.chat.findMany({
