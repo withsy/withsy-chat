@@ -1,4 +1,10 @@
-import { Chat, ChatPrompt, GratitudeJournal, Message } from "@/types";
+import {
+  Chat,
+  ChatPrompt,
+  GratitudeJournal,
+  Message,
+  UserPrompt,
+} from "@/types";
 import type { MessageId } from "@/types/id";
 import { UserId } from "@/types/user";
 import { uuidv7 } from "uuidv7";
@@ -14,7 +20,10 @@ export class ChatService {
   constructor(private readonly service: ServiceRegistry) {}
 
   decrypt(
-    entity: Chat.Entity & { parentMessage?: Message.Entity | null }
+    entity: Chat.Entity & {
+      parentMessage?: Message.Entity | null;
+      userPrompt?: UserPrompt.Entity | null;
+    }
   ): Chat.Data {
     const title = this.service.encryption.decrypt(entity.titleEncrypted);
     const data = {
@@ -23,10 +32,13 @@ export class ChatService {
       isStarred: entity.isStarred,
       type: entity.type,
       parentMessageId: entity.parentMessageId,
-      updatedAt: entity.updatedAt,
-      userPromptId: entity.userPromptId,
       parentMessage: entity.parentMessage
         ? this.service.message.decrypt(entity.parentMessage)
+        : null,
+      updatedAt: entity.updatedAt,
+      userPromptId: entity.userPromptId,
+      userPrompt: entity.userPrompt
+        ? this.service.userPrompt.decrypt(entity.userPrompt)
         : null,
     } satisfies Chat.Data;
     return data;
