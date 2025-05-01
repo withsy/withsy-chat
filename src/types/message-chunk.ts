@@ -7,17 +7,24 @@ import { UserUsageLimit } from "./user-usage-limit";
 export const Select = {
   index: true,
   textEncrypted: true,
+  reasoningTextEncrypted: true,
 } satisfies Prisma.MessageChunkSelect;
 
 export const Entity = z.object({
   index: MessageChunkIndex,
   textEncrypted: z.string(),
+  reasoningTextEncrypted: z.string(),
 });
 export type Entity = zInfer<typeof Entity>;
 const _ = {} satisfies Omit<Entity, keyof typeof Select>;
 
-export const Data = Entity.omit({ index: true, textEncrypted: true }).extend({
+export const Data = Entity.omit({
+  index: true,
+  textEncrypted: true,
+  reasoningTextEncrypted: true,
+}).extend({
   text: z.string(),
+  reasoningText: z.string(),
 });
 export type Data = zInfer<typeof Data>;
 

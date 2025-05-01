@@ -18,12 +18,16 @@ export class MessageService {
 
   decrypt(entity: Message.Entity & { chat?: Chat.Entity }): Message.Data {
     const text = this.service.encryption.decrypt(entity.textEncrypted);
+    const reasoningText = this.service.encryption.decrypt(
+      entity.reasoningTextEncrypted
+    );
     const data = {
       id: entity.id,
       chatId: entity.chatId,
       role: Role.parse(entity.role),
       model: entity.model ? Model.parse(entity.model) : null,
       text,
+      reasoningText,
       status: entity.status,
       isBookmarked: entity.isBookmarked,
       createdAt: entity.createdAt,
@@ -344,7 +348,11 @@ export class MessageService {
 
     const { fileInfos } = await this.service.s3.uploads(userId, { files });
     const userMessageTextEncrypted = this.service.encryption.encrypt(text);
+    const userMessageReasoningTextEncrypted =
+      this.service.encryption.encrypt("");
     const modelMessageTextEncrypted = this.service.encryption.encrypt("");
+    const modelMessageReasoningTextEncrypted =
+      this.service.encryption.encrypt("");
 
     const { userMessage, modelMessage } = await this.service.db.$transaction(
       async (tx) => {
@@ -352,6 +360,7 @@ export class MessageService {
           chatId,
           textEncrypted: userMessageTextEncrypted,
           isPublic: true,
+          reasoningTextEncrypted: userMessageReasoningTextEncrypted,
         });
 
         const modelMessage = await MessageService.createModelMessage(tx, {
@@ -359,6 +368,7 @@ export class MessageService {
           model,
           parentMessageId: userMessage.id,
           textEncrypted: modelMessageTextEncrypted,
+          reasoningTextEncrypted: modelMessageReasoningTextEncrypted,
         });
 
         await MessageFileService.createAll(tx, {
@@ -386,15 +396,21 @@ export class MessageService {
 
   static async createUserMessage(
     tx: Tx,
-    input: { chatId: ChatId; textEncrypted: string; isPublic: boolean }
+    input: {
+      chatId: ChatId;
+      textEncrypted: string;
+      isPublic: boolean;
+      reasoningTextEncrypted: string;
+    }
   ) {
-    const { chatId, textEncrypted, isPublic } = input;
+    const { chatId, textEncrypted, isPublic, reasoningTextEncrypted } = input;
 
     const entity = await tx.message.create({
       data: {
         id: MessageService.generateId(),
         chatId,
         textEncrypted,
+        reasoningTextEncrypted,
         role: Role.enum.user,
         status: "succeeded",
         isPublic,
@@ -411,9 +427,16 @@ export class MessageService {
       model: Model;
       parentMessageId: MessageId;
       textEncrypted: string;
+      reasoningTextEncrypted: string;
     }
   ) {
-    const { chatId, model, parentMessageId, textEncrypted } = input;
+    const {
+      chatId,
+      model,
+      parentMessageId,
+      textEncrypted,
+      reasoningTextEncrypted,
+    } = input;
 
     const entity = await tx.message.create({
       data: {
@@ -425,6 +448,7 @@ export class MessageService {
         parentMessageId,
         isPublic: true,
         textEncrypted,
+        reasoningTextEncrypted,
       },
     });
 

@@ -19,14 +19,15 @@ type Props = {
 const ChatBubbleComponent = ({ message, chatType, onToggleSaved }: Props) => {
   const { user } = useUser();
 
-  const { role, text: rawText, status } = message;
+  const { role, text, reasoningText, status } = message;
 
-  const text = rawText ?? "";
   const isLongMessage = text.length > 150;
   const [collapsed, setCollapsed] = useState(role === "user" && isLongMessage);
-  const displayedText = collapsed
-    ? text.split("\n").slice(0, 3).join("\n")
-    : text;
+  // TODO: separate text and reasoningText from displayedText.
+  // const displayedText = collapsed
+  //   ? text.split("\n").slice(0, 3).join("\n")
+  //   : text;
+  const displayedText = reasoningText + "\n\n" + text;
 
   const handleCopy = async () => {
     try {
@@ -136,6 +137,7 @@ export const ChatBubble = memo(ChatBubbleComponent, (prev, next) => {
     prev.message.id === next.message.id &&
     prev.message.isBookmarked === next.message.isBookmarked &&
     prev.message.text === next.message.text &&
+    prev.message.reasoningText === next.message.reasoningText &&
     prev.message.status === next.message.status &&
     prev.message.role === next.message.role &&
     prev.message.model === next.message.model &&

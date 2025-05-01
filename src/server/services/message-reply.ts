@@ -18,6 +18,8 @@ export class MessageReplyService {
     const { idempotencyKey, messageId, model } = input;
 
     const modelMessageTextEncrypted = this.service.encryption.encrypt("");
+    const modelMessageReasoningTextEncrypted =
+      this.service.encryption.encrypt("");
 
     const { userMessage, modelMessage } = await this.service.db.$transaction(
       async (tx) => {
@@ -60,6 +62,7 @@ export class MessageReplyService {
             status: "pending",
             isPublic: true,
             textEncrypted: modelMessageTextEncrypted,
+            reasoningTextEncrypted: modelMessageReasoningTextEncrypted,
             parentMessageId: oldModelMessage.parentMessageId,
           },
           select: Message.Select,

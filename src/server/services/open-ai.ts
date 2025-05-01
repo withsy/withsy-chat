@@ -10,7 +10,6 @@ import type {
 } from "openai/resources";
 import { match } from "ts-pattern";
 import type { ServiceRegistry } from "../service-registry";
-import type { EnvService } from "./env";
 import type { SendMessageToAiInput } from "./model-route";
 
 const MAX_CHUNK_BUFFER_LENGTH = 16;
@@ -85,23 +84,34 @@ export class OpenAiService {
     });
 
     let text = "";
+    let reasoningText = "";
     let chunks: ChatCompletionChunk[] = [];
     const callOnChatChunkReceived = async () => {
       if (chunks.length === 0) return;
+
       const rawData = JSON.stringify(chunks);
-      await onMessageChunkReceived({ text, rawData });
+      await onMessageChunkReceived({ rawData, text, reasoningText });
+
       text = "";
+      reasoningText = "";
       chunks = [];
     };
 
     for await (const chunk of stream) {
-      const token = chunk.choices[0].delta.content ?? "";
-      text += token;
+      const reasoningContent =
+        (Reflect.get(chunk.choices[0].delta, "reasoning_content") as string) ??
+        "";
+      reasoningText += reasoningContent;
+
+      const content = chunk.choices[0].delta.content ?? "";
+      text += content;
+
       chunks.push(chunk);
-      if (chunks.length >= MAX_CHUNK_BUFFER_LENGTH) {
+
+      if (chunks.length >= MAX_CHUNK_BUFFER_LENGTH)
         await callOnChatChunkReceived();
-      }
     }
+
     await callOnChatChunkReceived();
   }
 }

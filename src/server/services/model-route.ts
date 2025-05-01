@@ -27,6 +27,7 @@ export type SendMessageToAiInput = {
 
 export type OnMessageChunkReceivedInput = {
   text: string;
+  reasoningText: string;
   rawData: string;
 };
 export type OnMessageChunkReceived = (
@@ -71,11 +72,12 @@ export class ModelRouteService {
 
       let index: MessageChunkIndex = 0;
       const onMessageChunkReceived: OnMessageChunkReceived = async (input) => {
-        const { text, rawData } = input;
+        const { rawData, text, reasoningText } = input;
         await this.service.messageChunk.add({
           messageId: modelMessage.id,
           index,
           text,
+          reasoningText,
           rawData,
         });
         await notify(this.service.pgPool, "message_chunk_created", {

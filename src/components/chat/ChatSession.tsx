@@ -134,6 +134,7 @@ export function ChatSession({ initialMessages, children }: Props) {
                 ? {
                     ...msg,
                     text: msg.text + chunk.text,
+                    reasoningText: msg.reasoningText + chunk.reasoningText,
                   }
                 : msg
             )

@@ -12,8 +12,12 @@ export class MessageChunkService {
 
   decrypt(entity: MessageChunk.Entity): MessageChunk.Data {
     const text = this.service.encryption.decrypt(entity.textEncrypted);
+    const reasoningText = this.service.encryption.decrypt(
+      entity.reasoningTextEncrypted
+    );
     const data = {
       text,
+      reasoningText,
     } satisfies MessageChunk.Data;
     return data;
   }
@@ -23,11 +27,14 @@ export class MessageChunkService {
     index: MessageChunkIndex;
     rawData: string;
     text: string;
+    reasoningText: string;
   }) {
-    const { messageId, index, text, rawData } = input;
+    const { messageId, index, text, rawData, reasoningText } = input;
 
     const textEncrypted = this.service.encryption.encrypt(text);
     const rawDataEncrypted = this.service.encryption.encrypt(rawData);
+    const reasoningTextEncrypted =
+      this.service.encryption.encrypt(reasoningText);
 
     await this.service.db.messageChunk.create({
       data: {
@@ -35,6 +42,7 @@ export class MessageChunkService {
         index,
         textEncrypted,
         rawDataEncrypted,
+        reasoningTextEncrypted,
       },
       select: { index: true },
     });

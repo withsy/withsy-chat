@@ -105,6 +105,7 @@ CREATE TABLE "messages" (
     "role" TEXT NOT NULL,
     "model" TEXT,
     "text_encrypted" TEXT NOT NULL,
+    "reasoning_text_encrypted" TEXT NOT NULL,
     "status" "MessageStatus" NOT NULL DEFAULT 'pending',
     "is_bookmarked" BOOLEAN NOT NULL DEFAULT false,
     "is_public" BOOLEAN NOT NULL,
@@ -119,8 +120,9 @@ CREATE TABLE "messages" (
 CREATE TABLE "message_chunks" (
     "message_id" UUID NOT NULL,
     "index" INTEGER NOT NULL,
-    "text_encrypted" TEXT NOT NULL,
     "raw_data_encrypted" TEXT NOT NULL,
+    "text_encrypted" TEXT NOT NULL,
+    "reasoning_text_encrypted" TEXT NOT NULL,
     "created_at" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 

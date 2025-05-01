@@ -14,6 +14,7 @@ export const Select = {
   role: true,
   model: true,
   textEncrypted: true,
+  reasoningTextEncrypted: true,
   status: true,
   isBookmarked: true,
   parentMessageId: true,
@@ -29,6 +30,7 @@ export const Entity = z.object({
   role: z.string(),
   model: z.nullable(z.string()),
   textEncrypted: z.string(),
+  reasoningTextEncrypted: z.string(),
   status: Status,
   isBookmarked: z.boolean(),
   parentMessageId: z.nullable(MessageId),
@@ -44,6 +46,7 @@ export type Data = {
   role: Role;
   model: Model | null;
   text: string;
+  reasoningText: string;
   status: Status;
   isBookmarked: boolean;
   createdAt: Date;
@@ -52,10 +55,12 @@ export type Data = {
 };
 export const DataBase: z.ZodType<Data> = Entity.omit({
   textEncrypted: true,
+  reasoningTextEncrypted: true,
   role: true,
   model: true,
 }).extend({
   text: z.string(),
+  reasoningText: z.string(),
   role: Role,
   model: z.nullable(Model),
   chat: z.nullable(z.lazy(() => Chat.Data)).default(null),
