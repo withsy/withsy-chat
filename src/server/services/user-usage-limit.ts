@@ -13,7 +13,12 @@ import type { ServiceRegistry } from "../service-registry";
 import type { Tx } from "./db";
 
 export class UserUsageLimitService {
-  constructor(private readonly service: ServiceRegistry) {}
+  constructor(private readonly service: ServiceRegistry) {
+    const now = new Date();
+    const offset = now.getTimezoneOffset();
+    if (offset !== 0)
+      throw new Error(`The server's time zone is not UTC. offset: ${offset}`);
+  }
 
   async get(userId: UserId) {
     const res = await this.service.db.$transaction(async (tx) => {
