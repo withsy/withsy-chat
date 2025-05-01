@@ -42,13 +42,13 @@ export default function Page({ recommendedFriends, user }: Props) {
   return (
     <div className="flex flex-col min-h-screen">
       <div
-        className={`w-full bg-white/80 backdrop-blur-lg sticky top-0 z-50 transition-all duration-300 ${
+        className={`w-full bg-white/70 backdrop-blur-lg sticky top-0 z-50 transition-all duration-300 ${
           scrolled ? "border-b" : ""
         }`}
       >
         <div className="max-w-6xl mx-auto p-2 px-4 flex justify-between items-center select-none">
           <div
-            className="flex items-center gap-2 p-2"
+            className="flex items-center gap-2 p-2 cursor-pointer"
             onClick={() => {
               router.push("/");
             }}
@@ -66,14 +66,14 @@ export default function Page({ recommendedFriends, user }: Props) {
           </div>
           {user ? (
             <div
-              className="flex items-center gap-2 underline underline-offset-8 p-2 hover:bg-gray-200 active:bg-gray-200 rounded-md"
+              className="flex items-center gap-2 underline underline-offset-8 p-2 hover:bg-gray-200 active:bg-gray-200 rounded-md cursor-pointer"
               onClick={() => {
                 router.push("/chat");
               }}
             >
               <div
                 className="text-md font-semibold"
-                style={{ backgroundColor: "rgb(40,90,128)" }}
+                style={{ color: "rgb(40,90,128)" }}
               >
                 Return to chat
               </div>
