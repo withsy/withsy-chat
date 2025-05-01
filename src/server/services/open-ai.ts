@@ -25,10 +25,9 @@ export class OpenAiService {
   }
 
   static async sendMessageToAi(openai: OpenAI, input: SendMessageToAiInput) {
-    const { model, promptText, messagesForHistory, onMessageChunkReceived } =
-      input;
+    const { model, promptText, messagesForAi, onMessageChunkReceived } = input;
 
-    const histories = messagesForHistory.map((x) =>
+    const histories = messagesForAi.map((x) =>
       match(Role.parse(x.role))
         .with(
           "user",

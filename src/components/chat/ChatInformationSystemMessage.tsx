@@ -1,9 +1,9 @@
-import type { Chat } from "@/types/chat";
+import type { Chat } from "@/types";
 import Link from "next/link";
 import React, { useMemo } from "react";
 
 interface ChatInformationSystemMessageProps {
-  chat: Chat;
+  chat: Chat.Data;
 }
 
 const ChatInformationSystemMessage: React.FC<

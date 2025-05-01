@@ -1,15 +1,15 @@
 import { useUser } from "@/context/UserContext";
+import { useChatStore } from "@/stores/useChatStore";
+import { type Message } from "@/types";
 import { MessageId } from "@/types/id";
-import { type Message } from "@/types/message";
 import { ChevronsDown } from "lucide-react";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import { ChatBubble } from "./ChatBubble";
 import ChatInformationSystemMessage from "./ChatInformationSystemMessage";
-import { useChatStore } from "@/stores/useChatStore";
 
 type Props = {
-  messages: Message[];
+  messages: Message.Data[];
   onToggleSaved: (id: string, newValue: boolean) => void;
 };
 

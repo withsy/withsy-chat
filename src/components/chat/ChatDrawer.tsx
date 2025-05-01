@@ -1,9 +1,10 @@
 import { trpc } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
+import { useChatStore } from "@/stores/useChatStore";
 import { useDrawerStore } from "@/stores/useDrawerStore";
 import { useSidebarStore } from "@/stores/useSidebarStore";
-import { Chat } from "@/types/chat";
-import type { Message } from "@/types/message";
+import type { Message } from "@/types";
+import { Chat } from "@/types";
 import { skipToken } from "@tanstack/react-query";
 import { FolderGit2, FolderRoot, GitBranch } from "lucide-react";
 import { useRouter } from "next/router";
@@ -11,14 +12,13 @@ import { useEffect, useState } from "react";
 import { BookmarkCard } from "../bookmarks/BookmarkCard";
 import { PartialError } from "../Error";
 import { PartialLoading } from "../Loading";
-import { Drawer, DrawerContent } from "../ui/drawer";
-import ChatDrawerHeader from "./ChatDrawerHeader";
 import { PromptCard } from "../prompts/PromptCard";
 import { Button } from "../ui/button";
-import { useChatStore } from "@/stores/useChatStore";
+import { Drawer, DrawerContent } from "../ui/drawer";
+import ChatDrawerHeader from "./ChatDrawerHeader";
 
 type ChatDrawerProps = {
-  savedMessages?: Message[];
+  savedMessages?: Message.Data[];
 };
 
 export const ChatDrawer = ({ savedMessages }: ChatDrawerProps) => {
@@ -116,7 +116,7 @@ function Prompts() {
 
   const [isDefaultPromptCollapsed, setIsDefaultPromptCollapsed] =
     useState(true);
-  const [activePromptId, setActivePromptId] = useState<string | null>(null);
+  const [_activePromptId, setActivePromptId] = useState<string | null>(null);
 
   const updateChatPrompt = trpc.chat.update.useMutation({
     onSuccess: () => {
@@ -197,7 +197,7 @@ function Prompts() {
   );
 }
 
-function SavedMessages({ messages }: { messages: Message[] }) {
+function SavedMessages({ messages }: { messages: Message.Data[] }) {
   if (messages.length === 0) {
     return (
       <div className="h-full w-full flex items-center justify-center text-muted-foreground">
@@ -283,7 +283,7 @@ function Branches({ chatBranchList }: { chatBranchList: any }) {
         <span className="text-sm select-none">
           Branches created from this chat. Tap to jump to a specific branch.
         </span>
-        {chatBranchList.data.map((x: Chat) => {
+        {chatBranchList.data.map((x: Chat.Data) => {
           return (
             <div
               key={x.id}

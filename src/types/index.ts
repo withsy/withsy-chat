@@ -1,4 +1,5 @@
 export * as Chat from "./chat";
+export * as ChatBranch from "./chat-branch";
 export * as ChatPrompt from "./chat-prompt";
 export * as GratitudeJournal from "./gratitude-journal";
 export * as Message from "./message";

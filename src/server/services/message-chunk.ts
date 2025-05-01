@@ -5,7 +5,6 @@ import type { UserId } from "@/types/user";
 import type { UserUsageLimit } from "@/types/user-usage-limit";
 import { tracked } from "@trpc/server";
 import type { ServiceRegistry } from "../service-registry";
-import type { Tx } from "./db";
 import { listen } from "./pg";
 
 export class MessageChunkService {

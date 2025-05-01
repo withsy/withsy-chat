@@ -12,10 +12,9 @@ export class GoogleGenAiService {
   }
 
   async sendMessageToAi(input: SendMessageToAiInput) {
-    const { model, promptText, messagesForHistory, onMessageChunkReceived } =
-      input;
+    const { model, promptText, messagesForAi, onMessageChunkReceived } = input;
 
-    const contents = messagesForHistory.map((x) => ({
+    const contents = messagesForAi.map((x) => ({
       role: RoleGoogleGenAiMap[Role.parse(x.role)],
       parts: [{ text: x.text }],
     }));

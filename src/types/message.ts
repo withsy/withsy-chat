@@ -86,9 +86,14 @@ export type List = zInfer<typeof List>;
 export const ListOutput = z.array(Data);
 export type ListOutput = zInfer<typeof ListOutput>;
 
-export type MessageForHistory = {
+export type EntityForAi = {
   role: string;
   textEncrypted: string;
+};
+
+export type DataForAi = {
+  role: string;
+  text: string;
 };
 
 export const Send = z.object({

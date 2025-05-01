@@ -3,7 +3,7 @@ import { BookmarkFilters } from "@/components/bookmarks/BookmarkFilters";
 
 import { filterMessages } from "@/lib/filter-utils";
 import { trpc } from "@/lib/trpc";
-import type { Message } from "@/types/message";
+import type { Message } from "@/types";
 import type { User } from "@/types/user";
 import { useEffect, useMemo, useState } from "react";
 import { PartialEmpty } from "../Empty";
@@ -11,7 +11,7 @@ import { PartialLoading } from "../Loading";
 
 export default function BookmarkPage({ user }: { user: User }) {
   const [loading, setLoading] = useState(true);
-  const [data, setData] = useState<Message[]>([]);
+  const [data, setData] = useState<Message.Data[]>([]);
   const [searchText, setSearchText] = useState("");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const listSaved = trpc.message.list.useQuery({

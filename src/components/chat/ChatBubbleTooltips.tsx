@@ -9,8 +9,8 @@ import { useChatSession } from "@/context/ChatSessionContext";
 import { useUser } from "@/context/UserContext";
 import { trpc } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
-import type { ChatType } from "@/types/chat";
-import { MessageReplyRegenerateError } from "@/types/message-reply";
+import type { Chat } from "@/types";
+import { MessageReply } from "@/types";
 import type { Model } from "@/types/model";
 import { Bookmark, Copy, GitBranch, RefreshCw } from "lucide-react";
 import { useRouter } from "next/router";
@@ -19,7 +19,7 @@ import { v4 as uuid } from "uuid";
 import { ModelSelect } from "./ModelSelect";
 
 interface ChatBubbleTooltipsProps {
-  chatType: ChatType | undefined;
+  chatType: Chat.Type | undefined;
   messageId: string;
   messageModel: Model | null;
   isAi: boolean;
@@ -57,8 +57,7 @@ export const ChatBubbleTooltips: React.FC<ChatBubbleTooltipsProps> = ({
       onRegenerateSuccess(data);
     },
     onError(error) {
-      const res = MessageReplyRegenerateError.safeParse(error.data);
-      // console.error("TODO: handle error data:", res.data);
+      const res = MessageReply.RegenerateError.safeParse(error.data);
       toast.error(
         `Message reply regenerating failed. error data: ${JSON.stringify(
           res.data

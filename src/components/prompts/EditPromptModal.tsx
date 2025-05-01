@@ -8,13 +8,13 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import type { Schema } from "@/types/user-prompt";
+import type { UserPrompt } from "@/types";
 import { useState } from "react";
 
 interface EditPromptModalProps {
-  prompt: Schema;
+  prompt: UserPrompt.Data;
   onClose: () => void;
-  onSave: (updatedPrompt: Schema) => void;
+  onSave: (updatedPrompt: UserPrompt.Data) => void;
 }
 
 export function EditPromptModal({

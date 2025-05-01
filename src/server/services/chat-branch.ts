@@ -1,5 +1,4 @@
-import { ChatSelect } from "@/types/chat";
-import type { ChatBranchList, ChatBranchStart } from "@/types/chat-branch";
+import { Chat, ChatBranch } from "@/types";
 import type { UserId } from "@/types/user";
 import type { ServiceRegistry } from "../service-registry";
 import { ChatService } from "./chat";
@@ -9,24 +8,22 @@ import { MessageService } from "./message";
 export class ChatBranchService {
   constructor(private readonly service: ServiceRegistry) {}
 
-  async list(userId: UserId, input: ChatBranchList) {
+  async list(userId: UserId, input: ChatBranch.List): Promise<Chat.ListOutout> {
     const { chatId } = input;
-    const xs = await this.service.db.chat.findMany({
-      where: {
-        parentMessage: {
-          chatId,
-        },
-        userId,
-        deletedAt: null,
-      },
-      select: ChatSelect,
+
+    const entities = await this.service.db.chat.findMany({
+      where: { parentMessage: { chatId }, userId, deletedAt: null },
+      select: Chat.Select,
     });
-    return xs;
+
+    const datas = entities.map((x) => this.service.chat.decrypt(x));
+    return datas;
   }
 
-  async start(userId: UserId, input: ChatBranchStart) {
+  async start(userId: UserId, input: ChatBranch.Start): Promise<Chat.Data> {
     const { idempotencyKey, messageId } = input;
-    const res = await this.service.db.$transaction(async (tx) => {
+
+    const parentMessage = await this.service.db.$transaction(async (tx) => {
       await IdempotencyInfoService.checkDuplicateRequest(tx, idempotencyKey);
 
       const parentMessage = await MessageService.get(tx, {
@@ -34,16 +31,24 @@ export class ChatBranchService {
         messageId,
       });
 
-      const title = [...parentMessage.text].slice(0, 20).join("");
+      return parentMessage;
+    });
+
+    const parentMessageData = this.service.message.decrypt(parentMessage);
+    const title = [...parentMessageData.text].slice(0, 20).join("");
+    const titleEncrypted = this.service.encryption.encrypt(title);
+
+    const chat = await this.service.db.$transaction(async (tx) => {
       const chat = await ChatService.createBranchChat(tx, {
         userId,
         parentMessageId: parentMessage.id,
-        title,
+        titleEncrypted,
       });
 
       return chat;
     });
 
-    return res;
+    const data = this.service.chat.decrypt(chat);
+    return data;
   }
 }

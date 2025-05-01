@@ -47,9 +47,9 @@ export type Create = zInfer<typeof Create>;
 
 export const Update = z.object({
   userPromptId: UserPromptId,
-  title: z.string().optional(),
-  text: z.string().optional(),
-  isStarred: z.boolean(),
+  title: z.optional(z.string()),
+  text: z.optional(z.string()),
+  isStarred: z.optional(z.boolean()),
 });
 export type Update = zInfer<typeof Update>;
 

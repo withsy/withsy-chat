@@ -1,6 +1,5 @@
 import { Chat, ChatPrompt, Message, UserPrompt } from "@/types";
 import type { ChatId, MessageId } from "@/types/id";
-import type { MessageForHistory } from "@/types/message";
 import { Model } from "@/types/model";
 import { Role } from "@/types/role";
 import type { UserId } from "@/types/user";
@@ -66,20 +65,20 @@ export class MessageService {
     return datas;
   }
 
-  async listForHistory(input: {
+  async listForAi(input: {
     userId: UserId;
-    modelMessage: Message.Entity;
-  }) {
+    modelMessage: Message.Data;
+  }): Promise<Message.EntityForAi[]> {
     const { userId, modelMessage } = input;
 
     const service = this.service;
     const history = {
-      _olds: [] as MessageForHistory[], // old to less old
-      pushOlds(...xs: MessageForHistory[]) {
+      _olds: [] as Message.EntityForAi[], // old to less old
+      pushOlds(...xs: Message.EntityForAi[]) {
         this._olds.push(...xs);
       },
-      _news: [] as MessageForHistory[], // new to less new
-      pushNews(...xs: MessageForHistory[]) {
+      _news: [] as Message.EntityForAi[], // new to less new
+      pushNews(...xs: Message.EntityForAi[]) {
         this._news.push(...xs);
       },
       remainLength() {
@@ -155,11 +154,9 @@ export class MessageService {
     };
   }) {
     const { userId, messageId, include } = input;
-    const entity = await this.service.db.message.findUnique({
-      where: {
-        chat: { userId, deletedAt: null },
-        id: messageId,
-      },
+
+    const entity = await this.service.db.message.findUniqueOrThrow({
+      where: { chat: { userId, deletedAt: null }, id: messageId },
       select: {
         ...Message.Select,
         chat: include?.chat

@@ -9,19 +9,19 @@ export const Select = {
   chatId: true,
 } satisfies Prisma.GratitudeJournalSelect;
 
-export const Schema = z.object({
+export const Entity = z.object({
   id: GratitudeJournalId,
-  chatId: ChatId,
+  chatId: z.nullable(ChatId),
 });
-export type Schema = zInfer<typeof Schema>;
-const _ = {} satisfies Omit<Schema, keyof typeof Select>;
+export type Entity = zInfer<typeof Entity>;
+const _ = {} satisfies Omit<Entity, keyof typeof Select>;
 
 export type Data = {
   id: GratitudeJournalId;
   chatId: ChatId | null;
   chat?: Chat.Data | null;
 };
-export const Data: z.ZodType<Data> = Schema.extend({
+export const Data: z.ZodType<Data> = Entity.extend({
   chat: z.nullable(z.lazy(() => Chat.Data)).default(null),
 });
 
