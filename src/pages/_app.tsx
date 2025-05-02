@@ -23,7 +23,7 @@ const MyApp: AppType = ({
   const homeLayoutPages = [
     "/",
     "/about",
-    "/docs",
+    "/guide",
     "/roadmap",
     "/blog",
     "/contact",

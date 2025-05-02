@@ -18,8 +18,8 @@ export default function Component({ user }: { user: User | null }) {
       value: "about",
     },
     {
-      label: "Docs",
-      value: "docs",
+      label: "Guide",
+      value: "guide",
     },
     {
       label: "Roadmap",
