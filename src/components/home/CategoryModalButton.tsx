@@ -7,6 +7,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { AlignJustify } from "lucide-react";
 import { useRouter } from "next/router";
+import { useState } from "react";
 
 interface Category {
   label: string;
@@ -19,9 +20,15 @@ export default function CategoryModalButton({
   categories: Category[];
 }) {
   const router = useRouter();
+  const [open, setOpen] = useState(false);
+
+  const handleClick = async (value: string) => {
+    setOpen(false); // 먼저 닫기
+    await router.push(`/${value}`); // 그 다음 이동
+  };
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button
           variant="outline"
@@ -40,7 +47,7 @@ export default function CategoryModalButton({
               key={category.value}
               variant="ghost"
               className="justify-start text-lg py-2 active:bg-gray-200"
-              onClick={() => router.push(`/${category.value}`)}
+              onClick={() => handleClick(category.value)}
             >
               {category.label}
             </Button>
