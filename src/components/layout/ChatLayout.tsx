@@ -4,6 +4,7 @@ import { useSidebarStore } from "@/stores/useSidebarStore";
 import { type ReactNode } from "react";
 import Main from "./Main";
 import Sidebar from "./sidebar/Sidebar";
+import { useHasMounted } from "@/hooks/useHasMounted";
 
 type LayoutProps = {
   children: ReactNode;
@@ -11,8 +12,12 @@ type LayoutProps = {
 };
 
 export default function ChatLayout({ children, className }: LayoutProps) {
+  const mounted = useHasMounted();
   const { user } = useUser();
   const { collapsed, setCollapsed, isMobile } = useSidebarStore();
+
+  if (!mounted) return null; // avoid SSR mismatch
+
   const themeColor = user?.preferences.themeColor ?? "30,30,30";
   const themeOpacity = user?.preferences.themeOpacity ?? 0;
   const backgroundColor = `rgba(${themeColor}, ${themeOpacity})`;
@@ -23,7 +28,6 @@ export default function ChatLayout({ children, className }: LayoutProps) {
       style={{ backgroundColor }}
     >
       <Sidebar />
-
       {isMobile && !collapsed && (
         <div
           className={cn(
@@ -33,7 +37,6 @@ export default function ChatLayout({ children, className }: LayoutProps) {
           onClick={() => setCollapsed(true)}
         />
       )}
-
       <div className="flex flex-col flex-1 h-full z-20 min-w-0">
         <Main>{children}</Main>
       </div>
