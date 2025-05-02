@@ -14,6 +14,41 @@ export const config = {
   },
 };
 
+/**
+ * @swagger
+ * /api/ai-profile:
+ *   post:
+ *     summary: Update AI profile
+ *     consumes:
+ *       - multipart/form-data
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               model:
+ *                 type: string
+ *               name:
+ *                 type: string
+ *               image:
+ *                 type: string
+ *                 format: binary
+ *     responses:
+ *       200:
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 name:
+ *                   type: string
+ *                 model:
+ *                   type: string
+ *                 imageUrl:
+ *                   type: string
+ */
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
