@@ -8,6 +8,9 @@ import { getServerSession } from "next-auth";
 import { uuidv7 } from "uuidv7";
 import { authOptions } from "./auth/[...nextauth]";
 
+const ALLOWED_MIME_TYPES = ["image/jpeg", "image/png", "image/webp"];
+const MAX_FILE_SIZE = 1 * 1024 * 1024; // 1 MB
+
 export const config = {
   api: {
     bodyParser: false,
@@ -30,6 +33,7 @@ export const config = {
  *             properties:
  *               model:
  *                 type: string
+ *                 example: "gemini-2.0-flash"
  *               name:
  *                 type: string
  *               image:
@@ -67,7 +71,15 @@ export default async function handler(
   let imagePath: string | undefined = undefined;
   let uploadPromise: Promise<void> | undefined = undefined;
 
-  const busboy = Busboy({ headers: req.headers });
+  const busboy = Busboy({
+    headers: req.headers,
+    limits: {
+      fields: 2,
+      files: 1,
+      fileSize: MAX_FILE_SIZE,
+    },
+  });
+
   busboy
     .on("field", (fieldname, value) => {
       if (fieldname === "model") maybeModel = value;
@@ -76,6 +88,9 @@ export default async function handler(
     .on("file", (fieldname, readable, info) => {
       if (fieldname === "image") {
         const { mimeType } = info;
+        if (!ALLOWED_MIME_TYPES.includes(mimeType))
+          return res.status(400).json({ error: "Unsupported file type" });
+
         const ext = mime.extension(mimeType);
         const uuid = uuidv7();
         imagePath = `users/${userId}/ai-profiles/${uuid}.${ext}`;
