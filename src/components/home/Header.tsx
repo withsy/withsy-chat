@@ -2,10 +2,9 @@ import { useHeaderScroll } from "@/hooks/useHeaderScroll";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 import type { User } from "@/types/user";
 import { useRouter } from "next/router";
-import LoginButton from "../login/LoginButton";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import CategoryModalButton from "./CategoryModalButton";
-import ReturnButton from "./ReturnButton";
+import ResponsiveButton from "./ResponsiveButton";
 
 export default function Component({ user }: { user: User | null }) {
   const router = useRouter();
@@ -84,7 +83,7 @@ export default function Component({ user }: { user: User | null }) {
           </div>
         )}
         <div className="flex items-center gap-2">
-          {user != undefined ? <ReturnButton /> : <LoginButton />}
+          <ResponsiveButton user={user} />
           {isMobile && <CategoryModalButton categories={categories} />}
         </div>
       </div>

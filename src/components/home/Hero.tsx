@@ -1,6 +1,5 @@
 import type { User } from "@/types/user";
-import ReturnButton from "./ReturnButton";
-import LoginButton from "../login/LoginButton";
+import ResponsiveButton from "./ResponsiveButton";
 
 export function Hero({ user }: { user: User | null }) {
   return (
@@ -23,11 +22,7 @@ export function Hero({ user }: { user: User | null }) {
           savable.
         </p>
       </div>
-      {user != undefined ? (
-        <ReturnButton size="lg" />
-      ) : (
-        <LoginButton size="lg" />
-      )}
+      <ResponsiveButton user={user} size="lg" />
     </section>
   );
 }

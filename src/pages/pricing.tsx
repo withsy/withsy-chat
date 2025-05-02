@@ -1,4 +1,28 @@
-export default function Page() {
+import ResponsiveButton from "@/components/home/ResponsiveButton";
+import { getServerSession } from "next-auth";
+import { authOptions } from "./api/auth/[...nextauth]";
+import type { GetServerSideProps } from "next";
+import { service } from "@/server/service-registry";
+import { User, UserSession } from "@/types/user";
+
+type Props = {
+  user: User | null;
+};
+
+export const getServerSideProps: GetServerSideProps<Props> = async (
+  context
+) => {
+  const session = await getServerSession(context.req, context.res, authOptions);
+  let user: User | null = null;
+  if (session) {
+    const userSession = UserSession.parse(session);
+    user = await service.user.get(userSession.user.id);
+  }
+
+  return { props: { user } };
+};
+
+export default function Page({ user }: Props) {
   return (
     <div className="flex flex-col items-start text-start px-6 py-12 max-w-2xl mx-auto">
       <div className="text-center md:text-left">
@@ -15,14 +39,16 @@ export default function Page() {
           <p className="text-2xl font-bold mt-2">
             $0<span className="text-sm font-normal">/month</span>
           </p>
-          <ul className="mt-4 space-y-2 text-sm">
+          <ul className="my-4 space-y-2 text-sm">
             <li>✓ Up to 30 chats per day</li>
             <li>✓ Fast, reliable responses</li>
             <li>✓ Access to core Withsy features</li>
           </ul>
-          <button className="mt-6 bg-[rgb(40,90,128)] text-white px-4 py-2 rounded hover:bg-black">
-            Try Withsy Free
-          </button>
+          <ResponsiveButton
+            user={user}
+            size="default"
+            message="Try Withsy Free"
+          />
         </div>
 
         {/* Future Plans */}
