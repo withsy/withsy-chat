@@ -31,12 +31,14 @@ export default function ModelCard({ model, name, image, refetch }: Props) {
       form.append("model", model);
       form.append("name", newName.trim());
 
-      await fetch("/api/ai-profile", {
+      const res = await fetch("/api/ai-profile", {
         method: "POST",
         body: form,
       });
-
-      toast.success("Name updated");
+      if (!res.ok) {
+        throw new Error("Server responded with error");
+      }
+      toast.success("name updated");
       refetch();
     } catch (e) {
       toast.error("Failed to update name");
@@ -79,10 +81,13 @@ export default function ModelCard({ model, name, image, refetch }: Props) {
       form.append("name", newName.trim());
       form.append("image", file);
 
-      await fetch("/api/ai-profile", {
+      const res = await fetch("/api/ai-profile", {
         method: "POST",
         body: form,
       });
+      if (!res.ok) {
+        throw new Error("Server responded with error");
+      }
 
       toast.success("Image updated");
       refetch();
