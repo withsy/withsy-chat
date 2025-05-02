@@ -8,6 +8,9 @@ export const userAiProfileRouter = t.router({
     .query((opts) =>
       opts.ctx.service.userAiProfile.get(opts.ctx.userId, opts.input)
     ),
+  getAll: publicProcedure
+    .output(UserAiProfile.GetAllOutput)
+    .query((opts) => opts.ctx.service.userAiProfile.getAll(opts.ctx.userId)),
   deleteImage: publicProcedure
     .input(UserAiProfile.DeleteImage)
     .output(UserAiProfile.Data)

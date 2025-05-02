@@ -44,6 +44,16 @@ export class UserAiProfileService {
     return data;
   }
 
+  async getAll(userId: UserId): Promise<UserAiProfile.GetAllOutput> {
+    const entities = await this.service.db.userAiProfile.findMany({
+      where: { userId },
+      select: UserAiProfile.Select,
+    });
+
+    const datas = await Promise.all(entities.map((x) => this.decrypt(x)));
+    return datas;
+  }
+
   async update(input: {
     userId: UserId;
     model: Model;

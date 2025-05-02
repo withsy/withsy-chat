@@ -40,6 +40,9 @@ export type Get = zInfer<typeof Get>;
 export const GetOutput = z.nullable(Data);
 export type GetOutput = zInfer<typeof GetOutput>;
 
+export const GetAllOutput = z.array(Data);
+export type GetAllOutput = zInfer<typeof GetAllOutput>;
+
 export const DeleteImage = z.object({
   model: Model,
 });
