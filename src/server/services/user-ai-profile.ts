@@ -5,17 +5,23 @@ import type { ServiceRegistry } from "../service-registry";
 
 export class UserAiProfileService {
   private emptyNameEncrypted: string;
-  private emptyImageUrlEncrypted: string;
+  private emptyImagePathEncrypted: string;
 
   constructor(private readonly service: ServiceRegistry) {
     this.emptyNameEncrypted = this.service.encryption.encrypt("");
-    this.emptyImageUrlEncrypted = this.service.encryption.encrypt("");
+    this.emptyImagePathEncrypted = this.service.encryption.encrypt("");
   }
 
-  decrypt(entity: UserAiProfile.Entity): UserAiProfile.Data {
+  async decrypt(entity: UserAiProfile.Entity): Promise<UserAiProfile.Data> {
     const model = Model.parse(entity.model);
     const name = this.service.encryption.decrypt(entity.nameEncrypted);
-    const imageUrl = this.service.encryption.decrypt(entity.imageUrlEncrypted);
+    const imagePath = this.service.encryption.decrypt(
+      entity.imagePathEncrypted
+    );
+    const imageUrl =
+      imagePath.length > 0
+        ? await this.service.firebase.getSignedUrl(imagePath)
+        : "";
     const data = {
       model,
       name,
@@ -38,22 +44,20 @@ export class UserAiProfileService {
     return data;
   }
 
-  async update(
-    userId: UserId,
-    input: UserAiProfile.Update
-  ): Promise<UserAiProfile.Data> {
-    const { model, name, image } = input;
+  async update(input: {
+    userId: UserId;
+    model: Model;
+    name?: string;
+    imagePath?: string;
+  }): Promise<UserAiProfile.Data> {
+    const { userId, model, name, imagePath } = input;
 
     const nameEncrypted = name
       ? this.service.encryption.encrypt(name)
       : undefined;
-
-    // upload image
-    const imageUrlEncrypted: string | undefined = undefined;
-    if (image) {
-      const a = await this.service.firebase.upload({ userId, image });
-      console.log("@", a);
-    }
+    const imagePathEncrypted = imagePath
+      ? this.service.encryption.encrypt(imagePath)
+      : undefined;
 
     const res = await this.service.db.$transaction(async (tx) => {
       let entity = await tx.userAiProfile.findUnique({
@@ -61,42 +65,44 @@ export class UserAiProfileService {
         select: UserAiProfile.Select,
       });
 
-      let oldImageUrlEncrypted = "";
+      let oldImagePathEncrypted = "";
       if (!entity) {
         entity = await tx.userAiProfile.create({
           data: {
             userId,
             model,
             nameEncrypted: nameEncrypted ?? this.emptyNameEncrypted,
-            imageUrlEncrypted: imageUrlEncrypted ?? this.emptyImageUrlEncrypted,
+            imagePathEncrypted:
+              imagePathEncrypted ?? this.emptyImagePathEncrypted,
           },
           select: UserAiProfile.Select,
         });
       } else {
-        if (imageUrlEncrypted) oldImageUrlEncrypted = entity.imageUrlEncrypted;
+        if (imagePathEncrypted)
+          oldImagePathEncrypted = entity.imagePathEncrypted;
 
         entity = await tx.userAiProfile.update({
           where: { userId_model: { userId, model } },
           data: {
             nameEncrypted,
-            imageUrlEncrypted,
+            imagePathEncrypted,
           },
           select: UserAiProfile.Select,
         });
       }
 
-      return { entity, oldImageUrlEncrypted };
+      return { entity, oldImagePathEncrypted };
     });
 
-    const { entity, oldImageUrlEncrypted } = res;
-    if (oldImageUrlEncrypted) {
-      const oldImageUrl = this.service.encryption.decrypt(oldImageUrlEncrypted);
-      if (oldImageUrl) {
-        // delete old image
-      }
+    const { entity, oldImagePathEncrypted } = res;
+    if (oldImagePathEncrypted) {
+      const oldImagePath = this.service.encryption.decrypt(
+        oldImagePathEncrypted
+      );
+      if (oldImagePath) await this.service.firebase.delete(oldImagePath);
     }
 
-    const data = this.decrypt(entity);
+    const data = await this.decrypt(entity);
     return data;
   }
 
@@ -111,25 +117,25 @@ export class UserAiProfileService {
         select: UserAiProfile.Select,
       });
 
-      const oldImageUrlEncrypted = oldEntity.imageUrlEncrypted;
+      const oldImagePathEncrypted = oldEntity.imagePathEncrypted;
       const entity = await tx.userAiProfile.update({
         where: { userId_model: { userId, model } },
-        data: { imageUrlEncrypted: this.emptyImageUrlEncrypted },
+        data: { imagePathEncrypted: this.emptyImagePathEncrypted },
         select: UserAiProfile.Select,
       });
 
-      return { oldImageUrlEncrypted, entity };
+      return { oldImagePathEncrypted, entity };
     });
 
-    const { oldImageUrlEncrypted, entity } = res;
-    if (oldImageUrlEncrypted) {
-      const oldImageUrl = this.service.encryption.decrypt(oldImageUrlEncrypted);
-      if (oldImageUrl) {
-        // delete old image
-      }
+    const { oldImagePathEncrypted, entity } = res;
+    if (oldImagePathEncrypted) {
+      const oldImagePath = this.service.encryption.decrypt(
+        oldImagePathEncrypted
+      );
+      if (oldImagePath) await this.service.firebase.delete(oldImagePath);
     }
 
-    const data = this.decrypt(entity);
+    const data = await this.decrypt(entity);
     return data;
   }
 }

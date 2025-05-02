@@ -77,7 +77,7 @@ CREATE TABLE "user_ai_profiles" (
     "user_id" UUID NOT NULL,
     "model" TEXT NOT NULL,
     "name_encrypted" TEXT NOT NULL,
-    "image_url_encrypted" TEXT NOT NULL,
+    "image_path_encrypted" TEXT NOT NULL,
     "created_at" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
