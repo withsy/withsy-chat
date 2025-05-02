@@ -33,6 +33,9 @@ const ChatBubbleComponent = ({ message, chatType, onToggleSaved }: Props) => {
     role === "model"
       ? `${showReasoning && reasoningText ? reasoningText + "\n\n" : ""}${text}`
       : text;
+  const collapseText = collapsed
+    ? displayedText.split("\n").slice(0, 3).join("\n")
+    : displayedText;
 
   const handleCopy = async () => {
     try {
@@ -120,7 +123,11 @@ const ChatBubbleComponent = ({ message, chatType, onToggleSaved }: Props) => {
               className="ml-auto -mt-1 mb-1 text-sm text-muted-foreground flex items-center gap-1 cursor-pointer select-none"
               onClick={() => setShowReasoning((prev) => !prev)}
             >
-              <button className="transition-transform duration-200">
+              <button
+                className={`transition-transform duration-200 ${
+                  !text && "animate-pulse"
+                }`}
+              >
                 {showReasoning ? "Hide Thinking" : "Show Thinking"}
               </button>
             </div>
@@ -140,7 +147,7 @@ const ChatBubbleComponent = ({ message, chatType, onToggleSaved }: Props) => {
               : {}
           }
         >
-          <MarkdownBox content={displayedText} />
+          <MarkdownBox content={collapseText} />
           <StatusIndicator status={status} />
         </div>
         <div className="flex justify-between w-full mt-2">{items}</div>
