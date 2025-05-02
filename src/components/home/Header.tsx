@@ -30,6 +30,10 @@ export default function Component({ user }: { user: User | null }) {
       value: "blog",
     },
     {
+      label: "Pricing",
+      value: "pricing",
+    },
+    {
       label: "Contact",
       value: "contact",
     },
@@ -60,16 +64,23 @@ export default function Component({ user }: { user: User | null }) {
           </div>
         </div>
         {!isMobile && (
-          <div className="flex gap-8 text-muted-foreground">
-            {categories.map((category) => (
-              <button
-                key={category.value}
-                onClick={() => router.push(`/${category.value}`)}
-                className="hover:text-primary transition-colors font-semibold"
-              >
-                {category.label}
-              </button>
-            ))}
+          <div className="flex gap-8">
+            {categories.map((category) => {
+              const isActive = router.pathname === `/${category.value}`;
+              return (
+                <button
+                  key={category.value}
+                  onClick={() => router.push(`/${category.value}`)}
+                  className={`transition-colors font-semibold ${
+                    isActive
+                      ? "text-[rgb(40,90,128)]"
+                      : "text-muted-foreground hover:text-primary"
+                  }`}
+                >
+                  {category.label}
+                </button>
+              );
+            })}
           </div>
         )}
         <div className="flex items-center gap-2">

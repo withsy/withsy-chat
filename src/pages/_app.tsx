@@ -26,6 +26,7 @@ const MyApp: AppType = ({
     "/guide",
     "/roadmap",
     "/blog",
+    "/pricing",
     "/contact",
   ];
   const isLayoutDisabled = noLayoutPages.includes(router.pathname);
