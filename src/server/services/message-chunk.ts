@@ -51,7 +51,7 @@ export class MessageChunkService {
   async buildText(input: {
     userId: UserId;
     messageId: MessageId;
-  }): Promise<string> {
+  }): Promise<{ text: string; reasoningText: string }> {
     const { userId, messageId } = input;
 
     const entities = await this.service.db.messageChunk.findMany({
@@ -63,8 +63,10 @@ export class MessageChunkService {
       orderBy: { index: "asc" },
     });
 
-    const text = entities.map((x) => this.decrypt(x).text).join("");
-    return text;
+    const datas = entities.map((x) => this.decrypt(x));
+    const text = datas.map((x) => x.text).join("");
+    const reasoningText = datas.map((x) => x.reasoningText).join("");
+    return { text, reasoningText };
   }
 
   async *receive(userId: UserId, input: MessageChunk.Receive) {
