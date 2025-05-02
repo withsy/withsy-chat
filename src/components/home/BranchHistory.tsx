@@ -17,6 +17,7 @@ export default function BranchHistory() {
         {/* GIF 미디어 */}
         <div className="text-center">
           <Image
+            unoptimized
             src="/home/branch-history.gif"
             alt="Branch History"
             width={720}

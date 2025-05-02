@@ -14,6 +14,7 @@ export default function SaveStar() {
         </div>
 
         <Image
+          unoptimized
           src="/home/save-itmes.gif"
           alt="Saved Items"
           width={720}

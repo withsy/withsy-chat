@@ -19,6 +19,7 @@ export default function PromptTransparency() {
 
         {/* GIF */}
         <Image
+          unoptimized
           src="/home/apply-prompt.gif"
           alt="Apply Prompt"
           width={720}
@@ -46,6 +47,7 @@ export default function PromptTransparency() {
         <div className="w-full flex flex-col md:flex-row gap-6 items-center justify-center">
           <div className="text-center">
             <Image
+              unoptimized
               src="/home/before-prompt.png"
               alt="Before Prompt"
               width={360}
@@ -58,6 +60,7 @@ export default function PromptTransparency() {
           </div>
           <div className="text-center">
             <Image
+              unoptimized
               src="/home/after-prompt.png"
               alt="After Prompt"
               width={360}
