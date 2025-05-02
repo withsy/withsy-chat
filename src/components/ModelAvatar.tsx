@@ -23,7 +23,7 @@ export function ModelAvatar({ name, size = "md", path }: Props) {
     sm: "w-6 h-6 text-xs",
     md: "w-8 h-8 text-sm",
     lg: "w-10 h-10 text-base",
-    xl: "w-20 h-20 text-lg",
+    xl: "w-16 h-16 text-lg",
   }[size];
 
   const className = `${sizeClass} select-none`;
