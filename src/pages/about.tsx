@@ -1,4 +1,3 @@
-// app/about/page.tsx
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 
 export default function Page() {
