@@ -2,10 +2,9 @@ import { useHeaderScroll } from "@/hooks/useHeaderScroll";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 import type { User } from "@/types/user";
 import { useRouter } from "next/router";
-import LoginButton from "../login/LoginButton";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import CategoryModalButton from "./CategoryModalButton";
-import ReturnButton from "./ReturnButton";
+import ResponsiveButton from "./ResponsiveButton";
 
 export default function Component({ user }: { user: User | null }) {
   const router = useRouter();
@@ -14,22 +13,35 @@ export default function Component({ user }: { user: User | null }) {
 
   const categories = [
     {
-      label: "Why?",
-      value: "why",
+      label: "About",
+      value: "about",
     },
     {
-      label: "Withsy Chat",
-      value: "withsy-chat",
+      label: "Guide",
+      value: "guide",
+    },
+    {
+      label: "Roadmap",
+      value: "roadmap",
     },
     {
       label: "Blog",
       value: "blog",
     },
+    {
+      label: "Pricing",
+      value: "pricing",
+    },
+    {
+      label: "Contact",
+      value: "contact",
+    },
   ];
+
   return (
     <div
-      className={`w-full bg-white/70 backdrop-blur-lg sticky top-0 z-50 transition-all duration-300 ${
-        scrolled ? "border-b" : ""
+      className={`w-full backdrop-blur-lg sticky top-0 z-50 transition-all duration-300 ${
+        scrolled ? "bg-white/70 border-b" : "bg-transparent"
       }`}
     >
       <div className="max-w-6xl mx-auto p-2 px-4 flex justify-between items-center select-none">
@@ -51,20 +63,27 @@ export default function Component({ user }: { user: User | null }) {
           </div>
         </div>
         {!isMobile && (
-          <div className="flex gap-8 text-muted-foreground">
-            {categories.map((category) => (
-              <button
-                key={category.value}
-                onClick={() => router.push(`/${category.value}`)}
-                className="hover:text-primary transition-colors font-semibold"
-              >
-                {category.label}
-              </button>
-            ))}
+          <div className="flex gap-8">
+            {categories.map((category) => {
+              const isActive = router.pathname === `/${category.value}`;
+              return (
+                <button
+                  key={category.value}
+                  onClick={() => router.push(`/${category.value}`)}
+                  className={`transition-colors font-semibold ${
+                    isActive
+                      ? "text-[rgb(40,90,128)]"
+                      : "text-muted-foreground hover:text-primary"
+                  }`}
+                >
+                  {category.label}
+                </button>
+              );
+            })}
           </div>
         )}
         <div className="flex items-center gap-2">
-          {user ? <ReturnButton /> : <LoginButton />}
+          <ResponsiveButton user={user} />
           {isMobile && <CategoryModalButton categories={categories} />}
         </div>
       </div>

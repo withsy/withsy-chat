@@ -1,4 +1,3 @@
-import Layout from "@/components/layout/Layout";
 import AppProviders from "@/context/AppProviders";
 import { useSidebarInitializer } from "@/hooks/useSidebarInitializer";
 import { trpc } from "@/lib/trpc";
@@ -9,6 +8,8 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { Toaster as Sonner } from "sonner";
 import { Nunito } from "next/font/google";
+import ChatLayout from "@/components/layout/ChatLayout";
+import HomeLayout from "@/components/layout/HomeLayout";
 
 const nunito = Nunito({ subsets: ["latin"] });
 
@@ -18,8 +19,18 @@ const MyApp: AppType = ({
 }: AppProps) => {
   useSidebarInitializer();
   const router = useRouter();
-  const noLayoutPages = ["/auth/signin", "/"];
+  const noLayoutPages = ["/auth/signin"];
+  const homeLayoutPages = [
+    "/",
+    "/about",
+    "/guide",
+    "/roadmap",
+    "/blog",
+    "/pricing",
+    "/contact",
+  ];
   const isLayoutDisabled = noLayoutPages.includes(router.pathname);
+  const isHomeLayout = homeLayoutPages.includes(router.pathname);
   let title = "Withsy";
   if (process.env.NODE_ENV === "development") title = `[DEV] ${title}`;
 
@@ -33,11 +44,16 @@ const MyApp: AppType = ({
         <main className={nunito.className}>
           <Component {...pageProps} />
         </main>
-      ) : (
-        <Layout className={nunito.className}>
+      ) : isHomeLayout ? (
+        <HomeLayout className={nunito.className}>
           <Component {...pageProps} />
-        </Layout>
+        </HomeLayout>
+      ) : (
+        <ChatLayout className={nunito.className}>
+          <Component {...pageProps} />
+        </ChatLayout>
       )}
+
       <Sonner position="bottom-right" />
       <ReactQueryDevtools />
     </AppProviders>

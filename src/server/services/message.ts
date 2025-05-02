@@ -275,11 +275,13 @@ export class MessageService {
   }) {
     const { userId, messageId } = input;
 
-    const text = await this.service.messageChunk.buildText({
+    const { text, reasoningText } = await this.service.messageChunk.buildText({
       userId,
       messageId,
     });
     const textEncrypted = this.service.encryption.encrypt(text);
+    const reasoningTextEncrypted =
+      this.service.encryption.encrypt(reasoningText);
 
     await this.service.db.$transaction(async (tx) => {
       await MessageService.transit(tx, {
@@ -294,7 +296,7 @@ export class MessageService {
           chat: { userId, deletedAt: null },
           id: messageId,
         },
-        data: { textEncrypted },
+        data: { textEncrypted, reasoningTextEncrypted },
       });
     });
   }

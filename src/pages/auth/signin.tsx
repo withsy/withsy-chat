@@ -23,15 +23,17 @@ type Props = {
 
 export default function SignInPage({ providers }: Props) {
   return (
-    <div className="min-h-[100dvh] flex items-center justify-center bg-gray-50 px-4">
-      <div className="max-w-md w-full space-y-8 p-10 bg-white shadow-xl rounded-xl">
+    <div className="min-h-[100dvh] flex items-center justify-center bg-gray-50 px-4 select-none">
+      <div className="max-w-md w-full space-y-8 p-10">
         <div className="text-center">
           <img
             className="mx-auto h-16 w-16"
             src="/logo.png"
             alt="withsy logo"
           />
-          <h2 className="mt-6 text-2xl font-bold text-gray-900">Welcome</h2>
+          <h2 className="mt-6 text-2xl font-bold text-gray-900">
+            Welcome to Withsy
+          </h2>
           <p className="mt-2 text-sm text-gray-600">
             Use your Google account to continue
           </p>

@@ -11,8 +11,9 @@ function getGreeting() {
   return "Good evening";
 }
 
-export default function EmptyChatView({ name = "" }: { name?: string }) {
+export default function EmptyChatView() {
   const { user } = useUser();
+  const name = user?.name;
   const [greeting, setGreeting] = useState("Good day");
   const setChat = useChatStore((state) => state.setChat);
 

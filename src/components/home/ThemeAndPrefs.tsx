@@ -37,6 +37,7 @@ export default function ThemeAndPrefsSection() {
         {/* Media Section */}
         <div className="w-full md:w-1/2 flex flex-col gap-6 items-center">
           <Image
+            unoptimized
             src="/home/change-theme.gif"
             alt="Change Theme"
             width={600}
@@ -44,6 +45,7 @@ export default function ThemeAndPrefsSection() {
             className="rounded-xl shadow-md"
           />
           <Image
+            unoptimized
             src="/home/userprefs.gif"
             alt="User Preferences"
             width={600}
