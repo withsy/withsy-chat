@@ -23,11 +23,16 @@ const ChatBubbleComponent = ({ message, chatType, onToggleSaved }: Props) => {
 
   const isLongMessage = text.length > 150;
   const [collapsed, setCollapsed] = useState(role === "user" && isLongMessage);
+  const [showReasoning, setShowReasoning] = useState(false);
+
   // TODO: separate text and reasoningText from displayedText.
   // const displayedText = collapsed
   //   ? text.split("\n").slice(0, 3).join("\n")
   //   : text;
-  const displayedText = reasoningText + "\n\n" + text;
+  const displayedText =
+    role === "model"
+      ? `${showReasoning && reasoningText ? reasoningText + "\n\n" : ""}${text}`
+      : text;
 
   const handleCopy = async () => {
     try {
@@ -94,20 +99,32 @@ const ChatBubbleComponent = ({ message, chatType, onToggleSaved }: Props) => {
     >
       <ModelAvatar name={name} />
 
-      <div className="flex flex-col items-start flex-1">
+      <div className="flex flex-col items-start flex-1 w-full">
         <div
           className={cn(
-            "text-muted-foreground text-sm mb-1 select-none",
+            "text-muted-foreground text-sm mb-1 select-none flex justify-between items-center w-full",
             role === "model" ? "text-left" : "text-right",
             role === "user" && "self-end"
           )}
         >
-          {role === "model"
-            ? message.model
-              ? GetModelLabel(message.model)
-              : "AI"
-            : "You"}{" "}
-          · {new Date(message.createdAt).toLocaleTimeString()}
+          <div>
+            {role === "model"
+              ? message.model
+                ? GetModelLabel(message.model)
+                : "AI"
+              : "You"}{" "}
+            · {new Date(message.createdAt).toLocaleTimeString()}
+          </div>
+          {role === "model" && reasoningText && (
+            <div
+              className="ml-auto -mt-1 mb-1 text-sm text-muted-foreground flex items-center gap-1 cursor-pointer select-none"
+              onClick={() => setShowReasoning((prev) => !prev)}
+            >
+              <button className="transition-transform duration-200">
+                {showReasoning ? "Hide Thinking" : "Show Thinking"}
+              </button>
+            </div>
+          )}
         </div>
 
         <div
