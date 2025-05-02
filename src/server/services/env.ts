@@ -13,12 +13,13 @@ export const EnvService = z.object({
   googleClientId: z.string().min(1),
   googleClientSecret: z.string().min(1),
   encryptionKey: z.string().min(1),
+  firebaseServiceAccountKey: z.string().min(1),
 });
 export type EnvService = zInfer<typeof EnvService>;
 
 export function loadEnvService() {
   try {
-    return EnvService.parse({
+    const envService = EnvService.parse({
       nodeEnv: process.env.NODE_ENV,
       databaseUrl: process.env.DATABASE_URL,
       geminiApiKey: process.env.GEMINI_API_KEY,
@@ -29,7 +30,9 @@ export function loadEnvService() {
       googleClientId: process.env.GOOGLE_CLIENT_ID,
       googleClientSecret: process.env.GOOGLE_CLIENT_SECRET,
       encryptionKey: process.env.ENCRYPTION_KEY,
+      firebaseServiceAccountKey: process.env.FIREBASE_SERVICE_ACCOUNT_KEY,
     });
+    return envService;
   } catch (e) {
     console.log("Environment variable parsing failed.");
     throw e;

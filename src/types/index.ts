@@ -5,5 +5,6 @@ export * as GratitudeJournal from "./gratitude-journal";
 export * as Message from "./message";
 export * as MessageChunk from "./message-chunk";
 export * as MessageReply from "./message-reply";
+export * as UserAiProfile from "./user-ai-profile";
 export * as UserDefaultPrompt from "./user-default-prompt";
 export * as UserPrompt from "./user-prompt";
