@@ -6,6 +6,7 @@ import { ChatPromptService } from "./services/chat-prompt";
 import { createDb, type Db } from "./services/db";
 import { EncryptionService } from "./services/encryption";
 import { loadEnvService, type EnvService } from "./services/env";
+import { FirebaseService } from "./services/firebase";
 import { GoogleGenAiService } from "./services/google-gen-ai";
 import { GratitudeJournalService } from "./services/gratitude-journal";
 import { IdempotencyInfoService } from "./services/idempotency-info";
@@ -52,6 +53,7 @@ type ServiceDefinition = {
   chatPrompt: ChatPromptService;
   gratitudeJournal: GratitudeJournalService;
   encryption: EncryptionService;
+  firebase: FirebaseService;
 };
 
 export type ServiceRegistry = LazyObject<ServiceDefinition>;
@@ -83,6 +85,7 @@ function createServiceRegistry() {
     chatPrompt: (s) => new ChatPromptService(s),
     gratitudeJournal: (s) => new GratitudeJournalService(s),
     encryption: (s) => new EncryptionService(s),
+    firebase: (s) => new FirebaseService(s),
   });
 }
 
