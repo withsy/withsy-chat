@@ -102,11 +102,15 @@ const ChatBubbleComponent = ({ message, chatType, onToggleSaved }: Props) => {
     >
       <ModelAvatar name={name} />
 
-      <div className="flex flex-col items-start flex-1 w-full">
+      <div
+        className={`flex flex-col items-start flex-1 ${
+          role == "model" ? "w-full" : ""
+        }`}
+      >
         <div
           className={cn(
-            "text-muted-foreground text-sm mb-1 select-none flex justify-between items-center w-full",
-            role === "model" ? "text-left" : "text-right",
+            "text-muted-foreground text-sm mb-1 select-none flex justify-between items-center",
+            role === "model" ? "text-left w-full" : "text-right",
             role === "user" && "self-end"
           )}
         >
