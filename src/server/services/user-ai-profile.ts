@@ -50,6 +50,10 @@ export class UserAiProfileService {
 
     // upload image
     const imageUrlEncrypted: string | undefined = undefined;
+    if (image) {
+      const a = await this.service.firebase.upload({ userId, image });
+      console.log("@", a);
+    }
 
     const res = await this.service.db.$transaction(async (tx) => {
       let entity = await tx.userAiProfile.findUnique({
