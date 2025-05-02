@@ -72,6 +72,19 @@ CREATE TABLE "user_default_prompts" (
 );
 
 -- CreateTable
+CREATE TABLE "user_ai_profiles" (
+    "id" SERIAL NOT NULL,
+    "user_id" UUID NOT NULL,
+    "model" TEXT NOT NULL,
+    "name_encrypted" TEXT NOT NULL,
+    "image_path_encrypted" TEXT NOT NULL,
+    "created_at" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "user_ai_profiles_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "chats" (
     "id" UUID NOT NULL,
     "user_id" UUID NOT NULL,
@@ -186,6 +199,12 @@ CREATE INDEX "user_default_prompts_user_id_idx" ON "user_default_prompts"("user_
 CREATE INDEX "user_default_prompts_user_prompt_id_idx" ON "user_default_prompts"("user_prompt_id");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "user_ai_profiles_user_id_key" ON "user_ai_profiles"("user_id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "user_ai_profiles_user_id_model_key" ON "user_ai_profiles"("user_id", "model");
+
+-- CreateIndex
 CREATE INDEX "chats_user_id_idx" ON "chats"("user_id");
 
 -- CreateIndex
@@ -223,6 +242,9 @@ ALTER TABLE "user_default_prompts" ADD CONSTRAINT "user_default_prompts_user_id_
 
 -- AddForeignKey
 ALTER TABLE "user_default_prompts" ADD CONSTRAINT "user_default_prompts_user_prompt_id_fkey" FOREIGN KEY ("user_prompt_id") REFERENCES "user_prompts"("id") ON DELETE SET NULL ON UPDATE NO ACTION;
+
+-- AddForeignKey
+ALTER TABLE "user_ai_profiles" ADD CONSTRAINT "user_ai_profiles_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE NO ACTION;
 
 -- AddForeignKey
 ALTER TABLE "chats" ADD CONSTRAINT "chats_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE NO ACTION;

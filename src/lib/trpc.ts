@@ -3,6 +3,7 @@ import {
   httpBatchLink,
   httpLink,
   httpSubscriptionLink,
+  isNonJsonSerializable,
   loggerLink,
   splitLink,
   type TRPCLink,
@@ -19,6 +20,11 @@ function getUrl() {
   return `${getBaseUrl()}/api/trpc`;
 }
 
+const commonLinkOptions = {
+  transformer: superjson,
+  url: getUrl(),
+};
+
 const links: TRPCLink<AppRouter>[] = [
   loggerLink({
     enabled: (opts) =>
@@ -28,20 +34,12 @@ const links: TRPCLink<AppRouter>[] = [
   }),
   splitLink({
     condition: (op) => op.type === "subscription",
-    true: httpSubscriptionLink({
-      transformer: superjson,
-      url: getUrl(),
-    }),
+    true: httpSubscriptionLink(commonLinkOptions),
     false: splitLink({
-      condition: (op) => op.context.skipBatch === true,
-      true: httpLink({
-        transformer: superjson,
-        url: getUrl(),
-      }),
-      false: httpBatchLink({
-        transformer: superjson,
-        url: getUrl(),
-      }),
+      condition: (op) =>
+        op.context.skipBatch === true || isNonJsonSerializable(op.input),
+      true: httpLink(commonLinkOptions),
+      false: httpBatchLink(commonLinkOptions),
     }),
   }),
 ];
