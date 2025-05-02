@@ -4,6 +4,7 @@ import { User } from "@/types";
 import type { GetServerSideProps } from "next";
 import { getServerSession } from "next-auth";
 import { authOptions } from "./api/auth/[...nextauth]";
+import Link from "next/link";
 
 type Props = {
   user: User.Data | null;
@@ -72,9 +73,12 @@ export default function Page({ user }: Props) {
 
         <div className="mt-6 text-sm text-gray-600">
           Questions?{" "}
-          <a href="/contact" className="text-[rgb(40,90,128)] hover:underline">
+          <Link
+            href="/contact"
+            className="text-[rgb(40,90,128)] hover:underline"
+          >
             Contact us
-          </a>{" "}
+          </Link>{" "}
           for more info.
         </div>
       </div>
