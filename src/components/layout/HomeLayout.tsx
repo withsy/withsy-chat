@@ -13,7 +13,7 @@ export default function HomeLayout({ children, className }: LayoutProps) {
   return (
     <div className={`flex flex-col min-h-screen ${className}`}>
       <Header user={user} />
-      <div className="pb-30">
+      <div>
         <main>{children}</main>
       </div>
       <footer className="text-center text-xs text-muted-foreground p-4 select-none">
