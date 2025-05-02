@@ -15,4 +15,16 @@ export const encryptionRouter = t.router({
         throw new TRPCError({ code: "SERVICE_UNAVAILABLE" });
       return opts.ctx.service.encryption.decrypt(opts.input.payloadEncoded);
     }),
+  encrypt: publicProcedure
+    .input(
+      z.object({
+        text: z.string(),
+      })
+    )
+    .output(z.string())
+    .query((opts) => {
+      if (opts.ctx.service.env.nodeEnv === "production")
+        throw new TRPCError({ code: "SERVICE_UNAVAILABLE" });
+      return opts.ctx.service.encryption.encrypt(opts.input.text);
+    }),
 });

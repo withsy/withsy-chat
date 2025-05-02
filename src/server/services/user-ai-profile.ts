@@ -1,6 +1,6 @@
 import { UserAiProfile } from "@/types";
+import type { UserId } from "@/types/id";
 import { Model } from "@/types/model";
-import type { UserId } from "@/types/user";
 import type { ServiceRegistry } from "../service-registry";
 
 export class UserAiProfileService {

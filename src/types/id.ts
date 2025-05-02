@@ -1,6 +1,12 @@
 import { z } from "zod";
 import type { zInfer } from "./common";
 
+export const UserId = z.string().uuid();
+export type UserId = zInfer<typeof UserId>;
+
+export const UserLinkAccountId = z.number().int();
+export type UserLinkAccountId = zInfer<typeof UserLinkAccountId>;
+
 export const MessageId = z.string().uuid();
 export type MessageId = zInfer<typeof MessageId>;
 

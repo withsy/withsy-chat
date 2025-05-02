@@ -1,5 +1,5 @@
 import { Chat, ChatBranch } from "@/types";
-import type { UserId } from "@/types/user";
+import type { UserId } from "@/types/id";
 import type { ServiceRegistry } from "../service-registry";
 import { ChatService } from "./chat";
 import { IdempotencyInfoService } from "./idempotency-info";

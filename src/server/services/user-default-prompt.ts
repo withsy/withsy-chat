@@ -1,6 +1,5 @@
 import { UserDefaultPrompt, UserPrompt } from "@/types";
-import type { UserPromptId } from "@/types/id";
-import type { UserId } from "@/types/user";
+import type { UserId, UserPromptId } from "@/types/id";
 import type { ServiceRegistry } from "../service-registry";
 import type { Tx } from "./db";
 

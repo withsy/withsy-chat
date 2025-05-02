@@ -1,7 +1,7 @@
-import type { User } from "@/types/user";
+import type { User } from "@/types";
 import ResponsiveButton from "./ResponsiveButton";
 
-export function Hero({ user }: { user: User | null }) {
+export function Hero({ user }: { user: User.Data | null }) {
   return (
     <section className="w-full bg-transparent pt-15 pb-10 text-center relative overflow-hidden z-0">
       <div className="absolute top-[-100px] left-[-100px] w-[200px] h-[200px] bg-[#EA9257] rounded-full -z-1" />

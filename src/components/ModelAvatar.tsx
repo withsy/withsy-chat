@@ -16,7 +16,7 @@ export function ModelAvatar({ name, size = "md", path }: Props) {
   const src = path
     ? path
     : name === user.name
-    ? user.image ?? getModelAvatar(name)
+    ? user.imageUrl ?? getModelAvatar(name)
     : getModelAvatar(name);
 
   const sizeClass = {

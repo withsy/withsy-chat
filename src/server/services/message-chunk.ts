@@ -1,7 +1,6 @@
 import { MessageChunk } from "@/types";
-import type { MessageChunkIndex, MessageId } from "@/types/id";
+import type { MessageChunkIndex, MessageId, UserId } from "@/types/id";
 import { PgEvent, type PgEventInput } from "@/types/task";
-import type { UserId } from "@/types/user";
 import type { UserUsageLimit } from "@/types/user-usage-limit";
 import { tracked } from "@trpc/server";
 import type { ServiceRegistry } from "../service-registry";

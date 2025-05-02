@@ -1,6 +1,4 @@
 import { UserAiProfile } from "@/types";
-import fs from "node:fs";
-import { z } from "zod";
 import { publicProcedure, t } from "../server";
 
 export const userAiProfileRouter = t.router({

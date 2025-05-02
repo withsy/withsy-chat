@@ -1,6 +1,6 @@
 import { createServerContext } from "@/server/server-context";
 import { appRouter } from "@/server/trpc/routers/_app";
-import { UserJwt, UserSession } from "@/types/user";
+import { User } from "@/types";
 import { TRPCError } from "@trpc/server";
 import type { CreateNextContextOptions } from "@trpc/server/adapters/next";
 import * as trpcNext from "@trpc/server/adapters/next";
@@ -14,14 +14,14 @@ export default trpcNext.createNextApiHandler({
     let userId = "";
     const session = await getServerSession(req, res, authOptions);
     if (session) {
-      const userSession = UserSession.parse(session);
+      const userSession = User.Session.parse(session);
       userId = userSession.user.id;
     }
 
     if (!userId) {
       const token = await getToken({ req });
       if (token) {
-        const userJwt = UserJwt.parse(token);
+        const userJwt = User.Jwt.parse(token);
         userId = userJwt.sub;
       }
     }

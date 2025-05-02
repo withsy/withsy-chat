@@ -1,6 +1,6 @@
 import { devAuthProvider } from "@/server/dev-auth-provider";
 import { service } from "@/server/service-registry";
-import { UserJwt, UserSession } from "@/types/user";
+import { User } from "@/types";
 import NextAuth, { type AuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import type { Provider } from "next-auth/providers/index";
@@ -39,9 +39,9 @@ export const authOptions: AuthOptions = {
       const { provider, providerAccountId, refresh_token } = account;
       const name = profile?.name;
       const email = profile?.email;
-      let image: string | undefined = undefined;
+      let imageUrl: string | undefined = undefined;
       if (profile && provider === "google") {
-        image = Reflect.get(profile, "picture");
+        imageUrl = Reflect.get(profile, "picture");
       }
 
       const { userId } = await service.userLinkAccount.ensure({
@@ -50,16 +50,16 @@ export const authOptions: AuthOptions = {
         refreshToken: refresh_token,
         name,
         email,
-        image,
+        imageUrl,
       });
 
-      const userJwt = UserJwt.parse({ sub: userId });
+      const userJwt = User.Jwt.parse({ sub: userId });
       return userJwt;
     },
     session(params) {
       const { token, session } = params;
-      const userJwt = UserJwt.parse(token);
-      const userSession = UserSession.parse({
+      const userJwt = User.Jwt.parse(token);
+      const userSession = User.Session.parse({
         ...session,
         user: { ...(session.user ?? {}), id: userJwt.sub },
       });

@@ -2,10 +2,9 @@ import type { Prisma } from "@prisma/client";
 import { z } from "zod";
 import { Chat } from ".";
 import { type zInfer } from "./common";
-import { ChatId, IdempotencyKey, MessageId } from "./id";
+import { ChatId, IdempotencyKey, MessageId, UserId } from "./id";
 import { Model } from "./model";
 import { Role } from "./role";
-import { UserId } from "./user";
 import { UserUsageLimitError } from "./user-usage-limit";
 
 export const Select = {
@@ -106,7 +105,6 @@ export const Send = z.object({
   chatId: ChatId,
   text: z.string(),
   model: Model,
-  files: z.optional(z.array(z.instanceof(File))),
 });
 export type Send = zInfer<typeof Send>;
 

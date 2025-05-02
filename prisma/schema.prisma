@@ -9,9 +9,9 @@ datasource db {
 
 model User {
   id                String              @id @default(dbgenerated("gen_random_uuid()")) @map("id") @db.Uuid
-  name              String              @default("Buddy") @map("name")
-  email             String              @default("") @map("email")
-  image             String              @default("") @map("image")
+  nameEncrypted     String              @map("name_encrypted")
+  emailEncrypted    String              @map("email_encrypted")
+  imageUrlEncrypted String              @map("image_url_encrypted")
   aiLanguage        String              @default("") @map("ai_language")
   timezone          String              @default("") @map("timezone")
   preferences       Json                @default("{}") @map("preferences")
@@ -167,7 +167,6 @@ model Message {
   createdAt              DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt              DateTime       @default(now()) @map("updated_at") @db.Timestamptz(6)
   chunks                 MessageChunk[] @relation("message_chunks.message_id")
-  files                  MessageFile[]  @relation("message_files.message_id")
   childChats             Chat[]         @relation("chats.parent_message_id")
   childMessages          Message[]      @relation("messages.parent_message_id")
 
@@ -188,19 +187,6 @@ model MessageChunk {
 
   @@id([messageId, index])
   @@map("message_chunks")
-}
-
-model MessageFile {
-  id        Int      @id @default(autoincrement()) @map("id")
-  messageId String   @map("message_id") @db.Uuid
-  message   Message  @relation("message_files.message_id", fields: [messageId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  fileUri   String   @map("file_uri")
-  mimeType  String   @map("mime_type")
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
-
-  @@index([messageId])
-  @@map("message_files")
 }
 
 model IdempotencyInfo {

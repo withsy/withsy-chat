@@ -1,7 +1,6 @@
 import { z } from "zod";
 import type { MaybePromise, zInfer } from "./common";
-import { MessageChunkIndex, MessageId } from "./id";
-import { UserId } from "./user";
+import { MessageChunkIndex, MessageId, UserId } from "./id";
 
 //#region Task
 

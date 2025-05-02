@@ -1,6 +1,6 @@
 import { Message, MessageReply } from "@/types";
+import type { UserId } from "@/types/id";
 import { Role } from "@/types/role";
-import type { UserId } from "@/types/user";
 import { StatusCodes } from "http-status-codes";
 import { HttpServerError } from "../error";
 import type { ServiceRegistry } from "../service-registry";

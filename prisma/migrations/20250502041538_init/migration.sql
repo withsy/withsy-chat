@@ -7,9 +7,9 @@ CREATE TYPE "MessageStatus" AS ENUM ('pending', 'processing', 'succeeded', 'fail
 -- CreateTable
 CREATE TABLE "users" (
     "id" UUID NOT NULL DEFAULT gen_random_uuid(),
-    "name" TEXT NOT NULL DEFAULT 'Buddy',
-    "email" TEXT NOT NULL DEFAULT '',
-    "image" TEXT NOT NULL DEFAULT '',
+    "name_encrypted" TEXT NOT NULL,
+    "email_encrypted" TEXT NOT NULL,
+    "image_url_encrypted" TEXT NOT NULL,
     "ai_language" TEXT NOT NULL DEFAULT '',
     "timezone" TEXT NOT NULL DEFAULT '',
     "preferences" JSONB NOT NULL DEFAULT '{}',
@@ -143,18 +143,6 @@ CREATE TABLE "message_chunks" (
 );
 
 -- CreateTable
-CREATE TABLE "message_files" (
-    "id" SERIAL NOT NULL,
-    "message_id" UUID NOT NULL,
-    "file_uri" TEXT NOT NULL,
-    "mime_type" TEXT NOT NULL,
-    "created_at" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT "message_files_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
 CREATE TABLE "idempotency_infos" (
     "key" UUID NOT NULL,
     "created_at" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -220,9 +208,6 @@ CREATE INDEX "messages_parent_message_id_idx" ON "messages"("parent_message_id")
 CREATE INDEX "messages_chat_id_idx" ON "messages"("chat_id");
 
 -- CreateIndex
-CREATE INDEX "message_files_message_id_idx" ON "message_files"("message_id");
-
--- CreateIndex
 CREATE INDEX "gratitude_journals_user_id_idx" ON "gratitude_journals"("user_id");
 
 -- CreateIndex
@@ -266,9 +251,6 @@ ALTER TABLE "messages" ADD CONSTRAINT "messages_parent_message_id_fkey" FOREIGN 
 
 -- AddForeignKey
 ALTER TABLE "message_chunks" ADD CONSTRAINT "message_chunks_message_id_fkey" FOREIGN KEY ("message_id") REFERENCES "messages"("id") ON DELETE CASCADE ON UPDATE NO ACTION;
-
--- AddForeignKey
-ALTER TABLE "message_files" ADD CONSTRAINT "message_files_message_id_fkey" FOREIGN KEY ("message_id") REFERENCES "messages"("id") ON DELETE CASCADE ON UPDATE NO ACTION;
 
 -- AddForeignKey
 ALTER TABLE "gratitude_journals" ADD CONSTRAINT "gratitude_journals_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE NO ACTION;

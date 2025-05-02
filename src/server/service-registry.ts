@@ -12,9 +12,7 @@ import { GratitudeJournalService } from "./services/gratitude-journal";
 import { IdempotencyInfoService } from "./services/idempotency-info";
 import { MessageService } from "./services/message";
 import { MessageChunkService } from "./services/message-chunk";
-import { MessageFileService } from "./services/message-file";
 import { MessageReplyService } from "./services/message-reply";
-import { MockS3Service } from "./services/mock-s3";
 import { ModelRouteService } from "./services/model-route";
 import { OpenAiService } from "./services/open-ai";
 import { createPgPool } from "./services/pg";
@@ -40,7 +38,6 @@ type ServiceDefinition = {
   chat: ChatService;
   chatBranch: ChatBranchService;
   message: MessageService;
-  messageFile: MessageFileService;
   messageChunk: MessageChunkService;
   messageReply: MessageReplyService;
   modelRoute: ModelRouteService;
@@ -49,7 +46,6 @@ type ServiceDefinition = {
   xAi: XAiService;
   task: TaskService;
   idempotencyInfo: IdempotencyInfoService;
-  s3: MockS3Service;
   chatPrompt: ChatPromptService;
   gratitudeJournal: GratitudeJournalService;
   encryption: EncryptionService;
@@ -71,8 +67,9 @@ function createServiceRegistry() {
     userAiProfile: (s) => new UserAiProfileService(s),
     chat: (s) => new ChatService(s),
     chatBranch: (s) => new ChatBranchService(s),
+    chatPrompt: (s) => new ChatPromptService(s),
+    gratitudeJournal: (s) => new GratitudeJournalService(s),
     message: (s) => new MessageService(s),
-    messageFile: (s) => new MessageFileService(s),
     messageChunk: (s) => new MessageChunkService(s),
     messageReply: (s) => new MessageReplyService(s),
     modelRoute: (s) => new ModelRouteService(s),
@@ -81,9 +78,6 @@ function createServiceRegistry() {
     xAi: (s) => new XAiService(s),
     idempotencyInfo: (s) => new IdempotencyInfoService(s),
     task: (s) => new TaskService(s),
-    s3: (s) => new MockS3Service(s),
-    chatPrompt: (s) => new ChatPromptService(s),
-    gratitudeJournal: (s) => new GratitudeJournalService(s),
     encryption: (s) => new EncryptionService(s),
     firebase: (s) => new FirebaseService(s),
   });

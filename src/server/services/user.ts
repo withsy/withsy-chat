@@ -1,12 +1,6 @@
+import { User } from "@/types";
+import type { UserId } from "@/types/id";
 import { isValidAiLanguage } from "@/types/languages";
-import {
-  User,
-  UserSelect,
-  UserUpdate,
-  UserUpdatePrefs,
-  type UserEnsure,
-  type UserId,
-} from "@/types/user";
 import { TRPCError } from "@trpc/server";
 import type { ServiceRegistry } from "../service-registry";
 import { isValidTimezone } from "../utils";
@@ -18,20 +12,38 @@ const FALLBACK_AI_LANGUAGE = "en";
 export class UserService {
   constructor(private readonly service: ServiceRegistry) {}
 
-  async get(userId: UserId): Promise<User> {
-    const res = await this.service.db.user.findUniqueOrThrow({
-      where: { id: userId },
-      select: UserSelect,
-    });
-
-    return User.parse(res);
+  decrypt(entity: User.Entity): User.Data {
+    const name = this.service.encryption.decrypt(entity.nameEncrypted);
+    const email = this.service.encryption.decrypt(entity.emailEncrypted);
+    const imageUrl = this.service.encryption.decrypt(entity.imageUrlEncrypted);
+    const preferences = User.Prefs.parse(entity.preferences);
+    const data = {
+      id: entity.id,
+      name,
+      email,
+      imageUrl,
+      aiLanguage: entity.aiLanguage,
+      timezone: entity.timezone,
+      preferences,
+    } satisfies User.Data;
+    return data;
   }
 
-  async ensure(userId: UserId, input: UserEnsure) {
-    const res = await this.service.db.$transaction(async (tx) => {
+  async get(userId: UserId): Promise<User.Data> {
+    const entity = await this.service.db.user.findUniqueOrThrow({
+      where: { id: userId },
+      select: User.Select,
+    });
+
+    const data = this.decrypt(entity);
+    return data;
+  }
+
+  async ensure(userId: UserId, input: User.Ensure): Promise<User.Data> {
+    const entity = await this.service.db.$transaction(async (tx) => {
       const user = await tx.user.findUniqueOrThrow({
         where: { id: userId },
-        select: UserSelect,
+        select: User.Select,
       });
 
       let timezone: string | undefined = undefined;
@@ -56,21 +68,25 @@ export class UserService {
           aiLanguage,
           timezone,
         },
-        select: UserSelect,
+        select: User.Select,
       });
 
       return updated;
     });
 
-    return res;
+    const data = this.decrypt(entity);
+    return data;
   }
 
-  async updatePrefs(userId: UserId, input: UserUpdatePrefs) {
+  async updatePrefs(
+    userId: UserId,
+    input: User.UpdatePrefs
+  ): Promise<User.UpdatePrefsOutput> {
     const patch = Object.fromEntries(
       Object.entries(input).filter(([_, value]) => value !== undefined)
     );
 
-    const res = await this.service.db.$transaction(async (tx) => {
+    const entity = await this.service.db.$transaction(async (tx) => {
       {
         const affected =
           await tx.$executeRaw`SELECT id FROM users WHERE id = ${userId} ::uuid FOR UPDATE`;
@@ -92,18 +108,19 @@ export class UserService {
           });
       }
 
-      const user = tx.user.findUniqueOrThrow({
+      const entity = await tx.user.findUniqueOrThrow({
         where: { id: userId },
         select: { preferences: true },
       });
 
-      return user;
+      return entity;
     });
 
-    return res;
+    const data = User.UpdatePrefsOutput.parse(entity);
+    return data;
   }
 
-  async update(userId: UserId, input: UserUpdate) {
+  async update(userId: UserId, input: User.Update): Promise<User.Data> {
     const { aiLanguage, timezone } = input;
     if (aiLanguage && !isValidAiLanguage(aiLanguage))
       throw new TRPCError({
@@ -117,43 +134,46 @@ export class UserService {
         message: "Invalid timezone.",
       });
 
-    const res = await this.service.db.user.update({
+    const entity = await this.service.db.user.update({
       where: { id: userId },
       data: {
         aiLanguage,
         timezone,
       },
-      select: UserSelect,
+      select: User.Select,
     });
 
-    return res;
+    const data = this.decrypt(entity);
+    return data;
   }
 
   static async create(
     tx: Tx,
-    input: { name?: string; email?: string; image?: string }
+    input: {
+      nameEncrypted: string;
+      emailEncrypted: string;
+      imageUrlEncrypted: string;
+    }
   ) {
-    const { name, email, image } = input;
-    const res = await tx.user.create({
+    const { nameEncrypted, emailEncrypted, imageUrlEncrypted } = input;
+    const entity = await tx.user.create({
       data: {
-        name,
-        email,
-        image,
+        nameEncrypted,
+        emailEncrypted,
+        imageUrlEncrypted,
       },
-      select: {
-        id: true,
-      },
+      select: { id: true },
     });
 
-    return res;
+    return entity;
   }
 
-  static async getForGratitudeJournal(tx: Tx, input: { userId: UserId }) {
+  async getForGratitudeJournal(input: { userId: UserId }) {
     const { userId } = input;
-    const entity = await tx.user.findUniqueOrThrow({
+    const entity = await this.service.db.user.findUniqueOrThrow({
       where: { id: userId },
       select: {
-        name: true,
+        nameEncrypted: true,
         aiLanguage: true,
       },
     });

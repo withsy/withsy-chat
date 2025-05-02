@@ -11,10 +11,20 @@ export class UserLinkAccountService {
     refreshToken?: string;
     name?: string;
     email?: string;
-    image?: string;
+    imageUrl?: string;
   }) {
-    const { provider, providerAccountId, refreshToken, name, email, image } =
+    const { provider, providerAccountId, refreshToken, name, email, imageUrl } =
       input;
+
+    const nameEncrypted = name
+      ? this.service.encryption.encrypt(name)
+      : this.service.encryption.emptyStringEncrypted;
+    const emailEncrypted = email
+      ? this.service.encryption.encrypt(email)
+      : this.service.encryption.emptyStringEncrypted;
+    const imageUrlEncrypted = imageUrl
+      ? this.service.encryption.encrypt(imageUrl)
+      : this.service.encryption.emptyStringEncrypted;
 
     const res = await this.service.db.$transaction(async (tx) => {
       let linkAccount = await tx.userLinkAccount.findFirst({
@@ -29,7 +39,11 @@ export class UserLinkAccountService {
       });
 
       if (!linkAccount) {
-        const user = await UserService.create(tx, { name, email, image });
+        const user = await UserService.create(tx, {
+          nameEncrypted,
+          emailEncrypted,
+          imageUrlEncrypted,
+        });
         linkAccount = await tx.userLinkAccount.create({
           data: {
             userId: user.id,

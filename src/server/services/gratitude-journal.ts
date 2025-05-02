@@ -1,6 +1,6 @@
 import { Chat, GratitudeJournal } from "@/types";
 import { RecentJournal } from "@/types/gratitude-journal";
-import type { UserId } from "@/types/user";
+import type { UserId } from "@/types/id";
 import type { Prisma } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import {
@@ -135,6 +135,9 @@ export class GratitudeJournalService {
   ): Promise<Chat.StartOutput> {
     const { idempotencyKey } = input;
 
+    const user = await this.service.user.getForGratitudeJournal({ userId });
+    const userName = this.service.encryption.decrypt(user.nameEncrypted);
+
     const now = new Date();
     const prepareRes = await this.service.db.$transaction(async (tx) => {
       const timezoneInfo = await GratitudeJournalService.getTimezoneInfo(tx, {
@@ -142,14 +145,13 @@ export class GratitudeJournalService {
         now,
       });
 
-      const user = await UserService.getForGratitudeJournal(tx, { userId });
       const promptText = GratitudeJournalService.createPromptText({
-        userName: user.name,
+        userName,
         userAiLanguage: user.aiLanguage,
         zonedDate: zonedTodayDate,
       });
 
-      return { timezoneInfo, user, promptText };
+      return { timezoneInfo, promptText };
     });
 
     const { timezoneInfo, promptText } = prepareRes;
@@ -157,12 +159,6 @@ export class GratitudeJournalService {
 
     const title = `Gratitude Journal - ${zonedTodayDate}`;
     const titleEncrypted = this.service.encryption.encrypt(title);
-    const userMessageTextEncrypted = this.service.encryption.encrypt("");
-    const userMessageReasoningTextEncrypted =
-      this.service.encryption.encrypt("");
-    const modelMessageTextEncrypted = this.service.encryption.encrypt("");
-    const modelMessageReasoningTextEncrypted =
-      this.service.encryption.encrypt("");
     const promptTextEncrypted = this.service.encryption.encrypt(promptText);
 
     const createRes = await this.service.db.$transaction(async (tx) => {
@@ -197,16 +193,16 @@ export class GratitudeJournalService {
 
       const userMessage = await MessageService.createUserMessage(tx, {
         chatId: chat.id,
-        textEncrypted: userMessageTextEncrypted,
-        reasoningTextEncrypted: userMessageReasoningTextEncrypted,
+        textEncrypted: this.service.encryption.emptyStringEncrypted,
+        reasoningTextEncrypted: this.service.encryption.emptyStringEncrypted,
         isPublic: false,
       });
       const modelMessage = await MessageService.createModelMessage(tx, {
         chatId: chat.id,
         model: "gemini-2.0-flash",
         parentMessageId: userMessage.id,
-        textEncrypted: modelMessageTextEncrypted,
-        reasoningTextEncrypted: modelMessageReasoningTextEncrypted,
+        textEncrypted: this.service.encryption.emptyStringEncrypted,
+        reasoningTextEncrypted: this.service.encryption.emptyStringEncrypted,
       });
 
       const gratitudeJournal = await tx.gratitudeJournal.create({

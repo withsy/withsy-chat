@@ -1,4 +1,4 @@
-import { type UserId } from "@/types/user";
+import type { UserId } from "@/types/id";
 import { service, type ServiceRegistry } from "./service-registry";
 
 export type ServerContext = {

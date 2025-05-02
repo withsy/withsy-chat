@@ -1,21 +1,21 @@
 import ResponsiveButton from "@/components/home/ResponsiveButton";
+import { service } from "@/server/service-registry";
+import { User } from "@/types";
+import type { GetServerSideProps } from "next";
 import { getServerSession } from "next-auth";
 import { authOptions } from "./api/auth/[...nextauth]";
-import type { GetServerSideProps } from "next";
-import { service } from "@/server/service-registry";
-import { User, UserSession } from "@/types/user";
 
 type Props = {
-  user: User | null;
+  user: User.Data | null;
 };
 
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
 ) => {
   const session = await getServerSession(context.req, context.res, authOptions);
-  let user: User | null = null;
+  let user: User.Data | null = null;
   if (session) {
-    const userSession = UserSession.parse(session);
+    const userSession = User.Session.parse(session);
     user = await service.user.get(userSession.user.id);
   }
 

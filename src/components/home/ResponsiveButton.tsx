@@ -1,6 +1,6 @@
-import { type User } from "@/types/user";
-import ReturnButton from "./ReturnButton";
+import { type User } from "@/types";
 import LoginButton from "../login/LoginButton";
+import ReturnButton from "./ReturnButton";
 
 /**
  * Shows either “Return to chat” (when the user is logged-in)
@@ -15,7 +15,7 @@ export default function ResponsiveButton({
   size = "sm",
 }: {
   message?: string;
-  user: User | null;
+  user: User.Data | null;
   size?: "default" | "sm" | "lg" | "icon";
 }) {
   return user ? (

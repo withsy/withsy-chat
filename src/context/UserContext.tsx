@@ -1,5 +1,5 @@
 import { trpc } from "@/lib/trpc";
-import { User, UserPrefs, type UserUpdatePrefs } from "@/types/user";
+import { User } from "@/types";
 import { useSession } from "next-auth/react";
 import {
   createContext,
@@ -9,11 +9,11 @@ import {
   type ReactNode,
 } from "react";
 
-type UserPrefLoadings = Partial<Record<keyof UserUpdatePrefs, boolean>>;
-type SetUserPrefsAndSave = (input: UserUpdatePrefs) => void;
+type UserPrefLoadings = Partial<Record<keyof User.UpdatePrefs, boolean>>;
+type SetUserPrefsAndSave = (input: User.UpdatePrefs) => void;
 
 type UserContextType = {
-  user: User | null;
+  user: User.Data | null;
   setUserPrefsAndSave: SetUserPrefsAndSave;
   userPrefLoadings: UserPrefLoadings;
 };
@@ -25,16 +25,16 @@ export function UserProvider({ children }: { children: ReactNode }) {
   const [userPrefLoadings, setUserPrefLoadings] = useState<UserPrefLoadings>(
     {}
   );
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User.Data | null>(null);
 
   const { mutate: userEnsure } = trpc.user.ensure.useMutation({
     onSuccess: (data) => setUser(data),
   });
 
   const updateUserPrefs = trpc.user.updatePrefs.useMutation({
-    onMutate: async (input: UserUpdatePrefs) => {
+    onMutate: async (input: User.UpdatePrefs) => {
       if (!user) throw new Error("User is not set.");
-      const previous = UserPrefs.parse(
+      const previous = User.Prefs.parse(
         JSON.parse(JSON.stringify(user.preferences))
       );
 

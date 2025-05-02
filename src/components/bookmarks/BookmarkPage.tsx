@@ -1,29 +1,28 @@
 import { BookmarkCard } from "@/components/bookmarks/BookmarkCard";
 import { BookmarkFilters } from "@/components/bookmarks/BookmarkFilters";
 
-import { filterMessages } from "@/lib/filter-utils";
-import { trpc } from "@/lib/trpc";
-import type { Message } from "@/types";
-import type { User } from "@/types/user";
-import { useEffect, useMemo, useState } from "react";
-import { PartialEmpty } from "../Empty";
-import { PartialLoading } from "../Loading";
-import { useSidebarStore } from "@/stores/useSidebarStore";
-import { CollapseButton } from "../CollapseButton";
-import { Button } from "../ui/button";
-import { Eye, EyeOff, RotateCcw } from "lucide-react";
-import { toast } from "sonner";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { filterMessages } from "@/lib/filter-utils";
+import { trpc } from "@/lib/trpc";
+import { useSidebarStore } from "@/stores/useSidebarStore";
+import type { Message, User } from "@/types";
+import { Eye, EyeOff, RotateCcw } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { toast } from "sonner";
+import { CollapseButton } from "../CollapseButton";
+import { PartialEmpty } from "../Empty";
+import { PartialLoading } from "../Loading";
+import { Button } from "../ui/button";
 
 export default function BookmarkPage({
   user,
   headerStyle,
 }: {
-  user: User;
+  user: User.Data;
   headerStyle: React.CSSProperties;
 }) {
   const [loading, setLoading] = useState(true);

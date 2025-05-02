@@ -5,15 +5,13 @@ import {
   Message,
   UserPrompt,
 } from "@/types";
-import type { MessageId } from "@/types/id";
-import { UserId } from "@/types/user";
+import type { MessageId, UserId } from "@/types/id";
 import { uuidv7 } from "uuidv7";
 import type { ServiceRegistry } from "../service-registry";
 import { getHardDeleteCutoffDate } from "../utils";
 import type { Tx } from "./db";
 import { IdempotencyInfoService } from "./idempotency-info";
 import { MessageService } from "./message";
-import { MessageFileService } from "./message-file";
 import { UserUsageLimitService } from "./user-usage-limit";
 
 export class ChatService {
@@ -135,14 +133,11 @@ export class ChatService {
 
   async start(userId: UserId, input: Chat.Start): Promise<Chat.StartOutput> {
     const { model, text, idempotencyKey } = input;
-    const files = input.files ?? [];
 
     await this.service.db.$transaction(async (tx) => {
       await IdempotencyInfoService.checkDuplicateRequest(tx, idempotencyKey);
       await UserUsageLimitService.lockAndCheck(tx, { userId });
     });
-
-    const { fileInfos } = await this.service.s3.uploads(userId, { files });
 
     const modelMessageTextEncrypted = this.service.encryption.encrypt("");
     const modelMessageReasoningTextEncrypted =
@@ -173,11 +168,6 @@ export class ChatService {
           parentMessageId: userMessage.id,
           textEncrypted: modelMessageTextEncrypted,
           reasoningTextEncrypted: modelMessageReasoningTextEncrypted,
-        });
-
-        await MessageFileService.createAll(tx, {
-          messageId: userMessage.id,
-          fileInfos,
         });
 
         return { chat, userMessage, modelMessage };

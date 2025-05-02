@@ -1,6 +1,6 @@
 import { service } from "@/server/service-registry";
+import { User } from "@/types";
 import { Model } from "@/types/model";
-import { UserSession } from "@/types/user";
 import Busboy from "busboy";
 import mime from "mime-types";
 import type { NextApiRequest, NextApiResponse } from "next";
@@ -24,7 +24,7 @@ export default async function handler(
   const session = await getServerSession(req, res, authOptions);
   if (!session) return res.status(401).json({ error: "Unauthorized" });
 
-  const userSession = UserSession.parse(session);
+  const userSession = User.Session.parse(session);
   const userId = userSession.user.id;
 
   let maybeModel: string | undefined = undefined;

@@ -1,13 +1,11 @@
 import { Chat, ChatPrompt, Message, UserPrompt } from "@/types";
-import type { ChatId, MessageId } from "@/types/id";
+import type { ChatId, MessageId, UserId } from "@/types/id";
 import { Model } from "@/types/model";
 import { Role } from "@/types/role";
-import type { UserId } from "@/types/user";
 import { uuidv7 } from "uuidv7";
 import type { ServiceRegistry } from "../service-registry";
 import type { Tx } from "./db";
 import { IdempotencyInfoService } from "./idempotency-info";
-import { MessageFileService } from "./message-file";
 import { UserUsageLimitService } from "./user-usage-limit";
 
 // TODO: Change limit history length
@@ -341,14 +339,12 @@ export class MessageService {
 
   async send(userId: UserId, input: Message.Send): Promise<Message.SendOutput> {
     const { idempotencyKey, chatId, model, text } = input;
-    const files = input.files ?? [];
 
     await this.service.db.$transaction(async (tx) => {
       await IdempotencyInfoService.checkDuplicateRequest(tx, idempotencyKey);
       await UserUsageLimitService.lockAndCheck(tx, { userId });
     });
 
-    const { fileInfos } = await this.service.s3.uploads(userId, { files });
     const userMessageTextEncrypted = this.service.encryption.encrypt(text);
     const userMessageReasoningTextEncrypted =
       this.service.encryption.encrypt("");
@@ -371,11 +367,6 @@ export class MessageService {
           parentMessageId: userMessage.id,
           textEncrypted: modelMessageTextEncrypted,
           reasoningTextEncrypted: modelMessageReasoningTextEncrypted,
-        });
-
-        await MessageFileService.createAll(tx, {
-          messageId: userMessage.id,
-          fileInfos,
         });
 
         return { userMessage, modelMessage };
