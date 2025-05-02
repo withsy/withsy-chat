@@ -43,7 +43,7 @@ export default async function handler(
         const { mimeType } = info;
         const ext = mime.extension(mimeType);
         const uuid = uuidv7();
-        imagePath = `users/${userId}/${uuid}.${ext}`;
+        imagePath = `users/${userId}/ai-profiles/${uuid}.${ext}`;
 
         const writable = service.firebase.bucket
           .file(imagePath)
