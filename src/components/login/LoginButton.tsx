@@ -10,7 +10,7 @@ export default function LoginButton({ size = "sm" }: { size?: ButtonSize }) {
       onClick={() => signIn()}
       className={`text-${size} font-semibold cursor-pointer bg-[rgb(40,90,128)] text-white select-none`}
     >
-      Start Chatting
+      Start Chatting for Free
     </Button>
   );
 }
