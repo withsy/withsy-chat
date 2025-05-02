@@ -15,7 +15,7 @@ export const config = {
 };
 
 /**
- * @swagger
+ * @openapi
  * /api/ai-profile:
  *   post:
  *     summary: Update AI profile
