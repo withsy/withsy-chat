@@ -79,8 +79,8 @@ export class UserAiProfileService {
           data: {
             userId,
             model,
-            nameEncrypted: emptyNameEncrypted,
-            imagePathEncrypted: emptyImagePathEncrypted,
+            nameEncrypted: nameEncrypted ?? emptyNameEncrypted,
+            imagePathEncrypted: imagePathEncrypted ?? emptyImagePathEncrypted,
           },
           select: UserAiProfile.Select,
         });
