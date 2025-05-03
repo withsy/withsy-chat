@@ -9,6 +9,7 @@ import { ModelAvatar } from "../ModelAvatar";
 import { ChatBubbleTooltips } from "./ChatBubbleTooltips";
 import { GetModelLabel } from "./ModelSelect";
 import { StatusIndicator } from "./StatusIndicator";
+import { useAiProfileStore } from "@/stores/useAiProfileStore";
 
 type Props = {
   message: Message.Data;
@@ -18,6 +19,7 @@ type Props = {
 
 const ChatBubbleComponent = ({ message, chatType, onToggleSaved }: Props) => {
   const { user } = useUser();
+  const { profiles } = useAiProfileStore();
 
   const { role, text, reasoningText, status } = message;
 
@@ -25,10 +27,6 @@ const ChatBubbleComponent = ({ message, chatType, onToggleSaved }: Props) => {
   const [collapsed, setCollapsed] = useState(role === "user" && isLongMessage);
   const [showReasoning, setShowReasoning] = useState(false);
 
-  // TODO: separate text and reasoningText from displayedText.
-  // const displayedText = collapsed
-  //   ? text.split("\n").slice(0, 3).join("\n")
-  //   : text;
   const displayedText =
     role === "model"
       ? `${showReasoning && reasoningText ? reasoningText + "\n\n" : ""}${text}`
@@ -57,11 +55,13 @@ const ChatBubbleComponent = ({ message, chatType, onToggleSaved }: Props) => {
 
   if (!user) return null;
 
+  const userProfile =
+    role === "model" && message.model ? profiles[message.model] : null;
+  const image = role === "model" ? userProfile?.imageUrl : undefined;
   const name =
     role === "model"
-      ? message.model
-        ? GetModelLabel(message.model)
-        : "AI"
+      ? userProfile?.name ||
+        (message.model ? GetModelLabel(message.model) : "AI")
       : user.name ?? "username";
 
   const collapseToggleProps = {
@@ -100,7 +100,7 @@ const ChatBubbleComponent = ({ message, chatType, onToggleSaved }: Props) => {
         "flex-col gap-2"
       )}
     >
-      <ModelAvatar name={name} />
+      <ModelAvatar name={name} image={image} />
 
       <div
         className={`flex flex-col items-start flex-1 ${
@@ -115,12 +115,8 @@ const ChatBubbleComponent = ({ message, chatType, onToggleSaved }: Props) => {
           )}
         >
           <div>
-            {role === "model"
-              ? message.model
-                ? GetModelLabel(message.model)
-                : "AI"
-              : "You"}{" "}
-            · {new Date(message.createdAt).toLocaleTimeString()}
+            {role === "model" ? name : "You"} ·{" "}
+            {new Date(message.createdAt).toLocaleTimeString()}
           </div>
           {role === "model" && reasoningText && (
             <div

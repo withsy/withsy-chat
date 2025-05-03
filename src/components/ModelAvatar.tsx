@@ -6,14 +6,17 @@ type Props = {
   name: string;
   size?: "sm" | "md" | "lg" | "xl";
   path?: string;
+  image?: string;
 };
 
-export function ModelAvatar({ name, size = "md", path }: Props) {
+export function ModelAvatar({ name, size = "md", path, image }: Props) {
   const { user } = useUser();
 
   if (!user) return <></>;
 
-  const src = path
+  const src = image
+    ? image
+    : path
     ? path
     : name === user.name
     ? user.imageUrl ?? getModelAvatar(name)
