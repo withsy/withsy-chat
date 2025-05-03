@@ -29,7 +29,7 @@ export function ChatInputBox({
     (usageLimit.dailyRemaining === 0 || usageLimit.minuteRemaining === 0);
 
   const inputBoxClass = cn(
-    "relative max-w-screen-md w-full px-4 py-3 border rounded-xl bg-white",
+    "relative max-w-screen-lg w-full px-4 py-3 border rounded-xl bg-white",
     "transition-all"
   );
 
@@ -47,21 +47,18 @@ export function ChatInputBox({
     ];
   });
 
-  // 초기 포커스 설정: 컴포넌트 마운트 시 포커스 설정
   useEffect(() => {
     if (textareaRef.current && document.activeElement !== textareaRef.current) {
       textareaRef.current.focus();
     }
   }, []);
 
-  // shouldFocus prop에 따른 포커스 관리: 이미 포커스된 경우 재설정 방지
   useEffect(() => {
     if (
       shouldFocus &&
       textareaRef.current &&
       document.activeElement !== textareaRef.current
     ) {
-      // 드로어 애니메이션(300ms) 후 포커스 설정
       const timer = setTimeout(() => {
         textareaRef.current?.focus();
         textareaRef.current?.scrollIntoView({
@@ -73,7 +70,6 @@ export function ChatInputBox({
     }
   }, [shouldFocus]);
 
-  // 키보드 등장/사라짐 처리: 뷰포트 변경 시 입력 박스 위치 조정
   useEffect(() => {
     const handleResize = () => {
       if (textareaRef.current) {
