@@ -175,7 +175,11 @@ export default function ModelCard({ model, name, image }: Props) {
             size="sm"
             variant="outline"
             onClick={handleSave}
-            disabled={loading || newName.trim().length < 1}
+            disabled={
+              loading ||
+              newName.trim().length < 1 ||
+              newName.trim() === (name ?? "").trim()
+            }
           >
             Save
           </Button>
