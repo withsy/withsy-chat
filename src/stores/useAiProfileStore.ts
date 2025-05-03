@@ -7,6 +7,7 @@ type State = {
   setProfiles: (profiles: Record<string, UserAiProfile.Data>) => void;
   setLoading: (loading: boolean) => void;
   setProfile: (model: string, profile: UserAiProfile.Data) => void;
+  resetProfiles: () => void;
 };
 
 export const useAiProfileStore = create<State>((set, get) => ({
@@ -14,9 +15,10 @@ export const useAiProfileStore = create<State>((set, get) => ({
   isLoading: true,
   setProfiles: (newProfiles) => {
     const current = get().profiles;
-    const same = JSON.stringify(current) === JSON.stringify(newProfiles);
+    const merged = { ...current, ...newProfiles };
+    const same = JSON.stringify(current) === JSON.stringify(merged);
     if (!same) {
-      set({ profiles: newProfiles, isLoading: false });
+      set({ profiles: merged, isLoading: false });
     }
   },
   setLoading: (loading) => set({ isLoading: loading }),
@@ -24,4 +26,5 @@ export const useAiProfileStore = create<State>((set, get) => ({
     set((state) => ({
       profiles: { ...state.profiles, [model]: profile },
     })),
+  resetProfiles: () => set({ profiles: {}, isLoading: false }),
 }));
