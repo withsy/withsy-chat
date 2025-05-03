@@ -187,9 +187,6 @@ CREATE INDEX "user_default_prompts_user_id_idx" ON "user_default_prompts"("user_
 CREATE INDEX "user_default_prompts_user_prompt_id_idx" ON "user_default_prompts"("user_prompt_id");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "user_ai_profiles_user_id_key" ON "user_ai_profiles"("user_id");
-
--- CreateIndex
 CREATE UNIQUE INDEX "user_ai_profiles_user_id_model_key" ON "user_ai_profiles"("user_id", "model");
 
 -- CreateIndex
