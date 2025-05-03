@@ -146,7 +146,7 @@ export default function ModelCard({ model, name, image }: Props) {
             <AvatarFallback>{model.slice(0, 2).toUpperCase()}</AvatarFallback>
           </Avatar>
         ) : (
-          <ModelAvatar size="xl" name={model} />
+          <ModelAvatar size="xl" name={name ?? model} />
         )}
       </div>
 

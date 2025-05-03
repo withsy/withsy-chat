@@ -1,6 +1,7 @@
 import { CollapseButton } from "@/components/CollapseButton";
 import LoadAiProfiles from "@/components/LoadAiProfiles";
 import { PartialLoading } from "@/components/Loading";
+import { AvatarStyleSelector } from "@/components/models/AvatarStyleSelector";
 import ModelCard from "@/components/models/ModelCard";
 import { useUser } from "@/context/UserContext";
 import { useAiProfileStore } from "@/stores/useAiProfileStore";
@@ -33,7 +34,6 @@ export default function ModelsPage() {
       >
         <div>{collapsed && <CollapseButton />}</div>
       </div>
-
       <div className="mt-[50px] p-5 overflow-y-auto">
         <p className="text-muted-foreground mb-6">
           Make each AI model feel a little more personal by giving it a friendly
