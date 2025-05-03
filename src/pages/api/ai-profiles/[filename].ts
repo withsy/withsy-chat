@@ -26,16 +26,6 @@ export const config = {
  *           minLength: 1
  *     responses:
  *       200:
- *         headers:
- *           Content-Type:
- *             schema:
- *               type: string
- *           Content-Disposition:
- *             schema:
- *               type: string
- *           Cache-Control:
- *             schema:
- *               type: string
  *         content:
  *           image/*:
  *             schema:

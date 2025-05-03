@@ -24,19 +24,6 @@ import SuperJSON from "superjson";
  *           minLength: 1
  *     responses:
  *       200:
- *         headers:
- *           Content-Type:
- *             schema:
- *               type: string
- *           Cache-Control:
- *             schema:
- *               type: string
- *           Connection:
- *             schema:
- *               type: string
- *           Content-Encoding:
- *             schema:
- *               type: string
  *         content:
  *           text/event-stream:
  *             schema:

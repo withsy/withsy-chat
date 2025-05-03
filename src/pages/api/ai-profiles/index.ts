@@ -47,13 +47,6 @@ export const config = {
  *           application/json:
  *             schema:
  *               type: object
- *               properties:
- *                 name:
- *                   type: string
- *                 model:
- *                   type: string
- *                 imageSource:
- *                   type: string
  */
 export default createNextPagesApiHandler({ post });
 
