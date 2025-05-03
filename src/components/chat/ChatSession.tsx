@@ -8,6 +8,7 @@ import { useSelectedModelStore } from "@/stores/useSelectedModelStore";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 import { Chat, Message, MessageChunk } from "@/types";
 import { MessageId } from "@/types/id";
+import { isMessageComplete } from "@/types/message";
 import type { UserUsageLimit } from "@/types/user-usage-limit";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/router";
@@ -36,7 +37,13 @@ export function ChatSession({ initialMessages, children }: Props) {
   const { selectedModel } = useSelectedModelStore();
   const { user } = useUser();
   const [messages, setMessages] = useState(initialMessages);
-  const [streamMessageId, setStreamMessageId] = useState<string | null>(null);
+
+  const lastMessage = initialMessages.at(-1);
+  const maybeStreamMessageId =
+    lastMessage && !isMessageComplete(lastMessage) ? lastMessage.id : null;
+  const [streamMessageId, setStreamMessageId] = useState<string | null>(
+    maybeStreamMessageId
+  );
   const [shouldFocusInput, setShouldFocusInput] = useState(false);
   const [usageLimit, setUsageLimit] = useState<UserUsageLimit | null>(null);
   const [eventSource, setEventSource] = useState<EventSource | null>(null);
@@ -79,16 +86,11 @@ export function ChatSession({ initialMessages, children }: Props) {
   );
 
   useEffect(() => {
-    setMessages(initialMessages);
-  }, [initialMessages]);
-
-  // 포커스 설정: 드로어 애니메이션(300ms) 후 포커스 설정
-  useEffect(() => {
     const timer = setTimeout(() => {
       setShouldFocusInput(true);
       const resetTimer = setTimeout(() => setShouldFocusInput(false), 500);
       return () => clearTimeout(resetTimer);
-    }, 300); // 애니메이션 완료 후 포커스 설정
+    }, 300);
     return () => clearTimeout(timer);
   }, [chat?.id, collapsed]);
 
@@ -114,8 +116,8 @@ export function ChatSession({ initialMessages, children }: Props) {
 
     const source = new EventSource(`/api/messages/${streamMessageId}`);
     source.addEventListener("open", () => {
-      setMessages((prevMessages) =>
-        prevMessages.map((x) =>
+      setMessages((prev) =>
+        prev.map((x) =>
           x.id === streamMessageId
             ? {
                 ...x,
@@ -145,8 +147,8 @@ export function ChatSession({ initialMessages, children }: Props) {
       const event = MessageChunk.Event.parse(SuperJSON.parse(ev.data));
       if (event.type === "chunk") {
         const chunk = event.chunk;
-        setMessages((prevMessages) =>
-          prevMessages.map((x) =>
+        setMessages((prev) =>
+          prev.map((x) =>
             x.id === streamMessageId
               ? {
                   ...x,

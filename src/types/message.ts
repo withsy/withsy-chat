@@ -23,6 +23,10 @@ export const Select = {
 export const Status = z.enum(["pending", "processing", "succeeded", "failed"]);
 export type Status = zInfer<typeof Status>;
 
+export function isMessageComplete(data: Data) {
+  return data.status === "succeeded" || data.status === "failed";
+}
+
 export const Entity = z.object({
   id: MessageId,
   chatId: ChatId,

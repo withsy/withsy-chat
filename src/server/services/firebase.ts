@@ -22,7 +22,7 @@ export class FirebaseService {
 
   async delete(filePath: string): Promise<void> {
     try {
-      await this.service.firebase.bucket.file(filePath).delete();
+      await this.bucket.file(filePath).delete();
     } catch (e) {
       console.error(
         `Firebase file deleting failed. path: ${filePath} error:`,
