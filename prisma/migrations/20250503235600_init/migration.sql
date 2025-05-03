@@ -1,4 +1,10 @@
 -- CreateEnum
+CREATE TYPE "UserUsageLimitPeriod" AS ENUM ('daily', 'minute');
+
+-- CreateEnum
+CREATE TYPE "UserUsageLimitType" AS ENUM ('message', 'aiProfileImage');
+
+-- CreateEnum
 CREATE TYPE "ChatType" AS ENUM ('chat', 'branch', 'gratitudeJournal');
 
 -- CreateEnum
@@ -36,10 +42,11 @@ CREATE TABLE "user_link_accounts" (
 CREATE TABLE "user_usage_limits" (
     "id" SERIAL NOT NULL,
     "user_id" UUID NOT NULL,
-    "daily_remaining" INTEGER NOT NULL,
-    "daily_reset_at" TIMESTAMPTZ(6) NOT NULL,
-    "minute_remaining" INTEGER NOT NULL,
-    "minute_reset_at" TIMESTAMPTZ(6) NOT NULL,
+    "type" "UserUsageLimitType" NOT NULL,
+    "period" "UserUsageLimitPeriod" NOT NULL,
+    "allowed_amount" INTEGER NOT NULL,
+    "remaining_amount" INTEGER NOT NULL,
+    "reset_at" TIMESTAMPTZ(6) NOT NULL,
     "created_at" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -170,10 +177,10 @@ CREATE INDEX "user_link_accounts_user_id_idx" ON "user_link_accounts"("user_id")
 CREATE UNIQUE INDEX "user_link_accounts_provider_provider_account_id_key" ON "user_link_accounts"("provider", "provider_account_id");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "user_usage_limits_user_id_key" ON "user_usage_limits"("user_id");
+CREATE INDEX "user_usage_limits_user_id_idx" ON "user_usage_limits"("user_id");
 
 -- CreateIndex
-CREATE INDEX "user_usage_limits_user_id_idx" ON "user_usage_limits"("user_id");
+CREATE UNIQUE INDEX "user_usage_limits_user_id_type_period_key" ON "user_usage_limits"("user_id", "type", "period");
 
 -- CreateIndex
 CREATE INDEX "user_prompts_user_id_idx" ON "user_prompts"("user_id");
@@ -186,6 +193,9 @@ CREATE INDEX "user_default_prompts_user_id_idx" ON "user_default_prompts"("user_
 
 -- CreateIndex
 CREATE INDEX "user_default_prompts_user_prompt_id_idx" ON "user_default_prompts"("user_prompt_id");
+
+-- CreateIndex
+CREATE INDEX "user_ai_profiles_user_id_idx" ON "user_ai_profiles"("user_id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "user_ai_profiles_user_id_model_key" ON "user_ai_profiles"("user_id", "model");
