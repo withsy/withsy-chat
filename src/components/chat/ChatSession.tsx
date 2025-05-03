@@ -73,12 +73,13 @@ export function ChatSession({ initialMessages, children }: Props) {
     setMessages(initialMessages);
   }, [initialMessages]);
 
+  // 포커스 설정: 드로어 애니메이션(300ms) 후 포커스 설정
   useEffect(() => {
     const timer = setTimeout(() => {
       setShouldFocusInput(true);
       const resetTimer = setTimeout(() => setShouldFocusInput(false), 500);
       return () => clearTimeout(resetTimer);
-    }, 300);
+    }, 300); // 애니메이션 완료 후 포커스 설정
     return () => clearTimeout(timer);
   }, [chat?.id, collapsed]);
 
@@ -229,7 +230,7 @@ export function ChatSession({ initialMessages, children }: Props) {
         )}
         <div
           className={cn(
-            "flex-1 overflow-y-auto mt-[50px] mb-[150px] w-full transition-all duration-300",
+            "flex-1 overflow-y-auto mt-[50px] w-full transition-all duration-300",
             user.preferences.wideView
               ? "md:w-[95%] md:mx-auto"
               : "md:w-[80%] md:mx-auto"
@@ -243,18 +244,18 @@ export function ChatSession({ initialMessages, children }: Props) {
               />
             </ChatSessionProvider>
           )}
-          {children}
         </div>
-        <div className="fixed bottom-4 left-0 right-0 flex flex-col items-center justify-center px-4 z-10">
+        <div className="w-full px-4 sticky bottom-0 bg-white z-10 flex flex-col items-center">
           <ChatInputBox
             onSendMessage={onSendMessage}
             shouldFocus={shouldFocusInput}
             usageLimit={usageLimit}
           />
-          <div className="text-xs text-gray-500 mt-1">
+          <div className="text-xs text-gray-500 mt-2 mb-2">
             AI can make mistakes — please double-check.
           </div>
         </div>
+        {children}
       </div>
       <ChatDrawer savedMessages={savedMessages} />
     </div>
