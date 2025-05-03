@@ -12,6 +12,40 @@ export const config = {
   },
 };
 
+/**
+ * @openapi
+ * /api/ai-profiles/{filename}:
+ *   get:
+ *     summary: Download AI profile
+ *     parameters:
+ *       - name: filename
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *           minLength: 1
+ *     responses:
+ *       200:
+ *         headers:
+ *           Content-Type:
+ *             schema:
+ *               type: string
+ *           Content-Disposition:
+ *             schema:
+ *               type: string
+ *           Cache-Control:
+ *             schema:
+ *               type: string
+ *         content:
+ *           image/*:
+ *             schema:
+ *               type: string
+ *               format: binary
+ *           application/octet-stream:
+ *             schema:
+ *               type: string
+ *               format: binary
+ */
 export default createNextPagesApiHandler({ get });
 
 async function get(opts: Options) {
