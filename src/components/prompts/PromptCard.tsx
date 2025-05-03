@@ -4,13 +4,14 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { trpc } from "@/lib/trpc";
+import { useUser } from "@/context/UserContext";
+import { useTRPC } from "@/lib/trpc";
 import { useChatStore } from "@/stores/useChatStore";
 import type { UserPrompt } from "@/types";
+import { useMutation } from "@tanstack/react-query";
 import { MoreVertical, Star } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "../ui/badge";
-import { useUser } from "@/context/UserContext";
 
 interface PromptCardProps {
   prompt: UserPrompt.Data;
@@ -31,30 +32,33 @@ export function PromptCard({
   isActive,
   isDefault,
 }: PromptCardProps) {
+  const trpc = useTRPC();
   const { user } = useUser();
   if (!user) throw new Error("User must exist.");
 
   const { chat, updatePromptId } = useChatStore();
-  const updateChat = trpc.chat.update.useMutation({
-    onSuccess: (_data, variables) => {
-      if (variables.userPromptId === null) {
-        toast.success("Prompt cleared", {
-          description: "The active prompt has been removed.",
+  const updateChat = useMutation(
+    trpc.chat.update.mutationOptions({
+      onSuccess: (_data, variables) => {
+        if (variables.userPromptId === null) {
+          toast.success("Prompt cleared", {
+            description: "The active prompt has been removed.",
+          });
+          updatePromptId(null);
+        } else {
+          toast.success("Prompt applied", {
+            description: "This prompt has been set as active.",
+          });
+          updatePromptId(variables.userPromptId ?? null);
+        }
+      },
+      onError: (error) => {
+        toast.error("Failed to apply prompt", {
+          description: error.message ?? "Something went wrong.",
         });
-        updatePromptId(null);
-      } else {
-        toast.success("Prompt applied", {
-          description: "This prompt has been set as active.",
-        });
-        updatePromptId(variables.userPromptId ?? null);
-      }
-    },
-    onError: (error) => {
-      toast.error("Failed to apply prompt", {
-        description: error.message ?? "Something went wrong.",
-      });
-    },
-  });
+      },
+    })
+  );
 
   const cornerButton = isDefault ? (
     <Badge style={{ backgroundColor: `rgb(${user.preferences.themeColor})` }}>

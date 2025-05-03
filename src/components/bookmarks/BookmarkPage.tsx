@@ -7,9 +7,10 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { filterMessages } from "@/lib/filter-utils";
-import { trpc } from "@/lib/trpc";
+import { useTRPC } from "@/lib/trpc";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 import type { Message, User } from "@/types";
+import { useQuery } from "@tanstack/react-query";
 import { Eye, EyeOff, RotateCcw } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
@@ -25,6 +26,7 @@ export default function BookmarkPage({
   user: User.Data;
   headerStyle: React.CSSProperties;
 }) {
+  const trpc = useTRPC();
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<Message.Data[]>([]);
   const [searchText, setSearchText] = useState("");
@@ -32,17 +34,19 @@ export default function BookmarkPage({
   const [isFilterOpen, setIsFilterOpen] = useState(true);
 
   const { collapsed } = useSidebarStore();
-  const listSaved = trpc.message.list.useQuery({
-    options: {
-      scope: {
-        by: "user",
-        userId: user.id,
+  const listSaved = useQuery(
+    trpc.message.list.queryOptions({
+      options: {
+        scope: {
+          by: "user",
+          userId: user.id,
+        },
+        order: sortOrder,
+        include: { chat: true },
       },
-      order: sortOrder,
-      include: { chat: true },
-    },
-    isBookmarked: true,
-  });
+      isBookmarked: true,
+    })
+  );
 
   useEffect(() => {
     if (!listSaved.data) return;

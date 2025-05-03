@@ -1,9 +1,13 @@
-import { useEffect } from "react";
-import { trpc } from "@/lib/trpc";
+import { useTRPC } from "@/lib/trpc";
 import { useAiProfileStore } from "@/stores/useAiProfileStore";
+import { useQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
 
 export default function LoadAiProfiles() {
-  const { data = [], isLoading } = trpc.userAiProfile.getAll.useQuery();
+  const trpc = useTRPC();
+  const { data = [], isLoading } = useQuery(
+    trpc.userAiProfile.getAll.queryOptions()
+  );
   const { setProfiles, setLoading } = useAiProfileStore();
 
   useEffect(() => {

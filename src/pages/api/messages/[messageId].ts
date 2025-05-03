@@ -8,6 +8,7 @@ import { MessageChunk } from "@/types";
 import { PgEvent, type PgEventInput } from "@/types/task";
 import type { UserUsageLimit } from "@/types/user-usage-limit";
 import { getReasonPhrase, StatusCodes } from "http-status-codes";
+import SuperJSON from "superjson";
 
 export default createNextPagesApiHandler({ get });
 
@@ -40,7 +41,7 @@ export async function get(options: Options) {
   res.flushHeaders();
 
   const write = (data: MessageChunk.ReceiveData) => {
-    res.write(`data: ${JSON.stringify(data)}\n\n`);
+    res.write(`data: ${SuperJSON.stringify(data)}\n\n`);
   };
 
   const q: PgEventInput<"message_chunk_created">[] = [];

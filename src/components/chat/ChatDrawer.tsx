@@ -1,11 +1,11 @@
-import { trpc } from "@/lib/trpc";
+import { useTRPC } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
 import { useChatStore } from "@/stores/useChatStore";
 import { useDrawerStore } from "@/stores/useDrawerStore";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 import type { Message } from "@/types";
 import { Chat } from "@/types";
-import { skipToken } from "@tanstack/react-query";
+import { skipToken, useMutation, useQuery } from "@tanstack/react-query";
 import { FolderGit2, FolderRoot, GitBranch } from "lucide-react";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -21,6 +21,7 @@ type ChatDrawerProps = {
 };
 
 export const ChatDrawer = ({ savedMessages }: ChatDrawerProps) => {
+  const trpc = useTRPC();
   const { chat } = useChatStore();
   const { isMobile } = useSidebarStore();
   const { openDrawer, setOpenDrawer } = useDrawerStore();
@@ -28,8 +29,10 @@ export const ChatDrawer = ({ savedMessages }: ChatDrawerProps) => {
   const router = useRouter();
   const isDrawerOpen = !!openDrawer;
   const chatId = chat?.id;
-  const chatBranchList = trpc.chatBranch.list.useQuery(
-    chatId && openDrawer === "branches" ? { chatId } : skipToken
+  const chatBranchList = useQuery(
+    trpc.chatBranch.list.queryOptions(
+      chatId && openDrawer === "branches" ? { chatId } : skipToken
+    )
   );
 
   const [ready, setReady] = useState(false);
@@ -105,15 +108,18 @@ export const ChatDrawer = ({ savedMessages }: ChatDrawerProps) => {
 };
 
 function Prompts() {
+  const trpc = useTRPC();
   const { chat } = useChatStore();
-  const { data: defaultPrompt, isLoading: isLoadingDefaultPrompt } =
-    trpc.userDefaultPrompt.get.useQuery(undefined, {
+  const { data: defaultPrompt, isLoading: isLoadingDefaultPrompt } = useQuery(
+    trpc.userDefaultPrompt.get.queryOptions(undefined, {
       retry: false,
-    });
-  const { data: prompts, isLoading: isLoadingPrompts } =
-    trpc.userPrompt.list.useQuery();
+    })
+  );
+  const { data: prompts, isLoading: isLoadingPrompts } = useQuery(
+    trpc.userPrompt.list.queryOptions()
+  );
 
-  const updateChatPrompt = trpc.chat.update.useMutation();
+  const updateChatPrompt = useMutation(trpc.chat.update.mutationOptions());
   if (isLoadingDefaultPrompt || isLoadingPrompts) {
     return <div>Loading...</div>;
   }

@@ -1,16 +1,18 @@
 import { PartialError } from "@/components/Error";
 import { PartialLoading } from "@/components/Loading";
 import { formatDateLabel, toNewest } from "@/lib/date-utils";
-import { trpc } from "@/lib/trpc";
+import { useTRPC } from "@/lib/trpc";
 import type { Chat } from "@/types";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { useEffect, useState } from "react";
 import { SidebarChatItem } from "./SidebarChatItem";
 
 export default function SidebarChatList() {
-  const utils = trpc.useUtils();
-  const listChats = trpc.chat.list.useQuery();
-  const updateChatMut = trpc.chat.update.useMutation();
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+  const listChats = useQuery(trpc.chat.list.queryOptions());
+  const updateChatMut = useMutation(trpc.chat.update.mutationOptions());
   const [chats, setChats] = useState<Chat.Data[]>([]);
   const [starredOpen, setStarredOpen] = useState(true);
 
@@ -34,7 +36,8 @@ export default function SidebarChatList() {
       },
       {
         onError: () => setChats(prev),
-        onSuccess: () => utils.chat.list.invalidate(),
+        onSuccess: () =>
+          queryClient.invalidateQueries(trpc.chat.list.queryFilter()),
       }
     );
   };

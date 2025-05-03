@@ -7,11 +7,12 @@ import {
 } from "@/components/ui/tooltip";
 import { useChatSession } from "@/context/ChatSessionContext";
 import { useUser } from "@/context/UserContext";
-import { trpc } from "@/lib/trpc";
+import { useTRPC } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
 import type { Chat } from "@/types";
 import { MessageReply } from "@/types";
 import type { Model } from "@/types/model";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Bookmark, Copy, GitBranch, RefreshCw } from "lucide-react";
 import { useRouter } from "next/router";
 import { toast } from "sonner";
@@ -39,33 +40,38 @@ export const ChatBubbleTooltips: React.FC<ChatBubbleTooltipsProps> = ({
   onSave,
   className,
 }) => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
   const { onRegenerateSuccess } = useChatSession();
 
   const router = useRouter();
 
   const { user } = useUser();
 
-  const chatBranchStart = trpc.chatBranch.start.useMutation({
-    onSuccess(data) {
-      router.push(`/chat/${data.id}`);
-      utils.chat.list.invalidate();
-    },
-  });
+  const chatBranchStart = useMutation(
+    trpc.chatBranch.start.mutationOptions({
+      onSuccess(data) {
+        router.push(`/chat/${data.id}`);
+        queryClient.invalidateQueries(trpc.chat.list.queryFilter());
+      },
+    })
+  );
 
-  const messageReplyRegenerate = trpc.messageReply.regenerate.useMutation({
-    onSuccess(data) {
-      onRegenerateSuccess(data);
-    },
-    onError(error) {
-      const res = MessageReply.RegenerateError.safeParse(error.data);
-      toast.error(
-        `Message reply regenerating failed. error data: ${JSON.stringify(
-          res.data
-        )}`
-      );
-    },
-  });
-  const utils = trpc.useUtils();
+  const messageReplyRegenerate = useMutation(
+    trpc.messageReply.regenerate.mutationOptions({
+      onSuccess(data) {
+        onRegenerateSuccess(data);
+      },
+      onError(error) {
+        const res = MessageReply.RegenerateError.safeParse(error.data);
+        toast.error(
+          `Message reply regenerating failed. error data: ${JSON.stringify(
+            res.data
+          )}`
+        );
+      },
+    })
+  );
 
   const handleBranch = () => {
     chatBranchStart.mutate({

@@ -1,19 +1,23 @@
 import { ChatSession } from "@/components/chat/ChatSession";
-import { trpc } from "@/lib/trpc";
+import { useTRPC } from "@/lib/trpc";
+import { useChatStore } from "@/stores/useChatStore";
+import { useQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
 import { PartialError } from "../Error";
 import { PartialLoading } from "../Loading";
-import { useChatStore } from "@/stores/useChatStore";
-import { useEffect } from "react";
 
 type Props = {
   chatId: string;
 };
 
 export default function ChatView({ chatId }: Props) {
-  const chatGet = trpc.chat.get.useQuery({ chatId });
-  const messageList = trpc.message.list.useQuery({
-    options: { scope: { by: "chat", chatId } },
-  });
+  const trpc = useTRPC();
+  const chatGet = useQuery(trpc.chat.get.queryOptions({ chatId }));
+  const messageList = useQuery(
+    trpc.message.list.queryOptions({
+      options: { scope: { by: "chat", chatId } },
+    })
+  );
   const setChat = useChatStore((state) => state.setChat);
   useEffect(() => {
     if (chatGet.data) {

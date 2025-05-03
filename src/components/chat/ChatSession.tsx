@@ -1,18 +1,24 @@
 import { ChatSessionProvider } from "@/context/ChatSessionContext";
 import { useUser } from "@/context/UserContext";
-import { trpc } from "@/lib/trpc";
+import { useTRPC } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
 import { useChatStore } from "@/stores/useChatStore";
 import { useDrawerStore } from "@/stores/useDrawerStore";
 import { useSelectedModelStore } from "@/stores/useSelectedModelStore";
 import { useSidebarStore } from "@/stores/useSidebarStore";
-import { Chat, Message } from "@/types";
+import { Chat, Message, MessageChunk } from "@/types";
 import { MessageId } from "@/types/id";
 import type { UserUsageLimit } from "@/types/user-usage-limit";
-import { skipToken } from "@tanstack/react-query";
+import {
+  skipToken,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
+import SuperJSON from "superjson";
 import { v4 as uuid } from "uuid";
 import { ChatDrawer } from "./ChatDrawer";
 import ChatHeader from "./ChatHeader";
@@ -26,6 +32,8 @@ type Props = {
 };
 
 export function ChatSession({ initialMessages, children }: Props) {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
   const { chat } = useChatStore();
   const router = useRouter();
 
@@ -36,38 +44,44 @@ export function ChatSession({ initialMessages, children }: Props) {
   const [streamMessageId, setStreamMessageId] = useState<string | null>(null);
   const [shouldFocusInput, setShouldFocusInput] = useState(false);
   const [usageLimit, setUsageLimit] = useState<UserUsageLimit | null>(null);
+  const [eventSource, setEventSource] = useState<EventSource | null>(null);
 
   const { openDrawer } = useDrawerStore();
 
-  const utils = trpc.useUtils();
-  const usageQuery = trpc.userUsageLimit.get.useQuery(undefined, {
-    enabled: !!chat?.id,
-  });
+  const usageQuery = useQuery(
+    trpc.userUsageLimit.get.queryOptions(undefined, {
+      enabled: !!chat?.id,
+    })
+  );
 
-  const chatStart = trpc.chat.start.useMutation({
-    onError(error) {
-      const _res = Chat.StartError.safeParse(error.data);
-      toast.error(`Chat starting failed.`);
-    },
-    onSuccess(data) {
-      utils.chat.list.invalidate();
-      router.push(
-        `/chat/${data.chat.id}?streamMessageId=${data.modelMessage.id}`
-      );
-    },
-  });
+  const chatStart = useMutation(
+    trpc.chat.start.mutationOptions({
+      onError(error) {
+        const _res = Chat.StartError.safeParse(error.data);
+        toast.error(`Chat starting failed.`);
+      },
+      onSuccess(data) {
+        queryClient.invalidateQueries(trpc.chat.list.queryFilter());
+        router.push(
+          `/chat/${data.chat.id}?streamMessageId=${data.modelMessage.id}`
+        );
+      },
+    })
+  );
 
-  const messageSend = trpc.message.send.useMutation({
-    onError(error) {
-      const _res = Message.SendError.safeParse(error.data);
-      toast.error(`Message sending failed.`);
-    },
-    onSuccess(data) {
-      setMessages((prev) => [...prev, data.userMessage, data.modelMessage]);
-      setStreamMessageId(data.modelMessage.id);
-      utils.chat.list.invalidate();
-    },
-  });
+  const messageSend = useMutation(
+    trpc.message.send.mutationOptions({
+      onError(error) {
+        const _res = Message.SendError.safeParse(error.data);
+        toast.error(`Message sending failed.`);
+      },
+      onSuccess(data) {
+        setMessages((prev) => [...prev, data.userMessage, data.modelMessage]);
+        setStreamMessageId(data.modelMessage.id);
+        queryClient.invalidateQueries(trpc.chat.list.queryFilter());
+      },
+    })
+  );
 
   useEffect(() => {
     setMessages(initialMessages);
@@ -96,62 +110,77 @@ export function ChatSession({ initialMessages, children }: Props) {
     }
   }, [chat?.id, usageQuery.isSuccess, usageQuery.data]);
 
-  const _messageChunkReceive = trpc.messageChunk.receive.useSubscription(
-    streamMessageId != null ? { messageId: streamMessageId } : skipToken,
-    {
-      onStarted() {
+  useEffect(() => {
+    if (streamMessageId == null) {
+      if (eventSource)
+        if (eventSource.readyState !== eventSource.CLOSED) eventSource.close();
+
+      setEventSource(null);
+      return;
+    }
+
+    const source = new EventSource(`/api/messages/${streamMessageId}`);
+    source.addEventListener("open", () => {
+      setMessages((prevMessages) =>
+        prevMessages.map((x) =>
+          x.id === streamMessageId
+            ? {
+                ...x,
+                text: "",
+                status: "processing",
+              }
+            : x
+        )
+      );
+    });
+
+    let done = false;
+    source.addEventListener("error", (ev) => {
+      if (done) return;
+
+      setMessages((prev) =>
+        prev.map((x) =>
+          x.id === streamMessageId ? { ...x, status: "failed" } : x
+        )
+      );
+      setStreamMessageId(null);
+      toast.error("Receive chat message failed.");
+    });
+
+    source.addEventListener("message", (ev) => {
+      const received = MessageChunk.ReceiveData.parse(SuperJSON.parse(ev.data));
+      if (received.type === "chunk") {
+        const chunk = received.chunk;
         setMessages((prevMessages) =>
-          prevMessages.map((msg) =>
-            msg.id === streamMessageId
+          prevMessages.map((x) =>
+            x.id === streamMessageId
               ? {
-                  ...msg,
-                  text: "",
-                  status: "processing",
+                  ...x,
+                  text: x.text + chunk.text,
+                  reasoningText: x.reasoningText + chunk.reasoningText,
                 }
-              : msg
+              : x
           )
         );
-      },
-      onComplete() {
+      } else if (received.type === "usageLimit") {
+        const usageLimit = received.usageLimit;
+        if (usageLimit) setUsageLimit(usageLimit);
+
         setMessages((prev) =>
           prev.map((x) =>
             x.id === streamMessageId ? { ...x, status: "succeeded" } : x
           )
         );
         setStreamMessageId(null);
-      },
-      onError(error) {
-        setMessages((prev) =>
-          prev.map((x) =>
-            x.id === streamMessageId ? { ...x, status: "failed" } : x
-          )
-        );
-        setStreamMessageId(null);
-        toast.error(`Receive chat message failed. error: ${error}`);
-      },
-      onData(data) {
-        if (data.data.type === "chunk") {
-          const chunk = data.data.chunk;
-          setMessages((prevMessages) =>
-            prevMessages.map((msg) =>
-              msg.id === streamMessageId
-                ? {
-                    ...msg,
-                    text: msg.text + chunk.text,
-                    reasoningText: msg.reasoningText + chunk.reasoningText,
-                  }
-                : msg
-            )
-          );
-        } else if (data.data.type === "usageLimit") {
-          const usageLimit = data.data.usageLimit;
-          if (usageLimit) {
-            setUsageLimit(usageLimit);
-          }
-        }
-      },
-    }
-  );
+        done = true;
+      }
+    });
+
+    setEventSource(source);
+    return () => {
+      if (source && source.readyState !== EventSource.CLOSED) source.close();
+    };
+  }, [streamMessageId]);
 
   const onSendMessage = (message: string) => {
     if (chat != null) {
@@ -170,7 +199,7 @@ export function ChatSession({ initialMessages, children }: Props) {
     }
   };
 
-  const messageUpdate = trpc.message.update.useMutation();
+  const messageUpdate = useMutation(trpc.message.update.mutationOptions());
 
   const handleToggleSaved = (id: string, newValue: boolean) => {
     messageUpdate.mutate(
@@ -205,7 +234,7 @@ export function ChatSession({ initialMessages, children }: Props) {
   const handleRegenerateSuccess = (newMessage: Message.Data) => {
     setMessages((prev) => [...prev, newMessage]);
     setStreamMessageId(newMessage.id);
-    utils.chat.list.invalidate();
+    queryClient.invalidateQueries(trpc.chat.list.queryFilter());
   };
 
   const savedMessages = useMemo(
