@@ -1,8 +1,8 @@
+import { useAiProfileStore } from "@/stores/useAiProfileStore";
 import { useSelectedModelStore } from "@/stores/useSelectedModelStore";
 import { useSidebarStore } from "@/stores/useSidebarStore";
-import { useAiProfileStore } from "@/stores/useAiProfileStore";
 import { Model } from "@/types/model";
-import { useEffect, useRef, useState, type ReactNode, useMemo } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { ModelDropdown } from "./ModelDropdown";
 import { ModelSelectButton } from "./ModelSelectButton";
 
@@ -69,7 +69,7 @@ export function ModelSelect({
       return {
         label: userProfile?.name || value.label,
         value: model,
-        image: userProfile?.imageUrl,
+        image: userProfile?.imageSource,
         description: isCustomName
           ? `${value.description} (originally ${value.label})`
           : value.description,

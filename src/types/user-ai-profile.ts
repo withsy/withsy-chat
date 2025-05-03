@@ -28,7 +28,7 @@ export const Data = Entity.omit({
 }).extend({
   model: Model,
   name: z.string(),
-  imageUrl: z.string(),
+  imageSource: z.string(),
 });
 export type Data = zInfer<typeof Data>;
 

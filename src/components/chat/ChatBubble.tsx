@@ -1,5 +1,6 @@
 import { useUser } from "@/context/UserContext";
 import { cn } from "@/lib/utils";
+import { useAiProfileStore } from "@/stores/useAiProfileStore";
 import type { Chat, Message } from "@/types";
 import { memo, useState } from "react";
 import { toast } from "sonner";
@@ -9,7 +10,6 @@ import { ModelAvatar } from "../ModelAvatar";
 import { ChatBubbleTooltips } from "./ChatBubbleTooltips";
 import { GetModelLabel } from "./ModelSelect";
 import { StatusIndicator } from "./StatusIndicator";
-import { useAiProfileStore } from "@/stores/useAiProfileStore";
 
 type Props = {
   message: Message.Data;
@@ -57,7 +57,7 @@ const ChatBubbleComponent = ({ message, chatType, onToggleSaved }: Props) => {
 
   const userProfile =
     role === "model" && message.model ? profiles[message.model] : null;
-  const image = role === "model" ? userProfile?.imageUrl : undefined;
+  const image = role === "model" ? userProfile?.imageSource : undefined;
   const name =
     role === "model"
       ? userProfile?.name ||

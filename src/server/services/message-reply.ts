@@ -38,7 +38,7 @@ export class MessageReplyService {
             StatusCodes.INTERNAL_SERVER_ERROR,
             "parentMessageId must exist.",
             {
-              extra: {
+              details: {
                 messageId,
               },
             }

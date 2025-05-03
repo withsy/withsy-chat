@@ -2,6 +2,7 @@ import {
   createNextPagesApiHandler,
   type Options,
 } from "@/server/next-pages-api-handler";
+import type { UserId } from "@/types/id";
 import { Model } from "@/types/model";
 import Busboy from "busboy";
 import mime from "mime-types";
@@ -49,15 +50,10 @@ export const config = {
  *                   type: string
  *                 model:
  *                   type: string
- *                 imageUrl:
+ *                 imageSource:
  *                   type: string
  */
-export default createNextPagesApiHandler({ get, post });
-
-async function get(opts: Options) {
-  const { req, res, ctx } = opts;
-  const { service, userId } = ctx;
-}
+export default createNextPagesApiHandler({ post });
 
 async function post(opts: Options) {
   const { req, res, ctx } = opts;
@@ -90,7 +86,8 @@ async function post(opts: Options) {
 
         const ext = mime.extension(mimeType);
         const uuid = uuidv7();
-        imagePath = `users/${userId}/ai-profiles/${uuid}.${ext}`;
+        const fileName = `${uuid}.${ext}`;
+        imagePath = createImagePath({ userId, fileName });
 
         const writable = service.firebase.bucket
           .file(imagePath)
@@ -133,4 +130,9 @@ async function post(opts: Options) {
   });
 
   return res.status(200).json(userAiProfile);
+}
+
+export function createImagePath(input: { userId: UserId; fileName: string }) {
+  const { userId, fileName } = input;
+  return `users/${userId}/ai-profiles/${fileName}`;
 }

@@ -15,7 +15,7 @@ export type Handler = {
   post?: (opts: Options) => MaybePromise<void>;
 };
 
-export async function createNextPagesApiHandler(handler: Handler) {
+export function createNextPagesApiHandler(handler: Handler) {
   return async (req: NextApiRequest, res: NextApiResponse) => {
     try {
       const ctx = await createServerContext({ req, res });

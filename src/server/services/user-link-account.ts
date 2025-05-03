@@ -18,13 +18,13 @@ export class UserLinkAccountService {
 
     const nameEncrypted = name
       ? this.service.encryption.encrypt(name)
-      : this.service.encryption.emptyStringEncrypted;
+      : this.service.encryption.encrypt("");
     const emailEncrypted = email
       ? this.service.encryption.encrypt(email)
-      : this.service.encryption.emptyStringEncrypted;
+      : this.service.encryption.encrypt("");
     const imageUrlEncrypted = imageUrl
       ? this.service.encryption.encrypt(imageUrl)
-      : this.service.encryption.emptyStringEncrypted;
+      : this.service.encryption.encrypt("");
 
     const res = await this.service.db.$transaction(async (tx) => {
       let linkAccount = await tx.userLinkAccount.findFirst({
