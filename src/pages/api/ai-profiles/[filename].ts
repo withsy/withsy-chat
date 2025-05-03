@@ -46,6 +46,7 @@ async function get(opts: Options) {
     if (res.headersSent) {
       readable.destroy();
       res.end();
+      console.error("Unexpected error occurred. error:", e);
       return;
     }
 
