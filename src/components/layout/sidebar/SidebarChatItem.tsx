@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useUser } from "@/context/UserContext";
 import { trpc } from "@/lib/trpc";
+import { useChatStore } from "@/stores/useChatStore";
 import { useDrawerStore } from "@/stores/useDrawerStore";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 import type { Chat } from "@/types";
@@ -87,12 +88,18 @@ export function SidebarChatItem({
 
   const handleTitleSave = () => {
     if (editedTitle.trim() !== chat.title) {
+      const newTitle = editedTitle.trim();
       updateChatMut.mutate(
-        { chatId: chat.id, title: editedTitle },
+        { chatId: chat.id, title: newTitle },
         {
           onSuccess: () => {
-            const updatedChat = { ...chat, title: editedTitle };
-            if (onChatUpdate) onChatUpdate(updatedChat);
+            const updatedChat = { ...chat, title: newTitle };
+            onChatUpdate(updatedChat);
+
+            const currentChat = useChatStore.getState().chat;
+            if (currentChat?.id === chat.id) {
+              useChatStore.getState().setChat(updatedChat);
+            }
           },
         }
       );
