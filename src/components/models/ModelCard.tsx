@@ -8,9 +8,13 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { v4 as uuid } from "uuid";
 import CropImageModal from "./CropImageModal";
+import { useTRPC } from "@/lib/trpc";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import type { Model } from "@/types/model";
+import ConfirmResetModal from "./ConfirmResetModal";
 
 type Props = {
-  model: string;
+  model: Model;
   name?: string;
   image?: string;
 };
@@ -20,8 +24,32 @@ export default function ModelCard({ model, name, image }: Props) {
   const [loading, setLoading] = useState(false);
   const [cropModalOpen, setCropModalOpen] = useState(false);
   const [imageToCrop, setImageToCrop] = useState<string | null>(null);
+  const [resetModalOpen, setResetModalOpen] = useState(false);
 
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
   const { setProfile } = useAiProfileStore();
+
+  const deleteImageMutation = useMutation(
+    trpc.userAiProfile.deleteImage.mutationOptions({
+      onSuccess: () => {
+        toast.success("Profile image reset");
+        queryClient.invalidateQueries(trpc.userAiProfile.getAll.queryFilter());
+      },
+      onError: () => {
+        toast.error("Failed to reset profile image");
+      },
+      onSettled: () => {
+        setLoading(false);
+        setResetModalOpen(false);
+      },
+    })
+  );
+
+  const handleReset = () => {
+    setLoading(true);
+    deleteImageMutation.mutate({ model });
+  };
 
   const handleSave = async () => {
     if (newName.trim().length < 1) {
@@ -46,7 +74,7 @@ export default function ModelCard({ model, name, image }: Props) {
       if (!res.ok) throw new Error("Server responded with error");
 
       const updated = await res.json();
-      setProfile(model, updated); // ✅ zustand 상태 동기화
+      setProfile(model, updated);
       toast.success("Name updated");
     } catch (e) {
       toast.error("Failed to update name");
@@ -100,7 +128,7 @@ export default function ModelCard({ model, name, image }: Props) {
       if (!res.ok) throw new Error("Server responded with error");
 
       const updated = await res.json();
-      setProfile(model, updated); // ✅ 상태 갱신
+      setProfile(model, updated);
       toast.success("Image updated");
     } catch (e) {
       toast.error("Failed to update image");
@@ -123,7 +151,17 @@ export default function ModelCard({ model, name, image }: Props) {
       </div>
 
       <div className="flex-1 space-y-2">
-        <div className="font-semibold">{model}</div>
+        <div className="flex justify-between">
+          <div className="font-semibold">{model}</div>{" "}
+          <Button
+            size="sm"
+            variant="ghost"
+            className="text-xs text-muted-foreground hover:text-destructive"
+            onClick={() => setResetModalOpen(true)}
+          >
+            Remove Custom Image
+          </Button>
+        </div>
         <div className="flex items-center gap-2">
           <Input
             placeholder={`What would you like to call ${model}? (Max 20 characters)`}
@@ -152,13 +190,19 @@ export default function ModelCard({ model, name, image }: Props) {
         />
       </div>
 
-      {/* Crop Modal */}
       {imageToCrop && (
         <CropImageModal
           open={cropModalOpen}
           imageUrl={imageToCrop}
           onClose={() => setCropModalOpen(false)}
           onCropDone={handleCropDone}
+        />
+      )}
+      {resetModalOpen && (
+        <ConfirmResetModal
+          open={resetModalOpen}
+          onClose={() => setResetModalOpen(false)}
+          onConfirm={handleReset}
         />
       )}
     </div>
