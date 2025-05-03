@@ -1,5 +1,6 @@
 import ChatLayout from "@/components/layout/ChatLayout";
 import HomeLayout from "@/components/layout/HomeLayout";
+import LoadAiProfiles from "@/components/LoadAiProfiles";
 import AppProviders from "@/context/AppProviders";
 import { useSidebarInitializer } from "@/hooks/useSidebarInitializer";
 import { trpc } from "@/lib/trpc";
@@ -55,6 +56,7 @@ const MyApp: AppType = ({
       )}
 
       <Sonner position="bottom-right" />
+      <LoadAiProfiles />
       <ReactQueryDevtools />
     </AppProviders>
   );

@@ -6,25 +6,28 @@ import { ModelAvatar } from "@/components/ModelAvatar";
 import { toast } from "sonner";
 import CropImageModal from "./CropImageModal";
 import { base64ToFile } from "@/lib/avatar-utils";
+import { useAiProfileStore } from "@/stores/useAiProfileStore";
 
 type Props = {
   model: string;
   name?: string;
   image?: string;
-  refetch: () => void;
 };
 
-export default function ModelCard({ model, name, image, refetch }: Props) {
+export default function ModelCard({ model, name, image }: Props) {
   const [newName, setNewName] = useState(name ?? "");
   const [loading, setLoading] = useState(false);
   const [cropModalOpen, setCropModalOpen] = useState(false);
   const [imageToCrop, setImageToCrop] = useState<string | null>(null);
+
+  const { setProfile } = useAiProfileStore();
 
   const handleSave = async () => {
     if (newName.trim().length < 1) {
       toast.error("Name must be at least 1 character.");
       return;
     }
+
     setLoading(true);
     try {
       const form = new FormData();
@@ -35,11 +38,12 @@ export default function ModelCard({ model, name, image, refetch }: Props) {
         method: "POST",
         body: form,
       });
-      if (!res.ok) {
-        throw new Error("Server responded with error");
-      }
-      toast.success("name updated");
-      refetch();
+
+      if (!res.ok) throw new Error("Server responded with error");
+
+      const updated = await res.json();
+      setProfile(model, updated); // ✅ zustand 상태 동기화
+      toast.success("Name updated");
     } catch (e) {
       toast.error("Failed to update name");
     } finally {
@@ -85,12 +89,12 @@ export default function ModelCard({ model, name, image, refetch }: Props) {
         method: "POST",
         body: form,
       });
-      if (!res.ok) {
-        throw new Error("Server responded with error");
-      }
 
+      if (!res.ok) throw new Error("Server responded with error");
+
+      const updated = await res.json();
+      setProfile(model, updated); // ✅ 상태 갱신
       toast.success("Image updated");
-      refetch();
     } catch (e) {
       toast.error("Failed to update image");
     } finally {

@@ -1,28 +1,20 @@
-import { useMemo } from "react";
-import { trpc } from "@/lib/trpc";
+import { useUser } from "@/context/UserContext";
+import { useSidebarStore } from "@/stores/useSidebarStore";
+import { useAiProfileStore } from "@/stores/useAiProfileStore";
+import { PartialLoading } from "@/components/Loading";
+import { CollapseButton } from "@/components/CollapseButton";
 import { Model } from "@/types/model";
 import ModelCard from "@/components/models/ModelCard";
-import { CollapseButton } from "@/components/CollapseButton";
-import { useUser } from "@/context/UserContext";
-import { PartialLoading } from "@/components/Loading";
-import { useSidebarStore } from "@/stores/useSidebarStore";
+import LoadAiProfiles from "@/components/LoadAiProfiles";
 
 export default function ModelsPage() {
   const { user } = useUser();
   const { collapsed } = useSidebarStore();
+  const { profiles, isLoading } = useAiProfileStore();
 
   const MODELS = Model.options;
-  const { data: fetchedProfiles = [], refetch } =
-    trpc.userAiProfile.getAll.useQuery(undefined, {
-      refetchOnMount: true,
-      refetchOnWindowFocus: false,
-    });
 
-  const profileMap = useMemo(() => {
-    return Object.fromEntries(fetchedProfiles.map((p) => [p.model, p]));
-  }, [fetchedProfiles]);
-
-  if (!user) {
+  if (!user || isLoading) {
     return <PartialLoading />;
   }
 
@@ -33,6 +25,8 @@ export default function ModelsPage() {
 
   return (
     <div className="flex flex-col h-full relative">
+      <LoadAiProfiles />
+
       <div
         className="absolute top-0 left-0 w-full h-[50px] px-4 flex items-center justify-between select-none"
         style={headerStyle}
@@ -44,20 +38,18 @@ export default function ModelsPage() {
         <p className="text-muted-foreground text-sm mb-6">
           Make each AI model feel a little more personal by giving it a friendly
           name and a unique profile image. Images should be under 1MB, and names
-          can be up to 20 characters long. It’s a small touch, but it helps make
-          your experience feel more like you.
+          can be up to 20 characters long.
         </p>
 
         <div className="flex-1 space-y-4">
           {MODELS.map((model) => {
-            const profile = profileMap[model];
+            const profile = profiles[model];
             return (
               <ModelCard
                 key={model}
                 model={model}
                 name={profile?.name ?? model}
                 image={profile?.imageUrl}
-                refetch={refetch}
               />
             );
           })}
