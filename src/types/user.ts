@@ -31,6 +31,7 @@ export const Prefs = z.object({
   enterToSend: z.boolean().default(true),
   themeColor: z.string().default("255,187,0"),
   themeOpacity: z.number().default(0.5),
+  avatarStyle: z.string().default("thumbs"),
 });
 export type Prefs = zInfer<typeof Prefs>;
 
