@@ -5,6 +5,7 @@ export * as GratitudeJournal from "./gratitude-journal";
 export * as Message from "./message";
 export * as MessageChunk from "./message-chunk";
 export * as MessageReply from "./message-reply";
+export * as ServerError from "./server-error";
 export * as User from "./user";
 export * as UserAiProfile from "./user-ai-profile";
 export * as UserDefaultPrompt from "./user-default-prompt";

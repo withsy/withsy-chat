@@ -1,15 +1,15 @@
 import type { AppRouter } from "@/server/trpc/routers/_app";
+import { QueryClient } from "@tanstack/react-query";
 import {
+  createTRPCClient,
   httpBatchLink,
   httpLink,
-  httpSubscriptionLink,
-  isNonJsonSerializable,
   loggerLink,
   splitLink,
   type TRPCLink,
 } from "@trpc/client";
-import { createTRPCNext } from "@trpc/next";
-import superjson from "superjson";
+import { createTRPCContext } from "@trpc/tanstack-react-query";
+import { SuperJSON } from "superjson";
 
 function getBaseUrl() {
   if (typeof window !== "undefined") return "";
@@ -21,7 +21,7 @@ function getUrl() {
 }
 
 const commonLinkOptions = {
-  transformer: superjson,
+  transformer: SuperJSON,
   url: getUrl(),
 };
 
@@ -33,23 +33,44 @@ const links: TRPCLink<AppRouter>[] = [
       (opts.direction === "down" && opts.result instanceof Error),
   }),
   splitLink({
-    condition: (op) => op.type === "subscription",
-    true: httpSubscriptionLink(commonLinkOptions),
-    false: splitLink({
-      condition: (op) =>
-        op.context.skipBatch === true || isNonJsonSerializable(op.input),
-      true: httpLink(commonLinkOptions),
-      false: httpBatchLink(commonLinkOptions),
-    }),
+    condition: (op) => op.context.skipBatch === true,
+    true: httpLink(commonLinkOptions),
+    false: httpBatchLink(commonLinkOptions),
   }),
 ];
 
-export const trpc = createTRPCNext<AppRouter>({
-  transformer: superjson,
-  config() {
-    return {
-      links,
-    };
-  },
-  ssr: false,
-});
+export const { TRPCProvider, useTRPC, useTRPCClient } =
+  createTRPCContext<AppRouter>();
+
+function makeQueryClient() {
+  return new QueryClient({
+    defaultOptions: {
+      queries: {
+        // With SSR, we usually want to set some default staleTime
+        // above 0 to avoid refetching immediately on the client
+        staleTime: 60 * 1000,
+      },
+    },
+  });
+}
+
+let browserQueryClient: QueryClient | undefined = undefined;
+export function getQueryClient() {
+  if (typeof window === "undefined") {
+    // Server: always make a new query client
+    return makeQueryClient();
+  } else {
+    // Browser: make a new query client if we don't already have one
+    // This is very important, so we don't re-make a new client if React
+    // suspends during the initial render. This may not be needed if we
+    // have a suspense boundary BELOW the creation of the query client
+    if (!browserQueryClient) browserQueryClient = makeQueryClient();
+    return browserQueryClient;
+  }
+}
+
+export function createTrpcClient() {
+  return createTRPCClient<AppRouter>({
+    links,
+  });
+}

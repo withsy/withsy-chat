@@ -3,21 +3,23 @@ import HomeLayout from "@/components/layout/HomeLayout";
 import LoadAiProfiles from "@/components/LoadAiProfiles";
 import AppProviders from "@/context/AppProviders";
 import { useSidebarInitializer } from "@/hooks/useSidebarInitializer";
-import { trpc } from "@/lib/trpc";
+import { createTrpcClient, getQueryClient, TRPCProvider } from "@/lib/trpc";
 import "@/styles/globals.css";
+import { QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import type { AppProps, AppType } from "next/app";
 import { Nunito } from "next/font/google";
 import Head from "next/head";
 import { useRouter } from "next/router";
+import { useState } from "react";
 import { Toaster as Sonner } from "sonner";
 
 const nunito = Nunito({ subsets: ["latin"] });
 
-const MyApp: AppType = ({
+export default function App({
   Component,
   pageProps: { session, ...pageProps },
-}: AppProps) => {
+}: AppProps) {
   useSidebarInitializer();
   const router = useRouter();
   const noLayoutPages = ["/auth/signin", "/api-doc"];
@@ -35,31 +37,36 @@ const MyApp: AppType = ({
   let title = "Withsy";
   if (process.env.NODE_ENV === "development") title = `[DEV] ${title}`;
 
+  const queryClient = getQueryClient();
+  const [trpcClient] = useState(() => createTrpcClient());
+
   return (
-    <AppProviders session={session}>
-      <Head>
-        <link rel="icon" href="/favicon.ico" />
-        <title>{title}</title>
-      </Head>
-      {isLayoutDisabled ? (
-        <main className={nunito.className}>
-          <Component {...pageProps} />
-        </main>
-      ) : isHomeLayout ? (
-        <HomeLayout className={nunito.className}>
-          <Component {...pageProps} />
-        </HomeLayout>
-      ) : (
-        <ChatLayout className={nunito.className}>
-          <Component {...pageProps} />
-        </ChatLayout>
-      )}
+    <QueryClientProvider client={queryClient}>
+      <TRPCProvider trpcClient={trpcClient} queryClient={queryClient}>
+        <AppProviders session={session}>
+          <Head>
+            <link rel="icon" href="/favicon.ico" />
+            <title>{title}</title>
+          </Head>
+          {isLayoutDisabled ? (
+            <main className={nunito.className}>
+              <Component {...pageProps} />
+            </main>
+          ) : isHomeLayout ? (
+            <HomeLayout className={nunito.className}>
+              <Component {...pageProps} />
+            </HomeLayout>
+          ) : (
+            <ChatLayout className={nunito.className}>
+              <Component {...pageProps} />
+            </ChatLayout>
+          )}
 
-      <Sonner position="bottom-right" />
-      <LoadAiProfiles />
-      <ReactQueryDevtools />
-    </AppProviders>
+          <Sonner position="bottom-right" />
+          <LoadAiProfiles />
+          <ReactQueryDevtools />
+        </AppProviders>
+      </TRPCProvider>
+    </QueryClientProvider>
   );
-};
-
-export default trpc.withTRPC(MyApp);
+}

@@ -1,11 +1,11 @@
-import { useUser } from "@/context/UserContext";
-import { useSidebarStore } from "@/stores/useSidebarStore";
-import { useAiProfileStore } from "@/stores/useAiProfileStore";
-import { PartialLoading } from "@/components/Loading";
 import { CollapseButton } from "@/components/CollapseButton";
-import { Model } from "@/types/model";
-import ModelCard from "@/components/models/ModelCard";
 import LoadAiProfiles from "@/components/LoadAiProfiles";
+import { PartialLoading } from "@/components/Loading";
+import ModelCard from "@/components/models/ModelCard";
+import { useUser } from "@/context/UserContext";
+import { useAiProfileStore } from "@/stores/useAiProfileStore";
+import { useSidebarStore } from "@/stores/useSidebarStore";
+import { Model } from "@/types/model";
 
 export default function ModelsPage() {
   const { user } = useUser();
@@ -49,7 +49,7 @@ export default function ModelsPage() {
                 key={model}
                 model={model}
                 name={profile?.name ?? model}
-                image={profile?.imageUrl}
+                image={profile?.imageSource}
               />
             );
           })}

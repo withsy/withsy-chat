@@ -14,15 +14,12 @@ type EncryptionPayload = zInfer<typeof EncryptionPayload>;
 export class EncryptionService {
   private aes256GcmKey: Buffer;
 
-  emptyStringEncrypted: string;
-
   constructor(private readonly service: ServiceRegistry) {
     const buffer = Buffer.from(this.service.env.encryptionKey, "hex");
     if (buffer.length !== 32)
       throw new Error("Invalid encryption key length. Expected 32 bytes.");
 
     this.aes256GcmKey = buffer;
-    this.emptyStringEncrypted = this.encrypt("");
   }
 
   encrypt(text: string) {

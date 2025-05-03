@@ -1,5 +1,6 @@
-import { trpc } from "@/lib/trpc";
+import { useTRPC } from "@/lib/trpc";
 import type { Chat } from "@/types";
+import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -8,50 +9,30 @@ import { getCharacterStyle } from "./characterStyles";
 import { HoverInvertButton } from "./HoverInvertButton";
 import type { ActionName, WithsyFriend } from "./withsyFriends";
 
-const actionHandlers: Record<ActionName, () => void> = {
-  creativeExpression: () =>
-    trpc.gratitudeJournal.startChat
-      .useMutation()
-      .mutate({ idempotencyKey: uuid() }),
-  softSupport: () =>
-    trpc.gratitudeJournal.startChat
-      .useMutation()
-      .mutate({ idempotencyKey: uuid() }),
-  bookNotes: () =>
-    trpc.gratitudeJournal.startChat
-      .useMutation()
-      .mutate({ idempotencyKey: uuid() }),
-  gratitudeJournaling: () =>
-    trpc.gratitudeJournal.startChat
-      .useMutation()
-      .mutate({ idempotencyKey: uuid() }),
-  goalsHabits: () =>
-    trpc.gratitudeJournal.startChat
-      .useMutation()
-      .mutate({ idempotencyKey: uuid() }),
-  emotionalVenting: () =>
-    trpc.gratitudeJournal.startChat
-      .useMutation()
-      .mutate({ idempotencyKey: uuid() }),
-};
-
 export function FriendCard({ friend }: { friend: WithsyFriend }) {
+  const trpc = useTRPC();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const friendStyle = getCharacterStyle(friend.name);
 
-  const { mutateAsync: startCreativeExpression } =
-    trpc.gratitudeJournal.startChat.useMutation();
-  const { mutateAsync: startSoftSupport } =
-    trpc.gratitudeJournal.startChat.useMutation();
-  const { mutateAsync: startBookNotes } =
-    trpc.gratitudeJournal.startChat.useMutation();
-  const { mutateAsync: startGratitudeJournaling } =
-    trpc.gratitudeJournal.startChat.useMutation();
-  const { mutateAsync: startGoalsHabits } =
-    trpc.gratitudeJournal.startChat.useMutation();
-  const { mutateAsync: startEmotionalVenting } =
-    trpc.gratitudeJournal.startChat.useMutation();
+  const { mutateAsync: startCreativeExpression } = useMutation(
+    trpc.gratitudeJournal.startChat.mutationOptions()
+  );
+  const { mutateAsync: startSoftSupport } = useMutation(
+    trpc.gratitudeJournal.startChat.mutationOptions()
+  );
+  const { mutateAsync: startBookNotes } = useMutation(
+    trpc.gratitudeJournal.startChat.mutationOptions()
+  );
+  const { mutateAsync: startGratitudeJournaling } = useMutation(
+    trpc.gratitudeJournal.startChat.mutationOptions()
+  );
+  const { mutateAsync: startGoalsHabits } = useMutation(
+    trpc.gratitudeJournal.startChat.mutationOptions()
+  );
+  const { mutateAsync: startEmotionalVenting } = useMutation(
+    trpc.gratitudeJournal.startChat.mutationOptions()
+  );
 
   const actionHandlers: Record<ActionName, () => Promise<Chat.StartOutput>> = {
     creativeExpression: () =>

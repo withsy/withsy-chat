@@ -3,7 +3,8 @@ import { BookmarkCardHeader } from "@/components/bookmarks/BookmarkCardHeader";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { useUser } from "@/context/UserContext";
-import { trpc } from "@/lib/trpc";
+import { useTRPC } from "@/lib/trpc";
+import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
 import { CollapseToggle } from "../CollapseToggle";
@@ -26,6 +27,7 @@ export function BookmarkCard({
   createdAt,
   hideUnsave,
 }: BookmarkCardProps) {
+  const trpc = useTRPC();
   const { user } = useUser();
   if (!user) throw new Error("User must exist.");
 
@@ -39,7 +41,9 @@ export function BookmarkCard({
   const [bookmarked, setBookmarked] = useState(true);
   const link = `/chat/${chatId}?messageId=${messageId}`;
 
-  const updateMessageMutation = trpc.message.update.useMutation();
+  const updateMessageMutation = useMutation(
+    trpc.message.update.mutationOptions()
+  );
 
   const handleToggleSaved = () => {
     updateMessageMutation.mutate(

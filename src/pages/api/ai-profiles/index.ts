@@ -1,12 +1,14 @@
-import { service } from "@/server/service-registry";
-import { User } from "@/types";
+import { HttpServerError } from "@/server/error";
+import {
+  createNextPagesApiHandler,
+  type Options,
+} from "@/server/next-pages-api-handler";
+import type { UserId } from "@/types/id";
 import { Model } from "@/types/model";
 import Busboy from "busboy";
+import { getReasonPhrase, StatusCodes } from "http-status-codes";
 import mime from "mime-types";
-import type { NextApiRequest, NextApiResponse } from "next";
-import { getServerSession } from "next-auth";
 import { uuidv7 } from "uuidv7";
-import { authOptions } from "./auth/[...nextauth]";
 
 const ALLOWED_MIME_TYPES = ["image/jpeg", "image/png", "image/webp"];
 const MAX_FILE_SIZE = 1 * 1024 * 1024; // 1 MB
@@ -19,7 +21,7 @@ export const config = {
 
 /**
  * @openapi
- * /api/ai-profile:
+ * /api/ai-profiles:
  *   post:
  *     summary: Update AI profile
  *     consumes:
@@ -50,21 +52,30 @@ export const config = {
  *                   type: string
  *                 model:
  *                   type: string
- *                 imageUrl:
+ *                 imageSource:
  *                   type: string
  */
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  if (req.method !== "POST")
-    return res.status(405).json({ error: "Method not allowed" });
+export default createNextPagesApiHandler({ post });
 
-  const session = await getServerSession(req, res, authOptions);
-  if (!session) return res.status(401).json({ error: "Unauthorized" });
+async function post(opts: Options) {
+  const { req, res, ctx } = opts;
+  const { service, userId } = ctx;
 
-  const userSession = User.Session.parse(session);
-  const userId = userSession.user.id;
+  const idempotencyKey = req.headers["idempotency-key"];
+  if (typeof idempotencyKey != "string" || idempotencyKey.length === 0)
+    throw new HttpServerError(
+      StatusCodes.BAD_REQUEST,
+      "Idempotency-Key is required."
+    );
+
+  try {
+    await service.idempotencyInfo.checkDuplicateRequest(idempotencyKey);
+  } catch (_e) {
+    throw new HttpServerError(
+      StatusCodes.CONFLICT,
+      getReasonPhrase(StatusCodes.CONFLICT)
+    );
+  }
 
   let maybeModel: string | undefined = undefined;
   let name: string | undefined = undefined;
@@ -93,7 +104,8 @@ export default async function handler(
 
         const ext = mime.extension(mimeType);
         const uuid = uuidv7();
-        imagePath = `users/${userId}/ai-profiles/${uuid}.${ext}`;
+        const fileName = `${uuid}.${ext}`;
+        imagePath = createImagePath({ userId, fileName });
 
         const writable = service.firebase.bucket
           .file(imagePath)
@@ -136,4 +148,9 @@ export default async function handler(
   });
 
   return res.status(200).json(userAiProfile);
+}
+
+export function createImagePath(input: { userId: UserId; fileName: string }) {
+  const { userId, fileName } = input;
+  return `users/${userId}/ai-profiles/${fileName}`;
 }

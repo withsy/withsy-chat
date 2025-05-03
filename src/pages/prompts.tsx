@@ -4,14 +4,16 @@ import { EditPromptModal } from "@/components/prompts/EditPromptModal";
 import { PromptCard } from "@/components/prompts/PromptCard";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@/context/UserContext";
-import { trpc } from "@/lib/trpc";
+import { useTRPC } from "@/lib/trpc";
 import { useChatStore } from "@/stores/useChatStore";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 import type { UserPrompt } from "@/types";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { v4 as uuid } from "uuid";
 
 function PromptsPage() {
+  const trpc = useTRPC();
   const { user } = useUser();
   const { chat, setChat } = useChatStore();
   const { collapsed } = useSidebarStore();
@@ -23,42 +25,52 @@ function PromptsPage() {
     data: prompts,
     refetch: refetchPrompts,
     isLoading: isLoadingPrompts,
-  } = trpc.userPrompt.list.useQuery();
+  } = useQuery(trpc.userPrompt.list.queryOptions());
   const {
     data: defaultPrompt,
     refetch: refetchDefaultPrompt,
     isLoading: isLoadingDefaultPrompt,
-  } = trpc.userDefaultPrompt.get.useQuery(undefined, {
-    retry: false,
-  });
+  } = useQuery(
+    trpc.userDefaultPrompt.get.queryOptions(undefined, {
+      retry: false,
+    })
+  );
 
-  const createPrompt = trpc.userPrompt.create.useMutation({
-    onSuccess: () => {
-      refetchPrompts();
-      refetchDefaultPrompt();
-    },
-  });
+  const createPrompt = useMutation(
+    trpc.userPrompt.create.mutationOptions({
+      onSuccess: () => {
+        refetchPrompts();
+        refetchDefaultPrompt();
+      },
+    })
+  );
 
-  const updatePrompt = trpc.userPrompt.update.useMutation({
-    onSuccess: () => {
-      refetchPrompts();
-      refetchDefaultPrompt();
-    },
-  });
+  const updatePrompt = useMutation(
+    trpc.userPrompt.update.mutationOptions({
+      onSuccess: () => {
+        refetchPrompts();
+        refetchDefaultPrompt();
+      },
+    })
+  );
 
-  const updateDefaultPrompt = trpc.userDefaultPrompt.update.useMutation({
-    onSuccess: () => {
-      refetchPrompts();
-      refetchDefaultPrompt();
-    },
-  });
+  const updateDefaultPrompt = useMutation(
+    trpc.userDefaultPrompt.update.mutationOptions({
+      onSuccess: () => {
+        refetchPrompts();
+        refetchDefaultPrompt();
+      },
+    })
+  );
 
-  const deletePrompt = trpc.userPrompt.delete.useMutation({
-    onSuccess: () => {
-      refetchPrompts();
-      refetchDefaultPrompt();
-    },
-  });
+  const deletePrompt = useMutation(
+    trpc.userPrompt.delete.mutationOptions({
+      onSuccess: () => {
+        refetchPrompts();
+        refetchDefaultPrompt();
+      },
+    })
+  );
 
   const toggleStarPrompt = (prompt: UserPrompt.Data) => {
     updatePrompt.mutate({

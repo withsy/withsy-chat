@@ -23,6 +23,8 @@ export const t = initTRPC.context<ServerContext>().create({
       };
     }
 
+    // TODO: transform HttpServerError, ServerError.
+
     return shape;
   },
 });

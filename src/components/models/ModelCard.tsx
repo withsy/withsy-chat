@@ -1,12 +1,13 @@
-import { useState } from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { ModelAvatar } from "@/components/ModelAvatar";
-import { toast } from "sonner";
-import CropImageModal from "./CropImageModal";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { base64ToFile } from "@/lib/avatar-utils";
 import { useAiProfileStore } from "@/stores/useAiProfileStore";
+import { useState } from "react";
+import { toast } from "sonner";
+import { v4 as uuid } from "uuid";
+import CropImageModal from "./CropImageModal";
 
 type Props = {
   model: string;
@@ -34,9 +35,12 @@ export default function ModelCard({ model, name, image }: Props) {
       form.append("model", model);
       form.append("name", newName.trim());
 
-      const res = await fetch("/api/ai-profile", {
+      const res = await fetch("/api/ai-profiles", {
         method: "POST",
         body: form,
+        headers: {
+          "Idempotency-Key": uuid(),
+        },
       });
 
       if (!res.ok) throw new Error("Server responded with error");
@@ -85,9 +89,12 @@ export default function ModelCard({ model, name, image }: Props) {
       form.append("name", newName.trim());
       form.append("image", file);
 
-      const res = await fetch("/api/ai-profile", {
+      const res = await fetch("/api/ai-profiles", {
         method: "POST",
         body: form,
+        headers: {
+          "Idempotency-Key": uuid(),
+        },
       });
 
       if (!res.ok) throw new Error("Server responded with error");

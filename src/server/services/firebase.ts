@@ -20,16 +20,6 @@ export class FirebaseService {
     this.bucket = this.storage.bucket(BUCKET_NAME);
   }
 
-  async getSignedUrl(filePath: string): Promise<string> {
-    const file = this.bucket.file(filePath);
-    const [url] = await file.getSignedUrl({
-      action: "read",
-      expires: Date.now() + 15 * 60 * 1000, // 15 minutes
-    });
-
-    return url;
-  }
-
   async delete(filePath: string): Promise<void> {
     try {
       await this.service.firebase.bucket.file(filePath).delete();

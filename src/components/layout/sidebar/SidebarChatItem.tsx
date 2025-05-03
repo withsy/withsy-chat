@@ -14,11 +14,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useUser } from "@/context/UserContext";
-import { trpc } from "@/lib/trpc";
+import { useTRPC } from "@/lib/trpc";
 import { useChatStore } from "@/stores/useChatStore";
 import { useDrawerStore } from "@/stores/useDrawerStore";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 import type { Chat } from "@/types";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { EllipsisVertical, Pencil, Star, StarOff, Trash2 } from "lucide-react";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -32,6 +33,8 @@ export function SidebarChatItem({
   isSidebar?: boolean;
   onChatUpdate: (chat: Chat.Data) => void;
 }) {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
   const router = useRouter();
   const { setOpenDrawer } = useDrawerStore();
 
@@ -44,18 +47,22 @@ export function SidebarChatItem({
   const { user } = useUser();
   if (!user) throw new Error("User must exist.");
 
-  const utils = trpc.useUtils();
-  const updateChatMut = trpc.chat.update.useMutation({
-    onMutate: () => utils.chat.list.cancel(),
-    onSuccess: () => utils.chat.list.invalidate(),
-  });
-  const deleteChat = trpc.chat.delete.useMutation({
-    onMutate: () => utils.chat.list.cancel(),
-    onSuccess: () => {
-      if (isActive) router.push("/chat");
-      utils.chat.list.invalidate();
-    },
-  });
+  const updateChatMut = useMutation(
+    trpc.chat.update.mutationOptions({
+      onMutate: () => queryClient.cancelQueries(trpc.chat.list.queryFilter()),
+      onSuccess: () =>
+        queryClient.invalidateQueries(trpc.chat.list.queryFilter()),
+    })
+  );
+  const deleteChat = useMutation(
+    trpc.chat.delete.mutationOptions({
+      onMutate: () => queryClient.cancelQueries(trpc.chat.list.queryFilter()),
+      onSuccess: () => {
+        if (isActive) router.push("/chat");
+        queryClient.invalidateQueries(trpc.chat.list.queryFilter());
+      },
+    })
+  );
 
   const isActive = router.asPath === `/chat/${chat.id}`;
   const chatType = chat.type;
@@ -118,7 +125,7 @@ export function SidebarChatItem({
           onChatUpdate(chat);
         },
         onSuccess: () => {
-          utils.chat.list.invalidate();
+          queryClient.invalidateQueries(trpc.chat.list.queryFilter());
         },
       }
     );

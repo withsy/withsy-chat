@@ -1,5 +1,6 @@
-import { trpc } from "@/lib/trpc";
+import { useTRPC } from "@/lib/trpc";
 import { User } from "@/types";
+import { useMutation } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import {
   createContext,
@@ -21,57 +22,64 @@ type UserContextType = {
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export function UserProvider({ children }: { children: ReactNode }) {
+  const trpc = useTRPC();
   const { data: session } = useSession();
   const [userPrefLoadings, setUserPrefLoadings] = useState<UserPrefLoadings>(
     {}
   );
   const [user, setUser] = useState<User.Data | null>(null);
 
-  const { mutate: userEnsure } = trpc.user.ensure.useMutation({
-    onSuccess: (data) => setUser(data),
-  });
+  const { mutate: userEnsure } = useMutation(
+    trpc.user.ensure.mutationOptions({
+      onSuccess: (data) => setUser(data),
+    })
+  );
 
-  const updateUserPrefs = trpc.user.updatePrefs.useMutation({
-    onMutate: async (input: User.UpdatePrefs) => {
-      if (!user) throw new Error("User is not set.");
-      const previous = User.Prefs.parse(
-        JSON.parse(JSON.stringify(user.preferences))
-      );
+  const updateUserPrefs = useMutation(
+    trpc.user.updatePrefs.mutationOptions({
+      onMutate: async (input: User.UpdatePrefs) => {
+        if (!user) throw new Error("User is not set.");
+        const previous = User.Prefs.parse(
+          JSON.parse(JSON.stringify(user.preferences))
+        );
 
-      const inputs = Object.entries(input).filter(([_, v]) => v !== undefined);
-      inputs.forEach(([k, v]) => Reflect.set(user.preferences, k, v));
+        const inputs = Object.entries(input).filter(
+          ([_, v]) => v !== undefined
+        );
+        inputs.forEach(([k, v]) => Reflect.set(user.preferences, k, v));
 
-      const loadings = inputs.map(([k, _]) => [k, true]);
-      setUserPrefLoadings((p) => ({
-        ...p,
-        ...Object.fromEntries(loadings),
-      }));
-      return { previous, loadings };
-    },
-    onSettled(data, error, ___, ctx) {
-      if (!user) return;
-
-      if (data)
-        setUser({
-          ...user,
-          preferences: data.preferences,
-        });
-
-      if (error && ctx?.previous) {
-        setUser({
-          ...user,
-          preferences: ctx.previous,
-        });
-      }
-
-      if (ctx?.loadings) {
+        const loadings = inputs.map(([k, _]) => [k, true]);
         setUserPrefLoadings((p) => ({
           ...p,
-          ...Object.fromEntries(ctx.loadings.map(([k, _]) => [k, false])),
+          ...Object.fromEntries(loadings),
         }));
-      }
-    },
-  });
+        return { previous, loadings };
+      },
+      onSettled(data, error, ___, ctx) {
+        if (!user) return;
+
+        if (data)
+          setUser({
+            ...user,
+            preferences: data.preferences,
+          });
+
+        if (error && ctx?.previous) {
+          setUser({
+            ...user,
+            preferences: ctx.previous,
+          });
+        }
+
+        if (ctx?.loadings) {
+          setUserPrefLoadings((p) => ({
+            ...p,
+            ...Object.fromEntries(ctx.loadings.map(([k, _]) => [k, false])),
+          }));
+        }
+      },
+    })
+  );
 
   useEffect(() => {
     if (!session) return;

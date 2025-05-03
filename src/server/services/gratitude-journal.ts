@@ -160,6 +160,12 @@ export class GratitudeJournalService {
     const title = `Gratitude Journal - ${zonedTodayDate}`;
     const titleEncrypted = this.service.encryption.encrypt(title);
     const promptTextEncrypted = this.service.encryption.encrypt(promptText);
+    const userMessageTextEncrypted = this.service.encryption.encrypt("");
+    const userMessageReasoningTextEncrypted =
+      this.service.encryption.encrypt("");
+    const modelMessageTextEncrypted = this.service.encryption.encrypt("");
+    const modelMessageReasoningTextEncrypted =
+      this.service.encryption.encrypt("");
 
     const createRes = await this.service.db.$transaction(async (tx) => {
       await IdempotencyInfoService.checkDuplicateRequest(tx, idempotencyKey);
@@ -193,16 +199,16 @@ export class GratitudeJournalService {
 
       const userMessage = await MessageService.createUserMessage(tx, {
         chatId: chat.id,
-        textEncrypted: this.service.encryption.emptyStringEncrypted,
-        reasoningTextEncrypted: this.service.encryption.emptyStringEncrypted,
+        textEncrypted: userMessageTextEncrypted,
+        reasoningTextEncrypted: userMessageReasoningTextEncrypted,
         isPublic: false,
       });
       const modelMessage = await MessageService.createModelMessage(tx, {
         chatId: chat.id,
         model: "gemini-2.0-flash",
         parentMessageId: userMessage.id,
-        textEncrypted: this.service.encryption.emptyStringEncrypted,
-        reasoningTextEncrypted: this.service.encryption.emptyStringEncrypted,
+        textEncrypted: modelMessageTextEncrypted,
+        reasoningTextEncrypted: modelMessageReasoningTextEncrypted,
       });
 
       const gratitudeJournal = await tx.gratitudeJournal.create({
