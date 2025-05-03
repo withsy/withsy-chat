@@ -62,10 +62,16 @@ export default function MobileChatHeader({
         {chatTitle && (
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-              <button className="flex flex-row items-center truncate font-semibold px-2 py-1 gap-3 rounded-md hover:bg-white active:bg-white select-none">
-                {chatType && getChatTypeIcon(chatType, "")}
-                {chatTitle}
-                <ChevronDown size={16} />
+              <button className="max-w-[180px] flex items-center px-2 py-1 gap-3 rounded-md hover:bg-white active:bg-white select-none">
+                {chatType && (
+                  <span className="shrink-0">
+                    {getChatTypeIcon(chatType, "")}
+                  </span>
+                )}
+
+                <span className="truncate font-semibold">{chatTitle}</span>
+
+                <ChevronDown size={16} className="shrink-0" />
               </button>
             </DialogTrigger>
             <DialogContent className="p-5 flex flex-col gap-2 w-64">
