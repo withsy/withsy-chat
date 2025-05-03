@@ -38,12 +38,7 @@ export function ChatSession({ initialMessages, children }: Props) {
   const { user } = useUser();
   const [messages, setMessages] = useState(initialMessages);
 
-  const lastMessage = initialMessages.at(-1);
-  const maybeStreamMessageId =
-    lastMessage && !isMessageComplete(lastMessage) ? lastMessage.id : null;
-  const [streamMessageId, setStreamMessageId] = useState<string | null>(
-    maybeStreamMessageId
-  );
+  const [streamMessageId, setStreamMessageId] = useState<string | null>(null);
   const [shouldFocusInput, setShouldFocusInput] = useState(false);
   const [usageLimit, setUsageLimit] = useState<UserUsageLimit | null>(null);
   const [eventSource, setEventSource] = useState<EventSource | null>(null);
@@ -84,6 +79,14 @@ export function ChatSession({ initialMessages, children }: Props) {
       },
     })
   );
+
+  useEffect(() => {
+    setMessages(initialMessages);
+    const lastMessage = initialMessages.at(-1);
+    const streamMessageId =
+      lastMessage && !isMessageComplete(lastMessage) ? lastMessage.id : null;
+    setStreamMessageId(streamMessageId);
+  }, [initialMessages]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
