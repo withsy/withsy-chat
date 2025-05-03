@@ -10,6 +10,38 @@ import type { UserUsageLimit } from "@/types/user-usage-limit";
 import { getReasonPhrase, StatusCodes } from "http-status-codes";
 import SuperJSON from "superjson";
 
+/**
+ * @openapi
+ * /api/messages/{messageId}:
+ *   get:
+ *     summary: Receive messages streaming
+ *     parameters:
+ *       - name: messageId
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *           minLength: 1
+ *     responses:
+ *       200:
+ *         headers:
+ *           Content-Type:
+ *             schema:
+ *               type: string
+ *           Cache-Control:
+ *             schema:
+ *               type: string
+ *           Connection:
+ *             schema:
+ *               type: string
+ *           Content-Encoding:
+ *             schema:
+ *               type: string
+ *         content:
+ *           text/event-stream:
+ *             schema:
+ *               type: object
+ */
 export default createNextPagesApiHandler({ get });
 
 export async function get(options: Options) {
