@@ -47,15 +47,46 @@ export function ChatInputBox({
     ];
   });
 
+  // 초기 포커스 설정: 컴포넌트 마운트 시 포커스 설정
   useEffect(() => {
-    textareaRef.current?.focus();
+    if (textareaRef.current && document.activeElement !== textareaRef.current) {
+      textareaRef.current.focus();
+    }
   }, []);
 
+  // shouldFocus prop에 따른 포커스 관리: 이미 포커스된 경우 재설정 방지
   useEffect(() => {
-    if (shouldFocus) {
-      textareaRef.current?.focus();
+    if (
+      shouldFocus &&
+      textareaRef.current &&
+      document.activeElement !== textareaRef.current
+    ) {
+      // 드로어 애니메이션(300ms) 후 포커스 설정
+      const timer = setTimeout(() => {
+        textareaRef.current?.focus();
+        textareaRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "end",
+        });
+      }, 300);
+      return () => clearTimeout(timer);
     }
   }, [shouldFocus]);
+
+  // 키보드 등장/사라짐 처리: 뷰포트 변경 시 입력 박스 위치 조정
+  useEffect(() => {
+    const handleResize = () => {
+      if (textareaRef.current) {
+        textareaRef.current.scrollIntoView({
+          behavior: "smooth",
+          block: "end",
+        });
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const handleSend = () => {
     if (!message.trim()) return;

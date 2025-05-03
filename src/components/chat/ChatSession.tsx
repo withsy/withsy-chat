@@ -29,7 +29,7 @@ export function ChatSession({ initialMessages, children }: Props) {
   const { chat } = useChatStore();
   const router = useRouter();
 
-  const { isMobile } = useSidebarStore();
+  const { collapsed, isMobile } = useSidebarStore();
   const { selectedModel } = useSelectedModelStore();
   const { user } = useUser();
   const [messages, setMessages] = useState(initialMessages);
@@ -74,10 +74,13 @@ export function ChatSession({ initialMessages, children }: Props) {
   }, [initialMessages]);
 
   useEffect(() => {
-    setShouldFocusInput(true);
-    const timer = setTimeout(() => setShouldFocusInput(false), 500);
+    const timer = setTimeout(() => {
+      setShouldFocusInput(true);
+      const resetTimer = setTimeout(() => setShouldFocusInput(false), 500);
+      return () => clearTimeout(resetTimer);
+    }, 300);
     return () => clearTimeout(timer);
-  }, [chat?.id]);
+  }, [chat?.id, collapsed]);
 
   useEffect(() => {
     const { streamMessageId } = router.query;
@@ -242,7 +245,7 @@ export function ChatSession({ initialMessages, children }: Props) {
           )}
           {children}
         </div>
-        <div className="absolute bottom-[2vh] left-0 right-0 flex flex-col items-center justify-center px-4">
+        <div className="fixed bottom-4 left-0 right-0 flex flex-col items-center justify-center px-4 z-10">
           <ChatInputBox
             onSendMessage={onSendMessage}
             shouldFocus={shouldFocusInput}
