@@ -1,12 +1,11 @@
-import { service } from "@/server/service-registry";
-import { User } from "@/types";
+import {
+  createNextPagesApiHandler,
+  type Options,
+} from "@/server/next-pages-api-handler";
 import { Model } from "@/types/model";
 import Busboy from "busboy";
 import mime from "mime-types";
-import type { NextApiRequest, NextApiResponse } from "next";
-import { getServerSession } from "next-auth";
 import { uuidv7 } from "uuidv7";
-import { authOptions } from "./auth/[...nextauth]";
 
 const ALLOWED_MIME_TYPES = ["image/jpeg", "image/png", "image/webp"];
 const MAX_FILE_SIZE = 1 * 1024 * 1024; // 1 MB
@@ -19,7 +18,7 @@ export const config = {
 
 /**
  * @openapi
- * /api/ai-profile:
+ * /api/ai-profiles:
  *   post:
  *     summary: Update AI profile
  *     consumes:
@@ -53,18 +52,16 @@ export const config = {
  *                 imageUrl:
  *                   type: string
  */
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  if (req.method !== "POST")
-    return res.status(405).json({ error: "Method not allowed" });
+export default createNextPagesApiHandler({ get, post });
 
-  const session = await getServerSession(req, res, authOptions);
-  if (!session) return res.status(401).json({ error: "Unauthorized" });
+async function get(opts: Options) {
+  const { req, res, ctx } = opts;
+  const { service, userId } = ctx;
+}
 
-  const userSession = User.Session.parse(session);
-  const userId = userSession.user.id;
+async function post(opts: Options) {
+  const { req, res, ctx } = opts;
+  const { service, userId } = ctx;
 
   let maybeModel: string | undefined = undefined;
   let name: string | undefined = undefined;

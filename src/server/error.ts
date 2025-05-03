@@ -1,57 +1,57 @@
-import type { Extra, ServerErrorData } from "@/types/error";
-import { StatusCodes, getReasonPhrase } from "http-status-codes";
+import { ServerError as Base } from "@/types";
+import { StatusCodes } from "http-status-codes";
 import type { JsonObject } from "type-fest";
 
-export type ServerErrorOptions<TExtra extends Extra = Extra> = {
-  extra?: TExtra;
+export type Options<TDetails extends Base.Details = Base.Details> = {
+  details?: TDetails;
   errors?: ServerError[];
+  cause?: unknown;
 };
 
 export class ServerError<
-    TExtra extends Extra = Extra,
+    TDetails extends Base.Details = Base.Details,
     TCode extends number = number
   >
   extends Error
-  implements ServerErrorData
+  implements Base.Data
 {
-  public extra?: TExtra;
+  public type: string;
+  public details?: TDetails;
   public errors?: ServerError[];
 
   constructor(
     public code: TCode,
     message: string,
-    options?: ServerErrorOptions<TExtra>
+    options?: Options<TDetails>
   ) {
     super(message);
-    this.extra = options?.extra;
-    this.errors = options?.errors;
+    this.type = this.name;
+    if (options?.cause) this.cause = options.cause;
+    if (options?.details) this.details = options.details;
+    if (options?.errors) this.errors = options.errors;
   }
 
-  toData(): ServerErrorData {
-    const data: ServerErrorData = {
+  toData(): Base.Data {
+    const data: Base.Data = {
       code: this.code,
-      name: this.name,
+      type: this.type,
       message: this.message,
     };
-    if (process.env.NODE_ENV !== "production")
+    if (process.env.NODE_ENV !== "production") {
       if (this.stack) data.stack = this.stack;
-    if (this.extra) data.extra = this.extra;
+      if (this.cause) data.cause = this.cause;
+    }
+    if (this.details) data.details = this.details;
     if (this.errors) data.errors = this.errors.map((x) => x.toData());
     return data;
   }
 }
 
-export class HttpServerError<TExtra extends Extra = Extra> extends ServerError<
-  TExtra,
-  StatusCodes
-> {
-  constructor(
-    code: StatusCodes,
-    message: string,
-    options?: ServerErrorOptions<TExtra>
-  ) {
+export class HttpServerError<
+  TDetails extends Base.Details = Base.Details
+> extends ServerError<TDetails, StatusCodes> {
+  constructor(code: StatusCodes, message: string, options?: Options<TDetails>) {
     super(code, message, options);
-    this.name = getReasonPhrase(code);
   }
 }
 
