@@ -67,6 +67,14 @@ export const DataBase: z.ZodType<Data> = Entity.omit({
 });
 export const Data = DataBase;
 
+export const Get = z.object({
+  messageId: MessageId,
+});
+export type Get = zInfer<typeof Get>;
+
+export const GetOutput = z.nullable(Data);
+export type GetOutput = zInfer<typeof GetOutput>;
+
 export const List = z.object({
   role: z.optional(Role),
   isBookmarked: z.optional(z.boolean()),

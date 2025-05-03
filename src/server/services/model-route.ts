@@ -95,11 +95,12 @@ export class ModelRouteService {
         onMessageChunkReceived,
       };
       await match(modelProviderKey)
-        .with("google-gen-ai", () =>
-          this.service.googleGenAi.sendMessageToAi(input)
+        .with(
+          "google-gen-ai",
+          async () => await this.service.googleGenAi.sendMessageToAi(input)
         )
         // .with("open-ai", () => this.service.openAi.sendMessageToAi(input))
-        .with("x-ai", () => this.service.xAi.sendMessageToAi(input))
+        .with("x-ai", async () => await this.service.xAi.sendMessageToAi(input))
         .exhaustive();
 
       await this.service.message.transitProcessingToSucceeded({

@@ -35,6 +35,17 @@ export class MessageService {
     return data;
   }
 
+  async get(userId: UserId, input: Message.Get): Promise<Message.GetOutput> {
+    const { messageId } = input;
+    const entity = await this.service.db.message.findUnique({
+      where: { chat: { userId, deletedAt: null }, id: messageId },
+      select: Message.Select,
+    });
+
+    const data = entity ? this.decrypt(entity) : null;
+    return data;
+  }
+
   async list(userId: UserId, input: Message.List): Promise<Message.ListOutput> {
     const { role, isBookmarked, options } = input;
     const { scope, afterId, order, limit, include } = options;

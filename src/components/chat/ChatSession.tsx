@@ -9,12 +9,7 @@ import { useSidebarStore } from "@/stores/useSidebarStore";
 import { Chat, Message, MessageChunk } from "@/types";
 import { MessageId } from "@/types/id";
 import type { UserUsageLimit } from "@/types/user-usage-limit";
-import {
-  skipToken,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
@@ -134,17 +129,19 @@ export function ChatSession({ initialMessages, children }: Props) {
       );
     });
 
-    let done = false;
-    source.addEventListener("error", (ev) => {
-      if (done) return;
-
+    let isSuccess = false;
+    source.addEventListener("error", () => {
+      const currentId = streamMessageId;
+      setStreamMessageId(null);
       setMessages((prev) =>
         prev.map((x) =>
-          x.id === streamMessageId ? { ...x, status: "failed" } : x
+          x.id === currentId
+            ? { ...x, status: isSuccess ? "succeeded" : "failed" }
+            : x
         )
       );
-      setStreamMessageId(null);
-      toast.error("Receive chat message failed.");
+
+      if (!isSuccess) toast.error("Receive chat message failed.");
     });
 
     source.addEventListener("message", (ev) => {
@@ -165,14 +162,7 @@ export function ChatSession({ initialMessages, children }: Props) {
       } else if (received.type === "usageLimit") {
         const usageLimit = received.usageLimit;
         if (usageLimit) setUsageLimit(usageLimit);
-
-        setMessages((prev) =>
-          prev.map((x) =>
-            x.id === streamMessageId ? { ...x, status: "succeeded" } : x
-          )
-        );
-        setStreamMessageId(null);
-        done = true;
+        isSuccess = true;
       }
     });
 

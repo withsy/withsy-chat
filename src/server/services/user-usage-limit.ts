@@ -200,7 +200,7 @@ export class UserUsageLimitService {
   static createMinuteLimitError(usageLimit: UserUsageLimit) {
     return new TRPCError({
       code: "TOO_MANY_REQUESTS",
-      message: "Daily usage limit reached.",
+      message: "Minute usage limit reached.",
       cause: new TrpcDataError({
         type: "rate-limit-minute",
         minuteRemaining: usageLimit.minuteRemaining,
