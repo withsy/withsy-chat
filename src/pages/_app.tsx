@@ -7,7 +7,7 @@ import { createTrpcClient, getQueryClient, TRPCProvider } from "@/lib/trpc";
 import "@/styles/globals.css";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import type { AppProps, AppType } from "next/app";
+import type { AppProps } from "next/app";
 import { Nunito } from "next/font/google";
 import Head from "next/head";
 import { useRouter } from "next/router";
@@ -58,12 +58,12 @@ export default function App({
             </HomeLayout>
           ) : (
             <ChatLayout className={nunito.className}>
+              <LoadAiProfiles />
               <Component {...pageProps} />
             </ChatLayout>
           )}
 
           <Sonner position="bottom-right" />
-          <LoadAiProfiles />
           <ReactQueryDevtools />
         </AppProviders>
       </TRPCProvider>
