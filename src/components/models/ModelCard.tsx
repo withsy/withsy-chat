@@ -6,6 +6,7 @@ import { base64ToFile } from "@/lib/avatar-utils";
 import { useAiProfileStore } from "@/stores/useAiProfileStore";
 import { useState } from "react";
 import { toast } from "sonner";
+import { v4 as uuid } from "uuid";
 import CropImageModal from "./CropImageModal";
 
 type Props = {
@@ -37,6 +38,9 @@ export default function ModelCard({ model, name, image }: Props) {
       const res = await fetch("/api/ai-profiles", {
         method: "POST",
         body: form,
+        headers: {
+          "Idempotency-Key": uuid(),
+        },
       });
 
       if (!res.ok) throw new Error("Server responded with error");
@@ -88,6 +92,9 @@ export default function ModelCard({ model, name, image }: Props) {
       const res = await fetch("/api/ai-profiles", {
         method: "POST",
         body: form,
+        headers: {
+          "Idempotency-Key": uuid(),
+        },
       });
 
       if (!res.ok) throw new Error("Server responded with error");

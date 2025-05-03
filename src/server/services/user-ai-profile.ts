@@ -60,10 +60,12 @@ export class UserAiProfileService {
 
     const nameEncrypted = name
       ? this.service.encryption.encrypt(name)
-      : this.service.encryption.encrypt("");
+      : undefined;
     const imagePathEncrypted = imagePath
       ? this.service.encryption.encrypt(imagePath)
-      : this.service.encryption.encrypt("");
+      : undefined;
+    const emptyNameEncrypted = this.service.encryption.encrypt("");
+    const emptyImagePathEncrypted = this.service.encryption.encrypt("");
 
     const res = await this.service.db.$transaction(async (tx) => {
       let entity = await tx.userAiProfile.findUnique({
@@ -77,8 +79,8 @@ export class UserAiProfileService {
           data: {
             userId,
             model,
-            nameEncrypted,
-            imagePathEncrypted,
+            nameEncrypted: emptyNameEncrypted,
+            imagePathEncrypted: emptyImagePathEncrypted,
           },
           select: UserAiProfile.Select,
         });

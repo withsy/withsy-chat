@@ -1,3 +1,4 @@
+import { HttpServerError } from "@/server/error";
 import {
   createNextPagesApiHandler,
   type Options,
@@ -5,6 +6,7 @@ import {
 import type { UserId } from "@/types/id";
 import { Model } from "@/types/model";
 import Busboy from "busboy";
+import { getReasonPhrase, StatusCodes } from "http-status-codes";
 import mime from "mime-types";
 import { uuidv7 } from "uuidv7";
 
@@ -58,6 +60,22 @@ export default createNextPagesApiHandler({ post });
 async function post(opts: Options) {
   const { req, res, ctx } = opts;
   const { service, userId } = ctx;
+
+  const idempotencyKey = req.headers["idempotency-key"];
+  if (typeof idempotencyKey != "string" || idempotencyKey.length === 0)
+    throw new HttpServerError(
+      StatusCodes.BAD_REQUEST,
+      "Idempotency-Key is required."
+    );
+
+  try {
+    await service.idempotencyInfo.checkDuplicateRequest(idempotencyKey);
+  } catch (_e) {
+    throw new HttpServerError(
+      StatusCodes.CONFLICT,
+      getReasonPhrase(StatusCodes.CONFLICT)
+    );
+  }
 
   let maybeModel: string | undefined = undefined;
   let name: string | undefined = undefined;
