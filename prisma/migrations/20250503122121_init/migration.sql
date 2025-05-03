@@ -136,6 +136,7 @@ CREATE TABLE "message_chunks" (
     "raw_data_encrypted" TEXT NOT NULL,
     "text_encrypted" TEXT NOT NULL,
     "reasoning_text_encrypted" TEXT NOT NULL,
+    "is_done" BOOLEAN NOT NULL,
     "created_at" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 

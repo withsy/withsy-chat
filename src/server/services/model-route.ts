@@ -66,26 +66,37 @@ export class ModelRouteService {
       modelMessage,
     });
 
+    let index: MessageChunkIndex = 0;
+
+    const createChunk = async (input: {
+      text: string;
+      reasoningText: string;
+      rawData: string;
+      isDone: boolean;
+    }) => {
+      const { text, reasoningText, rawData, isDone } = input;
+      await this.service.messageChunk.create({
+        messageId: modelMessage.id,
+        index,
+        text,
+        reasoningText,
+        rawData,
+        isDone,
+      });
+      await notify(this.service.pgPool, "message_chunk_created", {
+        messageId: modelMessage.id,
+        index,
+      });
+      index += 1;
+    };
+
+    let isSuccess = false;
     try {
       const modelProviderKey = ModelProviderMap[modelMessage.model];
 
-      let index: MessageChunkIndex = 0;
       const onMessageChunkReceived: OnMessageChunkReceived = async (input) => {
         const { rawData, text, reasoningText } = input;
-        await this.service.messageChunk.add({
-          messageId: modelMessage.id,
-          index,
-          text,
-          reasoningText,
-          rawData,
-        });
-        await notify(this.service.pgPool, "message_chunk_created", {
-          status: "created",
-          messageId: modelMessage.id,
-          index,
-        });
-
-        index += 1;
+        await createChunk({ text, reasoningText, rawData, isDone: false });
       };
 
       const input: SendMessageToAiInput = {
@@ -103,24 +114,31 @@ export class ModelRouteService {
         .with("x-ai", async () => await this.service.xAi.sendMessageToAi(input))
         .exhaustive();
 
-      await this.service.message.transitProcessingToSucceeded({
-        userId,
-        messageId: modelMessageId,
-      });
+      isSuccess = true;
     } catch (e) {
       console.error("Send chat to ai failed. error:", e);
-      await this.service.db.$transaction(async (tx) => {
-        await MessageService.tryTransitProcessingToFailed(tx, {
+    } finally {
+      await createChunk({
+        text: "",
+        reasoningText: "",
+        rawData: "",
+        isDone: true,
+      });
+
+      if (isSuccess) {
+        await this.service.message.transitProcessingToSucceeded({
           userId,
           messageId: modelMessageId,
         });
-        await UserUsageLimitService.lockAndCompensate(tx, { userId });
-      });
-    } finally {
-      await notify(this.service.pgPool, "message_chunk_created", {
-        status: "completed",
-        messageId: modelMessageId,
-      });
+      } else {
+        await this.service.db.$transaction(async (tx) => {
+          await MessageService.tryTransitProcessingToFailed(tx, {
+            userId,
+            messageId: modelMessageId,
+          });
+          await UserUsageLimitService.lockAndCompensate(tx, { userId });
+        });
+      }
     }
   }
 

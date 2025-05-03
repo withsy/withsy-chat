@@ -142,9 +142,9 @@ export function ChatSession({ initialMessages, children }: Props) {
     });
 
     source.addEventListener("message", (ev) => {
-      const received = MessageChunk.ReceiveData.parse(SuperJSON.parse(ev.data));
-      if (received.type === "chunk") {
-        const chunk = received.chunk;
+      const event = MessageChunk.Event.parse(SuperJSON.parse(ev.data));
+      if (event.type === "chunk") {
+        const chunk = event.chunk;
         setMessages((prevMessages) =>
           prevMessages.map((x) =>
             x.id === streamMessageId
@@ -156,8 +156,8 @@ export function ChatSession({ initialMessages, children }: Props) {
               : x
           )
         );
-      } else if (received.type === "usageLimit") {
-        const usageLimit = received.usageLimit;
+      } else if (event.type === "usageLimit") {
+        const usageLimit = event.usageLimit;
         if (usageLimit) setUsageLimit(usageLimit);
         isSuccess = true;
       }

@@ -182,6 +182,7 @@ model MessageChunk {
   rawDataEncrypted       String   @map("raw_data_encrypted")
   textEncrypted          String   @map("text_encrypted")
   reasoningTextEncrypted String   @map("reasoning_text_encrypted")
+  isDone                 Boolean  @map("is_done")
   createdAt              DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt              DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
 

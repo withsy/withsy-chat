@@ -1,10 +1,6 @@
 import { MessageChunk } from "@/types";
 import type { MessageChunkIndex, MessageId, UserId } from "@/types/id";
-import { PgEvent, type PgEventInput } from "@/types/task";
-import type { UserUsageLimit } from "@/types/user-usage-limit";
-import { tracked } from "@trpc/server";
 import type { ServiceRegistry } from "../service-registry";
-import { listen } from "./pg";
 
 export class MessageChunkService {
   constructor(private readonly service: ServiceRegistry) {}
@@ -17,18 +13,20 @@ export class MessageChunkService {
     const data = {
       text,
       reasoningText,
+      isDone: entity.isDone,
     } satisfies MessageChunk.Data;
     return data;
   }
 
-  async add(input: {
+  async create(input: {
     messageId: MessageId;
     index: MessageChunkIndex;
     rawData: string;
     text: string;
     reasoningText: string;
+    isDone: boolean;
   }) {
-    const { messageId, index, text, rawData, reasoningText } = input;
+    const { messageId, index, text, rawData, reasoningText, isDone } = input;
 
     const textEncrypted = this.service.encryption.encrypt(text);
     const rawDataEncrypted = this.service.encryption.encrypt(rawData);
@@ -42,6 +40,7 @@ export class MessageChunkService {
         textEncrypted,
         rawDataEncrypted,
         reasoningTextEncrypted,
+        isDone,
       },
       select: { index: true },
     });

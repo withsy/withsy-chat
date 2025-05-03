@@ -28,17 +28,10 @@ export type CronTask = { cron: string; key: TaskKey };
 
 //#region PgEvent
 
-export const MessageChunkCreatedInput = z.discriminatedUnion("status", [
-  z.object({
-    status: z.literal("created"),
-    messageId: MessageId,
-    index: MessageChunkIndex,
-  }),
-  z.object({
-    status: z.literal("completed"),
-    messageId: MessageId,
-  }),
-]);
+export const MessageChunkCreatedInput = z.object({
+  messageId: MessageId,
+  index: MessageChunkIndex,
+});
 export type MessageChunkCreatedInput = zInfer<typeof MessageChunkCreatedInput>;
 
 export const PgEvent = {

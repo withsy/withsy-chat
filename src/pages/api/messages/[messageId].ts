@@ -59,8 +59,8 @@ export async function get(options: Options) {
   res.status(StatusCodes.OK);
   res.flushHeaders();
 
-  const write = (data: MessageChunk.ReceiveData) => {
-    res.write(`data: ${SuperJSON.stringify(data)}\n\n`);
+  const write = (event: MessageChunk.Event) => {
+    res.write(`data: ${SuperJSON.stringify(event)}\n\n`);
   };
 
   const q: PgEventInput<"message_chunk_created">[] = [];
@@ -83,33 +83,39 @@ export async function get(options: Options) {
     });
 
     let lastIndex = -1;
-    for (const entity of entities) {
-      const data = service.messageChunk.decrypt(entity);
-      write({ type: "chunk", chunk: data });
+
+    const onEntity = async (entity: MessageChunk.Entity) => {
+      if (entity.isDone) {
+        let usageLimit: UserUsageLimit | null = null;
+        try {
+          usageLimit = await service.userUsageLimit.get(userId);
+        } catch (e) {
+          console.error(
+            "User usage limit getting failed. userId:",
+            userId,
+            " error:",
+            e
+          );
+        }
+
+        write({ type: "usageLimit", usageLimit });
+      } else {
+        const data = service.messageChunk.decrypt(entity);
+        write({ type: "chunk", chunk: data });
+      }
+
       lastIndex = entity.index;
+      return { isDone: entity.isDone };
+    };
+
+    for (const entity of entities) {
+      const { isDone } = await onEntity(entity);
+      if (isDone) return;
     }
 
     while (true) {
       const input = q.shift();
       if (input) {
-        const { status } = input;
-        if (status === "completed") {
-          let usageLimit: UserUsageLimit | null = null;
-          try {
-            usageLimit = await service.userUsageLimit.get(userId);
-          } catch (e) {
-            console.error(
-              "User usage limit getting failed. userId:",
-              userId,
-              " error:",
-              e
-            );
-          }
-
-          write({ type: "usageLimit", usageLimit });
-          return;
-        }
-
         const { index } = input;
         if (index > lastIndex) {
           const entity = await service.db.messageChunk.findUniqueOrThrow({
@@ -120,9 +126,8 @@ export async function get(options: Options) {
             select: MessageChunk.Select,
           });
 
-          const data = service.messageChunk.decrypt(entity);
-          write({ type: "chunk", chunk: data });
-          lastIndex = index;
+          const { isDone } = await onEntity(entity);
+          if (isDone) return;
         }
       } else {
         const isStaleCompleted = await service.message.isStaleCompleted({

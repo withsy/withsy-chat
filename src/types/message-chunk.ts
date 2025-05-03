@@ -8,12 +8,14 @@ export const Select = {
   index: true,
   textEncrypted: true,
   reasoningTextEncrypted: true,
+  isDone: true,
 } satisfies Prisma.MessageChunkSelect;
 
 export const Entity = z.object({
   index: MessageChunkIndex,
   textEncrypted: z.string(),
   reasoningTextEncrypted: z.string(),
+  isDone: z.boolean(),
 });
 export type Entity = zInfer<typeof Entity>;
 const _ = {} satisfies Omit<Entity, keyof typeof Select>;
@@ -28,13 +30,7 @@ export const Data = Entity.omit({
 });
 export type Data = zInfer<typeof Data>;
 
-export const Receive = z.object({
-  messageId: MessageId,
-  lastEventId: MessageChunkIndex.optional(),
-});
-export type Receive = zInfer<typeof Receive>;
-
-export const ReceiveData = z.discriminatedUnion("type", [
+export const Event = z.discriminatedUnion("type", [
   z.object({
     type: z.literal("chunk"),
     chunk: Data,
@@ -44,4 +40,4 @@ export const ReceiveData = z.discriminatedUnion("type", [
     usageLimit: z.nullable(UserUsageLimit),
   }),
 ]);
-export type ReceiveData = zInfer<typeof ReceiveData>;
+export type Event = zInfer<typeof Event>;
