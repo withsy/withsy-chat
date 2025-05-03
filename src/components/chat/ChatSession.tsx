@@ -107,9 +107,7 @@ export function ChatSession({ initialMessages, children }: Props) {
 
   useEffect(() => {
     if (streamMessageId == null) {
-      if (eventSource)
-        if (eventSource.readyState !== eventSource.CLOSED) eventSource.close();
-
+      closeEventSource(eventSource);
       setEventSource(null);
       return;
     }
@@ -131,16 +129,15 @@ export function ChatSession({ initialMessages, children }: Props) {
 
     let isSuccess = false;
     source.addEventListener("error", () => {
-      const currentId = streamMessageId;
-      setStreamMessageId(null);
+      closeEventSource(source);
       setMessages((prev) =>
         prev.map((x) =>
-          x.id === currentId
+          x.id === streamMessageId
             ? { ...x, status: isSuccess ? "succeeded" : "failed" }
             : x
         )
       );
-
+      setStreamMessageId(null);
       if (!isSuccess) toast.error("Receive chat message failed.");
     });
 
@@ -168,7 +165,7 @@ export function ChatSession({ initialMessages, children }: Props) {
 
     setEventSource(source);
     return () => {
-      if (source && source.readyState !== EventSource.CLOSED) source.close();
+      closeEventSource(source);
     };
   }, [streamMessageId]);
 
@@ -279,4 +276,10 @@ export function ChatSession({ initialMessages, children }: Props) {
       <ChatDrawer savedMessages={savedMessages} />
     </div>
   );
+}
+
+function closeEventSource(source: EventSource | null) {
+  if (!source) return;
+  if (source.readyState === source.CLOSED) return;
+  source.close();
 }
