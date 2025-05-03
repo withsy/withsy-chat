@@ -35,7 +35,7 @@ export default function ModelsPage() {
       </div>
 
       <div className="mt-[50px] p-5 overflow-y-auto">
-        <p className="text-muted-foreground text-sm mb-6">
+        <p className="text-muted-foreground mb-6">
           Make each AI model feel a little more personal by giving it a friendly
           name and a unique profile image. Images should be under 1MB, and names
           can be up to 20 characters long.
