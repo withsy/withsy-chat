@@ -4,7 +4,6 @@ import { chatBranchRouter } from "./chat-branch";
 import { encryptionRouter } from "./encryption";
 import { gratitudeJournalRouter } from "./gratitude-journal";
 import { messageRouter } from "./message";
-import { messageChunkRouter } from "./message-chunk";
 import { messageReplyRouter } from "./message-reply";
 import { userRouter } from "./user";
 import { userAiProfileRouter } from "./user-ai-profile";
@@ -21,7 +20,6 @@ export const appRouter = t.router({
   chat: chatRouter,
   chatBranch: chatBranchRouter,
   message: messageRouter,
-  messageChunk: messageChunkRouter,
   messageReply: messageReplyRouter,
   gratitudeJournal: gratitudeJournalRouter,
   encryption: encryptionRouter,
