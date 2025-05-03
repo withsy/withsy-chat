@@ -245,6 +245,7 @@ export function ChatSession({ initialMessages, children }: Props) {
             </ChatSessionProvider>
           )}
         </div>
+        {children}
         <div className="w-full px-4 sticky bottom-0 bg-white z-10 flex flex-col items-center">
           <ChatInputBox
             onSendMessage={onSendMessage}
@@ -255,7 +256,6 @@ export function ChatSession({ initialMessages, children }: Props) {
             AI can make mistakes — please double-check.
           </div>
         </div>
-        {children}
       </div>
       <ChatDrawer savedMessages={savedMessages} />
     </div>
