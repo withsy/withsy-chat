@@ -1,11 +1,12 @@
 import { useSelectedModelStore } from "@/stores/useSelectedModelStore";
 import { useSidebarStore } from "@/stores/useSidebarStore";
+import { useAiProfileStore } from "@/stores/useAiProfileStore";
 import { Model } from "@/types/model";
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode, useMemo } from "react";
 import { ModelDropdown } from "./ModelDropdown";
 import { ModelSelectButton } from "./ModelSelectButton";
 
-const modelMap = {
+const defaultModelMap = {
   "gemini-2.0-flash": {
     label: "Gemini 2.0 Flash",
     description: "Fast and lightweight",
@@ -14,10 +15,6 @@ const modelMap = {
     label: "Gemini 1.5 Pro",
     description: "Strong reasoning, broad context understanding",
   },
-  // "gpt-4o": {
-  //   label: "gpt-4o",
-  //   description: "High accuracy, multi-modal data processing",
-  // },
   "grok-3-beta": {
     label: "Grok 3",
     description: "Latest version with advanced reasoning capabilities",
@@ -33,15 +30,15 @@ const modelMap = {
 } satisfies Record<Model, { label: string; description: string }>;
 
 export function GetModelLabel(model: Model) {
-  return modelMap[model].label;
+  return defaultModelMap[model].label;
 }
 
-export type ModelInfo = { label: string; value: Model; description: string };
-
-const models: ModelInfo[] = Object.entries(modelMap).map(([k, v]) => ({
-  ...v,
-  value: Model.parse(k),
-}));
+export type ModelInfo = {
+  label: string;
+  value: Model;
+  description: string;
+  image?: string;
+};
 
 interface ModelSelectProps {
   description?: string;
@@ -58,8 +55,30 @@ export function ModelSelect({
 }: ModelSelectProps) {
   const { isMobile } = useSidebarStore();
   const { selectedModel, setSelectedModel } = useSelectedModelStore();
+  const { profiles } = useAiProfileStore();
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const models: ModelInfo[] = useMemo(() => {
+    return Object.entries(defaultModelMap).map(([key, value]) => {
+      const model = key as Model;
+      const userProfile = profiles[model];
+      const isCustomName =
+        userProfile?.name && userProfile.name !== value.label;
+
+      return {
+        label: userProfile?.name || value.label,
+        value: model,
+        image: userProfile?.imageUrl,
+        description: isCustomName
+          ? `${value.description} (originally ${value.label})`
+          : value.description,
+      };
+    });
+  }, [profiles]);
+
+  const selectedLabel =
+    models.find((m) => m.value === selectedModel)?.label || "Select model";
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -77,9 +96,6 @@ export function ModelSelect({
         document.removeEventListener("mousedown", handleClickOutside);
     }
   }, [isMobile]);
-
-  const selectedLabel =
-    models.find((m) => m.value === selectedModel)?.label || "Select model";
 
   return (
     <div className="relative inline-block" ref={dropdownRef}>
