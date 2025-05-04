@@ -26,14 +26,17 @@ export default function App({
   const homeLayoutPages = [
     "/",
     "/about",
-    "/guide",
+    "/guides",
     "/roadmap",
     "/blog",
     "/pricing",
     "/contact",
   ];
   const isLayoutDisabled = noLayoutPages.includes(router.pathname);
-  const isHomeLayout = homeLayoutPages.includes(router.pathname);
+  const isHomeLayout = homeLayoutPages.some((path) => {
+    if (path === "/") return router.pathname === "/";
+    return router.pathname === path || router.pathname.startsWith(`${path}/`);
+  });
   let title = "Withsy";
   if (process.env.NODE_ENV === "development") title = `[DEV] ${title}`;
 
