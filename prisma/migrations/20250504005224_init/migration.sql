@@ -1,5 +1,5 @@
 -- CreateEnum
-CREATE TYPE "UserUsageLimitPeriod" AS ENUM ('daily', 'minute');
+CREATE TYPE "UserUsageLimitPeriod" AS ENUM ('annually', 'monthly', 'daily', 'perHour', 'perMinute', 'perSecond');
 
 -- CreateEnum
 CREATE TYPE "UserUsageLimitType" AS ENUM ('message', 'aiProfileImage');

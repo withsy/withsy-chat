@@ -45,8 +45,21 @@ export class UserUsageLimitService {
     await tx.userUsageLimit.create({
       data: {
         userId,
-        ...UserUsageLimitService.getDailyLimit(now),
-        ...UserUsageLimitService.getMinuteLimit(now),
+        type: "message",
+        period: "daily",
+        allowedAmount: 30,
+        remainingAmount: 30,
+        resetAt: UserUsageLimitService.getDailyResetAt(now),
+      },
+    });
+    await tx.userUsageLimit.create({
+      data: {
+        userId,
+        type: "message",
+        period: "perMinute",
+        allowedAmount: 6,
+        remainingAmount: 6,
+        resetAt: UserUsageLimitService.getPerMinuteResetAt(now),
       },
     });
   }
@@ -153,7 +166,7 @@ export class UserUsageLimitService {
     }
   }
 
-  static calculateDailyLimit(now: Date) {
+  static getDailyResetAt(now: Date) {
     const tomorrowMidnight = new Date(
       now.getFullYear(),
       now.getMonth(),
@@ -165,7 +178,7 @@ export class UserUsageLimitService {
     return tomorrowMidnight;
   }
 
-  static calculateMinuteLimit(now: Date) {
+  static getPerMinuteResetAt(now: Date) {
     const oneMinuteLater = new Date(now.getTime() + 60 * 1000);
     return oneMinuteLater;
   }

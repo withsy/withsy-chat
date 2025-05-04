@@ -13,7 +13,14 @@ export const Select = {
 export const Type = z.enum(["message", "aiProfileImage"]);
 export type Type = zInfer<typeof Type>;
 
-export const Period = z.enum(["daily", "minute"]);
+export const Period = z.enum([
+  "annually",
+  "monthly",
+  "daily",
+  "perHour",
+  "perMinute",
+  "perSecond",
+]);
 export type Period = zInfer<typeof Period>;
 
 export const Entity = z.object({

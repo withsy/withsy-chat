@@ -44,8 +44,12 @@ model UserLinkAccount {
 }
 
 enum UserUsageLimitPeriod {
+  annually
+  monthly
   daily
-  minute
+  perHour
+  perMinute
+  perSecond
 }
 
 enum UserUsageLimitType {
