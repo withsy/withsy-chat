@@ -104,6 +104,7 @@ async function post(opts: Options) {
             userId,
           });
         } catch (e) {
+          // TODO: TRPCError to HttpServerError
           if (e instanceof TRPCError && e.code === "TOO_MANY_REQUESTS") {
             return res
               .status(StatusCodes.TOO_MANY_REQUESTS)
