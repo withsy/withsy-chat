@@ -1,20 +1,22 @@
-import type { Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { z } from "zod";
 import type { zInfer, zInput } from "./common";
 
 export const UserUsageLimitSelect = {
-  dailyRemaining: true,
-  dailyResetAt: true,
-  minuteRemaining: true,
-  minuteResetAt: true,
+  type: true,
+  period: true,
+  allowedAmount: true,
+  remainingAmount: true,
+  resetAt: true,
 } satisfies Prisma.UserUsageLimitSelect;
 
+export const UserUsageLimitType = z.enum(["message", "aiProfileImage"]);
+export type UserUsageLimitType = zInfer<typeof UserUsageLimitType>;
+
 export const UserUsageLimitSchema = z.object({
-  dailyRemaining: z.number().int(),
-  dailyResetAt: z.date(),
-  minuteRemaining: z.number().int(),
-  minuteResetAt: z.date(),
+  type: UserUsageLimitType,
 });
+
 export type UserUsageLimitSchema = zInfer<typeof UserUsageLimitSchema>;
 const _ = {} satisfies Omit<
   UserUsageLimitSchema,
