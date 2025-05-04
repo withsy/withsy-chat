@@ -4,10 +4,11 @@ import Link from "next/link";
 export default function ChatThemeGuide() {
   return (
     <div className="container mx-auto py-12 px-4 max-w-4xl min-h-screen">
-      <Link href="/guides">
-        <p className="mb-6 text-center text-[rgb(40,90,128)] cursor-pointer hover:underline">
-          Guides
-        </p>
+      <Link
+        href="/guides"
+        className="mb-6 text-center text-[rgb(40,90,128)] cursor-pointer hover:underline block"
+      >
+        Guides
       </Link>
       <h1 className="text-4xl font-bold text-gray-900 mb-12 text-center">
         Chat Theme Customization Guide

@@ -1,13 +1,17 @@
-import Image from "next/image";
 import Link from "next/link";
+
+import dynamic from "next/dynamic";
+
+const SafeImage = dynamic(() => import("next/image"), { ssr: false });
 
 export default function CustomizeProfileGuide() {
   return (
     <div className="container mx-auto py-12 px-4 max-w-4xl min-h-screen">
-      <Link href="/guides">
-        <p className="mb-6 text-center text-[rgb(40,90,128)] cursor-pointer hover:underline">
-          Guides
-        </p>
+      <Link
+        href="/guides"
+        className="mb-6 text-center text-[rgb(40,90,128)] cursor-pointer hover:underline block"
+      >
+        Guides
       </Link>
       <h1 className="text-4xl font-bold text-gray-900 mb-12 text-center">
         AI Model Profile Customization Guide
@@ -37,7 +41,7 @@ export default function CustomizeProfileGuide() {
               Log in and navigate to the <em>Models</em> section from the
               sidebar.
             </p>
-            <Image
+            <SafeImage
               src="/guides/models-section.png"
               alt="Models Section Screenshot"
               width={600}
@@ -54,7 +58,7 @@ export default function CustomizeProfileGuide() {
               <em>Save</em> to apply the update. You can also click{" "}
               <em>Remove Custom Image</em> to revert to the default image.
             </p>
-            <Image
+            <SafeImage
               src="/guides/edit-profile.png"
               alt="Edit Profile Screenshot"
               width={1700}
