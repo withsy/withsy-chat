@@ -136,7 +136,7 @@ export class ChatService {
 
     await this.service.db.$transaction(async (tx) => {
       await IdempotencyInfoService.checkDuplicateRequest(tx, idempotencyKey);
-      await UserUsageLimitService.lockAndCheck(tx, { userId });
+      await UserUsageLimitService.checkMessage(tx, { userId });
     });
 
     const modelMessageTextEncrypted = this.service.encryption.encrypt("");
@@ -179,7 +179,7 @@ export class ChatService {
       modelMessageId: modelMessage.id,
     });
 
-    await UserUsageLimitService.lockAndDecrease(this.service.db, { userId });
+    await UserUsageLimitService.decreaseMessage(this.service.db, { userId });
 
     const res = {
       chat: this.decrypt(chat),

@@ -136,7 +136,7 @@ export class ModelRouteService {
             userId,
             messageId: modelMessageId,
           });
-          await UserUsageLimitService.lockAndCompensate(tx, { userId });
+          await UserUsageLimitService.compensateMessage(tx, { userId });
         });
       }
     }

@@ -177,7 +177,7 @@ CREATE INDEX "user_link_accounts_user_id_idx" ON "user_link_accounts"("user_id")
 CREATE UNIQUE INDEX "user_link_accounts_provider_provider_account_id_key" ON "user_link_accounts"("provider", "provider_account_id");
 
 -- CreateIndex
-CREATE INDEX "user_usage_limits_user_id_idx" ON "user_usage_limits"("user_id");
+CREATE INDEX "user_usage_limits_user_id_type_idx" ON "user_usage_limits"("user_id", "type");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "user_usage_limits_user_id_type_period_key" ON "user_usage_limits"("user_id", "type", "period");

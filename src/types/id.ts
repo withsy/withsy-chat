@@ -30,3 +30,6 @@ export type UserPromptId = zInfer<typeof UserPromptId>;
 
 export const UserAiProfileId = z.number().int();
 export type UserAiProfileId = zInfer<typeof UserAiProfileId>;
+
+export const UserUsageLimitId = z.number().int();
+export type UserUsageLimitId = zInfer<typeof UserUsageLimitId>;

@@ -7,6 +7,11 @@ INSERT INTO users(id, name_encrypted, email_encrypted, image_url_encrypted)
 INSERT INTO user_link_accounts(user_id, provider, provider_account_id)
   VALUES ('b24c885e-a501-4882-938b-f5fb16cbd395', 'credentials', 'withsy-dev');
 
-INSERT INTO user_usage_limits(user_id, daily_remaining, daily_reset_at, minute_remaining, minute_reset_at) 
-  VALUES ('b24c885e-a501-4882-938b-f5fb16cbd395', 30, date_trunc('day', NOW() + interval '1 day'), 6, NOW() + interval '1 minute');
+INSERT INTO user_usage_limits(user_id, type, period, allowed_amount, remaining_amount, reset_at) 
+  VALUES ('b24c885e-a501-4882-938b-f5fb16cbd395', 'message', 'daily', 30, 30, date_trunc('day', NOW() + interval '1 day'));
 
+INSERT INTO user_usage_limits(user_id, type, period, allowed_amount, remaining_amount, reset_at) 
+  VALUES ('b24c885e-a501-4882-938b-f5fb16cbd395', 'message', 'perMinute', 6, 6, date_trunc('minute', NOW() + interval '1 minute'));
+
+INSERT INTO user_usage_limits(user_id, type, period, allowed_amount, remaining_amount, reset_at) 
+  VALUES ('b24c885e-a501-4882-938b-f5fb16cbd395', 'aiProfileImage', 'monthly', 10, 10, date_trunc('month', NOW() + interval '1 month'));

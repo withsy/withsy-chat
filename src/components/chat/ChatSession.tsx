@@ -6,10 +6,9 @@ import { useChatStore } from "@/stores/useChatStore";
 import { useDrawerStore } from "@/stores/useDrawerStore";
 import { useSelectedModelStore } from "@/stores/useSelectedModelStore";
 import { useSidebarStore } from "@/stores/useSidebarStore";
-import { Chat, Message, MessageChunk } from "@/types";
+import { Chat, Message, MessageChunk, UserUsageLimit } from "@/types";
 import { MessageId } from "@/types/id";
 import { isMessageComplete } from "@/types/message";
-import type { UserUsageLimit } from "@/types/user-usage-limit";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { useEffect, useMemo, useState } from "react";
@@ -40,15 +39,18 @@ export function ChatSession({ initialMessages, children }: Props) {
 
   const [streamMessageId, setStreamMessageId] = useState<string | null>(null);
   const [shouldFocusInput, setShouldFocusInput] = useState(false);
-  const [usageLimit, setUsageLimit] = useState<UserUsageLimit | null>(null);
+  const [usageLimits, setUsageLimits] = useState<UserUsageLimit.Data[]>([]);
   const [eventSource, setEventSource] = useState<EventSource | null>(null);
 
   const { openDrawer } = useDrawerStore();
 
   const usageQuery = useQuery(
-    trpc.userUsageLimit.get.queryOptions(undefined, {
-      enabled: !!chat?.id,
-    })
+    trpc.userUsageLimit.list.queryOptions(
+      { type: "message" },
+      {
+        enabled: !!chat?.id,
+      }
+    )
   );
 
   const chatStart = useMutation(
@@ -106,7 +108,7 @@ export function ChatSession({ initialMessages, children }: Props) {
 
   useEffect(() => {
     if (usageQuery.isSuccess && usageQuery.data) {
-      setUsageLimit(usageQuery.data);
+      setUsageLimits(usageQuery.data);
     }
   }, [chat?.id, usageQuery.isSuccess, usageQuery.data]);
 
@@ -161,9 +163,9 @@ export function ChatSession({ initialMessages, children }: Props) {
               : x
           )
         );
-      } else if (event.type === "usageLimit") {
-        const usageLimit = event.usageLimit;
-        if (usageLimit) setUsageLimit(usageLimit);
+      } else if (event.type === "usageLimits") {
+        const usageLimits = event.usageLimits;
+        if (usageLimits) setUsageLimits(usageLimits);
         isSuccess = true;
       }
     });
@@ -271,7 +273,7 @@ export function ChatSession({ initialMessages, children }: Props) {
           <ChatInputBox
             onSendMessage={onSendMessage}
             shouldFocus={shouldFocusInput}
-            usageLimit={usageLimit}
+            usageLimits={usageLimits}
           />
           <div className="text-xs text-gray-500 mt-2 mb-2">
             AI can make mistakes — please double-check.

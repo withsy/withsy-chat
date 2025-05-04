@@ -1,10 +1,15 @@
 import { Prisma } from "@prisma/client";
 import { z } from "zod";
-import { ChatPrompt, GratitudeJournal, Message, UserPrompt } from ".";
+import {
+  ChatPrompt,
+  GratitudeJournal,
+  Message,
+  UserPrompt,
+  UserUsageLimit,
+} from ".";
 import { type zInfer } from "./common";
 import { ChatId, IdempotencyKey, MessageId, UserPromptId } from "./id";
 import { Model } from "./model";
-import { UserUsageLimitError } from "./user-usage-limit";
 
 export const Select = {
   id: true,
@@ -95,4 +100,4 @@ export const StartOutput = z.object({
 });
 export type StartOutput = zInfer<typeof StartOutput>;
 
-export const StartError = UserUsageLimitError;
+export const StartError = UserUsageLimit.Error;

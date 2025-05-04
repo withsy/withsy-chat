@@ -4,9 +4,8 @@ import {
   type Options,
 } from "@/server/next-pages-api-handler";
 import { listen } from "@/server/services/pg";
-import { MessageChunk } from "@/types";
+import { MessageChunk, UserUsageLimit } from "@/types";
 import { PgEvent, type PgEventInput } from "@/types/task";
-import type { UserUsageLimit } from "@/types/user-usage-limit";
 import { getReasonPhrase, StatusCodes } from "http-status-codes";
 import SuperJSON from "superjson";
 
@@ -86,9 +85,11 @@ export async function get(options: Options) {
 
     const onEntity = async (entity: MessageChunk.Entity) => {
       if (entity.isDone) {
-        let usageLimit: UserUsageLimit | null = null;
+        let usageLimits: UserUsageLimit.Data[] = [];
         try {
-          usageLimit = await service.userUsageLimit.get(userId);
+          usageLimits = await service.userUsageLimit.list(userId, {
+            type: "message",
+          });
         } catch (e) {
           console.error(
             "User usage limit getting failed. userId:",
@@ -98,7 +99,7 @@ export async function get(options: Options) {
           );
         }
 
-        write({ type: "usageLimit", usageLimit });
+        write({ type: "usageLimits", usageLimits });
       } else {
         const data = service.messageChunk.decrypt(entity);
         write({ type: "chunk", chunk: data });

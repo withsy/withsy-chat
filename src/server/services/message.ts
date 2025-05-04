@@ -353,7 +353,7 @@ export class MessageService {
 
     await this.service.db.$transaction(async (tx) => {
       await IdempotencyInfoService.checkDuplicateRequest(tx, idempotencyKey);
-      await UserUsageLimitService.lockAndCheck(tx, { userId });
+      await UserUsageLimitService.checkMessage(tx, { userId });
     });
 
     const userMessageTextEncrypted = this.service.encryption.encrypt(text);
@@ -390,7 +390,7 @@ export class MessageService {
       modelMessageId: modelMessage.id,
     });
 
-    await UserUsageLimitService.lockAndDecrease(this.service.db, { userId });
+    await UserUsageLimitService.decreaseMessage(this.service.db, { userId });
 
     return {
       userMessage: this.decrypt(userMessage),

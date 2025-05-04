@@ -70,7 +70,7 @@ model UserUsageLimit {
   updatedAt       DateTime             @default(now()) @map("updated_at") @db.Timestamptz(6)
 
   @@unique([userId, type, period])
-  @@index([userId])
+  @@index([userId, type])
   @@map("user_usage_limits")
 }
 
