@@ -42,25 +42,33 @@ export class UserUsageLimitService {
   static async create(tx: Tx, input: { userId: UserId }) {
     const { userId } = input;
     const now = new Date();
-    await tx.userUsageLimit.create({
-      data: {
-        userId,
-        type: "message",
-        period: "daily",
-        allowedAmount: 30,
-        remainingAmount: 30,
-        resetAt: UserUsageLimitService.getDailyResetAt(now),
-      },
-    });
-    await tx.userUsageLimit.create({
-      data: {
-        userId,
-        type: "message",
-        period: "perMinute",
-        allowedAmount: 6,
-        remainingAmount: 6,
-        resetAt: UserUsageLimitService.getPerMinuteResetAt(now),
-      },
+    await tx.userUsageLimit.createMany({
+      data: [
+        {
+          userId,
+          type: "message",
+          period: "daily",
+          allowedAmount: 30,
+          remainingAmount: 30,
+          resetAt: UserUsageLimitService.getDailyResetAt(now),
+        },
+        {
+          userId,
+          type: "message",
+          period: "perMinute",
+          allowedAmount: 6,
+          remainingAmount: 6,
+          resetAt: UserUsageLimitService.getPerMinuteResetAt(now),
+        },
+        {
+          userId,
+          type: "aiProfileImage",
+          period: "monthly",
+          allowedAmount: 10,
+          remainingAmount: 10,
+          resetAt: UserUsageLimitService.getPerMinuteResetAt(now),
+        },
+      ],
     });
   }
 
