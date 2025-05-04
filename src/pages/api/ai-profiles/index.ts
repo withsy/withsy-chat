@@ -6,6 +6,7 @@ import {
 import { UserUsageLimitService } from "@/server/services/user-usage-limit";
 import type { UserId } from "@/types/id";
 import { Model } from "@/types/model";
+import { TRPCError } from "@trpc/server";
 import Busboy from "busboy";
 import { getReasonPhrase, StatusCodes } from "http-status-codes";
 import mime from "mime-types";
@@ -98,7 +99,17 @@ async function post(opts: Options) {
     })
     .on("file", async (fieldname, readable, info) => {
       if (fieldname === "image") {
-        await UserUsageLimitService.checkAiProfileImage(service.db, { userId });
+        try {
+          await UserUsageLimitService.checkAiProfileImage(service.db, {
+            userId,
+          });
+        } catch (e) {
+          if (e instanceof TRPCError && e.code === "TOO_MANY_REQUESTS") {
+            return res
+              .status(StatusCodes.TOO_MANY_REQUESTS)
+              .json({ error: "AI Profile image usage limit exceeded." });
+          }
+        }
 
         const { mimeType } = info;
         if (!ALLOWED_MIME_TYPES.includes(mimeType))
