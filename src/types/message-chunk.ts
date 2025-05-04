@@ -1,8 +1,8 @@
 import type { Prisma } from "@prisma/client";
 import { z } from "zod";
+import { UserUsageLimit } from ".";
 import type { zInfer } from "./common";
-import { MessageChunkIndex, MessageId } from "./id";
-import { UserUsageLimit } from "./user-usage-limit";
+import { MessageChunkIndex } from "./id";
 
 export const Select = {
   index: true,
@@ -36,8 +36,8 @@ export const Event = z.discriminatedUnion("type", [
     chunk: Data,
   }),
   z.object({
-    type: z.literal("usageLimit"),
-    usageLimit: z.nullable(UserUsageLimit),
+    type: z.literal("usageLimits"),
+    usageLimits: z.array(UserUsageLimit.Data),
   }),
 ]);
 export type Event = zInfer<typeof Event>;

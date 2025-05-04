@@ -1,11 +1,10 @@
 import type { Prisma } from "@prisma/client";
 import { z } from "zod";
-import { Chat } from ".";
+import { Chat, UserUsageLimit } from ".";
 import { type zInfer } from "./common";
 import { ChatId, IdempotencyKey, MessageId, UserId } from "./id";
 import { Model } from "./model";
 import { Role } from "./role";
-import { UserUsageLimitError } from "./user-usage-limit";
 
 export const Select = {
   id: true,
@@ -126,7 +125,7 @@ export const SendOutput = z.object({
 });
 export type SendOutput = zInfer<typeof SendOutput>;
 
-export const SendError = UserUsageLimitError;
+export const SendError = UserUsageLimit.Error;
 
 export const Update = z.object({
   messageId: MessageId,

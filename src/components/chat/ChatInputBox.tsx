@@ -1,6 +1,6 @@
 import { useUser } from "@/context/UserContext";
 import { cn } from "@/lib/utils";
-import type { UserUsageLimit } from "@/types/user-usage-limit";
+import type { UserUsageLimit } from "@/types";
 import { Send } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import TextareaAutosize from "react-textarea-autosize";
@@ -9,13 +9,13 @@ import { UsageLimitNotice } from "./UsageLimitNotice";
 
 type Props = {
   onSendMessage: (message: string) => void;
-  usageLimit: UserUsageLimit | null;
+  usageLimits: UserUsageLimit.Data[];
   shouldFocus?: boolean;
 };
 
 export function ChatInputBox({
   onSendMessage,
-  usageLimit,
+  usageLimits,
   shouldFocus = false,
 }: Props) {
   const { user } = useUser();
@@ -25,8 +25,8 @@ export function ChatInputBox({
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const isSendDisabled =
-    usageLimit !== null &&
-    (usageLimit.dailyRemaining === 0 || usageLimit.minuteRemaining === 0);
+    usageLimits.filter((x) => x.remainingAmount <= 0).length <
+    usageLimits.length;
 
   const inputBoxClass = cn(
     "relative max-w-screen-lg w-full px-4 py-3 border rounded-xl bg-white",
@@ -129,14 +129,8 @@ export function ChatInputBox({
       />
       <div className="absolute bottom-0 left-4 right-4 flex items-center justify-between">
         <div>
-          {usageLimit && (
-            <UsageLimitNotice
-              dailyRemaining={usageLimit.dailyRemaining}
-              dailyResetAt={usageLimit.dailyResetAt}
-              minuteRemaining={usageLimit.minuteRemaining}
-              minuteResetAt={usageLimit.minuteResetAt}
-              themeColor={user.preferences.themeColor}
-            />
+          {usageLimits.length > 0 && (
+            <UsageLimitNotice usageLimits={usageLimits} />
           )}
         </div>
         <button

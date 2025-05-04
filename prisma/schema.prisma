@@ -43,18 +43,34 @@ model UserLinkAccount {
   @@map("user_link_accounts")
 }
 
-model UserUsageLimit {
-  id              Int      @id @default(autoincrement()) @map("id")
-  userId          String   @unique @map("user_id") @db.Uuid
-  user            User     @relation("user_usage_limits.user_id", fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  dailyRemaining  Int      @map("daily_remaining")
-  dailyResetAt    DateTime @map("daily_reset_at") @db.Timestamptz(6)
-  minuteRemaining Int      @map("minute_remaining")
-  minuteResetAt   DateTime @map("minute_reset_at") @db.Timestamptz(6)
-  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt       DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
+enum UserUsageLimitPeriod {
+  annually
+  monthly
+  daily
+  perHour
+  perMinute
+  perSecond
+}
 
-  @@index([userId])
+enum UserUsageLimitType {
+  message
+  aiProfileImage
+}
+
+model UserUsageLimit {
+  id              Int                  @id @default(autoincrement()) @map("id")
+  userId          String               @map("user_id") @db.Uuid
+  user            User                 @relation("user_usage_limits.user_id", fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  type            UserUsageLimitType   @map("type")
+  period          UserUsageLimitPeriod @map("period")
+  allowedAmount   Int                  @map("allowed_amount")
+  remainingAmount Int                  @map("remaining_amount")
+  resetAt         DateTime             @map("reset_at") @db.Timestamptz(6)
+  createdAt       DateTime             @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime             @default(now()) @map("updated_at") @db.Timestamptz(6)
+
+  @@unique([userId, type, period])
+  @@index([userId, type])
   @@map("user_usage_limits")
 }
 
@@ -100,6 +116,7 @@ model UserAiProfile {
   updatedAt          DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
 
   @@unique([userId, model])
+  @@index([userId])
   @@map("user_ai_profiles")
 }
 

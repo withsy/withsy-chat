@@ -1,12 +1,11 @@
-import { UserUsageLimit } from "@/types/user-usage-limit";
+import { UserUsageLimit } from "@/types";
 import { publicProcedure, t } from "../server";
 
 export const userUsageLimitRouter = t.router({
-  get: publicProcedure
-    .output(UserUsageLimit)
+  list: publicProcedure
+    .input(UserUsageLimit.List)
+    .output(UserUsageLimit.ListOutput)
     .query((opts) =>
-      opts.ctx.service.userUsageLimit
-        .get(opts.ctx.userId)
-        .then((x) => UserUsageLimit.parse(x))
+      opts.ctx.service.userUsageLimit.list(opts.ctx.userId, opts.input)
     ),
 });

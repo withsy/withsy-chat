@@ -3,8 +3,10 @@ import {
   createNextPagesApiHandler,
   type Options,
 } from "@/server/next-pages-api-handler";
+import { UserUsageLimitService } from "@/server/services/user-usage-limit";
 import type { UserId } from "@/types/id";
 import { Model } from "@/types/model";
+import { TRPCError } from "@trpc/server";
 import Busboy from "busboy";
 import { getReasonPhrase, StatusCodes } from "http-status-codes";
 import mime from "mime-types";
@@ -70,7 +72,7 @@ async function post(opts: Options) {
     );
   }
 
-  let maybeModel: string | undefined = undefined;
+  let model: string | undefined = undefined;
   let name: string | undefined = undefined;
   let imagePath: string | undefined = undefined;
   let uploadPromise: Promise<void> | undefined = undefined;
@@ -86,11 +88,30 @@ async function post(opts: Options) {
 
   busboy
     .on("field", (fieldname, value) => {
-      if (fieldname === "model") maybeModel = value;
+      if (fieldname === "model") {
+        const parseRes = Model.safeParse(value);
+        if (!parseRes.success)
+          return res.status(400).json({ error: "Invalid model" });
+        model = parseRes.data;
+      }
+
       if (fieldname === "name") name = value;
     })
-    .on("file", (fieldname, readable, info) => {
+    .on("file", async (fieldname, readable, info) => {
       if (fieldname === "image") {
+        try {
+          await UserUsageLimitService.checkAiProfileImage(service.db, {
+            userId,
+          });
+        } catch (e) {
+          // TODO: TRPCError to HttpServerError
+          if (e instanceof TRPCError && e.code === "TOO_MANY_REQUESTS") {
+            return res
+              .status(StatusCodes.TOO_MANY_REQUESTS)
+              .json({ error: "AI Profile image usage limit exceeded." });
+          }
+        }
+
         const { mimeType } = info;
         if (!ALLOWED_MIME_TYPES.includes(mimeType))
           return res.status(400).json({ error: "Unsupported file type" });
@@ -114,7 +135,12 @@ async function post(opts: Options) {
     busboy
       .on("finish", async () => {
         try {
-          if (uploadPromise) await uploadPromise;
+          if (uploadPromise) {
+            await uploadPromise;
+            await UserUsageLimitService.decreaseAiProfileImage(service.db, {
+              userId,
+            });
+          }
           resolve();
         } catch (e) {
           reject(e);
@@ -125,22 +151,16 @@ async function post(opts: Options) {
     req.pipe(busboy);
   });
 
-  if (!maybeModel) return res.status(400).json({ error: "Invalid model" });
+  if (!model) return res.status(400).json({ error: "Invalid model" });
 
-  const parseRes = Model.safeParse(maybeModel);
-  if (!parseRes.success)
-    return res.status(400).json({ error: "Invalid model" });
-
-  const model = parseRes.data;
-
-  const userAiProfile = await service.userAiProfile.update({
+  const data = await service.userAiProfile.update({
     userId,
     model,
     name,
     imagePath,
   });
 
-  return res.status(200).json(userAiProfile);
+  return res.status(200).json(data);
 }
 
 export function createImagePath(input: { userId: UserId; fileName: string }) {

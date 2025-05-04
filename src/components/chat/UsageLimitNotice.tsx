@@ -1,11 +1,9 @@
+import { useUser } from "@/context/UserContext";
+import type { UserUsageLimit } from "@/types";
 import React from "react";
 
 type Props = {
-  dailyRemaining: number;
-  dailyResetAt: Date;
-  minuteRemaining: number;
-  minuteResetAt: Date;
-  themeColor: string;
+  usageLimits: UserUsageLimit.Data[];
 };
 
 const getMinutesLeft = (target: Date) =>
@@ -71,25 +69,33 @@ const buildMessage = (
   }
 };
 
-export const UsageLimitNotice: React.FC<Props> = ({
-  dailyRemaining,
-  dailyResetAt,
-  minuteRemaining,
-  minuteResetAt,
-  themeColor,
-}) => {
-  let message: React.ReactNode = null;
+export const UsageLimitNotice: React.FC<Props> = ({ usageLimits }) => {
+  const { user } = useUser();
+  if (!user) return null;
 
-  if (dailyRemaining === 0) {
-    const minutesLeft = getMinutesLeft(dailyResetAt);
-    message = buildMessage("daily", { minutesLeft, resetAt: dailyResetAt });
-  } else if (minuteRemaining === 0) {
-    const minutesLeft = getMinutesLeft(minuteResetAt);
-    message = buildMessage("minute", { minutesLeft, resetAt: minuteResetAt });
-  } else if (dailyRemaining <= 3) {
+  let message: React.ReactNode = null;
+  const messageDaily = usageLimits.find(
+    (x) => x.type === "message" && x.period === "daily"
+  );
+  const messagePerMinute = usageLimits.find(
+    (x) => x.type === "message" && x.period === "perMinute"
+  );
+  if (messageDaily && messageDaily.remainingAmount === 0) {
+    const minutesLeft = getMinutesLeft(messageDaily.resetAt);
+    message = buildMessage("daily", {
+      minutesLeft,
+      resetAt: messageDaily.resetAt,
+    });
+  } else if (messagePerMinute && messagePerMinute.remainingAmount === 0) {
+    const minutesLeft = getMinutesLeft(messagePerMinute.resetAt);
+    message = buildMessage("minute", {
+      minutesLeft,
+      resetAt: messagePerMinute.resetAt,
+    });
+  } else if (messageDaily && messageDaily.remainingAmount <= 3) {
     message = buildMessage("low", {
-      remaining: dailyRemaining,
-      resetAt: dailyResetAt,
+      remaining: messageDaily.remainingAmount,
+      resetAt: messageDaily.resetAt,
     });
   }
 
@@ -97,7 +103,7 @@ export const UsageLimitNotice: React.FC<Props> = ({
     <span
       className="select-none text-xs text-gray-500"
       style={{
-        color: `rgb(${themeColor})`,
+        color: `rgb(${user.preferences.themeColor})`,
         overflow: "hidden",
         whiteSpace: "nowrap",
         textOverflow: "ellipsis",
