@@ -11,3 +11,4 @@ export * as UserAiProfile from "./user-ai-profile";
 export * as UserDefaultPrompt from "./user-default-prompt";
 export * as UserLinkAccount from "./user-link-account";
 export * as UserPrompt from "./user-prompt";
+export * as UserUsageLimit from "./user-usage-limit";

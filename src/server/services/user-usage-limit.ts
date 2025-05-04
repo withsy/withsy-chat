@@ -1,9 +1,8 @@
+import { UserUsageLimit } from "@/types";
 import type { UserId } from "@/types/id";
 import {
   rateLimitRpd,
   rateLimitRpm,
-  UserUsageLimit,
-  UserUsageLimitSelect,
   type UserUsageLimitErrorInput,
 } from "@/types/user-usage-limit";
 import { TRPCError } from "@trpc/server";
@@ -24,7 +23,7 @@ export class UserUsageLimitService {
     const res = await this.service.db.$transaction(async (tx) => {
       const usageLimit = await tx.userUsageLimit.findUniqueOrThrow({
         where: { userId },
-        select: { id: true, ...UserUsageLimitSelect },
+        select: { id: true, ...UserUsageLimit.Select },
       });
 
       const now = new Date();
