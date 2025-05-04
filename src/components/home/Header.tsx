@@ -17,8 +17,8 @@ export default function Component({ user }: { user: User.Data | null }) {
       value: "about",
     },
     {
-      label: "Guide",
-      value: "guide",
+      label: "Guides",
+      value: "guides",
     },
     {
       label: "Roadmap",
