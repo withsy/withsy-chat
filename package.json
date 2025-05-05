@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "@google/genai": "^0.10.0",
+    "@harryplusplus/busboy-async": "^0.2.2",
     "@monaco-editor/react": "^4.7.0",
     "@prisma/client": "^6.6.0",
     "@radix-ui/react-accordion": "^1.2.3",
@@ -42,7 +43,6 @@
     "@trpc/client": "11.1.2",
     "@trpc/server": "11.1.2",
     "@trpc/tanstack-react-query": "11.1.2",
-    "busboy": "^1.6.0",
     "chroma-js": "^3.1.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -90,7 +90,6 @@
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
     "@tanstack/eslint-plugin-query": "^5.74.7",
-    "@types/busboy": "^1.5.4",
     "@types/chroma-js": "^3.1.1",
     "@types/event-source-polyfill": "^1.0.5",
     "@types/mime-types": "^2.1.4",
