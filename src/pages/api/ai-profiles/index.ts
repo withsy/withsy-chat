@@ -6,7 +6,7 @@ import {
 import { UserUsageLimitService } from "@/server/services/user-usage-limit";
 import type { UserId } from "@/types/id";
 import { Model } from "@/types/model";
-import { busboy } from "@harryplusplus/busboy-async";
+import { busboy } from "busboy-async";
 import { getReasonPhrase, StatusCodes } from "http-status-codes";
 import mime from "mime-types";
 import { v7 as uuidv7 } from "uuid";
