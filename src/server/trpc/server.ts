@@ -5,20 +5,13 @@ import {
 } from "@trpc/server/unstable-core-do-not-import";
 import { StatusCodes } from "http-status-codes";
 import { SuperJSON } from "superjson";
-import { HttpServerError, ServerError, TrpcDataError } from "../error";
+import { HttpServerError, ServerError } from "../error";
 import type { ServerContext } from "../server-context";
 
 export const t = initTRPC.context<ServerContext>().create({
   transformer: SuperJSON,
   errorFormatter: ({ error, shape }) => {
     const { cause } = error;
-    if (cause instanceof TrpcDataError) {
-      return {
-        ...shape,
-        data: cause.data,
-      };
-    }
-
     if (cause instanceof HttpServerError) {
       const code_key = getTrpcErrorCodeKeyByStatusCode(cause.code);
       const code = TRPC_ERROR_CODES_BY_KEY[code_key];

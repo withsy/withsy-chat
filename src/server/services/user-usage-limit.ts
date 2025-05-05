@@ -15,7 +15,8 @@ import {
   startOfSecond,
   startOfYear,
 } from "date-fns";
-import { TrpcDataError } from "../error";
+import { StatusCodes } from "http-status-codes";
+import { HttpServerError } from "../error";
 import type { ServiceRegistry } from "../service-registry";
 import type { Tx } from "./db";
 
@@ -264,16 +265,18 @@ export class UserUsageLimitService {
   }
 
   static createError(entity: UserUsageLimit.Entity) {
-    return new TRPCError({
-      code: "TOO_MANY_REQUESTS",
-      message: "Usage limit reached.",
-      cause: new TrpcDataError({
-        type: entity.type,
-        period: entity.period,
-        remainingAmount: entity.remainingAmount,
-        resetAt: entity.resetAt.toISOString(),
-      } satisfies UserUsageLimit.ErrorInput),
-    });
+    return new HttpServerError(
+      StatusCodes.TOO_MANY_REQUESTS,
+      "Usage limit reached.",
+      {
+        details: {
+          type: entity.type,
+          period: entity.period,
+          remainingAmount: entity.remainingAmount,
+          resetAt: entity.resetAt.toISOString(),
+        } satisfies UserUsageLimit.ErrorInput,
+      }
+    );
   }
 
   static async save(tx: Tx, entity: UserUsageLimit.Entity) {

@@ -1,6 +1,5 @@
 import { ServerError as Base } from "@/types";
 import { StatusCodes } from "http-status-codes";
-import type { JsonObject } from "type-fest";
 
 export type Options<TDetails extends Base.Details = Base.Details> = {
   details?: TDetails;
@@ -60,10 +59,4 @@ export function parseMessageFromUnknown(x: unknown) {
   if (typeof x === "object" && x !== null && "message" in x)
     return String(x.message);
   return String(x);
-}
-
-export class TrpcDataError extends Error {
-  constructor(readonly data: JsonObject) {
-    super();
-  }
 }

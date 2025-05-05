@@ -105,12 +105,16 @@ async function post(opts: Options) {
             userId,
           });
         } catch (e) {
-          // TODO: TRPCError to HttpServerError
-          if (e instanceof TRPCError && e.code === "TOO_MANY_REQUESTS") {
+          if (
+            e instanceof HttpServerError &&
+            e.code === StatusCodes.TOO_MANY_REQUESTS
+          ) {
             return res
               .status(StatusCodes.TOO_MANY_REQUESTS)
               .json({ error: "AI Profile image usage limit exceeded." });
           }
+
+          throw e;
         }
 
         const { mimeType } = event.info;
