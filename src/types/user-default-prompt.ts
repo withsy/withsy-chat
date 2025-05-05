@@ -23,6 +23,6 @@ export const GetOutput = z.nullable(Data);
 export type GetOutput = zInfer<typeof GetOutput>;
 
 export const Update = z.object({
-  userPromptId: UserPromptId,
+  userPromptId: z.nullable(UserPromptId),
 });
 export type Update = zInfer<typeof Update>;

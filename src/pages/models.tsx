@@ -1,19 +1,37 @@
 import { CollapseButton } from "@/components/CollapseButton";
 import LoadAiProfiles from "@/components/LoadAiProfiles";
 import { PartialLoading } from "@/components/Loading";
-import { AvatarStyleSelector } from "@/components/models/AvatarStyleSelector";
 import ModelCard from "@/components/models/ModelCard";
 import { useUser } from "@/context/UserContext";
+import { setTrpcCsrfToken } from "@/lib/trpc";
+import { getCsrfToken } from "@/server/utils";
 import { useAiProfileStore } from "@/stores/useAiProfileStore";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 import { Model } from "@/types/model";
+import type { GetServerSideProps } from "next";
+import { useEffect } from "react";
 
-export default function ModelsPage() {
+type Props = {
+  csrfToken: string;
+};
+
+export const getServerSideProps: GetServerSideProps<Props> = async ({
+  res,
+}) => {
+  const csrfToken = getCsrfToken(res);
+  return { props: { csrfToken } };
+};
+
+export default function ModelsPage({ csrfToken }: Props) {
   const { user } = useUser();
   const { collapsed } = useSidebarStore();
   const { profiles, isLoading } = useAiProfileStore();
 
   const MODELS = Model.options;
+
+  useEffect(() => {
+    if (csrfToken) setTrpcCsrfToken(csrfToken);
+  }, [csrfToken]);
 
   if (!user || isLoading) {
     return <PartialLoading />;
@@ -50,6 +68,7 @@ export default function ModelsPage() {
                 model={model}
                 name={profile?.name ?? model}
                 image={profile?.imageSource}
+                csrfToken={csrfToken}
               />
             );
           })}
