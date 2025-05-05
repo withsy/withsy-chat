@@ -140,10 +140,10 @@ export function PromptCard({
         {prompt.text}
       </div>
       <div className="mt-4 font-semibold flex justify-between items-center gap-1">
+        {prompt.isStarred && (
+          <Star size={16} fill={`rgb(${user.preferences.themeColor})`} />
+        )}
         <div className="truncate flex items-center gap-1">
-          {prompt.isStarred && (
-            <Star size={14} fill={`rgb(${user.preferences.themeColor})`} />
-          )}
           <span>{prompt.title}</span>
         </div>
         {cornerButton}
