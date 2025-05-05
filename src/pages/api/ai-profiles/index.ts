@@ -7,7 +7,6 @@ import { UserUsageLimitService } from "@/server/services/user-usage-limit";
 import type { UserId } from "@/types/id";
 import { Model } from "@/types/model";
 import { busboy } from "@harryplusplus/busboy-async";
-import { TRPCError } from "@trpc/server";
 import { getReasonPhrase, StatusCodes } from "http-status-codes";
 import mime from "mime-types";
 import { uuidv7 } from "uuidv7";
