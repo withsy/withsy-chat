@@ -5,6 +5,8 @@ import matter from "gray-matter";
 import { serialize } from "next-mdx-remote/serialize";
 import { MDXRemote, type MDXRemoteSerializeResult } from "next-mdx-remote";
 import type { GetStaticPaths, GetStaticProps } from "next";
+import Link from "next/link";
+import { ChevronLeft } from "lucide-react";
 
 type Props = {
   source: MDXRemoteSerializeResult;
@@ -17,6 +19,13 @@ type Props = {
 export default function GuidePage({ source, frontMatter }: Props) {
   return (
     <div className="max-w-3xl mx-auto py-16 px-4">
+      <Link
+        href="/guides"
+        className="mb-6 inline-flex items-center text-sm text-muted-foreground hover:underline"
+      >
+        <ChevronLeft className="w-4 h-4 mr-1" />
+        Back to Guides
+      </Link>
       <h1 className="text-3xl font-bold mb-4">{frontMatter.title}</h1>
       {frontMatter.description && (
         <p className="text-muted-foreground mb-8">{frontMatter.description}</p>

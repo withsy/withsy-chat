@@ -67,7 +67,7 @@ export function PromptCard({
   ) : chat != null ? (
     isActive ? (
       <button
-        className="text-xs font-medium text-primary hover:underline"
+        className="text-xs font-medium text-primary hover:underline rounded-sm bg-gray-200 px-2 py-1"
         onClick={(e) => {
           e.stopPropagation();
           updateChat.mutate({
@@ -80,7 +80,7 @@ export function PromptCard({
       </button>
     ) : (
       <button
-        className="text-xs font-medium text-primary hover:underline"
+        className="text-xs font-medium text-primary hover:underline rounded-sm bg-gray-200 px-2 py-1"
         onClick={(e) => {
           e.stopPropagation();
           updateChat.mutate({
