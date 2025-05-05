@@ -88,7 +88,8 @@ async function post(opts: Options) {
       if (event.name === "model") {
         const parseRes = Model.safeParse(event.value);
         if (!parseRes.success)
-          return res.status(400).json({ error: "Invalid model" });
+          throw new HttpServerError(StatusCodes.BAD_REQUEST, "Invalid model");
+
         model = parseRes.data;
       }
 
@@ -99,26 +100,16 @@ async function post(opts: Options) {
 
     if (event.type === "file") {
       if (event.name === "image") {
-        try {
-          await UserUsageLimitService.checkAiProfileImage(service.db, {
-            userId,
-          });
-        } catch (e) {
-          if (
-            e instanceof HttpServerError &&
-            e.code === StatusCodes.TOO_MANY_REQUESTS
-          ) {
-            return res
-              .status(StatusCodes.TOO_MANY_REQUESTS)
-              .json({ error: "AI Profile image usage limit exceeded." });
-          }
-
-          throw e;
-        }
+        await UserUsageLimitService.checkAiProfileImage(service.db, {
+          userId,
+        });
 
         const { mimeType } = event.info;
         if (!ALLOWED_MIME_TYPES.includes(mimeType))
-          return res.status(400).json({ error: "Unsupported file type" });
+          throw new HttpServerError(
+            StatusCodes.BAD_REQUEST,
+            "Unsupported file type"
+          );
 
         const ext = mime.extension(mimeType);
         const uuid = uuidv7();
@@ -142,7 +133,8 @@ async function post(opts: Options) {
     }
   }
 
-  if (!model) return res.status(400).json({ error: "Invalid model" });
+  if (!model)
+    throw new HttpServerError(StatusCodes.BAD_REQUEST, "Invalid model");
 
   const data = await service.userAiProfile.update({
     userId,
