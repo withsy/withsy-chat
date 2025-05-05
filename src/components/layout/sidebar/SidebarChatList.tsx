@@ -19,7 +19,7 @@ export default function SidebarChatList() {
   useEffect(() => {
     if (!listChats.data) return;
     setChats(listChats.data);
-  }, [listChats]);
+  }, [listChats.data]);
 
   const updateChat = (updatedChat: Chat.Data) => {
     const prev = chats;

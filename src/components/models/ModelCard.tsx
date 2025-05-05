@@ -121,7 +121,7 @@ export default function ModelCard({ model, name, image, csrfToken }: Props) {
       const updated = await res.json();
       setProfile(model, updated);
       toast.success("Image updated");
-    } catch (e) {
+    } catch (_e) {
       toast.error("Failed to update image");
     } finally {
       setLoading(false);
