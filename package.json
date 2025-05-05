@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "@google/genai": "^0.10.0",
-    "@harryplusplus/busboy-async": "^0.2.2",
+    "@harryplusplus/busboy-async": "^0.2.3",
     "@monaco-editor/react": "^4.7.0",
     "@prisma/client": "^6.6.0",
     "@radix-ui/react-accordion": "^1.2.3",
