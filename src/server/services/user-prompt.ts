@@ -1,6 +1,6 @@
 import { UserPrompt } from "@/types";
 import type { UserId } from "@/types/id";
-import { uuidv7 } from "uuidv7";
+import { v7 as uuidv7 } from "uuid";
 import type { ServiceRegistry } from "../service-registry";
 import { getHardDeleteCutoffDate } from "../utils";
 import { IdempotencyInfoService } from "./idempotency-info";

@@ -12,7 +12,7 @@ import {
   subMonths,
 } from "date-fns";
 import { fromZonedTime, toZonedTime } from "date-fns-tz";
-import { uuidv7 } from "uuidv7";
+import { v7 as uuidv7 } from "uuid";
 import type { ServiceRegistry } from "../service-registry";
 import { ChatService } from "./chat";
 import { ChatPromptService } from "./chat-prompt";

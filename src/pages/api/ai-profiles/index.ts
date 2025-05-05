@@ -6,11 +6,10 @@ import {
 import { UserUsageLimitService } from "@/server/services/user-usage-limit";
 import type { UserId } from "@/types/id";
 import { Model } from "@/types/model";
-import { TRPCError } from "@trpc/server";
-import Busboy from "busboy";
+import { busboy } from "busboy-async";
 import { getReasonPhrase, StatusCodes } from "http-status-codes";
 import mime from "mime-types";
-import { uuidv7 } from "uuidv7";
+import { v7 as uuidv7 } from "uuid";
 
 const ALLOWED_MIME_TYPES = ["image/jpeg", "image/png", "image/webp"];
 const MAX_FILE_SIZE = 1 * 1024 * 1024; // 1 MB
@@ -72,13 +71,8 @@ async function post(opts: Options) {
     );
   }
 
-  let model: string | undefined = undefined;
-  let name: string | undefined = undefined;
-  let imagePath: string | undefined = undefined;
-  let uploadPromise: Promise<void> | undefined = undefined;
-
-  const busboy = Busboy({
-    headers: req.headers,
+  const stream = busboy(req, {
+    allowedFileNames: ["image"],
     limits: {
       fields: 2,
       files: 1,
@@ -86,35 +80,37 @@ async function post(opts: Options) {
     },
   });
 
-  busboy
-    .on("field", (fieldname, value) => {
-      if (fieldname === "model") {
-        const parseRes = Model.safeParse(value);
+  let model: Model | undefined = undefined;
+  let name: string | undefined = undefined;
+  let imagePath: string | undefined = undefined;
+
+  for await (const event of stream) {
+    if (event.type === "field") {
+      if (event.name === "model") {
+        const parseRes = Model.safeParse(event.value);
         if (!parseRes.success)
-          return res.status(400).json({ error: "Invalid model" });
+          throw new HttpServerError(StatusCodes.BAD_REQUEST, "Invalid model");
+
         model = parseRes.data;
       }
 
-      if (fieldname === "name") name = value;
-    })
-    .on("file", async (fieldname, readable, info) => {
-      if (fieldname === "image") {
-        try {
-          await UserUsageLimitService.checkAiProfileImage(service.db, {
-            userId,
-          });
-        } catch (e) {
-          // TODO: TRPCError to HttpServerError
-          if (e instanceof TRPCError && e.code === "TOO_MANY_REQUESTS") {
-            return res
-              .status(StatusCodes.TOO_MANY_REQUESTS)
-              .json({ error: "AI Profile image usage limit exceeded." });
-          }
-        }
+      if (event.name === "name") {
+        name = event.value;
+      }
+    }
 
-        const { mimeType } = info;
+    if (event.type === "file") {
+      if (event.name === "image") {
+        await UserUsageLimitService.checkAiProfileImage(service.db, {
+          userId,
+        });
+
+        const { mimeType } = event.info;
         if (!ALLOWED_MIME_TYPES.includes(mimeType))
-          return res.status(400).json({ error: "Unsupported file type" });
+          throw new HttpServerError(
+            StatusCodes.BAD_REQUEST,
+            "Unsupported file type"
+          );
 
         const ext = mime.extension(mimeType);
         const uuid = uuidv7();
@@ -125,33 +121,19 @@ async function post(opts: Options) {
           .file(imagePath)
           .createWriteStream({ metadata: { contentType: mimeType } });
 
-        uploadPromise = new Promise<void>((resolve, reject) => {
-          readable.pipe(writable).on("finish", resolve).on("error", reject);
+        await new Promise<void>((resolve, reject) => {
+          event.stream.pipe(writable).on("finish", resolve).on("error", reject);
+        });
+
+        await UserUsageLimitService.decreaseAiProfileImage(service.db, {
+          userId,
         });
       }
-    });
+    }
+  }
 
-  await new Promise<void>((resolve, reject) => {
-    busboy
-      .on("finish", async () => {
-        try {
-          if (uploadPromise) {
-            await uploadPromise;
-            await UserUsageLimitService.decreaseAiProfileImage(service.db, {
-              userId,
-            });
-          }
-          resolve();
-        } catch (e) {
-          reject(e);
-        }
-      })
-      .on("error", reject);
-
-    req.pipe(busboy);
-  });
-
-  if (!model) return res.status(400).json({ error: "Invalid model" });
+  if (!model)
+    throw new HttpServerError(StatusCodes.BAD_REQUEST, "Invalid model");
 
   const data = await service.userAiProfile.update({
     userId,
