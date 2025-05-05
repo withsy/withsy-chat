@@ -142,11 +142,13 @@ export function PromptCard({
       <div className="mt-4 font-semibold flex justify-between items-center gap-1">
         <div className="flex items-center gap-1 min-w-0">
           {prompt.isStarred && (
-            <Star size={16} fill={`rgb(${user.preferences.themeColor})`} />
+            <Star
+              size={16}
+              fill={`rgb(${user.preferences.themeColor})`}
+              className="shrink-0"
+            />
           )}
-          <div className="truncate min-w-0">
-            <span className="truncate block">{prompt.title}</span>
-          </div>
+          <span className="truncate block leading-none">{prompt.title}</span>
         </div>
         {cornerButton}
       </div>
