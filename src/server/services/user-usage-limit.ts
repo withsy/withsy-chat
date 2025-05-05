@@ -1,6 +1,5 @@
 import { UserUsageLimit } from "@/types";
 import type { UserId } from "@/types/id";
-import { TRPCError } from "@trpc/server";
 import {
   addDays,
   addHours,
