@@ -1,6 +1,6 @@
 import { useTRPC } from "@/lib/trpc";
 import { User } from "@/types";
-import { useMutation } from "@tanstack/react-query";
+import { skipToken, useMutation, useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import {
   createContext,
@@ -28,11 +28,8 @@ export function UserProvider({ children }: { children: ReactNode }) {
     {}
   );
   const [user, setUser] = useState<User.Data | null>(null);
-
-  const { mutate: userEnsure } = useMutation(
-    trpc.user.ensure.mutationOptions({
-      onSuccess: (data) => setUser(data),
-    })
+  const userGet = useQuery(
+    trpc.user.get.queryOptions(session ? undefined : skipToken)
   );
 
   const updateUserPrefs = useMutation(
@@ -82,24 +79,9 @@ export function UserProvider({ children }: { children: ReactNode }) {
   );
 
   useEffect(() => {
-    if (!session) return;
-
-    let aiLanguage: string | undefined = undefined;
-    try {
-      aiLanguage = navigator.language.split("-")[0];
-    } catch (e) {
-      void e;
-    }
-
-    let timezone: string | undefined = undefined;
-    try {
-      timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    } catch (e) {
-      void e;
-    }
-
-    userEnsure({ aiLanguage, timezone });
-  }, [session, userEnsure]);
+    if (!userGet.data) return;
+    setUser(userGet.data);
+  }, [userGet.data]);
 
   const setUserPrefsAndSave: SetUserPrefsAndSave = (input) => {
     updateUserPrefs.mutate(input);

@@ -4,15 +4,28 @@ import { EditPromptModal } from "@/components/prompts/EditPromptModal";
 import { PromptCard } from "@/components/prompts/PromptCard";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@/context/UserContext";
-import { useTRPC } from "@/lib/trpc";
+import { setTrpcCsrfToken, useTRPC } from "@/lib/trpc";
+import { getCsrfToken } from "@/server/utils";
 import { useChatStore } from "@/stores/useChatStore";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 import type { UserPrompt } from "@/types";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import type { GetServerSideProps } from "next";
+import { useEffect, useState } from "react";
 import { v4 as uuid } from "uuid";
 
-function PromptsPage() {
+type Props = {
+  csrfToken: string;
+};
+
+export const getServerSideProps: GetServerSideProps<Props> = async ({
+  res,
+}) => {
+  const csrfToken = getCsrfToken(res);
+  return { props: { csrfToken } };
+};
+
+function PromptsPage({ csrfToken }: Props) {
   const trpc = useTRPC();
   const { user } = useUser();
   const { chat, setChat } = useChatStore();
@@ -91,6 +104,10 @@ function PromptsPage() {
     updatedAt: Date;
     isDefault?: boolean;
   } | null>(null);
+
+  useEffect(() => {
+    if (csrfToken) setTrpcCsrfToken(csrfToken);
+  }, [csrfToken]);
 
   if (!user || isLoadingPrompts || isLoadingDefaultPrompt) {
     return <PartialLoading />;
