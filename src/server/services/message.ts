@@ -2,7 +2,7 @@ import { Chat, ChatPrompt, Message, UserPrompt } from "@/types";
 import type { ChatId, MessageId, UserId } from "@/types/id";
 import { Model } from "@/types/model";
 import { Role } from "@/types/role";
-import { uuidv7 } from "uuidv7";
+import { v7 as uuidv7 } from "uuid";
 import type { ServiceRegistry } from "../service-registry";
 import type { Tx } from "./db";
 import { IdempotencyInfoService } from "./idempotency-info";

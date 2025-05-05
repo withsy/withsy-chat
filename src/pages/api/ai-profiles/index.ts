@@ -9,7 +9,7 @@ import { Model } from "@/types/model";
 import { busboy } from "@harryplusplus/busboy-async";
 import { getReasonPhrase, StatusCodes } from "http-status-codes";
 import mime from "mime-types";
-import { uuidv7 } from "uuidv7";
+import { v7 as uuidv7 } from "uuid";
 
 const ALLOWED_MIME_TYPES = ["image/jpeg", "image/png", "image/webp"];
 const MAX_FILE_SIZE = 1 * 1024 * 1024; // 1 MB
