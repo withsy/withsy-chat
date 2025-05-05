@@ -18,7 +18,7 @@ interface PromptCardProps {
   onClick: (prompt: UserPrompt.Data) => void;
   onDelete?: (promptId: string) => void;
   onToggleStar?: (prompt: UserPrompt.Data) => void;
-  onMakeDefault?: (promptId: string) => void;
+  onMakeDefault?: (promptId: string | null) => void;
   isActive?: boolean;
   isDefault?: boolean;
 }
@@ -116,11 +116,16 @@ export function PromptCard({
                 {prompt.isStarred ? "Unstar" : "Star"}
               </DropdownMenuItem>
             )}
-            {onMakeDefault && (
-              <DropdownMenuItem onClick={() => onMakeDefault?.(prompt.id)}>
-                Make Default
-              </DropdownMenuItem>
-            )}
+            {onMakeDefault &&
+              (isDefault ? (
+                <DropdownMenuItem onClick={() => onMakeDefault?.(null)}>
+                  Remove Default
+                </DropdownMenuItem>
+              ) : (
+                <DropdownMenuItem onClick={() => onMakeDefault?.(prompt.id)}>
+                  Make Default
+                </DropdownMenuItem>
+              ))}
             {onDelete && (
               <DropdownMenuItem
                 onClick={() => onDelete?.(prompt.id)}

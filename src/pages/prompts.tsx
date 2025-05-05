@@ -92,7 +92,7 @@ function PromptsPage({ csrfToken }: Props) {
     });
   };
 
-  const makeDefaultPrompt = (promptId: string) => {
+  const makeDefaultPrompt = (promptId: string | null) => {
     updateDefaultPrompt.mutate({ userPromptId: promptId });
   };
 
@@ -167,6 +167,7 @@ function PromptsPage({ csrfToken }: Props) {
                   isDefault: true,
                 })
               }
+              onMakeDefault={makeDefaultPrompt}
               onToggleStar={toggleStarPrompt}
               onDelete={(promptId) => {
                 deletePrompt.mutate({ userPromptId: promptId });
