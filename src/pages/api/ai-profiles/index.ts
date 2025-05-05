@@ -72,6 +72,7 @@ async function post(opts: Options) {
   }
 
   const stream = busboy(req, {
+    allowedFileNames: ["image"],
     limits: {
       fields: 2,
       files: 1,
@@ -127,8 +128,6 @@ async function post(opts: Options) {
         await UserUsageLimitService.decreaseAiProfileImage(service.db, {
           userId,
         });
-      } else {
-        event.stream.resume();
       }
     }
   }
