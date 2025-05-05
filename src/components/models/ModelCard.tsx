@@ -3,23 +3,24 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { base64ToFile } from "@/lib/avatar-utils";
+import { useTRPC } from "@/lib/trpc";
 import { useAiProfileStore } from "@/stores/useAiProfileStore";
+import type { Model } from "@/types/model";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
 import { v4 as uuid } from "uuid";
-import CropImageModal from "./CropImageModal";
-import { useTRPC } from "@/lib/trpc";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import type { Model } from "@/types/model";
 import ConfirmResetModal from "./ConfirmResetModal";
+import CropImageModal from "./CropImageModal";
 
 type Props = {
   model: Model;
   name?: string;
   image?: string;
+  csrfToken: string;
 };
 
-export default function ModelCard({ model, name, image }: Props) {
+export default function ModelCard({ model, name, image, csrfToken }: Props) {
   const [newName, setNewName] = useState(name ?? "");
   const [loading, setLoading] = useState(false);
   const [cropModalOpen, setCropModalOpen] = useState(false);
@@ -63,20 +64,15 @@ export default function ModelCard({ model, name, image }: Props) {
       form.append("model", model);
       form.append("name", newName.trim());
 
-      const res = await fetch("/api/ai-profiles", {
-        method: "POST",
-        body: form,
-        headers: {
-          "Idempotency-Key": uuid(),
-        },
+      const res = await updateAiProfile({
+        form,
+        csrfToken,
       });
-
-      if (!res.ok) throw new Error("Server responded with error");
 
       const updated = await res.json();
       setProfile(model, updated);
       toast.success("Name updated");
-    } catch (e) {
+    } catch (_e) {
       toast.error("Failed to update name");
     } finally {
       setLoading(false);
@@ -117,15 +113,10 @@ export default function ModelCard({ model, name, image }: Props) {
       form.append("name", newName.trim());
       form.append("image", file);
 
-      const res = await fetch("/api/ai-profiles", {
-        method: "POST",
-        body: form,
-        headers: {
-          "Idempotency-Key": uuid(),
-        },
+      const res = await updateAiProfile({
+        form,
+        csrfToken,
       });
-
-      if (!res.ok) throw new Error("Server responded with error");
 
       const updated = await res.json();
       setProfile(model, updated);
@@ -211,4 +202,21 @@ export default function ModelCard({ model, name, image }: Props) {
       )}
     </div>
   );
+}
+
+async function updateAiProfile(input: { form: FormData; csrfToken: string }) {
+  const { form, csrfToken } = input;
+
+  const res = await fetch("/api/ai-profiles", {
+    method: "POST",
+    body: form,
+    headers: {
+      "Idempotency-Key": uuid(),
+      "X-CSRF-Token": csrfToken,
+    },
+  });
+
+  if (!res.ok) throw new Error("Server responded with error");
+
+  return res;
 }

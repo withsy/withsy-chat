@@ -20,9 +20,23 @@ function getUrl() {
   return `${getBaseUrl()}/api/trpc`;
 }
 
+let csrfToken: string | null = null;
+export const setTrpcCsrfToken = (token: string) => {
+  csrfToken = token;
+};
+
 const commonLinkOptions = {
   transformer: SuperJSON,
   url: getUrl(),
+  headers: () => {
+    if (csrfToken) {
+      return {
+        "X-CSRF-Token": csrfToken,
+      };
+    }
+
+    return {};
+  },
 };
 
 const links: TRPCLink<AppRouter>[] = [
