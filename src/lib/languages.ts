@@ -1,4 +1,4 @@
-import { geminiApiSupportedLanguages } from "@/types/languages";
+// import { geminiApiSupportedLanguages } from "@/types/languages";
 
 // TODO
 // export function getSupportedLanguageTable(
