@@ -6,4 +6,4 @@ const csrfMiddleware = createCsrfMiddleware({
   },
 });
 
-export const middleware = csrfMiddleware;
+// export const middleware = csrfMiddleware;
