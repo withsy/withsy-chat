@@ -109,27 +109,21 @@ export function ChatMessageList({ messages, onToggleSaved }: Props) {
         className="space-y-12 overflow-x-hidden overflow-y-auto h-full pr-2"
       >
         {chat != null && <ChatInformationSystemMessage chat={chat} />}
-        {messages.map((msg) =>
-          msg.role === "system" ? (
-            <div key={msg.id} className="flex justify-center my-4 py-4">
-              <span className="text-muted-foreground italic">{msg.text}</span>
-            </div>
-          ) : (
-            <div
+        {messages.map((msg) => (
+          <div
+            key={msg.id}
+            ref={(el) => {
+              messageRefs.current[msg.id] = el;
+            }}
+          >
+            <ChatBubble
               key={msg.id}
-              ref={(el) => {
-                messageRefs.current[msg.id] = el;
-              }}
-            >
-              <ChatBubble
-                key={msg.id}
-                chatType={chat?.type}
-                message={msg}
-                onToggleSaved={onToggleSaved}
-              />
-            </div>
-          )
-        )}
+              chatType={chat?.type}
+              message={msg}
+              onToggleSaved={onToggleSaved}
+            />
+          </div>
+        ))}
         <div ref={bottomRef} />
       </div>
 
