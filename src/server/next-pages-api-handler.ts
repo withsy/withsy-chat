@@ -46,16 +46,14 @@ export function createNextPagesApiHandler(handler: Handler) {
 
       if (isPrismaClientKnownRequestError(e)) {
         const statusCode = getHttpStatusCodeByPrismaCode(e.code);
-        if (statusCode === StatusCodes.NOT_FOUND) {
-          return res
-            .status(StatusCodes.NOT_FOUND)
-            .json(
-              new HttpServerError(
-                StatusCodes.NOT_FOUND,
-                getReasonPhrase(StatusCodes.NOT_FOUND)
-              ).toData()
-            );
-        }
+        return res
+          .status(statusCode)
+          .json(
+            new HttpServerError(
+              statusCode,
+              getReasonPhrase(statusCode)
+            ).toData()
+          );
       }
 
       console.error("Unexpected error occurred. error:", e);
