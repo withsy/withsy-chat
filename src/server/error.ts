@@ -1,4 +1,5 @@
 import * as Base from "@/types/server-error";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { StatusCodes } from "http-status-codes";
 
 export type Options<TDetails extends Base.Details = Base.Details> = {
@@ -59,4 +60,25 @@ export function parseMessageFromUnknown(x: unknown) {
   if (typeof x === "object" && x !== null && "message" in x)
     return String(x.message);
   return String(x);
+}
+
+export function isPrismaClientKnownRequestError(
+  error: unknown
+): error is PrismaClientKnownRequestError {
+  if (error instanceof PrismaClientKnownRequestError) return true;
+
+  if (
+    error &&
+    typeof error === "object" &&
+    "name" in error &&
+    error.name === "PrismaClientKnownRequestError"
+  )
+    return true;
+
+  return false;
+}
+
+export function getHttpStatusCodeByPrismaCode(code: string) {
+  if (code === "P2025") return StatusCodes.NOT_FOUND;
+  return StatusCodes.INTERNAL_SERVER_ERROR;
 }

@@ -1,4 +1,3 @@
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { initTRPC } from "@trpc/server";
 import {
   TRPC_ERROR_CODES_BY_KEY,
@@ -6,7 +5,12 @@ import {
 } from "@trpc/server/unstable-core-do-not-import";
 import { getReasonPhrase, StatusCodes } from "http-status-codes";
 import { SuperJSON } from "superjson";
-import { HttpServerError, ServerError } from "../error";
+import {
+  getHttpStatusCodeByPrismaCode,
+  HttpServerError,
+  isPrismaClientKnownRequestError,
+  ServerError,
+} from "../error";
 import type { ServerContext } from "../server-context";
 
 export const t = initTRPC.context<ServerContext>().create({
@@ -14,8 +18,8 @@ export const t = initTRPC.context<ServerContext>().create({
   errorFormatter: ({ error, shape }) => {
     const { cause } = error;
     if (cause instanceof HttpServerError) {
-      const code_key = getTrpcErrorCodeKeyByStatusCode(cause.code);
-      const code = TRPC_ERROR_CODES_BY_KEY[code_key];
+      const codeKey = getTrpcErrorCodeKeyByStatusCode(cause.code);
+      const code = TRPC_ERROR_CODES_BY_KEY[codeKey];
       return {
         ...shape,
         data: cause.toData(),
@@ -31,12 +35,9 @@ export const t = initTRPC.context<ServerContext>().create({
       };
     }
 
-    if (
-      cause instanceof PrismaClientKnownRequestError ||
-      cause?.name === "PrismaClientKnownRequestError"
-    ) {
-      const e = cause as PrismaClientKnownRequestError;
-      if (e.code === "P2025") {
+    if (isPrismaClientKnownRequestError(cause)) {
+      const statusCode = getHttpStatusCodeByPrismaCode(cause.code);
+      if (statusCode === StatusCodes.NOT_FOUND) {
         return {
           message: getReasonPhrase(StatusCodes.NOT_FOUND),
           code: TRPC_ERROR_CODES_BY_KEY.NOT_FOUND,
