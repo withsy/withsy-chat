@@ -1,7 +1,10 @@
-import { Chat, ChatPrompt, Message, UserPrompt } from "@/types";
+import * as Chat from "@/types/chat";
+import * as ChatPrompt from "@/types/chat-prompt";
 import type { ChatId, MessageId, UserId } from "@/types/id";
+import * as Message from "@/types/message";
 import { Model } from "@/types/model";
 import { Role } from "@/types/role";
+import * as UserPrompt from "@/types/user-prompt";
 import { v7 as uuidv7 } from "uuid";
 import type { ServiceRegistry } from "../service-registry";
 import type { Tx } from "./db";

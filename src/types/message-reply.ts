@@ -1,8 +1,8 @@
 import { z } from "zod";
-import { UserUsageLimit } from ".";
 import type { zInfer } from "./common";
 import { IdempotencyKey, MessageId } from "./id";
 import { Model } from "./model";
+import * as UserUsageLimit from "./user-usage-limit";
 
 export const Regenerate = z.object({
   idempotencyKey: IdempotencyKey,

@@ -4,7 +4,7 @@ import PromptTransparency from "@/components/home/PromptTransparency";
 import SaveStar from "@/components/home/SaveStar";
 import ThemeAndPrefsSection from "@/components/home/ThemeAndPrefs";
 import { getUser } from "@/server/utils";
-import { User } from "@/types";
+import type * as User from "@/types/user";
 import type { GetServerSideProps } from "next";
 
 type Props = {

@@ -1,4 +1,4 @@
-import { UserAiProfile } from "@/types";
+import * as UserAiProfile from "@/types/user-ai-profile";
 import { publicProcedure, t } from "../server";
 
 export const userAiProfileRouter = t.router({

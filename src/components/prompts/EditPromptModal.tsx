@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import type { UserPrompt } from "@/types";
+import type * as UserPrompt from "@/types/user-prompt";
 import { useState } from "react";
 
 interface EditPromptModalProps {

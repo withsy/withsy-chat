@@ -1,6 +1,6 @@
-import { UserAiProfile } from "@/types";
 import type { UserId } from "@/types/id";
 import { Model } from "@/types/model";
+import * as UserAiProfile from "@/types/user-ai-profile";
 import type { ServiceRegistry } from "../service-registry";
 import { UserUsageLimitService } from "./user-usage-limit";
 

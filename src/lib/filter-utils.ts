@@ -1,4 +1,4 @@
-import type { Message } from "@/types";
+import type * as Message from "@/types/message";
 
 export function filterMessages({
   messages,

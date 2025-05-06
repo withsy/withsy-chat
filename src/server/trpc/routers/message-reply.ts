@@ -1,4 +1,5 @@
-import { Message, MessageReply } from "@/types";
+import * as Message from "@/types/message";
+import * as MessageReply from "@/types/message-reply";
 import { publicProcedure, t } from "../server";
 
 export const messageReplyRouter = t.router({

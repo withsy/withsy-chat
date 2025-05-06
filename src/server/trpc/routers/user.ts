@@ -1,4 +1,4 @@
-import { User } from "@/types";
+import * as User from "@/types/user";
 import { publicProcedure, t } from "../server";
 
 export const userRouter = t.router({

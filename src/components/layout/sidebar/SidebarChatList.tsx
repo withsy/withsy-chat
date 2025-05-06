@@ -2,7 +2,7 @@ import { PartialError } from "@/components/Error";
 import { PartialLoading } from "@/components/Loading";
 import { formatDateLabel, toNewest } from "@/lib/date-utils";
 import { useTRPC } from "@/lib/trpc";
-import type { Chat } from "@/types";
+import type * as Chat from "@/types/chat";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { useEffect, useState } from "react";

@@ -1,15 +1,13 @@
 import { Prisma } from "@prisma/client";
 import { z } from "zod";
-import {
-  ChatPrompt,
-  GratitudeJournal,
-  Message,
-  UserPrompt,
-  UserUsageLimit,
-} from ".";
+import * as ChatPrompt from "./chat-prompt";
 import { type zInfer } from "./common";
+import * as GratitudeJournal from "./gratitude-journal";
 import { ChatId, IdempotencyKey, MessageId, UserPromptId } from "./id";
+import * as Message from "./message";
 import { Model } from "./model";
+import * as UserPrompt from "./user-prompt";
+import * as UserUsageLimit from "./user-usage-limit";
 
 export const Select = {
   id: true,
@@ -53,10 +51,10 @@ export const Data: z.ZodType<Data> = Entity.omit({
   titleEncrypted: true,
 }).extend({
   title: z.string(),
-  parentMessage: z.nullable(Message.Data).default(null),
-  prompts: z.array(ChatPrompt.Data).default([]),
+  parentMessage: z.nullable(z.lazy(() => Message.Data)).default(null),
+  prompts: z.array(z.lazy(() => ChatPrompt.Data)).default([]),
   gratitudeJournals: z.array(z.lazy(() => GratitudeJournal.Data)).default([]),
-  userPrompt: z.nullable(UserPrompt.Data).default(null),
+  userPrompt: z.nullable(z.lazy(() => UserPrompt.Data)).default(null),
 });
 
 export const Get = z.object({
@@ -95,9 +93,9 @@ export type Start = zInfer<typeof Start>;
 
 export const StartOutput = z.object({
   chat: Data,
-  userMessage: Message.Data,
-  modelMessage: Message.Data,
+  userMessage: z.lazy(() => Message.Data),
+  modelMessage: z.lazy(() => Message.Data),
 });
 export type StartOutput = zInfer<typeof StartOutput>;
 
-export const StartError = UserUsageLimit.Error;
+export const StartError = z.lazy(() => UserUsageLimit.Error);

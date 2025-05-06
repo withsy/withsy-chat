@@ -1,5 +1,5 @@
-import { Sparkles, Settings, Save, GitBranch } from "lucide-react";
-import type { User } from "@/types";
+import type * as User from "@/types/user";
+import { GitBranch, Save, Settings, Sparkles } from "lucide-react";
 import ResponsiveButton from "./ResponsiveButton";
 
 export function Hero({ user }: { user: User.Data | null }) {

@@ -13,7 +13,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import type { UserPrompt } from "@/types";
+import type * as UserPrompt from "@/types/user-prompt";
 import { MoreVertical, Star } from "lucide-react";
 
 interface PromptsTableProps {

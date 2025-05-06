@@ -1,6 +1,6 @@
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
-import { User } from "@/types";
 import type { UserId } from "@/types/id";
+import * as User from "@/types/user";
 import { getReasonPhrase, StatusCodes } from "http-status-codes";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth";

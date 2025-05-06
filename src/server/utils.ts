@@ -1,5 +1,5 @@
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
-import { User } from "@/types";
+import * as User from "@/types/user";
 import { subDays } from "date-fns";
 import { getServerSession } from "next-auth";
 import type { NextApiRequestCookies } from "next/dist/server/api-utils";

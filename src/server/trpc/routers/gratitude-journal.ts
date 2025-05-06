@@ -1,4 +1,5 @@
-import { Chat, GratitudeJournal } from "@/types";
+import * as Chat from "@/types/chat";
+import * as GratitudeJournal from "@/types/gratitude-journal";
 import { publicProcedure, t } from "../server";
 
 export const gratitudeJournalRouter = t.router({

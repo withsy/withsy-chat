@@ -1,9 +1,10 @@
-import { Message, UserDefaultPrompt } from "@/types";
 import type { MaybePromise } from "@/types/common";
 import type { MessageChunkIndex, MessageId, UserId } from "@/types/id";
+import type * as Message from "@/types/message";
 import { Model, ModelProviderMap } from "@/types/model";
 import { Role } from "@/types/role";
 import type { TaskInput } from "@/types/task";
+import * as UserDefaultPrompt from "@/types/user-default-prompt";
 import { match } from "ts-pattern";
 import type { Simplify } from "type-fest";
 import type { ServiceRegistry } from "../service-registry";

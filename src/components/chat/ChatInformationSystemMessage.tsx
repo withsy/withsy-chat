@@ -1,4 +1,4 @@
-import type { Chat } from "@/types";
+import type * as Chat from "@/types/chat";
 import Link from "next/link";
 import React, { useMemo } from "react";
 

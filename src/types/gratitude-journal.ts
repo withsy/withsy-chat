@@ -1,6 +1,6 @@
 import type { Prisma } from "@prisma/client";
 import { z } from "zod";
-import { Chat } from ".";
+import * as Chat from "./chat";
 import type { zInfer } from "./common";
 import { ChatId, GratitudeJournalId, IdempotencyKey } from "./id";
 

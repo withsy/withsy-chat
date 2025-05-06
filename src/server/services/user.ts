@@ -1,6 +1,6 @@
-import { User } from "@/types";
 import type { UserId } from "@/types/id";
 import { isValidAiLanguage } from "@/types/languages";
+import * as User from "@/types/user";
 import { TRPCError } from "@trpc/server";
 import type { ServiceRegistry } from "../service-registry";
 import { isValidTimezone } from "../utils";

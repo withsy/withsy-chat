@@ -1,6 +1,6 @@
 import ResponsiveButton from "@/components/home/ResponsiveButton";
 import { getUser } from "@/server/utils";
-import { User } from "@/types";
+import type * as User from "@/types/user";
 import type { GetServerSideProps } from "next";
 import Link from "next/link";
 

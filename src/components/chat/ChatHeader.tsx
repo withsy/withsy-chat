@@ -7,7 +7,7 @@ import {
 import { useUser } from "@/context/UserContext";
 import { useDrawerStore } from "@/stores/useDrawerStore";
 import { useSidebarStore } from "@/stores/useSidebarStore";
-import type { Chat } from "@/types";
+import type * as Chat from "@/types/chat";
 import { Bookmark, FolderGit2, PenLine, TableProperties } from "lucide-react";
 import { useRouter } from "next/router";
 import { CollapseButton } from "../CollapseButton";

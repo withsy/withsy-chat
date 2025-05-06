@@ -1,4 +1,4 @@
-import { type User } from "@/types";
+import type * as User from "@/types/user";
 import LoginButton from "../login/LoginButton";
 import ReturnButton from "./ReturnButton";
 

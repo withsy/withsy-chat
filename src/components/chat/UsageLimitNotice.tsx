@@ -1,5 +1,5 @@
 import { useUser } from "@/context/UserContext";
-import type { UserUsageLimit } from "@/types";
+import type * as UserUsageLimit from "@/types/user-usage-limit";
 import React from "react";
 
 type Props = {

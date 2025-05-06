@@ -1,4 +1,4 @@
-import { UserPrompt } from "@/types";
+import * as UserPrompt from "@/types/user-prompt";
 import { publicProcedure, t } from "../server";
 
 export const userPromptRouter = t.router({

@@ -1,5 +1,5 @@
+import type * as UserAiProfile from "@/types/user-ai-profile";
 import { create } from "zustand";
-import type { UserAiProfile } from "@/types";
 
 type State = {
   profiles: Record<string, UserAiProfile.Data>;

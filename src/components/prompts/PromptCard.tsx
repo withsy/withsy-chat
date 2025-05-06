@@ -7,7 +7,7 @@ import {
 import { useUser } from "@/context/UserContext";
 import { useTRPC } from "@/lib/trpc";
 import { useChatStore } from "@/stores/useChatStore";
-import type { UserPrompt } from "@/types";
+import type * as UserPrompt from "@/types/user-prompt";
 import { useMutation } from "@tanstack/react-query";
 import { MoreVertical, Star } from "lucide-react";
 import { toast } from "sonner";

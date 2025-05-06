@@ -1,4 +1,5 @@
-import { Chat, ChatBranch } from "@/types";
+import * as Chat from "@/types/chat";
+import * as ChatBranch from "@/types/chat-branch";
 import { publicProcedure, t } from "../server";
 
 export const chatBranchRouter = t.router({

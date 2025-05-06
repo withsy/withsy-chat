@@ -1,6 +1,6 @@
 import { devAuthProvider } from "@/server/dev-auth-provider";
 import { service } from "@/server/service-registry";
-import { User } from "@/types";
+import * as User from "@/types/user";
 import NextAuth, { type AuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import type { Provider } from "next-auth/providers/index";

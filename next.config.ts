@@ -13,6 +13,7 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  cleanDistDir: true,
 };
 
 export default nextConfig;

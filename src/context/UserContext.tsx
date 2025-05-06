@@ -1,5 +1,5 @@
 import { useTRPC } from "@/lib/trpc";
-import { User } from "@/types";
+import * as User from "@/types/user";
 import { skipToken, useMutation, useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import {

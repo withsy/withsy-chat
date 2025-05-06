@@ -1,4 +1,4 @@
-import { UserUsageLimit } from "@/types";
+import * as UserUsageLimit from "@/types/user-usage-limit";
 import { publicProcedure, t } from "../server";
 
 export const userUsageLimitRouter = t.router({

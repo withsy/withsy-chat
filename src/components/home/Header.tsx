@@ -1,6 +1,6 @@
 import { useHeaderScroll } from "@/hooks/useHeaderScroll";
 import { useSidebarStore } from "@/stores/useSidebarStore";
-import type { User } from "@/types";
+import type * as User from "@/types/user";
 import { useRouter } from "next/router";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import CategoryModalButton from "./CategoryModalButton";

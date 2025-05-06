@@ -9,7 +9,8 @@ import {
 import { filterMessages } from "@/lib/filter-utils";
 import { useTRPC } from "@/lib/trpc";
 import { useSidebarStore } from "@/stores/useSidebarStore";
-import type { Message, User } from "@/types";
+import type * as Message from "@/types/message";
+import type * as User from "@/types/user";
 import { useQuery } from "@tanstack/react-query";
 import { Eye, EyeOff, RotateCcw } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";

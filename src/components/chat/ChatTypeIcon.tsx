@@ -1,4 +1,4 @@
-import type { Chat } from "@/types";
+import type * as Chat from "@/types/chat";
 import { BookHeart, FolderRoot, GitBranch } from "lucide-react";
 
 const iconMap = {

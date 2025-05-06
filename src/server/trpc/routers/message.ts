@@ -1,4 +1,4 @@
-import { Message } from "@/types";
+import * as Message from "@/types/message";
 import { publicProcedure, t } from "../server";
 
 export const messageRouter = t.router({

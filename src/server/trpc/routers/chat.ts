@@ -1,17 +1,16 @@
-import { Chat } from "@/types";
-import { ListOutout } from "@/types/chat";
+import * as Chat from "@/types/chat";
 import { publicProcedure, t } from "../server";
 
 export const chatRouter = t.router({
   list: publicProcedure
-    .output(ListOutout)
+    .output(Chat.ListOutout)
     .query((opts) =>
       opts.ctx.service.chat
         .list(opts.ctx.userId)
         .then((xs) => xs.map((x) => Chat.Data.parse(x)))
     ),
   listDeleted: publicProcedure
-    .output(ListOutout)
+    .output(Chat.ListOutout)
     .query((opts) =>
       opts.ctx.service.chat
         .listDeleted(opts.ctx.userId)

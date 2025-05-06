@@ -1,5 +1,5 @@
-import { UserUsageLimit } from "@/types";
 import type { UserId } from "@/types/id";
+import * as UserUsageLimit from "@/types/user-usage-limit";
 import {
   addDays,
   addHours,

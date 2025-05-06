@@ -1,11 +1,9 @@
-import {
-  Chat,
-  ChatPrompt,
-  GratitudeJournal,
-  Message,
-  UserPrompt,
-} from "@/types";
+import * as Chat from "@/types/chat";
+import * as ChatPrompt from "@/types/chat-prompt";
+import * as GratitudeJournal from "@/types/gratitude-journal";
 import type { MessageId, UserId } from "@/types/id";
+import * as Message from "@/types/message";
+import type * as UserPrompt from "@/types/user-prompt";
 import { v7 as uuidv7 } from "uuid";
 import type { ServiceRegistry } from "../service-registry";
 import { getHardDeleteCutoffDate } from "../utils";

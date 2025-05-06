@@ -6,9 +6,11 @@ import { useChatStore } from "@/stores/useChatStore";
 import { useDrawerStore } from "@/stores/useDrawerStore";
 import { useSelectedModelStore } from "@/stores/useSelectedModelStore";
 import { useSidebarStore } from "@/stores/useSidebarStore";
-import { Chat, Message, MessageChunk, UserUsageLimit } from "@/types";
+import * as Chat from "@/types/chat";
 import { MessageId } from "@/types/id";
-import { isMessageComplete } from "@/types/message";
+import * as Message from "@/types/message";
+import * as MessageChunk from "@/types/message-chunk";
+import type * as UserUsageLimit from "@/types/user-usage-limit";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { useEffect, useMemo, useState } from "react";
@@ -86,7 +88,7 @@ export function ChatSession({ initialMessages, children }: Props) {
     setMessages(initialMessages);
     const lastMessage = initialMessages.at(-1);
     const streamMessageId =
-      lastMessage && !isMessageComplete(lastMessage) ? lastMessage.id : null;
+      lastMessage && !Message.isComplete(lastMessage) ? lastMessage.id : null;
     setStreamMessageId(streamMessageId);
   }, [initialMessages]);
 

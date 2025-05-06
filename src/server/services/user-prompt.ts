@@ -1,5 +1,5 @@
-import { UserPrompt } from "@/types";
 import type { UserId } from "@/types/id";
+import * as UserPrompt from "@/types/user-prompt";
 import { v7 as uuidv7 } from "uuid";
 import type { ServiceRegistry } from "../service-registry";
 import { getHardDeleteCutoffDate } from "../utils";

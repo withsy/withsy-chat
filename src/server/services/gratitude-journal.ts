@@ -1,5 +1,5 @@
-import { Chat, GratitudeJournal } from "@/types";
-import { RecentJournal } from "@/types/gratitude-journal";
+import * as Chat from "@/types/chat";
+import * as GratitudeJournal from "@/types/gratitude-journal";
 import type { UserId } from "@/types/id";
 import type { Prisma } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
@@ -76,7 +76,9 @@ export class GratitudeJournalService {
       let currentStreak = todayJournal ? 1 : 0;
       let zonedCheckStart = subDays(zonedTodayStart, 1);
       let isCurrentStreakDone = false;
-      const recentJournals: RecentJournal[] = new Array(xs.length);
+      const recentJournals: GratitudeJournal.RecentJournal[] = new Array(
+        xs.length
+      );
       for (let i = xs.length - 1; i >= 0; --i) {
         const x = xs[i];
         const zonedTime = toZonedTime(x.createdAt, timezone);

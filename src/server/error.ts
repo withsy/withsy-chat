@@ -1,4 +1,4 @@
-import { ServerError as Base } from "@/types";
+import * as Base from "@/types/server-error";
 import { StatusCodes } from "http-status-codes";
 
 export type Options<TDetails extends Base.Details = Base.Details> = {

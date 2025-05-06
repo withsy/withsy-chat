@@ -1,5 +1,5 @@
-import { MessageChunk } from "@/types";
 import type { MessageChunkIndex, MessageId, UserId } from "@/types/id";
+import * as MessageChunk from "@/types/message-chunk";
 import type { ServiceRegistry } from "../service-registry";
 
 export class MessageChunkService {
