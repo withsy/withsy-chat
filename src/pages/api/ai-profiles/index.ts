@@ -10,6 +10,7 @@ import { busboy } from "busboy-async";
 import { getReasonPhrase, StatusCodes } from "http-status-codes";
 import mime from "mime-types";
 import { v7 as uuidv7 } from "uuid";
+import { z } from "zod";
 
 const ALLOWED_MIME_TYPES = ["image/jpeg", "image/png", "image/webp"];
 const MAX_FILE_SIZE = 1 * 1024 * 1024; // 1 MB
@@ -51,6 +52,12 @@ export const config = {
  */
 export default createNextPagesApiHandler({ post });
 
+const Input = z.object({
+  model: Model,
+  name: z.optional(z.string()),
+  imagePath: z.optional(z.string()),
+});
+
 async function post(opts: Options) {
   const { req, res, ctx } = opts;
   const { service, userId } = ctx;
@@ -80,23 +87,11 @@ async function post(opts: Options) {
     },
   });
 
-  let model: Model | undefined = undefined;
-  let name: string | undefined = undefined;
-  let imagePath: string | undefined = undefined;
-
+  const inputRaw: Record<string, string> = {};
   for await (const event of stream) {
     if (event.type === "field") {
-      if (event.name === "model") {
-        const parseRes = Model.safeParse(event.value);
-        if (!parseRes.success)
-          throw new HttpServerError(StatusCodes.BAD_REQUEST, "Invalid model");
-
-        model = parseRes.data;
-      }
-
-      if (event.name === "name") {
-        name = event.value;
-      }
+      if (event.name === "model") inputRaw["model"] = event.value;
+      if (event.name === "name") inputRaw["name"] = event.value;
     }
 
     if (event.type === "file") {
@@ -115,7 +110,7 @@ async function post(opts: Options) {
         const ext = mime.extension(mimeType);
         const uuid = uuidv7();
         const fileName = `${uuid}.${ext}`;
-        imagePath = createImagePath({ userId, fileName });
+        const imagePath = createImagePath({ userId, fileName });
 
         const writable = service.firebase.bucket
           .file(imagePath)
@@ -125,24 +120,42 @@ async function post(opts: Options) {
           event.stream.pipe(writable).on("finish", resolve).on("error", reject);
         });
 
-        await UserUsageLimitService.decreaseAiProfileImage(service.db, {
-          userId,
-        });
+        inputRaw["imagePath"] = imagePath;
       }
     }
   }
 
-  if (!model)
-    throw new HttpServerError(StatusCodes.BAD_REQUEST, "Invalid model");
+  const inputRes = Input.safeParse(inputRaw);
+  if (!inputRes.success) {
+    throw new HttpServerError(StatusCodes.BAD_REQUEST, "Invalid input.", {
+      details: {
+        issues: inputRes.error.issues.map((x) => ({
+          code: x.code,
+          fatal: x.fatal ?? null,
+          message: x.message,
+          path: x.path,
+        })),
+      },
+    });
+  }
 
-  const data = await service.userAiProfile.update({
-    userId,
-    model,
-    name,
-    imagePath,
-  });
+  const { model, name, imagePath } = inputRes.data;
+  try {
+    const data = await service.userAiProfile.update({
+      userId,
+      model,
+      name,
+      imagePath,
+    });
 
-  return res.status(200).json(data);
+    return res.status(200).json(data);
+  } catch (e) {
+    if (imagePath) {
+      await service.firebase.delete(imagePath);
+    }
+
+    throw e;
+  }
 }
 
 export function createImagePath(input: { userId: UserId; fileName: string }) {
