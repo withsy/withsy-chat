@@ -3,6 +3,7 @@ import fs from "fs";
 import path from "path";
 import matter from "gray-matter";
 import Link from "next/link";
+import { Bookmark, Sparkles, TableProperties } from "lucide-react";
 
 type Guide = {
   title: string;
@@ -20,6 +21,21 @@ export default function GuidesIndexPage({
 }: {
   categories: GuideCategory[];
 }) {
+  const getIconForCategory = (name: string) => {
+    switch (name.toLowerCase()) {
+      case "prompts":
+        return <TableProperties className="w-5 h-5 text-gray-500 mr-3" />;
+      case "saved":
+        return <Bookmark className="w-5 h-5 text-gray-500 mr-3" />;
+      case "customization":
+        return <Sparkles className="w-5 h-5 text-gray-500 mr-3" />;
+      default:
+        return null;
+    }
+  };
+  const capitalize = (text: string) =>
+    text.charAt(0).toUpperCase() + text.slice(1);
+
   return (
     <div className="max-w-5xl mx-auto px-4 py-16">
       <h1 className="text-4xl font-bold mb-12 text-center text-gray-900">
@@ -29,8 +45,9 @@ export default function GuidesIndexPage({
       <div className="space-y-12">
         {categories.map((category) => (
           <div key={category.name}>
-            <h2 className="text-2xl font-semibold mb-4 text-gray-800">
-              {category.name}
+            <h2 className="text-2xl font-semibold mb-4 text-gray-800 flex items-center">
+              {getIconForCategory(category.name)}
+              {capitalize(category.name)}
             </h2>
             <ul className="space-y-2">
               {category.guides.map((guide) => (
