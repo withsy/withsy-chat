@@ -52,16 +52,6 @@ export default function Page({ user }: Props) {
           We’re working on paid plans with access to advanced models like GPT-4
           and Claude, plus higher usage limits for power users.
         </p>
-        <form className="flex gap-2">
-          <input
-            type="email"
-            placeholder="Enter your email for updates"
-            className="border rounded px-3 py-2 w-full"
-          />
-          <button className="bg-[rgb(40,90,128)] text-white px-4 py-2 rounded hover:bg-black">
-            Join Waitlist
-          </button>
-        </form>
 
         <div className="mt-6 text-sm text-gray-600">
           Questions?{" "}

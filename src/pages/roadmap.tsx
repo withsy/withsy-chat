@@ -69,14 +69,14 @@ export default function RoadmapPage() {
         to enhance your AI chat experience.
       </p>
 
-      <div className="space-y-12 py-4">
+      <div className="space-y-16 py-8">
         {releases.map((release) => (
           <div key={release.name}>
             <h2 className="text-2xl font-semibold mb-2 text-gray-800 flex items-center">
               {getIconForRelease(release.name)}
               {capitalize(release.tagline)}
               <Badge
-                className={`ml-3 text-white ${
+                className={`ml-3 text-white font-semibold ${
                   release.status === "Upcoming" ? "bg-[#EA9257]" : "bg-gray-500"
                 }`}
                 aria-label={`Status: ${release.status}`}
@@ -85,11 +85,11 @@ export default function RoadmapPage() {
               </Badge>
             </h2>
             {release.releaseDate && (
-              <p className="text-gray-400 text-sm mb-2">
+              <p className="text-gray-600 text-sm mb-2">
                 Released in {release.releaseDate}
               </p>
             )}
-            <p className="text-gray-500 text-base mb-4">
+            <p className="text-gray-800 text-base mb-4">
               {release.description}
             </p>
             <ul className="space-y-4">
@@ -97,17 +97,13 @@ export default function RoadmapPage() {
                 typeof feature === "string" ? (
                   <li key={feature} className="flex items-center">
                     <span className="text-[#EA9257] mr-2">•</span>
-                    <span className="text-[rgb(40,90,128)] text-lg">
-                      {feature}
-                    </span>
+                    <span className="text-black text-lg">{feature}</span>
                   </li>
                 ) : (
                   <li key={feature.name} className="flex flex-col">
                     <div className="flex items-center">
                       <span className="text-[#EA9257] mr-2">•</span>
-                      <span className="text-[rgb(40,90,128)] text-lg">
-                        {feature.name}
-                      </span>
+                      <span className="text-black text-lg">{feature.name}</span>
                     </div>
                     <div className="ml-6 space-y-2">
                       {feature.links.map((link) => (
@@ -115,7 +111,7 @@ export default function RoadmapPage() {
                           <span className="text-[#EA9257] mr-2">•</span>
                           <Link
                             href={link}
-                            className="text-[#EA9257] hover:underline text-md mr-2"
+                            className="text-[#285A80] hover:underline text-md mr-2"
                           >
                             {link.split("/").pop()?.replace(/-/g, " ")}
                           </Link>
