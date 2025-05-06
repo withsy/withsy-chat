@@ -39,7 +39,8 @@ export function BookmarkCard({
     isLongMessage && collapsed ? text?.slice(0, 150) + "..." : text;
 
   const [bookmarked, setBookmarked] = useState(true);
-  const link = `/chat/${chatId}?messageId=${messageId}`;
+  const chatLink = `/chat/${chatId}`;
+  const messageLink = `/chat/${chatId}?messageId=${messageId}`;
 
   const updateMessageMutation = useMutation(
     trpc.message.update.mutationOptions()
@@ -75,7 +76,7 @@ export function BookmarkCard({
             <BookmarkCardHeader
               title={title}
               createdAt={createdAt.toISOString()}
-              link={link}
+              link={chatLink}
             />
             <Separator />
           </>
@@ -95,7 +96,7 @@ export function BookmarkCard({
           <BookmarkCardActions
             themeColor={themeColor}
             content={text}
-            link={link}
+            link={messageLink}
             onUnsave={handleToggleSaved}
             hideUnsave={hideUnsave}
           />

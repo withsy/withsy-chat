@@ -23,6 +23,9 @@ export function BookmarkCardHeader({ title, createdAt, link }: Props) {
             {title}
           </CardTitle>
           <ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
+          <p className="opacity-0 group-hover:opacity-100 transition-opacity">
+            Go to chat
+          </p>
         </div>
 
         <div className="flex gap-x-3 overflow-hidden">
