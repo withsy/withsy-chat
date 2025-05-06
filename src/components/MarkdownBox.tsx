@@ -7,7 +7,7 @@ import { remarkRemoveParagraphInList } from "@/lib/remark-remove-li-paragraph";
 
 export function MarkdownBox({ content }: { content: string | null }) {
   return (
-    <div className="prose prose-sm dark:prose-invert break-words max-w-full overflow-x-auto [&_li>p]:inline [&_li>p]:m-0">
+    <div className="prose prose-sm dark:prose-invert break-all max-w-full overflow-x-auto [&_li>p]:inline [&_li>p]:m-0">
       <ReactMarkdown
         remarkPlugins={[remarkGfm, remarkRemoveParagraphInList]}
         rehypePlugins={[rehypeHighlight]}

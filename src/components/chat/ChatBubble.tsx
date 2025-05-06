@@ -137,7 +137,7 @@ const ChatBubbleComponent = ({ message, chatType, onToggleSaved }: Props) => {
 
         <div
           className={cn(
-            "inline-block rounded-md mx-4 py-2 px-2 whitespace-pre-wrap break-words",
+            "inline-block rounded-md mx-4 py-2 px-2 whitespace-pre-wrap break-all",
             role === "user" ? "self-end " : "self-start"
           )}
           style={
