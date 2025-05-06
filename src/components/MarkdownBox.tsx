@@ -3,15 +3,24 @@ import ReactMarkdown from "react-markdown";
 import rehypeHighlight from "rehype-highlight";
 import remarkGfm from "remark-gfm";
 import { CodeBlock } from "./CodeBlock";
+import { remarkRemoveParagraphInList } from "@/lib/remark-remove-li-paragraph";
 
 export function MarkdownBox({ content }: { content: string | null }) {
-  console.log(JSON.stringify(content));
   return (
     <div className="prose prose-sm dark:prose-invert break-words max-w-full overflow-x-auto [&_li>p]:inline [&_li>p]:m-0">
       <ReactMarkdown
-        remarkPlugins={[remarkGfm]}
+        remarkPlugins={[remarkGfm, remarkRemoveParagraphInList]}
         rehypePlugins={[rehypeHighlight]}
         components={{
+          li: ({ children, ...props }) => {
+            const filteredChildren = Array.isArray(children)
+              ? children.filter(
+                  (child) => !(typeof child === "string" && child.trim() === "")
+                )
+              : children;
+
+            return <li {...props}>{filteredChildren}</li>;
+          },
           pre: ({ children, ...props }) => {
             const existingClassName = props.className || "";
             return (
