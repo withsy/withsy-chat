@@ -38,7 +38,7 @@ export default function GuidesIndexPage({
 
   return (
     <div className="flex flex-col items-start text-start px-6 py-12 max-w-3xl mx-auto">
-      <h2 className="text-3xl font-bold mb-4">Help Guides</h2>
+      <h2 className="text-3xl font-bold mb-4">User Guides</h2>
       <p className="text-base leading-relaxed mb-6">
         Discover all you need to master, personalize, and optimize your AI chat
         experience.
