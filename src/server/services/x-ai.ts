@@ -1,5 +1,6 @@
 import OpenAI from "openai";
 import type { ServiceRegistry } from "../service-registry";
+import { envConfig } from "./env";
 import type { SendMessageToAiInput } from "./model-route";
 import { OpenAiService } from "./open-ai";
 
@@ -10,7 +11,7 @@ export class XAiService {
 
   constructor(private readonly service: ServiceRegistry) {
     this.openai = new OpenAI({
-      apiKey: this.service.env.xaiApiKey,
+      apiKey: envConfig.xaiApiKey,
       baseURL: XAI_BASE_URL,
     });
   }

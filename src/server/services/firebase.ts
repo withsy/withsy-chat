@@ -1,5 +1,6 @@
 import admin from "firebase-admin";
 import type { ServiceRegistry } from "../service-registry";
+import { envConfig } from "./env";
 
 export type Bucket = ReturnType<admin.storage.Storage["bucket"]>;
 
@@ -11,7 +12,7 @@ export class FirebaseService {
   bucket: Bucket;
 
   constructor(private readonly service: ServiceRegistry) {
-    const serviceAccount = JSON.parse(service.env.firebaseServiceAccountKey);
+    const serviceAccount = JSON.parse(envConfig.firebaseServiceAccountKey);
     const credential = admin.credential.cert(serviceAccount);
     this.app = admin.initializeApp({
       credential,
