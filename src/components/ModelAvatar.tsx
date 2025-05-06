@@ -1,5 +1,4 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useAvatarStyleStore } from "@/stores/useAvatarStyleStore";
 import { getModelAvatar } from "@/lib/avatar-utils";
 
 type Props = {
@@ -10,9 +9,7 @@ type Props = {
 };
 
 export function ModelAvatar({ name, size = "md", path, image }: Props) {
-  const avatarStyle = useAvatarStyleStore((s) => s.style);
-
-  const src = image ? image : path ? path : getModelAvatar(name, avatarStyle);
+  const src = image ? image : path ? path : getModelAvatar(name, "thumbs");
 
   const sizeClass = {
     sm: "w-6 h-6 text-xs",
