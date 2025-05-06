@@ -24,9 +24,9 @@ export function ChatInputBox({
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  const isSendDisabled =
-    usageLimits.filter((x) => x.remainingAmount <= 0).length <
-    usageLimits.length;
+  const isSendDisabled = usageLimits
+    .filter((x) => x.type === "message")
+    .some((x) => x.remainingAmount <= 0);
 
   const inputBoxClass = cn(
     "relative max-w-screen-lg w-full px-4 py-3 border rounded-xl bg-white",
