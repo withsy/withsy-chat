@@ -18,7 +18,7 @@ export class OpenAiService {
   private openai: OpenAI;
 
   constructor(private readonly service: ServiceRegistry) {
-    this.openai = new OpenAI({ apiKey: service.env.openaiApiKey });
+    this.openai = new OpenAI();
   }
 
   async sendMessageToAi(input: SendMessageToAiInput) {
