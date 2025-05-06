@@ -1,9 +1,7 @@
 import ResponsiveButton from "@/components/home/ResponsiveButton";
-import { service } from "@/server/service-registry";
+import { getUser } from "@/server/utils";
 import { User } from "@/types";
 import type { GetServerSideProps } from "next";
-import { getServerSession } from "next-auth";
-import { authOptions } from "./api/auth/[...nextauth]";
 import Link from "next/link";
 
 type Props = {
@@ -13,13 +11,7 @@ type Props = {
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
 ) => {
-  const session = await getServerSession(context.req, context.res, authOptions);
-  let user: User.Data | null = null;
-  if (session) {
-    const userSession = User.Session.parse(session);
-    user = await service.user.get(userSession.user.id);
-  }
-
+  const user = await getUser({ req: context.req, res: context.res });
   return { props: { user } };
 };
 

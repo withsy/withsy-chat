@@ -8,7 +8,7 @@ export class GoogleGenAiService {
   private ai: GoogleGenAI;
 
   constructor(private readonly service: ServiceRegistry) {
-    this.ai = new GoogleGenAI({ apiKey: this.service.env.geminiApiKey });
+    this.ai = new GoogleGenAI({ apiKey: service.env.geminiApiKey });
   }
 
   async sendMessageToAi(input: SendMessageToAiInput) {

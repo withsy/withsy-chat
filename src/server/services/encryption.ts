@@ -15,7 +15,7 @@ export class EncryptionService {
   private aes256GcmKey: Buffer;
 
   constructor(private readonly service: ServiceRegistry) {
-    const buffer = Buffer.from(this.service.env.encryptionKey, "hex");
+    const buffer = Buffer.from(service.env.encryptionKey, "hex");
     if (buffer.length !== 32)
       throw new Error("Invalid encryption key length. Expected 32 bytes.");
 

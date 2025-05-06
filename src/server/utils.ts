@@ -1,5 +1,10 @@
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
+import { User } from "@/types";
 import { subDays } from "date-fns";
-import type { ServerResponse } from "node:http";
+import { getServerSession } from "next-auth";
+import type { NextApiRequestCookies } from "next/dist/server/api-utils";
+import type { IncomingMessage, ServerResponse } from "node:http";
+import { service } from "./service-registry";
 
 export function isValidTimezone(timezone: string): boolean {
   try {
@@ -19,4 +24,21 @@ export function getCsrfToken(res: ServerResponse) {
   const csrfToken = res.getHeader("x-csrf-token");
   if (typeof csrfToken !== "string") return "";
   return csrfToken;
+}
+
+export async function getUser(input: {
+  req: IncomingMessage & {
+    cookies: NextApiRequestCookies;
+  };
+  res: ServerResponse<IncomingMessage>;
+}) {
+  const { req, res } = input;
+  const session = await getServerSession(req, res, authOptions);
+  let user: User.Data | null = null;
+  if (session) {
+    const userSession = User.Session.parse(session);
+    user = await service.user.get(userSession.user.id);
+  }
+
+  return user;
 }
