@@ -37,7 +37,7 @@ export default function GuidesIndexPage({
                 <li key={guide.slug.join("/")}>
                   <Link
                     href={`/guides/${guide.slug.join("/")}`}
-                    className="text-blue-700 hover:underline text-lg"
+                    className="text-[rgb(40,90,128)] hover:underline text-lg"
                   >
                     {guide.title}
                   </Link>

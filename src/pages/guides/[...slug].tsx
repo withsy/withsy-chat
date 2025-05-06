@@ -44,7 +44,7 @@ export default function GuidePage({ source, frontMatter, related }: Props) {
               <li key={r.slug.join("/")}>
                 <Link
                   href={`/guides/${r.slug.join("/")}`}
-                  className="text-blue-600 hover:underline"
+                  className="text-[rgb(40,90,128)] hover:underline"
                 >
                   {r.title}
                 </Link>
