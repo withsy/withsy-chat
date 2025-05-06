@@ -13,7 +13,10 @@ export const ChatPromptEntity = z.object({
   textEncrypted: z.string(),
 });
 export type ChatPromptEntity = zInfer<typeof ChatPromptEntity>;
-const _ = {} satisfies Omit<ChatPromptEntity, keyof typeof ChatPromptSelect>;
+const _checkChatPrompt = {} satisfies Omit<
+  ChatPromptEntity,
+  keyof typeof ChatPromptSelect
+>;
 
 export const ChatPromptData = ChatPromptEntity.omit({
   id: true,

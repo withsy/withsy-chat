@@ -13,7 +13,7 @@ import { GetModelLabel } from "./ModelSelect";
 import { StatusIndicator } from "./StatusIndicator";
 
 type Props = {
-  message: Message.Data;
+  message: MessageData;
   chatType: Chat.Type | undefined;
   onToggleSaved?: (id: string, newValue: boolean) => void;
 };

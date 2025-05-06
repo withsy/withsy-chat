@@ -1,5 +1,14 @@
 import type { UserId } from "@/types/id";
-import * as UserUsageLimit from "@/types/user-usage-limit";
+import {
+  UserUsageLimitData,
+  UserUsageLimitList,
+  UserUsageLimitListOutput,
+  UserUsageLimitPeriod,
+  UserUsageLimitSelect,
+  UserUsageLimitType,
+  type UserUsageLimitEntity,
+  type UserUsageLimitErrorInput,
+} from "@/types/user-usage-limit";
 import {
   addDays,
   addHours,
@@ -27,25 +36,25 @@ export class UserUsageLimitService {
       throw new Error(`The server's time zone is not UTC. offset: ${offset}`);
   }
 
-  decrypt(entity: UserUsageLimit.Entity): UserUsageLimit.Data {
+  decrypt(entity: UserUsageLimitEntity): UserUsageLimitData {
     const data = {
       type: entity.type,
       period: entity.period,
       remainingAmount: entity.remainingAmount,
       resetAt: entity.resetAt,
-    } satisfies UserUsageLimit.Data;
+    } satisfies UserUsageLimitData;
     return data;
   }
 
   async list(
     userId: UserId,
-    input: UserUsageLimit.List
-  ): Promise<UserUsageLimit.ListOutput> {
+    input: UserUsageLimitList
+  ): Promise<UserUsageLimitListOutput> {
     const { type } = input;
     const entities = await this.service.db.$transaction(async (tx) => {
       const entities = await tx.userUsageLimit.findMany({
         where: { userId, type },
-        select: UserUsageLimit.Select,
+        select: UserUsageLimitSelect,
       });
 
       const now = new Date();
@@ -182,8 +191,8 @@ export class UserUsageLimitService {
     tx: Tx,
     input: {
       userId: UserId;
-      type: UserUsageLimit.Type;
-      period: UserUsageLimit.Period;
+      type: UserUsageLimitType;
+      period: UserUsageLimitPeriod;
       now: Date;
     }
   ) {
@@ -203,8 +212,8 @@ export class UserUsageLimitService {
     tx: Tx,
     input: {
       userId: UserId;
-      type: UserUsageLimit.Type;
-      period: UserUsageLimit.Period;
+      type: UserUsageLimitType;
+      period: UserUsageLimitPeriod;
       now: Date;
     }
   ) {
@@ -228,8 +237,8 @@ export class UserUsageLimitService {
     tx: Tx,
     input: {
       userId: UserId;
-      type: UserUsageLimit.Type;
-      period: UserUsageLimit.Period;
+      type: UserUsageLimitType;
+      period: UserUsageLimitPeriod;
       now: Date;
     }
   ) {
@@ -249,8 +258,8 @@ export class UserUsageLimitService {
     tx: Tx,
     input: {
       userId: UserId;
-      type: UserUsageLimit.Type;
-      period: UserUsageLimit.Period;
+      type: UserUsageLimitType;
+      period: UserUsageLimitPeriod;
     }
   ) {
     const { userId, type, period } = input;
@@ -258,12 +267,12 @@ export class UserUsageLimitService {
       where: {
         userId_type_period: { userId, type, period },
       },
-      select: UserUsageLimit.Select,
+      select: UserUsageLimitSelect,
     });
     return entity;
   }
 
-  static createError(entity: UserUsageLimit.Entity) {
+  static createError(entity: UserUsageLimitEntity) {
     return new HttpServerError(
       StatusCodes.TOO_MANY_REQUESTS,
       "Usage limit reached.",
@@ -273,25 +282,25 @@ export class UserUsageLimitService {
           period: entity.period,
           remainingAmount: entity.remainingAmount,
           resetAt: entity.resetAt.toISOString(),
-        } satisfies UserUsageLimit.ErrorInput,
+        } satisfies UserUsageLimitErrorInput,
       }
     );
   }
 
-  static async save(tx: Tx, entity: UserUsageLimit.Entity) {
+  static async save(tx: Tx, entity: UserUsageLimitEntity) {
     await tx.userUsageLimit.update({
       where: { id: entity.id },
       data: entity,
     });
   }
 
-  static resetIfExpired(entity: UserUsageLimit.Entity, now: Date) {
+  static resetIfExpired(entity: UserUsageLimitEntity, now: Date) {
     if (entity.resetAt > now) return false;
     entity.remainingAmount = entity.allowedAmount;
     UserUsageLimitService.updateResetAt(entity, now);
   }
 
-  static updateResetAt(entity: UserUsageLimit.Entity, now: Date) {
+  static updateResetAt(entity: UserUsageLimitEntity, now: Date) {
     switch (entity.period) {
       case "annually":
         entity.resetAt = UserUsageLimitService.getAnnuallyResetAt(now);

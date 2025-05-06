@@ -3,7 +3,7 @@ import { z } from "zod";
 import type { zInfer, zInput } from "./common";
 import { UserUsageLimitId } from "./id";
 
-export const Select = {
+export const UserUsageLimitSelect = {
   id: true,
   type: true,
   period: true,
@@ -12,10 +12,10 @@ export const Select = {
   resetAt: true,
 } satisfies Prisma.UserUsageLimitSelect;
 
-export const Type = z.enum(["message", "aiProfileImage"]);
-export type Type = zInfer<typeof Type>;
+export const UserUsageLimitType = z.enum(["message", "aiProfileImage"]);
+export type UserUsageLimitType = zInfer<typeof UserUsageLimitType>;
 
-export const Period = z.enum([
+export const UserUsageLimitPeriod = z.enum([
   "annually",
   "monthly",
   "daily",
@@ -23,36 +23,42 @@ export const Period = z.enum([
   "perMinute",
   "perSecond",
 ]);
-export type Period = zInfer<typeof Period>;
+export type UserUsageLimitPeriod = zInfer<typeof UserUsageLimitPeriod>;
 
-export const Entity = z.object({
+export const UserUsageLimitEntity = z.object({
   id: UserUsageLimitId,
-  type: Type,
-  period: Period,
+  type: UserUsageLimitType,
+  period: UserUsageLimitPeriod,
   allowedAmount: z.number().int(),
   remainingAmount: z.number().int(),
   resetAt: z.date(),
 });
 
-export type Entity = zInfer<typeof Entity>;
-const _ = {} satisfies Omit<Entity, keyof typeof Select>;
+export type UserUsageLimitEntity = zInfer<typeof UserUsageLimitEntity>;
+const _checkUserUsageLimit = {} satisfies Omit<
+  UserUsageLimitEntity,
+  keyof typeof UserUsageLimitSelect
+>;
 
-export const Data = Entity.omit({ id: true, allowedAmount: true }).extend({});
-export type Data = zInfer<typeof Data>;
+export const UserUsageLimitData = UserUsageLimitEntity.omit({
+  id: true,
+  allowedAmount: true,
+}).extend({});
+export type UserUsageLimitData = zInfer<typeof UserUsageLimitData>;
 
-export const Error = z.object({
-  type: Type,
-  period: Period,
+export const UserUsageLimitError = z.object({
+  type: UserUsageLimitType,
+  period: UserUsageLimitPeriod,
   remainingAmount: z.number().int(),
   resetAt: z.string().transform((x) => new Date(x)),
 });
-export type Error = zInfer<typeof Error>;
-export type ErrorInput = zInput<typeof Error>;
+export type UserUsageLimitError = zInfer<typeof UserUsageLimitError>;
+export type UserUsageLimitErrorInput = zInput<typeof UserUsageLimitError>;
 
-export const List = z.object({
-  type: Type,
+export const UserUsageLimitList = z.object({
+  type: UserUsageLimitType,
 });
-export type List = zInfer<typeof List>;
+export type UserUsageLimitList = zInfer<typeof UserUsageLimitList>;
 
-export const ListOutput = z.array(Data);
-export type ListOutput = zInfer<typeof ListOutput>;
+export const UserUsageLimitListOutput = z.array(UserUsageLimitData);
+export type UserUsageLimitListOutput = zInfer<typeof UserUsageLimitListOutput>;

@@ -24,7 +24,7 @@ import { ChatMessageList } from "./ChatMessageList";
 import MobileChatHeader from "./MobileChatHeader";
 
 type Props = {
-  initialMessages: Message.Data[];
+  initialMessages: MessageData[];
   children?: React.ReactNode;
 };
 
@@ -41,13 +41,13 @@ export function ChatSession({ initialMessages, children }: Props) {
 
   const [streamMessageId, setStreamMessageId] = useState<string | null>(null);
   const [shouldFocusInput, setShouldFocusInput] = useState(false);
-  const [usageLimits, setUsageLimits] = useState<UserUsageLimit.Data[]>([]);
+  const [usageLimits, setUsageLimits] = useState<UserUsageLimitData[]>([]);
   const [eventSource, setEventSource] = useState<EventSource | null>(null);
 
   const { openDrawer } = useDrawerStore();
 
   const usageQuery = useQuery(
-    trpc.userUsageLimit.list.queryOptions(
+    trpc.UserUsageLimitList.queryOptions(
       { type: "message" },
       {
         enabled: !!chat?.id,
@@ -58,7 +58,7 @@ export function ChatSession({ initialMessages, children }: Props) {
   const chatStart = useMutation(
     trpc.chat.start.mutationOptions({
       onError(error) {
-        const _res = Chat.StartError.safeParse(error.data);
+        const _res = ChatStartError.safeParse(error.data);
         toast.error(`Chat starting failed.`);
       },
       onSuccess(data) {
@@ -73,7 +73,7 @@ export function ChatSession({ initialMessages, children }: Props) {
   const messageSend = useMutation(
     trpc.message.send.mutationOptions({
       onError(error) {
-        const _res = Message.SendError.safeParse(error.data);
+        const _res = MessageSendError.safeParse(error.data);
         toast.error(`Message sending failed.`);
       },
       onSuccess(data) {
@@ -227,7 +227,7 @@ export function ChatSession({ initialMessages, children }: Props) {
     );
   };
 
-  const handleRegenerateSuccess = (newMessage: Message.Data) => {
+  const handleRegenerateSuccess = (newMessage: MessageData) => {
     setMessages((prev) => [...prev, newMessage]);
     setStreamMessageId(newMessage.id);
     queryClient.invalidateQueries(trpc.chat.list.queryFilter());

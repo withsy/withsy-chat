@@ -2,7 +2,7 @@ import { z } from "zod";
 import type { zInfer } from "./common";
 import { IdempotencyKey, MessageId } from "./id";
 import { Model } from "./model";
-import * as UserUsageLimit from "./user-usage-limit";
+import { UserUsageLimitError } from "./user-usage-limit";
 
 export const MessageReplyRegenerate = z.object({
   idempotencyKey: IdempotencyKey,
@@ -11,4 +11,4 @@ export const MessageReplyRegenerate = z.object({
 });
 export type MessageReplyRegenerate = zInfer<typeof MessageReplyRegenerate>;
 
-export const MessageReplyRegenerateError = UserUsageLimit.Error;
+export const MessageReplyRegenerateError = UserUsageLimitError;

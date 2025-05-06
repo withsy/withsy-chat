@@ -13,7 +13,7 @@ export default function SidebarChatList() {
   const queryClient = useQueryClient();
   const listChats = useQuery(trpc.chat.list.queryOptions());
   const updateChatMut = useMutation(trpc.chat.update.mutationOptions());
-  const [chats, setChats] = useState<Chat.Data[]>([]);
+  const [chats, setChats] = useState<ChatData[]>([]);
   const [starredOpen, setStarredOpen] = useState(true);
 
   useEffect(() => {
@@ -21,7 +21,7 @@ export default function SidebarChatList() {
     setChats(listChats.data);
   }, [listChats.data]);
 
-  const updateChat = (updatedChat: Chat.Data) => {
+  const updateChat = (updatedChat: ChatData) => {
     const prev = chats;
 
     setChats((prev) =>
@@ -46,8 +46,8 @@ export default function SidebarChatList() {
   if (listChats.isError) return <PartialError message="loading chat list" />;
   if (!listChats.data) return <></>;
 
-  const starred: Chat.Data[] = [];
-  const nonStarredMap: Map<string, Chat.Data[]> = new Map();
+  const starred: ChatData[] = [];
+  const nonStarredMap: Map<string, ChatData[]> = new Map();
   listChats.data.forEach((chat) => {
     if (chat.isStarred) {
       starred.push(chat);

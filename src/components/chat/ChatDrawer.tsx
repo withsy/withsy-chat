@@ -17,7 +17,7 @@ import { Drawer, DrawerContent } from "../ui/drawer";
 import ChatDrawerHeader from "./ChatDrawerHeader";
 
 type ChatDrawerProps = {
-  savedMessages?: Message.Data[];
+  savedMessages?: MessageData[];
 };
 
 export const ChatDrawer = ({ savedMessages }: ChatDrawerProps) => {
@@ -190,7 +190,7 @@ function Prompts() {
   );
 }
 
-function SavedMessages({ messages }: { messages: Message.Data[] }) {
+function SavedMessages({ messages }: { messages: MessageData[] }) {
   if (messages.length === 0) {
     return (
       <div className="h-full w-full flex items-center justify-center text-muted-foreground">
@@ -276,7 +276,7 @@ function Branches({ chatBranchList }: { chatBranchList: any }) {
         <span className="text-sm select-none">
           Branches created from this chat. Tap to jump to a specific branch.
         </span>
-        {chatBranchList.data.map((x: Chat.Data) => {
+        {chatBranchList.data.map((x: ChatData) => {
           return (
             <div
               key={x.id}

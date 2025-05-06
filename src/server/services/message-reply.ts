@@ -14,8 +14,8 @@ export class MessageReplyService {
 
   async regenerate(
     userId: UserId,
-    input: MessageReply.Regenerate
-  ): Promise<Message.Data> {
+    input: MessageReplyRegenerate
+  ): Promise<MessageData> {
     const { idempotencyKey, messageId, model } = input;
 
     const modelMessageTextEncrypted = this.service.encryption.encrypt("");
@@ -31,7 +31,7 @@ export class MessageReplyService {
             chat: { userId, deletedAt: null },
             id: messageId,
           },
-          select: Message.Select,
+          select: MessageSelect,
         });
 
         if (!oldModelMessage.parentMessageId) {
@@ -51,7 +51,7 @@ export class MessageReplyService {
             chat: { userId, deletedAt: null },
             id: oldModelMessage.parentMessageId,
           },
-          select: Message.Select,
+          select: MessageSelect,
         });
 
         const modelMessage = await tx.message.create({
@@ -66,7 +66,7 @@ export class MessageReplyService {
             reasoningTextEncrypted: modelMessageReasoningTextEncrypted,
             parentMessageId: oldModelMessage.parentMessageId,
           },
-          select: Message.Select,
+          select: MessageSelect,
         });
 
         return { userMessage, modelMessage };

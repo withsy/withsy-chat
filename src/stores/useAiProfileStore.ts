@@ -1,12 +1,12 @@
-import type * as UserAiProfile from "@/types/user-ai-profile";
+import type { UserAiProfileData } from "@/types/user-ai-profile";
 import { create } from "zustand";
 
 type State = {
-  profiles: Record<string, UserAiProfile.Data>;
+  profiles: Record<string, UserAiProfileData>;
   isLoading: boolean;
-  setProfiles: (profiles: Record<string, UserAiProfile.Data>) => void;
+  setProfiles: (profiles: Record<string, UserAiProfileData>) => void;
   setLoading: (loading: boolean) => void;
-  setProfile: (model: string, profile: UserAiProfile.Data) => void;
+  setProfile: (model: string, profile: UserAiProfileData) => void;
   resetProfiles: () => void;
 };
 

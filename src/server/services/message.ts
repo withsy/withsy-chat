@@ -1,10 +1,23 @@
-import * as Chat from "@/types/chat";
-import * as ChatPrompt from "@/types/chat-prompt";
+import { ChatEntity, ChatSelect } from "@/types/chat";
+import { ChatPromptSelect } from "@/types/chat-prompt";
 import type { ChatId, MessageId, UserId } from "@/types/id";
-import * as Message from "@/types/message";
+import {
+  MessageData,
+  MessageEntity,
+  MessageGet,
+  MessageGetOutput,
+  MessageList,
+  MessageListOutput,
+  MessageSelect,
+  MessageUpdate,
+  type MessageEntityForAi,
+  type MessageSend,
+  type MessageSendOutput,
+  type MessageStatus,
+} from "@/types/message";
 import { Model } from "@/types/model";
 import { Role } from "@/types/role";
-import * as UserPrompt from "@/types/user-prompt";
+import { UserPromptSelect } from "@/types/user-prompt";
 import { v7 as uuidv7 } from "uuid";
 import type { ServiceRegistry } from "../service-registry";
 import type { Tx } from "./db";
@@ -17,7 +30,7 @@ const DEFAULT_REMAIN_LENGTH = 10;
 export class MessageService {
   constructor(private readonly service: ServiceRegistry) {}
 
-  decrypt(entity: Message.Entity & { chat?: Chat.Entity }): Message.Data {
+  decrypt(entity: MessageEntity & { chat?: ChatEntity }): MessageData {
     const text = this.service.encryption.decrypt(entity.textEncrypted);
     const reasoningText = this.service.encryption.decrypt(
       entity.reasoningTextEncrypted
@@ -34,22 +47,22 @@ export class MessageService {
       createdAt: entity.createdAt,
       parentMessageId: entity.parentMessageId,
       chat: entity.chat ? this.service.chat.decrypt(entity.chat) : null,
-    } satisfies Message.Data;
+    } satisfies MessageData;
     return data;
   }
 
-  async get(userId: UserId, input: Message.Get): Promise<Message.GetOutput> {
+  async get(userId: UserId, input: MessageGet): Promise<MessageGetOutput> {
     const { messageId } = input;
     const entity = await this.service.db.message.findUnique({
       where: { chat: { userId, deletedAt: null }, id: messageId },
-      select: Message.Select,
+      select: MessageSelect,
     });
 
     const data = entity ? this.decrypt(entity) : null;
     return data;
   }
 
-  async list(userId: UserId, input: Message.List): Promise<Message.ListOutput> {
+  async list(userId: UserId, input: MessageList): Promise<MessageListOutput> {
     const { role, isBookmarked, options } = input;
     const { scope, afterId, order, limit, include } = options;
 
@@ -63,10 +76,10 @@ export class MessageService {
       },
       orderBy: { id: order },
       select: {
-        ...Message.Select,
+        ...MessageSelect,
         chat: include?.chat
           ? {
-              select: Chat.Select,
+              select: ChatSelect,
             }
           : false,
       },
@@ -83,17 +96,17 @@ export class MessageService {
 
   async listForAi(input: {
     userId: UserId;
-    modelMessage: Message.Data;
-  }): Promise<Message.EntityForAi[]> {
+    modelMessage: MessageData;
+  }): Promise<MessageEntityForAi[]> {
     const { userId, modelMessage } = input;
 
     const history = {
-      _olds: [] as Message.EntityForAi[], // old to less old
-      pushOlds(...xs: Message.EntityForAi[]) {
+      _olds: [] as MessageEntityForAi[], // old to less old
+      pushOlds(...xs: MessageEntityForAi[]) {
         this._olds.push(...xs);
       },
-      _news: [] as Message.EntityForAi[], // new to less new
-      pushNews(...xs: Message.EntityForAi[]) {
+      _news: [] as MessageEntityForAi[], // new to less new
+      pushNews(...xs: MessageEntityForAi[]) {
         this._news.push(...xs);
       },
       remainLength() {
@@ -132,7 +145,7 @@ export class MessageService {
             deletedAt: null,
             id: modelMessage.chatId,
           },
-          select: { parentMessage: { select: Message.Select } },
+          select: { parentMessage: { select: MessageSelect } },
         });
         const { parentMessage } = chat;
         if (parentMessage && parentMessage.status === "succeeded") {
@@ -174,13 +187,13 @@ export class MessageService {
     const entity = await this.service.db.message.findUniqueOrThrow({
       where: { chat: { userId, deletedAt: null }, id: messageId },
       select: {
-        ...Message.Select,
+        ...MessageSelect,
         chat: include?.chat
           ? {
               select: {
-                ...Chat.Select,
-                prompts: { select: ChatPrompt.Select },
-                userPrompt: { select: UserPrompt.Select },
+                ...ChatSelect,
+                prompts: { select: ChatPromptSelect },
+                userPrompt: { select: UserPromptSelect },
               },
             }
           : false,
@@ -190,7 +203,7 @@ export class MessageService {
     return entity;
   }
 
-  async update(userId: UserId, input: Message.Update): Promise<Message.Data> {
+  async update(userId: UserId, input: MessageUpdate): Promise<MessageData> {
     const { messageId, isBookmarked } = input;
 
     const entity = await this.service.db.message.update({
@@ -199,7 +212,7 @@ export class MessageService {
         id: messageId,
       },
       data: { isBookmarked },
-      select: Message.Select,
+      select: MessageSelect,
     });
 
     const data = this.decrypt(entity);
@@ -235,7 +248,7 @@ export class MessageService {
         chat: { userId, deletedAt: null },
         id: messageId,
       },
-      select: Message.Select,
+      select: MessageSelect,
     });
 
     return entity;
@@ -246,8 +259,8 @@ export class MessageService {
     input: {
       userId: UserId;
       messageId: MessageId;
-      expectStatus: Message.Status;
-      nextStatus: Message.Status;
+      expectStatus: MessageStatus;
+      nextStatus: MessageStatus;
     }
   ) {
     const { userId, messageId, expectStatus, nextStatus } = input;
@@ -351,7 +364,7 @@ export class MessageService {
       console.warn(`Marked ${res.count} zombie messages as failed.`);
   }
 
-  async send(userId: UserId, input: Message.Send): Promise<Message.SendOutput> {
+  async send(userId: UserId, input: MessageSend): Promise<MessageSendOutput> {
     const { idempotencyKey, chatId, model, text } = input;
 
     await this.service.db.$transaction(async (tx) => {

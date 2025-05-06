@@ -9,7 +9,7 @@ import { UsageLimitNotice } from "./UsageLimitNotice";
 
 type Props = {
   onSendMessage: (message: string) => void;
-  usageLimits: UserUsageLimit.Data[];
+  usageLimits: UserUsageLimitData[];
   shouldFocus?: boolean;
 };
 

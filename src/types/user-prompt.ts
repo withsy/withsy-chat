@@ -3,7 +3,7 @@ import { z } from "zod";
 import type { zInfer } from "./common";
 import { IdempotencyKey, UserPromptId } from "./id";
 
-export const Select = {
+export const UserPromptSelect = {
   id: true,
   titleEncrypted: true,
   textEncrypted: true,
@@ -11,54 +11,57 @@ export const Select = {
   updatedAt: true,
 } satisfies Prisma.UserPromptSelect;
 
-export const Entity = z.object({
+export const UserPromptEntity = z.object({
   id: UserPromptId,
   titleEncrypted: z.string(),
   textEncrypted: z.string(),
   isStarred: z.boolean(),
   updatedAt: z.date(),
 });
-export type Entity = zInfer<typeof Entity>;
-const _ = {} satisfies Omit<Entity, keyof typeof Select>;
+export type UserPromptEntity = zInfer<typeof UserPromptEntity>;
+const _checkUserPrompt = {} satisfies Omit<
+  UserPromptEntity,
+  keyof typeof UserPromptSelect
+>;
 
-export const Data = Entity.omit({
+export const UserPromptData = UserPromptEntity.omit({
   titleEncrypted: true,
   textEncrypted: true,
 }).extend({
   title: z.string(),
   text: z.string(),
 });
-export type Data = zInfer<typeof Data>;
+export type UserPromptData = zInfer<typeof UserPromptData>;
 
-export const Get = z.object({
+export const UserPromptGet = z.object({
   userPromptId: UserPromptId,
 });
-export type Get = zInfer<typeof Get>;
+export type UserPromptGet = zInfer<typeof UserPromptGet>;
 
-export const ListOutput = z.array(Data);
-export type ListOutput = zInfer<typeof ListOutput>;
+export const UserPromptListOutput = z.array(UserPromptData);
+export type UserPromptListOutput = zInfer<typeof UserPromptListOutput>;
 
-export const Create = z.object({
+export const UserPromptCreate = z.object({
   idempotencyKey: IdempotencyKey,
   title: z.string(),
   text: z.string(),
 });
-export type Create = zInfer<typeof Create>;
+export type UserPromptCreate = zInfer<typeof UserPromptCreate>;
 
-export const Update = z.object({
+export const UserPromptUpdate = z.object({
   userPromptId: UserPromptId,
   title: z.optional(z.string()),
   text: z.optional(z.string()),
   isStarred: z.optional(z.boolean()),
 });
-export type Update = zInfer<typeof Update>;
+export type UserPromptUpdate = zInfer<typeof UserPromptUpdate>;
 
-export const Delete = z.object({
+export const UserPromptDelete = z.object({
   userPromptId: UserPromptId,
 });
-export type Delete = zInfer<typeof Delete>;
+export type UserPromptDelete = zInfer<typeof UserPromptDelete>;
 
-export const Restore = z.object({
+export const UserPromptRestore = z.object({
   userPromptId: UserPromptId,
 });
-export type Restore = zInfer<typeof Restore>;
+export type UserPromptRestore = zInfer<typeof UserPromptRestore>;

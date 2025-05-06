@@ -3,6 +3,7 @@ import { z } from "zod";
 import type { zInfer } from "./common";
 import { MessageChunkIndex } from "./id";
 import * as UserUsageLimit from "./user-usage-limit";
+import { UserUsageLimitData } from "./user-usage-limit";
 
 export const MessageChunkSelect = {
   index: true,
@@ -18,7 +19,7 @@ export const MessageChunkEntity = z.object({
   isDone: z.boolean(),
 });
 export type MessageChunkEntity = zInfer<typeof MessageChunkEntity>;
-const _ = {} satisfies Omit<
+const _checkMessageChunk = {} satisfies Omit<
   MessageChunkEntity,
   keyof typeof MessageChunkSelect
 >;
@@ -40,7 +41,7 @@ export const MessageChunkEvent = z.discriminatedUnion("type", [
   }),
   z.object({
     type: z.literal("usageLimits"),
-    usageLimits: z.array(UserUsageLimit.Data),
+    usageLimits: z.array(UserUsageLimitData),
   }),
 ]);
 export type MessageChunkEvent = zInfer<typeof MessageChunkEvent>;

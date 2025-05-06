@@ -1,22 +1,22 @@
-import * as Chat from "@/types/chat";
-import * as ChatBranch from "@/types/chat-branch";
+import { ChatData, ChatListOutout } from "@/types/chat";
+import { ChatBranchList, ChatBranchStart } from "@/types/chat-branch";
 import { publicProcedure, t } from "../server";
 
 export const chatBranchRouter = t.router({
   list: publicProcedure
-    .input(ChatBranch.List)
-    .output(Chat.ListOutout)
+    .input(ChatBranchList)
+    .output(ChatListOutout)
     .query((opts) =>
       opts.ctx.service.chatBranch
         .list(opts.ctx.userId, opts.input)
-        .then((xs) => xs.map((x) => Chat.Data.parse(x)))
+        .then((xs) => xs.map((x) => ChatData.parse(x)))
     ),
   start: publicProcedure
-    .input(ChatBranch.Start)
-    .output(Chat.Data)
+    .input(ChatBranchStart)
+    .output(ChatData)
     .mutation((opts) =>
       opts.ctx.service.chatBranch
         .start(opts.ctx.userId, opts.input)
-        .then((x) => Chat.Data.parse(x))
+        .then((x) => ChatData.parse(x))
     ),
 });

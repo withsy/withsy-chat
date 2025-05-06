@@ -85,7 +85,7 @@ function PromptsPage({ csrfToken }: Props) {
     })
   );
 
-  const toggleStarPrompt = (prompt: UserPrompt.Data) => {
+  const toggleStarPrompt = (prompt: UserPromptData) => {
     updatePrompt.mutate({
       userPromptId: prompt.id,
       isStarred: !prompt.isStarred,

@@ -9,7 +9,7 @@ import { ChatBubble } from "./ChatBubble";
 import ChatInformationSystemMessage from "./ChatInformationSystemMessage";
 
 type Props = {
-  messages: Message.Data[];
+  messages: MessageData[];
   onToggleSaved: (id: string, newValue: boolean) => void;
 };
 

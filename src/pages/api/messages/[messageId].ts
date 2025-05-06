@@ -86,9 +86,9 @@ export async function get(options: Options) {
 
     const onEntity = async (entity: MessageChunk.Entity) => {
       if (entity.isDone) {
-        let usageLimits: UserUsageLimit.Data[] = [];
+        let usageLimits: UserUsageLimitData[] = [];
         try {
-          usageLimits = await service.userUsageLimit.list(userId, {
+          usageLimits = await service.UserUsageLimitList(userId, {
             type: "message",
           });
         } catch (e) {

@@ -1,6 +1,7 @@
 import { useTRPC } from "@/lib/trpc";
 import type * as Chat from "@/types/chat";
 import { useMutation } from "@tanstack/react-query";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -8,7 +9,6 @@ import { v4 as uuid } from "uuid";
 import { getCharacterStyle } from "./characterStyles";
 import { HoverInvertButton } from "./HoverInvertButton";
 import type { ActionName, WithsyFriend } from "./withsyFriends";
-import Image from "next/image";
 
 export function FriendCard({ friend }: { friend: WithsyFriend }) {
   const trpc = useTRPC();
@@ -35,7 +35,7 @@ export function FriendCard({ friend }: { friend: WithsyFriend }) {
     trpc.gratitudeJournal.startChat.mutationOptions()
   );
 
-  const actionHandlers: Record<ActionName, () => Promise<Chat.StartOutput>> = {
+  const actionHandlers: Record<ActionName, () => Promise<ChatStartOutput>> = {
     creativeExpression: () =>
       startCreativeExpression({ idempotencyKey: uuid() }),
     softSupport: () => startSoftSupport({ idempotencyKey: uuid() }),

@@ -14,7 +14,7 @@ export class ChatPromptService {
 
     const entity = await tx.chatPrompt.create({
       data: { chatId, textEncrypted },
-      select: ChatPrompt.Select,
+      select: ChatPromptSelect,
     });
 
     return entity;

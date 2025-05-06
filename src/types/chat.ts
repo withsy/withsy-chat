@@ -4,10 +4,10 @@ import { ChatPromptData } from "./chat-prompt";
 import { type zInfer } from "./common";
 import { GratitudeJournalData } from "./gratitude-journal";
 import { ChatId, IdempotencyKey, MessageId, UserPromptId } from "./id";
-import * as Message from "./message";
+import { MessageData } from "./message";
 import { Model } from "./model";
-import * as UserPrompt from "./user-prompt";
-import * as UserUsageLimit from "./user-usage-limit";
+import { UserPromptData } from "./user-prompt";
+import { UserUsageLimitError } from "./user-usage-limit";
 
 export const ChatSelect = {
   id: true,
@@ -40,21 +40,21 @@ export type ChatData = {
   isStarred: boolean;
   type: ChatType;
   parentMessageId: MessageId | null;
-  parentMessage?: Message.Data | null;
+  parentMessage?: MessageData | null;
   updatedAt: Date;
   prompts?: ChatPromptData[];
   gratitudeJournals?: GratitudeJournalData[];
   userPromptId: UserPromptId | null;
-  userPrompt?: UserPrompt.Data | null;
+  userPrompt?: UserPromptData | null;
 };
 export const ChatData: z.ZodType<ChatData> = ChatEntity.omit({
   titleEncrypted: true,
 }).extend({
   title: z.string(),
-  parentMessage: z.nullable(z.lazy(() => Message.Data)).default(null),
+  parentMessage: z.nullable(z.lazy(() => MessageData)).default(null),
   prompts: z.array(z.lazy(() => ChatPromptData)).default([]),
   gratitudeJournals: z.array(z.lazy(() => GratitudeJournalData)).default([]),
-  userPrompt: z.nullable(z.lazy(() => UserPrompt.Data)).default(null),
+  userPrompt: z.nullable(z.lazy(() => UserPromptData)).default(null),
 });
 
 export const ChatGet = z.object({
@@ -93,9 +93,9 @@ export type ChatStart = zInfer<typeof ChatStart>;
 
 export const ChatStartOutput = z.object({
   chat: ChatData,
-  userMessage: z.lazy(() => Message.Data),
-  modelMessage: z.lazy(() => Message.Data),
+  userMessage: z.lazy(() => MessageData),
+  modelMessage: z.lazy(() => MessageData),
 });
 export type ChatStartOutput = zInfer<typeof ChatStartOutput>;
 
-export const ChatStartError = z.lazy(() => UserUsageLimit.Error);
+export const ChatStartError = z.lazy(() => UserUsageLimitError);

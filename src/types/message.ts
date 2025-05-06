@@ -5,7 +5,7 @@ import { type zInfer } from "./common";
 import { ChatId, IdempotencyKey, MessageId, UserId } from "./id";
 import { Model } from "./model";
 import { Role } from "./role";
-import * as UserUsageLimit from "./user-usage-limit";
+import { UserUsageLimitError } from "./user-usage-limit";
 
 export const MessageSelect = {
   id: true,
@@ -134,7 +134,7 @@ export const MessageSendOutput = z.object({
 });
 export type MessageSendOutput = zInfer<typeof MessageSendOutput>;
 
-export const MessageSendError = UserUsageLimit.Error;
+export const MessageSendError = UserUsageLimitError;
 
 export const MessageUpdate = z.object({
   messageId: MessageId,

@@ -63,7 +63,7 @@ export const ChatBubbleTooltips: React.FC<ChatBubbleTooltipsProps> = ({
         onRegenerateSuccess(data);
       },
       onError(error) {
-        const res = MessageReply.RegenerateError.safeParse(error.data);
+        const res = MessageReplyRegenerateError.safeParse(error.data);
         toast.error(
           `Message reply regenerating failed. error data: ${JSON.stringify(
             res.data

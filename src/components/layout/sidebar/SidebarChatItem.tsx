@@ -29,9 +29,9 @@ export function SidebarChatItem({
   isSidebar,
   onChatUpdate,
 }: {
-  chat: Chat.Data;
+  chat: ChatData;
   isSidebar?: boolean;
-  onChatUpdate: (chat: Chat.Data) => void;
+  onChatUpdate: (chat: ChatData) => void;
 }) {
   const trpc = useTRPC();
   const queryClient = useQueryClient();

@@ -4,7 +4,7 @@ export function filterMessages({
   messages,
   sortOrder,
 }: {
-  messages: Message.Data[];
+  messages: MessageData[];
   sortOrder: "asc" | "desc";
 }) {
   return messages.sort((a, b) => {

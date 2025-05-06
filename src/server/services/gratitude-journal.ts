@@ -25,17 +25,17 @@ export class GratitudeJournalService {
   constructor(private readonly service: ServiceRegistry) {}
 
   decrypt(
-    entity: GratitudeJournal.Entity & { chat?: Chat.Entity | null }
-  ): GratitudeJournal.Data {
+    entity: GratitudeJournal.Entity & { chat?: ChatEntity | null }
+  ): GratitudeJournalData {
     const data = {
       id: entity.id,
       chatId: entity.chatId,
       chat: entity.chat ? this.service.chat.decrypt(entity.chat) : null,
-    } satisfies GratitudeJournal.Data;
+    } satisfies GratitudeJournalData;
     return data;
   }
 
-  async getStats(userId: UserId): Promise<GratitudeJournal.Stats> {
+  async getStats(userId: UserId): Promise<GratitudeJournalStats> {
     const res = await this.service.db.$transaction(async (tx) => {
       const now = new Date();
       const { timezone, zonedTodayStart, utcTodayStart, utcTodayEnd } =
@@ -70,7 +70,7 @@ export class GratitudeJournalService {
           utcTodayStart,
           utcTodayEnd,
         }),
-        select: { ...GratitudeJournal.Select, chat: { select: Chat.Select } },
+        select: { ...GratitudeJournal.Select, chat: { select: ChatSelect } },
       });
 
       let currentStreak = todayJournal ? 1 : 0;
@@ -116,14 +116,14 @@ export class GratitudeJournalService {
 
   async getJournal(
     userId: UserId,
-    input: GratitudeJournal.GetJournal
-  ): Promise<GratitudeJournal.Data> {
+    input: GratitudeJournalGetJournal
+  ): Promise<GratitudeJournalData> {
     const { gratitudeJournalId } = input;
     const entity = await this.service.db.gratitudeJournal.findUniqueOrThrow({
       where: { userId, id: gratitudeJournalId },
       select: {
         ...GratitudeJournal.Select,
-        chat: { select: Chat.Select },
+        chat: { select: ChatSelect },
       },
     });
 
@@ -133,8 +133,8 @@ export class GratitudeJournalService {
 
   async startChat(
     userId: UserId,
-    input: GratitudeJournal.StartChat
-  ): Promise<Chat.StartOutput> {
+    input: GratitudeJournalStartChat
+  ): Promise<ChatStartOutput> {
     const { idempotencyKey } = input;
 
     const user = await this.service.user.getForGratitudeJournal({ userId });

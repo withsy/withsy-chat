@@ -29,7 +29,7 @@ export default function BookmarkPage({
 }) {
   const trpc = useTRPC();
   const [loading, setLoading] = useState(true);
-  const [data, setData] = useState<Message.Data[]>([]);
+  const [data, setData] = useState<MessageData[]>([]);
   const [searchText, setSearchText] = useState("");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const [isFilterOpen, setIsFilterOpen] = useState(true);

@@ -12,9 +12,9 @@ import type * as UserPrompt from "@/types/user-prompt";
 import { useState } from "react";
 
 interface EditPromptModalProps {
-  prompt: UserPrompt.Data;
+  prompt: UserPromptData;
   onClose: () => void;
-  onSave: (updatedPrompt: UserPrompt.Data) => void;
+  onSave: (updatedPrompt: UserPromptData) => void;
 }
 
 export function EditPromptModal({

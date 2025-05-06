@@ -3,7 +3,7 @@ import Link from "next/link";
 import React, { useMemo } from "react";
 
 interface ChatInformationSystemMessageProps {
-  chat: Chat.Data;
+  chat: ChatData;
 }
 
 const ChatInformationSystemMessage: React.FC<

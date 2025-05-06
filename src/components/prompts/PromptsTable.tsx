@@ -17,7 +17,7 @@ import type * as UserPrompt from "@/types/user-prompt";
 import { MoreVertical, Star } from "lucide-react";
 
 interface PromptsTableProps {
-  prompts: UserPrompt.Data[];
+  prompts: UserPromptData[];
   onToggleStar: (id: string) => void;
   onDelete: (id: string) => void;
   onEdit: (id: string) => void;
