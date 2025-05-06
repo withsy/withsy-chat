@@ -32,10 +32,10 @@ jobs:
 
       - id: "secrets"
         name: "Fetch Secrets from Secret Manager"
-        uses: "google-github-actions/secret-manager@v1"
+        uses: "google-github-actions/get-secretmanager-secrets@v2"
         with:
-          project_id: "${{ env.PROJECT_ID }}"
-          secrets: "withsy-prod-secrets > SECRET_MANAGER_ENV"
+          secrets: |-
+            SECRET_MANAGER_ENV:projects/703175251392/secrets/withsy-prod-secrets
 
       - name: "Create .env file"
         run: |
