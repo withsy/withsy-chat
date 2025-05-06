@@ -15,7 +15,8 @@
     "dev": "TZ=UTC next dev --turbopack",
     "lint": "next lint",
     "start": "TZ=UTC next start",
-    "typecheck": "tsc"
+    "typecheck": "tsc",
+    "cli": "tsx src/server/cli.ts"
   },
   "dependencies": {
     "@edge-csrf/nextjs": "2.5.2",
