@@ -15,12 +15,12 @@ export type JsonValue =
   | {
       [key: string]: JsonValue;
     };
-export const JsonValueSchema: z.ZodType<JsonValue> = z.union([
+export const JsonValueBase: z.ZodType<JsonValue> = z.union([
   z.string(),
   z.number(),
   z.boolean(),
   z.null(),
-  z.lazy(() => JsonValueSchema.array()),
-  z.lazy(() => z.record(JsonValueSchema)),
+  z.array(z.lazy(() => JsonValueBase)),
+  z.record(z.lazy(() => JsonValueBase)),
 ]);
-export const JsonValue = JsonValueSchema;
+export const JsonValue = JsonValueBase;

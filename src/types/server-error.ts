@@ -1,25 +1,23 @@
 import { z } from "zod";
 import { JsonValue } from "./common";
 
-export type Details = Record<string, JsonValue>;
+export type ServerErrorDetails = Record<string, JsonValue>;
 
-export type Data = {
+export type ServerErrorData = {
   code: number;
-  type: string;
   message: string;
   stack?: string; // Excluded in production environments.
   cause?: unknown; // Excluded in production environments.
-  details?: Details;
-  errors?: Data[];
+  details?: ServerErrorDetails;
+  errors?: ServerErrorData[];
 };
 
-const DataBase: z.ZodSchema<Data> = z.object({
+const ServerErrorDataBase: z.ZodSchema<ServerErrorData> = z.object({
   code: z.number().int(),
-  type: z.string(),
   message: z.string(),
   stack: z.optional(z.string()),
   cause: z.optional(z.unknown()),
   details: z.optional(z.record(JsonValue)),
-  errors: z.optional(z.array(z.lazy(() => DataBase))),
+  errors: z.optional(z.array(z.lazy(() => ServerErrorDataBase))),
 });
-export const Data = DataBase;
+export const ServerErrorData = ServerErrorDataBase;

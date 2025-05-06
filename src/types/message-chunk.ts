@@ -4,23 +4,26 @@ import type { zInfer } from "./common";
 import { MessageChunkIndex } from "./id";
 import * as UserUsageLimit from "./user-usage-limit";
 
-export const Select = {
+export const MessageChunkSelect = {
   index: true,
   textEncrypted: true,
   reasoningTextEncrypted: true,
   isDone: true,
 } satisfies Prisma.MessageChunkSelect;
 
-export const Entity = z.object({
+export const MessageChunkEntity = z.object({
   index: MessageChunkIndex,
   textEncrypted: z.string(),
   reasoningTextEncrypted: z.string(),
   isDone: z.boolean(),
 });
-export type Entity = zInfer<typeof Entity>;
-const _ = {} satisfies Omit<Entity, keyof typeof Select>;
+export type MessageChunkEntity = zInfer<typeof MessageChunkEntity>;
+const _ = {} satisfies Omit<
+  MessageChunkEntity,
+  keyof typeof MessageChunkSelect
+>;
 
-export const Data = Entity.omit({
+export const MessageChunkData = MessageChunkEntity.omit({
   index: true,
   textEncrypted: true,
   reasoningTextEncrypted: true,
@@ -28,16 +31,16 @@ export const Data = Entity.omit({
   text: z.string(),
   reasoningText: z.string(),
 });
-export type Data = zInfer<typeof Data>;
+export type MessageChunkData = zInfer<typeof MessageChunkData>;
 
-export const Event = z.discriminatedUnion("type", [
+export const MessageChunkEvent = z.discriminatedUnion("type", [
   z.object({
     type: z.literal("chunk"),
-    chunk: Data,
+    chunk: MessageChunkData,
   }),
   z.object({
     type: z.literal("usageLimits"),
     usageLimits: z.array(UserUsageLimit.Data),
   }),
 ]);
-export type Event = zInfer<typeof Event>;
+export type MessageChunkEvent = zInfer<typeof MessageChunkEvent>;

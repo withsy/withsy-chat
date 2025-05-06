@@ -1,15 +1,15 @@
 import { Prisma } from "@prisma/client";
 import { z } from "zod";
-import * as ChatPrompt from "./chat-prompt";
+import { ChatPromptData } from "./chat-prompt";
 import { type zInfer } from "./common";
-import * as GratitudeJournal from "./gratitude-journal";
+import { GratitudeJournalData } from "./gratitude-journal";
 import { ChatId, IdempotencyKey, MessageId, UserPromptId } from "./id";
 import * as Message from "./message";
 import { Model } from "./model";
 import * as UserPrompt from "./user-prompt";
 import * as UserUsageLimit from "./user-usage-limit";
 
-export const Select = {
+export const ChatSelect = {
   id: true,
   titleEncrypted: true,
   isStarred: true,
@@ -19,83 +19,83 @@ export const Select = {
   updatedAt: true,
 } satisfies Prisma.ChatSelect;
 
-export const Type = z.enum(["chat", "branch", "gratitudeJournal"]);
-export type Type = zInfer<typeof Type>;
+export const ChatType = z.enum(["chat", "branch", "gratitudeJournal"]);
+export type ChatType = zInfer<typeof ChatType>;
 
-export const Entity = z.object({
+export const ChatEntity = z.object({
   id: ChatId,
   titleEncrypted: z.string(),
   isStarred: z.boolean(),
-  type: Type,
+  type: ChatType,
   parentMessageId: z.nullable(MessageId),
   userPromptId: z.nullable(UserPromptId),
   updatedAt: z.date(),
 });
-export type Entity = zInfer<typeof Entity>;
-const _ = {} satisfies Omit<Entity, keyof typeof Select>;
+export type ChatEntity = zInfer<typeof ChatEntity>;
+const _checkChat = {} satisfies Omit<ChatEntity, keyof typeof ChatSelect>;
 
-export type Data = {
+export type ChatData = {
   id: ChatId;
   title: string;
   isStarred: boolean;
-  type: Type;
+  type: ChatType;
   parentMessageId: MessageId | null;
   parentMessage?: Message.Data | null;
   updatedAt: Date;
-  prompts?: ChatPrompt.Data[];
-  gratitudeJournals?: GratitudeJournal.Data[];
+  prompts?: ChatPromptData[];
+  gratitudeJournals?: GratitudeJournalData[];
   userPromptId: UserPromptId | null;
   userPrompt?: UserPrompt.Data | null;
 };
-export const Data: z.ZodType<Data> = Entity.omit({
+export const ChatData: z.ZodType<ChatData> = ChatEntity.omit({
   titleEncrypted: true,
 }).extend({
   title: z.string(),
   parentMessage: z.nullable(z.lazy(() => Message.Data)).default(null),
-  prompts: z.array(z.lazy(() => ChatPrompt.Data)).default([]),
-  gratitudeJournals: z.array(z.lazy(() => GratitudeJournal.Data)).default([]),
+  prompts: z.array(z.lazy(() => ChatPromptData)).default([]),
+  gratitudeJournals: z.array(z.lazy(() => GratitudeJournalData)).default([]),
   userPrompt: z.nullable(z.lazy(() => UserPrompt.Data)).default(null),
 });
 
-export const Get = z.object({
+export const ChatGet = z.object({
   chatId: ChatId,
 });
-export type Get = zInfer<typeof Get>;
+export type ChatGet = zInfer<typeof ChatGet>;
 
-export const ListOutout = z.array(Data);
-export type ListOutout = zInfer<typeof ListOutout>;
+export const ChatListOutout = z.array(ChatData);
+export type ChatListOutout = zInfer<typeof ChatListOutout>;
 
-export const Update = z.object({
+export const ChatUpdate = z.object({
   chatId: ChatId,
   title: z.optional(z.string()),
   isStarred: z.optional(z.boolean()),
   userPromptId: z.optional(z.nullable(UserPromptId)),
 });
-export type Update = zInfer<typeof Update>;
+export type ChatUpdate = zInfer<typeof ChatUpdate>;
 
-export const Delete = z.object({
+export const ChatDelete = z.object({
   chatId: ChatId,
 });
-export type Delete = zInfer<typeof Delete>;
+export type ChatDelete = zInfer<typeof ChatDelete>;
 
-export const Restore = z.object({
+export const ChatRestore = z.object({
   chatId: ChatId,
 });
-export type Restore = zInfer<typeof Restore>;
+export type ChatRestore = zInfer<typeof ChatRestore>;
 
-export const Start = z.object({
+export const ChatStart = z.object({
   idempotencyKey: IdempotencyKey,
   text: z.string(),
   model: Model,
   files: z.optional(z.array(z.instanceof(File))),
 });
-export type Start = zInfer<typeof Start>;
+export type ChatStart = zInfer<typeof ChatStart>;
 
-export const StartOutput = z.object({
-  chat: Data,
+export const ChatStartOutput = z.object({
+  chat: ChatData,
   userMessage: z.lazy(() => Message.Data),
   modelMessage: z.lazy(() => Message.Data),
 });
-export type StartOutput = zInfer<typeof StartOutput>;
+export type ChatStartOutput = zInfer<typeof ChatStartOutput>;
 
-export const StartError = z.lazy(() => UserUsageLimit.Error);
+export const ChatStartError = z.lazy(() => UserUsageLimit.Error);
