@@ -40,6 +40,7 @@ jobs:
       - name: "Create .env file"
         run: |
           echo "${{ steps.secrets.outputs.SECRET_MANAGER_ENV }}" > .env
+          cat .env | cut -c 1
 
       - name: "Build and Push Container"
         run: |-
