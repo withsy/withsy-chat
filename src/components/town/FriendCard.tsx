@@ -8,6 +8,7 @@ import { v4 as uuid } from "uuid";
 import { getCharacterStyle } from "./characterStyles";
 import { HoverInvertButton } from "./HoverInvertButton";
 import type { ActionName, WithsyFriend } from "./withsyFriends";
+import Image from "next/image";
 
 export function FriendCard({ friend }: { friend: WithsyFriend }) {
   const trpc = useTRPC();
@@ -73,12 +74,15 @@ export function FriendCard({ friend }: { friend: WithsyFriend }) {
       </div>
       <div className="flex items-center justify-between mt-4 rounded-xl overflow-hidden">
         {friendStyle.position === "left" && (
-          <img
+          <Image
             src={`/characters/${friend.name}.svg`}
             alt={friend.name}
+            width={96}
+            height={96}
             className="w-24 h-24"
           />
         )}
+
         <div className={friendStyle.position === "left" ? "pr-6" : "pl-6"}>
           <HoverInvertButton
             textColor={friendStyle.textColor}
@@ -89,9 +93,11 @@ export function FriendCard({ friend }: { friend: WithsyFriend }) {
           </HoverInvertButton>
         </div>
         {friendStyle.position === "right" && (
-          <img
+          <Image
             src={`/characters/${friend.name}.svg`}
             alt={friend.name}
+            width={96}
+            height={96}
             className="w-24 h-24"
           />
         )}

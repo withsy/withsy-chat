@@ -2,6 +2,7 @@ import { Gem, Gift } from "lucide-react";
 import { HoverInvertButton } from "./HoverInvertButton";
 import { characterStyles, type CharacterName } from "./characterStyles";
 import { type RecommendedFriends } from "./withsyFriends";
+import Image from "next/image";
 
 type Props = {
   recommendedFriends: RecommendedFriends;
@@ -32,10 +33,12 @@ export function RecommendedSection({ recommendedFriends }: Props) {
         </div>
         <div className="flex items-center justify-between mt-4">
           {friendStyle.position === "left" && (
-            <img
+            <Image
               src={`/characters/${bestFriend.name.toLowerCase()}.svg`}
               alt={bestFriend.name}
-              className="w-24 h-24 rounded-xl"
+              width={96}
+              height={96}
+              className="rounded-xl"
             />
           )}
           <div className="px-6">
@@ -47,10 +50,12 @@ export function RecommendedSection({ recommendedFriends }: Props) {
             </HoverInvertButton>
           </div>
           {friendStyle.position === "right" && (
-            <img
+            <Image
               src={`/characters/${bestFriend.name.toLowerCase()}.svg`}
               alt={bestFriend.name}
-              className="w-24 h-24 rounded-xl"
+              width={96}
+              height={96}
+              className="rounded-xl"
             />
           )}
         </div>

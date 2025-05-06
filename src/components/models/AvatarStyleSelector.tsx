@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useUser } from "@/context/UserContext";
 import { useAvatarStyleStore } from "@/stores/useAvatarStyleStore";
 import { ConfirmAvatarStyleModal } from "./ConfirmAvatarStyleModal";
+import Image from "next/image";
 
 const avatarStyles = [
   { id: "thumbs", label: "Thumbs" },
@@ -46,10 +47,12 @@ export function AvatarStyleSelector() {
               }`}
               aria-label={`Select ${style.label}`}
             >
-              <img
+              <Image
                 src={`https://api.dicebear.com/7.x/${style.id}/svg?seed=preview`}
                 alt={style.label}
-                className="w-full h-full"
+                width={48}
+                height={48}
+                className="w-full h-full object-cover"
               />
             </button>
           ))}
