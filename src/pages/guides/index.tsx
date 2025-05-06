@@ -24,11 +24,11 @@ export default function GuidesIndexPage({
   const getIconForCategory = (name: string) => {
     switch (name.toLowerCase()) {
       case "prompts":
-        return <TableProperties className="w-5 h-5 text-gray-500 mr-3" />;
+        return <TableProperties className="w-5 h-5 text-[#EA9257] mr-3" />;
       case "saved":
-        return <Bookmark className="w-5 h-5 text-gray-500 mr-3" />;
+        return <Bookmark className="w-5 h-5 text-[#EA9257] mr-3" />;
       case "customization":
-        return <Sparkles className="w-5 h-5 text-gray-500 mr-3" />;
+        return <Sparkles className="w-5 h-5 text-[#EA9257] mr-3" />;
       default:
         return null;
     }
@@ -47,7 +47,7 @@ export default function GuidesIndexPage({
       <div className="space-y-12 py-4">
         {categories.map((category) => (
           <div key={category.name}>
-            <h2 className="text-2xl font-semibold mb-4 text-gray-800 flex items-center">
+            <h2 className="text-xl font-semibold mb-4 text-gray-800 flex items-center">
               {getIconForCategory(category.name)}
               {capitalize(category.name)}
             </h2>
