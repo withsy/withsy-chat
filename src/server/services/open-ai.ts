@@ -10,7 +10,6 @@ import type {
 } from "openai/resources";
 import { match } from "ts-pattern";
 import type { ServiceRegistry } from "../service-registry";
-import { envConfig } from "./env";
 import type { SendMessageToAiInput } from "./model-route";
 
 const MAX_CHUNK_BUFFER_LENGTH = 16;
@@ -70,7 +69,7 @@ export class OpenAiService {
       messages.push({ role: "system", content: promptText });
     messages.push(...histories);
 
-    if (envConfig.nodeEnv !== "production")
+    if (service.env.nodeEnv !== "production")
       console.log(
         "OpenAiService.sendMessageToAi. model:",
         model,

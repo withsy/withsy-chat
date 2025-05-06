@@ -2,7 +2,7 @@ import type { zInfer } from "@/types/common";
 import "dotenv/config";
 import { z } from "zod";
 
-export const EnvConfig = z.object({
+export const EnvService = z.object({
   nodeEnv: z.enum(["development", "production", "test"]),
   databaseUrl: z.string().min(1),
   geminiApiKey: z.string().min(1),
@@ -14,11 +14,11 @@ export const EnvConfig = z.object({
   encryptionKey: z.string().min(1),
   firebaseServiceAccountKey: z.string().min(1),
 });
-export type EnvConfig = zInfer<typeof EnvConfig>;
+export type EnvService = zInfer<typeof EnvService>;
 
-export function loadEnvConfig() {
+export function loadEnvService() {
   try {
-    const envConfig = EnvConfig.parse({
+    const envService = EnvService.parse({
       nodeEnv: process.env.NODE_ENV,
       databaseUrl: process.env.DATABASE_URL,
       geminiApiKey: process.env.GEMINI_API_KEY,
@@ -30,11 +30,9 @@ export function loadEnvConfig() {
       encryptionKey: process.env.ENCRYPTION_KEY,
       firebaseServiceAccountKey: process.env.FIREBASE_SERVICE_ACCOUNT_KEY,
     });
-    return envConfig;
+    return envService;
   } catch (e) {
     console.log("Environment variable parsing failed.");
     throw e;
   }
 }
-
-export const envConfig = loadEnvConfig();

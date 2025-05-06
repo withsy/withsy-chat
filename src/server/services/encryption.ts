@@ -2,7 +2,6 @@ import type { zInfer } from "@/types/common";
 import { createCipheriv, createDecipheriv, randomBytes } from "node:crypto";
 import { z } from "zod";
 import type { ServiceRegistry } from "../service-registry";
-import { envConfig } from "./env";
 
 const EncryptionPayload = z.object({
   algorithm: z.literal("aes-256-gcm"),
@@ -16,7 +15,7 @@ export class EncryptionService {
   private aes256GcmKey: Buffer;
 
   constructor(private readonly service: ServiceRegistry) {
-    const buffer = Buffer.from(envConfig.encryptionKey, "hex");
+    const buffer = Buffer.from(service.env.encryptionKey, "hex");
     if (buffer.length !== 32)
       throw new Error("Invalid encryption key length. Expected 32 bytes.");
 
