@@ -9,34 +9,19 @@ import ResponsiveButton from "./ResponsiveButton";
 export default function Component({ user }: { user: User.Data | null }) {
   const router = useRouter();
   const scrolled = useHeaderScroll();
-  const { isMobile } = useSidebarStore();
+  const { isMobile, hydrated } = useSidebarStore();
 
   const categories = [
-    {
-      label: "About",
-      value: "about",
-    },
-    {
-      label: "Guides",
-      value: "guides",
-    },
-    {
-      label: "Roadmap",
-      value: "roadmap",
-    },
-    {
-      label: "Blog",
-      value: "blog",
-    },
-    {
-      label: "Pricing",
-      value: "pricing",
-    },
-    {
-      label: "Contact",
-      value: "contact",
-    },
+    { label: "About", value: "about" },
+    { label: "Guides", value: "guides" },
+    { label: "Roadmap", value: "roadmap" },
+    { label: "Blog", value: "blog" },
+    { label: "Pricing", value: "pricing" },
+    { label: "Contact", value: "contact" },
   ];
+
+  // 👇 Hydration 되기 전에는 렌더링 생략
+  if (!hydrated) return null;
 
   return (
     <div
@@ -62,6 +47,7 @@ export default function Component({ user }: { user: User.Data | null }) {
             Withsy
           </div>
         </div>
+
         {!isMobile && (
           <div className="flex gap-8">
             {categories.map((category) => {
@@ -82,6 +68,7 @@ export default function Component({ user }: { user: User.Data | null }) {
             })}
           </div>
         )}
+
         <div className="flex items-center gap-2">
           <ResponsiveButton user={user} />
           {isMobile && <CategoryModalButton categories={categories} />}
