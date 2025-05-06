@@ -129,6 +129,50 @@ input, textarea {
 .prose tbody td {
   @apply p-3 align-top text-gray-800 dark:text-gray-200;
 }
+
+
+.prose h1 {
+  @apply text-3xl font-bold text-gray-900 mb-4;
+}
+
+.prose h2 {
+  @apply text-2xl font-semibold text-gray-800 mt-10 mb-4;
+}
+
+.prose h3 {
+  @apply text-xl font-medium text-gray-700 mt-8 mb-3;
+}
+
+.prose ul {
+  @apply list-disc list-outside my-0 pl-4 text-gray-800 dark:text-gray-200;
+}
+
+.prose ol {
+  @apply list-decimal list-outside my-0 pl-4 text-gray-800 dark:text-gray-200;
+}
+
+.prose li {
+  @apply my-0;
+}
+
+.prose li > p {
+  display: inline !important;
+  margin: 0 !important;
+}
+
+
+.prose blockquote {
+  @apply border-l-4 border-gray-300 dark:border-gray-700 pl-4 text-gray-600 dark:text-gray-400 my-6;
+}
+
+.prose code {
+  @apply bg-gray-100 dark:bg-gray-800 text-pink-700 dark:text-pink-400 px-1 py-0.5 rounded text-sm font-mono;
+}
+
+.prose p {
+  @apply my-0;
+}
+
 /* #######################################  custom end  ####################################### */
 
 
@@ -179,36 +223,4 @@ body {
   body {
     @apply bg-background text-foreground;
   }
-}
-
-.prose h1 {
-  @apply text-3xl font-bold text-gray-900 mb-4;
-}
-
-.prose h2 {
-  @apply text-2xl font-semibold text-gray-800 mt-10 mb-4;
-}
-
-.prose h3 {
-  @apply text-xl font-medium text-gray-700 mt-8 mb-3;
-}
-
-.prose ul {
-  @apply list-disc list-inside my-4 pl-4 text-gray-800 dark:text-gray-200;
-}
-
-.prose ol {
-  @apply list-decimal list-inside my-4 pl-4 text-gray-800 dark:text-gray-200;
-}
-
-.prose li {
-  @apply my-1;
-}
-
-.prose blockquote {
-  @apply border-l-4 border-gray-300 dark:border-gray-700 pl-4 text-gray-600 dark:text-gray-400 my-6;
-}
-
-.prose code {
-  @apply bg-gray-100 dark:bg-gray-800 text-pink-700 dark:text-pink-400 px-1 py-0.5 rounded text-sm font-mono;
 }

@@ -5,8 +5,9 @@ import remarkGfm from "remark-gfm";
 import { CodeBlock } from "./CodeBlock";
 
 export function MarkdownBox({ content }: { content: string | null }) {
+  console.log(JSON.stringify(content));
   return (
-    <div className="prose prose-sm dark:prose-invert break-words max-w-full overflow-x-auto">
+    <div className="prose prose-sm dark:prose-invert break-words max-w-full overflow-x-auto [&_li>p]:inline [&_li>p]:m-0">
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         rehypePlugins={[rehypeHighlight]}
