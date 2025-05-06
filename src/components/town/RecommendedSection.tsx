@@ -1,8 +1,8 @@
 import { Gem, Gift } from "lucide-react";
+import Image from "next/image";
 import { HoverInvertButton } from "./HoverInvertButton";
 import { characterStyles, type CharacterName } from "./characterStyles";
 import { type RecommendedFriends } from "./withsyFriends";
-import Image from "next/image";
 
 type Props = {
   recommendedFriends: RecommendedFriends;
@@ -44,7 +44,7 @@ export function RecommendedSection({ recommendedFriends }: Props) {
           <div className="px-6">
             <HoverInvertButton
               textColor={friendStyle.textColor}
-              onClick={() => console.log(`${bestFriend.name} clicked!`)}
+              onClick={() => {}}
             >
               {bestFriend.specialty}
             </HoverInvertButton>
@@ -77,10 +77,7 @@ export function RecommendedSection({ recommendedFriends }: Props) {
           <p className="text-sm text-gray-600 mb-2">{extraFriend.role}</p>
         </div>
 
-        <HoverInvertButton
-          textColor="black"
-          onClick={() => console.log(`${extraFriend.name} clicked!`)}
-        >
+        <HoverInvertButton textColor="black" onClick={() => {}}>
           {extraFriend.specialty}
         </HoverInvertButton>
       </div>

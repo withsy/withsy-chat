@@ -1,7 +1,12 @@
 import type { MaybePromise } from "@/types/common";
 import { getReasonPhrase, StatusCodes } from "http-status-codes";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { HttpServerError, ServerError } from "./error";
+import {
+  getHttpStatusCodeByPrismaCode,
+  HttpServerError,
+  isPrismaClientKnownRequestError,
+  ServerError,
+} from "./error";
 import { createServerContext, type ServerContext } from "./server-context";
 
 export type Options = {
@@ -37,6 +42,18 @@ export function createNextPagesApiHandler(handler: Handler) {
 
       if (e instanceof ServerError) {
         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(e.toData());
+      }
+
+      if (isPrismaClientKnownRequestError(e)) {
+        const statusCode = getHttpStatusCodeByPrismaCode(e.code);
+        return res
+          .status(statusCode)
+          .json(
+            new HttpServerError(
+              statusCode,
+              getReasonPhrase(statusCode)
+            ).toData()
+          );
       }
 
       console.error("Unexpected error occurred. error:", e);
