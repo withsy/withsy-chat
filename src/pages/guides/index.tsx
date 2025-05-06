@@ -37,12 +37,10 @@ export default function GuidesIndexPage({
     text.charAt(0).toUpperCase() + text.slice(1);
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-16">
-      <h1 className="text-4xl font-bold mb-12 text-center text-gray-900">
-        Help Guides
-      </h1>
+    <div className="flex flex-col items-start text-start px-6 py-12 max-w-3xl mx-auto">
+      <h2 className="text-3xl font-bold mb-4">Help Guides</h2>
 
-      <div className="space-y-12">
+      <div className="space-y-12 py-8">
         {categories.map((category) => (
           <div key={category.name}>
             <h2 className="text-2xl font-semibold mb-4 text-gray-800 flex items-center">
