@@ -141,7 +141,11 @@ export default function UserDropdownMenu() {
               "hover:bg-white active:bg-white font-semibold select-none"
             )}
           >
-            <ModelAvatar name={user.name ?? ""} size="sm" />
+            <ModelAvatar
+              name={user.name ?? ""}
+              image={user.imageUrl}
+              size="sm"
+            />
             <span>{user.name}</span>
           </button>
         </DropdownMenuTrigger>

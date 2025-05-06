@@ -4,12 +4,11 @@ import { getModelAvatar } from "@/lib/avatar-utils";
 type Props = {
   name: string;
   size?: "sm" | "md" | "lg" | "xl";
-  path?: string;
   image?: string;
 };
 
-export function ModelAvatar({ name, size = "md", path, image }: Props) {
-  const src = image ? image : path ? path : getModelAvatar(name, "thumbs");
+export function ModelAvatar({ name, size = "md", image }: Props) {
+  const src = image ? image : getModelAvatar(name, "thumbs");
 
   const sizeClass = {
     sm: "w-6 h-6 text-xs",

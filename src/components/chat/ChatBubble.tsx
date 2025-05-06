@@ -58,7 +58,7 @@ const ChatBubbleComponent = ({ message, chatType, onToggleSaved }: Props) => {
 
   const userProfile =
     role === "model" && message.model ? profiles[message.model] : null;
-  const image = role === "model" ? userProfile?.imageSource : undefined;
+  const image = role === "model" ? userProfile?.imageSource : user.imageUrl;
   const name =
     role === "model"
       ? userProfile?.name ||
