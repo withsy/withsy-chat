@@ -30,6 +30,17 @@ jobs:
           project_id: "${{ env.PROJECT_ID }}"
           service_account: "${{ env.SERVICE_ACCOUNT }}"
 
+      - id: "secrets"
+        name: "Fetch Secrets from Secret Manager"
+        uses: "google-github-actions/secret-manager@v1"
+        with:
+          project_id: "${{ env.PROJECT_ID }}"
+          secrets: "withsy-prod-secrets > SECRET_MANAGER_ENV"
+
+      - name: "Create .env file"
+        run: |
+          echo "${{ steps.secrets.outputs.SECRET_MANAGER_ENV }}" > .env
+
       - name: "Build and Push Container"
         run: |-
           gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://us-central1-docker.pkg.dev
