@@ -1,6 +1,7 @@
 import type { MessageChunkIndex, MessageId, UserId } from "@/types/id";
 import * as MessageChunk from "@/types/message-chunk";
 import type { ServiceRegistry } from "../service-registry";
+import { getHardDeleteCutoffDate } from "../utils";
 
 export class MessageChunkService {
   constructor(private readonly service: ServiceRegistry) {}
@@ -65,5 +66,14 @@ export class MessageChunkService {
     const text = datas.map((x) => x.text).join("");
     const reasoningText = datas.map((x) => x.reasoningText).join("");
     return { text, reasoningText };
+  }
+
+  async onHardDeleteTask() {
+    const cutoffDate = getHardDeleteCutoffDate(new Date());
+
+    const res = await this.service.db.messageChunk.deleteMany({
+      where: { createdAt: { lt: cutoffDate } },
+    });
+    console.warn(`Successfully hard deleted ${res.count} messageChunks.`);
   }
 }
