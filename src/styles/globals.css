@@ -208,3 +208,7 @@ body {
 .prose blockquote {
   @apply border-l-4 border-gray-300 dark:border-gray-700 pl-4 text-gray-600 dark:text-gray-400 my-6;
 }
+
+.prose code {
+  @apply bg-gray-100 dark:bg-gray-800 text-pink-700 dark:text-pink-400 px-1 py-0.5 rounded text-sm font-mono;
+}
