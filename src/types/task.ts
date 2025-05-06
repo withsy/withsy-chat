@@ -11,6 +11,7 @@ export const Task = {
     modelMessageId: MessageId,
   }),
   message_cleanup_zombies: z.void(),
+  message_chunk_hard_delete: z.void(),
   chat_hard_delete: z.void(),
   user_prompt_hard_delete: z.void(),
 } as const;
