@@ -33,7 +33,7 @@ const ChatBubbleComponent = ({ message, chatType, onToggleSaved }: Props) => {
       ? `${showReasoning && reasoningText ? reasoningText + "\n\n" : ""}${text}`
       : text;
   const collapseText = collapsed
-    ? displayedText.split("\n").slice(0, 3).join("\n")
+    ? displayedText.slice(0, 150) + (displayedText.length > 150 ? "..." : "")
     : displayedText;
 
   const handleCopy = async () => {
