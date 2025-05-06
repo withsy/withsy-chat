@@ -119,10 +119,6 @@ export default function RoadmapPage() {
                           >
                             {link.split("/").pop()?.replace(/-/g, " ")}
                           </Link>
-                          <SquareArrowOutUpRight
-                            size={14}
-                            className="text-[#EA9257] hover:underline text-md"
-                          />
                         </div>
                       ))}
                     </div>
