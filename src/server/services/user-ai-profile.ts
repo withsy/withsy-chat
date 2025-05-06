@@ -2,6 +2,7 @@ import { UserAiProfile } from "@/types";
 import type { UserId } from "@/types/id";
 import { Model } from "@/types/model";
 import type { ServiceRegistry } from "../service-registry";
+import { UserUsageLimitService } from "./user-usage-limit";
 
 export class UserAiProfileService {
   constructor(private readonly service: ServiceRegistry) {}
@@ -97,6 +98,11 @@ export class UserAiProfileService {
           select: UserAiProfile.Select,
         });
       }
+
+      if (imagePath)
+        await UserUsageLimitService.decreaseAiProfileImage(tx, {
+          userId,
+        });
 
       return { entity, oldImagePathEncrypted };
     });
