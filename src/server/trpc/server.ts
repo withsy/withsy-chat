@@ -1,9 +1,10 @@
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { initTRPC } from "@trpc/server";
 import {
   TRPC_ERROR_CODES_BY_KEY,
   type TRPC_ERROR_CODE_KEY,
 } from "@trpc/server/unstable-core-do-not-import";
-import { StatusCodes } from "http-status-codes";
+import { getReasonPhrase, StatusCodes } from "http-status-codes";
 import { SuperJSON } from "superjson";
 import { HttpServerError, ServerError } from "../error";
 import type { ServerContext } from "../server-context";
@@ -30,7 +31,23 @@ export const t = initTRPC.context<ServerContext>().create({
       };
     }
 
-    return shape;
+    if (
+      cause instanceof PrismaClientKnownRequestError ||
+      cause?.name === "PrismaClientKnownRequestError"
+    ) {
+      const e = cause as PrismaClientKnownRequestError;
+      if (e.code === "P2025") {
+        return {
+          message: getReasonPhrase(StatusCodes.NOT_FOUND),
+          code: TRPC_ERROR_CODES_BY_KEY.NOT_FOUND,
+        };
+      }
+    }
+
+    return {
+      message: getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR),
+      code: TRPC_ERROR_CODES_BY_KEY.INTERNAL_SERVER_ERROR,
+    };
   },
 });
 
