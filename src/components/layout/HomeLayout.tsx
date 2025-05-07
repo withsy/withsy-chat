@@ -27,6 +27,12 @@ export default function HomeLayout({ children, className }: LayoutProps) {
         <a href="#" className="termly-display-preferences">
           Consent Preferences
         </a>
+        <a
+          href="https://app.termly.io/notify/9b1a8d6a-2bea-462c-a1af-16b9ec4a3cc7"
+          target="_blank"
+        >
+          DSAR Request
+        </a>
       </footer>
     </div>
   );
