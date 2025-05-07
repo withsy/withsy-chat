@@ -142,12 +142,12 @@ export class ChatService {
 
   async start(userId: UserId, input: ChatStart): Promise<ChatStartOutput> {
     const { model, text, idempotencyKey } = input;
-
+    console.log("@3");
     await this.service.db.$transaction(async (tx) => {
       await IdempotencyInfoService.checkDuplicateRequest(tx, idempotencyKey);
       await UserUsageLimitService.checkMessage(tx, { userId });
     });
-
+    console.log("@4");
     const modelMessageTextEncrypted = this.service.encryption.encrypt("");
     const modelMessageReasoningTextEncrypted =
       this.service.encryption.encrypt("");
@@ -182,12 +182,13 @@ export class ChatService {
         return { chat, userMessage, modelMessage };
       });
 
+    console.log("@1");
     await this.service.task.add("model_route_send_message_to_ai", {
       userId,
       userMessageId: userMessage.id,
       modelMessageId: modelMessage.id,
     });
-
+    console.log("@2");
     await UserUsageLimitService.decreaseMessage(this.service.db, { userId });
 
     const res = {
