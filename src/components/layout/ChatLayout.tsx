@@ -1,10 +1,11 @@
 import { useUser } from "@/context/UserContext";
 import { cn } from "@/lib/utils";
 import { useSidebarStore } from "@/stores/useSidebarStore";
-import { type ReactNode } from "react";
+import { useEffect, type ReactNode } from "react";
 import Main from "./Main";
 import Sidebar from "./sidebar/Sidebar";
 import { useHasMounted } from "@/hooks/useHasMounted";
+import { useRouter } from "next/navigation";
 
 type LayoutProps = {
   children: ReactNode;
@@ -15,6 +16,13 @@ export default function ChatLayout({ children, className }: LayoutProps) {
   const mounted = useHasMounted();
   const { user } = useUser();
   const { collapsed, setCollapsed, isMobile } = useSidebarStore();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (mounted && !user) {
+      router.push("/");
+    }
+  }, [mounted, user, router]);
 
   if (!mounted) return null; // avoid SSR mismatch
 
