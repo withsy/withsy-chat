@@ -1,4 +1,4 @@
-import type * as Message from "@/types/message";
+import type { MessageData, MessageStatus } from "@/types/message";
 import { createContext, useContext, useState } from "react";
 
 interface ChatSessionContextType {

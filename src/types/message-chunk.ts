@@ -2,7 +2,6 @@ import type { Prisma } from "@prisma/client";
 import { z } from "zod";
 import type { zInfer } from "./common";
 import { MessageChunkIndex } from "./id";
-import * as UserUsageLimit from "./user-usage-limit";
 import { UserUsageLimitData } from "./user-usage-limit";
 
 export const MessageChunkSelect = {

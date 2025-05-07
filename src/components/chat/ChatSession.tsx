@@ -6,11 +6,15 @@ import { useChatStore } from "@/stores/useChatStore";
 import { useDrawerStore } from "@/stores/useDrawerStore";
 import { useSelectedModelStore } from "@/stores/useSelectedModelStore";
 import { useSidebarStore } from "@/stores/useSidebarStore";
-import * as Chat from "@/types/chat";
+import { ChatStartError } from "@/types/chat";
 import { MessageId } from "@/types/id";
-import * as Message from "@/types/message";
-import * as MessageChunk from "@/types/message-chunk";
-import type * as UserUsageLimit from "@/types/user-usage-limit";
+import {
+  isMessageComplete,
+  MessageSendError,
+  type MessageData,
+} from "@/types/message";
+import { MessageChunkEvent } from "@/types/message-chunk";
+import type { UserUsageLimitData } from "@/types/user-usage-limit";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { useEffect, useMemo, useState } from "react";
@@ -47,7 +51,7 @@ export function ChatSession({ initialMessages, children }: Props) {
   const { openDrawer } = useDrawerStore();
 
   const usageQuery = useQuery(
-    trpc.UserUsageLimitList.queryOptions(
+    trpc.userUsageLimit.list.queryOptions(
       { type: "message" },
       {
         enabled: !!chat?.id,
@@ -88,7 +92,7 @@ export function ChatSession({ initialMessages, children }: Props) {
     setMessages(initialMessages);
     const lastMessage = initialMessages.at(-1);
     const streamMessageId =
-      lastMessage && !Message.isComplete(lastMessage) ? lastMessage.id : null;
+      lastMessage && !isMessageComplete(lastMessage) ? lastMessage.id : null;
     setStreamMessageId(streamMessageId);
   }, [initialMessages]);
 
@@ -151,7 +155,7 @@ export function ChatSession({ initialMessages, children }: Props) {
     });
 
     source.addEventListener("message", (ev) => {
-      const event = MessageChunk.Event.parse(SuperJSON.parse(ev.data));
+      const event = MessageChunkEvent.parse(SuperJSON.parse(ev.data));
       if (event.type === "chunk") {
         const chunk = event.chunk;
         setMessages((prev) =>

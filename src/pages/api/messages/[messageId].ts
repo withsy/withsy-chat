@@ -4,9 +4,13 @@ import {
   type Options,
 } from "@/server/next-pages-api-handler";
 import { listen } from "@/server/services/pg";
-import * as MessageChunk from "@/types/message-chunk";
+import {
+  MessageChunkEntity,
+  MessageChunkEvent,
+  MessageChunkSelect,
+} from "@/types/message-chunk";
 import { PgEvent, type PgEventInput } from "@/types/task";
-import type * as UserUsageLimit from "@/types/user-usage-limit";
+import type { UserUsageLimitData } from "@/types/user-usage-limit";
 import { getReasonPhrase, StatusCodes } from "http-status-codes";
 import SuperJSON from "superjson";
 
@@ -59,7 +63,7 @@ export async function get(options: Options) {
   res.status(StatusCodes.OK);
   res.flushHeaders();
 
-  const write = (event: MessageChunk.Event) => {
+  const write = (event: MessageChunkEvent) => {
     res.write(`data: ${SuperJSON.stringify(event)}\n\n`);
   };
 
@@ -79,16 +83,16 @@ export async function get(options: Options) {
     const entities = await service.db.messageChunk.findMany({
       where: { message: { chat: { userId, deletedAt: null } }, messageId },
       orderBy: { index: "asc" },
-      select: MessageChunk.Select,
+      select: MessageChunkSelect,
     });
 
     let lastIndex = -1;
 
-    const onEntity = async (entity: MessageChunk.Entity) => {
+    const onEntity = async (entity: MessageChunkEntity) => {
       if (entity.isDone) {
         let usageLimits: UserUsageLimitData[] = [];
         try {
-          usageLimits = await service.UserUsageLimitList(userId, {
+          usageLimits = await service.userUsageLimit.list(userId, {
             type: "message",
           });
         } catch (e) {
@@ -125,7 +129,7 @@ export async function get(options: Options) {
               message: { chat: { userId, deletedAt: null } },
               messageId_index: { messageId, index },
             },
-            select: MessageChunk.Select,
+            select: MessageChunkSelect,
           });
 
           const { isDone } = await onEntity(entity);

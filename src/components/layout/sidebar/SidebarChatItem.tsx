@@ -18,7 +18,7 @@ import { useTRPC } from "@/lib/trpc";
 import { useChatStore } from "@/stores/useChatStore";
 import { useDrawerStore } from "@/stores/useDrawerStore";
 import { useSidebarStore } from "@/stores/useSidebarStore";
-import type * as Chat from "@/types/chat";
+import type { ChatData } from "@/types/chat";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { EllipsisVertical, Pencil, Star, StarOff, Trash2 } from "lucide-react";
 import { useRouter } from "next/router";

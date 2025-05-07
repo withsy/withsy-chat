@@ -1,12 +1,16 @@
 import type { MessageChunkIndex, MessageId, UserId } from "@/types/id";
-import * as MessageChunk from "@/types/message-chunk";
+import {
+  MessageChunkData,
+  MessageChunkEntity,
+  MessageChunkSelect,
+} from "@/types/message-chunk";
 import type { ServiceRegistry } from "../service-registry";
 import { getHardDeleteCutoffDate } from "../utils";
 
 export class MessageChunkService {
   constructor(private readonly service: ServiceRegistry) {}
 
-  decrypt(entity: MessageChunk.Entity): MessageChunk.Data {
+  decrypt(entity: MessageChunkEntity): MessageChunkData {
     const text = this.service.encryption.decrypt(entity.textEncrypted);
     const reasoningText = this.service.encryption.decrypt(
       entity.reasoningTextEncrypted
@@ -15,7 +19,7 @@ export class MessageChunkService {
       text,
       reasoningText,
       isDone: entity.isDone,
-    } satisfies MessageChunk.Data;
+    } satisfies MessageChunkData;
     return data;
   }
 
@@ -58,7 +62,7 @@ export class MessageChunkService {
         message: { chat: { userId, deletedAt: null } },
         messageId,
       },
-      select: MessageChunk.Select,
+      select: MessageChunkSelect,
       orderBy: { index: "asc" },
     });
 

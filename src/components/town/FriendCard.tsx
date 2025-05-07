@@ -1,5 +1,5 @@
 import { useTRPC } from "@/lib/trpc";
-import type * as Chat from "@/types/chat";
+import type { ChatStartOutput } from "@/types/chat";
 import { useMutation } from "@tanstack/react-query";
 import Image from "next/image";
 import { useRouter } from "next/navigation";

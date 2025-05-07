@@ -1,6 +1,6 @@
 import type { UserId } from "@/types/id";
-import * as Message from "@/types/message";
-import type * as MessageReply from "@/types/message-reply";
+import { MessageSelect, type MessageData } from "@/types/message";
+import type { MessageReplyRegenerate } from "@/types/message-reply";
 import { Role } from "@/types/role";
 import { StatusCodes } from "http-status-codes";
 import { HttpServerError } from "../error";

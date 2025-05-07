@@ -1,5 +1,13 @@
-import * as Chat from "@/types/chat";
-import * as GratitudeJournal from "@/types/gratitude-journal";
+import { ChatSelect, ChatStartOutput, type ChatEntity } from "@/types/chat";
+import {
+  GratitudeJournalData,
+  GratitudeJournalEntity,
+  GratitudeJournalGetJournal,
+  GratitudeJournalRecentJournal,
+  GratitudeJournalSelect,
+  GratitudeJournalStartChat,
+  GratitudeJournalStats,
+} from "@/types/gratitude-journal";
 import type { UserId } from "@/types/id";
 import type { Prisma } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
@@ -25,7 +33,7 @@ export class GratitudeJournalService {
   constructor(private readonly service: ServiceRegistry) {}
 
   decrypt(
-    entity: GratitudeJournal.Entity & { chat?: ChatEntity | null }
+    entity: GratitudeJournalEntity & { chat?: ChatEntity | null }
   ): GratitudeJournalData {
     const data = {
       id: entity.id,
@@ -70,13 +78,13 @@ export class GratitudeJournalService {
           utcTodayStart,
           utcTodayEnd,
         }),
-        select: { ...GratitudeJournal.Select, chat: { select: ChatSelect } },
+        select: { ...GratitudeJournalSelect, chat: { select: ChatSelect } },
       });
 
       let currentStreak = todayJournal ? 1 : 0;
       let zonedCheckStart = subDays(zonedTodayStart, 1);
       let isCurrentStreakDone = false;
-      const recentJournals: GratitudeJournal.RecentJournal[] = new Array(
+      const recentJournals: GratitudeJournalRecentJournal[] = new Array(
         xs.length
       );
       for (let i = xs.length - 1; i >= 0; --i) {
@@ -122,7 +130,7 @@ export class GratitudeJournalService {
     const entity = await this.service.db.gratitudeJournal.findUniqueOrThrow({
       where: { userId, id: gratitudeJournalId },
       select: {
-        ...GratitudeJournal.Select,
+        ...GratitudeJournalSelect,
         chat: { select: ChatSelect },
       },
     });
@@ -179,7 +187,7 @@ export class GratitudeJournalService {
       });
       const todayJournal = await tx.gratitudeJournal.findFirst({
         where,
-        select: GratitudeJournal.Select,
+        select: GratitudeJournalSelect,
       });
       if (todayJournal) {
         throw new TRPCError({
@@ -219,7 +227,7 @@ export class GratitudeJournalService {
           userId,
           chatId: chat.id,
         },
-        select: GratitudeJournal.Select,
+        select: GratitudeJournalSelect,
       });
       chat.gratitudeJournals.push(gratitudeJournal);
 

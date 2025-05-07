@@ -1,6 +1,5 @@
 import { BookmarkCard } from "@/components/bookmarks/BookmarkCard";
 import { BookmarkFilters } from "@/components/bookmarks/BookmarkFilters";
-
 import {
   Tooltip,
   TooltipContent,
@@ -9,7 +8,7 @@ import {
 import { filterMessages } from "@/lib/filter-utils";
 import { useTRPC } from "@/lib/trpc";
 import { useSidebarStore } from "@/stores/useSidebarStore";
-import type * as Message from "@/types/message";
+import type { MessageData } from "@/types/message";
 import type * as User from "@/types/user";
 import { useQuery } from "@tanstack/react-query";
 import { Eye, EyeOff, RotateCcw } from "lucide-react";

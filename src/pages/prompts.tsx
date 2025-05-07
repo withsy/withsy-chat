@@ -8,7 +8,7 @@ import { setTrpcCsrfToken, useTRPC } from "@/lib/trpc";
 import { getCsrfToken } from "@/server/utils";
 import { useChatStore } from "@/stores/useChatStore";
 import { useSidebarStore } from "@/stores/useSidebarStore";
-import type * as UserPrompt from "@/types/user-prompt";
+import type { UserPromptData } from "@/types/user-prompt";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import type { GetServerSideProps } from "next";
 import { useEffect, useState } from "react";

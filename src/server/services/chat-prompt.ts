@@ -1,4 +1,4 @@
-import * as ChatPrompt from "@/types/chat-prompt";
+import { ChatPromptSelect } from "@/types/chat-prompt";
 import type { ChatId } from "@/types/id";
 import type { ServiceRegistry } from "../service-registry";
 import type { Tx } from "./db";

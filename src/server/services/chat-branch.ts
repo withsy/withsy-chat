@@ -1,5 +1,5 @@
-import * as Chat from "@/types/chat";
-import type * as ChatBranch from "@/types/chat-branch";
+import { ChatListOutout, ChatSelect, type ChatData } from "@/types/chat";
+import type { ChatBranchList, ChatBranchStart } from "@/types/chat-branch";
 import type { UserId } from "@/types/id";
 import type { ServiceRegistry } from "../service-registry";
 import { ChatService } from "./chat";

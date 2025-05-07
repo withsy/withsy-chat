@@ -9,8 +9,8 @@ import { useChatSession } from "@/context/ChatSessionContext";
 import { useUser } from "@/context/UserContext";
 import { useTRPC } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
-import type * as Chat from "@/types/chat";
-import * as MessageReply from "@/types/message-reply";
+import type { ChatType } from "@/types/chat";
+import { MessageReplyRegenerateError } from "@/types/message-reply";
 import type { Model } from "@/types/model";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Bookmark, Copy, GitBranch, RefreshCw } from "lucide-react";
@@ -20,7 +20,7 @@ import { v4 as uuid } from "uuid";
 import { ModelSelect } from "./ModelSelect";
 
 interface ChatBubbleTooltipsProps {
-  chatType: Chat.Type | undefined;
+  chatType: ChatType | undefined;
   messageId: string;
   messageModel: Model | null;
   isAi: boolean;

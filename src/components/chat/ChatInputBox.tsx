@@ -1,6 +1,6 @@
 import { useUser } from "@/context/UserContext";
 import { cn } from "@/lib/utils";
-import type * as UserUsageLimit from "@/types/user-usage-limit";
+import type { UserUsageLimitData } from "@/types/user-usage-limit";
 import { Send } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import TextareaAutosize from "react-textarea-autosize";

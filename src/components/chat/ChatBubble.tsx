@@ -1,8 +1,8 @@
 import { useUser } from "@/context/UserContext";
 import { cn } from "@/lib/utils";
 import { useAiProfileStore } from "@/stores/useAiProfileStore";
-import type * as Chat from "@/types/chat";
-import type * as Message from "@/types/message";
+import type { ChatType } from "@/types/chat";
+import type { MessageData } from "@/types/message";
 import { memo, useState } from "react";
 import { toast } from "sonner";
 import { CollapseToggle } from "../CollapseToggle";
@@ -14,7 +14,7 @@ import { StatusIndicator } from "./StatusIndicator";
 
 type Props = {
   message: MessageData;
-  chatType: Chat.Type | undefined;
+  chatType: ChatType | undefined;
   onToggleSaved?: (id: string, newValue: boolean) => void;
 };
 

@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/badge";
+import { Search, Sparkles } from "lucide-react";
 import Link from "next/link";
-import { Search, Sparkles, SquareArrowOutUpRight } from "lucide-react";
 
 export default function RoadmapPage() {
   const getIconForRelease = (name: string) => {

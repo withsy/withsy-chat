@@ -1,4 +1,4 @@
-import type * as Chat from "@/types/chat";
+import type { ChatType } from "@/types/chat";
 import { BookHeart, FolderRoot, GitBranch } from "lucide-react";
 
 const iconMap = {
@@ -7,7 +7,7 @@ const iconMap = {
   gratitudeJournal: BookHeart,
 };
 
-export function getChatTypeIcon(chatType: Chat.Type, iconClassName?: string) {
+export function getChatTypeIcon(chatType: ChatType, iconClassName?: string) {
   const IconComponent = iconMap[chatType];
   if (!IconComponent) return null;
   return <IconComponent size={16} className={iconClassName} />;
