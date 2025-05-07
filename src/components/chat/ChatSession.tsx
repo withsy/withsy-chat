@@ -41,8 +41,13 @@ export function ChatSession({ initialMessages, children }: Props) {
   const { collapsed, isMobile } = useSidebarStore();
   const { selectedModel } = useSelectedModelStore();
   const { user } = useUser();
-  const [messages, setMessages] = useState(initialMessages);
 
+  const [messages, setMessages] = useState(
+    initialMessages.map((msg) => ({
+      ...msg,
+      isMessageCollapsed: true,
+    }))
+  );
   const [streamMessageId, setStreamMessageId] = useState<string | null>(null);
   const [shouldFocusInput, setShouldFocusInput] = useState(false);
   const [usageLimits, setUsageLimits] = useState<UserUsageLimitData[]>([]);
@@ -81,7 +86,11 @@ export function ChatSession({ initialMessages, children }: Props) {
         toast.error(`Message sending failed.`);
       },
       onSuccess(data) {
-        setMessages((prev) => [...prev, data.userMessage, data.modelMessage]);
+        setMessages((prev) => [
+          ...prev,
+          { ...data.userMessage, isMessageCollapsed: false },
+          { ...data.modelMessage, isMessageCollapsed: false },
+        ]);
         setStreamMessageId(data.modelMessage.id);
         queryClient.invalidateQueries(trpc.chat.list.queryFilter());
       },
@@ -89,7 +98,12 @@ export function ChatSession({ initialMessages, children }: Props) {
   );
 
   useEffect(() => {
-    setMessages(initialMessages);
+    setMessages(
+      initialMessages.map((msg) => ({
+        ...msg,
+        isMessageCollapsed: true,
+      }))
+    );
     const lastMessage = initialMessages.at(-1);
     const streamMessageId =
       lastMessage && !isMessageComplete(lastMessage) ? lastMessage.id : null;
@@ -232,7 +246,10 @@ export function ChatSession({ initialMessages, children }: Props) {
   };
 
   const handleRegenerateSuccess = (newMessage: MessageData) => {
-    setMessages((prev) => [...prev, newMessage]);
+    setMessages((prev) => [
+      ...prev,
+      { ...newMessage, isMessageCollapsed: false },
+    ]);
     setStreamMessageId(newMessage.id);
     queryClient.invalidateQueries(trpc.chat.list.queryFilter());
   };

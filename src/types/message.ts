@@ -63,6 +63,7 @@ export type MessageData = {
   createdAt: Date;
   parentMessageId: MessageId | null;
   parentMessage?: MessageData | null;
+  isMessageCollapsed?: boolean;
 };
 export const MessageDataBase: z.ZodType<MessageData> = MessageEntity.omit({
   textEncrypted: true,

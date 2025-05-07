@@ -22,10 +22,12 @@ const ChatBubbleComponent = ({ message, chatType, onToggleSaved }: Props) => {
   const { user } = useUser();
   const { profiles } = useAiProfileStore();
 
-  const { role, text, reasoningText, status } = message;
+  const { role, text, reasoningText, status, isMessageCollapsed } = message;
 
   const isLongMessage = text.length > 150;
-  const [collapsed, setCollapsed] = useState(role === "user" && isLongMessage);
+  const [collapsed, setCollapsed] = useState(
+    isMessageCollapsed ?? (role === "user" && isLongMessage)
+  );
   const [showReasoning, setShowReasoning] = useState(false);
 
   const displayedText =
