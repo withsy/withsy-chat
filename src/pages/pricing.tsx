@@ -1,11 +1,11 @@
 import ResponsiveButton from "@/components/home/ResponsiveButton";
 import { getUser } from "@/server/utils";
-import type * as User from "@/types/user";
+import type { UserData } from "@/types/user";
 import type { GetServerSideProps } from "next";
 import Link from "next/link";
 
 type Props = {
-  user: User.Data | null;
+  user: UserData | null;
 };
 
 export const getServerSideProps: GetServerSideProps<Props> = async (

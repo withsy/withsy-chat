@@ -9,7 +9,7 @@ import { filterMessages } from "@/lib/filter-utils";
 import { useTRPC } from "@/lib/trpc";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 import type { MessageData } from "@/types/message";
-import type * as User from "@/types/user";
+import type { UserData } from "@/types/user";
 import { useQuery } from "@tanstack/react-query";
 import { Eye, EyeOff, RotateCcw } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
@@ -23,7 +23,7 @@ export default function BookmarkPage({
   user,
   headerStyle,
 }: {
-  user: User.Data;
+  user: UserData;
   headerStyle: React.CSSProperties;
 }) {
   const trpc = useTRPC();

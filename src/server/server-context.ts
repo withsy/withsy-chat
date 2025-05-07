@@ -1,6 +1,6 @@
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import type { UserId } from "@/types/id";
-import * as User from "@/types/user";
+import { UserJwt, UserSession } from "@/types/user";
 import { getReasonPhrase, StatusCodes } from "http-status-codes";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth";
@@ -22,14 +22,14 @@ export async function createServerContext(input: {
   let userId = "";
   const session = await getServerSession(req, res, authOptions);
   if (session) {
-    const userSession = User.Session.parse(session);
+    const userSession = UserSession.parse(session);
     userId = userSession.user.id;
   }
 
   if (!userId) {
     const token = await getToken({ req });
     if (token) {
-      const userJwt = User.Jwt.parse(token);
+      const userJwt = UserJwt.parse(token);
       userId = userJwt.sub;
     }
   }

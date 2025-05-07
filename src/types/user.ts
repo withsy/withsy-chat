@@ -3,7 +3,7 @@ import { z } from "zod";
 import { type zInfer } from "./common";
 import { UserId } from "./id";
 
-export const Select = {
+export const UserSelect = {
   id: true,
   nameEncrypted: true,
   emailEncrypted: true,
@@ -13,7 +13,7 @@ export const Select = {
   preferences: true,
 } satisfies Prisma.UserSelect;
 
-export const Entity = z.object({
+export const UserEntity = z.object({
   id: UserId,
   nameEncrypted: z.string(),
   emailEncrypted: z.string(),
@@ -22,10 +22,10 @@ export const Entity = z.object({
   timezone: z.string(),
   preferences: z.any(),
 });
-export type Entity = zInfer<typeof Entity>;
-const _ = {} satisfies Omit<Entity, keyof typeof Select>;
+export type UserEntity = zInfer<typeof UserEntity>;
+const _checkUser = {} satisfies Omit<UserEntity, keyof typeof UserSelect>;
 
-export const Prefs = z.object({
+export const UserPrefs = z.object({
   wideView: z.boolean().default(false),
   largeText: z.boolean().default(false),
   enterToSend: z.boolean().default(true),
@@ -33,9 +33,9 @@ export const Prefs = z.object({
   themeOpacity: z.number().default(0.5),
   avatarStyle: z.string().default("thumbs"),
 });
-export type Prefs = zInfer<typeof Prefs>;
+export type UserPrefs = zInfer<typeof UserPrefs>;
 
-export const Data = Entity.omit({
+export const UserData = UserEntity.omit({
   nameEncrypted: true,
   emailEncrypted: true,
   imageUrlEncrypted: true,
@@ -44,36 +44,36 @@ export const Data = Entity.omit({
   name: z.string(),
   email: z.string(),
   imageUrl: z.string(),
-  preferences: Prefs,
+  preferences: UserPrefs,
 });
-export type Data = zInfer<typeof Data>;
+export type UserData = zInfer<typeof UserData>;
 
-export const Ensure = z.object({
+export const UserEnsure = z.object({
   aiLanguage: z.string().optional(),
   timezone: z.string().optional(),
 });
-export type Ensure = zInfer<typeof Ensure>;
+export type UserEnsure = zInfer<typeof UserEnsure>;
 
-export const UpdatePrefs = Prefs.partial();
-export type UpdatePrefs = zInfer<typeof UpdatePrefs>;
+export const UserUpdatePrefs = UserPrefs.partial();
+export type UserUpdatePrefs = zInfer<typeof UserUpdatePrefs>;
 
-export const UpdatePrefsOutput = Data.pick({
+export const UserUpdatePrefsOutput = UserData.pick({
   preferences: true,
 });
-export type UpdatePrefsOutput = zInfer<typeof UpdatePrefsOutput>;
+export type UserUpdatePrefsOutput = zInfer<typeof UserUpdatePrefsOutput>;
 
-export const Update = Data.pick({
+export const UserUpdate = UserData.pick({
   aiLanguage: true,
   timezone: true,
 }).partial();
-export type Update = zInfer<typeof Update>;
+export type UserUpdate = zInfer<typeof UserUpdate>;
 
-export const Jwt = z.object({
+export const UserJwt = z.object({
   sub: z.string(),
 });
-export type Jwt = zInfer<typeof Jwt>;
+export type UserJwt = zInfer<typeof UserJwt>;
 
-export const Session = z.object({
+export const UserSession = z.object({
   user: z.object({
     name: z.string().nullish(),
     email: z.string().nullish(),
@@ -82,4 +82,4 @@ export const Session = z.object({
   }),
   expires: z.string(),
 });
-export type Session = zInfer<typeof Session>;
+export type UserSession = zInfer<typeof UserSession>;

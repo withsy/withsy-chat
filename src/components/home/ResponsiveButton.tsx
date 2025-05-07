@@ -1,4 +1,4 @@
-import type * as User from "@/types/user";
+import type { UserData } from "@/types/user";
 import LoginButton from "../login/LoginButton";
 import ReturnButton from "./ReturnButton";
 
@@ -15,7 +15,7 @@ export default function ResponsiveButton({
   size = "sm",
 }: {
   message?: string;
-  user: User.Data | null;
+  user: UserData | null;
   size?: "default" | "sm" | "lg" | "icon";
 }) {
   return user ? (

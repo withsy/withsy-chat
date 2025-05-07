@@ -1,5 +1,5 @@
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
-import * as User from "@/types/user";
+import { UserData, UserSession } from "@/types/user";
 import { subDays } from "date-fns";
 import { getServerSession } from "next-auth";
 import type { NextApiRequestCookies } from "next/dist/server/api-utils";
@@ -34,9 +34,9 @@ export async function getUser(input: {
 }) {
   const { req, res } = input;
   const session = await getServerSession(req, res, authOptions);
-  let user: User.Data | null = null;
+  let user: UserData | null = null;
   if (session) {
-    const userSession = User.Session.parse(session);
+    const userSession = UserSession.parse(session);
     user = await service.user.get(userSession.user.id);
   }
 

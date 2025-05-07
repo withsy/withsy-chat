@@ -3,12 +3,14 @@ import { Hero } from "@/components/home/Hero";
 import PromptTransparency from "@/components/home/PromptTransparency";
 import SaveStar from "@/components/home/SaveStar";
 import ThemeAndPrefsSection from "@/components/home/ThemeAndPrefs";
+import { useUser } from "@/context/UserContext";
 import { getUser } from "@/server/utils";
-import type * as User from "@/types/user";
+import type { UserData } from "@/types/user";
 import type { GetServerSideProps } from "next";
+import { useEffect } from "react";
 
 type Props = {
-  user: User.Data | null;
+  user: UserData | null;
 };
 
 export const getServerSideProps: GetServerSideProps<Props> = async (
@@ -19,6 +21,12 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
 };
 
 export default function Page({ user }: Props) {
+  const { setUser } = useUser();
+
+  useEffect(() => {
+    if (user) setUser(user);
+  }, [user, setUser]);
+
   return (
     <div>
       <Hero user={user} />

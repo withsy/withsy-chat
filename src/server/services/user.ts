@@ -1,6 +1,15 @@
 import type { UserId } from "@/types/id";
 import { isValidAiLanguage } from "@/types/languages";
-import * as User from "@/types/user";
+import {
+  UserData,
+  UserEnsure,
+  UserEntity,
+  UserPrefs,
+  UserSelect,
+  UserUpdate,
+  UserUpdatePrefs,
+  UserUpdatePrefsOutput,
+} from "@/types/user";
 import { TRPCError } from "@trpc/server";
 import type { ServiceRegistry } from "../service-registry";
 import { isValidTimezone } from "../utils";
@@ -12,11 +21,11 @@ const FALLBACK_AI_LANGUAGE = "en";
 export class UserService {
   constructor(private readonly service: ServiceRegistry) {}
 
-  decrypt(entity: User.Entity): User.Data {
+  decrypt(entity: UserEntity): UserData {
     const name = this.service.encryption.decrypt(entity.nameEncrypted);
     const email = this.service.encryption.decrypt(entity.emailEncrypted);
     const imageUrl = this.service.encryption.decrypt(entity.imageUrlEncrypted);
-    const preferences = User.Prefs.parse(entity.preferences);
+    const preferences = UserPrefs.parse(entity.preferences);
     const data = {
       id: entity.id,
       name,
@@ -25,25 +34,25 @@ export class UserService {
       aiLanguage: entity.aiLanguage,
       timezone: entity.timezone,
       preferences,
-    } satisfies User.Data;
+    } satisfies UserData;
     return data;
   }
 
-  async get(userId: UserId): Promise<User.Data> {
+  async get(userId: UserId): Promise<UserData> {
     const entity = await this.service.db.user.findUniqueOrThrow({
       where: { id: userId },
-      select: User.Select,
+      select: UserSelect,
     });
 
     const data = this.decrypt(entity);
     return data;
   }
 
-  async ensure(userId: UserId, input: User.Ensure): Promise<User.Data> {
+  async ensure(userId: UserId, input: UserEnsure): Promise<UserData> {
     const entity = await this.service.db.$transaction(async (tx) => {
       const user = await tx.user.findUniqueOrThrow({
         where: { id: userId },
-        select: User.Select,
+        select: UserSelect,
       });
 
       let timezone: string | undefined = undefined;
@@ -68,7 +77,7 @@ export class UserService {
           aiLanguage,
           timezone,
         },
-        select: User.Select,
+        select: UserSelect,
       });
 
       return updated;
@@ -80,8 +89,8 @@ export class UserService {
 
   async updatePrefs(
     userId: UserId,
-    input: User.UpdatePrefs
-  ): Promise<User.UpdatePrefsOutput> {
+    input: UserUpdatePrefs
+  ): Promise<UserUpdatePrefsOutput> {
     const patch = Object.fromEntries(
       Object.entries(input).filter(([_, value]) => value !== undefined)
     );
@@ -116,11 +125,11 @@ export class UserService {
       return entity;
     });
 
-    const data = User.UpdatePrefsOutput.parse(entity);
+    const data = UserUpdatePrefsOutput.parse(entity);
     return data;
   }
 
-  async update(userId: UserId, input: User.Update): Promise<User.Data> {
+  async update(userId: UserId, input: UserUpdate): Promise<UserData> {
     const { aiLanguage, timezone } = input;
     if (aiLanguage && !isValidAiLanguage(aiLanguage))
       throw new TRPCError({
@@ -140,7 +149,7 @@ export class UserService {
         aiLanguage,
         timezone,
       },
-      select: User.Select,
+      select: UserSelect,
     });
 
     const data = this.decrypt(entity);

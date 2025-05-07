@@ -1,12 +1,12 @@
 import { useHeaderScroll } from "@/hooks/useHeaderScroll";
 import { useSidebarStore } from "@/stores/useSidebarStore";
-import type * as User from "@/types/user";
+import type { UserData } from "@/types/user";
 import { useRouter } from "next/router";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import CategoryModalButton from "./CategoryModalButton";
 import ResponsiveButton from "./ResponsiveButton";
 
-export default function Component({ user }: { user: User.Data | null }) {
+export default function Component({ user }: { user: UserData | null }) {
   const router = useRouter();
   const scrolled = useHeaderScroll();
   const { isMobile, hydrated } = useSidebarStore();
