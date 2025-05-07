@@ -1,12 +1,12 @@
 import type { Pool } from "pg";
 import { createLazyObject, type LazyObject } from "./lazy-object";
+import { AiProfileStorageService } from "./services/ai-profile-storage";
 import { ChatService } from "./services/chat";
 import { ChatBranchService } from "./services/chat-branch";
 import { ChatPromptService } from "./services/chat-prompt";
 import { createDb, type Db } from "./services/db";
 import { EncryptionService } from "./services/encryption";
 import { loadEnvService, type EnvService } from "./services/env";
-import { FirebaseService } from "./services/firebase";
 import { GoogleGenAiService } from "./services/google-gen-ai";
 import { GratitudeJournalService } from "./services/gratitude-journal";
 import { IdempotencyInfoService } from "./services/idempotency-info";
@@ -16,6 +16,7 @@ import { MessageReplyService } from "./services/message-reply";
 import { ModelRouteService } from "./services/model-route";
 import { OpenAiService } from "./services/open-ai";
 import { createPgPool } from "./services/pg";
+import { S3Service } from "./services/s3";
 import { TaskService } from "./services/task";
 import { UserService } from "./services/user";
 import { UserAiProfileService } from "./services/user-ai-profile";
@@ -49,7 +50,8 @@ type ServiceDefinition = {
   chatPrompt: ChatPromptService;
   gratitudeJournal: GratitudeJournalService;
   encryption: EncryptionService;
-  firebase: FirebaseService;
+  s3: S3Service;
+  aiProfileStorage: AiProfileStorageService;
 };
 
 export type ServiceRegistry = LazyObject<ServiceDefinition>;
@@ -79,7 +81,8 @@ function createServiceRegistry() {
     idempotencyInfo: (s) => new IdempotencyInfoService(s),
     task: (s) => new TaskService(s),
     encryption: (s) => new EncryptionService(s),
-    firebase: (s) => new FirebaseService(s),
+    s3: (s) => new S3Service(s),
+    aiProfileStorage: (s) => new AiProfileStorageService(s),
   });
 }
 

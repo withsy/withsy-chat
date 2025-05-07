@@ -12,7 +12,8 @@ export const EnvService = z.object({
   googleClientId: z.string().min(1),
   googleClientSecret: z.string().min(1),
   encryptionKey: z.string().min(1),
-  firebaseServiceAccountKey: z.string().min(1),
+  s3AccessKeyId: z.string().min(1),
+  s3SecretAccessKey: z.string().min(1),
 });
 export type EnvService = zInfer<typeof EnvService>;
 
@@ -28,7 +29,8 @@ export function loadEnvService() {
       googleClientId: process.env.GOOGLE_CLIENT_ID,
       googleClientSecret: process.env.GOOGLE_CLIENT_SECRET,
       encryptionKey: process.env.ENCRYPTION_KEY,
-      firebaseServiceAccountKey: process.env.FIREBASE_SERVICE_ACCOUNT_KEY,
+      s3AccessKeyId: process.env.S3_ACCESS_KEY_ID,
+      s3SecretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
     });
     return envService;
   } catch (e) {

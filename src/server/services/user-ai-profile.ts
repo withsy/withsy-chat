@@ -21,12 +21,7 @@ export class UserAiProfileService {
     const imagePath = this.service.encryption.decrypt(
       entity.imagePathEncrypted
     );
-
-    const parts = imagePath.split("/"); // e.g.) users/:userId/ai-profiles/:fileName
-    const fileName = parts.at(3) ?? "";
-    const imageSource =
-      fileName.length > 0 ? `/api/ai-profiles/${fileName}` : "";
-
+    const imageSource = UserAiProfileService.createImageSource({ imagePath });
     const data = {
       model,
       name,
@@ -120,7 +115,8 @@ export class UserAiProfileService {
       const oldImagePath = this.service.encryption.decrypt(
         oldImagePathEncrypted
       );
-      if (oldImagePath) await this.service.firebase.delete(oldImagePath);
+      if (oldImagePath)
+        await this.service.aiProfileStorage.delete({ imagePath: oldImagePath });
     }
 
     const data = this.decrypt(entity);
@@ -157,10 +153,25 @@ export class UserAiProfileService {
       const oldImagePath = this.service.encryption.decrypt(
         oldImagePathEncrypted
       );
-      if (oldImagePath) await this.service.firebase.delete(oldImagePath);
+      if (oldImagePath)
+        await this.service.aiProfileStorage.delete({ imagePath: oldImagePath });
     }
 
     const data = this.decrypt(entity);
     return data;
+  }
+
+  static createImagePath(input: { userId: UserId; fileName: string }) {
+    const { userId, fileName } = input;
+    return `${userId}/${fileName}`;
+  }
+
+  static createImageSource(input: { imagePath: string }) {
+    const { imagePath } = input;
+    const parts = imagePath.split("/"); // e.g.) <userId>/<fileName>
+    const fileName = parts.at(1) ?? "";
+    const imageSource =
+      fileName.length > 0 ? `/api/ai-profiles/${fileName}` : "";
+    return imageSource;
   }
 }
