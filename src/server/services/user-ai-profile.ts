@@ -1,13 +1,21 @@
 import type { UserId } from "@/types/id";
 import { Model } from "@/types/model";
-import * as UserAiProfile from "@/types/user-ai-profile";
+import {
+  UserAiProfileData,
+  UserAiProfileDeleteImage,
+  UserAiProfileEntity,
+  UserAiProfileGet,
+  UserAiProfileGetAllOutput,
+  UserAiProfileGetOutput,
+  UserAiProfileSelect,
+} from "@/types/user-ai-profile";
 import type { ServiceRegistry } from "../service-registry";
 import { UserUsageLimitService } from "./user-usage-limit";
 
 export class UserAiProfileService {
   constructor(private readonly service: ServiceRegistry) {}
 
-  decrypt(entity: UserAiProfile.Entity): UserAiProfile.Data {
+  decrypt(entity: UserAiProfileEntity): UserAiProfileData {
     const model = Model.parse(entity.model);
     const name = this.service.encryption.decrypt(entity.nameEncrypted);
     const imagePath = this.service.encryption.decrypt(
@@ -23,28 +31,28 @@ export class UserAiProfileService {
       model,
       name,
       imageSource,
-    } satisfies UserAiProfile.Data;
+    } satisfies UserAiProfileData;
     return data;
   }
 
   async get(
     userId: UserId,
-    input: UserAiProfile.Get
-  ): Promise<UserAiProfile.GetOutput> {
+    input: UserAiProfileGet
+  ): Promise<UserAiProfileGetOutput> {
     const { model } = input;
     const entity = await this.service.db.userAiProfile.findUnique({
       where: { userId_model: { userId, model } },
-      select: UserAiProfile.Select,
+      select: UserAiProfileSelect,
     });
 
     const data = entity ? this.decrypt(entity) : null;
     return data;
   }
 
-  async getAll(userId: UserId): Promise<UserAiProfile.GetAllOutput> {
+  async getAll(userId: UserId): Promise<UserAiProfileGetAllOutput> {
     const entities = await this.service.db.userAiProfile.findMany({
       where: { userId },
-      select: UserAiProfile.Select,
+      select: UserAiProfileSelect,
     });
 
     const datas = entities.map((x) => this.decrypt(x));
@@ -56,7 +64,7 @@ export class UserAiProfileService {
     model: Model;
     name?: string;
     imagePath?: string;
-  }): Promise<UserAiProfile.Data> {
+  }): Promise<UserAiProfileData> {
     const { userId, model, name, imagePath } = input;
 
     const nameEncrypted = name
@@ -71,7 +79,7 @@ export class UserAiProfileService {
     const res = await this.service.db.$transaction(async (tx) => {
       let entity = await tx.userAiProfile.findUnique({
         where: { userId_model: { userId, model } },
-        select: UserAiProfile.Select,
+        select: UserAiProfileSelect,
       });
 
       let oldImagePathEncrypted = "";
@@ -83,7 +91,7 @@ export class UserAiProfileService {
             nameEncrypted: nameEncrypted ?? emptyNameEncrypted,
             imagePathEncrypted: imagePathEncrypted ?? emptyImagePathEncrypted,
           },
-          select: UserAiProfile.Select,
+          select: UserAiProfileSelect,
         });
       } else {
         if (imagePathEncrypted)
@@ -95,7 +103,7 @@ export class UserAiProfileService {
             nameEncrypted,
             imagePathEncrypted,
           },
-          select: UserAiProfile.Select,
+          select: UserAiProfileSelect,
         });
       }
 
@@ -121,8 +129,8 @@ export class UserAiProfileService {
 
   async deleteImage(
     userId: UserId,
-    input: UserAiProfile.DeleteImage
-  ): Promise<UserAiProfile.Data> {
+    input: UserAiProfileDeleteImage
+  ): Promise<UserAiProfileData> {
     const { model } = input;
 
     const imagePathEncrypted = this.service.encryption.encrypt("");
@@ -130,7 +138,7 @@ export class UserAiProfileService {
     const res = await this.service.db.$transaction(async (tx) => {
       const oldEntity = await tx.userAiProfile.findUniqueOrThrow({
         where: { userId_model: { userId, model } },
-        select: UserAiProfile.Select,
+        select: UserAiProfileSelect,
       });
 
       const oldImagePathEncrypted = oldEntity.imagePathEncrypted;
@@ -138,7 +146,7 @@ export class UserAiProfileService {
       const entity = await tx.userAiProfile.update({
         where: { userId_model: { userId, model } },
         data: { imagePathEncrypted },
-        select: UserAiProfile.Select,
+        select: UserAiProfileSelect,
       });
 
       return { oldImagePathEncrypted, entity };

@@ -1,5 +1,15 @@
 import type { UserId } from "@/types/id";
-import * as UserPrompt from "@/types/user-prompt";
+import {
+  UserPromptCreate,
+  UserPromptData,
+  UserPromptDelete,
+  UserPromptEntity,
+  UserPromptGet,
+  UserPromptListOutput,
+  UserPromptRestore,
+  UserPromptSelect,
+  UserPromptUpdate,
+} from "@/types/user-prompt";
 import { v7 as uuidv7 } from "uuid";
 import type { ServiceRegistry } from "../service-registry";
 import { getHardDeleteCutoffDate } from "../utils";
@@ -9,7 +19,7 @@ import { UserDefaultPromptService } from "./user-default-prompt";
 export class UserPromptService {
   constructor(private readonly service: ServiceRegistry) {}
 
-  decrypt(entity: UserPrompt.Entity): UserPrompt.Data {
+  decrypt(entity: UserPromptEntity): UserPromptData {
     const title = this.service.encryption.decrypt(entity.titleEncrypted);
     const text = this.service.encryption.decrypt(entity.textEncrypted);
     const data = {
@@ -18,38 +28,38 @@ export class UserPromptService {
       text,
       isStarred: entity.isStarred,
       updatedAt: entity.updatedAt,
-    } satisfies UserPrompt.Data;
+    } satisfies UserPromptData;
     return data;
   }
 
-  async get(userId: UserId, input: UserPrompt.Get): Promise<UserPrompt.Data> {
+  async get(userId: UserId, input: UserPromptGet): Promise<UserPromptData> {
     const { userPromptId } = input;
 
     const entity = await this.service.db.userPrompt.findUniqueOrThrow({
       where: { userId, deletedAt: null, id: userPromptId },
-      select: UserPrompt.Select,
+      select: UserPromptSelect,
     });
 
     const data = this.decrypt(entity);
     return data;
   }
 
-  async list(userId: UserId): Promise<UserPrompt.ListOutput> {
+  async list(userId: UserId): Promise<UserPromptListOutput> {
     const entities = await this.service.db.userPrompt.findMany({
       where: { userId, deletedAt: null },
       orderBy: { id: "asc" },
-      select: UserPrompt.Select,
+      select: UserPromptSelect,
     });
 
     const datas = entities.map((x) => this.decrypt(x));
     return datas;
   }
 
-  async listDeleted(userId: UserId): Promise<UserPrompt.ListOutput> {
+  async listDeleted(userId: UserId): Promise<UserPromptListOutput> {
     const entities = await this.service.db.userPrompt.findMany({
       where: { userId, deletedAt: { not: null } },
       orderBy: { id: "asc" },
-      select: UserPrompt.Select,
+      select: UserPromptSelect,
     });
 
     const datas = entities.map((x) => this.decrypt(x));
@@ -58,8 +68,8 @@ export class UserPromptService {
 
   async create(
     userId: UserId,
-    input: UserPrompt.Create
-  ): Promise<UserPrompt.Data> {
+    input: UserPromptCreate
+  ): Promise<UserPromptData> {
     const { idempotencyKey, title, text } = input;
 
     const titleEncrypted = this.service.encryption.encrypt(title);
@@ -75,7 +85,7 @@ export class UserPromptService {
           titleEncrypted,
           textEncrypted,
         },
-        select: UserPrompt.Select,
+        select: UserPromptSelect,
       });
 
       return entity;
@@ -87,8 +97,8 @@ export class UserPromptService {
 
   async update(
     userId: UserId,
-    input: UserPrompt.Update
-  ): Promise<UserPrompt.Data> {
+    input: UserPromptUpdate
+  ): Promise<UserPromptData> {
     const { userPromptId, title, text, isStarred } = input;
 
     const titleEncrypted =
@@ -99,14 +109,14 @@ export class UserPromptService {
     const entity = await this.service.db.userPrompt.update({
       where: { userId, deletedAt: null, id: userPromptId },
       data: { titleEncrypted, textEncrypted, isStarred },
-      select: UserPrompt.Select,
+      select: UserPromptSelect,
     });
 
     const data = this.decrypt(entity);
     return data;
   }
 
-  async delete(userId: UserId, input: UserPrompt.Delete): Promise<void> {
+  async delete(userId: UserId, input: UserPromptDelete): Promise<void> {
     const { userPromptId } = input;
 
     await this.service.db.$transaction(async (tx) => {
@@ -134,14 +144,14 @@ export class UserPromptService {
 
   async restore(
     userId: UserId,
-    input: UserPrompt.Restore
-  ): Promise<UserPrompt.Data> {
+    input: UserPromptRestore
+  ): Promise<UserPromptData> {
     const { userPromptId } = input;
 
     const entity = await this.service.db.userPrompt.update({
       where: { id: userPromptId, userId, deletedAt: { not: null } },
       data: { deletedAt: null },
-      select: UserPrompt.Select,
+      select: UserPromptSelect,
     });
 
     const data = this.decrypt(entity);

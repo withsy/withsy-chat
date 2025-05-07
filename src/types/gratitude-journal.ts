@@ -1,49 +1,59 @@
 import type { Prisma } from "@prisma/client";
 import { z } from "zod";
-import * as Chat from "./chat";
+import { ChatData } from "./chat";
 import type { zInfer } from "./common";
 import { ChatId, GratitudeJournalId, IdempotencyKey } from "./id";
 
-export const Select = {
+export const GratitudeJournalSelect = {
   id: true,
   chatId: true,
 } satisfies Prisma.GratitudeJournalSelect;
 
-export const Entity = z.object({
+export const GratitudeJournalEntity = z.object({
   id: GratitudeJournalId,
   chatId: z.nullable(ChatId),
 });
-export type Entity = zInfer<typeof Entity>;
-const _ = {} satisfies Omit<Entity, keyof typeof Select>;
+export type GratitudeJournalEntity = zInfer<typeof GratitudeJournalEntity>;
+const _ = {} satisfies Omit<
+  GratitudeJournalEntity,
+  keyof typeof GratitudeJournalSelect
+>;
 
-export type Data = {
+export type GratitudeJournalData = {
   id: GratitudeJournalId;
   chatId: ChatId | null;
-  chat?: Chat.Data | null;
+  chat?: ChatData | null;
 };
-export const Data: z.ZodType<Data> = Entity.extend({
-  chat: z.nullable(z.lazy(() => Chat.Data)).default(null),
-});
+export const GratitudeJournalData: z.ZodType<GratitudeJournalData> =
+  GratitudeJournalEntity.extend({
+    chat: z.nullable(z.lazy(() => ChatData)).default(null),
+  });
 
-export const StartChat = z.object({
+export const GratitudeJournalStartChat = z.object({
   idempotencyKey: IdempotencyKey,
 });
-export type StartChat = zInfer<typeof StartChat>;
+export type GratitudeJournalStartChat = zInfer<
+  typeof GratitudeJournalStartChat
+>;
 
-export const RecentJournal = z.object({
+export const GratitudeJournalRecentJournal = z.object({
   zonedDate: z.string(),
   gratitudeJournalId: GratitudeJournalId,
 });
-export type RecentJournal = zInfer<typeof RecentJournal>;
+export type GratitudeJournalRecentJournal = zInfer<
+  typeof GratitudeJournalRecentJournal
+>;
 
-export const Stats = z.object({
-  recentJournals: RecentJournal.array(),
+export const GratitudeJournalStats = z.object({
+  recentJournals: GratitudeJournalRecentJournal.array(),
   currentStreak: z.number(),
-  todayJournal: z.nullable(Data),
+  todayJournal: z.nullable(GratitudeJournalData),
 });
-export type Stats = zInfer<typeof Stats>;
+export type GratitudeJournalStats = zInfer<typeof GratitudeJournalStats>;
 
-export const GetJournal = z.object({
+export const GratitudeJournalGetJournal = z.object({
   gratitudeJournalId: GratitudeJournalId,
 });
-export type GetJournal = zInfer<typeof GetJournal>;
+export type GratitudeJournalGetJournal = zInfer<
+  typeof GratitudeJournalGetJournal
+>;

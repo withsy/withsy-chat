@@ -2,13 +2,13 @@ import { z } from "zod";
 import type { zInfer } from "./common";
 import { ChatId, IdempotencyKey, MessageId } from "./id";
 
-export const List = z.object({
+export const ChatBranchList = z.object({
   chatId: ChatId,
 });
-export type List = zInfer<typeof List>;
+export type ChatBranchList = zInfer<typeof ChatBranchList>;
 
-export const Start = z.object({
+export const ChatBranchStart = z.object({
   idempotencyKey: IdempotencyKey,
   messageId: MessageId,
 });
-export type Start = zInfer<typeof Start>;
+export type ChatBranchStart = zInfer<typeof ChatBranchStart>;

@@ -1,52 +1,60 @@
-import * as UserPrompt from "@/types/user-prompt";
+import {
+  UserPromptCreate,
+  UserPromptData,
+  UserPromptDelete,
+  UserPromptGet,
+  UserPromptListOutput,
+  UserPromptRestore,
+  UserPromptUpdate,
+} from "@/types/user-prompt";
 import { publicProcedure, t } from "../server";
 
 export const userPromptRouter = t.router({
   get: publicProcedure
-    .input(UserPrompt.Get)
-    .output(UserPrompt.Data)
+    .input(UserPromptGet)
+    .output(UserPromptData)
     .query((opts) =>
       opts.ctx.service.userPrompt
         .get(opts.ctx.userId, opts.input)
-        .then((x) => UserPrompt.Data.parse(x))
+        .then((x) => UserPromptData.parse(x))
     ),
   list: publicProcedure
-    .output(UserPrompt.ListOutput)
+    .output(UserPromptListOutput)
     .query((opts) =>
       opts.ctx.service.userPrompt
         .list(opts.ctx.userId)
-        .then((xs) => xs.map((x) => UserPrompt.Data.parse(x)))
+        .then((xs) => xs.map((x) => UserPromptData.parse(x)))
     ),
   listDeleted: publicProcedure
-    .output(UserPrompt.ListOutput)
+    .output(UserPromptListOutput)
     .query((opts) =>
       opts.ctx.service.userPrompt
         .listDeleted(opts.ctx.userId)
-        .then((xs) => xs.map((x) => UserPrompt.Data.parse(x)))
+        .then((xs) => xs.map((x) => UserPromptData.parse(x)))
     ),
   create: publicProcedure
-    .input(UserPrompt.Create)
-    .output(UserPrompt.Data)
+    .input(UserPromptCreate)
+    .output(UserPromptData)
     .mutation((opts) =>
       opts.ctx.service.userPrompt
         .create(opts.ctx.userId, opts.input)
-        .then((x) => UserPrompt.Data.parse(x))
+        .then((x) => UserPromptData.parse(x))
     ),
   update: publicProcedure
-    .input(UserPrompt.Update)
-    .output(UserPrompt.Data)
+    .input(UserPromptUpdate)
+    .output(UserPromptData)
     .mutation((opts) =>
       opts.ctx.service.userPrompt
         .update(opts.ctx.userId, opts.input)
-        .then((x) => UserPrompt.Data.parse(x))
+        .then((x) => UserPromptData.parse(x))
     ),
   delete: publicProcedure
-    .input(UserPrompt.Delete)
+    .input(UserPromptDelete)
     .mutation((opts) =>
       opts.ctx.service.userPrompt.delete(opts.ctx.userId, opts.input)
     ),
   restore: publicProcedure
-    .input(UserPrompt.Restore)
+    .input(UserPromptRestore)
     .mutation((opts) =>
       opts.ctx.service.userPrompt.restore(opts.ctx.userId, opts.input)
     ),

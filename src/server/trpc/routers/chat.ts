@@ -1,56 +1,65 @@
-import * as Chat from "@/types/chat";
+import {
+  ChatData,
+  ChatDelete,
+  ChatGet,
+  ChatListOutout,
+  ChatRestore,
+  ChatStart,
+  ChatStartOutput,
+  ChatUpdate,
+} from "@/types/chat";
 import { publicProcedure, t } from "../server";
 
 export const chatRouter = t.router({
   list: publicProcedure
-    .output(Chat.ListOutout)
+    .output(ChatListOutout)
     .query((opts) =>
       opts.ctx.service.chat
         .list(opts.ctx.userId)
-        .then((xs) => xs.map((x) => Chat.Data.parse(x)))
+        .then((xs) => xs.map((x) => ChatData.parse(x)))
     ),
   listDeleted: publicProcedure
-    .output(Chat.ListOutout)
+    .output(ChatListOutout)
     .query((opts) =>
       opts.ctx.service.chat
         .listDeleted(opts.ctx.userId)
-        .then((xs) => xs.map((x) => Chat.Data.parse(x)))
+        .then((xs) => xs.map((x) => ChatData.parse(x)))
     ),
   get: publicProcedure
-    .input(Chat.Get)
-    .output(Chat.Data)
+    .input(ChatGet)
+    .output(ChatData)
     .query((opts) =>
       opts.ctx.service.chat
         .get(opts.ctx.userId, opts.input)
-        .then((x) => Chat.Data.parse(x))
+        .then((x) => ChatData.parse(x))
     ),
   update: publicProcedure
-    .input(Chat.Update)
-    .output(Chat.Data)
+    .input(ChatUpdate)
+    .output(ChatData)
     .mutation((opts) =>
       opts.ctx.service.chat
         .update(opts.ctx.userId, opts.input)
-        .then((x) => Chat.Data.parse(x))
+        .then((x) => ChatData.parse(x))
     ),
   delete: publicProcedure
-    .input(Chat.Delete)
+    .input(ChatDelete)
     .mutation((opts) =>
       opts.ctx.service.chat.delete(opts.ctx.userId, opts.input)
     ),
   restore: publicProcedure
-    .input(Chat.Restore)
-    .output(Chat.Data)
+    .input(ChatRestore)
+    .output(ChatData)
     .mutation((opts) =>
       opts.ctx.service.chat
         .restore(opts.ctx.userId, opts.input)
-        .then((x) => Chat.Data.parse(x))
+        .then((x) => ChatData.parse(x))
     ),
   start: publicProcedure
-    .input(Chat.Start)
-    .output(Chat.StartOutput)
+    .input(ChatStart)
+    .output(ChatStartOutput)
     .mutation((opts) =>
       opts.ctx.service.chat
         .start(opts.ctx.userId, opts.input)
-        .then((x) => Chat.StartOutput.parse(x))
+        .then((x) => ChatStartOutput.parse(x))
     ),
 });

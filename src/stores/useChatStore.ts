@@ -1,9 +1,9 @@
-import type * as Chat from "@/types/chat";
+import type { ChatData } from "@/types/chat";
 import { create } from "zustand";
 
 type ChatStore = {
-  chat: Chat.Data | null;
-  setChat: (chat: Chat.Data | null) => void;
+  chat: ChatData | null;
+  setChat: (chat: ChatData | null) => void;
   updatePromptId: (promptId: string | null) => void;
 };
 

@@ -7,17 +7,17 @@ import {
 import { useUser } from "@/context/UserContext";
 import { useTRPC } from "@/lib/trpc";
 import { useChatStore } from "@/stores/useChatStore";
-import type * as UserPrompt from "@/types/user-prompt";
+import type { UserPromptData } from "@/types/user-prompt";
 import { useMutation } from "@tanstack/react-query";
 import { MoreVertical, Star } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "../ui/badge";
 
 interface PromptCardProps {
-  prompt: UserPrompt.Data;
-  onClick: (prompt: UserPrompt.Data) => void;
+  prompt: UserPromptData;
+  onClick: (prompt: UserPromptData) => void;
   onDelete?: (promptId: string) => void;
-  onToggleStar?: (prompt: UserPrompt.Data) => void;
+  onToggleStar?: (prompt: UserPromptData) => void;
   onMakeDefault?: (promptId: string | null) => void;
   isActive?: boolean;
   isDefault?: boolean;

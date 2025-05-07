@@ -3,19 +3,25 @@ import { z } from "zod";
 import type { zInfer } from "./common";
 import { ChatPromptId } from "./id";
 
-export const Select = {
+export const ChatPromptSelect = {
   id: true,
   textEncrypted: true,
 } satisfies Prisma.ChatPromptSelect;
 
-export const Entity = z.object({
+export const ChatPromptEntity = z.object({
   id: ChatPromptId,
   textEncrypted: z.string(),
 });
-export type Entity = zInfer<typeof Entity>;
-const _ = {} satisfies Omit<Entity, keyof typeof Select>;
+export type ChatPromptEntity = zInfer<typeof ChatPromptEntity>;
+const _checkChatPrompt = {} satisfies Omit<
+  ChatPromptEntity,
+  keyof typeof ChatPromptSelect
+>;
 
-export const Data = Entity.omit({ id: true, textEncrypted: true }).extend({
+export const ChatPromptData = ChatPromptEntity.omit({
+  id: true,
+  textEncrypted: true,
+}).extend({
   text: z.optional(z.string()),
 });
-export type Data = zInfer<typeof Data>;
+export type ChatPromptData = zInfer<typeof ChatPromptData>;

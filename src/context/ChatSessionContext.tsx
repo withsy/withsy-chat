@@ -1,10 +1,10 @@
-import type * as Message from "@/types/message";
+import type { MessageData, MessageStatus } from "@/types/message";
 import { createContext, useContext, useState } from "react";
 
 interface ChatSessionContextType {
-  status: Message.Status | null;
-  setStatus: (status: Message.Status) => void;
-  onRegenerateSuccess: (newMessage: Message.Data) => void;
+  status: MessageStatus | null;
+  setStatus: (status: MessageStatus) => void;
+  onRegenerateSuccess: (newMessage: MessageData) => void;
 }
 
 const ChatSessionContext = createContext<ChatSessionContextType | null>(null);
@@ -19,14 +19,14 @@ export const useChatSession = () => {
 
 interface ChatSessionProviderProps {
   children: React.ReactNode;
-  onRegenerateSuccess: (newMessage: Message.Data) => void;
+  onRegenerateSuccess: (newMessage: MessageData) => void;
 }
 
 export const ChatSessionProvider = ({
   children,
   onRegenerateSuccess,
 }: ChatSessionProviderProps) => {
-  const [status, setStatus] = useState<Message.Status | null>(null);
+  const [status, setStatus] = useState<MessageStatus | null>(null);
 
   return (
     <ChatSessionContext.Provider

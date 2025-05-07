@@ -1,6 +1,5 @@
 import { BookmarkCard } from "@/components/bookmarks/BookmarkCard";
 import { BookmarkFilters } from "@/components/bookmarks/BookmarkFilters";
-
 import {
   Tooltip,
   TooltipContent,
@@ -9,7 +8,7 @@ import {
 import { filterMessages } from "@/lib/filter-utils";
 import { useTRPC } from "@/lib/trpc";
 import { useSidebarStore } from "@/stores/useSidebarStore";
-import type * as Message from "@/types/message";
+import type { MessageData } from "@/types/message";
 import type * as User from "@/types/user";
 import { useQuery } from "@tanstack/react-query";
 import { Eye, EyeOff, RotateCcw } from "lucide-react";
@@ -29,7 +28,7 @@ export default function BookmarkPage({
 }) {
   const trpc = useTRPC();
   const [loading, setLoading] = useState(true);
-  const [data, setData] = useState<Message.Data[]>([]);
+  const [data, setData] = useState<MessageData[]>([]);
   const [searchText, setSearchText] = useState("");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const [isFilterOpen, setIsFilterOpen] = useState(true);

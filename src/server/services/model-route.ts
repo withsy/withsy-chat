@@ -1,10 +1,10 @@
 import type { MaybePromise } from "@/types/common";
 import type { MessageChunkIndex, MessageId, UserId } from "@/types/id";
-import type * as Message from "@/types/message";
+import type { MessageData, MessageDataForAi } from "@/types/message";
 import { Model, ModelProviderMap } from "@/types/model";
 import { Role } from "@/types/role";
 import type { TaskInput } from "@/types/task";
-import * as UserDefaultPrompt from "@/types/user-default-prompt";
+import { UserDefaultPromptGetOutput } from "@/types/user-default-prompt";
 import { match } from "ts-pattern";
 import type { Simplify } from "type-fest";
 import type { ServiceRegistry } from "../service-registry";
@@ -13,15 +13,15 @@ import { notify } from "./pg";
 import { UserUsageLimitService } from "./user-usage-limit";
 
 export type ValidatedModelMessage = Simplify<
-  Omit<Message.Data, "model"> & {
-    model: NonNullable<Message.Data["model"]>;
+  Omit<MessageData, "model"> & {
+    model: NonNullable<MessageData["model"]>;
   }
 >;
 
 export type SendMessageToAiInput = {
   model: Model;
   promptText: string;
-  messagesForAi: Message.DataForAi[];
+  messagesForAi: MessageDataForAi[];
   onMessageChunkReceived: OnMessageChunkReceived;
 };
 
@@ -144,8 +144,8 @@ export class ModelRouteService {
 
   private async messagesForAi(input: {
     userId: UserId;
-    modelMessage: Message.Data;
-  }): Promise<Message.DataForAi[]> {
+    modelMessage: MessageData;
+  }): Promise<MessageDataForAi[]> {
     const { userId, modelMessage } = input;
     const entities = await this.service.message.listForAi({
       userId,
@@ -173,9 +173,9 @@ export class ModelRouteService {
   }): Promise<
     | {
         ok: true;
-        userMessage: Message.Data;
+        userMessage: MessageData;
         modelMessage: ValidatedModelMessage;
-        userDefaultPrompt: UserDefaultPrompt.GetOutput;
+        userDefaultPrompt: UserDefaultPromptGetOutput;
       }
     | { ok: false }
   > {
@@ -195,7 +195,7 @@ export class ModelRouteService {
     const userMessage = this.service.message.decrypt(userMessageRaw);
     const modelMessage = this.service.message.decrypt(modelMessageRaw);
     const userDefaultPrompt =
-      UserDefaultPrompt.GetOutput.parse(userDefaultPromptRaw);
+      UserDefaultPromptGetOutput.parse(userDefaultPromptRaw);
     if (modelMessage.model == null) {
       console.error(
         "Model message model must not be null. modelMessageId:",

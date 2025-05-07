@@ -2,27 +2,32 @@ import type { Prisma } from "@prisma/client";
 import { z } from "zod";
 import type { zInfer } from "./common";
 import { UserPromptId } from "./id";
-import * as UserPrompt from "./user-prompt";
+import { UserPromptData } from "./user-prompt";
 
-export const Select = {
+export const UserDefaultPromptSelect = {
   userPromptId: true,
 } satisfies Prisma.UserDefaultPromptSelect;
 
-export const Entity = z.object({
+export const UserDefaultPromptEntity = z.object({
   userPromptId: z.nullable(UserPromptId),
 });
-export type Entity = zInfer<typeof Entity>;
-const _ = {} satisfies Omit<Entity, keyof typeof Select>;
+export type UserDefaultPromptEntity = zInfer<typeof UserDefaultPromptEntity>;
+const _checkUserDefaultPrompt = {} satisfies Omit<
+  UserDefaultPromptEntity,
+  keyof typeof UserDefaultPromptSelect
+>;
 
-export const Data = Entity.extend({
-  userPrompt: z.nullable(UserPrompt.Data).default(null),
+export const UserDefaultPromptData = UserDefaultPromptEntity.extend({
+  userPrompt: z.nullable(UserPromptData).default(null),
 });
-export type Data = zInfer<typeof Data>;
+export type UserDefaultPromptData = zInfer<typeof UserDefaultPromptData>;
 
-export const GetOutput = z.nullable(Data);
-export type GetOutput = zInfer<typeof GetOutput>;
+export const UserDefaultPromptGetOutput = z.nullable(UserDefaultPromptData);
+export type UserDefaultPromptGetOutput = zInfer<
+  typeof UserDefaultPromptGetOutput
+>;
 
-export const Update = z.object({
+export const UserDefaultPromptUpdate = z.object({
   userPromptId: z.nullable(UserPromptId),
 });
-export type Update = zInfer<typeof Update>;
+export type UserDefaultPromptUpdate = zInfer<typeof UserDefaultPromptUpdate>;

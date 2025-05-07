@@ -1,13 +1,13 @@
 import type { Prisma } from "@prisma/client";
 import { z } from "zod";
-import * as Chat from "./chat";
+import { ChatData } from "./chat";
 import { type zInfer } from "./common";
 import { ChatId, IdempotencyKey, MessageId, UserId } from "./id";
 import { Model } from "./model";
 import { Role } from "./role";
-import * as UserUsageLimit from "./user-usage-limit";
+import { UserUsageLimitError } from "./user-usage-limit";
 
-export const Select = {
+export const MessageSelect = {
   id: true,
   chatId: true,
   role: true,
@@ -20,43 +20,51 @@ export const Select = {
   createdAt: true,
 } satisfies Prisma.MessageSelect;
 
-export const Status = z.enum(["pending", "processing", "succeeded", "failed"]);
-export type Status = zInfer<typeof Status>;
+export const MessageStatus = z.enum([
+  "pending",
+  "processing",
+  "succeeded",
+  "failed",
+]);
+export type MessageStatus = zInfer<typeof MessageStatus>;
 
-export function isComplete(data: Data) {
+export function isMessageComplete(data: MessageData) {
   return data.status === "succeeded" || data.status === "failed";
 }
 
-export const Entity = z.object({
+export const MessageEntity = z.object({
   id: MessageId,
   chatId: ChatId,
   role: z.string(),
   model: z.nullable(z.string()),
   textEncrypted: z.string(),
   reasoningTextEncrypted: z.string(),
-  status: Status,
+  status: MessageStatus,
   isBookmarked: z.boolean(),
   parentMessageId: z.nullable(MessageId),
   createdAt: z.date(),
 });
-export type Entity = zInfer<typeof Entity>;
-const _ = {} satisfies Omit<Entity, keyof typeof Select>;
+export type MessageEntity = zInfer<typeof MessageEntity>;
+const _checkMessage = {} satisfies Omit<
+  MessageEntity,
+  keyof typeof MessageSelect
+>;
 
-export type Data = {
+export type MessageData = {
   id: MessageId;
   chatId: ChatId;
-  chat?: Chat.Data | null;
+  chat?: ChatData | null;
   role: Role;
   model: Model | null;
   text: string;
   reasoningText: string;
-  status: Status;
+  status: MessageStatus;
   isBookmarked: boolean;
   createdAt: Date;
   parentMessageId: MessageId | null;
-  parentMessage?: Data | null;
+  parentMessage?: MessageData | null;
 };
-export const DataBase: z.ZodType<Data> = Entity.omit({
+export const MessageDataBase: z.ZodType<MessageData> = MessageEntity.omit({
   textEncrypted: true,
   reasoningTextEncrypted: true,
   role: true,
@@ -66,20 +74,20 @@ export const DataBase: z.ZodType<Data> = Entity.omit({
   reasoningText: z.string(),
   role: Role,
   model: z.nullable(Model),
-  chat: z.nullable(z.lazy(() => Chat.Data)).default(null),
-  parentMessage: z.nullable(z.lazy(() => DataBase)).default(null),
+  chat: z.nullable(z.lazy(() => ChatData)).default(null),
+  parentMessage: z.nullable(z.lazy(() => MessageDataBase)).default(null),
 });
-export const Data = DataBase;
+export const MessageData = MessageDataBase;
 
-export const Get = z.object({
+export const MessageGet = z.object({
   messageId: MessageId,
 });
-export type Get = zInfer<typeof Get>;
+export type MessageGet = zInfer<typeof MessageGet>;
 
-export const GetOutput = z.nullable(Data);
-export type GetOutput = zInfer<typeof GetOutput>;
+export const MessageGetOutput = z.nullable(MessageData);
+export type MessageGetOutput = zInfer<typeof MessageGetOutput>;
 
-export const List = z.object({
+export const MessageList = z.object({
   role: z.optional(Role),
   isBookmarked: z.optional(z.boolean()),
   options: z.object({
@@ -97,39 +105,39 @@ export const List = z.object({
     ),
   }),
 });
-export type List = zInfer<typeof List>;
+export type MessageList = zInfer<typeof MessageList>;
 
-export const ListOutput = z.array(Data);
-export type ListOutput = zInfer<typeof ListOutput>;
+export const MessageListOutput = z.array(MessageData);
+export type MessageListOutput = zInfer<typeof MessageListOutput>;
 
-export type EntityForAi = {
+export type MessageEntityForAi = {
   role: string;
   textEncrypted: string;
 };
 
-export type DataForAi = {
+export type MessageDataForAi = {
   role: string;
   text: string;
 };
 
-export const Send = z.object({
+export const MessageSend = z.object({
   idempotencyKey: IdempotencyKey,
   chatId: ChatId,
   text: z.string(),
   model: Model,
 });
-export type Send = zInfer<typeof Send>;
+export type MessageSend = zInfer<typeof MessageSend>;
 
-export const SendOutput = z.object({
-  userMessage: Data,
-  modelMessage: Data,
+export const MessageSendOutput = z.object({
+  userMessage: MessageData,
+  modelMessage: MessageData,
 });
-export type SendOutput = zInfer<typeof SendOutput>;
+export type MessageSendOutput = zInfer<typeof MessageSendOutput>;
 
-export const SendError = UserUsageLimit.Error;
+export const MessageSendError = UserUsageLimitError;
 
-export const Update = z.object({
+export const MessageUpdate = z.object({
   messageId: MessageId,
   isBookmarked: z.optional(z.boolean()),
 });
-export type Update = zInfer<typeof Update>;
+export type MessageUpdate = zInfer<typeof MessageUpdate>;

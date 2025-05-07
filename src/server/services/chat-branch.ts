@@ -1,5 +1,5 @@
-import * as Chat from "@/types/chat";
-import type * as ChatBranch from "@/types/chat-branch";
+import { ChatListOutout, ChatSelect, type ChatData } from "@/types/chat";
+import type { ChatBranchList, ChatBranchStart } from "@/types/chat-branch";
 import type { UserId } from "@/types/id";
 import type { ServiceRegistry } from "../service-registry";
 import { ChatService } from "./chat";
@@ -9,19 +9,19 @@ import { MessageService } from "./message";
 export class ChatBranchService {
   constructor(private readonly service: ServiceRegistry) {}
 
-  async list(userId: UserId, input: ChatBranch.List): Promise<Chat.ListOutout> {
+  async list(userId: UserId, input: ChatBranchList): Promise<ChatListOutout> {
     const { chatId } = input;
 
     const entities = await this.service.db.chat.findMany({
       where: { parentMessage: { chatId }, userId, deletedAt: null },
-      select: Chat.Select,
+      select: ChatSelect,
     });
 
     const datas = entities.map((x) => this.service.chat.decrypt(x));
     return datas;
   }
 
-  async start(userId: UserId, input: ChatBranch.Start): Promise<Chat.Data> {
+  async start(userId: UserId, input: ChatBranchStart): Promise<ChatData> {
     const { idempotencyKey, messageId } = input;
 
     const parentMessage = await this.service.db.$transaction(async (tx) => {

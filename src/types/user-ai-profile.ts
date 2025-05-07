@@ -4,23 +4,26 @@ import type { zInfer } from "./common";
 import { UserAiProfileId } from "./id";
 import { Model } from "./model";
 
-export const Select = {
+export const UserAiProfileSelect = {
   id: true,
   model: true,
   nameEncrypted: true,
   imagePathEncrypted: true,
 } satisfies Prisma.UserAiProfileSelect;
 
-export const Entity = z.object({
+export const UserAiProfileEntity = z.object({
   id: UserAiProfileId,
   model: z.string(),
   nameEncrypted: z.string(),
   imagePathEncrypted: z.string(),
 });
-export type Entity = zInfer<typeof Entity>;
-const _ = {} satisfies Omit<Entity, keyof typeof Select>;
+export type UserAiProfileEntity = zInfer<typeof UserAiProfileEntity>;
+const _checkUserAiProfile = {} satisfies Omit<
+  UserAiProfileEntity,
+  keyof typeof UserAiProfileSelect
+>;
 
-export const Data = Entity.omit({
+export const UserAiProfileData = UserAiProfileEntity.omit({
   id: true,
   model: true,
   nameEncrypted: true,
@@ -30,20 +33,22 @@ export const Data = Entity.omit({
   name: z.string(),
   imageSource: z.string(),
 });
-export type Data = zInfer<typeof Data>;
+export type UserAiProfileData = zInfer<typeof UserAiProfileData>;
 
-export const Get = z.object({
+export const UserAiProfileGet = z.object({
   model: Model,
 });
-export type Get = zInfer<typeof Get>;
+export type UserAiProfileGet = zInfer<typeof UserAiProfileGet>;
 
-export const GetOutput = z.nullable(Data);
-export type GetOutput = zInfer<typeof GetOutput>;
+export const UserAiProfileGetOutput = z.nullable(UserAiProfileData);
+export type UserAiProfileGetOutput = zInfer<typeof UserAiProfileGetOutput>;
 
-export const GetAllOutput = z.array(Data);
-export type GetAllOutput = zInfer<typeof GetAllOutput>;
+export const UserAiProfileGetAllOutput = z.array(UserAiProfileData);
+export type UserAiProfileGetAllOutput = zInfer<
+  typeof UserAiProfileGetAllOutput
+>;
 
-export const DeleteImage = z.object({
+export const UserAiProfileDeleteImage = z.object({
   model: Model,
 });
-export type DeleteImage = zInfer<typeof DeleteImage>;
+export type UserAiProfileDeleteImage = zInfer<typeof UserAiProfileDeleteImage>;

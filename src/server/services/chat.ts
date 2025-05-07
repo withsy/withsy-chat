@@ -1,9 +1,20 @@
-import * as Chat from "@/types/chat";
-import * as ChatPrompt from "@/types/chat-prompt";
-import * as GratitudeJournal from "@/types/gratitude-journal";
+import {
+  ChatData,
+  ChatDelete,
+  ChatEntity,
+  ChatGet,
+  ChatListOutout,
+  ChatRestore,
+  ChatSelect,
+  ChatStart,
+  ChatStartOutput,
+  ChatUpdate,
+} from "@/types/chat";
+import { ChatPromptSelect } from "@/types/chat-prompt";
+import { GratitudeJournalSelect } from "@/types/gratitude-journal";
 import type { MessageId, UserId } from "@/types/id";
-import * as Message from "@/types/message";
-import type * as UserPrompt from "@/types/user-prompt";
+import { MessageEntity, MessageSelect } from "@/types/message";
+import type { UserPromptEntity } from "@/types/user-prompt";
 import { v7 as uuidv7 } from "uuid";
 import type { ServiceRegistry } from "../service-registry";
 import { getHardDeleteCutoffDate } from "../utils";
@@ -16,11 +27,11 @@ export class ChatService {
   constructor(private readonly service: ServiceRegistry) {}
 
   decrypt(
-    entity: Chat.Entity & {
-      parentMessage?: Message.Entity | null;
-      userPrompt?: UserPrompt.Entity | null;
+    entity: ChatEntity & {
+      parentMessage?: MessageEntity | null;
+      userPrompt?: UserPromptEntity | null;
     }
-  ): Chat.Data {
+  ): ChatData {
     const title = this.service.encryption.decrypt(entity.titleEncrypted);
     const data = {
       id: entity.id,
@@ -36,40 +47,40 @@ export class ChatService {
       userPrompt: entity.userPrompt
         ? this.service.userPrompt.decrypt(entity.userPrompt)
         : null,
-    } satisfies Chat.Data;
+    } satisfies ChatData;
     return data;
   }
 
-  async list(userId: UserId): Promise<Chat.ListOutout> {
+  async list(userId: UserId): Promise<ChatListOutout> {
     const entities = await this.service.db.chat.findMany({
       where: { userId, deletedAt: null },
       orderBy: { id: "asc" },
-      select: Chat.Select,
+      select: ChatSelect,
     });
 
     const datas = entities.map((x) => this.decrypt(x));
     return datas;
   }
 
-  async listDeleted(userId: UserId): Promise<Chat.ListOutout> {
+  async listDeleted(userId: UserId): Promise<ChatListOutout> {
     const entities = await this.service.db.chat.findMany({
       where: { userId, deletedAt: { not: null } },
       orderBy: { id: "asc" },
-      select: Chat.Select,
+      select: ChatSelect,
     });
 
     const datas = entities.map((x) => this.decrypt(x));
     return datas;
   }
 
-  async get(userId: UserId, input: Chat.Get): Promise<Chat.Data> {
+  async get(userId: UserId, input: ChatGet): Promise<ChatData> {
     const { chatId } = input;
 
     const entity = await this.service.db.chat.findUniqueOrThrow({
       where: { id: chatId, userId, deletedAt: null },
       select: {
-        ...Chat.Select,
-        parentMessage: { select: Message.Select },
+        ...ChatSelect,
+        parentMessage: { select: MessageSelect },
       },
     });
 
@@ -77,7 +88,7 @@ export class ChatService {
     return data;
   }
 
-  async update(userId: UserId, input: Chat.Update): Promise<Chat.Data> {
+  async update(userId: UserId, input: ChatUpdate): Promise<ChatData> {
     const { chatId, title, isStarred, userPromptId } = input;
 
     const titleEncrypted =
@@ -96,7 +107,7 @@ export class ChatService {
           isStarred,
           userPromptId,
         },
-        select: Chat.Select,
+        select: ChatSelect,
       });
 
       return entity;
@@ -106,7 +117,7 @@ export class ChatService {
     return data;
   }
 
-  async delete(userId: UserId, input: Chat.Delete): Promise<void> {
+  async delete(userId: UserId, input: ChatDelete): Promise<void> {
     const { chatId } = input;
 
     await this.service.db.chat.update({
@@ -116,20 +127,20 @@ export class ChatService {
     });
   }
 
-  async restore(userId: UserId, input: Chat.Restore): Promise<Chat.Data> {
+  async restore(userId: UserId, input: ChatRestore): Promise<ChatData> {
     const { chatId } = input;
 
     const entity = await this.service.db.chat.update({
       where: { id: chatId, userId, deletedAt: { not: null } },
       data: { deletedAt: null },
-      select: Chat.Select,
+      select: ChatSelect,
     });
 
     const data = this.decrypt(entity);
     return data;
   }
 
-  async start(userId: UserId, input: Chat.Start): Promise<Chat.StartOutput> {
+  async start(userId: UserId, input: ChatStart): Promise<ChatStartOutput> {
     const { model, text, idempotencyKey } = input;
 
     await this.service.db.$transaction(async (tx) => {
@@ -183,7 +194,7 @@ export class ChatService {
       chat: this.decrypt(chat),
       userMessage: this.service.message.decrypt(userMessage),
       modelMessage: this.service.message.decrypt(modelMessage),
-    } satisfies Chat.StartOutput;
+    } satisfies ChatStartOutput;
 
     return res;
   }
@@ -224,7 +235,7 @@ export class ChatService {
         titleEncrypted,
         type: "chat",
       },
-      select: Chat.Select,
+      select: ChatSelect,
     });
 
     return entity;
@@ -244,9 +255,9 @@ export class ChatService {
         type: "gratitudeJournal",
       },
       select: {
-        ...Chat.Select,
-        prompts: { select: ChatPrompt.Select },
-        gratitudeJournals: { select: GratitudeJournal.Select },
+        ...ChatSelect,
+        prompts: { select: ChatPromptSelect },
+        gratitudeJournals: { select: GratitudeJournalSelect },
       },
     });
 
@@ -271,7 +282,7 @@ export class ChatService {
         type: "branch",
         parentMessageId,
       },
-      select: Chat.Select,
+      select: ChatSelect,
     });
 
     return entity;

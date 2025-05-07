@@ -1,6 +1,6 @@
 import type { UserId } from "@/types/id";
-import * as Message from "@/types/message";
-import type * as MessageReply from "@/types/message-reply";
+import { MessageSelect, type MessageData } from "@/types/message";
+import type { MessageReplyRegenerate } from "@/types/message-reply";
 import { Role } from "@/types/role";
 import { StatusCodes } from "http-status-codes";
 import { HttpServerError } from "../error";
@@ -14,8 +14,8 @@ export class MessageReplyService {
 
   async regenerate(
     userId: UserId,
-    input: MessageReply.Regenerate
-  ): Promise<Message.Data> {
+    input: MessageReplyRegenerate
+  ): Promise<MessageData> {
     const { idempotencyKey, messageId, model } = input;
 
     const modelMessageTextEncrypted = this.service.encryption.encrypt("");
@@ -31,7 +31,7 @@ export class MessageReplyService {
             chat: { userId, deletedAt: null },
             id: messageId,
           },
-          select: Message.Select,
+          select: MessageSelect,
         });
 
         if (!oldModelMessage.parentMessageId) {
@@ -51,7 +51,7 @@ export class MessageReplyService {
             chat: { userId, deletedAt: null },
             id: oldModelMessage.parentMessageId,
           },
-          select: Message.Select,
+          select: MessageSelect,
         });
 
         const modelMessage = await tx.message.create({
@@ -66,7 +66,7 @@ export class MessageReplyService {
             reasoningTextEncrypted: modelMessageReasoningTextEncrypted,
             parentMessageId: oldModelMessage.parentMessageId,
           },
-          select: Message.Select,
+          select: MessageSelect,
         });
 
         return { userMessage, modelMessage };

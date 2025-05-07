@@ -6,11 +6,15 @@ import { useChatStore } from "@/stores/useChatStore";
 import { useDrawerStore } from "@/stores/useDrawerStore";
 import { useSelectedModelStore } from "@/stores/useSelectedModelStore";
 import { useSidebarStore } from "@/stores/useSidebarStore";
-import * as Chat from "@/types/chat";
+import { ChatStartError } from "@/types/chat";
 import { MessageId } from "@/types/id";
-import * as Message from "@/types/message";
-import * as MessageChunk from "@/types/message-chunk";
-import type * as UserUsageLimit from "@/types/user-usage-limit";
+import {
+  isMessageComplete,
+  MessageSendError,
+  type MessageData,
+} from "@/types/message";
+import { MessageChunkEvent } from "@/types/message-chunk";
+import type { UserUsageLimitData } from "@/types/user-usage-limit";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { useEffect, useMemo, useState } from "react";
@@ -24,7 +28,7 @@ import { ChatMessageList } from "./ChatMessageList";
 import MobileChatHeader from "./MobileChatHeader";
 
 type Props = {
-  initialMessages: Message.Data[];
+  initialMessages: MessageData[];
   children?: React.ReactNode;
 };
 
@@ -41,7 +45,7 @@ export function ChatSession({ initialMessages, children }: Props) {
 
   const [streamMessageId, setStreamMessageId] = useState<string | null>(null);
   const [shouldFocusInput, setShouldFocusInput] = useState(false);
-  const [usageLimits, setUsageLimits] = useState<UserUsageLimit.Data[]>([]);
+  const [usageLimits, setUsageLimits] = useState<UserUsageLimitData[]>([]);
   const [eventSource, setEventSource] = useState<EventSource | null>(null);
 
   const { openDrawer } = useDrawerStore();
@@ -58,7 +62,7 @@ export function ChatSession({ initialMessages, children }: Props) {
   const chatStart = useMutation(
     trpc.chat.start.mutationOptions({
       onError(error) {
-        const _res = Chat.StartError.safeParse(error.data);
+        const _res = ChatStartError.safeParse(error.data);
         toast.error(`Chat starting failed.`);
       },
       onSuccess(data) {
@@ -73,7 +77,7 @@ export function ChatSession({ initialMessages, children }: Props) {
   const messageSend = useMutation(
     trpc.message.send.mutationOptions({
       onError(error) {
-        const _res = Message.SendError.safeParse(error.data);
+        const _res = MessageSendError.safeParse(error.data);
         toast.error(`Message sending failed.`);
       },
       onSuccess(data) {
@@ -88,7 +92,7 @@ export function ChatSession({ initialMessages, children }: Props) {
     setMessages(initialMessages);
     const lastMessage = initialMessages.at(-1);
     const streamMessageId =
-      lastMessage && !Message.isComplete(lastMessage) ? lastMessage.id : null;
+      lastMessage && !isMessageComplete(lastMessage) ? lastMessage.id : null;
     setStreamMessageId(streamMessageId);
   }, [initialMessages]);
 
@@ -151,7 +155,7 @@ export function ChatSession({ initialMessages, children }: Props) {
     });
 
     source.addEventListener("message", (ev) => {
-      const event = MessageChunk.Event.parse(SuperJSON.parse(ev.data));
+      const event = MessageChunkEvent.parse(SuperJSON.parse(ev.data));
       if (event.type === "chunk") {
         const chunk = event.chunk;
         setMessages((prev) =>
@@ -227,7 +231,7 @@ export function ChatSession({ initialMessages, children }: Props) {
     );
   };
 
-  const handleRegenerateSuccess = (newMessage: Message.Data) => {
+  const handleRegenerateSuccess = (newMessage: MessageData) => {
     setMessages((prev) => [...prev, newMessage]);
     setStreamMessageId(newMessage.id);
     queryClient.invalidateQueries(trpc.chat.list.queryFilter());

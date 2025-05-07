@@ -2,13 +2,13 @@ import { z } from "zod";
 import type { zInfer } from "./common";
 import { IdempotencyKey, MessageId } from "./id";
 import { Model } from "./model";
-import * as UserUsageLimit from "./user-usage-limit";
+import { UserUsageLimitError } from "./user-usage-limit";
 
-export const Regenerate = z.object({
+export const MessageReplyRegenerate = z.object({
   idempotencyKey: IdempotencyKey,
   messageId: MessageId,
   model: Model.optional(),
 });
-export type Regenerate = zInfer<typeof Regenerate>;
+export type MessageReplyRegenerate = zInfer<typeof MessageReplyRegenerate>;
 
-export const RegenerateError = UserUsageLimit.Error;
+export const MessageReplyRegenerateError = UserUsageLimitError;

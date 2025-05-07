@@ -1,6 +1,12 @@
 import type { UserId, UserPromptId } from "@/types/id";
-import * as UserDefaultPrompt from "@/types/user-default-prompt";
-import * as UserPrompt from "@/types/user-prompt";
+import {
+  UserDefaultPromptData,
+  UserDefaultPromptEntity,
+  UserDefaultPromptGetOutput,
+  UserDefaultPromptSelect,
+  UserDefaultPromptUpdate,
+} from "@/types/user-default-prompt";
+import { UserPromptEntity, UserPromptSelect } from "@/types/user-prompt";
 import type { ServiceRegistry } from "../service-registry";
 import type { Tx } from "./db";
 
@@ -8,18 +14,18 @@ export class UserDefaultPromptService {
   constructor(private readonly service: ServiceRegistry) {}
 
   decrypt(
-    entity: UserDefaultPrompt.Entity & { userPrompt?: UserPrompt.Entity | null }
-  ): UserDefaultPrompt.Data {
+    entity: UserDefaultPromptEntity & { userPrompt?: UserPromptEntity | null }
+  ): UserDefaultPromptData {
     const data = {
       userPromptId: entity.userPromptId,
       userPrompt: entity.userPrompt
         ? this.service.userPrompt.decrypt(entity.userPrompt)
         : null,
-    } satisfies UserDefaultPrompt.Data;
+    } satisfies UserDefaultPromptData;
     return data;
   }
 
-  async get(userId: UserId): Promise<UserDefaultPrompt.GetOutput> {
+  async get(userId: UserId): Promise<UserDefaultPromptGetOutput> {
     const entity = await this.service.db.$transaction(async (tx) => {
       const entity = await UserDefaultPromptService.get(tx, { userId });
       return entity;
@@ -31,8 +37,8 @@ export class UserDefaultPromptService {
 
   async update(
     userId: UserId,
-    input: UserDefaultPrompt.Update
-  ): Promise<UserDefaultPrompt.Data> {
+    input: UserDefaultPromptUpdate
+  ): Promise<UserDefaultPromptData> {
     const { userPromptId } = input;
     const entity = await this.service.db.$transaction(async (tx) => {
       const entity = await UserDefaultPromptService.update(tx, {
@@ -52,8 +58,8 @@ export class UserDefaultPromptService {
     const res = await tx.userDefaultPrompt.findUnique({
       where: { userId },
       select: {
-        ...UserDefaultPrompt.Select,
-        userPrompt: { select: UserPrompt.Select },
+        ...UserDefaultPromptSelect,
+        userPrompt: { select: UserPromptSelect },
       },
     });
 
@@ -68,8 +74,8 @@ export class UserDefaultPromptService {
     let userDefaultPrompt = await tx.userDefaultPrompt.findUnique({
       where: { userId },
       select: {
-        ...UserDefaultPrompt.Select,
-        userPrompt: { select: UserPrompt.Select },
+        ...UserDefaultPromptSelect,
+        userPrompt: { select: UserPromptSelect },
       },
     });
 
@@ -80,8 +86,8 @@ export class UserDefaultPromptService {
           userPromptId,
         },
         select: {
-          ...UserDefaultPrompt.Select,
-          userPrompt: { select: UserPrompt.Select },
+          ...UserDefaultPromptSelect,
+          userPrompt: { select: UserPromptSelect },
         },
       });
     } else {
@@ -89,8 +95,8 @@ export class UserDefaultPromptService {
         where: { userId },
         data: { userPromptId },
         select: {
-          ...UserDefaultPrompt.Select,
-          userPrompt: { select: UserPrompt.Select },
+          ...UserDefaultPromptSelect,
+          userPrompt: { select: UserPromptSelect },
         },
       });
     }

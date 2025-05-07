@@ -1,40 +1,36 @@
-import * as Base from "@/types/server-error";
+import type { ServerErrorData, ServerErrorDetails } from "@/types/server-error";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { StatusCodes } from "http-status-codes";
 
-export type Options<TDetails extends Base.Details = Base.Details> = {
+export type ServerErrorOptions<
+  TDetails extends ServerErrorDetails = ServerErrorDetails
+> = {
   details?: TDetails;
-  errors?: ServerError[];
   cause?: unknown;
 };
 
 export class ServerError<
-    TDetails extends Base.Details = Base.Details,
+    TDetails extends ServerErrorDetails = ServerErrorDetails,
     TCode extends number = number
   >
   extends Error
-  implements Base.Data
+  implements ServerErrorData
 {
-  public type: string;
   public details?: TDetails;
-  public errors?: ServerError[];
 
   constructor(
     public code: TCode,
     message: string,
-    options?: Options<TDetails>
+    options?: ServerErrorOptions<TDetails>
   ) {
     super(message);
-    this.type = this.name;
     if (options?.cause) this.cause = options.cause;
     if (options?.details) this.details = options.details;
-    if (options?.errors) this.errors = options.errors;
   }
 
-  toData(): Base.Data {
-    const data: Base.Data = {
+  toData(): ServerErrorData {
+    const data: ServerErrorData = {
       code: this.code,
-      type: this.type,
       message: this.message,
     };
     if (process.env.NODE_ENV !== "production") {
@@ -42,15 +38,18 @@ export class ServerError<
       if (this.cause) data.cause = this.cause;
     }
     if (this.details) data.details = this.details;
-    if (this.errors) data.errors = this.errors.map((x) => x.toData());
     return data;
   }
 }
 
 export class HttpServerError<
-  TDetails extends Base.Details = Base.Details
+  TDetails extends ServerErrorDetails = ServerErrorDetails
 > extends ServerError<TDetails, StatusCodes> {
-  constructor(code: StatusCodes, message: string, options?: Options<TDetails>) {
+  constructor(
+    code: StatusCodes,
+    message: string,
+    options?: ServerErrorOptions<TDetails>
+  ) {
     super(code, message, options);
   }
 }

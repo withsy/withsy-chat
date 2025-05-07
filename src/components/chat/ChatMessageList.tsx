@@ -1,7 +1,7 @@
 import { useUser } from "@/context/UserContext";
 import { useChatStore } from "@/stores/useChatStore";
 import { MessageId } from "@/types/id";
-import type * as Message from "@/types/message";
+import type { MessageData } from "@/types/message";
 import { ChevronsDown } from "lucide-react";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
@@ -9,7 +9,7 @@ import { ChatBubble } from "./ChatBubble";
 import ChatInformationSystemMessage from "./ChatInformationSystemMessage";
 
 type Props = {
-  messages: Message.Data[];
+  messages: MessageData[];
   onToggleSaved: (id: string, newValue: boolean) => void;
 };
 

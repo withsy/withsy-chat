@@ -1,9 +1,9 @@
 import { useUser } from "@/context/UserContext";
-import type * as UserUsageLimit from "@/types/user-usage-limit";
+import type { UserUsageLimitData } from "@/types/user-usage-limit";
 import React from "react";
 
 type Props = {
-  usageLimits: UserUsageLimit.Data[];
+  usageLimits: UserUsageLimitData[];
 };
 
 const getMinutesLeft = (target: Date) =>
