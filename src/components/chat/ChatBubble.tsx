@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 import { useAiProfileStore } from "@/stores/useAiProfileStore";
 import type { ChatType } from "@/types/chat";
 import type { MessageData } from "@/types/message";
-import { memo, useState } from "react";
+import { memo, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { CollapseToggle } from "../CollapseToggle";
 import { MarkdownBox } from "../MarkdownBox";
@@ -16,6 +16,24 @@ type Props = {
   message: MessageData;
   chatType: ChatType | undefined;
   onToggleSaved?: (id: string, newValue: boolean) => void;
+};
+
+const hasMarkdown = (text: string): boolean => {
+  const markdownPatterns = [
+    /\*\*.*?\*\*/, // bold
+    /__.*?__/, // bold
+    /\*.*?\*/, // italic
+    /_.*?_/, // italic
+    /#+\s/, // heading
+    /\[.*?\]\(.*?\)/, // link
+    /`.*?`/, // inline code
+    /```[\s\S]*?```/, // code block
+    /^[-*]\s/, // unordered list
+    /^\d+\.\s/, // ordered list
+    /^>\s/, // quote
+    /\|.*?\|/, // table
+  ];
+  return markdownPatterns.some((pattern) => pattern.test(text));
 };
 
 const ChatBubbleComponent = ({ message, chatType, onToggleSaved }: Props) => {
@@ -37,6 +55,13 @@ const ChatBubbleComponent = ({ message, chatType, onToggleSaved }: Props) => {
   const collapseText = collapsed
     ? displayedText.slice(0, 150) + (displayedText.length > 150 ? "..." : "")
     : displayedText;
+
+  const isMarkdownContent = useMemo(() => {
+    const textToCheck = isMessageCollapsed
+      ? collapseText.slice(0, 150)
+      : displayedText;
+    return hasMarkdown(textToCheck);
+  }, [collapseText, displayedText, isMessageCollapsed]);
 
   const handleCopy = async () => {
     try {
@@ -73,7 +98,6 @@ const ChatBubbleComponent = ({ message, chatType, onToggleSaved }: Props) => {
     setCollapsed,
   };
 
-  // ChatBubbleTooltips용 props
   const tooltipsProps = {
     chatType,
     messageId: message.id,
@@ -150,7 +174,11 @@ const ChatBubbleComponent = ({ message, chatType, onToggleSaved }: Props) => {
               : {}
           }
         >
-          <MarkdownBox content={collapseText} />
+          {isMarkdownContent ? (
+            <MarkdownBox content={collapseText} />
+          ) : (
+            <div>{collapseText}</div>
+          )}
           <StatusIndicator status={status} />
         </div>
         <div className="flex justify-between w-full mt-2">{items}</div>
