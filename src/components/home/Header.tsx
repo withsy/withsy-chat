@@ -15,7 +15,7 @@ export default function Component({ user }: { user: User.Data | null }) {
     { label: "About", value: "about" },
     { label: "Guides", value: "guides" },
     { label: "Roadmap", value: "roadmap" },
-    { label: "Blog", value: "blog" },
+    // { label: "Blog", value: "blog" },
     { label: "Pricing", value: "pricing" },
     { label: "Contact", value: "contact" },
   ];
