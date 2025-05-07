@@ -14,12 +14,13 @@ export default function SaveStar() {
         </div>
 
         <Image
-          unoptimized
           src="/home/save-itmes.gif"
           alt="Saved Items"
           width={720}
           height={400}
           className="rounded-xl shadow-md"
+          placeholder="blur"
+          blurDataURL="/home/save-itmes.jpg"
         />
         {/* 기능 요약 리스트 */}
         <ul className="list-disc list-inside text-muted-foreground text-base max-w-2xl mx-auto space-y-2">

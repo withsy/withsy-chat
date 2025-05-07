@@ -22,6 +22,8 @@ export default function BranchHistory() {
             width={720}
             height={400}
             className="rounded-xl shadow-md"
+            placeholder="blur"
+            blurDataURL="/home/branch-history.jpg"
           />
           <p className="mt-2 text-sm text-muted-foreground">
             Explore and branch conversations seamlessly

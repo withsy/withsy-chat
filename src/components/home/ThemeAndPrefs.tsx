@@ -46,6 +46,8 @@ export default function ThemeAndPrefsSection() {
             width={600}
             height={350}
             className="rounded-xl shadow-md"
+            placeholder="blur"
+            blurDataURL="/home/change-theme.jpg"
           />
           <Image
             src="/home/userprefs.gif"
@@ -53,6 +55,8 @@ export default function ThemeAndPrefsSection() {
             width={600}
             height={350}
             className="rounded-xl shadow-md"
+            placeholder="blur"
+            blurDataURL="/home/userprefs.jpg"
           />
         </div>
       </div>

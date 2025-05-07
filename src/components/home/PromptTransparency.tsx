@@ -24,6 +24,8 @@ export default function PromptTransparency() {
           width={720}
           height={400}
           className="rounded-xl shadow-md"
+          placeholder="blur"
+          blurDataURL="/home/apply-prompt.jpg"
         />
 
         {/* 기능 요약 리스트 */}
