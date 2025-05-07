@@ -14,9 +14,9 @@ export default function ThemeAndPrefsSection() {
           </p>
 
           <p className="text-muted-foreground text-lg mb-4">
-            Personalize the experience with flexible layout and behavior
-            settings. You can even choose your AI companion's profile image and
-            name.
+            {
+              "Personalize the experience with flexible layout and behavior settings. You can even choose your AI companion's profile image and name."
+            }
           </p>
 
           <ul className="list-disc list-inside text-left text-base text-muted-foreground space-y-2">
