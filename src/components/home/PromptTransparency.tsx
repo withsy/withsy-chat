@@ -19,7 +19,6 @@ export default function PromptTransparency() {
 
         {/* GIF */}
         <Image
-          unoptimized
           src="/home/apply-prompt.gif"
           alt="Apply Prompt"
           width={720}
