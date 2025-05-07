@@ -1,6 +1,6 @@
 import { devAuthProvider } from "@/server/dev-auth-provider";
 import { service } from "@/server/service-registry";
-import * as User from "@/types/user";
+import { UserJwt, UserSession } from "@/types/user";
 import NextAuth, { type AuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import type { Provider } from "next-auth/providers/index";
@@ -53,13 +53,13 @@ export const authOptions: AuthOptions = {
         imageUrl,
       });
 
-      const userJwt = User.Jwt.parse({ sub: userId });
+      const userJwt = UserJwt.parse({ sub: userId });
       return userJwt;
     },
     session(params) {
       const { token, session } = params;
-      const userJwt = User.Jwt.parse(token);
-      const userSession = User.Session.parse({
+      const userJwt = UserJwt.parse(token);
+      const userSession = UserSession.parse({
         ...session,
         user: { ...(session.user ?? {}), id: userJwt.sub },
       });

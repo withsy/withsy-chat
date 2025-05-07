@@ -1,5 +1,5 @@
 import { useTRPC } from "@/lib/trpc";
-import * as User from "@/types/user";
+import { UserPrefs, type UserData, type UserUpdatePrefs } from "@/types/user";
 import { skipToken, useMutation, useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import {
@@ -10,11 +10,12 @@ import {
   type ReactNode,
 } from "react";
 
-type UserPrefLoadings = Partial<Record<keyof User.UpdatePrefs, boolean>>;
-type SetUserPrefsAndSave = (input: User.UpdatePrefs) => void;
+type UserPrefLoadings = Partial<Record<keyof UserUpdatePrefs, boolean>>;
+type SetUserPrefsAndSave = (input: UserUpdatePrefs) => void;
 
 type UserContextType = {
-  user: User.Data | null;
+  user: UserData | null;
+  setUser: (user: UserData) => void;
   setUserPrefsAndSave: SetUserPrefsAndSave;
   userPrefLoadings: UserPrefLoadings;
 };
@@ -27,16 +28,16 @@ export function UserProvider({ children }: { children: ReactNode }) {
   const [userPrefLoadings, setUserPrefLoadings] = useState<UserPrefLoadings>(
     {}
   );
-  const [user, setUser] = useState<User.Data | null>(null);
+  const [user, setUser] = useState<UserData | null>(null);
   const userGet = useQuery(
     trpc.user.get.queryOptions(session ? undefined : skipToken)
   );
 
   const updateUserPrefs = useMutation(
     trpc.user.updatePrefs.mutationOptions({
-      onMutate: async (input: User.UpdatePrefs) => {
+      onMutate: async (input: UserUpdatePrefs) => {
         if (!user) throw new Error("User is not set.");
-        const previous = User.Prefs.parse(
+        const previous = UserPrefs.parse(
           JSON.parse(JSON.stringify(user.preferences))
         );
 
@@ -91,6 +92,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
     <UserContext.Provider
       value={{
         user,
+        setUser,
         setUserPrefsAndSave,
         userPrefLoadings,
       }}

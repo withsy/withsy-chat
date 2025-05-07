@@ -5,9 +5,10 @@ import { PromptCard } from "@/components/prompts/PromptCard";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@/context/UserContext";
 import { setTrpcCsrfToken, useTRPC } from "@/lib/trpc";
-import { getCsrfToken } from "@/server/utils";
+import { getCsrfToken, getUser } from "@/server/utils";
 import { useChatStore } from "@/stores/useChatStore";
 import { useSidebarStore } from "@/stores/useSidebarStore";
+import type { UserData } from "@/types/user";
 import type { UserPromptData } from "@/types/user-prompt";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import type { GetServerSideProps } from "next";
@@ -16,18 +17,21 @@ import { v4 as uuid } from "uuid";
 
 type Props = {
   csrfToken: string;
+  user: UserData | null;
 };
 
 export const getServerSideProps: GetServerSideProps<Props> = async ({
+  req,
   res,
 }) => {
   const csrfToken = getCsrfToken(res);
-  return { props: { csrfToken } };
+  const user = await getUser({ req, res });
+  return { props: { csrfToken, user } };
 };
 
-function PromptsPage({ csrfToken }: Props) {
+function PromptsPage({ csrfToken, user }: Props) {
   const trpc = useTRPC();
-  const { user } = useUser();
+  const { setUser } = useUser();
   const { chat, setChat } = useChatStore();
   const { collapsed } = useSidebarStore();
 
@@ -108,6 +112,10 @@ function PromptsPage({ csrfToken }: Props) {
   useEffect(() => {
     if (csrfToken) setTrpcCsrfToken(csrfToken);
   }, [csrfToken]);
+
+  useEffect(() => {
+    if (user) setUser(user);
+  }, [user, setUser]);
 
   if (!user || isLoadingPrompts || isLoadingDefaultPrompt) {
     return <PartialLoading />;

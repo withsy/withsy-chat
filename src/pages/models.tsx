@@ -4,26 +4,30 @@ import { PartialLoading } from "@/components/Loading";
 import ModelCard from "@/components/models/ModelCard";
 import { useUser } from "@/context/UserContext";
 import { setTrpcCsrfToken } from "@/lib/trpc";
-import { getCsrfToken } from "@/server/utils";
+import { getCsrfToken, getUser } from "@/server/utils";
 import { useAiProfileStore } from "@/stores/useAiProfileStore";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 import { Model } from "@/types/model";
+import type { UserData } from "@/types/user";
 import type { GetServerSideProps } from "next";
 import { useEffect } from "react";
 
 type Props = {
   csrfToken: string;
+  user: UserData | null;
 };
 
 export const getServerSideProps: GetServerSideProps<Props> = async ({
+  req,
   res,
 }) => {
   const csrfToken = getCsrfToken(res);
-  return { props: { csrfToken } };
+  const user = await getUser({ req, res });
+  return { props: { csrfToken, user } };
 };
 
-export default function ModelsPage({ csrfToken }: Props) {
-  const { user } = useUser();
+export default function ModelsPage({ csrfToken, user }: Props) {
+  const { setUser } = useUser();
   const { collapsed } = useSidebarStore();
   const { profiles, isLoading } = useAiProfileStore();
 
@@ -32,6 +36,10 @@ export default function ModelsPage({ csrfToken }: Props) {
   useEffect(() => {
     if (csrfToken) setTrpcCsrfToken(csrfToken);
   }, [csrfToken]);
+
+  useEffect(() => {
+    if (user) setUser(user);
+  }, [user, setUser]);
 
   if (!user || isLoading) {
     return <PartialLoading />;
