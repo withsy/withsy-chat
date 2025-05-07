@@ -60,7 +60,7 @@ export default function App({
               <Component {...pageProps} />
             </HomeLayout>
           ) : (
-            <ChatLayout className={nunito.className}>
+            <ChatLayout className={nunito.className} user={pageProps.user}>
               <LoadAiProfiles />
               <Component {...pageProps} />
             </ChatLayout>
