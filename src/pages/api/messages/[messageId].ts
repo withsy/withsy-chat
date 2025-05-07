@@ -59,7 +59,6 @@ export async function get(options: Options) {
   res.setHeader("Content-Type", "text/event-stream");
   res.setHeader("Cache-Control", "no-cache");
   res.setHeader("Connection", "keep-alive");
-  res.setHeader("Content-Encoding", "none");
   res.status(StatusCodes.OK);
   res.flushHeaders();
 
