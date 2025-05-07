@@ -4,5 +4,4 @@ Dockerfile
 .dockerignore
 *.log
 *.env
-!.env
 temp
