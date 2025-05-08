@@ -266,7 +266,10 @@ export function SidebarChatItem({
             </Dialog>
           </>
         ) : (
-          <DropdownMenu onOpenChange={(open) => setIsDropdownOpen(open)}>
+          <DropdownMenu
+            open={isDropdownOpen}
+            onOpenChange={(open) => setIsDropdownOpen(open)}
+          >
             <DropdownMenuTrigger asChild>
               <Button
                 variant="ghost"
