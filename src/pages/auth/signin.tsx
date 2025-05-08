@@ -1,4 +1,11 @@
-import { Badge, CircleUserRound, LogIn, Mail, User } from "lucide-react";
+import {
+  Badge,
+  CircleUserRound,
+  LogIn,
+  Mail,
+  SquareArrowOutUpRight,
+  User,
+} from "lucide-react";
 import type { GetServerSideProps } from "next";
 import { getProviders, signIn } from "next-auth/react";
 import Image from "next/image";
@@ -17,7 +24,7 @@ type Props = {
 export default function SignInPage({ providers }: Props) {
   return (
     <div className="min-h-[100dvh] flex items-center justify-center bg-gray-50 px-4 select-none">
-      <div className="max-w-md w-full space-y-8 p-10">
+      <div className="max-w-lg w-full space-y-8 p-10">
         <div className="text-center">
           <Image
             className="mx-auto"
@@ -69,14 +76,30 @@ export default function SignInPage({ providers }: Props) {
             ))}
 
           <div>
-            <p className="text-xs text-gray-500 mt-1">
-              by signing in you agree to our{" "}
-              <a href="/terms" className="underline">
-                Terms of Service
-              </a>{" "}
-              and{" "}
-              <a href="/privacy" className="underline">
+            <p className="text-xs text-gray-500 mt-1 flex flex-row flex-wrap space-x-1">
+              <span>by signing in you agree to our</span>
+              <a
+                href="/privacy-policy.html"
+                className="underline inline-flex items-center ml-1"
+                target="_blank"
+              >
                 Privacy Policy
+                <SquareArrowOutUpRight
+                  size={10}
+                  className="ml-1 inline align-middle"
+                />
+              </a>
+              <span>and</span>
+              <a
+                href="/terms-of-service.html"
+                className="underline inline-flex items-center ml-1"
+                target="_blank"
+              >
+                Terms of Service
+                <SquareArrowOutUpRight
+                  size={10}
+                  className="ml-1 inline align-middle"
+                />
               </a>
             </p>
           </div>
