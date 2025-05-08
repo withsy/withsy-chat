@@ -80,6 +80,7 @@ async function post(opts: Options) {
     limits: {
       fields: 2,
       files: 1,
+      fileSize: 1 * 1024 * 1024, // 1MB
     },
   });
 
@@ -97,6 +98,12 @@ async function post(opts: Options) {
         });
 
         const { mimeType } = event.info;
+        if (!mimeType.startsWith("image/"))
+          throw new HttpServerError(
+            StatusCodes.BAD_REQUEST,
+            "Invalid file type."
+          );
+
         const ext = mime.extension(mimeType);
         const uuid = uuidv7();
         const fileName = `${uuid}.${ext}`;

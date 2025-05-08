@@ -5,6 +5,7 @@ import {
   type CompleteMultipartUploadCommandOutput,
   type DeleteObjectCommandOutput,
   type GetObjectCommandOutput,
+  type S3ClientConfig,
 } from "@aws-sdk/client-s3";
 import { Upload } from "@aws-sdk/lib-storage";
 import type { Readable } from "node:stream";
@@ -14,14 +15,28 @@ export class S3Service {
   private client: S3Client;
 
   constructor(private readonly service: ServiceRegistry) {
+    if (service.env.nodeEnv === "production") {
+      if (service.env.awsAccessKeyId || service.env.awsSecretAccessKey)
+        throw new Error("In Production, please grant Instance Role.");
+    }
+
+    let credentials: S3ClientConfig["credentials"] = undefined;
+    if (service.env.nodeEnv === "development") {
+      if (!service.env.awsAccessKeyId)
+        throw new Error("Please set AWS_ACCESS_KEY_ID.");
+      if (!service.env.awsSecretAccessKey)
+        throw new Error("Please set AWS_SECRET_ACCESS_KEY.");
+
+      credentials = {
+        accessKeyId: service.env.awsAccessKeyId,
+        secretAccessKey: service.env.awsSecretAccessKey,
+      };
+    }
+
     this.client = new S3Client({
       forcePathStyle: true,
       region: "us-east-2",
-      endpoint: "https://xhtdyjxnnvqgtepcjlus.supabase.co/storage/v1/s3",
-      credentials: {
-        accessKeyId: service.env.s3AccessKeyId,
-        secretAccessKey: service.env.s3SecretAccessKey,
-      },
+      credentials,
     });
   }
 
