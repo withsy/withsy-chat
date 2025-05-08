@@ -36,15 +36,6 @@ export default function ChatLayout({ children, className }: LayoutProps) {
       style={{ backgroundColor }}
     >
       <Sidebar />
-      {isMobile && !collapsed && (
-        <div
-          className={cn(
-            "fixed inset-0 bg-black/30 z-30 transition-opacity duration-300",
-            collapsed ? "opacity-0 pointer-events-none" : "opacity-100"
-          )}
-          onClick={() => setCollapsed(true)}
-        />
-      )}
       <div className="flex flex-col flex-1 h-full z-20 min-w-0">
         <Main>{children}</Main>
       </div>
