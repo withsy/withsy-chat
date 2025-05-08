@@ -24,10 +24,8 @@ jobs:
       - name: Get Dotenv Contents
         run: |
           VALUE=$(aws ssm get-parameter --name production --with-decryption --region us-east-2 --query "Parameter.Value" --output text)
-          echo "DOTENV_CONTENTS<<EOF" >> $GITHUB_ENV
-          echo "$VALUE" >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
-          echo "$VALUE" | cut -c 1
+          echo "$VALUE" >> .env
+          cat .env | cut -c 1
 
       - name: Login to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v2
@@ -35,5 +33,5 @@ jobs:
       - name: Build and push Docker image
         run: |
           TAG=003342497027.dkr.ecr.us-east-2.amazonaws.com/withsy/withsy-chat:latest
-          docker build --tag "$TAG" --secret id=DOTENV_CONTENTS,env=DOTENV_CONTENTS -f prod/Dockerfile .
+          docker build --tag "$TAG" --secret id=DOTENV_CONTENTS,src=.env -f prod/Dockerfile .
           docker push "$TAG"
