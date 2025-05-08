@@ -98,6 +98,7 @@ export default function UserDropdownMenu() {
   const { user, setUserPrefsAndSave } = useUser();
   const [themeModalOpen, setThemeModalOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   if (!user) return null;
 
@@ -204,12 +205,13 @@ export default function UserDropdownMenu() {
           </Drawer>
         </>
       ) : (
-        <DropdownMenu>
+        <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
           <DropdownMenuTrigger asChild>
             <button
               type="button"
               className={cn(
-                "cursor-pointer flex items-center rounded-md w-full gap-2 px-2.5 py-2 hover:bg-white active:bg-white font-semibold select-none"
+                "cursor-pointer flex items-center rounded-md w-full gap-2 px-2.5 py-2 font-semibold select-none",
+                dropdownOpen ? "bg-white" : "hover:bg-white active:bg-white"
               )}
             >
               <ModelAvatar
