@@ -1,6 +1,7 @@
 import { useUser } from "@/context/UserContext";
 import { type ReactNode } from "react";
 import Header from "../home/Header";
+import BmcWidget from "../BmcWidget";
 
 type LayoutProps = {
   children: ReactNode;
@@ -15,6 +16,7 @@ export default function HomeLayout({ children, className }: LayoutProps) {
       <Header user={user} />
       <div>
         <main>{children}</main>
+        <BmcWidget />
       </div>
       <footer className="text-center text-xs text-muted-foreground p-4 select-none flex flex-wrap justify-center gap-x-4 gap-y-2">
         <div>© {new Date().getFullYear()} Withsy. All rights reserved.</div>
