@@ -23,7 +23,7 @@ jobs:
 
       - name: Get Dotenv Contents
         run: |
-          VALUE=$(aws ssm get-parameter --name production --with-decryption --region us-east-2 --query "Parameter.Value" --output text)
+          VALUE=$(aws ssm get-parameter --name withsy-chat-prod --with-decryption --region us-east-2 --query "Parameter.Value" --output text)
           echo "$VALUE" >> .env
           cat .env | cut -c 1
 
