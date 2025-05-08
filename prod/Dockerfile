@@ -25,4 +25,4 @@ COPY --from=builder /app/package.json ./
 COPY --from=builder /app/next.config.ts ./
 COPY --from=builder /app/prod ./prod
 EXPOSE 3000
-CMD ["npm", "run", "start"]
+CMD ["npx", "tsx", "prod/dotenv.mts", "npm", "run", "start"]
