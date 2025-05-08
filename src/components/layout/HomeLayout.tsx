@@ -16,7 +16,7 @@ export default function HomeLayout({ children, className }: LayoutProps) {
       <div>
         <main>{children}</main>
       </div>
-      <footer className="text-center text-xs text-muted-foreground p-4 select-none flex flex-row justify-center space-x-4">
+      <footer className="text-center text-xs text-muted-foreground p-4 select-none flex flex-wrap justify-center gap-x-4 gap-y-2">
         <div>© {new Date().getFullYear()} Withsy. All rights reserved.</div>
         <a href="#" className="termly-display-preferences">
           Consent Preferences
