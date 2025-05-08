@@ -20,7 +20,6 @@ export default function Component({ user }: { user: UserData | null }) {
     { label: "Contact", value: "contact" },
   ];
 
-  // 👇 Hydration 되기 전에는 렌더링 생략
   if (!hydrated) return null;
 
   return (
