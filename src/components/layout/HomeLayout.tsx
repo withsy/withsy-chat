@@ -30,6 +30,9 @@ export default function HomeLayout({ children, className }: LayoutProps) {
         <a href="/dpa" target="_blank">
           DPA
         </a>
+        <a href="/license" target="_blank">
+          License
+        </a>
         <a href="/privacy-policy.html" target="_blank">
           Privacy Policy
         </a>

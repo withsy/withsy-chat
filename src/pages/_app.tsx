@@ -34,6 +34,7 @@ export default function App({
     "/pricing",
     "/contact",
     "/dpa",
+    "/license",
   ];
   const isLayoutDisabled = noLayoutPages.includes(router.pathname);
   const isHomeLayout = homeLayoutPages.some((path) => {
