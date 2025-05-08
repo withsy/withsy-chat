@@ -3,8 +3,8 @@ import { useSidebarStore } from "@/stores/useSidebarStore";
 import type { UserData } from "@/types/user";
 import { useRouter } from "next/router";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import CategoryModalButton from "./CategoryModalButton";
 import ResponsiveButton from "./ResponsiveButton";
+import CategoryButton from "./CategoryDrawerButton";
 
 export default function Component({ user }: { user: UserData | null }) {
   const router = useRouter();
@@ -70,7 +70,7 @@ export default function Component({ user }: { user: UserData | null }) {
 
         <div className="flex items-center gap-2">
           <ResponsiveButton user={user} />
-          {isMobile && <CategoryModalButton categories={categories} />}
+          {isMobile && <CategoryButton categories={categories} />}
         </div>
       </div>
     </div>
