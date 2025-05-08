@@ -42,6 +42,9 @@ export default function HomeLayout({ children, className }: LayoutProps) {
         <a href="/cookie-policy.html" target="_blank">
           Cookie Policy
         </a>
+        <a href="/terms-of-service.html" target="_blank">
+          Terms of Service
+        </a>
       </footer>
     </div>
   );
