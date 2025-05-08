@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
 import {
   Tooltip,
   TooltipContent,
@@ -8,12 +8,19 @@ import {
 import { useUser } from "@/context/UserContext";
 import { useDrawerStore } from "@/stores/useDrawerStore";
 import type { ChatType } from "@/types/chat";
-import { ChevronDown, PenLine } from "lucide-react";
+import {
+  Bookmark,
+  ChevronDown,
+  FolderGit2,
+  PenLine,
+  TableProperties,
+} from "lucide-react";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { CollapseButton } from "../CollapseButton";
 import { IconWithLabel } from "../IconWithLabel";
 import { getChatTypeIcon } from "./ChatTypeIcon";
+import HoverSwitchIcon from "../HoverSwitchIcon";
 
 export default function MobileChatHeader({
   chatTitle,
@@ -57,46 +64,52 @@ export default function MobileChatHeader({
         <CollapseButton />
       </div>
 
-      {/* Center: Chat Title + Modal */}
+      {/* Center: Chat Title + Drawer */}
       <div className="flex-1 flex justify-center">
         {chatTitle && (
-          <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild>
+          <Drawer open={open} onOpenChange={setOpen}>
+            <DrawerTrigger asChild>
               <button className="max-w-[180px] flex items-center px-2 py-1 gap-3 rounded-md hover:bg-white active:bg-white select-none">
                 {chatType && (
                   <span className="shrink-0">
                     {getChatTypeIcon(chatType, "")}
                   </span>
                 )}
-
                 <span className="truncate font-semibold">{chatTitle}</span>
-
                 <ChevronDown size={16} className="shrink-0" />
               </button>
-            </DialogTrigger>
-            <DialogContent className="p-5 flex flex-col gap-2 w-64">
-              <button
-                onClick={() => handleSelectDrawer("prompt")}
-                className="w-full text-left hover:bg-gray-100 active:bg-gray-100 px-2 py-2 rounded text-lg"
-              >
-                Prompt
-              </button>
-              <button
-                onClick={() => handleSelectDrawer("saved")}
-                className="w-full text-left hover:bg-gray-100 active:bg-gray-100 px-2 py-2 rounded text-lg"
-              >
-                Saved
-              </button>
-              {(chatType === "chat" || chatType === "branch") && (
-                <button
-                  onClick={() => handleSelectDrawer("branches")}
-                  className="w-full text-left hover:bg-gray-100 active:bg-gray-100 px-2 py-2 rounded text-lg"
-                >
-                  Branches
-                </button>
-              )}
-            </DialogContent>
-          </Dialog>
+            </DrawerTrigger>
+            <DrawerContent className="p-5">
+              <div className="flex flex-col gap-2 py-5 w-full max-w-sm mx-auto">
+                <h2 className="text-xl font-semibold mb-2">Chat Options</h2>
+                <p className="text-sm text-muted-foreground mb-4">
+                  View prompts, access your saved items, or browse branches
+                  created in this chat.
+                </p>
+                {[
+                  { label: "Prompt", id: "prompt", icon: TableProperties },
+                  { label: "Saved", id: "saved", icon: Bookmark },
+                  ...(chatType === "chat" || chatType === "branch"
+                    ? [{ label: "Branches", id: "branches", icon: FolderGit2 }]
+                    : []),
+                ].map(({ label, id, icon: Icon }) => (
+                  <button
+                    key={id}
+                    onClick={() => handleSelectDrawer(id)}
+                    className="flex items-center gap-2 w-full text-left hover:bg-gray-100 active:bg-gray-100 px-2 py-2 rounded text-lg"
+                  >
+                    <HoverSwitchIcon
+                      DefaultIcon={Icon}
+                      HoverIcon={Icon}
+                      fill={`rgb(${themeColor})`}
+                      isActive={openDrawer === id}
+                    />
+                    <span>{label}</span>
+                  </button>
+                ))}
+              </div>
+            </DrawerContent>
+          </Drawer>
         )}
       </div>
 
