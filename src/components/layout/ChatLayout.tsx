@@ -1,7 +1,7 @@
+import { useUser } from "@/context/UserContext";
 import { useHasMounted } from "@/hooks/useHasMounted";
 import { cn } from "@/lib/utils";
 import { useSidebarStore } from "@/stores/useSidebarStore";
-import type { UserData } from "@/types/user";
 import { useRouter } from "next/navigation";
 import { useEffect, type ReactNode } from "react";
 import Main from "./Main";
@@ -10,20 +10,19 @@ import Sidebar from "./sidebar/Sidebar";
 type LayoutProps = {
   children: ReactNode;
   className: string;
-  user: UserData | null;
 };
 
-export default function ChatLayout({ children, className, user }: LayoutProps) {
+export default function ChatLayout({ children, className }: LayoutProps) {
   const mounted = useHasMounted();
   const { collapsed, setCollapsed, isMobile } = useSidebarStore();
-
+  const { user, userGetStatus } = useUser();
   const router = useRouter();
 
   useEffect(() => {
-    if (mounted && !user) {
+    if (mounted && userGetStatus === "error") {
       router.push("/auth/signin");
     }
-  }, [mounted, user, router]);
+  }, [mounted, userGetStatus, router]);
 
   if (!mounted) return null; // avoid SSR mismatch
 

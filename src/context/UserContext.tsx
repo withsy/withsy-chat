@@ -15,6 +15,7 @@ type SetUserPrefsAndSave = (input: UserUpdatePrefs) => void;
 
 type UserContextType = {
   user: UserData | null;
+  userGetStatus: "error" | "pending" | "success";
   setUser: (user: UserData) => void;
   setUserPrefsAndSave: SetUserPrefsAndSave;
   userPrefLoadings: UserPrefLoadings;
@@ -92,6 +93,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
     <UserContext.Provider
       value={{
         user,
+        userGetStatus: userGet.status,
         setUser,
         setUserPrefsAndSave,
         userPrefLoadings,
