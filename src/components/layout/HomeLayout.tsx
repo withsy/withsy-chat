@@ -33,9 +33,14 @@ export default function HomeLayout({ children, className }: LayoutProps) {
         >
           DSAR Request
         </a>
-
         <a href="/dpa" target="_blank">
           DPA
+        </a>
+        <a href="/privacy-policy.html" target="_blank">
+          Privacy Policy
+        </a>
+        <a href="/cookie-policy.html" target="_blank">
+          Cookie Policy
         </a>
       </footer>
     </div>
