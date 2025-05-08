@@ -1,16 +1,16 @@
 import { parse } from "dotenv";
 import { spawn } from "node:child_process";
 
-const secretManagerEnv = process.env.SECRET_MANAGER_ENV;
-if (!secretManagerEnv) {
-  console.error("ERROR: Please set SECRET_MANAGER_ENV environment variable.");
+const dotenvContents = process.env.DOTENV_CONTENTS;
+if (!dotenvContents) {
+  console.error("ERROR: Please set DOTENV_CONTENTS environment variable.");
   process.exit(1);
 }
 
 const command = process.argv.slice(2).join(" ");
 const env = {
   ...process.env,
-  ...parse(secretManagerEnv),
+  ...parse(dotenvContents),
 };
 
 const controller = new AbortController();
