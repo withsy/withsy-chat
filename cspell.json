@@ -1,34 +1,20 @@
 {
   "enabledFileTypes": {
-    "json": true,
-    "jsonc": true,
     "typescript": true,
-    "yaml": true
+    "typescriptreact": true
   },
-  "ignorePaths": [
-    "dist/",
-    "node_modules/",
-    ".devcontainer/",
-    "package.json",
-    ".next/"
-  ],
+  "ignorePaths": ["node_modules/", "package.json", ".next/"],
   "words": [
-    "plpgsql",
     "prefs",
     "genai",
-    "tocstop",
     "graphile",
     "noti",
     "unlisten",
     "sonner",
     "nextauth",
-    "timestamptz",
     "withsy",
-    "autoincrement",
-    "dbgenerated",
-    "prepass",
     "uuidv",
     "datas",
-    "harryplusplus"
+    "dotenv"
   ]
 }
