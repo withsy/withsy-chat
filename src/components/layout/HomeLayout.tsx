@@ -33,6 +33,10 @@ export default function HomeLayout({ children, className }: LayoutProps) {
         >
           DSAR Request
         </a>
+
+        <a href="/dpa" target="_blank">
+          DPA
+        </a>
       </footer>
     </div>
   );
