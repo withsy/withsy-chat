@@ -3,7 +3,7 @@ import fs from "fs";
 import path from "path";
 import matter from "gray-matter";
 import Link from "next/link";
-import { Bookmark, Sparkles, TableProperties } from "lucide-react";
+import { Bookmark, CircleHelp, Sparkles, TableProperties } from "lucide-react";
 
 type Guide = {
   title: string;
@@ -29,6 +29,8 @@ export default function GuidesIndexPage({
         return <Bookmark className="w-5 h-5 text-[#EA9257] mr-3" />;
       case "customization":
         return <Sparkles className="w-5 h-5 text-[#EA9257] mr-3" />;
+      case "general":
+        return <CircleHelp className="w-5 h-5 text-[#EA9257] mr-3" />;
       default:
         return null;
     }
@@ -36,6 +38,11 @@ export default function GuidesIndexPage({
   const capitalize = (text: string) =>
     text.charAt(0).toUpperCase() + text.slice(1);
 
+  categories.sort((a, b) => {
+    if (a.name.toLowerCase() === "general") return 1;
+    if (b.name.toLowerCase() === "general") return -1;
+    return 0;
+  });
   return (
     <div className="flex flex-col items-start text-start px-6 py-12 max-w-3xl mx-auto">
       <h2 className="text-3xl font-bold mb-4">User Guides</h2>
