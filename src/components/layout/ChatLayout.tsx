@@ -1,7 +1,5 @@
 import { useUser } from "@/context/UserContext";
 import { useHasMounted } from "@/hooks/useHasMounted";
-import { cn } from "@/lib/utils";
-import { useSidebarStore } from "@/stores/useSidebarStore";
 import { useRouter } from "next/navigation";
 import { useEffect, type ReactNode } from "react";
 import Main from "./Main";
@@ -14,7 +12,6 @@ type LayoutProps = {
 
 export default function ChatLayout({ children, className }: LayoutProps) {
   const mounted = useHasMounted();
-  const { collapsed, setCollapsed, isMobile } = useSidebarStore();
   const { user, userGetStatus } = useUser();
   const router = useRouter();
 
