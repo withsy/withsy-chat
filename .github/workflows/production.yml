@@ -21,6 +21,12 @@ jobs:
           role-to-assume: arn:aws:iam::003342497027:role/github-withsy-secret
           aws-region: us-east-2
 
+      - name: Get .env
+        run: |
+          VALUE=$(aws ssm get-parameter --name production --with-decryption --region us-east-2 --query "Parameter.Value" --output text)
+          echo "$VALUE" > .env
+          cat .env | cut -c 1
+
       # - name: "Create .env file"
       #   run: |
       #     echo "${{ steps.secrets.outputs.SECRET_MANAGER_ENV }}" > .env
