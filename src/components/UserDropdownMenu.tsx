@@ -59,7 +59,7 @@ function UserMenuItem({
         onClick?.();
       }}
       className={cn(
-        "flex items-center justify-between rounded px-2 py-2 hover:bg-gray-100 cursor-pointer",
+        "flex items-center justify-between rounded px-2 py-2 hover:bg-gray-100 cursor-pointer w-full",
         largeText ? "text-lg" : "text-sm"
       )}
     >
@@ -67,12 +67,14 @@ function UserMenuItem({
         <Icon className={cn("mr-2", isMobile ? "h-6 w-6" : "h-4 w-4")} />
         <Label className="text-black">{label}</Label>
       </div>
-      {checked && (
-        <Check
-          className="h-4 w-4"
-          style={{ color: `rgb(var(--theme-color))` }}
-        />
-      )}
+      <div>
+        {checked && (
+          <Check
+            className="h-4 w-4"
+            style={{ color: `rgb(var(--theme-color))` }}
+          />
+        )}
+      </div>
     </div>
   );
 
@@ -195,8 +197,6 @@ export default function UserDropdownMenu() {
             />
             <span>{user.name}</span>
           </button>
-
-          {/* 드로어 메뉴 */}
           <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
             <DrawerContent className="p-4 space-y-2">
               {renderMenuItems()}
@@ -223,7 +223,7 @@ export default function UserDropdownMenu() {
           <DropdownMenuContent
             align="end"
             className={cn(
-              "w-48 p-2 m-2",
+              "w-48 p-2 m-2 justify-between",
               user.preferences.largeText ? "text-lg" : "text-base"
             )}
           >
