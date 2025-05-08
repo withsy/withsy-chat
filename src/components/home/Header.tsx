@@ -16,7 +16,7 @@ export default function Component({ user }: { user: UserData | null }) {
     { label: "Guides", value: "guides" },
     { label: "Roadmap", value: "roadmap" },
     // { label: "Blog", value: "blog" },
-    { label: "Pricing", value: "pricing" },
+    // { label: "Pricing", value: "pricing" },
     { label: "Contact", value: "contact" },
   ];
 
