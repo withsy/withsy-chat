@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-export default function DPAPage() {
+function Page() {
   return (
     <div className="flex flex-col items-start text-start px-6 py-12 max-w-3xl mx-auto">
       <h2 className="text-3xl font-bold mb-4">
@@ -59,3 +59,6 @@ export default function DPAPage() {
     </div>
   );
 }
+
+(Page as any).layoutType = "home";
+export default Page;

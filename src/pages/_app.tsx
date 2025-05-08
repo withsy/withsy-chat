@@ -11,7 +11,6 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import type { AppProps } from "next/app";
 import { Nunito } from "next/font/google";
 import Head from "next/head";
-import { useRouter } from "next/router";
 import { useState } from "react";
 import { Toaster as Sonner } from "sonner";
 
@@ -23,30 +22,13 @@ export default function App({
   pageProps: { session, ...pageProps },
 }: AppProps) {
   useSidebarInitializer();
-  const router = useRouter();
-  const noLayoutPages = ["/auth/signin", "/api-doc"];
-  const homeLayoutPages = [
-    "/",
-    "/about",
-    "/guides",
-    "/roadmap",
-    "/blog",
-    "/pricing",
-    "/contact",
-    "/dpa",
-    "/license",
-  ];
-  const isLayoutDisabled = noLayoutPages.includes(router.pathname);
-  const isHomeLayout = homeLayoutPages.some((path) => {
-    if (path === "/") return router.pathname === "/";
-    return router.pathname === path || router.pathname.startsWith(`${path}/`);
-  });
   let title = "Withsy";
   if (process.env.NODE_ENV === "development") title = `[DEV] ${title}`;
 
   const queryClient = getQueryClient();
   const [trpcClient] = useState(() => createTrpcClient());
 
+  const layoutType = (Component as any).layoutType ?? "none";
   return (
     <QueryClientProvider client={queryClient}>
       <TRPCProvider trpcClient={trpcClient} queryClient={queryClient}>
@@ -55,11 +37,11 @@ export default function App({
             <link rel="icon" href="/favicon.ico" />
             <title>{title}</title>
           </Head>
-          {isLayoutDisabled ? (
+          {layoutType == "none" ? (
             <main className={nunito.className}>
               <Component {...pageProps} />
             </main>
-          ) : isHomeLayout ? (
+          ) : layoutType == "home" ? (
             <HomeLayout className={nunito.className}>
               <Component {...pageProps} />
             </HomeLayout>

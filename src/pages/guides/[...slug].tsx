@@ -16,7 +16,7 @@ type Props = {
   related: { slug: string[]; title: string }[];
 };
 
-export default function GuidePage({ source, frontMatter, related }: Props) {
+function Page({ source, frontMatter, related }: Props) {
   return (
     <div className="max-w-3xl mx-auto py-16 px-4">
       <Link
@@ -141,3 +141,6 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     },
   };
 };
+
+(Page as any).layoutType = "home";
+export default Page;

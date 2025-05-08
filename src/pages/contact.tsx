@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Copy, Check } from "lucide-react";
 import { useState } from "react";
 
-export default function ContactPage() {
+function Page() {
   const [copied, setCopied] = useState(false);
   const email = "withsy.team@gmail.com";
 
@@ -52,3 +52,6 @@ export default function ContactPage() {
     </div>
   );
 }
+
+(Page as any).layoutType = "home";
+export default Page;

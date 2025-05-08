@@ -20,7 +20,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({
   return { props: { csrfToken, user } };
 };
 
-export default function Page({ csrfToken, user }: Props) {
+function Page({ csrfToken, user }: Props) {
   const { setUser } = useUser();
 
   useEffect(() => {
@@ -33,3 +33,6 @@ export default function Page({ csrfToken, user }: Props) {
 
   return <EmptyChatView />;
 }
+
+(Page as any).layoutType = "chat";
+export default Page;

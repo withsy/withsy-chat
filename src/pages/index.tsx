@@ -20,7 +20,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
   return { props: { user } };
 };
 
-export default function Page({ user }: Props) {
+function Page({ user }: Props) {
   const { setUser } = useUser();
 
   useEffect(() => {
@@ -37,3 +37,6 @@ export default function Page({ user }: Props) {
     </div>
   );
 }
+
+(Page as any).layoutType = "home";
+export default Page;

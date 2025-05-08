@@ -1,6 +1,6 @@
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 
-export default function Page() {
+function Page() {
   return (
     <div className="flex flex-col md:flex-row items-center md:items-start gap-6 md:gap-10 px-6 py-12 max-w-4xl mx-auto">
       {/* Avatar on the left */}
@@ -42,3 +42,6 @@ export default function Page() {
     </div>
   );
 }
+
+(Page as any).layoutType = "home";
+export default Page;

@@ -1,4 +1,4 @@
-export default function License() {
+function License() {
   return (
     <div className="flex flex-col items-start text-start px-6 py-12 max-w-3xl mx-auto">
       <h2 className="text-3xl font-bold mb-4">License</h2>
@@ -12,3 +12,6 @@ export default function License() {
     </div>
   );
 }
+
+(License as any).layoutType = "home";
+export default License;

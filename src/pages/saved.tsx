@@ -21,7 +21,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({
   return { props: { csrfToken, user } };
 };
 
-export default function BookmarkIndex({ csrfToken, user }: Props) {
+function SavedPage({ csrfToken, user }: Props) {
   const { setUser } = useUser();
 
   useEffect(() => {
@@ -43,3 +43,6 @@ export default function BookmarkIndex({ csrfToken, user }: Props) {
 
   return <BookmarkPage user={user} headerStyle={headerStyle} />;
 }
+
+(SavedPage as any).layoutType = "chat";
+export default SavedPage;

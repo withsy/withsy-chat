@@ -252,4 +252,5 @@ function PromptsPage({ csrfToken, user }: Props) {
   );
 }
 
+(PromptsPage as any).layoutType = "chat";
 export default PromptsPage;

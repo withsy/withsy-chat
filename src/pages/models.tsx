@@ -26,7 +26,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({
   return { props: { csrfToken, user } };
 };
 
-export default function ModelsPage({ csrfToken, user }: Props) {
+function ModelsPage({ csrfToken, user }: Props) {
   const { setUser } = useUser();
   const { collapsed } = useSidebarStore();
   const { profiles, isLoading } = useAiProfileStore();
@@ -85,3 +85,6 @@ export default function ModelsPage({ csrfToken, user }: Props) {
     </div>
   );
 }
+
+(ModelsPage as any).layoutType = "chat";
+export default ModelsPage;

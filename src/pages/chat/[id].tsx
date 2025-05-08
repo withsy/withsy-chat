@@ -22,7 +22,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({
   return { props: { csrfToken, user } };
 };
 
-export default function Page({ csrfToken, user }: Props) {
+function Page({ csrfToken, user }: Props) {
   const router = useRouter();
   const { id } = router.query;
   const chatId = typeof id === "string" ? id : null;
@@ -41,3 +41,6 @@ export default function Page({ csrfToken, user }: Props) {
 
   return <ChatView chatId={chatId} />;
 }
+
+(Page as any).layoutType = "chat";
+export default Page;

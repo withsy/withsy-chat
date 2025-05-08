@@ -16,11 +16,7 @@ type GuideCategory = {
   guides: Guide[];
 };
 
-export default function GuidesIndexPage({
-  categories,
-}: {
-  categories: GuideCategory[];
-}) {
+function Page({ categories }: { categories: GuideCategory[] }) {
   const getIconForCategory = (name: string) => {
     switch (name.toLowerCase()) {
       case "prompts":
@@ -120,3 +116,6 @@ export async function getStaticProps() {
     },
   };
 }
+
+(Page as any).layoutType = "home";
+export default Page;
