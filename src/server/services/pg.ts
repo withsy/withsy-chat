@@ -6,6 +6,12 @@ import type { ServiceRegistry } from "../service-registry";
 export function createPgPool(s: ServiceRegistry): Pool {
   const pool = new Pool({
     connectionString: s.env.databaseUrl,
+    ssl:
+      s.env.nodeEnv === "production"
+        ? {
+            rejectUnauthorized: false,
+          }
+        : undefined,
   });
 
   const onError = (e: unknown) => {
