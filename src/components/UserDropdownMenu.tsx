@@ -5,7 +5,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Label } from "@/components/ui/label";
+import { Drawer, DrawerContent } from "@/components/ui/drawer";
 import { useUser } from "@/context/UserContext";
 import { cn } from "@/lib/utils";
 import { useSidebarStore } from "@/stores/useSidebarStore";
@@ -22,15 +22,7 @@ import { signOut } from "next-auth/react";
 import { useState } from "react";
 import { ModelAvatar } from "./ModelAvatar";
 import { ThemeSettingsModal } from "./modal/ThemeSettingsModal";
-
-interface MenuActionItem {
-  icon: LucideIcon;
-  label: string;
-  onClick?: () => void;
-  checked?: boolean;
-}
-
-type MenuItem = "separator" | MenuActionItem;
+import { Label } from "@/components/ui/label";
 
 interface UserMenuItemProps {
   icon: LucideIcon;
@@ -40,6 +32,15 @@ interface UserMenuItemProps {
   checked?: boolean;
   preventClose?: boolean;
 }
+
+type MenuActionItem = {
+  icon: LucideIcon;
+  label: string;
+  onClick?: () => void;
+  checked?: boolean;
+};
+
+type MenuItem = "separator" | MenuActionItem;
 
 function UserMenuItem({
   icon: Icon,
@@ -51,30 +52,20 @@ function UserMenuItem({
 }: UserMenuItemProps) {
   const { isMobile } = useSidebarStore();
 
-  return (
-    <DropdownMenuItem
-      onSelect={(e) => {
-        if (preventClose) {
-          e.preventDefault();
-        }
+  const base = (
+    <div
+      onClick={(e) => {
+        e.stopPropagation();
         onClick?.();
       }}
       className={cn(
-        "flex items-center justify-between active:bg-gray-100",
-        isMobile ? "py-3 px-2" : "py-2 px-2"
+        "flex items-center justify-between rounded px-2 py-2 hover:bg-gray-100 cursor-pointer",
+        largeText ? "text-lg" : "text-sm"
       )}
     >
       <div className="flex items-center">
         <Icon className={cn("mr-2", isMobile ? "h-6 w-6" : "h-4 w-4")} />
-        <Label
-          className={cn(
-            "text-black",
-            isMobile ? "text-lg" : "",
-            largeText && "text-lg"
-          )}
-        >
-          {label}
-        </Label>
+        <Label className="text-black">{label}</Label>
       </div>
       {checked && (
         <Check
@@ -82,6 +73,20 @@ function UserMenuItem({
           style={{ color: `rgb(var(--theme-color))` }}
         />
       )}
+    </div>
+  );
+
+  if (isMobile) return base;
+
+  return (
+    <DropdownMenuItem
+      onSelect={(e) => {
+        if (preventClose) e.preventDefault();
+        onClick?.();
+      }}
+      className="p-0"
+    >
+      {base}
     </DropdownMenuItem>
   );
 }
@@ -89,21 +94,12 @@ function UserMenuItem({
 export default function UserDropdownMenu() {
   const { isMobile } = useSidebarStore();
   const { user, setUserPrefsAndSave } = useUser();
-
   const [themeModalOpen, setThemeModalOpen] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   if (!user) return null;
 
-  const userMenuItems: MenuItem[] = [
-    "separator",
-    {
-      icon: Palette,
-      label: "Theme",
-      onClick: () => setThemeModalOpen(true),
-    },
-  ];
-
-  const preferenceItems: MenuActionItem[] = [
+  const preferenceItems = [
     {
       icon: CornerDownLeft,
       label: "Enter to send",
@@ -127,18 +123,69 @@ export default function UserDropdownMenu() {
     },
   ];
 
-  const mobileClassName = isMobile ? "px-2.5 py-3" : "px-2.5 py-2";
+  const userMenuItems: MenuItem[] = [
+    "separator",
+    {
+      icon: Palette,
+      label: "Theme",
+      onClick: () => setThemeModalOpen(true),
+    },
+    "separator",
+    {
+      icon: LogOut,
+      label: "Log out",
+      onClick: async () => signOut({ callbackUrl: "/" }),
+    },
+  ];
+
+  const renderMenuItems = () => (
+    <>
+      {preferenceItems.map((item) => (
+        <UserMenuItem
+          key={item.label}
+          icon={item.icon}
+          label={item.label}
+          largeText={user.preferences.largeText}
+          onClick={item.onClick}
+          checked={item.checked}
+          preventClose
+        />
+      ))}
+      {userMenuItems.map((item, idx) =>
+        item === "separator" ? (
+          <DropdownMenuSeparator key={`sep-${idx}`} className="px-4" />
+        ) : (
+          <UserMenuItem
+            key={item.label}
+            icon={item.icon}
+            label={item.label}
+            largeText={user.preferences.largeText}
+            onClick={item.onClick}
+          />
+        )
+      )}
+      <DropdownMenuSeparator className="px-4" />
+      <div className="flex justify-center p-2">
+        <span className="text-xs text-muted-foreground select-none">
+          withsy with{" "}
+          <span style={{ color: `rgb(${user.preferences.themeColor})` }}>
+            ♥
+          </span>
+        </span>
+      </div>
+    </>
+  );
 
   return (
     <>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
+      {isMobile ? (
+        <>
+          {/* 버튼은 항상 동일하게 */}
           <button
             type="button"
+            onClick={() => setDrawerOpen(true)}
             className={cn(
-              "cursor-pointer flex items-center rounded-md w-full gap-2",
-              mobileClassName,
-              "hover:bg-white active:bg-white font-semibold select-none"
+              "cursor-pointer flex items-center rounded-md w-full gap-2 px-2.5 py-3 hover:bg-white active:bg-white font-semibold select-none"
             )}
           >
             <ModelAvatar
@@ -148,65 +195,42 @@ export default function UserDropdownMenu() {
             />
             <span>{user.name}</span>
           </button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent
-          align="end"
-          className={cn(
-            "w-48 p-2 m-2",
-            user.preferences.largeText ? "text-lg" : "text-base"
-          )}
-        >
-          {preferenceItems.map((item) => (
-            <UserMenuItem
-              key={item.label}
-              icon={item.icon}
-              label={item.label}
-              largeText={user.preferences.largeText}
-              onClick={item.onClick}
-              checked={item.checked}
-              preventClose
-            />
-          ))}
-          {userMenuItems.map((item, idx) =>
-            item === "separator" ? (
-              <DropdownMenuSeparator className="px-4" key={`sep-${idx}`} />
-            ) : (
-              <UserMenuItem
-                key={item.label}
-                icon={item.icon}
-                label={item.label}
-                largeText={user.preferences.largeText}
-                onClick={item.onClick}
+
+          {/* 드로어 메뉴 */}
+          <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
+            <DrawerContent className="p-4 space-y-2">
+              {renderMenuItems()}
+            </DrawerContent>
+          </Drawer>
+        </>
+      ) : (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button
+              type="button"
+              className={cn(
+                "cursor-pointer flex items-center rounded-md w-full gap-2 px-2.5 py-2 hover:bg-white active:bg-white font-semibold select-none"
+              )}
+            >
+              <ModelAvatar
+                name={user.name ?? ""}
+                image={user.imageUrl}
+                size="sm"
               />
-            )
-          )}
-          <UserMenuItem
-            key="Log out"
-            icon={LogOut}
-            label="Log out"
-            largeText={user.preferences.largeText}
-            onClick={async () => {
-              signOut({ callbackUrl: "/" });
-            }}
-          />
-
-          <DropdownMenuSeparator className="px-4" />
-
-          {/* Footer */}
-          <div className="flex justify-center p-2">
-            <span className="text-xs text-muted-foreground select-none">
-              withsy with{" "}
-              <span
-                style={{
-                  color: `rgb(${user.preferences.themeColor})`,
-                }}
-              >
-                ♥
-              </span>
-            </span>
-          </div>
-        </DropdownMenuContent>
-      </DropdownMenu>
+              <span>{user.name}</span>
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent
+            align="end"
+            className={cn(
+              "w-48 p-2 m-2",
+              user.preferences.largeText ? "text-lg" : "text-base"
+            )}
+          >
+            {renderMenuItems()}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      )}
 
       <ThemeSettingsModal
         open={themeModalOpen}
