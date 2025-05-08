@@ -18,7 +18,7 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::003342497027:role/github-withsy-secret
+          role-to-assume: arn:aws:iam::003342497027:role/github-withsy-chat-deploy
           aws-region: us-east-2
 
       - name: Get Dotenv Contents
