@@ -1,4 +1,4 @@
-name: Production
+name: Deploy Production to AWS
 
 on:
   workflow_dispatch:
