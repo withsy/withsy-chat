@@ -1,0 +1,45 @@
+name: Production
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::003342497027:role/github-withsy-secret
+          aws-region: us-east-2
+
+      # - name: "Create .env file"
+      #   run: |
+      #     echo "${{ steps.secrets.outputs.SECRET_MANAGER_ENV }}" > .env
+      #     cat .env | cut -c 1
+
+      # - name: "Build and Push Container"
+      #   run: |-
+      #     gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://us-central1-docker.pkg.dev
+      #     DOCKER_TAG="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/withsy/${{ env.SERVICE }}:${{ github.sha }}"
+      #     docker build --tag "${DOCKER_TAG}" -f gcp/Dockerfile .
+      #     docker push "${DOCKER_TAG}"
+
+      # - name: "Deploy to Cloud Run"
+      #   uses: "google-github-actions/deploy-cloudrun@v2" # google-github-actions/deploy-cloudrun@v2
+      #   with:
+      #     service: "${{ env.SERVICE }}"
+      #     region: "${{ env.REGION }}"
+      #     image: "${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/withsy/${{ env.SERVICE }}:${{ github.sha }}"
+
+      # - name: "Show output"
+      #   run: |2-
+      #     echo ${{ steps.deploy.outputs.url }}
