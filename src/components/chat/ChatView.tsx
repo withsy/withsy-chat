@@ -2,6 +2,7 @@ import { ChatSession } from "@/components/chat/ChatSession";
 import { useTRPC } from "@/lib/trpc";
 import { useChatStore } from "@/stores/useChatStore";
 import { useQuery } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { PartialError } from "../Error";
 import { PartialLoading } from "../Loading";
@@ -11,6 +12,7 @@ type Props = {
 };
 
 export default function ChatView({ chatId }: Props) {
+  const router = useRouter();
   const trpc = useTRPC();
   const chatGet = useQuery(trpc.chat.get.queryOptions({ chatId }));
   const messageList = useQuery(
@@ -24,6 +26,13 @@ export default function ChatView({ chatId }: Props) {
       setChat(chatGet.data);
     }
   }, [chatGet.data, setChat]);
+
+  useEffect(() => {
+    if (!chatGet.error) return;
+    if (!chatGet.error.shape) return;
+    if (chatGet.error.shape.code === -32004 /* Not Found */)
+      router.push("/chat");
+  }, [chatGet.error, router]);
 
   if (chatGet.isLoading) return <PartialLoading />;
   if (chatGet.isError || !chatGet.data)
