@@ -48,10 +48,6 @@ const ChatBubbleComponent = ({ message, chatType, onToggleSaved }: Props) => {
   );
   const [showReasoning, setShowReasoning] = useState(false);
 
-  // const displayedText =
-  //   role === "model"
-  //     ? `${showReasoning && reasoningText ? reasoningText + "\n\n" : ""}${text}`
-  //     : text;
   const collapseText = collapsed
     ? text.slice(0, 150) + (text.length > 150 ? "..." : "")
     : text;
