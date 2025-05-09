@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 import { useAiProfileStore } from "@/stores/useAiProfileStore";
 import type { ChatType } from "@/types/chat";
 import type { MessageData } from "@/types/message";
-import { memo, useMemo, useState } from "react";
+import { memo, useState } from "react";
 import { toast } from "sonner";
 import { CollapseToggle } from "../CollapseToggle";
 import { MarkdownBox } from "../MarkdownBox";
@@ -18,24 +18,6 @@ type Props = {
   onToggleSaved?: (id: string, newValue: boolean) => void;
 };
 
-const hasMarkdown = (text: string): boolean => {
-  const markdownPatterns = [
-    /\*\*.*?\*\*/, // bold
-    /__.*?__/, // bold
-    /\*.*?\*/, // italic
-    /_.*?_/, // italic
-    /#+\s/, // heading
-    /\[.*?\]\(.*?\)/, // link
-    /`.*?`/, // inline code
-    /```[\s\S]*?```/, // code block
-    /^[-*]\s/, // unordered list
-    /^\d+\.\s/, // ordered list
-    /^>\s/, // quote
-    /\|.*?\|/, // table
-  ];
-  return markdownPatterns.some((pattern) => pattern.test(text));
-};
-
 const ChatBubbleComponent = ({ message, chatType, onToggleSaved }: Props) => {
   const { user } = useUser();
   const { profiles } = useAiProfileStore();
@@ -48,10 +30,6 @@ const ChatBubbleComponent = ({ message, chatType, onToggleSaved }: Props) => {
   );
   const [showReasoning, setShowReasoning] = useState(false);
 
-  // const displayedText =
-  //   role === "model"
-  //     ? `${showReasoning && reasoningText ? reasoningText + "\n\n" : ""}${text}`
-  //     : text;
   const collapseText = collapsed
     ? text.slice(0, 150) + (text.length > 150 ? "..." : "")
     : text;
@@ -188,6 +166,7 @@ export const ChatBubble = memo(ChatBubbleComponent, (prev, next) => {
     prev.message.status === next.message.status &&
     prev.message.role === next.message.role &&
     prev.message.model === next.message.model &&
-    prev.message.createdAt === next.message.createdAt
+    prev.message.createdAt === next.message.createdAt &&
+    prev.message.isMessageCollapsed === next.message.isMessageCollapsed
   );
 });
