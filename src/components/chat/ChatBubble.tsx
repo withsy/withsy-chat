@@ -56,13 +56,6 @@ const ChatBubbleComponent = ({ message, chatType, onToggleSaved }: Props) => {
     ? displayedText.slice(0, 150) + (displayedText.length > 150 ? "..." : "")
     : displayedText;
 
-  const isMarkdownContent = useMemo(() => {
-    const textToCheck = isMessageCollapsed
-      ? collapseText.slice(0, 150)
-      : displayedText;
-    return hasMarkdown(textToCheck);
-  }, [collapseText, displayedText, isMessageCollapsed]);
-
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(text);
@@ -174,11 +167,7 @@ const ChatBubbleComponent = ({ message, chatType, onToggleSaved }: Props) => {
               : {}
           }
         >
-          {isMarkdownContent ? (
-            <MarkdownBox content={collapseText} />
-          ) : (
-            <div>{collapseText}</div>
-          )}
+          <MarkdownBox content={collapseText} />
           <StatusIndicator status={status} />
         </div>
         <div className="flex justify-between w-full mt-2">{items}</div>
