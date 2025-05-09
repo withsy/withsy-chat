@@ -9,6 +9,7 @@ import {
 import type { GetServerSideProps } from "next";
 import { getProviders, signIn } from "next-auth/react";
 import Image from "next/image";
+import { Browser } from "@capacitor/browser";
 
 const iconMap: Record<string, React.ReactNode> = {
   email: <Mail size={18} />,
@@ -19,6 +20,11 @@ const iconMap: Record<string, React.ReactNode> = {
 
 type Props = {
   providers: Record<string, any> | null;
+};
+
+const isNativeApp = () => {
+  if (typeof window === "undefined") return false;
+  return /withsy-app/i.test(navigator.userAgent);
 };
 
 export default function SignInPage({ providers }: Props) {
@@ -47,11 +53,16 @@ export default function SignInPage({ providers }: Props) {
               <div key={provider.name}>
                 {id === "google" ? (
                   <button
-                    onClick={() =>
-                      signIn(provider.id, { callbackUrl: "/chat" })
-                    }
+                    onClick={async () => {
+                      if (isNativeApp()) {
+                        await Browser.open({
+                          url: "https://withsy.chat/auth/signin/google?callbackUrl=/auth/mobile/google",
+                        });
+                      } else {
+                        signIn(provider.id, { callbackUrl: "/chat" });
+                      }
+                    }}
                     className="w-full flex items-center justify-center gap-3 py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-100 transition"
-                    style={{ fontFamily: "Roboto, sans-serif" }}
                   >
                     <Image
                       src="/google_logo.svg"

@@ -66,6 +66,13 @@ export const authOptions: AuthOptions = {
 
       return userSession;
     },
+    async redirect({ url, baseUrl }) {
+      const isMobile = url.includes("/mobile");
+      if (isMobile) {
+        return "https://withsy.chat/auth/mobile/google"; // 로그인 완료 후 이쪽으로 redirect
+      }
+      return baseUrl + "/chat";
+    },
   },
 };
 
