@@ -48,13 +48,13 @@ const ChatBubbleComponent = ({ message, chatType, onToggleSaved }: Props) => {
   );
   const [showReasoning, setShowReasoning] = useState(false);
 
-  const displayedText =
-    role === "model"
-      ? `${showReasoning && reasoningText ? reasoningText + "\n\n" : ""}${text}`
-      : text;
+  // const displayedText =
+  //   role === "model"
+  //     ? `${showReasoning && reasoningText ? reasoningText + "\n\n" : ""}${text}`
+  //     : text;
   const collapseText = collapsed
-    ? displayedText.slice(0, 150) + (displayedText.length > 150 ? "..." : "")
-    : displayedText;
+    ? text.slice(0, 150) + (text.length > 150 ? "..." : "")
+    : text;
 
   const handleCopy = async () => {
     try {
@@ -167,6 +167,9 @@ const ChatBubbleComponent = ({ message, chatType, onToggleSaved }: Props) => {
               : {}
           }
         >
+          {showReasoning && reasoningText && (
+            <MarkdownBox content={reasoningText} />
+          )}
           <MarkdownBox content={collapseText} />
           <StatusIndicator status={status} />
         </div>
