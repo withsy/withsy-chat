@@ -1,0 +1,15 @@
+/.git/
+/.github/
+/dev/
+/prisma/
+/prod/
+/src/
+/.env*
+!/.env
+/.gitignore
+/cspell.json
+/eslint.config.ts
+/postcss.config.mjs
+/README.md
+/tailwind.config.js
+/tsconfig.json
