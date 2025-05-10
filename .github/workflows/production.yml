@@ -15,6 +15,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Install Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install EB CLI
+        run: |
+          pip install awsebcli==3.23.3
+          eb --version
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -26,12 +36,3 @@ jobs:
           VALUE=$(aws ssm get-parameter --name withsy-chat-prod --with-decryption --region us-east-2 --query "Parameter.Value" --output text)
           echo "$VALUE" >> .env
           cat .env | cut -c 1
-
-      - name: Login to Amazon ECR
-        uses: aws-actions/amazon-ecr-login@v2
-
-      - name: Build and push Docker image
-        run: |
-          TAG=003342497027.dkr.ecr.us-east-2.amazonaws.com/withsy/withsy-chat:latest
-          docker build --tag "$TAG" --secret id=DOTENV_CONTENTS,src=.env -f prod/Dockerfile .
-          docker push "$TAG"
