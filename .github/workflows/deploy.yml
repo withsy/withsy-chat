@@ -50,4 +50,4 @@ jobs:
 
       - name: Deploy to EB
         run: |
-          eb deploy withsy-chat-env --label "version-${{ github.sha }}"
+          eb deploy withsy-chat-env --label "version-${{ github.sha }}" --timeout 20
