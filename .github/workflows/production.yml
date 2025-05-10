@@ -32,6 +32,11 @@ jobs:
           echo "$VALUE" >> .env
           cat .env | cut -c 1
 
+      - name: Build
+        run: |
+          npm install
+          npm run build
+
       - name: Deploy to EB
         run: |
           eb deploy withsy-chat-env --label "version-${{ github.sha }}"
