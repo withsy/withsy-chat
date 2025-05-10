@@ -42,10 +42,11 @@ jobs:
           echo "$VALUE" >> .env
           cat .env | cut -c 1
 
+      - name: Install dependencies
+        run: npm install
+
       - name: Build
-        run: |
-          npm install
-          npm run build
+        run: npm run build
 
       - name: Deploy to EB
         run: |
