@@ -37,7 +37,9 @@ export async function getUser(input: {
   let user: UserData | null = null;
   if (session) {
     const userSession = UserSession.parse(session);
-    user = await service.user.get(userSession.user.id);
+    try {
+      user = await service.user.get(userSession.user.id);
+    } catch (_e) {}
   }
 
   return user;
