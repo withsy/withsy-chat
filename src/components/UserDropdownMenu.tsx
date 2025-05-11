@@ -102,6 +102,22 @@ export default function UserDropdownMenu() {
 
   if (!user) return null;
 
+  // Theme 메뉴 아이템 클릭 시 드롭다운과 드로어를 닫고 테마 모달 열기
+  const handleThemeClick = () => {
+    // 모바일일 경우 드로어 닫기
+    if (isMobile) {
+      setDrawerOpen(false);
+    } else {
+      // 데스크탑일 경우 드롭다운 닫기
+      setDropdownOpen(false);
+    }
+
+    // 약간의 딜레이 후 테마 모달 열기
+    setTimeout(() => {
+      setThemeModalOpen(true);
+    }, 100);
+  };
+
   const preferenceItems = [
     {
       icon: CornerDownLeft,
@@ -131,7 +147,7 @@ export default function UserDropdownMenu() {
     {
       icon: Palette,
       label: "Theme",
-      onClick: () => setThemeModalOpen(true),
+      onClick: handleThemeClick,
     },
     "separator",
     {
@@ -236,7 +252,7 @@ export default function UserDropdownMenu() {
 
       <ThemeSettingsModal
         open={themeModalOpen}
-        onClose={() => setThemeModalOpen(false)}
+        setThemeModalOpen={setThemeModalOpen}
       />
     </>
   );

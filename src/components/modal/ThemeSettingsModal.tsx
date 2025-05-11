@@ -8,7 +8,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { useUser } from "@/context/UserContext";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const recommendedThemes = [
   { name: "Sunset Orange", color: "255,87,34", opacity: 0.2 },
@@ -21,10 +21,10 @@ const recommendedThemes = [
 
 export function ThemeSettingsModal({
   open,
-  onClose,
+  setThemeModalOpen,
 }: {
   open: boolean;
-  onClose: () => void;
+  setThemeModalOpen: (open: boolean) => void;
 }) {
   const { user, setUserPrefsAndSave } = useUser();
   if (!user) throw new Error("User must exist.");
@@ -34,95 +34,112 @@ export function ThemeSettingsModal({
     user.preferences.themeOpacity
   );
 
+  useEffect(() => {
+    if (open) {
+      setCustomColor(user.preferences.themeColor);
+      setCustomOpacity(user.preferences.themeOpacity);
+    }
+  }, [open, user.preferences.themeColor, user.preferences.themeOpacity]);
+
   const handleApply = () => {
     setUserPrefsAndSave({
       themeColor: customColor,
       themeOpacity: customOpacity,
     });
-    onClose();
+    setThemeModalOpen(false);
+  };
+
+  const handleClose = () => {
+    setThemeModalOpen(false);
   };
 
   return (
-    <div className="z-150">
-      <Dialog open={open} onOpenChange={onClose}>
-        <DialogContent className="z-[9999] max-w-lg max-h-[80%] w-full h-full">
-          <DialogHeader>
-            <DialogTitle className="text-xl">THEME</DialogTitle>
-          </DialogHeader>
-          <div className="overflow-y-auto">
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4 items-start">
-                <div className="space-y-4">
-                  <div>
-                    <Label>Custom Color</Label>
-                    <input
-                      type="color"
-                      value={rgbToHex(customColor)}
-                      onChange={(e) => setCustomColor(hexToRgb(e.target.value))}
-                      className="w-full h-10 rounded-md cursor-pointer mt-2"
-                    />
-                  </div>
-                  <div>
-                    <Label>Opacity ({customOpacity.toFixed(2)})</Label>
-                    <Slider
-                      className="mt-2"
-                      value={[customOpacity]}
-                      min={0}
-                      max={1}
-                      step={0.01}
-                      onValueChange={([value]: [number]) =>
-                        setCustomOpacity(value)
-                      }
-                    />
-                  </div>
+    <Dialog open={open} onOpenChange={setThemeModalOpen}>
+      <DialogContent
+        className="z-[150] max-w-lg max-h-[80%] w-full h-full"
+        aria-describedby="Customize the theme color and opacity for your application."
+        style={{ pointerEvents: "auto" }}
+        onPointerDownOutside={handleClose}
+      >
+        <DialogHeader>
+          <DialogTitle className="text-xl">THEME</DialogTitle>
+        </DialogHeader>
+        <div className="overflow-y-auto">
+          <p id="theme-settings-description" className="sr-only">
+            Customize the theme color and opacity for your application.
+          </p>
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4 items-start">
+              <div className="space-y-4">
+                <div>
+                  <Label>Custom Color</Label>
+                  <input
+                    type="color"
+                    value={rgbToHex(customColor)}
+                    onChange={(e) => setCustomColor(hexToRgb(e.target.value))}
+                    className="w-full h-10 rounded-md cursor-pointer mt-2"
+                  />
                 </div>
                 <div>
-                  <Label>Preview</Label>
-                  <div
-                    className="w-full h-28 rounded-md border mt-2"
-                    style={{
-                      backgroundColor: `rgba(${customColor}, ${customOpacity})`,
-                    }}
+                  <Label>Opacity ({customOpacity.toFixed(2)})</Label>
+                  <Slider
+                    className="mt-2"
+                    value={[customOpacity]}
+                    min={0}
+                    max={1}
+                    step={0.01}
+                    onValueChange={([value]: [number]) =>
+                      setCustomOpacity(value)
+                    }
                   />
-                  <p className="text-xs text-muted-foreground mt-2">
-                    rgba({customColor}, {customOpacity.toFixed(2)})
-                  </p>
                 </div>
               </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4 my-4">
-              {recommendedThemes.map((theme) => (
-                <button
-                  key={theme.name}
-                  className="rounded-xl p-4 border hover:border-blue-500 flex flex-col items-start text-left"
+              <div>
+                <Label>Preview</Label>
+                <div
+                  className="w-full h-28 rounded-md border mt-2"
                   style={{
-                    backgroundColor: `rgba(${theme.color}, ${theme.opacity})`,
+                    backgroundColor: `rgba(${customColor}, ${customOpacity})`,
                   }}
-                  onClick={() => {
-                    setCustomColor(theme.color);
-                    setCustomOpacity(theme.opacity);
-                  }}
-                >
-                  <span className="text-sm mb-1">{theme.name}</span>
-                  <span className="text-xs text-muted-foreground">
-                    {theme.color} / {theme.opacity}
-                  </span>
-                </button>
-              ))}
+                />
+                <p className="text-xs text-muted-foreground mt-2">
+                  rgba({customColor}, {customOpacity.toFixed(2)})
+                </p>
+              </div>
             </div>
           </div>
-          <Button
-            onClick={handleApply}
-            className="w-full mt-4 "
-            style={{
-              backgroundColor: `rgba(${user.preferences.themeColor}`,
-            }}
-          >
-            SAVE
-          </Button>
-        </DialogContent>
-      </Dialog>
-    </div>
+          <div className="grid grid-cols-2 gap-4 my-4">
+            {recommendedThemes.map((theme) => (
+              <button
+                key={theme.name}
+                className="rounded-xl p-4 border hover:border-blue-500 flex flex-col items-start text-left"
+                style={{
+                  backgroundColor: `rgba(${theme.color}, ${theme.opacity})`,
+                }}
+                onClick={() => {
+                  setCustomColor(theme.color);
+                  setCustomOpacity(theme.opacity);
+                }}
+              >
+                <span className="text-sm mb-1">{theme.name}</span>
+                <span className="text-xs text-muted-foreground">
+                  {theme.color} / {theme.opacity}
+                </span>
+              </button>
+            ))}
+          </div>
+        </div>
+        <Button
+          onClick={handleApply}
+          className="w-full mt-4"
+          style={{
+            backgroundColor: `rgba(${user.preferences.themeColor})`,
+          }}
+        >
+          SAVE
+        </Button>
+      </DialogContent>
+    </Dialog>
   );
 }
 
