@@ -22,6 +22,7 @@ const providers: Provider[] = [
 if (service.env.nodeEnv === "development") providers.push(devAuthProvider);
 
 export const authOptions: AuthOptions = {
+  debug: true,
   pages: {
     signIn: "/auth/signin",
   },
