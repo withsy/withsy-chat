@@ -4,6 +4,7 @@ import { UserJwt, UserSession } from "@/types/user";
 import NextAuth, { type AuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import type { Provider } from "next-auth/providers/index";
+import { inspect } from "node:util";
 
 const providers: Provider[] = [
   GoogleProvider({
@@ -22,7 +23,29 @@ const providers: Provider[] = [
 if (service.env.nodeEnv === "development") providers.push(devAuthProvider);
 
 export const authOptions: AuthOptions = {
-  debug: true,
+  logger: {
+    debug(code, metadata) {
+      console.info(
+        "[next-auth] debug",
+        "code:",
+        code,
+        "metadata:",
+        inspect(metadata, { depth: null })
+      );
+    },
+    error(code, metadata) {
+      console.info(
+        "[next-auth] error",
+        "code:",
+        code,
+        "metadata:",
+        inspect(metadata, { depth: null })
+      );
+    },
+    warn(code) {
+      console.info("[next-auth] warn", "code:", code);
+    },
+  },
   pages: {
     signIn: "/auth/signin",
   },
