@@ -224,3 +224,22 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+/* globals.css */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent; /* 스크롤 트랙 배경 */
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2); /* 스크롤 바 색상 */
+  border-radius: 4px;
+}
+
+/* Firefox */
+* {
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+}
