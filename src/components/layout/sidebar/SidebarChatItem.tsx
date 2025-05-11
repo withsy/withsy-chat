@@ -89,6 +89,11 @@ export function SidebarChatItem({
         setCollapsed(true);
       }
       setOpenDrawer(null);
+      queryClient.invalidateQueries(
+        trpc.message.list.queryFilter({
+          options: { scope: { by: "chat", chatId: chat.id } },
+        })
+      );
       router.push(`/chat/${chat.id}`);
     }
   };
