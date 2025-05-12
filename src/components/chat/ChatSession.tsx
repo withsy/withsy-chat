@@ -93,10 +93,11 @@ export function ChatSession({ initialMessages, children }: Props) {
   );
 
   useEffect(() => {
+    const collapseStatus = initialMessages.length > 2;
     setMessages(
       initialMessages.map((msg) => ({
         ...msg,
-        isMessageCollapsed: true,
+        isMessageCollapsed: collapseStatus,
       }))
     );
     const lastMessage = initialMessages.at(-1);
