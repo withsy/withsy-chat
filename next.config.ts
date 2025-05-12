@@ -14,6 +14,7 @@ const nextConfig: NextConfig = {
     ],
   },
   cleanDistDir: true,
+  output: "export",
 };
 
 export default nextConfig;

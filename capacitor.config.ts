@@ -4,7 +4,7 @@ import type { CapacitorConfig } from "@capacitor/cli";
 const config: CapacitorConfig = {
   appId: "chat.withsy.app",
   appName: "Withsy",
-  webDir: "dist",
+  webDir: "out",
   server: {
     url: "https://withsy.chat",
     cleartext: true,
