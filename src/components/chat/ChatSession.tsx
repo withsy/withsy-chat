@@ -42,12 +42,7 @@ export function ChatSession({ initialMessages, children }: Props) {
   const { selectedModel } = useSelectedModelStore();
   const { user } = useUser();
 
-  const [messages, setMessages] = useState(
-    initialMessages.map((msg) => ({
-      ...msg,
-      isMessageCollapsed: true,
-    }))
-  );
+  const [messages, setMessages] = useState<MessageData[]>([]);
   const [streamMessageId, setStreamMessageId] = useState<string | null>(null);
   const [shouldFocusInput, setShouldFocusInput] = useState(false);
   const [usageLimits, setUsageLimits] = useState<UserUsageLimitData[]>([]);
