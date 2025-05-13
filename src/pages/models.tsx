@@ -34,6 +34,7 @@ function ModelsPage({ csrfToken, user }: Props) {
   const MODELS = Model.options;
 
   useEffect(() => {
+    console.log("@ csrfToken", csrfToken);
     if (csrfToken) setTrpcCsrfToken(csrfToken);
   }, [csrfToken]);
 
