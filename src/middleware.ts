@@ -27,7 +27,6 @@ export const middleware = async (request: NextRequest) => {
 };
 
 export const config = {
-  runtime: "nodejs",
   matcher: [
     "/((?!api/auth|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)",
   ],
