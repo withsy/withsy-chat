@@ -6,6 +6,7 @@
     "build": "npm run build:prisma && npm run build:next",
     "build:next": "next build",
     "build:prisma": "prisma generate",
+    "cli": "tsx src/server/cli.ts",
     "db:migrate": "npm run db:migrate:core && npm run db:migrate:worker",
     "db:migrate:core": "prisma migrate deploy",
     "db:migrate:worker": "dotenv -- tsx scripts/migrate-worker.ts",
@@ -15,8 +16,7 @@
     "dev": "TZ=UTC next dev --turbopack",
     "lint": "next lint",
     "start": "TZ=UTC next start",
-    "typecheck": "tsc",
-    "cli": "tsx src/server/cli.ts"
+    "typecheck": "tsc"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "3.804.0",
@@ -115,8 +115,7 @@
     "tsx": "4.19.4",
     "type-fest": "4.41.0",
     "typescript": "5",
-    "typescript-eslint": "8.32.0",
-    "vercel": "41.7.4"
+    "typescript-eslint": "8.32.0"
   },
   "engines": {
     "node": "22.x"
