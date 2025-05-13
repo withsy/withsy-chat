@@ -2,12 +2,9 @@ import { Readable } from "node:stream";
 import type { ServiceRegistry } from "../service-registry";
 
 export class AiProfileStorageService {
-  private bucketName: string;
+  private bucketName = "ai-profiles";
 
-  constructor(private readonly service: ServiceRegistry) {
-    const suffix = service.env.nodeEnv === "production" ? "prod" : "dev";
-    this.bucketName = `withdy-chat-ai-profiles-${suffix}`;
-  }
+  constructor(private readonly service: ServiceRegistry) {}
 
   /**
    * Must consume the result stream.
