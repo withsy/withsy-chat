@@ -5,13 +5,14 @@ import { PromptCard } from "@/components/prompts/PromptCard";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@/context/UserContext";
 import { setTrpcCsrfToken, useTRPC } from "@/lib/trpc";
-import { getCsrfToken, getUser } from "@/server/utils";
+import { getUser } from "@/server/utils";
 import { useChatStore } from "@/stores/useChatStore";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 import type { UserData } from "@/types/user";
 import type { UserPromptData } from "@/types/user-prompt";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import type { GetServerSideProps } from "next";
+import { getCsrfToken } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { v4 as uuid } from "uuid";
 
@@ -24,7 +25,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({
   req,
   res,
 }) => {
-  const csrfToken = getCsrfToken(res);
+  const csrfToken = (await getCsrfToken({ req })) ?? "";
   const user = await getUser({ req, res });
   return { props: { csrfToken, user } };
 };

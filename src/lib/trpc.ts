@@ -31,7 +31,7 @@ const commonLinkOptions = {
   headers: () => {
     if (csrfToken) {
       return {
-        "X-CSRF-Token": csrfToken,
+        "X-Csrf-Token": csrfToken,
       };
     }
 

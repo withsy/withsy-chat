@@ -2,9 +2,10 @@ import ChatView from "@/components/chat/ChatView";
 import { PartialError } from "@/components/Error";
 import { useUser } from "@/context/UserContext";
 import { setTrpcCsrfToken } from "@/lib/trpc";
-import { getCsrfToken, getUser } from "@/server/utils";
+import { getUser } from "@/server/utils";
 import type { UserData } from "@/types/user";
 import type { GetServerSideProps } from "next";
+import { getCsrfToken } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 
@@ -17,7 +18,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({
   req,
   res,
 }) => {
-  const csrfToken = getCsrfToken(res);
+  const csrfToken = (await getCsrfToken({ req })) ?? "";
   const user = await getUser({ req, res });
   return { props: { csrfToken, user } };
 };

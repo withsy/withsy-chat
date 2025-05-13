@@ -40,5 +40,21 @@ export async function createServerContext(input: {
       getReasonPhrase(StatusCodes.UNAUTHORIZED)
     );
 
+  if (
+    req.method === "POST" ||
+    req.method === "PUT" ||
+    req.method === "DELETE" ||
+    req.method === "PATCH"
+  ) {
+    const csrfToken = req.headers["x-csrf-token"];
+    if (typeof csrfToken !== "string")
+      throw new HttpServerError(
+        StatusCodes.FORBIDDEN,
+        getReasonPhrase(StatusCodes.FORBIDDEN)
+      );
+
+    service.nextAuthCsrf.validateCsrfTokenWithReq({ csrfToken, req });
+  }
+
   return { service, userId };
 }

@@ -212,7 +212,7 @@ async function updateAiProfile(input: { form: FormData; csrfToken: string }) {
     body: form,
     headers: {
       "Idempotency-Key": uuid(),
-      "X-CSRF-Token": csrfToken,
+      "X-Csrf-Token": csrfToken,
     },
   });
 
