@@ -47,9 +47,3 @@ next-env.d.ts
 
 # vscode
 /.vscode/
-
-# Elastic Beanstalk Files
-.elasticbeanstalk/*
-!.elasticbeanstalk/*.cfg.yml
-!.elasticbeanstalk/*.global.yml
-!.elasticbeanstalk/config.yml

@@ -4,12 +4,13 @@ import { PartialLoading } from "@/components/Loading";
 import ModelCard from "@/components/models/ModelCard";
 import { useUser } from "@/context/UserContext";
 import { setTrpcCsrfToken } from "@/lib/trpc";
-import { getCsrfToken, getUser } from "@/server/utils";
+import { getUser } from "@/server/utils";
 import { useAiProfileStore } from "@/stores/useAiProfileStore";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 import { Model } from "@/types/model";
 import type { UserData } from "@/types/user";
 import type { GetServerSideProps } from "next";
+import { getCsrfToken } from "next-auth/react";
 import { useEffect } from "react";
 
 type Props = {
@@ -21,7 +22,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({
   req,
   res,
 }) => {
-  const csrfToken = getCsrfToken(res);
+  const csrfToken = (await getCsrfToken({ req })) ?? "";
   const user = await getUser({ req, res });
   return { props: { csrfToken, user } };
 };

@@ -14,6 +14,7 @@ import { MessageService } from "./services/message";
 import { MessageChunkService } from "./services/message-chunk";
 import { MessageReplyService } from "./services/message-reply";
 import { ModelRouteService } from "./services/model-route";
+import { NextAuthCsrfService } from "./services/next-auth-csrf";
 import { OpenAiService } from "./services/open-ai";
 import { createPgPool } from "./services/pg";
 import { S3Service } from "./services/s3";
@@ -52,6 +53,7 @@ type ServiceDefinition = {
   encryption: EncryptionService;
   s3: S3Service;
   aiProfileStorage: AiProfileStorageService;
+  nextAuthCsrf: NextAuthCsrfService;
 };
 
 export type ServiceRegistry = LazyObject<ServiceDefinition>;
@@ -83,6 +85,7 @@ function createServiceRegistry() {
     encryption: (s) => new EncryptionService(s),
     s3: (s) => new S3Service(s),
     aiProfileStorage: (s) => new AiProfileStorageService(s),
+    nextAuthCsrf: (s) => new NextAuthCsrfService(s),
   });
 }
 
