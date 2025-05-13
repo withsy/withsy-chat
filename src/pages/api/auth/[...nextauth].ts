@@ -1,7 +1,7 @@
 import { devAuthProvider } from "@/server/dev-auth-provider";
 import { service } from "@/server/service-registry";
 import { UserJwt, UserSession } from "@/types/user";
-import NextAuth, { type AuthOptions } from "next-auth";
+import NextAuth, { type AuthOptions, type LoggerInstance } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import type { Provider } from "next-auth/providers/index";
 import { inspect } from "node:util";
@@ -22,30 +22,32 @@ const providers: Provider[] = [
 
 if (service.env.nodeEnv === "development") providers.push(devAuthProvider);
 
-export const authOptions: AuthOptions = {
-  logger: {
-    debug(code, metadata) {
-      console.info(
-        "[next-auth] debug",
-        "code:",
-        code,
-        "metadata:",
-        inspect(metadata, { depth: null })
-      );
-    },
-    error(code, metadata) {
-      console.info(
-        "[next-auth] error",
-        "code:",
-        code,
-        "metadata:",
-        inspect(metadata, { depth: null })
-      );
-    },
-    warn(code) {
-      console.info("[next-auth] warn", "code:", code);
-    },
+const logger: LoggerInstance = {
+  debug(code, metadata) {
+    console.info(
+      "[next-auth] debug",
+      "code:",
+      code,
+      "metadata:",
+      inspect(metadata, { depth: null })
+    );
   },
+  error(code, metadata) {
+    console.info(
+      "[next-auth] error",
+      "code:",
+      code,
+      "metadata:",
+      inspect(metadata, { depth: null })
+    );
+  },
+  warn(code) {
+    console.info("[next-auth] warn", "code:", code);
+  },
+};
+
+export const authOptions: AuthOptions = {
+  logger: service.env.nodeEnv === "production" ? undefined : logger,
   pages: {
     signIn: "/auth/signin",
   },
