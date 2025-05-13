@@ -1,7 +1,11 @@
-name: Deploy to AWS EB
+name: Deploy Production to Vercel
 
 on:
   workflow_dispatch:
+
+env:
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
 jobs:
   deploy:
@@ -20,34 +24,20 @@ jobs:
         with:
           node-version: "22"
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.13"
+      - name: Install dependencies
+        run: npm install
 
-      - name: Install EB CLI
-        run: |
-          pip install awsebcli==3.23.3
-          eb --version
+      - name: Pull Vercel Environment Information
+        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: arn:aws:iam::003342497027:role/github-withsy-chat-deploy
           aws-region: us-east-2
+          
+      - name: Build Project Artifacts
+        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
 
-      - name: Get Dotenv Contents
-        run: |
-          VALUE=$(aws ssm get-parameter --name withsy-chat-prod --with-decryption --region us-east-2 --query "Parameter.Value" --output text)
-          echo "$VALUE" >> .env
-          cat .env | cut -c 1
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build
-        run: npm run build
-
-      - name: Deploy to EB
-        run: |
-          eb deploy withsy-chat-env --label "version-${{ github.sha }}" --timeout 20
+      - name: Deploy Project Artifacts to Vercel
+        run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
