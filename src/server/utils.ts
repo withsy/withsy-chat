@@ -22,6 +22,7 @@ export function getHardDeleteCutoffDate(now: Date) {
 
 export function getCsrfToken(res: ServerResponse) {
   const csrfToken = res.getHeader("x-csrf-token");
+  console.log("@ x-csrf-token", csrfToken);
   if (typeof csrfToken !== "string") return "";
   return csrfToken;
 }
