@@ -1,10 +1,9 @@
 import { createCsrfProtect, CsrfError } from "@edge-csrf/nextjs";
 import { NextResponse, type NextRequest } from "next/server";
-import { service } from "./server/service-registry";
 
 const csrfProtect = createCsrfProtect({
   cookie: {
-    secure: service.env.nodeEnv === "production",
+    secure: process.env.NODE_ENV === "production",
   },
 });
 
