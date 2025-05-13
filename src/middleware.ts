@@ -12,6 +12,10 @@ export const middleware = async (request: NextRequest) => {
 
   try {
     await csrfProtect(request, response);
+    console.log(
+      "CSRF Token set in middleware:",
+      response.headers.get("x-csrf-token")
+    );
   } catch (e) {
     if (e instanceof CsrfError)
       return new NextResponse("invalid csrf token", { status: 403 });
