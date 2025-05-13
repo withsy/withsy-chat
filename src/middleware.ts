@@ -1,9 +1,10 @@
 import { createCsrfProtect, CsrfError } from "@edge-csrf/nextjs";
 import { NextResponse, type NextRequest } from "next/server";
+import { service } from "./server/service-registry";
 
 const csrfProtect = createCsrfProtect({
   cookie: {
-    secure: process.env.NODE_ENV === "production",
+    secure: service.env.nodeEnv === "production",
   },
 });
 
@@ -26,6 +27,7 @@ export const middleware = async (request: NextRequest) => {
 };
 
 export const config = {
+  runtime: "nodejs",
   matcher: [
     "/((?!api/auth|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)",
   ],
