@@ -33,7 +33,7 @@ function createAuthOptions(): AuthOptions {
     },
   });
 
-  if (service.env.nodeEnv === "development") providers.push(devAuthProvider);
+  if (service.env.nodeEnv !== "production") providers.push(devAuthProvider);
 
   const authOptions: AuthOptions = {
     pages: {
@@ -83,7 +83,7 @@ function createAuthOptions(): AuthOptions {
     },
   };
 
-  const logger: LoggerInstance = {
+  const devLogger: LoggerInstance = {
     debug(code, metadata) {
       console.info(
         "[next-auth] debug",
@@ -107,7 +107,7 @@ function createAuthOptions(): AuthOptions {
     },
   };
 
-  if (service.env.nodeEnv !== "production") authOptions.logger = logger;
+  if (service.env.nodeEnv !== "production") authOptions.logger = devLogger;
 
   return authOptions;
 }
