@@ -6,9 +6,7 @@ import GoogleProvider from "next-auth/providers/google";
 import type { Provider } from "next-auth/providers/index";
 import { inspect } from "node:util";
 
-let _authOptions: AuthOptions | null = null;
-
-function initAuthOptions() {
+function createAuthOptions(): AuthOptions {
   const providers: Provider[] = [
     GoogleProvider({
       clientId: service.env.googleClientId,
@@ -37,32 +35,7 @@ function initAuthOptions() {
 
   if (service.env.nodeEnv === "development") providers.push(devAuthProvider);
 
-  const logger: LoggerInstance = {
-    debug(code, metadata) {
-      console.info(
-        "[next-auth] debug",
-        "code:",
-        code,
-        "metadata:",
-        inspect(metadata, { depth: null })
-      );
-    },
-    error(code, metadata) {
-      console.info(
-        "[next-auth] error",
-        "code:",
-        code,
-        "metadata:",
-        inspect(metadata, { depth: null })
-      );
-    },
-    warn(code) {
-      console.info("[next-auth] warn", "code:", code);
-    },
-  };
-
-  _authOptions = {
-    logger: service.env.nodeEnv === "production" ? undefined : logger,
+  const authOptions: AuthOptions = {
     pages: {
       signIn: "/auth/signin",
     },
@@ -109,10 +82,39 @@ function initAuthOptions() {
       },
     },
   };
+
+  const logger: LoggerInstance = {
+    debug(code, metadata) {
+      console.info(
+        "[next-auth] debug",
+        "code:",
+        code,
+        "metadata:",
+        inspect(metadata, { depth: null })
+      );
+    },
+    error(code, metadata) {
+      console.info(
+        "[next-auth] error",
+        "code:",
+        code,
+        "metadata:",
+        inspect(metadata, { depth: null })
+      );
+    },
+    warn(code) {
+      console.info("[next-auth] warn", "code:", code);
+    },
+  };
+
+  if (service.env.nodeEnv !== "production") authOptions.logger = logger;
+
+  return authOptions;
 }
 
+let _authOptions: AuthOptions | null = null;
+
 export function getAuthOptions(): AuthOptions {
-  if (!_authOptions) initAuthOptions();
-  if (!_authOptions) throw new Error("Uninitialized auth options.");
+  if (!_authOptions) _authOptions = createAuthOptions();
   return _authOptions;
 }
