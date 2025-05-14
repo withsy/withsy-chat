@@ -8,6 +8,7 @@ env:
   REGION: us-central1
   SERVICE: withsy-chat
   WORKLOAD_IDENTITY_PROVIDER: "${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}"
+  DOCKER_TAG: "${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/withsy-chat/${{ env.SERVICE }}:${{ github.sha }}"
 
 jobs:
   deploy:
@@ -43,16 +44,15 @@ jobs:
       - name: Build and Push Container
         run: |-
           gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://us-central1-docker.pkg.dev
-          DOCKER_TAG="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/withsy-chat/${{ env.SERVICE }}:${{ github.sha }}"
-          docker build --tag "${DOCKER_TAG}" --secret id=DOTENV_CONTENTS,src=.env -f prod/Dockerfile .
-          docker push "${DOCKER_TAG}"
+          docker build --tag "${{ env.DOCKER_TAG }}" --secret id=DOTENV_CONTENTS,src=.env -f prod/Dockerfile .
+          docker push "${{ env.DOCKER_TAG }}"
 
       - name: Deploy to Cloud Run
         uses: google-github-actions/deploy-cloudrun@v2
         with:
           service: "${{ env.SERVICE }}"
           region: "${{ env.REGION }}"
-          image: "${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/withsy/${{ env.SERVICE }}:${{ github.sha }}"
+          image: "${{ env.DOCKER_TAG }}"
 
       - name: Show output
         run: |2-
