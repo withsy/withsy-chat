@@ -28,19 +28,19 @@ jobs:
           workload_identity_provider: "${{ env.WORKLOAD_IDENTITY_PROVIDER }}"
           project_id: "${{ env.PROJECT_ID }}"
 
-      - id: "secrets"
-        name: "Fetch Secrets from Secret Manager"
-        uses: "google-github-actions/get-secretmanager-secrets@v2"
+      - id: secrets
+        name: Fetch Secrets from Secret Manager
+        uses: google-github-actions/get-secretmanager-secrets@v2
         with:
           secrets: |-
             DOTENV_CONTENTS:projects/101289463905/secrets/DOTENV_CONTENTS
 
-      - name: "Create .env file"
+      - name: Create .env file
         run: |
           echo "${{ steps.secrets.outputs.DOTENV_CONTENTS }}" > .env
           cat .env | cut -c 1
 
-      - name: "Build and Push Container"
+      - name: Build and Push Container
         run: |-
           gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://us-central1-docker.pkg.dev
           DOCKER_TAG="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/withsy/${{ env.SERVICE }}:${{ github.sha }}"
@@ -54,6 +54,6 @@ jobs:
           region: "${{ env.REGION }}"
           image: "${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/withsy/${{ env.SERVICE }}:${{ github.sha }}"
 
-      - name: "Show output"
+      - name: Show output
         run: |2-
           echo ${{ steps.deploy.outputs.url }}
