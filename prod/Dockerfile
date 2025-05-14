@@ -5,7 +5,10 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 COPY . .
-RUN npm run build
+RUN --mount=type=secret,id=DOTENV_CONTENTS \
+    DOTENV_CONTENTS=$(cat /run/secrets/DOTENV_CONTENTS) \
+    npx tsx prod/dotenv.mts \
+    npm run build
 
 FROM base AS prod_deps
 WORKDIR /app
@@ -22,4 +25,4 @@ COPY --from=builder /app/package.json ./
 COPY --from=builder /app/next.config.ts ./
 COPY --from=builder /app/prod ./prod
 EXPOSE 3000
-CMD ["node", "--experimental-transform-types", "--disable-warning=ExperimentalWarning", "prod/run.mts", "npm", "start"]
+CMD ["npx", "tsx", "prod/dotenv.mts", "npm", "run", "start"]

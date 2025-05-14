@@ -44,7 +44,7 @@ jobs:
         run: |-
           gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://us-central1-docker.pkg.dev
           DOCKER_TAG="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/withsy/${{ env.SERVICE }}:${{ github.sha }}"
-          docker build --tag "${DOCKER_TAG}" -f prod/Dockerfile .
+          docker build --tag "${DOCKER_TAG}" --secret id=DOTENV_CONTENTS,src=.env -f prod/Dockerfile .
           docker push "${DOCKER_TAG}"
 
       - name: Deploy to Cloud Run
