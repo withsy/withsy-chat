@@ -1,7 +1,9 @@
+import { service } from "@/server/service-registry";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(_: NextApiRequest, res: NextApiResponse) {
-  // NOTE: Since the AWS service checks the server status with this endpoint,
-  // you should not change the /api/healthz path.
+  // NOTE: This is an endpoint called to check start up during deployment.
+  // Please do not change the API path.
+  await service.task.waitUntilStart();
   return res.status(200).send("ok");
 }

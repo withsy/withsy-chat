@@ -41,6 +41,10 @@ export class TaskService {
     })();
   }
 
+  async waitUntilStart() {
+    await this.runner;
+  }
+
   async add<K extends TaskKey>(key: K, input: TaskInput<K>) {
     const runner = await this.runner;
     await runner.addJob(key, input as any);
