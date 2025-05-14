@@ -38,7 +38,6 @@ jobs:
       - name: Create .env file
         run: |
           echo "${{ steps.secrets.outputs.DOTENV_CONTENTS }}" > .env
-          cat .env | cut -c 1
 
       - id: build
         name: Build docker image
