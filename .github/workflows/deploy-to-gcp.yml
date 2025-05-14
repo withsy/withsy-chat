@@ -43,7 +43,7 @@ jobs:
 
       - name: Build and Push Container
         run: |-
-          gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://us-central1-docker.pkg.dev
+          gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin "https://${{ env.REGION }}-docker.pkg.dev"
           docker build --tag "${{ env.DOCKER_TAG }}" --secret id=DOTENV_CONTENTS,src=.env -f prod/Dockerfile .
           docker push "${{ env.DOCKER_TAG }}"
 
