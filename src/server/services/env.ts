@@ -14,6 +14,7 @@ export const EnvService = z.object({
   encryptionKey: z.string().min(1),
   s3AccessKeyId: z.string().min(1),
   s3SecretAccessKey: z.string().min(1),
+  rdsCaCert: z.optional(z.string().min(1)),
 });
 export type EnvService = zInfer<typeof EnvService>;
 
@@ -31,6 +32,7 @@ export function loadEnvService() {
       encryptionKey: process.env.ENCRYPTION_KEY,
       s3AccessKeyId: process.env.S3_ACCESS_KEY_ID,
       s3SecretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
+      rdsCaCert: process.env.RDS_CA_CERT,
     });
     return envService;
   } catch (e) {

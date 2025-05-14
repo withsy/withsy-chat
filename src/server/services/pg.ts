@@ -1,17 +1,23 @@
 import type { PgEventInput, PgEventKey, PgEventSchema } from "@/types/task";
 import type { MaybePromise } from "@trpc/server/unstable-core-do-not-import";
+import type { ConnectionOptions } from "node:tls";
 import { type Notification, Pool } from "pg";
 import type { ServiceRegistry } from "../service-registry";
 
 export function createPgPool(s: ServiceRegistry): Pool {
+  let ssl: ConnectionOptions | undefined = undefined;
+
+  if (s.env.nodeEnv === "production") {
+    if (!s.env.rdsCaCert) throw new Error("Please set RDS_CA_CERT env var.");
+    ssl = {
+      rejectUnauthorized: true,
+      ca: [s.env.rdsCaCert],
+    };
+  }
+
   const pool = new Pool({
     connectionString: s.env.databaseUrl,
-    ssl:
-      s.env.nodeEnv === "production"
-        ? {
-            rejectUnauthorized: false,
-          }
-        : undefined,
+    ssl,
   });
 
   const onError = (e: unknown) => {
