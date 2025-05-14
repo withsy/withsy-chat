@@ -1,4 +1,12 @@
 steps:
+  - id: Debug Env Vars
+    name: ubuntu
+    entrypoint: bash
+    args:
+      - -c
+      - printenv
+    secretEnv:
+      - NEXTAUTH_URL
   - id: Buildpack
     name: gcr.io/k8s-skaffold/pack
     entrypoint: pack
