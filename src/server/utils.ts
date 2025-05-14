@@ -1,9 +1,9 @@
-import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import { UserData, UserSession } from "@/types/user";
 import { subDays } from "date-fns";
 import { getServerSession } from "next-auth";
 import type { NextApiRequestCookies } from "next/dist/server/api-utils";
 import type { IncomingMessage, ServerResponse } from "node:http";
+import { getAuthOptions } from "./auth";
 import { service } from "./service-registry";
 
 export function isValidTimezone(timezone: string): boolean {
@@ -27,7 +27,7 @@ export async function getUser(input: {
   res: ServerResponse<IncomingMessage>;
 }) {
   const { req, res } = input;
-  const session = await getServerSession(req, res, authOptions);
+  const session = await getServerSession(req, res, getAuthOptions());
   let user: UserData | null = null;
   if (session) {
     const userSession = UserSession.parse(session);

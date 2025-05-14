@@ -1,10 +1,10 @@
-import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import type { UserId } from "@/types/id";
 import { UserJwt, UserSession } from "@/types/user";
 import { getReasonPhrase, StatusCodes } from "http-status-codes";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth";
 import { getToken } from "next-auth/jwt";
+import { getAuthOptions } from "./auth";
 import { HttpServerError } from "./error";
 import { service, type ServiceRegistry } from "./service-registry";
 
@@ -20,7 +20,7 @@ export async function createServerContext(input: {
   const { req, res } = input;
 
   let userId = "";
-  const session = await getServerSession(req, res, authOptions);
+  const session = await getServerSession(req, res, getAuthOptions());
   if (session) {
     const userSession = UserSession.parse(session);
     userId = userSession.user.id;
