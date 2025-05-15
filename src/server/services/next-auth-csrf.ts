@@ -6,10 +6,9 @@ export class NextAuthCsrfService {
   private cookieName: string;
 
   constructor(private readonly service: ServiceRegistry) {
-    const url = new URL(this.service.env.nextauthUrl);
-    this.cookieName = `${
-      url.protocol === "https:" ? "__Host-" : ""
-    }next-auth.csrf-token`;
+    const url = new URL(service.env.nextauthUrl);
+    const prefix = url.protocol === "https:" ? "__Host-" : "";
+    this.cookieName = `${prefix}next-auth.csrf-token`;
   }
 
   createCsrfTokenHash(csrfToken: string): string {
