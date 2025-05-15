@@ -89,4 +89,9 @@ function createServiceRegistry() {
   });
 }
 
-export const service = createServiceRegistry();
+let service: ServiceRegistry | null = null;
+
+export function getService(): ServiceRegistry {
+  if (!service) service = createServiceRegistry();
+  return service;
+}

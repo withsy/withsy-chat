@@ -1,4 +1,4 @@
-import { service } from "@/server/service-registry";
+import { getService } from "@/server/service-registry";
 import { UserJwt, UserSession } from "@/types/user";
 import { type AuthOptions, type LoggerInstance } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
@@ -9,8 +9,8 @@ import { inspect } from "node:util";
 function createAuthOptions(): AuthOptions {
   const providers: Provider[] = [
     GoogleProvider({
-      clientId: service.env.googleClientId,
-      clientSecret: service.env.googleClientSecret,
+      clientId: getService().env.googleClientId,
+      clientSecret: getService().env.googleClientSecret,
       authorization: {
         params: {
           prompt: "consent",
@@ -33,7 +33,8 @@ function createAuthOptions(): AuthOptions {
     },
   });
 
-  if (service.env.nodeEnv !== "production") providers.push(devAuthProvider);
+  if (getService().env.nodeEnv !== "production")
+    providers.push(devAuthProvider);
 
   const authOptions: AuthOptions = {
     pages: {
@@ -58,7 +59,7 @@ function createAuthOptions(): AuthOptions {
           imageUrl = Reflect.get(profile, "picture");
         }
 
-        const { userId } = await service.userLinkAccount.ensure({
+        const { userId } = await getService().userLinkAccount.ensure({
           provider,
           providerAccountId,
           refreshToken: refresh_token,
@@ -107,14 +108,14 @@ function createAuthOptions(): AuthOptions {
     },
   };
 
-  if (service.env.nodeEnv !== "production") authOptions.logger = devLogger;
+  if (getService().env.nodeEnv !== "production") authOptions.logger = devLogger;
 
   return authOptions;
 }
 
-let _authOptions: AuthOptions | null = null;
+let authOptions: AuthOptions | null = null;
 
 export function getAuthOptions(): AuthOptions {
-  if (!_authOptions) _authOptions = createAuthOptions();
-  return _authOptions;
+  if (!authOptions) authOptions = createAuthOptions();
+  return authOptions;
 }
