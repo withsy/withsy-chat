@@ -8,7 +8,7 @@ export class GoogleGenAiService {
   private ai: GoogleGenAI;
 
   constructor(private readonly service: ServiceRegistry) {
-    this.ai = new GoogleGenAI({ apiKey: service.env.geminiApiKey });
+    this.ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
   }
 
   async sendMessageToAi(input: SendMessageToAiInput) {
@@ -19,7 +19,7 @@ export class GoogleGenAiService {
       parts: [{ text: x.text }],
     }));
 
-    if (this.service.env.nodeEnv === "development")
+    if (process.env.NODE_ENV === "development")
       console.log(
         "GoogleGenAiService.sendMessageToAi. model:",
         model,

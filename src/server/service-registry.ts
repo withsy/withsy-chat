@@ -6,7 +6,7 @@ import { ChatBranchService } from "./services/chat-branch";
 import { ChatPromptService } from "./services/chat-prompt";
 import { createDb, type Db } from "./services/db";
 import { EncryptionService } from "./services/encryption";
-import { loadEnvService, type EnvService } from "./services/env";
+import { EnvValidationService } from "./services/env-validation";
 import { GoogleGenAiService } from "./services/google-gen-ai";
 import { GratitudeJournalService } from "./services/gratitude-journal";
 import { IdempotencyInfoService } from "./services/idempotency-info";
@@ -28,7 +28,7 @@ import { UserUsageLimitService } from "./services/user-usage-limit";
 import { XAiService } from "./services/x-ai";
 
 type ServiceDefinition = {
-  env: EnvService;
+  envValidation: EnvValidationService;
   pgPool: Pool;
   db: Db;
   user: UserService;
@@ -60,7 +60,7 @@ export type ServiceRegistry = LazyObject<ServiceDefinition>;
 
 function createServiceRegistry() {
   return createLazyObject<ServiceDefinition>({
-    env: () => loadEnvService(),
+    envValidation: (s) => new EnvValidationService(s),
     pgPool: (s) => createPgPool(s),
     db: (s) => createDb(s),
     user: (s) => new UserService(s),

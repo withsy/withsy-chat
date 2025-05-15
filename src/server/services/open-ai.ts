@@ -69,7 +69,7 @@ export class OpenAiService {
       messages.push({ role: "system", content: promptText });
     messages.push(...histories);
 
-    if (service.env.nodeEnv !== "production")
+    if (process.env.NODE_ENV !== "production")
       console.log(
         "OpenAiService.sendMessageToAi. model:",
         model,

@@ -4,19 +4,20 @@ import type { ConnectionOptions } from "node:tls";
 import { type Notification, Pool } from "pg";
 import type { ServiceRegistry } from "../service-registry";
 
-export function createPgPool(s: ServiceRegistry): Pool {
+export function createPgPool(_s: ServiceRegistry): Pool {
   let ssl: ConnectionOptions | undefined = undefined;
 
-  if (s.env.nodeEnv === "production") {
-    if (!s.env.rdsCaCert) throw new Error("Please set RDS_CA_CERT env var.");
+  if (process.env.NODE_ENV === "production") {
+    if (!process.env.RDS_CA_CERT)
+      throw new Error("Please set RDS_CA_CERT env var.");
     ssl = {
       rejectUnauthorized: true,
-      ca: [s.env.rdsCaCert],
+      ca: [process.env.RDS_CA_CERT],
     };
   }
 
   const pool = new Pool({
-    connectionString: s.env.databaseUrl,
+    connectionString: process.env.DATABASE_URL,
     ssl,
   });
 

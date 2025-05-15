@@ -11,7 +11,7 @@ export const encryptionRouter = t.router({
     )
     .output(z.string())
     .query((opts) => {
-      if (opts.ctx.service.env.nodeEnv === "production")
+      if (process.env.NODE_ENV === "production")
         throw new TRPCError({ code: "SERVICE_UNAVAILABLE" });
       return opts.ctx.service.encryption.decrypt(opts.input.payloadEncoded);
     }),
@@ -23,7 +23,7 @@ export const encryptionRouter = t.router({
     )
     .output(z.string())
     .query((opts) => {
-      if (opts.ctx.service.env.nodeEnv === "production")
+      if (process.env.NODE_ENV === "production")
         throw new TRPCError({ code: "SERVICE_UNAVAILABLE" });
       return opts.ctx.service.encryption.encrypt(opts.input.text);
     }),

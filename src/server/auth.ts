@@ -9,8 +9,8 @@ import { inspect } from "node:util";
 function createAuthOptions(): AuthOptions {
   const providers: Provider[] = [
     GoogleProvider({
-      clientId: getService().env.googleClientId,
-      clientSecret: getService().env.googleClientSecret,
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       authorization: {
         params: {
           prompt: "consent",
@@ -33,8 +33,7 @@ function createAuthOptions(): AuthOptions {
     },
   });
 
-  if (getService().env.nodeEnv !== "production")
-    providers.push(devAuthProvider);
+  if (process.env.NODE_ENV !== "production") providers.push(devAuthProvider);
 
   const authOptions: AuthOptions = {
     pages: {
@@ -108,7 +107,7 @@ function createAuthOptions(): AuthOptions {
     },
   };
 
-  if (getService().env.nodeEnv !== "production") authOptions.logger = devLogger;
+  if (process.env.NODE_ENV !== "production") authOptions.logger = devLogger;
 
   return authOptions;
 }

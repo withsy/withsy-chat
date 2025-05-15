@@ -5,7 +5,7 @@ export class EncryptionService {
   private encryption: Encryption;
 
   constructor(private readonly service: ServiceRegistry) {
-    this.encryption = new Encryption(service.env.encryptionKey);
+    this.encryption = new Encryption(process.env.ENCRYPTION_KEY);
   }
 
   encrypt(text: string) {

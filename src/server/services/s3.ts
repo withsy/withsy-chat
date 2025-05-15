@@ -21,10 +21,10 @@ export class S3Service {
       forcePathStyle: true,
       region: "us-east-2",
       endpoint:
-        service.env.nodeEnv === "production" ? PROD_ENDPOINT : DEV_ENDPOINT,
+        process.env.NODE_ENV === "production" ? PROD_ENDPOINT : DEV_ENDPOINT,
       credentials: {
-        accessKeyId: service.env.s3AccessKeyId,
-        secretAccessKey: service.env.s3SecretAccessKey,
+        accessKeyId: process.env.S3_ACCESS_KEY_ID,
+        secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
       },
     });
   }

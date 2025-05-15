@@ -10,7 +10,7 @@ export class XAiService {
 
   constructor(private readonly service: ServiceRegistry) {
     this.openai = new OpenAI({
-      apiKey: service.env.xaiApiKey,
+      apiKey: process.env.XAI_API_KEY,
       baseURL: XAI_BASE_URL,
     });
   }
