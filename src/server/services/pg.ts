@@ -19,6 +19,7 @@ export function createPgPool(_s: ServiceRegistry): Pool {
   const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
     ssl,
+    keepAlive: true,
   });
 
   const onError = (e: unknown) => {
