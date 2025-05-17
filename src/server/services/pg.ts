@@ -11,8 +11,8 @@ export function createPgPool(_s: ServiceRegistry): Pool {
     if (!process.env.RDS_CA_CERT)
       throw new Error("Please set RDS_CA_CERT env var.");
     ssl = {
-      rejectUnauthorized: true,
-      ca: [process.env.RDS_CA_CERT],
+      rejectUnauthorized: false,
+      // ca: [process.env.RDS_CA_CERT],
     };
   }
 
