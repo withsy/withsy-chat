@@ -20,7 +20,7 @@ export function createPgPool(_s: ServiceRegistry): Pool {
     connectionString: process.env.DATABASE_URL,
     ssl,
     keepAlive: true,
-    connectionTimeoutMillis: 10000,
+    connectionTimeoutMillis: 60000,
   });
 
   const onError = (e: unknown) => {
