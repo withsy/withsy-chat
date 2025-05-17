@@ -22,7 +22,7 @@ export class TaskService {
     ];
 
     this.runner = (async () => {
-      return await run({
+      const runner = await run({
         pgPool: service.pgPool,
         taskList: Object.fromEntries(
           Object.entries(taskMap).map(([key, handler]) => {
@@ -38,6 +38,30 @@ export class TaskService {
         ) as TaskList,
         crontab: cronTasks.map(({ cron, key }) => `${cron} ${key}`).join("\n"),
       });
+
+      runner.events.on("job:error", ({ error }) => {
+        console.error("runner job:error", error);
+      });
+      runner.events.on("pool:listen:error", ({ error }) => {
+        console.error("runner pool:listen:error", error);
+      });
+      runner.events.on("worker:fatalError", ({ error }) => {
+        console.error("runner worker:fatalError", error);
+      });
+      runner.events.on("worker:getJob:error", ({ error }) => {
+        console.error("runner worker:getJob:error", error);
+      });
+      runner.events.on("pool:forcefulShutdown:error", ({ error }) => {
+        console.error("runner pool:forcefulShutdown:error", error);
+      });
+      runner.events.on("pool:gracefulShutdown:error", ({ error }) => {
+        console.error("runner pool:gracefulShutdown:error", error);
+      });
+      runner.events.on("pool:gracefulShutdown:workerError", ({ error }) => {
+        console.error("runner pool:gracefulShutdown:workerError", error);
+      });
+
+      return runner;
     })();
   }
 
