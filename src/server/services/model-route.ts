@@ -9,7 +9,6 @@ import { match } from "ts-pattern";
 import type { Simplify } from "type-fest";
 import type { ServiceRegistry } from "../service-registry";
 import { MessageService } from "./message";
-import { notify } from "./pg";
 import { UserUsageLimitService } from "./user-usage-limit";
 
 export type ValidatedModelMessage = Simplify<

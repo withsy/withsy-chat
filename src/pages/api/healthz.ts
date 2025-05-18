@@ -6,6 +6,6 @@ export default async function handler(_: NextApiRequest, res: NextApiResponse) {
   // Please do not change the API path.
   const service = getService();
   service.envValidation.validate();
-  await service.task.waitUntilStart();
+  await service.task.start();
   return res.status(200).send("ok");
 }
