@@ -25,7 +25,8 @@
     "src/**/*.ts",
     "src/**/*.tsx",
     "scripts/**/*.ts",
-    "prod/dotenv.mts"
+    "prod/**/*.ts",
+    "dev/**/*.ts"
   ],
   "exclude": ["node_modules"]
 }
