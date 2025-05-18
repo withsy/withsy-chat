@@ -17,6 +17,7 @@ import { ModelRouteService } from "./services/model-route";
 import { NextAuthCsrfService } from "./services/next-auth-csrf";
 import { OpenAiService } from "./services/open-ai";
 import { createPgPool } from "./services/pg";
+import { PubSubService } from "./services/pubsub";
 import { S3Service } from "./services/s3";
 import { TaskService } from "./services/task";
 import { UserService } from "./services/user";
@@ -54,6 +55,7 @@ type ServiceDefinition = {
   s3: S3Service;
   aiProfileStorage: AiProfileStorageService;
   nextAuthCsrf: NextAuthCsrfService;
+  pubsub: PubSubService;
 };
 
 export type ServiceRegistry = LazyObject<ServiceDefinition>;
@@ -86,6 +88,7 @@ function createServiceRegistry() {
     s3: (s) => new S3Service(s),
     aiProfileStorage: (s) => new AiProfileStorageService(s),
     nextAuthCsrf: (s) => new NextAuthCsrfService(s),
+    pubsub: (s) => new PubSubService(s),
   });
 }
 
