@@ -39,26 +39,59 @@ export class TaskService {
         crontab: cronTasks.map(({ cron, key }) => `${cron} ${key}`).join("\n"),
       });
 
-      runner.events.on("job:error", ({ error }) => {
-        console.error("runner job:error", error);
-      });
-      runner.events.on("pool:listen:error", ({ error }) => {
-        console.error("runner pool:listen:error", error);
-      });
-      runner.events.on("worker:fatalError", ({ error }) => {
-        console.error("runner worker:fatalError", error);
-      });
-      runner.events.on("worker:getJob:error", ({ error }) => {
-        console.error("runner worker:getJob:error", error);
-      });
-      runner.events.on("pool:forcefulShutdown:error", ({ error }) => {
-        console.error("runner pool:forcefulShutdown:error", error);
-      });
-      runner.events.on("pool:gracefulShutdown:error", ({ error }) => {
-        console.error("runner pool:gracefulShutdown:error", error);
-      });
-      runner.events.on("pool:gracefulShutdown:workerError", ({ error }) => {
-        console.error("runner pool:gracefulShutdown:workerError", error);
+      const createOnError =
+        (message: string) => (event: { error: unknown }) => {
+          console.error(message, event.error);
+        };
+
+      const onJobError = createOnError("job:error");
+      const onPoolListenError = createOnError("pool:listen:error");
+      const onWorkerFatalError = createOnError("worker:fatalError");
+      const onWorkerGetJobError = createOnError("worker:getJob:error");
+      const onPoolForcefulShutdownError = createOnError(
+        "pool:forcefulShutdown:error"
+      );
+      const onPoolGracefulShutdownError = createOnError(
+        "pool:gracefulShutdown:error"
+      );
+      const onPoolGracefulShutdownWorkerError = createOnError(
+        "pool:gracefulShutdown:workerError"
+      );
+
+      runner.events.on("job:error", onJobError);
+      runner.events.on("pool:listen:error", onPoolListenError);
+      runner.events.on("worker:fatalError", onWorkerFatalError);
+      runner.events.on("worker:getJob:error", onWorkerGetJobError);
+      runner.events.on(
+        "pool:forcefulShutdown:error",
+        onPoolForcefulShutdownError
+      );
+      runner.events.on(
+        "pool:gracefulShutdown:error",
+        onPoolGracefulShutdownError
+      );
+      runner.events.on(
+        "pool:gracefulShutdown:workerError",
+        onPoolGracefulShutdownWorkerError
+      );
+
+      process.on("SIGTERM", () => {
+        runner.events.off("job:error", onJobError);
+        runner.events.off("pool:listen:error", onPoolListenError);
+        runner.events.off("worker:fatalError", onWorkerFatalError);
+        runner.events.off("worker:getJob:error", onWorkerGetJobError);
+        runner.events.off(
+          "pool:forcefulShutdown:error",
+          onPoolForcefulShutdownError
+        );
+        runner.events.off(
+          "pool:gracefulShutdown:error",
+          onPoolGracefulShutdownError
+        );
+        runner.events.off(
+          "pool:gracefulShutdown:workerError",
+          onPoolGracefulShutdownWorkerError
+        );
       });
 
       return runner;
