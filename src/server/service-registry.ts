@@ -92,9 +92,8 @@ function createServiceRegistry() {
   return service;
 }
 
-let service: ServiceRegistry | null = null;
+const service = createServiceRegistry();
 
 export function getService(): ServiceRegistry {
-  if (!service) service = createServiceRegistry();
   return service;
 }

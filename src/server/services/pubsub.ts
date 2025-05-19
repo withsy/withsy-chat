@@ -56,8 +56,36 @@ export class PubSubService {
       }
     };
 
+    subscription.on("close", () => {
+      console.log(
+        "PubSub subscription close.",
+        "topic:",
+        topicName,
+        "subscription:",
+        subscriptionName
+      );
+    });
     subscription.on("error", (error) => {
-      console.error("PubSub subscription error:", error);
+      console.error(
+        "PubSub subscription error.",
+        "topic:",
+        topicName,
+        "subscription:",
+        subscriptionName,
+        "error:",
+        error
+      );
+    });
+    subscription.on("debug", (msg) => {
+      console.log(
+        "PubSub subscription debug.",
+        "topic:",
+        topicName,
+        "subscription:",
+        subscriptionName,
+        "debug message:",
+        msg
+      );
     });
     subscription.on("message", onMessage);
 
@@ -83,6 +111,13 @@ export class PubSubService {
       await close();
     };
 
+    console.log(
+      "PubSub subscribed.",
+      "topic:",
+      topicName,
+      "subscription:",
+      subscriptionName
+    );
     return unsubscribe;
   }
 }
