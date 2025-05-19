@@ -1,10 +1,21 @@
-import type { CronTask, TaskInput, TaskKey, TaskMap } from "@/types/task";
+import type { MessageId } from "@/types/id";
+import type {
+  CronTask,
+  MessageChunkCreatedInput,
+  TaskInput,
+  TaskKey,
+  TaskMap,
+} from "@/types/task";
 import type { ServiceRegistry } from "../service-registry";
 
 export class TaskService {
-  constructor(private readonly service: ServiceRegistry) {}
+  started: Promise<void>;
 
-  async start() {
+  constructor(private readonly service: ServiceRegistry) {
+    this.started = this.start();
+  }
+
+  private async start() {
     const taskMap: TaskMap = {
       model_route_send_message_to_ai: (input) =>
         this.service.modelRoute.onSendMessageToAiTask(input),
@@ -15,6 +26,7 @@ export class TaskService {
       chat_hard_delete: () => this.service.chat.onHardDeleteTask(),
       user_prompt_hard_delete: () => this.service.userPrompt.onHardDeleteTask(),
     };
+
     const cronTasks: CronTask[] = [
       { cron: "*/5 * * * *", key: "message_cleanup_zombies" },
       { cron: "0 0 * * *", key: "message_chunk_hard_delete" },
@@ -23,22 +35,44 @@ export class TaskService {
     ];
 
     for (const [key, handler] of Object.entries(taskMap)) {
-      const subscription = await this.service.pubsub.getSubscription({
+      await this.service.pubsub.subscribe({
         topicName: key,
         subscriptionName: "default",
-      });
-      subscription.on("message", async (message) => {
-        try {
-          await handler(JSON.parse(message.data.toString()));
-          message.ack();
-        } catch (_e) {
-          message.nack();
-        }
+        handler,
       });
     }
   }
 
-  async add<K extends TaskKey>(key: K, input: TaskInput<K>) {
+  async publishTask<K extends TaskKey>(key: K, input: TaskInput<K>) {
+    await this.started;
     await this.service.pubsub.publishMessage({ topicName: key, json: input });
+  }
+
+  async publishMessageChunkCreated(
+    messageId: MessageId,
+    input: MessageChunkCreatedInput
+  ) {
+    await this.started;
+    await this.service.pubsub.publishMessage({
+      topicName: this.createMessageChunkCreatedTopic(messageId),
+      json: input,
+    });
+  }
+
+  async subscribeMessageChunkCreated(input: {
+    messageId: MessageId;
+    handler: (input: MessageChunkCreatedInput) => void;
+  }) {
+    await this.started;
+    const { messageId, handler } = input;
+    return await this.service.pubsub.subscribe({
+      topicName: this.createMessageChunkCreatedTopic(messageId),
+      subscriptionName: "default",
+      handler,
+    });
+  }
+
+  createMessageChunkCreatedTopic(messageId: MessageId) {
+    return `message_chunk_created-${messageId}`;
   }
 }

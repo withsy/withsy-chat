@@ -182,7 +182,7 @@ export class ChatService {
         return { chat, userMessage, modelMessage };
       });
 
-    await this.service.task.add("model_route_send_message_to_ai", {
+    await this.service.task.publishTask("model_route_send_message_to_ai", {
       userId,
       userMessageId: userMessage.id,
       modelMessageId: modelMessage.id,

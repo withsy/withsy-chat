@@ -1,4 +1,3 @@
-import type { Pool } from "pg";
 import { createLazyObject, type LazyObject } from "./lazy-object";
 import { AiProfileStorageService } from "./services/ai-profile-storage";
 import { ChatService } from "./services/chat";
@@ -16,7 +15,6 @@ import { MessageReplyService } from "./services/message-reply";
 import { ModelRouteService } from "./services/model-route";
 import { NextAuthCsrfService } from "./services/next-auth-csrf";
 import { OpenAiService } from "./services/open-ai";
-import { createPgPool } from "./services/pg";
 import { PubSubService } from "./services/pubsub";
 import { S3Service } from "./services/s3";
 import { TaskService } from "./services/task";
@@ -30,7 +28,6 @@ import { XAiService } from "./services/x-ai";
 
 type ServiceDefinition = {
   envValidation: EnvValidationService;
-  pgPool: Pool;
   db: Db;
   user: UserService;
   userLinkAccount: UserLinkAccountService;
@@ -61,9 +58,8 @@ type ServiceDefinition = {
 export type ServiceRegistry = LazyObject<ServiceDefinition>;
 
 function createServiceRegistry() {
-  return createLazyObject<ServiceDefinition>({
+  const service = createLazyObject<ServiceDefinition>({
     envValidation: (s) => new EnvValidationService(s),
-    pgPool: (s) => createPgPool(s),
     db: (s) => createDb(s),
     user: (s) => new UserService(s),
     userLinkAccount: (s) => new UserLinkAccountService(s),
@@ -90,6 +86,10 @@ function createServiceRegistry() {
     nextAuthCsrf: (s) => new NextAuthCsrfService(s),
     pubsub: (s) => new PubSubService(s),
   });
+
+  service.envValidation.validate();
+  void service.task;
+  return service;
 }
 
 let service: ServiceRegistry | null = null;

@@ -4,18 +4,18 @@ import { z } from "zod";
 import type { ServiceRegistry } from "../service-registry";
 
 const EnvValidation = z.object({
-  nodeEnv: z.enum(["development", "production", "test"]),
-  databaseUrl: z.string().min(1),
-  geminiApiKey: z.string().min(1),
-  xaiApiKey: z.string().min(1),
-  nextauthUrl: z.string().min(1),
-  nextauthSecret: z.string().min(1),
-  googleClientId: z.string().min(1),
-  googleClientSecret: z.string().min(1),
-  encryptionKey: z.string().min(1),
-  s3AccessKeyId: z.string().min(1),
-  s3SecretAccessKey: z.string().min(1),
-  rdsCaCert: z.optional(z.string().min(1)),
+  NODE_ENV: z.enum(["development", "production", "test"]),
+  DATABASE_URL: z.string().min(1),
+  GEMINI_API_KEY: z.string().min(1),
+  XAI_API_KEY: z.string().min(1),
+  NEXTAUTH_URL: z.string().min(1),
+  NEXTAUTH_SECRET: z.string().min(1),
+  GOOGLE_CLIENT_ID: z.string().min(1),
+  GOOGLE_CLIENT_SECRET: z.string().min(1),
+  ENCRYPTION_KEY: z.string().min(1),
+  S3_ACCESS_KEY_ID: z.string().min(1),
+  S3_SECRET_ACCESS_KEY: z.string().min(1),
+  PUBSUB_EMULATOR_HOST: z.optional(z.string().min(1)),
 });
 type EnvValidation = zInfer<typeof EnvValidation>;
 
@@ -24,20 +24,7 @@ export class EnvValidationService {
 
   validate() {
     try {
-      EnvValidation.parse({
-        nodeEnv: process.env.NODE_ENV,
-        databaseUrl: process.env.DATABASE_URL,
-        geminiApiKey: process.env.GEMINI_API_KEY,
-        xaiApiKey: process.env.XAI_API_KEY,
-        nextauthUrl: process.env.NEXTAUTH_URL,
-        nextauthSecret: process.env.NEXTAUTH_SECRET,
-        googleClientId: process.env.GOOGLE_CLIENT_ID,
-        googleClientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        encryptionKey: process.env.ENCRYPTION_KEY,
-        s3AccessKeyId: process.env.S3_ACCESS_KEY_ID,
-        s3SecretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
-        rdsCaCert: process.env.RDS_CA_CERT,
-      });
+      EnvValidation.parse(process.env);
     } catch (e) {
       console.log("Environment variable parsing failed.");
       throw e;
@@ -59,7 +46,7 @@ declare global {
       ENCRYPTION_KEY: string;
       S3_ACCESS_KEY_ID: string;
       S3_SECRET_ACCESS_KEY: string;
-      RDS_CA_CERT?: string;
+      PUBSUB_EMULATOR_HOST?: string;
     }
   }
 }

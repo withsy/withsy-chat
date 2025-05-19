@@ -3,13 +3,12 @@ import {
   createNextPagesApiHandler,
   type Options,
 } from "@/server/next-pages-api-handler";
-import { listen } from "@/server/services/pg";
 import {
   MessageChunkEntity,
   MessageChunkEvent,
   MessageChunkSelect,
 } from "@/types/message-chunk";
-import { PgEvent, type PgEventInput } from "@/types/task";
+import type { MessageChunkCreatedInput } from "@/types/task";
 import type { UserUsageLimitData } from "@/types/user-usage-limit";
 import { getReasonPhrase, StatusCodes } from "http-status-codes";
 import SuperJSON from "superjson";
@@ -47,11 +46,11 @@ export async function get(options: Options) {
     );
 
   let isClosed = false;
-  let unlisten: (() => Promise<void>) | null = null;
+  let unsubscribe: (() => Promise<void>) | null = null;
   const close = async () => {
     if (isClosed) return;
     isClosed = true;
-    if (unlisten) await unlisten();
+    if (unsubscribe) await unsubscribe();
     res.end();
   };
 
@@ -67,17 +66,13 @@ export async function get(options: Options) {
     res.write(`data: ${SuperJSON.stringify(event)}\n\n`);
   };
 
-  const q: PgEventInput<"message_chunk_created">[] = [];
-
-  unlisten = await listen(
-    service.pgPool,
-    "message_chunk_created",
-    PgEvent.message_chunk_created,
-    (input) => {
-      if (input.messageId !== messageId) return;
+  const q: MessageChunkCreatedInput[] = [];
+  unsubscribe = await service.task.subscribeMessageChunkCreated({
+    messageId,
+    handler: (input) => {
       q.push(input);
-    }
-  );
+    },
+  });
 
   try {
     const entities = await service.db.messageChunk.findMany({

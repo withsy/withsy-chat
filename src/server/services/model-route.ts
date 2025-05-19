@@ -83,8 +83,7 @@ export class ModelRouteService {
         rawData,
         isDone,
       });
-      await notify(this.service.pgPool, "message_chunk_created", {
-        messageId: modelMessage.id,
+      await this.service.task.publishMessageChunkCreated(modelMessage.id, {
         index,
       });
       index += 1;
