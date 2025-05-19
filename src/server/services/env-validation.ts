@@ -15,7 +15,6 @@ const EnvValidation = z.object({
   encryptionKey: z.string().min(1),
   s3AccessKeyId: z.string().min(1),
   s3SecretAccessKey: z.string().min(1),
-  rdsCaCert: z.optional(z.string().min(1)),
 });
 type EnvValidation = zInfer<typeof EnvValidation>;
 
@@ -36,7 +35,6 @@ export class EnvValidationService {
         encryptionKey: process.env.ENCRYPTION_KEY,
         s3AccessKeyId: process.env.S3_ACCESS_KEY_ID,
         s3SecretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
-        rdsCaCert: process.env.RDS_CA_CERT,
       });
     } catch (e) {
       console.log("Environment variable parsing failed.");
@@ -59,7 +57,6 @@ declare global {
       ENCRYPTION_KEY: string;
       S3_ACCESS_KEY_ID: string;
       S3_SECRET_ACCESS_KEY: string;
-      RDS_CA_CERT?: string;
     }
   }
 }
