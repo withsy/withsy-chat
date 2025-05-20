@@ -15,15 +15,15 @@ const defaultModelMap = {
     label: "Gemini 1.5 Pro",
     description: "Strong reasoning, broad context understanding",
   },
-  "grok-3-beta": {
+  "grok-3": {
     label: "Grok 3",
     description: "Latest version with advanced reasoning capabilities",
   },
-  "grok-3-mini-beta": {
+  "grok-3-mini": {
     label: "Grok 3 Mini",
     description: "Optimized for efficiency while maintaining quality",
   },
-  "grok-3-mini-fast-beta": {
+  "grok-3-mini-fast": {
     label: "Grok 3 Mini Fast",
     description: "Fastest response times with balanced performance",
   },
