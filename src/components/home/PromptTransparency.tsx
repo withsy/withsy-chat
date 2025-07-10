@@ -17,9 +17,9 @@ export default function PromptTransparency() {
           </p>
         </div>
 
-        {/* GIF */}
         <Image
-          src="/home/apply-prompt.gif"
+          unoptimized
+          src="/home/apply-prompt.webp"
           alt="Apply Prompt"
           width={720}
           height={400}

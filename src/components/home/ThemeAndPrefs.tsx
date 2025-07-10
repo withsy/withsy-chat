@@ -41,7 +41,8 @@ export default function ThemeAndPrefsSection() {
         {/* Media Section */}
         <div className="w-full md:w-1/2 flex flex-col gap-6 items-center">
           <Image
-            src="/home/change-theme.gif"
+            unoptimized
+            src="/home/change-theme.webp"
             alt="Change Theme"
             width={600}
             height={350}
@@ -50,7 +51,8 @@ export default function ThemeAndPrefsSection() {
             blurDataURL="/home/change-theme.jpg"
           />
           <Image
-            src="/home/userprefs.gif"
+            unoptimized
+            src="/home/userprefs.webp"
             alt="User Preferences"
             width={600}
             height={350}

@@ -14,10 +14,10 @@ export default function BranchHistory() {
           </p>
         </div>
 
-        {/* GIF 미디어 */}
         <div className="text-center">
           <Image
-            src="/home/branch-history.gif"
+            unoptimized
+            src="/home/branch-history.webp"
             alt="Branch History"
             width={720}
             height={400}

@@ -14,7 +14,8 @@ export default function SaveStar() {
         </div>
 
         <Image
-          src="/home/save-itmes.gif"
+          unoptimized
+          src="/home/save-itmes.webp"
           alt="Saved Items"
           width={720}
           height={400}
