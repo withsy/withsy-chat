@@ -7,11 +7,12 @@ import {
   UserDefaultPromptUpdate,
 } from "@/types/user-default-prompt";
 import { UserPromptEntity, UserPromptSelect } from "@/types/user-prompt";
-import type { ServiceRegistry } from "../service-registry";
 import type { Tx } from "./db";
+import { inject } from "../service-registry";
 
 export class UserDefaultPromptService {
-  constructor(private readonly service: ServiceRegistry) {}
+  userPrompt = inject("userPrompt");
+  db = inject("db");
 
   decrypt(
     entity: UserDefaultPromptEntity & { userPrompt?: UserPromptEntity | null }
@@ -19,14 +20,14 @@ export class UserDefaultPromptService {
     const data = {
       userPromptId: entity.userPromptId,
       userPrompt: entity.userPrompt
-        ? this.service.userPrompt.decrypt(entity.userPrompt)
+        ? this.userPrompt.decrypt(entity.userPrompt)
         : null,
     } satisfies UserDefaultPromptData;
     return data;
   }
 
   async get(userId: UserId): Promise<UserDefaultPromptGetOutput> {
-    const entity = await this.service.db.$transaction(async (tx) => {
+    const entity = await this.db.$transaction(async (tx) => {
       const entity = await UserDefaultPromptService.get(tx, { userId });
       return entity;
     });
@@ -40,7 +41,7 @@ export class UserDefaultPromptService {
     input: UserDefaultPromptUpdate
   ): Promise<UserDefaultPromptData> {
     const { userPromptId } = input;
-    const entity = await this.service.db.$transaction(async (tx) => {
+    const entity = await this.db.$transaction(async (tx) => {
       const entity = await UserDefaultPromptService.update(tx, {
         userId,
         userPromptId,

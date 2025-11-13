@@ -1,7 +1,6 @@
 import type { zInfer } from "@/types/common";
 import "dotenv/config";
 import { z } from "zod";
-import type { ServiceRegistry } from "../service-registry";
 
 const EnvValidation = z.object({
   nodeEnv: z.enum(["development", "production", "test"]),
@@ -19,8 +18,6 @@ const EnvValidation = z.object({
 type EnvValidation = zInfer<typeof EnvValidation>;
 
 export class EnvValidationService {
-  constructor(private readonly service: ServiceRegistry) {}
-
   validate() {
     try {
       EnvValidation.parse({

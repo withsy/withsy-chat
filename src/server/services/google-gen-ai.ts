@@ -1,13 +1,12 @@
 import { Role, RoleGoogleGenAiMap } from "@/types/role";
 import { GoogleGenAI } from "@google/genai";
 import { inspect } from "node:util";
-import type { ServiceRegistry } from "../service-registry";
 import type { SendMessageToAiInput } from "./model-route";
 
 export class GoogleGenAiService {
-  private ai: GoogleGenAI;
+  private readonly ai: GoogleGenAI;
 
-  constructor(private readonly service: ServiceRegistry) {
+  constructor() {
     this.ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
   }
 

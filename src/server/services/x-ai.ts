@@ -1,5 +1,4 @@
 import OpenAI from "openai";
-import type { ServiceRegistry } from "../service-registry";
 import type { SendMessageToAiInput } from "./model-route";
 import { OpenAiService } from "./open-ai";
 
@@ -8,7 +7,7 @@ const XAI_BASE_URL = "https://api.x.ai/v1";
 export class XAiService {
   private openai: OpenAI;
 
-  constructor(private readonly service: ServiceRegistry) {
+  constructor() {
     this.openai = new OpenAI({
       apiKey: process.env.XAI_API_KEY,
       baseURL: XAI_BASE_URL,
@@ -16,10 +15,6 @@ export class XAiService {
   }
 
   async sendMessageToAi(input: SendMessageToAiInput) {
-    return await OpenAiService.sendMessageToAi(
-      this.service,
-      this.openai,
-      input
-    );
+    return await OpenAiService.sendMessageToAi(this.openai, input);
   }
 }

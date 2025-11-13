@@ -1,9 +1,10 @@
-import type { ServiceRegistry } from "../service-registry";
+import { inject } from "../service-registry";
 import { UserService } from "./user";
 import { UserUsageLimitService } from "./user-usage-limit";
 
 export class UserLinkAccountService {
-  constructor(private readonly service: ServiceRegistry) {}
+  private readonly encryption = inject("encryption");
+  private readonly db = inject("db");
 
   async ensure(input: {
     provider: string;
@@ -17,16 +18,16 @@ export class UserLinkAccountService {
       input;
 
     const nameEncrypted = name
-      ? this.service.encryption.encrypt(name)
-      : this.service.encryption.encrypt("");
+      ? this.encryption.encrypt(name)
+      : this.encryption.encrypt("");
     const emailEncrypted = email
-      ? this.service.encryption.encrypt(email)
-      : this.service.encryption.encrypt("");
+      ? this.encryption.encrypt(email)
+      : this.encryption.encrypt("");
     const imageUrlEncrypted = imageUrl
-      ? this.service.encryption.encrypt(imageUrl)
-      : this.service.encryption.encrypt("");
+      ? this.encryption.encrypt(imageUrl)
+      : this.encryption.encrypt("");
 
-    const res = await this.service.db.$transaction(async (tx) => {
+    const res = await this.db.$transaction(async (tx) => {
       let linkAccount = await tx.userLinkAccount.findFirst({
         where: {
           provider,

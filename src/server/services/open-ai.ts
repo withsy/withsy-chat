@@ -9,7 +9,6 @@ import type {
   ChatCompletionUserMessageParam,
 } from "openai/resources";
 import { match } from "ts-pattern";
-import type { ServiceRegistry } from "../service-registry";
 import type { SendMessageToAiInput } from "./model-route";
 
 const MAX_CHUNK_BUFFER_LENGTH = 16;
@@ -17,23 +16,15 @@ const MAX_CHUNK_BUFFER_LENGTH = 16;
 export class OpenAiService {
   private openai: OpenAI;
 
-  constructor(private readonly service: ServiceRegistry) {
+  constructor() {
     this.openai = new OpenAI();
   }
 
   async sendMessageToAi(input: SendMessageToAiInput) {
-    return await OpenAiService.sendMessageToAi(
-      this.service,
-      this.openai,
-      input
-    );
+    return await OpenAiService.sendMessageToAi(this.openai, input);
   }
 
-  static async sendMessageToAi(
-    service: ServiceRegistry,
-    openai: OpenAI,
-    input: SendMessageToAiInput
-  ) {
+  static async sendMessageToAi(openai: OpenAI, input: SendMessageToAiInput) {
     const { model, promptText, messagesForAi, onMessageChunkReceived } = input;
 
     const histories = messagesForAi.map((x) =>

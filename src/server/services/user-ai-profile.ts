@@ -9,18 +9,18 @@ import {
   UserAiProfileGetOutput,
   UserAiProfileSelect,
 } from "@/types/user-ai-profile";
-import type { ServiceRegistry } from "../service-registry";
 import { UserUsageLimitService } from "./user-usage-limit";
+import { inject } from "../service-registry";
 
 export class UserAiProfileService {
-  constructor(private readonly service: ServiceRegistry) {}
+  private readonly encryption = inject("encryption");
+  private readonly db = inject("db");
+  private readonly aiProfileStorage = inject("aiProfileStorage");
 
   decrypt(entity: UserAiProfileEntity): UserAiProfileData {
     const model = Model.parse(entity.model);
-    const name = this.service.encryption.decrypt(entity.nameEncrypted);
-    const imagePath = this.service.encryption.decrypt(
-      entity.imagePathEncrypted
-    );
+    const name = this.encryption.decrypt(entity.nameEncrypted);
+    const imagePath = this.encryption.decrypt(entity.imagePathEncrypted);
     const imageSource = UserAiProfileService.createImageSource({ imagePath });
     const data = {
       model,
@@ -35,7 +35,7 @@ export class UserAiProfileService {
     input: UserAiProfileGet
   ): Promise<UserAiProfileGetOutput> {
     const { model } = input;
-    const entity = await this.service.db.userAiProfile.findUnique({
+    const entity = await this.db.userAiProfile.findUnique({
       where: { userId_model: { userId, model } },
       select: UserAiProfileSelect,
     });
@@ -45,7 +45,7 @@ export class UserAiProfileService {
   }
 
   async getAll(userId: UserId): Promise<UserAiProfileGetAllOutput> {
-    const entities = await this.service.db.userAiProfile.findMany({
+    const entities = await this.db.userAiProfile.findMany({
       where: { userId },
       select: UserAiProfileSelect,
     });
@@ -62,16 +62,14 @@ export class UserAiProfileService {
   }): Promise<UserAiProfileData> {
     const { userId, model, name, imagePath } = input;
 
-    const nameEncrypted = name
-      ? this.service.encryption.encrypt(name)
-      : undefined;
+    const nameEncrypted = name ? this.encryption.encrypt(name) : undefined;
     const imagePathEncrypted = imagePath
-      ? this.service.encryption.encrypt(imagePath)
+      ? this.encryption.encrypt(imagePath)
       : undefined;
-    const emptyNameEncrypted = this.service.encryption.encrypt("");
-    const emptyImagePathEncrypted = this.service.encryption.encrypt("");
+    const emptyNameEncrypted = this.encryption.encrypt("");
+    const emptyImagePathEncrypted = this.encryption.encrypt("");
 
-    const res = await this.service.db.$transaction(async (tx) => {
+    const res = await this.db.$transaction(async (tx) => {
       let entity = await tx.userAiProfile.findUnique({
         where: { userId_model: { userId, model } },
         select: UserAiProfileSelect,
@@ -112,11 +110,9 @@ export class UserAiProfileService {
 
     const { entity, oldImagePathEncrypted } = res;
     if (oldImagePathEncrypted) {
-      const oldImagePath = this.service.encryption.decrypt(
-        oldImagePathEncrypted
-      );
+      const oldImagePath = this.encryption.decrypt(oldImagePathEncrypted);
       if (oldImagePath)
-        await this.service.aiProfileStorage.delete({ imagePath: oldImagePath });
+        await this.aiProfileStorage.delete({ imagePath: oldImagePath });
     }
 
     const data = this.decrypt(entity);
@@ -129,9 +125,9 @@ export class UserAiProfileService {
   ): Promise<UserAiProfileData> {
     const { model } = input;
 
-    const imagePathEncrypted = this.service.encryption.encrypt("");
+    const imagePathEncrypted = this.encryption.encrypt("");
 
-    const res = await this.service.db.$transaction(async (tx) => {
+    const res = await this.db.$transaction(async (tx) => {
       const oldEntity = await tx.userAiProfile.findUniqueOrThrow({
         where: { userId_model: { userId, model } },
         select: UserAiProfileSelect,
@@ -150,11 +146,9 @@ export class UserAiProfileService {
 
     const { oldImagePathEncrypted, entity } = res;
     if (oldImagePathEncrypted) {
-      const oldImagePath = this.service.encryption.decrypt(
-        oldImagePathEncrypted
-      );
+      const oldImagePath = this.encryption.decrypt(oldImagePathEncrypted);
       if (oldImagePath)
-        await this.service.aiProfileStorage.delete({ imagePath: oldImagePath });
+        await this.aiProfileStorage.delete({ imagePath: oldImagePath });
     }
 
     const data = this.decrypt(entity);

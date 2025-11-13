@@ -3,6 +3,7 @@ import {
   createNextPagesApiHandler,
   type Options,
 } from "@/server/next-pages-api-handler";
+import { inject } from "@/server/service-registry";
 import { listen } from "@/server/services/pg";
 import {
   MessageChunkEntity,
@@ -37,7 +38,12 @@ export default createNextPagesApiHandler({ get });
 
 export async function get(options: Options) {
   const { req, res, ctx } = options;
-  const { service, userId } = ctx;
+  const { userId } = ctx;
+  const pgPool = inject("pgPool");
+  const db = inject("db");
+  const userUsageLimit = inject("userUsageLimit");
+  const messageChunk = inject("messageChunk");
+  const message = inject("message");
 
   const messageId = req.query["messageId"];
   if (typeof messageId !== "string" || messageId.length === 0)
@@ -70,7 +76,7 @@ export async function get(options: Options) {
   const q: PgEventInput<"message_chunk_created">[] = [];
 
   unlisten = await listen(
-    service.pgPool,
+    pgPool,
     "message_chunk_created",
     PgEvent.message_chunk_created,
     (input) => {
@@ -80,7 +86,7 @@ export async function get(options: Options) {
   );
 
   try {
-    const entities = await service.db.messageChunk.findMany({
+    const entities = await db.messageChunk.findMany({
       where: { message: { chat: { userId, deletedAt: null } }, messageId },
       orderBy: { index: "asc" },
       select: MessageChunkSelect,
@@ -92,7 +98,7 @@ export async function get(options: Options) {
       if (entity.isDone) {
         let usageLimits: UserUsageLimitData[] = [];
         try {
-          usageLimits = await service.userUsageLimit.list(userId, {
+          usageLimits = await userUsageLimit.list(userId, {
             type: "message",
           });
         } catch (e) {
@@ -106,7 +112,7 @@ export async function get(options: Options) {
 
         write({ type: "usageLimits", usageLimits });
       } else {
-        const data = service.messageChunk.decrypt(entity);
+        const data = messageChunk.decrypt(entity);
         write({ type: "chunk", chunk: data });
       }
 
@@ -124,7 +130,7 @@ export async function get(options: Options) {
       if (input) {
         const { index } = input;
         if (index > lastIndex) {
-          const entity = await service.db.messageChunk.findUniqueOrThrow({
+          const entity = await db.messageChunk.findUniqueOrThrow({
             where: {
               message: { chat: { userId, deletedAt: null } },
               messageId_index: { messageId, index },
@@ -136,7 +142,7 @@ export async function get(options: Options) {
           if (isDone) return;
         }
       } else {
-        const isStaleCompleted = await service.message.isStaleCompleted({
+        const isStaleCompleted = await message.isStaleCompleted({
           userId,
           messageId,
         });

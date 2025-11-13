@@ -1,9 +1,10 @@
 import { PrismaClient } from "../generated/prisma/client";
-import type { ServiceRegistry } from "../service-registry";
+import { inject } from "../service-registry";
 import { PrismaPg } from "@prisma/adapter-pg";
 
-export function createDb(_s: ServiceRegistry) {
-  const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
+export function createDb() {
+  const pgPool = inject("pgPool");
+  const adapter = new PrismaPg(pgPool);
   const prisma = new PrismaClient({ adapter });
   process.on("SIGTERM", async () => {
     await prisma.$disconnect();

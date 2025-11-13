@@ -6,10 +6,9 @@ import { getServerSession } from "next-auth";
 import { getToken } from "next-auth/jwt";
 import { getAuthOptions } from "./auth";
 import { HttpServerError } from "./error";
-import { getService, type ServiceRegistry } from "./service-registry";
+import { inject } from "./service-registry";
 
 export type ServerContext = {
-  service: ServiceRegistry;
   userId: UserId;
 };
 
@@ -53,8 +52,8 @@ export async function createServerContext(input: {
         getReasonPhrase(StatusCodes.FORBIDDEN)
       );
 
-    getService().nextAuthCsrf.validateCsrfTokenWithReq({ csrfToken, req });
+    inject("nextAuthCsrf").validateCsrfTokenWithReq({ csrfToken, req });
   }
 
-  return { service: getService(), userId };
+  return { userId };
 }

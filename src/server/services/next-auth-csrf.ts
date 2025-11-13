@@ -1,11 +1,10 @@
 import type { NextApiRequest } from "next";
 import { createHash } from "node:crypto";
-import type { ServiceRegistry } from "../service-registry";
 
 export class NextAuthCsrfService {
   private cookieName: string;
 
-  constructor(private readonly service: ServiceRegistry) {
+  constructor() {
     if (!process.env.NEXTAUTH_URL) throw new Error("Please set NEXTAUTH_URL.");
     const url = new URL(process.env.NEXTAUTH_URL);
     const prefix = url.protocol === "https:" ? "__Host-" : "";

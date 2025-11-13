@@ -1,10 +1,10 @@
-import { getService } from "@/server/service-registry";
 import { UserJwt, UserSession } from "@/types/user";
 import { type AuthOptions, type LoggerInstance } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import type { Provider } from "next-auth/providers/index";
 import { inspect } from "node:util";
+import { inject } from "./service-registry";
 
 function createAuthOptions(): AuthOptions {
   const providers: Provider[] = [
@@ -58,7 +58,7 @@ function createAuthOptions(): AuthOptions {
           imageUrl = Reflect.get(profile, "picture");
         }
 
-        const { userId } = await getService().userLinkAccount.ensure({
+        const { userId } = await inject("userLinkAccount").ensure({
           provider,
           providerAccountId,
           refreshToken: refresh_token,

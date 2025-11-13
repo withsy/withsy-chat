@@ -1,18 +1,24 @@
 import type { CronTask, TaskInput, TaskKey, TaskMap } from "@/types/task";
 import { run, type Runner, type TaskList } from "graphile-worker";
-import type { ServiceRegistry } from "../service-registry";
+import { inject } from "../service-registry";
 
 export class TaskService {
-  private runner: Promise<Runner>;
+  private readonly runner: Promise<Runner>;
+  private readonly modelRoute = inject("modelRoute");
+  private readonly message = inject("message");
+  private readonly messageChunk = inject("messageChunk");
+  private readonly chat = inject("chat");
+  private readonly userPrompt = inject("userPrompt");
+  private readonly pgPool = inject("pgPool");
 
-  constructor(private readonly service: ServiceRegistry) {
+  constructor() {
     const taskMap: TaskMap = {
       model_route_send_message_to_ai: (input) =>
-        service.modelRoute.onSendMessageToAiTask(input),
-      message_cleanup_zombies: () => service.message.onCleanupZombiesTask(),
-      message_chunk_hard_delete: () => service.messageChunk.onHardDeleteTask(),
-      chat_hard_delete: () => service.chat.onHardDeleteTask(),
-      user_prompt_hard_delete: () => service.userPrompt.onHardDeleteTask(),
+        this.modelRoute.onSendMessageToAiTask(input),
+      message_cleanup_zombies: () => this.message.onCleanupZombiesTask(),
+      message_chunk_hard_delete: () => this.messageChunk.onHardDeleteTask(),
+      chat_hard_delete: () => this.chat.onHardDeleteTask(),
+      user_prompt_hard_delete: () => this.userPrompt.onHardDeleteTask(),
     };
     const cronTasks: CronTask[] = [
       { cron: "*/5 * * * *", key: "message_cleanup_zombies" },
@@ -23,7 +29,7 @@ export class TaskService {
 
     this.runner = (async () => {
       const runner = await run({
-        pgPool: service.pgPool,
+        pgPool: this.pgPool,
         taskList: Object.fromEntries(
           Object.entries(taskMap).map(([key, handler]) => {
             const wrapper = async (input: any) => {

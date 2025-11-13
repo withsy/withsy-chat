@@ -4,7 +4,7 @@ import { getServerSession } from "next-auth";
 import type { NextApiRequestCookies } from "next/dist/server/api-utils";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { getAuthOptions } from "./auth";
-import { getService } from "./service-registry";
+import { inject } from "./service-registry";
 
 export function isValidTimezone(timezone: string): boolean {
   try {
@@ -32,7 +32,7 @@ export async function getUser(input: {
   if (session) {
     const userSession = UserSession.parse(session);
     try {
-      user = await getService().user.get(userSession.user.id);
+      user = await inject("user").get(userSession.user.id);
     } catch (_e) {}
   }
 

@@ -19,20 +19,24 @@ import { Model } from "@/types/model";
 import { Role } from "@/types/role";
 import { UserPromptSelect } from "@/types/user-prompt";
 import { v7 as uuidv7 } from "uuid";
-import type { ServiceRegistry } from "../service-registry";
 import type { Tx } from "./db";
 import { IdempotencyInfoService } from "./idempotency-info";
 import { UserUsageLimitService } from "./user-usage-limit";
+import { inject } from "../service-registry";
 
 // TODO: Change limit history length
 const DEFAULT_REMAIN_LENGTH = 10;
 
 export class MessageService {
-  constructor(private readonly service: ServiceRegistry) {}
+  private readonly encryption = inject("encryption");
+  private readonly chat = inject("chat");
+  private readonly db = inject("db");
+  private readonly messageChunk = inject("messageChunk");
+  private readonly task = inject("task");
 
   decrypt(entity: MessageEntity & { chat?: ChatEntity }): MessageData {
-    const text = this.service.encryption.decrypt(entity.textEncrypted);
-    const reasoningText = this.service.encryption.decrypt(
+    const text = this.encryption.decrypt(entity.textEncrypted);
+    const reasoningText = this.encryption.decrypt(
       entity.reasoningTextEncrypted
     );
     const data = {
@@ -46,14 +50,14 @@ export class MessageService {
       isBookmarked: entity.isBookmarked,
       createdAt: entity.createdAt,
       parentMessageId: entity.parentMessageId,
-      chat: entity.chat ? this.service.chat.decrypt(entity.chat) : null,
+      chat: entity.chat ? this.chat.decrypt(entity.chat) : null,
     } satisfies MessageData;
     return data;
   }
 
   async get(userId: UserId, input: MessageGet): Promise<MessageGetOutput> {
     const { messageId } = input;
-    const entity = await this.service.db.message.findUnique({
+    const entity = await this.db.message.findUnique({
       where: { chat: { userId, deletedAt: null }, id: messageId },
       select: MessageSelect,
     });
@@ -66,7 +70,7 @@ export class MessageService {
     const { role, isBookmarked, options } = input;
     const { scope, afterId, order, limit, include } = options;
 
-    const entities = await this.service.db.message.findMany({
+    const entities = await this.db.message.findMany({
       where: {
         chat: { userId, deletedAt: null },
         chatId: scope.by === "chat" ? scope.chatId : undefined,
@@ -121,7 +125,7 @@ export class MessageService {
       },
     };
 
-    await this.service.db.$transaction(async (tx) => {
+    await this.db.$transaction(async (tx) => {
       if (!modelMessage.parentMessageId)
         throw new Error("parentMessageId must exist.");
 
@@ -184,7 +188,7 @@ export class MessageService {
   }) {
     const { userId, messageId, include } = input;
 
-    const entity = await this.service.db.message.findUniqueOrThrow({
+    const entity = await this.db.message.findUniqueOrThrow({
       where: { chat: { userId, deletedAt: null }, id: messageId },
       select: {
         ...MessageSelect,
@@ -206,7 +210,7 @@ export class MessageService {
   async update(userId: UserId, input: MessageUpdate): Promise<MessageData> {
     const { messageId, isBookmarked } = input;
 
-    const entity = await this.service.db.message.update({
+    const entity = await this.db.message.update({
       where: {
         chat: { userId, deletedAt: null },
         id: messageId,
@@ -225,7 +229,7 @@ export class MessageService {
   }): Promise<boolean> {
     const { userId, messageId } = input;
 
-    const entity = await this.service.db.message.findUnique({
+    const entity = await this.db.message.findUnique({
       where: {
         chat: { userId, deletedAt: null },
         id: messageId,
@@ -284,7 +288,7 @@ export class MessageService {
   }) {
     const { userId, messageId } = input;
 
-    const entity = await MessageService.transit(this.service.db, {
+    const entity = await MessageService.transit(this.db, {
       userId,
       messageId,
       expectStatus: "pending",
@@ -300,15 +304,14 @@ export class MessageService {
   }) {
     const { userId, messageId } = input;
 
-    const { text, reasoningText } = await this.service.messageChunk.buildText({
+    const { text, reasoningText } = await this.messageChunk.buildText({
       userId,
       messageId,
     });
-    const textEncrypted = this.service.encryption.encrypt(text);
-    const reasoningTextEncrypted =
-      this.service.encryption.encrypt(reasoningText);
+    const textEncrypted = this.encryption.encrypt(text);
+    const reasoningTextEncrypted = this.encryption.encrypt(reasoningText);
 
-    await this.service.db.$transaction(async (tx) => {
+    await this.db.$transaction(async (tx) => {
       await MessageService.transit(tx, {
         userId,
         messageId,
@@ -350,7 +353,7 @@ export class MessageService {
   }
 
   async onCleanupZombiesTask() {
-    const res = await this.service.db.message.updateMany({
+    const res = await this.db.message.updateMany({
       where: {
         status: { in: ["pending", "processing"] },
         updatedAt: {
@@ -367,19 +370,17 @@ export class MessageService {
   async send(userId: UserId, input: MessageSend): Promise<MessageSendOutput> {
     const { idempotencyKey, chatId, model, text } = input;
 
-    await this.service.db.$transaction(async (tx) => {
+    await this.db.$transaction(async (tx) => {
       await IdempotencyInfoService.checkDuplicateRequest(tx, idempotencyKey);
       await UserUsageLimitService.checkMessage(tx, { userId });
     });
 
-    const userMessageTextEncrypted = this.service.encryption.encrypt(text);
-    const userMessageReasoningTextEncrypted =
-      this.service.encryption.encrypt("");
-    const modelMessageTextEncrypted = this.service.encryption.encrypt("");
-    const modelMessageReasoningTextEncrypted =
-      this.service.encryption.encrypt("");
+    const userMessageTextEncrypted = this.encryption.encrypt(text);
+    const userMessageReasoningTextEncrypted = this.encryption.encrypt("");
+    const modelMessageTextEncrypted = this.encryption.encrypt("");
+    const modelMessageReasoningTextEncrypted = this.encryption.encrypt("");
 
-    const { userMessage, modelMessage } = await this.service.db.$transaction(
+    const { userMessage, modelMessage } = await this.db.$transaction(
       async (tx) => {
         const userMessage = await MessageService.createUserMessage(tx, {
           chatId,
@@ -400,13 +401,13 @@ export class MessageService {
       }
     );
 
-    await this.service.task.add("model_route_send_message_to_ai", {
+    await this.task.add("model_route_send_message_to_ai", {
       userId,
       userMessageId: userMessage.id,
       modelMessageId: modelMessage.id,
     });
 
-    await UserUsageLimitService.decreaseMessage(this.service.db, { userId });
+    await UserUsageLimitService.decreaseMessage(this.db, { userId });
 
     return {
       userMessage: this.decrypt(userMessage),

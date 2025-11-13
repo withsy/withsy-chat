@@ -3,15 +3,15 @@ import { idempotencyInfoSelect } from "@/types/idempotency";
 import { Prisma } from "@prisma/client";
 import { StatusCodes } from "http-status-codes";
 import { HttpServerError } from "../error";
-import type { ServiceRegistry } from "../service-registry";
 import type { Tx } from "./db";
+import { inject } from "../service-registry";
 
 export class IdempotencyInfoService {
-  constructor(private readonly service: ServiceRegistry) {}
+  private readonly db = inject("db");
 
   async checkDuplicateRequest(idempotencyKey: IdempotencyKey) {
     const res = await IdempotencyInfoService.checkDuplicateRequest(
-      this.service.db,
+      this.db,
       idempotencyKey
     );
     return res;

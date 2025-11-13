@@ -21,6 +21,9 @@ export const JsonValueBase: z.ZodType<JsonValue> = z.union([
   z.boolean(),
   z.null(),
   z.array(z.lazy(() => JsonValueBase)),
-  z.record(z.lazy(() => JsonValueBase)),
+  z.record(
+    z.string(),
+    z.lazy(() => JsonValueBase)
+  ),
 ]);
 export const JsonValue = JsonValueBase;

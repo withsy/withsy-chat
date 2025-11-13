@@ -25,16 +25,11 @@ import {
 } from "date-fns";
 import { StatusCodes } from "http-status-codes";
 import { HttpServerError } from "../error";
-import type { ServiceRegistry } from "../service-registry";
 import type { Tx } from "./db";
+import { inject } from "../service-registry";
 
 export class UserUsageLimitService {
-  constructor(private readonly service: ServiceRegistry) {
-    const now = new Date();
-    const offset = now.getTimezoneOffset();
-    if (offset !== 0)
-      throw new Error(`The server's time zone is not UTC. offset: ${offset}`);
-  }
+  private readonly db = inject("db");
 
   decrypt(entity: UserUsageLimitEntity): UserUsageLimitData {
     const data = {
@@ -51,7 +46,7 @@ export class UserUsageLimitService {
     input: UserUsageLimitList
   ): Promise<UserUsageLimitListOutput> {
     const { type } = input;
-    const entities = await this.service.db.$transaction(async (tx) => {
+    const entities = await this.db.$transaction(async (tx) => {
       const entities = await tx.userUsageLimit.findMany({
         where: { userId, type },
         select: UserUsageLimitSelect,

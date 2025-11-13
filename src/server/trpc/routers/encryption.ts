@@ -1,6 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { publicProcedure, t } from "../server";
+import { inject } from "@/server/service-registry";
 
 export const encryptionRouter = t.router({
   decrypt: publicProcedure
@@ -13,7 +14,7 @@ export const encryptionRouter = t.router({
     .query((opts) => {
       if (process.env.NODE_ENV === "production")
         throw new TRPCError({ code: "SERVICE_UNAVAILABLE" });
-      return opts.ctx.service.encryption.decrypt(opts.input.payloadEncoded);
+      return inject("encryption").decrypt(opts.input.payloadEncoded);
     }),
   encrypt: publicProcedure
     .input(
@@ -25,6 +26,6 @@ export const encryptionRouter = t.router({
     .query((opts) => {
       if (process.env.NODE_ENV === "production")
         throw new TRPCError({ code: "SERVICE_UNAVAILABLE" });
-      return opts.ctx.service.encryption.encrypt(opts.input.text);
+      return inject("encryption").encrypt(opts.input.text);
     }),
 });

@@ -11,7 +11,7 @@ import {
   UserUpdatePrefsOutput,
 } from "@/types/user";
 import { TRPCError } from "@trpc/server";
-import type { ServiceRegistry } from "../service-registry";
+import { inject } from "../service-registry";
 import { isValidTimezone } from "../utils";
 import type { Tx } from "./db";
 
@@ -19,12 +19,13 @@ const FALLBACK_TIMEZONE = "UTC";
 const FALLBACK_AI_LANGUAGE = "en";
 
 export class UserService {
-  constructor(private readonly service: ServiceRegistry) {}
+  private readonly encryption = inject("encryption");
+  private readonly db = inject("db");
 
   decrypt(entity: UserEntity): UserData {
-    const name = this.service.encryption.decrypt(entity.nameEncrypted);
-    const email = this.service.encryption.decrypt(entity.emailEncrypted);
-    const imageUrl = this.service.encryption.decrypt(entity.imageUrlEncrypted);
+    const name = this.encryption.decrypt(entity.nameEncrypted);
+    const email = this.encryption.decrypt(entity.emailEncrypted);
+    const imageUrl = this.encryption.decrypt(entity.imageUrlEncrypted);
     const preferences = UserPrefs.parse(entity.preferences);
     const data = {
       id: entity.id,
@@ -39,7 +40,7 @@ export class UserService {
   }
 
   async get(userId: UserId): Promise<UserData> {
-    const entity = await this.service.db.user.findUniqueOrThrow({
+    const entity = await this.db.user.findUniqueOrThrow({
       where: { id: userId },
       select: UserSelect,
     });
@@ -49,7 +50,7 @@ export class UserService {
   }
 
   async ensure(userId: UserId, input: UserEnsure): Promise<UserData> {
-    const entity = await this.service.db.$transaction(async (tx) => {
+    const entity = await this.db.$transaction(async (tx) => {
       const user = await tx.user.findUniqueOrThrow({
         where: { id: userId },
         select: UserSelect,
@@ -95,7 +96,7 @@ export class UserService {
       Object.entries(input).filter(([_, value]) => value !== undefined)
     );
 
-    const entity = await this.service.db.$transaction(async (tx) => {
+    const entity = await this.db.$transaction(async (tx) => {
       {
         const affected =
           await tx.$executeRaw`SELECT id FROM users WHERE id = ${userId} ::uuid FOR UPDATE`;
@@ -143,7 +144,7 @@ export class UserService {
         message: "Invalid timezone.",
       });
 
-    const entity = await this.service.db.user.update({
+    const entity = await this.db.user.update({
       where: { id: userId },
       data: {
         aiLanguage,
@@ -179,7 +180,7 @@ export class UserService {
 
   async getForGratitudeJournal(input: { userId: UserId }) {
     const { userId } = input;
-    const entity = await this.service.db.user.findUniqueOrThrow({
+    const entity = await this.db.user.findUniqueOrThrow({
       where: { id: userId },
       select: {
         nameEncrypted: true,

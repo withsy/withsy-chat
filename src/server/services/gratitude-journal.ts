@@ -21,16 +21,21 @@ import {
 } from "date-fns";
 import { fromZonedTime, toZonedTime } from "date-fns-tz";
 import { v7 as uuidv7 } from "uuid";
-import type { ServiceRegistry } from "../service-registry";
 import { ChatService } from "./chat";
 import { ChatPromptService } from "./chat-prompt";
 import type { Tx } from "./db";
 import { IdempotencyInfoService } from "./idempotency-info";
 import { MessageService } from "./message";
 import { UserService } from "./user";
+import { inject } from "../service-registry";
 
 export class GratitudeJournalService {
-  constructor(private readonly service: ServiceRegistry) {}
+  chat = inject("chat");
+  db = inject("db");
+  user = inject("user");
+  encryption = inject("encryption");
+  task = inject("task");
+  message = inject("message");
 
   decrypt(
     entity: GratitudeJournalEntity & { chat?: ChatEntity | null }
@@ -38,13 +43,13 @@ export class GratitudeJournalService {
     const data = {
       id: entity.id,
       chatId: entity.chatId,
-      chat: entity.chat ? this.service.chat.decrypt(entity.chat) : null,
+      chat: entity.chat ? this.chat.decrypt(entity.chat) : null,
     } satisfies GratitudeJournalData;
     return data;
   }
 
   async getStats(userId: UserId): Promise<GratitudeJournalStats> {
-    const res = await this.service.db.$transaction(async (tx) => {
+    const res = await this.db.$transaction(async (tx) => {
       const now = new Date();
       const { timezone, zonedTodayStart, utcTodayStart, utcTodayEnd } =
         await GratitudeJournalService.getTimezoneInfo(tx, {
@@ -127,7 +132,7 @@ export class GratitudeJournalService {
     input: GratitudeJournalGetJournal
   ): Promise<GratitudeJournalData> {
     const { gratitudeJournalId } = input;
-    const entity = await this.service.db.gratitudeJournal.findUniqueOrThrow({
+    const entity = await this.db.gratitudeJournal.findUniqueOrThrow({
       where: { userId, id: gratitudeJournalId },
       select: {
         ...GratitudeJournalSelect,
@@ -145,11 +150,11 @@ export class GratitudeJournalService {
   ): Promise<ChatStartOutput> {
     const { idempotencyKey } = input;
 
-    const user = await this.service.user.getForGratitudeJournal({ userId });
-    const userName = this.service.encryption.decrypt(user.nameEncrypted);
+    const user = await this.user.getForGratitudeJournal({ userId });
+    const userName = this.encryption.decrypt(user.nameEncrypted);
 
     const now = new Date();
-    const prepareRes = await this.service.db.$transaction(async (tx) => {
+    const prepareRes = await this.db.$transaction(async (tx) => {
       const timezoneInfo = await GratitudeJournalService.getTimezoneInfo(tx, {
         userId,
         now,
@@ -168,16 +173,14 @@ export class GratitudeJournalService {
     const { utcTodayStart, utcTodayEnd, zonedTodayDate } = timezoneInfo;
 
     const title = `Gratitude Journal - ${zonedTodayDate}`;
-    const titleEncrypted = this.service.encryption.encrypt(title);
-    const promptTextEncrypted = this.service.encryption.encrypt(promptText);
-    const userMessageTextEncrypted = this.service.encryption.encrypt("");
-    const userMessageReasoningTextEncrypted =
-      this.service.encryption.encrypt("");
-    const modelMessageTextEncrypted = this.service.encryption.encrypt("");
-    const modelMessageReasoningTextEncrypted =
-      this.service.encryption.encrypt("");
+    const titleEncrypted = this.encryption.encrypt(title);
+    const promptTextEncrypted = this.encryption.encrypt(promptText);
+    const userMessageTextEncrypted = this.encryption.encrypt("");
+    const userMessageReasoningTextEncrypted = this.encryption.encrypt("");
+    const modelMessageTextEncrypted = this.encryption.encrypt("");
+    const modelMessageReasoningTextEncrypted = this.encryption.encrypt("");
 
-    const createRes = await this.service.db.$transaction(async (tx) => {
+    const createRes = await this.db.$transaction(async (tx) => {
       await IdempotencyInfoService.checkDuplicateRequest(tx, idempotencyKey);
 
       const where = GratitudeJournalService.getTodayJournalWhere({
@@ -236,16 +239,16 @@ export class GratitudeJournalService {
 
     const { chat, userMessage, modelMessage } = createRes;
 
-    await this.service.task.add("model_route_send_message_to_ai", {
+    await this.task.add("model_route_send_message_to_ai", {
       userId,
       userMessageId: userMessage.id,
       modelMessageId: modelMessage.id,
     });
 
     return {
-      chat: this.service.chat.decrypt(chat),
-      userMessage: this.service.message.decrypt(userMessage),
-      modelMessage: this.service.message.decrypt(modelMessage),
+      chat: this.chat.decrypt(chat),
+      userMessage: this.message.decrypt(userMessage),
+      modelMessage: this.message.decrypt(modelMessage),
     };
   }
 

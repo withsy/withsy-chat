@@ -6,20 +6,19 @@ import {
   GratitudeJournalStats,
 } from "@/types/gratitude-journal";
 import { publicProcedure, t } from "../server";
+import { inject } from "@/server/service-registry";
 
 export const gratitudeJournalRouter = t.router({
-  getStats: publicProcedure
-    .output(GratitudeJournalStats)
-    .query((opts) =>
-      opts.ctx.service.gratitudeJournal
-        .getStats(opts.ctx.userId)
-        .then((x) => GratitudeJournalStats.parse(x))
-    ),
+  getStats: publicProcedure.output(GratitudeJournalStats).query((opts) =>
+    inject("gratitudeJournal")
+      .getStats(opts.ctx.userId)
+      .then((x) => GratitudeJournalStats.parse(x))
+  ),
   getJournal: publicProcedure
     .input(GratitudeJournalGetJournal)
     .output(GratitudeJournalData)
     .query((opts) =>
-      opts.ctx.service.gratitudeJournal
+      inject("gratitudeJournal")
         .getJournal(opts.ctx.userId, opts.input)
         .then((x) => GratitudeJournalData.parse(x))
     ),
@@ -27,7 +26,7 @@ export const gratitudeJournalRouter = t.router({
     .input(GratitudeJournalStartChat)
     .output(ChatStartOutput)
     .mutation((opts) =>
-      opts.ctx.service.gratitudeJournal
+      inject("gratitudeJournal")
         .startChat(opts.ctx.userId, opts.input)
         .then((x) => ChatStartOutput.parse(x))
     ),

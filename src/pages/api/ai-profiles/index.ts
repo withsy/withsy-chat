@@ -3,6 +3,7 @@ import {
   createNextPagesApiHandler,
   type Options,
 } from "@/server/next-pages-api-handler";
+import { inject } from "@/server/service-registry";
 import { UserAiProfileService } from "@/server/services/user-ai-profile";
 import { UserUsageLimitService } from "@/server/services/user-usage-limit";
 import { Model } from "@/types/model";
@@ -57,7 +58,11 @@ const Input = z.object({
 
 async function post(opts: Options) {
   const { req, res, ctx } = opts;
-  const { service, userId } = ctx;
+  const { userId } = ctx;
+  const idempotencyInfo = inject("idempotencyInfo");
+  const db = inject("db");
+  const aiProfileStorage = inject("aiProfileStorage");
+  const userAiProfile = inject("userAiProfile");
 
   const idempotencyKey = req.headers["idempotency-key"];
   if (typeof idempotencyKey != "string" || idempotencyKey.length === 0)
@@ -67,7 +72,7 @@ async function post(opts: Options) {
     );
 
   try {
-    await service.idempotencyInfo.checkDuplicateRequest(idempotencyKey);
+    await idempotencyInfo.checkDuplicateRequest(idempotencyKey);
   } catch (_e) {
     throw new HttpServerError(
       StatusCodes.CONFLICT,
@@ -93,7 +98,7 @@ async function post(opts: Options) {
 
     if (event.type === "file") {
       if (event.name === "image") {
-        await UserUsageLimitService.checkAiProfileImage(service.db, {
+        await UserUsageLimitService.checkAiProfileImage(db, {
           userId,
         });
 
@@ -112,7 +117,7 @@ async function post(opts: Options) {
           fileName,
         });
 
-        await service.aiProfileStorage.putStream({
+        await aiProfileStorage.putStream({
           imagePath,
           contentType: mimeType,
           stream: event.stream,
@@ -129,9 +134,8 @@ async function post(opts: Options) {
       details: {
         issues: inputRes.error.issues.map((x) => ({
           code: x.code,
-          fatal: x.fatal ?? null,
           message: x.message,
-          path: x.path,
+          path: x.path.join("."),
         })),
       },
     });
@@ -139,7 +143,7 @@ async function post(opts: Options) {
 
   const { model, name, imagePath } = inputRes.data;
   try {
-    const data = await service.userAiProfile.update({
+    const data = await userAiProfile.update({
       userId,
       model,
       name,
@@ -148,7 +152,7 @@ async function post(opts: Options) {
 
     return res.status(200).json(data);
   } catch (e) {
-    if (imagePath) await service.aiProfileStorage.delete({ imagePath });
+    if (imagePath) await aiProfileStorage.delete({ imagePath });
 
     throw e;
   }

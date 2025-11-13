@@ -4,13 +4,16 @@ import type { MessageReplyRegenerate } from "@/types/message-reply";
 import { Role } from "@/types/role";
 import { StatusCodes } from "http-status-codes";
 import { HttpServerError } from "../error";
-import type { ServiceRegistry } from "../service-registry";
 import { IdempotencyInfoService } from "./idempotency-info";
 import { MessageService } from "./message";
 import { UserUsageLimitService } from "./user-usage-limit";
+import { inject } from "../service-registry";
 
 export class MessageReplyService {
-  constructor(private readonly service: ServiceRegistry) {}
+  encryption = inject("encryption");
+  db = inject("db");
+  task = inject("task");
+  message = inject("message");
 
   async regenerate(
     userId: UserId,
@@ -18,11 +21,10 @@ export class MessageReplyService {
   ): Promise<MessageData> {
     const { idempotencyKey, messageId, model } = input;
 
-    const modelMessageTextEncrypted = this.service.encryption.encrypt("");
-    const modelMessageReasoningTextEncrypted =
-      this.service.encryption.encrypt("");
+    const modelMessageTextEncrypted = this.encryption.encrypt("");
+    const modelMessageReasoningTextEncrypted = this.encryption.encrypt("");
 
-    const { userMessage, modelMessage } = await this.service.db.$transaction(
+    const { userMessage, modelMessage } = await this.db.$transaction(
       async (tx) => {
         await IdempotencyInfoService.checkDuplicateRequest(tx, idempotencyKey);
         await UserUsageLimitService.checkMessage(tx, { userId });
@@ -73,15 +75,15 @@ export class MessageReplyService {
       }
     );
 
-    await this.service.task.add("model_route_send_message_to_ai", {
+    await this.task.add("model_route_send_message_to_ai", {
       userId,
       userMessageId: userMessage.id,
       modelMessageId: modelMessage.id,
     });
 
-    await UserUsageLimitService.decreaseMessage(this.service.db, { userId });
+    await UserUsageLimitService.decreaseMessage(this.db, { userId });
 
-    const data = this.service.message.decrypt(modelMessage);
+    const data = this.message.decrypt(modelMessage);
     return data;
   }
 }

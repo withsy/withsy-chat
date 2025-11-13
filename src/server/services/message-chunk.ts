@@ -4,15 +4,16 @@ import {
   MessageChunkEntity,
   MessageChunkSelect,
 } from "@/types/message-chunk";
-import type { ServiceRegistry } from "../service-registry";
 import { getHardDeleteCutoffDate } from "../utils";
+import { inject } from "../service-registry";
 
 export class MessageChunkService {
-  constructor(private readonly service: ServiceRegistry) {}
+  private readonly encryption = inject("encryption");
+  private readonly db = inject("db");
 
   decrypt(entity: MessageChunkEntity): MessageChunkData {
-    const text = this.service.encryption.decrypt(entity.textEncrypted);
-    const reasoningText = this.service.encryption.decrypt(
+    const text = this.encryption.decrypt(entity.textEncrypted);
+    const reasoningText = this.encryption.decrypt(
       entity.reasoningTextEncrypted
     );
     const data = {
@@ -33,12 +34,11 @@ export class MessageChunkService {
   }) {
     const { messageId, index, text, rawData, reasoningText, isDone } = input;
 
-    const textEncrypted = this.service.encryption.encrypt(text);
-    const rawDataEncrypted = this.service.encryption.encrypt(rawData);
-    const reasoningTextEncrypted =
-      this.service.encryption.encrypt(reasoningText);
+    const textEncrypted = this.encryption.encrypt(text);
+    const rawDataEncrypted = this.encryption.encrypt(rawData);
+    const reasoningTextEncrypted = this.encryption.encrypt(reasoningText);
 
-    await this.service.db.messageChunk.create({
+    await this.db.messageChunk.create({
       data: {
         messageId,
         index,
@@ -57,7 +57,7 @@ export class MessageChunkService {
   }): Promise<{ text: string; reasoningText: string }> {
     const { userId, messageId } = input;
 
-    const entities = await this.service.db.messageChunk.findMany({
+    const entities = await this.db.messageChunk.findMany({
       where: {
         message: { chat: { userId, deletedAt: null } },
         messageId,
@@ -75,7 +75,7 @@ export class MessageChunkService {
   async onHardDeleteTask() {
     const cutoffDate = getHardDeleteCutoffDate(new Date());
 
-    const res = await this.service.db.messageChunk.deleteMany({
+    const res = await this.db.messageChunk.deleteMany({
       where: { createdAt: { lt: cutoffDate } },
     });
     console.warn(`Successfully hard deleted ${res.count} messageChunks.`);

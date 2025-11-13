@@ -1,10 +1,9 @@
 import { Readable } from "node:stream";
-import type { ServiceRegistry } from "../service-registry";
+import { inject } from "../service-registry";
 
 export class AiProfileStorageService {
   private bucketName = "ai-profiles";
-
-  constructor(private readonly service: ServiceRegistry) {}
+  private readonly s3 = inject("s3");
 
   /**
    * Must consume the result stream.
@@ -14,7 +13,7 @@ export class AiProfileStorageService {
   }): Promise<{ stream: Readable; contentType: string | null } | null> {
     const { imagePath } = input;
     try {
-      const res = await this.service.s3.getObject({
+      const res = await this.s3.getObject({
         bucket: this.bucketName,
         key: imagePath,
       });
@@ -44,7 +43,7 @@ export class AiProfileStorageService {
     stream: Readable;
   }) {
     const { imagePath, contentType, stream } = input;
-    await this.service.s3.putObjectStream({
+    await this.s3.putObjectStream({
       bucket: this.bucketName,
       key: imagePath,
       contentType,
@@ -55,7 +54,7 @@ export class AiProfileStorageService {
   async delete(input: { imagePath: string }) {
     const { imagePath } = input;
     try {
-      await this.service.s3.deleteObject({
+      await this.s3.deleteObject({
         bucket: this.bucketName,
         key: imagePath,
       });

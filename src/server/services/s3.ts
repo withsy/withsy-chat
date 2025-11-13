@@ -8,7 +8,6 @@ import {
 } from "@aws-sdk/client-s3";
 import { Upload } from "@aws-sdk/lib-storage";
 import type { Readable } from "node:stream";
-import type { ServiceRegistry } from "../service-registry";
 
 const PROD_ENDPOINT = "https://nsrzjvlxrwyckjfmfzih.supabase.co/storage/v1/s3";
 const DEV_ENDPOINT = "https://iexsdnahybucxvjpsrol.supabase.co/storage/v1/s3";
@@ -16,7 +15,7 @@ const DEV_ENDPOINT = "https://iexsdnahybucxvjpsrol.supabase.co/storage/v1/s3";
 export class S3Service {
   private client: S3Client;
 
-  constructor(private readonly service: ServiceRegistry) {
+  constructor() {
     this.client = new S3Client({
       forcePathStyle: true,
       region: "us-east-2",

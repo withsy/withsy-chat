@@ -8,35 +8,32 @@ import {
   UserPromptUpdate,
 } from "@/types/user-prompt";
 import { publicProcedure, t } from "../server";
+import { inject } from "@/server/service-registry";
 
 export const userPromptRouter = t.router({
   get: publicProcedure
     .input(UserPromptGet)
     .output(UserPromptData)
     .query((opts) =>
-      opts.ctx.service.userPrompt
+      inject("userPrompt")
         .get(opts.ctx.userId, opts.input)
         .then((x) => UserPromptData.parse(x))
     ),
-  list: publicProcedure
-    .output(UserPromptListOutput)
-    .query((opts) =>
-      opts.ctx.service.userPrompt
-        .list(opts.ctx.userId)
-        .then((xs) => xs.map((x) => UserPromptData.parse(x)))
-    ),
-  listDeleted: publicProcedure
-    .output(UserPromptListOutput)
-    .query((opts) =>
-      opts.ctx.service.userPrompt
-        .listDeleted(opts.ctx.userId)
-        .then((xs) => xs.map((x) => UserPromptData.parse(x)))
-    ),
+  list: publicProcedure.output(UserPromptListOutput).query((opts) =>
+    inject("userPrompt")
+      .list(opts.ctx.userId)
+      .then((xs) => xs.map((x) => UserPromptData.parse(x)))
+  ),
+  listDeleted: publicProcedure.output(UserPromptListOutput).query((opts) =>
+    inject("userPrompt")
+      .listDeleted(opts.ctx.userId)
+      .then((xs) => xs.map((x) => UserPromptData.parse(x)))
+  ),
   create: publicProcedure
     .input(UserPromptCreate)
     .output(UserPromptData)
     .mutation((opts) =>
-      opts.ctx.service.userPrompt
+      inject("userPrompt")
         .create(opts.ctx.userId, opts.input)
         .then((x) => UserPromptData.parse(x))
     ),
@@ -44,18 +41,18 @@ export const userPromptRouter = t.router({
     .input(UserPromptUpdate)
     .output(UserPromptData)
     .mutation((opts) =>
-      opts.ctx.service.userPrompt
+      inject("userPrompt")
         .update(opts.ctx.userId, opts.input)
         .then((x) => UserPromptData.parse(x))
     ),
   delete: publicProcedure
     .input(UserPromptDelete)
     .mutation((opts) =>
-      opts.ctx.service.userPrompt.delete(opts.ctx.userId, opts.input)
+      inject("userPrompt").delete(opts.ctx.userId, opts.input)
     ),
   restore: publicProcedure
     .input(UserPromptRestore)
     .mutation((opts) =>
-      opts.ctx.service.userPrompt.restore(opts.ctx.userId, opts.input)
+      inject("userPrompt").restore(opts.ctx.userId, opts.input)
     ),
 });

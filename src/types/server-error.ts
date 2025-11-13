@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { JsonValue, type zInfer } from "./common";
 
-export const ServerErrorDetails = z.record(JsonValue);
+export const ServerErrorDetails = z.record(z.string(), JsonValue);
 export type ServerErrorDetails = zInfer<typeof ServerErrorDetails>;
 
 export const ServerErrorData = z.object({

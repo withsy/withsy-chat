@@ -3,6 +3,7 @@ import {
   createNextPagesApiHandler,
   type Options,
 } from "@/server/next-pages-api-handler";
+import { inject } from "@/server/service-registry";
 import { UserAiProfileService } from "@/server/services/user-ai-profile";
 import { getReasonPhrase, StatusCodes } from "http-status-codes";
 
@@ -40,7 +41,8 @@ export default createNextPagesApiHandler({ get });
 
 async function get(opts: Options) {
   const { req, res, ctx } = opts;
-  const { service, userId } = ctx;
+  const { userId } = ctx;
+  const aiProfileStorage = inject("aiProfileStorage");
 
   const fileName = req.query["filename"];
   if (typeof fileName !== "string" || fileName.length === 0)
@@ -50,7 +52,7 @@ async function get(opts: Options) {
     );
 
   const imagePath = UserAiProfileService.createImagePath({ userId, fileName });
-  const result = await service.aiProfileStorage.getStream({ imagePath });
+  const result = await aiProfileStorage.getStream({ imagePath });
   if (!result)
     throw new HttpServerError(
       StatusCodes.NOT_FOUND,
