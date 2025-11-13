@@ -1,5 +1,4 @@
 import type { zInfer } from "@/types/common";
-import "dotenv/config";
 import { z } from "zod";
 
 const EnvValidation = z.object({
