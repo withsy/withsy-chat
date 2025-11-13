@@ -13,6 +13,7 @@ interface Injector<TProviderMap extends AnyProviderMap> {
 export class Container<TProviderMap extends AnyProviderMap> {
   readonly #injectableMap: Record<string, any> = {};
   readonly #providerMap: TProviderMap;
+  readonly #callStack = new Set<string>();
 
   constructor(providerMap: TProviderMap) {
     this.#providerMap = providerMap;
@@ -32,13 +33,26 @@ export class Container<TProviderMap extends AnyProviderMap> {
       throw new Error(`[${nameString}] provider not exists.`);
     }
 
-    const injectable = provider();
-    if (!injectable) {
-      throw new Error(`[${nameString}] provider is invalid.`);
+    if (this.#callStack.has(nameString)) {
+      const callStack = this.#callStack.keys().toArray();
+      callStack.push(nameString);
+      throw new Error(
+        `Circular call detected. call stack: [${callStack.join(" -> ")}]`
+      );
     }
 
-    this.#injectableMap[nameString] = injectable;
-    return injectable;
+    try {
+      this.#callStack.add(nameString);
+      const injectable = provider();
+      if (!injectable) {
+        throw new Error(`[${nameString}] provider is invalid.`);
+      }
+
+      this.#injectableMap[nameString] = injectable;
+      return injectable;
+    } finally {
+      this.#callStack.clear();
+    }
   }
 
   getInjector(): Injector<TProviderMap> {
