@@ -80,7 +80,7 @@ export const diContainer = DiContainer.newBuilder()
       new MessageChunkService(inject("encryptionService"), inject("db"))
   )
   .add("googleGenAiService", () => new GoogleGenAiService())
-  .add("openAiService", () => new OpenAiService())
+  // .add("openAiService", () => new OpenAiService())
   .add("xAiService", () => new XAiService())
   .add(
     "idempotencyInfoService",
@@ -183,4 +183,9 @@ export const diContainer = DiContainer.newBuilder()
   )
   .build();
 
-process.on("SIGTERM", () => diContainer.destroy());
+diContainer.init();
+
+const destroy = () => diContainer.destroy();
+
+process.on("SIGINT", destroy);
+process.on("SIGTERM", destroy);

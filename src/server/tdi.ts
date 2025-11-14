@@ -58,6 +58,7 @@ export class DiContainer<InjectableMap extends AnyInjectableMap> {
   readonly #optionsMap: AnyOptionsMap;
   readonly #instanceMap = new Map<string, AnyInjectable>();
   readonly #currentInitOrders = new Set<string>();
+  #destroyed = false;
 
   constructor(builderContext: BuilderContext<InjectableMap>) {
     this.#providerMap = builderContext.providerMap;
@@ -65,10 +66,16 @@ export class DiContainer<InjectableMap extends AnyInjectableMap> {
   }
 
   init() {
-    this.#optionsMap.keys().forEach((name) => this.get(name));
+    this.#providerMap.keys().forEach((name) => this.get(name));
   }
 
   async destroy() {
+    if (this.#destroyed) {
+      return;
+    }
+
+    this.#destroyed = true;
+
     await this.destroyInstances();
 
     this.#optionsMap.clear();
