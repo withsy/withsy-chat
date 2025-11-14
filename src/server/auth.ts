@@ -58,7 +58,7 @@ function createAuthOptions(): AuthOptions {
           imageUrl = Reflect.get(profile, "picture");
         }
 
-        const { userId } = await inject("userLinkAccount").ensure({
+        const { userId } = await inject("userLinkAccountService").ensure({
           provider,
           providerAccountId,
           refreshToken: refresh_token,

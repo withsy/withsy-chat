@@ -8,12 +8,12 @@ import { getHardDeleteCutoffDate } from "../utils";
 import { inject } from "../service-registry";
 
 export class MessageChunkService {
-  private readonly encryption = inject("encryption");
+  private readonly encryptionService = inject("encryptionService");
   private readonly db = inject("db");
 
   decrypt(entity: MessageChunkEntity): MessageChunkData {
-    const text = this.encryption.decrypt(entity.textEncrypted);
-    const reasoningText = this.encryption.decrypt(
+    const text = this.encryptionService.decrypt(entity.textEncrypted);
+    const reasoningText = this.encryptionService.decrypt(
       entity.reasoningTextEncrypted
     );
     const data = {
@@ -34,9 +34,10 @@ export class MessageChunkService {
   }) {
     const { messageId, index, text, rawData, reasoningText, isDone } = input;
 
-    const textEncrypted = this.encryption.encrypt(text);
-    const rawDataEncrypted = this.encryption.encrypt(rawData);
-    const reasoningTextEncrypted = this.encryption.encrypt(reasoningText);
+    const textEncrypted = this.encryptionService.encrypt(text);
+    const rawDataEncrypted = this.encryptionService.encrypt(rawData);
+    const reasoningTextEncrypted =
+      this.encryptionService.encrypt(reasoningText);
 
     await this.db.messageChunk.create({
       data: {

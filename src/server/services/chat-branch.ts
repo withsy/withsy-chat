@@ -8,9 +8,9 @@ import { inject } from "../service-registry";
 
 export class ChatBranchService {
   private readonly db = inject("db");
-  private readonly chat = inject("chat");
-  private readonly message = inject("message");
-  private readonly encryption = inject("encryption");
+  private readonly chatService = inject("chatService");
+  private readonly messageService = inject("messageService");
+  private readonly encryptionService = inject("encryptionService");
 
   async list(userId: UserId, input: ChatBranchList): Promise<ChatListOutout> {
     const { chatId } = input;
@@ -20,7 +20,7 @@ export class ChatBranchService {
       select: ChatSelect,
     });
 
-    const datas = entities.map((x) => this.chat.decrypt(x));
+    const datas = entities.map((x) => this.chatService.decrypt(x));
     return datas;
   }
 
@@ -38,9 +38,9 @@ export class ChatBranchService {
       return parentMessage;
     });
 
-    const parentMessageData = this.message.decrypt(parentMessage);
+    const parentMessageData = this.messageService.decrypt(parentMessage);
     const title = [...parentMessageData.text].slice(0, 20).join("");
-    const titleEncrypted = this.encryption.encrypt(title);
+    const titleEncrypted = this.encryptionService.encrypt(title);
 
     const chat = await this.db.$transaction(async (tx) => {
       const chat = await ChatService.createBranchChat(tx, {
@@ -52,7 +52,7 @@ export class ChatBranchService {
       return chat;
     });
 
-    const data = this.chat.decrypt(chat);
+    const data = this.chatService.decrypt(chat);
     return data;
   }
 }

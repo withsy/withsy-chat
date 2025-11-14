@@ -24,11 +24,11 @@ import { UserUsageLimitService } from "./user-usage-limit";
 import { inject } from "../service-registry";
 
 export class ChatService {
-  private readonly encryption = inject("encryption");
+  private readonly encryptionService = inject("encryptionService");
   private readonly db = inject("db");
-  private readonly message = inject("message");
-  private readonly userPrompt = inject("userPrompt");
-  private readonly task = inject("task");
+  private readonly messageService = inject("messageService");
+  private readonly userPromptService = inject("userPromptService");
+  private readonly taskService = inject("taskService");
 
   decrypt(
     entity: ChatEntity & {
@@ -36,7 +36,7 @@ export class ChatService {
       userPrompt?: UserPromptEntity | null;
     }
   ): ChatData {
-    const title = this.encryption.decrypt(entity.titleEncrypted);
+    const title = this.encryptionService.decrypt(entity.titleEncrypted);
     const data = {
       id: entity.id,
       title,
@@ -44,12 +44,12 @@ export class ChatService {
       type: entity.type,
       parentMessageId: entity.parentMessageId,
       parentMessage: entity.parentMessage
-        ? this.message.decrypt(entity.parentMessage)
+        ? this.messageService.decrypt(entity.parentMessage)
         : null,
       updatedAt: entity.updatedAt,
       userPromptId: entity.userPromptId,
       userPrompt: entity.userPrompt
-        ? this.userPrompt.decrypt(entity.userPrompt)
+        ? this.userPromptService.decrypt(entity.userPrompt)
         : null,
     } satisfies ChatData;
     return data;
@@ -96,7 +96,7 @@ export class ChatService {
     const { chatId, title, isStarred, userPromptId } = input;
 
     const titleEncrypted =
-      title != null ? this.encryption.encrypt(title) : undefined;
+      title != null ? this.encryptionService.encrypt(title) : undefined;
 
     const entity = await this.db.$transaction(async (tx) => {
       if (userPromptId)
@@ -152,12 +152,14 @@ export class ChatService {
       await UserUsageLimitService.checkMessage(tx, { userId });
     });
 
-    const modelMessageTextEncrypted = this.encryption.encrypt("");
-    const modelMessageReasoningTextEncrypted = this.encryption.encrypt("");
-    const userMessageTextEncrypted = this.encryption.encrypt(text);
-    const userMessageReasoningTextEncrypted = this.encryption.encrypt("");
+    const modelMessageTextEncrypted = this.encryptionService.encrypt("");
+    const modelMessageReasoningTextEncrypted =
+      this.encryptionService.encrypt("");
+    const userMessageTextEncrypted = this.encryptionService.encrypt(text);
+    const userMessageReasoningTextEncrypted =
+      this.encryptionService.encrypt("");
     const title = [...text].slice(0, 20).join("");
-    const titleEncrypted = this.encryption.encrypt(title);
+    const titleEncrypted = this.encryptionService.encrypt(title);
 
     const { chat, userMessage, modelMessage } = await this.db.$transaction(
       async (tx) => {
@@ -185,7 +187,7 @@ export class ChatService {
       }
     );
 
-    await this.task.add("model_route_send_message_to_ai", {
+    await this.taskService.add("model_route_send_message_to_ai", {
       userId,
       userMessageId: userMessage.id,
       modelMessageId: modelMessage.id,
@@ -195,8 +197,8 @@ export class ChatService {
 
     const res = {
       chat: this.decrypt(chat),
-      userMessage: this.message.decrypt(userMessage),
-      modelMessage: this.message.decrypt(modelMessage),
+      userMessage: this.messageService.decrypt(userMessage),
+      modelMessage: this.messageService.decrypt(modelMessage),
     } satisfies ChatStartOutput;
 
     return res;

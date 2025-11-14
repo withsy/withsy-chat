@@ -30,12 +30,12 @@ import { UserService } from "./user";
 import { inject } from "../service-registry";
 
 export class GratitudeJournalService {
-  chat = inject("chat");
+  chatService = inject("chatService");
   db = inject("db");
-  user = inject("user");
-  encryption = inject("encryption");
-  task = inject("task");
-  message = inject("message");
+  userService = inject("userService");
+  encryptionService = inject("encryptionService");
+  taskService = inject("taskService");
+  messageService = inject("messageService");
 
   decrypt(
     entity: GratitudeJournalEntity & { chat?: ChatEntity | null }
@@ -43,7 +43,7 @@ export class GratitudeJournalService {
     const data = {
       id: entity.id,
       chatId: entity.chatId,
-      chat: entity.chat ? this.chat.decrypt(entity.chat) : null,
+      chat: entity.chat ? this.chatService.decrypt(entity.chat) : null,
     } satisfies GratitudeJournalData;
     return data;
   }
@@ -150,8 +150,8 @@ export class GratitudeJournalService {
   ): Promise<ChatStartOutput> {
     const { idempotencyKey } = input;
 
-    const user = await this.user.getForGratitudeJournal({ userId });
-    const userName = this.encryption.decrypt(user.nameEncrypted);
+    const user = await this.userService.getForGratitudeJournal({ userId });
+    const userName = this.encryptionService.decrypt(user.nameEncrypted);
 
     const now = new Date();
     const prepareRes = await this.db.$transaction(async (tx) => {
@@ -173,12 +173,14 @@ export class GratitudeJournalService {
     const { utcTodayStart, utcTodayEnd, zonedTodayDate } = timezoneInfo;
 
     const title = `Gratitude Journal - ${zonedTodayDate}`;
-    const titleEncrypted = this.encryption.encrypt(title);
-    const promptTextEncrypted = this.encryption.encrypt(promptText);
-    const userMessageTextEncrypted = this.encryption.encrypt("");
-    const userMessageReasoningTextEncrypted = this.encryption.encrypt("");
-    const modelMessageTextEncrypted = this.encryption.encrypt("");
-    const modelMessageReasoningTextEncrypted = this.encryption.encrypt("");
+    const titleEncrypted = this.encryptionService.encrypt(title);
+    const promptTextEncrypted = this.encryptionService.encrypt(promptText);
+    const userMessageTextEncrypted = this.encryptionService.encrypt("");
+    const userMessageReasoningTextEncrypted =
+      this.encryptionService.encrypt("");
+    const modelMessageTextEncrypted = this.encryptionService.encrypt("");
+    const modelMessageReasoningTextEncrypted =
+      this.encryptionService.encrypt("");
 
     const createRes = await this.db.$transaction(async (tx) => {
       await IdempotencyInfoService.checkDuplicateRequest(tx, idempotencyKey);
@@ -239,16 +241,16 @@ export class GratitudeJournalService {
 
     const { chat, userMessage, modelMessage } = createRes;
 
-    await this.task.add("model_route_send_message_to_ai", {
+    await this.taskService.add("model_route_send_message_to_ai", {
       userId,
       userMessageId: userMessage.id,
       modelMessageId: modelMessage.id,
     });
 
     return {
-      chat: this.chat.decrypt(chat),
-      userMessage: this.message.decrypt(userMessage),
-      modelMessage: this.message.decrypt(modelMessage),
+      chat: this.chatService.decrypt(chat),
+      userMessage: this.messageService.decrypt(userMessage),
+      modelMessage: this.messageService.decrypt(modelMessage),
     };
   }
 

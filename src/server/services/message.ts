@@ -28,15 +28,15 @@ import { inject } from "../service-registry";
 const DEFAULT_REMAIN_LENGTH = 10;
 
 export class MessageService {
-  private readonly encryption = inject("encryption");
-  private readonly chat = inject("chat");
+  private readonly encryptionService = inject("encryptionService");
+  private readonly chatService = inject("chatService");
   private readonly db = inject("db");
-  private readonly messageChunk = inject("messageChunk");
-  private readonly task = inject("task");
+  private readonly messageChunkService = inject("messageChunkService");
+  private readonly taskService = inject("taskService");
 
   decrypt(entity: MessageEntity & { chat?: ChatEntity }): MessageData {
-    const text = this.encryption.decrypt(entity.textEncrypted);
-    const reasoningText = this.encryption.decrypt(
+    const text = this.encryptionService.decrypt(entity.textEncrypted);
+    const reasoningText = this.encryptionService.decrypt(
       entity.reasoningTextEncrypted
     );
     const data = {
@@ -50,7 +50,7 @@ export class MessageService {
       isBookmarked: entity.isBookmarked,
       createdAt: entity.createdAt,
       parentMessageId: entity.parentMessageId,
-      chat: entity.chat ? this.chat.decrypt(entity.chat) : null,
+      chat: entity.chat ? this.chatService.decrypt(entity.chat) : null,
     } satisfies MessageData;
     return data;
   }
@@ -304,12 +304,13 @@ export class MessageService {
   }) {
     const { userId, messageId } = input;
 
-    const { text, reasoningText } = await this.messageChunk.buildText({
+    const { text, reasoningText } = await this.messageChunkService.buildText({
       userId,
       messageId,
     });
-    const textEncrypted = this.encryption.encrypt(text);
-    const reasoningTextEncrypted = this.encryption.encrypt(reasoningText);
+    const textEncrypted = this.encryptionService.encrypt(text);
+    const reasoningTextEncrypted =
+      this.encryptionService.encrypt(reasoningText);
 
     await this.db.$transaction(async (tx) => {
       await MessageService.transit(tx, {
@@ -375,10 +376,12 @@ export class MessageService {
       await UserUsageLimitService.checkMessage(tx, { userId });
     });
 
-    const userMessageTextEncrypted = this.encryption.encrypt(text);
-    const userMessageReasoningTextEncrypted = this.encryption.encrypt("");
-    const modelMessageTextEncrypted = this.encryption.encrypt("");
-    const modelMessageReasoningTextEncrypted = this.encryption.encrypt("");
+    const userMessageTextEncrypted = this.encryptionService.encrypt(text);
+    const userMessageReasoningTextEncrypted =
+      this.encryptionService.encrypt("");
+    const modelMessageTextEncrypted = this.encryptionService.encrypt("");
+    const modelMessageReasoningTextEncrypted =
+      this.encryptionService.encrypt("");
 
     const { userMessage, modelMessage } = await this.db.$transaction(
       async (tx) => {
@@ -401,7 +404,7 @@ export class MessageService {
       }
     );
 
-    await this.task.add("model_route_send_message_to_ai", {
+    await this.taskService.add("model_route_send_message_to_ai", {
       userId,
       userMessageId: userMessage.id,
       modelMessageId: modelMessage.id,

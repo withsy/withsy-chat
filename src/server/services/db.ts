@@ -1,19 +1,19 @@
 import { PrismaClient } from "../generated/prisma/client";
 import { inject } from "../service-registry";
 import { PrismaPg } from "@prisma/adapter-pg";
+import { InjectableContextProvider, type InjectableContext } from "../tdi";
 
-export function createDb() {
-  const pgPool = inject("pgPool");
-  const adapter = new PrismaPg(pgPool);
-  const prisma = new PrismaClient({ adapter });
-  process.on("SIGTERM", async () => {
-    await prisma.$disconnect();
-  });
-
-  return prisma;
+export class DbProvider extends InjectableContextProvider<PrismaClient> {
+  provide(): InjectableContext<PrismaClient> {
+    const pgPool = inject("pgPool");
+    const adapter = new PrismaPg(pgPool);
+    const client = new PrismaClient({ adapter });
+    return {
+      injectable: client,
+      destroy: () => client.$disconnect(),
+    };
+  }
 }
 
-export type Db = ReturnType<typeof createDb>;
-export type Tx = Parameters<
-  Parameters<ReturnType<typeof createDb>["$transaction"]>[0]
->[0];
+export type Db = PrismaClient;
+export type Tx = Parameters<Parameters<Db["$transaction"]>[0]>[0];

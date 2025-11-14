@@ -32,7 +32,7 @@ export async function getUser(input: {
   if (session) {
     const userSession = UserSession.parse(session);
     try {
-      user = await inject("user").get(userSession.user.id);
+      user = await inject("userService").get(userSession.user.id);
     } catch (_e) {}
   }
 

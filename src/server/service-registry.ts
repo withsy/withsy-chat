@@ -2,7 +2,7 @@ import { AiProfileStorageService } from "./services/ai-profile-storage";
 import { ChatService } from "./services/chat";
 import { ChatBranchService } from "./services/chat-branch";
 import { ChatPromptService } from "./services/chat-prompt";
-import { createDb } from "./services/db";
+import { DbProvider } from "./services/db";
 import { EncryptionService } from "./services/encryption";
 import { EnvValidationService } from "./services/env-validation";
 import { GoogleGenAiService } from "./services/google-gen-ai";
@@ -14,7 +14,7 @@ import { MessageReplyService } from "./services/message-reply";
 import { ModelRouteService } from "./services/model-route";
 import { NextAuthCsrfService } from "./services/next-auth-csrf";
 import { OpenAiService } from "./services/open-ai";
-import { createPgPool } from "./services/pg";
+import { PgPoolProvider } from "./services/pg";
 import { S3Service } from "./services/s3";
 import { TaskService } from "./services/task";
 import { UserService } from "./services/user";
@@ -26,33 +26,35 @@ import { UserUsageLimitService } from "./services/user-usage-limit";
 import { XAiService } from "./services/x-ai";
 import { Container } from "./tdi";
 
-const container = new Container({
-  envValidation: () => new EnvValidationService(),
-  pgPool: () => createPgPool(),
-  db: () => createDb(),
-  user: () => new UserService(),
-  userLinkAccount: () => new UserLinkAccountService(),
-  userUsageLimit: () => new UserUsageLimitService(),
-  userPrompt: () => new UserPromptService(),
-  userDefaultPrompt: () => new UserDefaultPromptService(),
-  userAiProfile: () => new UserAiProfileService(),
-  chat: () => new ChatService(),
-  chatBranch: () => new ChatBranchService(),
-  chatPrompt: () => new ChatPromptService(),
-  gratitudeJournal: () => new GratitudeJournalService(),
-  message: () => new MessageService(),
-  messageChunk: () => new MessageChunkService(),
-  messageReply: () => new MessageReplyService(),
-  modelRoute: () => new ModelRouteService(),
-  googleGenAi: () => new GoogleGenAiService(),
-  openAi: () => new OpenAiService(),
-  xAi: () => new XAiService(),
-  idempotencyInfo: () => new IdempotencyInfoService(),
-  task: () => new TaskService(),
-  encryption: () => new EncryptionService(),
-  s3: () => new S3Service(),
-  aiProfileStorage: () => new AiProfileStorageService(),
-  nextAuthCsrf: () => new NextAuthCsrfService(),
-});
+export const container = Container.newBuilder()
+  .addProvider("envValidationService", () => new EnvValidationService())
+  .addProvider("pgPool", new PgPoolProvider())
+  .addProvider("db", new DbProvider())
+  .addProvider("userService", () => new UserService())
+  .addProvider("userLinkAccountService", () => new UserLinkAccountService())
+  .addProvider("userUsageLimitService", () => new UserUsageLimitService())
+  .addProvider("userPromptService", () => new UserPromptService())
+  .addProvider("userDefaultPromptService", () => new UserDefaultPromptService())
+  .addProvider("userAiProfileService", () => new UserAiProfileService())
+  .addProvider("chatService", () => new ChatService())
+  .addProvider("chatBranchService", () => new ChatBranchService())
+  .addProvider("chatPromptService", () => new ChatPromptService())
+  .addProvider("gratitudeJournalService", () => new GratitudeJournalService())
+  .addProvider("messageService", () => new MessageService())
+  .addProvider("messageChunkService", () => new MessageChunkService())
+  .addProvider("messageReplyService", () => new MessageReplyService())
+  .addProvider("modelRouteService", () => new ModelRouteService())
+  .addProvider("googleGenAiService", () => new GoogleGenAiService())
+  .addProvider("openAiService", () => new OpenAiService())
+  .addProvider("xAiService", () => new XAiService())
+  .addProvider("idempotencyInfoService", () => new IdempotencyInfoService())
+  .addProvider("taskService", () => new TaskService())
+  .addProvider("encryptionService", () => new EncryptionService())
+  .addProvider("s3Service", () => new S3Service())
+  .addProvider("aiProfileStorageService", () => new AiProfileStorageService())
+  .addProvider("nextAuthCsrfService", () => new NextAuthCsrfService())
+  .build();
+
+process.on("SIGTERM", () => container.destroy());
 
 export const inject = container.getInjector();

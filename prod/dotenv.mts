@@ -1,4 +1,4 @@
-import { parse } from "dotenv";
+import { parse } from "@dotenvx/dotenvx";
 import { spawn } from "node:child_process";
 
 const dotenvContents = process.env.DOTENV_CONTENTS;

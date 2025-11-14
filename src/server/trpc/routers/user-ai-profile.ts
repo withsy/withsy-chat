@@ -12,14 +12,16 @@ export const userAiProfileRouter = t.router({
   get: publicProcedure
     .input(UserAiProfileGet)
     .output(UserAiProfileGetOutput)
-    .query((opts) => inject("userAiProfile").get(opts.ctx.userId, opts.input)),
+    .query((opts) =>
+      inject("userAiProfileService").get(opts.ctx.userId, opts.input)
+    ),
   getAll: publicProcedure
     .output(UserAiProfileGetAllOutput)
-    .query((opts) => inject("userAiProfile").getAll(opts.ctx.userId)),
+    .query((opts) => inject("userAiProfileService").getAll(opts.ctx.userId)),
   deleteImage: publicProcedure
     .input(UserAiProfileDeleteImage)
     .output(UserAiProfileData)
     .mutation((opts) =>
-      inject("userAiProfile").deleteImage(opts.ctx.userId, opts.input)
+      inject("userAiProfileService").deleteImage(opts.ctx.userId, opts.input)
     ),
 });

@@ -11,7 +11,7 @@ import type { Tx } from "./db";
 import { inject } from "../service-registry";
 
 export class UserDefaultPromptService {
-  userPrompt = inject("userPrompt");
+  userPromptService = inject("userPromptService");
   db = inject("db");
 
   decrypt(
@@ -20,7 +20,7 @@ export class UserDefaultPromptService {
     const data = {
       userPromptId: entity.userPromptId,
       userPrompt: entity.userPrompt
-        ? this.userPrompt.decrypt(entity.userPrompt)
+        ? this.userPromptService.decrypt(entity.userPrompt)
         : null,
     } satisfies UserDefaultPromptData;
     return data;

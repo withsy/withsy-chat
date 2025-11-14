@@ -8,7 +8,7 @@ export const chatBranchRouter = t.router({
     .input(ChatBranchList)
     .output(ChatListOutout)
     .query((opts) =>
-      inject("chatBranch")
+      inject("chatBranchService")
         .list(opts.ctx.userId, opts.input)
         .then((xs) => xs.map((x) => ChatData.parse(x)))
     ),
@@ -16,7 +16,7 @@ export const chatBranchRouter = t.router({
     .input(ChatBranchStart)
     .output(ChatData)
     .mutation((opts) =>
-      inject("chatBranch")
+      inject("chatBranchService")
         .start(opts.ctx.userId, opts.input)
         .then((x) => ChatData.parse(x))
     ),

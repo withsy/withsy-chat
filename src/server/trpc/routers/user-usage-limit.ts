@@ -10,6 +10,6 @@ export const userUsageLimitRouter = t.router({
     .input(UserUsageLimitList)
     .output(UserUsageLimitListOutput)
     .query((opts) =>
-      inject("userUsageLimit").list(opts.ctx.userId, opts.input)
+      inject("userUsageLimitService").list(opts.ctx.userId, opts.input)
     ),
 });

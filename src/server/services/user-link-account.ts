@@ -3,7 +3,7 @@ import { UserService } from "./user";
 import { UserUsageLimitService } from "./user-usage-limit";
 
 export class UserLinkAccountService {
-  private readonly encryption = inject("encryption");
+  private readonly encryptionService = inject("encryptionService");
   private readonly db = inject("db");
 
   async ensure(input: {
@@ -18,14 +18,14 @@ export class UserLinkAccountService {
       input;
 
     const nameEncrypted = name
-      ? this.encryption.encrypt(name)
-      : this.encryption.encrypt("");
+      ? this.encryptionService.encrypt(name)
+      : this.encryptionService.encrypt("");
     const emailEncrypted = email
-      ? this.encryption.encrypt(email)
-      : this.encryption.encrypt("");
+      ? this.encryptionService.encrypt(email)
+      : this.encryptionService.encrypt("");
     const imageUrlEncrypted = imageUrl
-      ? this.encryption.encrypt(imageUrl)
-      : this.encryption.encrypt("");
+      ? this.encryptionService.encrypt(imageUrl)
+      : this.encryptionService.encrypt("");
 
     const res = await this.db.$transaction(async (tx) => {
       let linkAccount = await tx.userLinkAccount.findFirst({

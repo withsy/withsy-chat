@@ -1,25 +1,27 @@
 import type { PgEventInput, PgEventKey, PgEventSchema } from "@/types/task";
 import type { MaybePromise } from "@trpc/server/unstable-core-do-not-import";
 import { type Notification, Pool } from "pg";
+import { InjectableContextProvider, type InjectableContext } from "../tdi";
 
-export function createPgPool(): Pool {
-  const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
-  });
+export class PgPoolProvider extends InjectableContextProvider<Pool> {
+  provide(): InjectableContext<Pool> {
+    const pool = new Pool({
+      connectionString: process.env.DATABASE_URL,
+    });
 
-  const onError = (e: unknown) => {
-    console.error("Postgres error occurred. error:", e);
-  };
-  pool.on("error", onError);
-  pool.on("connect", (client) => {
-    client.on("error", onError);
-  });
+    const onError = (e: unknown) => {
+      console.error("Postgres error occurred. error:", e);
+    };
+    pool.on("error", onError);
+    pool.on("connect", (client) => {
+      client.on("error", onError);
+    });
 
-  process.on("SIGTERM", async () => {
-    await pool.end();
-  });
-
-  return pool;
+    return {
+      injectable: pool,
+      destroy: () => pool.end(),
+    };
+  }
 }
 
 export async function notify<K extends PgEventKey>(

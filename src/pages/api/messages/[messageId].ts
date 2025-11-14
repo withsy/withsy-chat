@@ -41,9 +41,9 @@ export async function get(options: Options) {
   const { userId } = ctx;
   const pgPool = inject("pgPool");
   const db = inject("db");
-  const userUsageLimit = inject("userUsageLimit");
-  const messageChunk = inject("messageChunk");
-  const message = inject("message");
+  const userUsageLimitService = inject("userUsageLimitService");
+  const messageChunkService = inject("messageChunkService");
+  const messageService = inject("messageService");
 
   const messageId = req.query["messageId"];
   if (typeof messageId !== "string" || messageId.length === 0)
@@ -98,7 +98,7 @@ export async function get(options: Options) {
       if (entity.isDone) {
         let usageLimits: UserUsageLimitData[] = [];
         try {
-          usageLimits = await userUsageLimit.list(userId, {
+          usageLimits = await userUsageLimitService.list(userId, {
             type: "message",
           });
         } catch (e) {
@@ -112,7 +112,7 @@ export async function get(options: Options) {
 
         write({ type: "usageLimits", usageLimits });
       } else {
-        const data = messageChunk.decrypt(entity);
+        const data = messageChunkService.decrypt(entity);
         write({ type: "chunk", chunk: data });
       }
 
@@ -142,7 +142,7 @@ export async function get(options: Options) {
           if (isDone) return;
         }
       } else {
-        const isStaleCompleted = await message.isStaleCompleted({
+        const isStaleCompleted = await messageService.isStaleCompleted({
           userId,
           messageId,
         });

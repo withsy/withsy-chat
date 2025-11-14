@@ -35,20 +35,22 @@ export type OnMessageChunkReceived = (
 ) => MaybePromise<void>;
 
 export class ModelRouteService {
-  private readonly message = inject("message");
-  private readonly messageChunk = inject("messageChunk");
+  private readonly messageService = inject("messageService");
+  private readonly messageChunkService = inject("messageChunkService");
   private readonly pgPool = inject("pgPool");
-  private readonly googleGenAi = inject("googleGenAi");
-  private readonly xAi = inject("xAi");
+  private readonly googleGenAiService = inject("googleGenAiService");
+  private readonly xAiService = inject("xAiService");
   private readonly db = inject("db");
-  private readonly encryption = inject("encryption");
-  private readonly userDefaultPrompt = inject("userDefaultPrompt");
+  private readonly encryptionService = inject("encryptionService");
+  private readonly userDefaultPromptService = inject(
+    "userDefaultPromptService"
+  );
 
   async onSendMessageToAiTask(
     input: TaskInput<"model_route_send_message_to_ai">
   ) {
     const { userId, userMessageId, modelMessageId } = input;
-    const chatMessage = await this.message.transitPendingToProcessing({
+    const chatMessage = await this.messageService.transitPendingToProcessing({
       userId,
       messageId: modelMessageId,
     });
@@ -83,7 +85,7 @@ export class ModelRouteService {
       isDone: boolean;
     }) => {
       const { text, reasoningText, rawData, isDone } = input;
-      await this.messageChunk.create({
+      await this.messageChunkService.create({
         messageId: modelMessage.id,
         index,
         text,
@@ -116,9 +118,9 @@ export class ModelRouteService {
       await match(modelProviderKey)
         .with(
           "google-gen-ai",
-          async () => await this.googleGenAi.sendMessageToAi(input)
+          async () => await this.googleGenAiService.sendMessageToAi(input)
         )
-        .with("x-ai", async () => await this.xAi.sendMessageToAi(input))
+        .with("x-ai", async () => await this.xAiService.sendMessageToAi(input))
         .exhaustive();
 
       isSuccess = true;
@@ -133,7 +135,7 @@ export class ModelRouteService {
       });
 
       if (isSuccess) {
-        await this.message.transitProcessingToSucceeded({
+        await this.messageService.transitProcessingToSucceeded({
           userId,
           messageId: modelMessageId,
         });
@@ -154,7 +156,7 @@ export class ModelRouteService {
     modelMessage: MessageData;
   }): Promise<MessageDataForAi[]> {
     const { userId, modelMessage } = input;
-    const entities = await this.message.listForAi({
+    const entities = await this.messageService.listForAi({
       userId,
       modelMessage,
     });
@@ -168,7 +170,7 @@ export class ModelRouteService {
 
     const datas = entities.map((x) => ({
       role: x.role,
-      text: this.encryption.decrypt(x.textEncrypted),
+      text: this.encryptionService.decrypt(x.textEncrypted),
     }));
     return datas;
   }
@@ -190,17 +192,17 @@ export class ModelRouteService {
 
     const [userMessageRaw, modelMessageRaw, userDefaultPromptRaw] =
       await Promise.all([
-        this.message.getForAi({ userId, messageId: userMessageId }),
-        this.message.getForAi({
+        this.messageService.getForAi({ userId, messageId: userMessageId }),
+        this.messageService.getForAi({
           userId,
           messageId: modelMessageId,
           include: { chat: true },
         }),
-        this.userDefaultPrompt.get(userId),
+        this.userDefaultPromptService.get(userId),
       ]);
 
-    const userMessage = this.message.decrypt(userMessageRaw);
-    const modelMessage = this.message.decrypt(modelMessageRaw);
+    const userMessage = this.messageService.decrypt(userMessageRaw);
+    const modelMessage = this.messageService.decrypt(modelMessageRaw);
     const userDefaultPrompt =
       UserDefaultPromptGetOutput.parse(userDefaultPromptRaw);
     if (modelMessage.model == null) {

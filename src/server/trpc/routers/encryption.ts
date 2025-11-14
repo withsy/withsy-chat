@@ -14,7 +14,7 @@ export const encryptionRouter = t.router({
     .query((opts) => {
       if (process.env.NODE_ENV === "production")
         throw new TRPCError({ code: "SERVICE_UNAVAILABLE" });
-      return inject("encryption").decrypt(opts.input.payloadEncoded);
+      return inject("encryptionService").decrypt(opts.input.payloadEncoded);
     }),
   encrypt: publicProcedure
     .input(
@@ -26,6 +26,6 @@ export const encryptionRouter = t.router({
     .query((opts) => {
       if (process.env.NODE_ENV === "production")
         throw new TRPCError({ code: "SERVICE_UNAVAILABLE" });
-      return inject("encryption").encrypt(opts.input.text);
+      return inject("encryptionService").encrypt(opts.input.text);
     }),
 });

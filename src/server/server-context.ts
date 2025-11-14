@@ -52,7 +52,7 @@ export async function createServerContext(input: {
         getReasonPhrase(StatusCodes.FORBIDDEN)
       );
 
-    inject("nextAuthCsrf").validateCsrfTokenWithReq({ csrfToken, req });
+    inject("nextAuthCsrfService").validateCsrfTokenWithReq({ csrfToken, req });
   }
 
   return { userId };

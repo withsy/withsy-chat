@@ -15,17 +15,17 @@ export const userPromptRouter = t.router({
     .input(UserPromptGet)
     .output(UserPromptData)
     .query((opts) =>
-      inject("userPrompt")
+      inject("userPromptService")
         .get(opts.ctx.userId, opts.input)
         .then((x) => UserPromptData.parse(x))
     ),
   list: publicProcedure.output(UserPromptListOutput).query((opts) =>
-    inject("userPrompt")
+    inject("userPromptService")
       .list(opts.ctx.userId)
       .then((xs) => xs.map((x) => UserPromptData.parse(x)))
   ),
   listDeleted: publicProcedure.output(UserPromptListOutput).query((opts) =>
-    inject("userPrompt")
+    inject("userPromptService")
       .listDeleted(opts.ctx.userId)
       .then((xs) => xs.map((x) => UserPromptData.parse(x)))
   ),
@@ -33,7 +33,7 @@ export const userPromptRouter = t.router({
     .input(UserPromptCreate)
     .output(UserPromptData)
     .mutation((opts) =>
-      inject("userPrompt")
+      inject("userPromptService")
         .create(opts.ctx.userId, opts.input)
         .then((x) => UserPromptData.parse(x))
     ),
@@ -41,18 +41,18 @@ export const userPromptRouter = t.router({
     .input(UserPromptUpdate)
     .output(UserPromptData)
     .mutation((opts) =>
-      inject("userPrompt")
+      inject("userPromptService")
         .update(opts.ctx.userId, opts.input)
         .then((x) => UserPromptData.parse(x))
     ),
   delete: publicProcedure
     .input(UserPromptDelete)
     .mutation((opts) =>
-      inject("userPrompt").delete(opts.ctx.userId, opts.input)
+      inject("userPromptService").delete(opts.ctx.userId, opts.input)
     ),
   restore: publicProcedure
     .input(UserPromptRestore)
     .mutation((opts) =>
-      inject("userPrompt").restore(opts.ctx.userId, opts.input)
+      inject("userPromptService").restore(opts.ctx.userId, opts.input)
     ),
 });

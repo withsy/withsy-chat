@@ -19,13 +19,13 @@ const FALLBACK_TIMEZONE = "UTC";
 const FALLBACK_AI_LANGUAGE = "en";
 
 export class UserService {
-  private readonly encryption = inject("encryption");
+  private readonly encryptionService = inject("encryptionService");
   private readonly db = inject("db");
 
   decrypt(entity: UserEntity): UserData {
-    const name = this.encryption.decrypt(entity.nameEncrypted);
-    const email = this.encryption.decrypt(entity.emailEncrypted);
-    const imageUrl = this.encryption.decrypt(entity.imageUrlEncrypted);
+    const name = this.encryptionService.decrypt(entity.nameEncrypted);
+    const email = this.encryptionService.decrypt(entity.emailEncrypted);
+    const imageUrl = this.encryptionService.decrypt(entity.imageUrlEncrypted);
     const preferences = UserPrefs.parse(entity.preferences);
     const data = {
       id: entity.id,

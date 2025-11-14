@@ -4,21 +4,22 @@ import { inject } from "../service-registry";
 
 export class TaskService {
   private readonly runner: Promise<Runner>;
-  private readonly modelRoute = inject("modelRoute");
-  private readonly message = inject("message");
-  private readonly messageChunk = inject("messageChunk");
-  private readonly chat = inject("chat");
-  private readonly userPrompt = inject("userPrompt");
+  private readonly modelRouteService = inject("modelRouteService");
+  private readonly messageService = inject("messageService");
+  private readonly messageChunkService = inject("messageChunkService");
+  private readonly chatService = inject("chatService");
+  private readonly userPromptService = inject("userPromptService");
   private readonly pgPool = inject("pgPool");
 
   constructor() {
     const taskMap: TaskMap = {
       model_route_send_message_to_ai: (input) =>
-        this.modelRoute.onSendMessageToAiTask(input),
-      message_cleanup_zombies: () => this.message.onCleanupZombiesTask(),
-      message_chunk_hard_delete: () => this.messageChunk.onHardDeleteTask(),
-      chat_hard_delete: () => this.chat.onHardDeleteTask(),
-      user_prompt_hard_delete: () => this.userPrompt.onHardDeleteTask(),
+        this.modelRouteService.onSendMessageToAiTask(input),
+      message_cleanup_zombies: () => this.messageService.onCleanupZombiesTask(),
+      message_chunk_hard_delete: () =>
+        this.messageChunkService.onHardDeleteTask(),
+      chat_hard_delete: () => this.chatService.onHardDeleteTask(),
+      user_prompt_hard_delete: () => this.userPromptService.onHardDeleteTask(),
     };
     const cronTasks: CronTask[] = [
       { cron: "*/5 * * * *", key: "message_cleanup_zombies" },

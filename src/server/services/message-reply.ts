@@ -10,10 +10,10 @@ import { UserUsageLimitService } from "./user-usage-limit";
 import { inject } from "../service-registry";
 
 export class MessageReplyService {
-  encryption = inject("encryption");
+  encryptionService = inject("encryptionService");
   db = inject("db");
-  task = inject("task");
-  message = inject("message");
+  taskService = inject("taskService");
+  messageService = inject("messageService");
 
   async regenerate(
     userId: UserId,
@@ -21,8 +21,9 @@ export class MessageReplyService {
   ): Promise<MessageData> {
     const { idempotencyKey, messageId, model } = input;
 
-    const modelMessageTextEncrypted = this.encryption.encrypt("");
-    const modelMessageReasoningTextEncrypted = this.encryption.encrypt("");
+    const modelMessageTextEncrypted = this.encryptionService.encrypt("");
+    const modelMessageReasoningTextEncrypted =
+      this.encryptionService.encrypt("");
 
     const { userMessage, modelMessage } = await this.db.$transaction(
       async (tx) => {
@@ -75,7 +76,7 @@ export class MessageReplyService {
       }
     );
 
-    await this.task.add("model_route_send_message_to_ai", {
+    await this.taskService.add("model_route_send_message_to_ai", {
       userId,
       userMessageId: userMessage.id,
       modelMessageId: modelMessage.id,
@@ -83,7 +84,7 @@ export class MessageReplyService {
 
     await UserUsageLimitService.decreaseMessage(this.db, { userId });
 
-    const data = this.message.decrypt(modelMessage);
+    const data = this.messageService.decrypt(modelMessage);
     return data;
   }
 }

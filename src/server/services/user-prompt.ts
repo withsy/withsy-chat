@@ -17,12 +17,12 @@ import { UserDefaultPromptService } from "./user-default-prompt";
 import { inject } from "../service-registry";
 
 export class UserPromptService {
-  encryption = inject("encryption");
+  encryptionService = inject("encryptionService");
   db = inject("db");
 
   decrypt(entity: UserPromptEntity): UserPromptData {
-    const title = this.encryption.decrypt(entity.titleEncrypted);
-    const text = this.encryption.decrypt(entity.textEncrypted);
+    const title = this.encryptionService.decrypt(entity.titleEncrypted);
+    const text = this.encryptionService.decrypt(entity.textEncrypted);
     const data = {
       id: entity.id,
       title,
@@ -73,8 +73,8 @@ export class UserPromptService {
   ): Promise<UserPromptData> {
     const { idempotencyKey, title, text } = input;
 
-    const titleEncrypted = this.encryption.encrypt(title);
-    const textEncrypted = this.encryption.encrypt(text);
+    const titleEncrypted = this.encryptionService.encrypt(title);
+    const textEncrypted = this.encryptionService.encrypt(text);
 
     const entity = await this.db.$transaction(async (tx) => {
       await IdempotencyInfoService.checkDuplicateRequest(tx, idempotencyKey);
@@ -103,9 +103,9 @@ export class UserPromptService {
     const { userPromptId, title, text, isStarred } = input;
 
     const titleEncrypted =
-      title != null ? this.encryption.encrypt(title) : undefined;
+      title != null ? this.encryptionService.encrypt(title) : undefined;
     const textEncrypted =
-      text != null ? this.encryption.encrypt(text) : undefined;
+      text != null ? this.encryptionService.encrypt(text) : undefined;
 
     const entity = await this.db.userPrompt.update({
       where: { userId, deletedAt: null, id: userPromptId },

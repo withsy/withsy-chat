@@ -1,31 +1,82 @@
-interface Provider<TInjectable> {
-  (): TInjectable;
+interface InjectableProvider<Injectable> {
+  (): Injectable;
 }
 
-type AnyProviderMap = Record<string, Provider<any>>;
+export type InjectableDestroyer = () => void | Promise<void>;
 
-interface Injector<TProviderMap extends AnyProviderMap> {
-  <TName extends keyof TProviderMap>(name: TName): ReturnType<
-    TProviderMap[TName]
+export interface InjectableContext<Injectable> {
+  injectable: Injectable;
+  destroy?: InjectableDestroyer;
+}
+
+export abstract class InjectableContextProvider<Injectable> {
+  abstract provide(): InjectableContext<Injectable>;
+}
+
+type InjectableProviderLike<Injectable> =
+  | InjectableProvider<Injectable>
+  | InjectableContextProvider<Injectable>;
+
+type InferInjectable<T> = T extends InjectableProvider<infer I>
+  ? I
+  : T extends InjectableContextProvider<infer I>
+  ? I
+  : never;
+
+type AnyInjectableProviderMap = Record<string, InjectableProviderLike<any>>;
+
+interface Injector<ProviderMap extends AnyInjectableProviderMap> {
+  <Name extends keyof ProviderMap>(name: Name): InferInjectable<
+    ProviderMap[Name]
   >;
 }
 
-export class Container<TProviderMap extends AnyProviderMap> {
-  readonly #injectableMap: Record<string, any> = {};
-  readonly #providerMap: TProviderMap;
-  readonly #callStack = new Set<string>();
+export class Container<ProviderMap extends AnyInjectableProviderMap> {
+  readonly #providerMap: ProviderMap;
+  readonly #providerAddedOrders: Set<string>;
+  readonly #injectableContextMap = new Map<string, InjectableContext<any>>();
+  readonly #injectableInitOrders = new Set<string>();
 
-  constructor(providerMap: TProviderMap) {
+  constructor(providerMap: ProviderMap, providerAddedOrders: Set<string>) {
     this.#providerMap = providerMap;
+    this.#providerAddedOrders = providerAddedOrders;
   }
 
-  getInjectable<TName extends keyof TProviderMap>(
-    name: TName
-  ): ReturnType<TProviderMap[TName]> {
+  init() {
+    this.#providerAddedOrders.forEach((name) => this.getInjectable(name));
+  }
+
+  async destroy() {
+    await this.destroyInjectables();
+
+    this.#providerAddedOrders.clear();
+    Object.keys(this.#providerMap).forEach(
+      (key) => delete this.#providerMap[key]
+    );
+  }
+
+  private async destroyInjectables() {
+    const injectableContextEntries = this.#injectableContextMap
+      .entries()
+      .toArray()
+      .reverse();
+    this.#injectableContextMap.clear();
+
+    for (const [_, context] of injectableContextEntries) {
+      if (context.destroy) {
+        await context.destroy();
+      }
+    }
+  }
+
+  getInjectable<Name extends keyof ProviderMap>(
+    name: Name
+  ): InferInjectable<ProviderMap[Name]> {
     const nameString = name.toString();
 
-    if (nameString in this.#injectableMap) {
-      return this.#injectableMap[nameString];
+    const injectableContext = this.#injectableContextMap.get(nameString);
+    if (injectableContext) {
+      return injectableContext.injectable;
     }
 
     const provider = this.#providerMap[nameString];
@@ -33,63 +84,94 @@ export class Container<TProviderMap extends AnyProviderMap> {
       throw new Error(`[${nameString}] provider not exists.`);
     }
 
-    if (this.#callStack.has(nameString)) {
-      const callStack = this.#callStack.keys().toArray();
-      callStack.push(nameString);
+    if (this.#injectableInitOrders.has(nameString)) {
+      const injectableInitOrders = this.#injectableInitOrders.keys().toArray();
+      injectableInitOrders.push(nameString);
+
       throw new Error(
-        `Circular call detected. call stack: [${callStack.join(" -> ")}]`
+        `Circular call detected. init order: [${injectableInitOrders.join(
+          " -> "
+        )}]`
       );
     }
 
     try {
-      this.#callStack.add(nameString);
-      const injectable = provider();
-      if (!injectable) {
-        throw new Error(`[${nameString}] provider is invalid.`);
-      }
+      this.#injectableInitOrders.add(nameString);
 
-      this.#injectableMap[nameString] = injectable;
-      return injectable;
+      const injectableContext = provideInjectableContext(nameString, provider);
+      this.#injectableContextMap.set(nameString, injectableContext);
+
+      return injectableContext.injectable;
     } finally {
-      this.#callStack.clear();
+      this.#injectableInitOrders.clear();
     }
   }
 
-  getInjector(): Injector<TProviderMap> {
+  getInjector(): Injector<ProviderMap> {
     return this.getInjectable.bind(this);
   }
 
-  static newBuilder(this: void): ContainerBuilder<{}> {
-    return new ContainerBuilder({});
+  static newBuilder(this: void): Builder<{}> {
+    return new Builder({
+      providerMap: {},
+      providerAddedOrders: new Set(),
+    });
   }
 }
 
-class ContainerBuilder<TProviderMap extends AnyProviderMap> {
-  readonly #providerMap: TProviderMap;
+interface BuilderContext<ProviderMap extends AnyInjectableProviderMap> {
+  readonly providerMap: ProviderMap;
+  readonly providerAddedOrders: Set<string>;
+}
 
-  constructor(providerMap: TProviderMap) {
-    this.#providerMap = providerMap;
+class Builder<ProviderMap extends AnyInjectableProviderMap> {
+  readonly #context: BuilderContext<ProviderMap>;
+
+  constructor(context: BuilderContext<ProviderMap>) {
+    this.#context = context;
   }
 
-  addProvider<TName extends string, TInjectable>(
-    name: TName,
-    provider: Provider<TInjectable>
-  ): ContainerBuilder<
-    TProviderMap & {
-      [key in TName]: Provider<TInjectable>;
+  addProvider<Name extends string, Injectable>(
+    name: Name,
+    provider: InjectableProviderLike<Injectable>
+  ): Builder<
+    ProviderMap & {
+      [key in Name]: InjectableProviderLike<Injectable>;
     }
   > {
-    if (name in this.#providerMap) {
+    if (name in this.#context.providerMap) {
       throw new Error(`[${name}] provider exists.`);
     }
 
-    return new ContainerBuilder({
-      ...this.#providerMap,
-      [name]: provider,
-    });
+    Reflect.set(this.#context.providerMap, name, provider);
+    this.#context.providerAddedOrders.add(name);
+
+    return new Builder(this.#context);
   }
 
-  build(): Container<TProviderMap> {
-    return new Container<TProviderMap>(this.#providerMap);
+  build(): Container<ProviderMap> {
+    return new Container<ProviderMap>(
+      this.#context.providerMap,
+      this.#context.providerAddedOrders
+    );
   }
+}
+
+function provideInjectableContext<Injectable>(
+  name: string,
+  provider: InjectableProviderLike<Injectable>
+): InjectableContext<Injectable> {
+  let injectableContext: InjectableContext<Injectable> | undefined = undefined;
+  if (provider instanceof InjectableContextProvider) {
+    injectableContext = provider.provide();
+  } else {
+    const injectable = provider();
+    injectableContext = { injectable };
+  }
+
+  if (!injectableContext) {
+    throw new Error(`[${name}] injectable context is invalid.`);
+  }
+
+  return injectableContext;
 }

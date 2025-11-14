@@ -42,7 +42,7 @@ export default createNextPagesApiHandler({ get });
 async function get(opts: Options) {
   const { req, res, ctx } = opts;
   const { userId } = ctx;
-  const aiProfileStorage = inject("aiProfileStorage");
+  const aiProfileStorageService = inject("aiProfileStorageService");
 
   const fileName = req.query["filename"];
   if (typeof fileName !== "string" || fileName.length === 0)
@@ -52,7 +52,7 @@ async function get(opts: Options) {
     );
 
   const imagePath = UserAiProfileService.createImagePath({ userId, fileName });
-  const result = await aiProfileStorage.getStream({ imagePath });
+  const result = await aiProfileStorageService.getStream({ imagePath });
   if (!result)
     throw new HttpServerError(
       StatusCodes.NOT_FOUND,

@@ -8,7 +8,7 @@ export const messageReplyRouter = t.router({
     .input(MessageReplyRegenerate)
     .output(MessageData)
     .mutation((opts) =>
-      inject("messageReply")
+      inject("messageReplyService")
         .regenerate(opts.ctx.userId, opts.input)
         .then((x) => MessageData.parse(x))
     ),

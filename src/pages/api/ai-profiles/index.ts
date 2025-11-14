@@ -59,10 +59,10 @@ const Input = z.object({
 async function post(opts: Options) {
   const { req, res, ctx } = opts;
   const { userId } = ctx;
-  const idempotencyInfo = inject("idempotencyInfo");
+  const idempotencyInfoService = inject("idempotencyInfoService");
   const db = inject("db");
-  const aiProfileStorage = inject("aiProfileStorage");
-  const userAiProfile = inject("userAiProfile");
+  const aiProfileStorageService = inject("aiProfileStorageService");
+  const userAiProfileService = inject("userAiProfileService");
 
   const idempotencyKey = req.headers["idempotency-key"];
   if (typeof idempotencyKey != "string" || idempotencyKey.length === 0)
@@ -72,7 +72,7 @@ async function post(opts: Options) {
     );
 
   try {
-    await idempotencyInfo.checkDuplicateRequest(idempotencyKey);
+    await idempotencyInfoService.checkDuplicateRequest(idempotencyKey);
   } catch (_e) {
     throw new HttpServerError(
       StatusCodes.CONFLICT,
@@ -117,7 +117,7 @@ async function post(opts: Options) {
           fileName,
         });
 
-        await aiProfileStorage.putStream({
+        await aiProfileStorageService.putStream({
           imagePath,
           contentType: mimeType,
           stream: event.stream,
@@ -143,7 +143,7 @@ async function post(opts: Options) {
 
   const { model, name, imagePath } = inputRes.data;
   try {
-    const data = await userAiProfile.update({
+    const data = await userAiProfileService.update({
       userId,
       model,
       name,
@@ -152,7 +152,7 @@ async function post(opts: Options) {
 
     return res.status(200).json(data);
   } catch (e) {
-    if (imagePath) await aiProfileStorage.delete({ imagePath });
+    if (imagePath) await aiProfileStorageService.delete({ imagePath });
 
     throw e;
   }
