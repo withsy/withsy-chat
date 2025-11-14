@@ -1,5 +1,7 @@
 // #region Helpers
 
+type MaybePromise<T> = T | Promise<T>;
+
 type Merged<A extends object, B extends object> = {
   [K in keyof A | keyof B]: K extends keyof B
     ? B[K]
@@ -18,7 +20,7 @@ interface InjectableProvider<Injectable> {
 
 type InjectableDestroyer<Injectable> = (
   injectable: Injectable
-) => void | Promise<void>;
+) => MaybePromise<void>;
 
 interface InjectableOptions<Injectable> {
   destroy?: InjectableDestroyer<Injectable>;
