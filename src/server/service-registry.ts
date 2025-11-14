@@ -16,7 +16,7 @@ import { MessageReplyService } from "./services/message-reply";
 import { MessageTaskHandler } from "./services/message-task-handler";
 import { ModelRouteService } from "./services/model-route";
 import { NextAuthCsrfService } from "./services/next-auth-csrf";
-import { OpenAiService } from "./services/open-ai";
+// import { OpenAiService } from "./services/open-ai";
 import { createPgPool } from "./services/pg";
 import { S3Service } from "./services/s3";
 import { TaskService } from "./services/task";
