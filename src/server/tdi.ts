@@ -10,6 +10,8 @@ type Merged<A extends object, B extends object> = {
     : never;
 };
 
+type Simplify<T> = T extends infer O ? { [K in keyof O]: O[K] } : never;
+
 // #endregion Helpers
 
 // #region Common types
@@ -168,7 +170,7 @@ class Builder<ProviderMap extends AnyProviderMap> {
     name: NoDuplicatedName<Name, ProviderMap>,
     provider: InjectableProvider<Injectable>,
     options?: InjectableOptions<Injectable>
-  ): Builder<MergedProviderMap<ProviderMap, Name, Injectable>> {
+  ): Builder<Simplify<MergedProviderMap<ProviderMap, Name, Injectable>>> {
     if (name in this.#context.providerMap) {
       throw new Error(`Provider name '${name}' already exists.`);
     }
@@ -178,11 +180,7 @@ class Builder<ProviderMap extends AnyProviderMap> {
       this.#context.optionsMap.set(name, options);
     }
 
-    return new Builder(
-      this.#context as BuilderContext<
-        MergedProviderMap<ProviderMap, Name, Injectable>
-      >
-    );
+    return new Builder(this.#context as any);
   }
 
   build(): Container<ProviderMap> {
