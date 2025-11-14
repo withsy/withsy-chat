@@ -7,12 +7,14 @@ import {
   UserDefaultPromptUpdate,
 } from "@/types/user-default-prompt";
 import { UserPromptEntity, UserPromptSelect } from "@/types/user-prompt";
-import type { Tx } from "./db";
-import { inject } from "../service-registry";
+import type { Db, Tx } from "./db";
+import type { UserPromptService } from "./user-prompt";
 
 export class UserDefaultPromptService {
-  userPromptService = inject("userPromptService");
-  db = inject("db");
+  constructor(
+    private readonly userPromptService: UserPromptService,
+    private readonly db: Db
+  ) {}
 
   decrypt(
     entity: UserDefaultPromptEntity & { userPrompt?: UserPromptEntity | null }

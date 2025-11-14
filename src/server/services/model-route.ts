@@ -10,7 +10,14 @@ import type { Simplify } from "type-fest";
 import { MessageService } from "./message";
 import { notify } from "./pg";
 import { UserUsageLimitService } from "./user-usage-limit";
-import { inject } from "../service-registry";
+import type { MessageChunkService } from "./message-chunk";
+import type { Pool } from "pg";
+import type { GoogleGenAiService } from "./google-gen-ai";
+import type { XAiService } from "./x-ai";
+import type { Db } from "./db";
+import type { EncryptionService } from "./encryption";
+import type { UserDefaultPromptService } from "./user-default-prompt";
+import type { ChatMessageDecryptService } from "./chat-message-decrypt";
 
 export type ValidatedModelMessage = Simplify<
   Omit<MessageData, "model"> & {
@@ -35,16 +42,17 @@ export type OnMessageChunkReceived = (
 ) => MaybePromise<void>;
 
 export class ModelRouteService {
-  private readonly messageService = inject("messageService");
-  private readonly messageChunkService = inject("messageChunkService");
-  private readonly pgPool = inject("pgPool");
-  private readonly googleGenAiService = inject("googleGenAiService");
-  private readonly xAiService = inject("xAiService");
-  private readonly db = inject("db");
-  private readonly encryptionService = inject("encryptionService");
-  private readonly userDefaultPromptService = inject(
-    "userDefaultPromptService"
-  );
+  constructor(
+    private readonly messageService: MessageService,
+    private readonly messageChunkService: MessageChunkService,
+    private readonly pgPool: Pool,
+    private readonly googleGenAiService: GoogleGenAiService,
+    private readonly xAiService: XAiService,
+    private readonly db: Db,
+    private readonly encryptionService: EncryptionService,
+    private readonly userDefaultPromptService: UserDefaultPromptService,
+    private readonly chatMessageDecryptService: ChatMessageDecryptService
+  ) {}
 
   async onSendMessageToAiTask(
     input: TaskInput<"model_route_send_message_to_ai">
@@ -201,8 +209,10 @@ export class ModelRouteService {
         this.userDefaultPromptService.get(userId),
       ]);
 
-    const userMessage = this.messageService.decrypt(userMessageRaw);
-    const modelMessage = this.messageService.decrypt(modelMessageRaw);
+    const userMessage =
+      this.chatMessageDecryptService.decryptMessage(userMessageRaw);
+    const modelMessage =
+      this.chatMessageDecryptService.decryptMessage(modelMessageRaw);
     const userDefaultPrompt =
       UserDefaultPromptGetOutput.parse(userDefaultPromptRaw);
     if (modelMessage.model == null) {

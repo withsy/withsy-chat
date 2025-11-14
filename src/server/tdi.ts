@@ -16,8 +16,12 @@ type Simplify<T> = T extends infer O ? { [K in keyof O]: O[K] } : never;
 
 // #region Common types
 
-interface InjectableProvider<Injectable> {
-  (): Injectable;
+interface InjectableProviderContext<ProviderMap extends AnyProviderMap> {
+  inject: Injector<ProviderMap>;
+}
+
+interface InjectableProvider<ProviderMap extends AnyProviderMap, Injectable> {
+  (context: InjectableProviderContext<ProviderMap>): Injectable;
 }
 
 type InjectableDestroyer<Injectable> = (
@@ -28,16 +32,15 @@ interface InjectableOptions<Injectable> {
   destroy?: InjectableDestroyer<Injectable>;
 }
 
-type InferInjectable<T> = T extends InjectableProvider<infer I> ? I : never;
-
 type AnyInjectable = any;
-type AnyProviderMap = Record<string, InjectableProvider<AnyInjectable>>;
+type AnyProviderMap = Record<
+  string,
+  InjectableProvider<AnyProviderMap, AnyInjectable>
+>;
 type AnyOptionsMap = Map<string, InjectableOptions<AnyInjectable>>;
 
 interface Injector<ProviderMap extends AnyProviderMap> {
-  <Name extends keyof ProviderMap>(name: Name): InferInjectable<
-    ProviderMap[Name]
-  >;
+  <Name extends keyof ProviderMap>(name: Name): ReturnType<ProviderMap[Name]>;
 }
 
 // #endregion Common
@@ -56,7 +59,7 @@ export class Container<ProviderMap extends AnyProviderMap> {
   }
 
   init() {
-    this.#optionsMap.keys().forEach((name) => this.getInjectable(name));
+    this.#optionsMap.keys().forEach((name) => this.get(name));
   }
 
   async destroy() {
@@ -83,9 +86,9 @@ export class Container<ProviderMap extends AnyProviderMap> {
     }
   }
 
-  getInjectable<Name extends keyof ProviderMap>(
+  get<Name extends keyof ProviderMap>(
     name: Name
-  ): InferInjectable<ProviderMap[Name]> {
+  ): ReturnType<ProviderMap[Name]> {
     const nameString = name.toString();
 
     if (this.#instanceMap.has(nameString)) {
@@ -107,17 +110,13 @@ export class Container<ProviderMap extends AnyProviderMap> {
 
       this.#currentInitOrders.add(nameString);
 
-      const injectable = provider();
+      const injectable = provider({ inject: this.get.bind(this) });
       this.#instanceMap.set(nameString, injectable);
 
       return injectable;
     } finally {
       this.#currentInitOrders.clear();
     }
-  }
-
-  getInjector(): Injector<ProviderMap> {
-    return this.getInjectable.bind(this);
   }
 
   static newBuilder(this: void): Builder<{}> {
@@ -151,7 +150,7 @@ type MergedProviderMap<
 > = Merged<
   ProviderMap,
   {
-    [key in Name]: InjectableProvider<Injectable>;
+    [key in Name]: InjectableProvider<ProviderMap, Injectable>;
   }
 >;
 
@@ -168,7 +167,7 @@ class Builder<ProviderMap extends AnyProviderMap> {
 
   add<Name extends string, Injectable>(
     name: NoDuplicatedName<Name, ProviderMap>,
-    provider: InjectableProvider<Injectable>,
+    provider: InjectableProvider<ProviderMap, Injectable>,
     options?: InjectableOptions<Injectable>
   ): Builder<Simplify<MergedProviderMap<ProviderMap, Name, Injectable>>> {
     if (name in this.#context.providerMap) {

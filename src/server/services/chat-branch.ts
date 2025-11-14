@@ -4,13 +4,16 @@ import type { UserId } from "@/types/id";
 import { ChatService } from "./chat";
 import { IdempotencyInfoService } from "./idempotency-info";
 import { MessageService } from "./message";
-import { inject } from "../service-registry";
+import type { Db } from "./db";
+import type { EncryptionService } from "./encryption";
+import type { ChatMessageDecryptService } from "./chat-message-decrypt";
 
 export class ChatBranchService {
-  private readonly db = inject("db");
-  private readonly chatService = inject("chatService");
-  private readonly messageService = inject("messageService");
-  private readonly encryptionService = inject("encryptionService");
+  constructor(
+    private readonly db: Db,
+    private readonly encryptionService: EncryptionService,
+    private readonly chatMessageDecryptService: ChatMessageDecryptService
+  ) {}
 
   async list(userId: UserId, input: ChatBranchList): Promise<ChatListOutout> {
     const { chatId } = input;
@@ -20,7 +23,9 @@ export class ChatBranchService {
       select: ChatSelect,
     });
 
-    const datas = entities.map((x) => this.chatService.decrypt(x));
+    const datas = entities.map((x) =>
+      this.chatMessageDecryptService.decryptChat(x)
+    );
     return datas;
   }
 
@@ -38,7 +43,8 @@ export class ChatBranchService {
       return parentMessage;
     });
 
-    const parentMessageData = this.messageService.decrypt(parentMessage);
+    const parentMessageData =
+      this.chatMessageDecryptService.decryptMessage(parentMessage);
     const title = [...parentMessageData.text].slice(0, 20).join("");
     const titleEncrypted = this.encryptionService.encrypt(title);
 
@@ -52,7 +58,7 @@ export class ChatBranchService {
       return chat;
     });
 
-    const data = this.chatService.decrypt(chat);
+    const data = this.chatMessageDecryptService.decryptChat(chat);
     return data;
   }
 }

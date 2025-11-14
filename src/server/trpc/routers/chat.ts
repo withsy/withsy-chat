@@ -9,16 +9,17 @@ import {
   ChatUpdate,
 } from "@/types/chat";
 import { publicProcedure, t } from "../server";
-import { inject } from "@/server/service-registry";
 
 export const chatRouter = t.router({
   list: publicProcedure.output(ChatListOutout).query((opts) =>
-    inject("chatService")
+    opts.ctx.container
+      .get("chatService")
       .list(opts.ctx.userId)
       .then((xs) => xs.map((x) => ChatData.parse(x)))
   ),
   listDeleted: publicProcedure.output(ChatListOutout).query((opts) =>
-    inject("chatService")
+    opts.ctx.container
+      .get("chatService")
       .listDeleted(opts.ctx.userId)
       .then((xs) => xs.map((x) => ChatData.parse(x)))
   ),
@@ -26,7 +27,8 @@ export const chatRouter = t.router({
     .input(ChatGet)
     .output(ChatData)
     .query((opts) =>
-      inject("chatService")
+      opts.ctx.container
+        .get("chatService")
         .get(opts.ctx.userId, opts.input)
         .then((x) => ChatData.parse(x))
     ),
@@ -34,20 +36,22 @@ export const chatRouter = t.router({
     .input(ChatUpdate)
     .output(ChatData)
     .mutation((opts) =>
-      inject("chatService")
+      opts.ctx.container
+        .get("chatService")
         .update(opts.ctx.userId, opts.input)
         .then((x) => ChatData.parse(x))
     ),
   delete: publicProcedure
     .input(ChatDelete)
     .mutation((opts) =>
-      inject("chatService").delete(opts.ctx.userId, opts.input)
+      opts.ctx.container.get("chatService").delete(opts.ctx.userId, opts.input)
     ),
   restore: publicProcedure
     .input(ChatRestore)
     .output(ChatData)
     .mutation((opts) =>
-      inject("chatService")
+      opts.ctx.container
+        .get("chatService")
         .restore(opts.ctx.userId, opts.input)
         .then((x) => ChatData.parse(x))
     ),
@@ -55,7 +59,8 @@ export const chatRouter = t.router({
     .input(ChatStart)
     .output(ChatStartOutput)
     .mutation((opts) =>
-      inject("chatService")
+      opts.ctx.container
+        .get("chatService")
         .start(opts.ctx.userId, opts.input)
         .then((x) => ChatStartOutput.parse(x))
     ),

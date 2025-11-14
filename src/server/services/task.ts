@@ -1,24 +1,36 @@
 import type { CronTask, TaskInput, TaskKey, TaskMap } from "@/types/task";
 import { run, type Runner, type TaskList } from "graphile-worker";
-import { inject } from "../service-registry";
+import type { ModelRouteService } from "./model-route";
+import type { MessageService } from "./message";
+import type { MessageChunkService } from "./message-chunk";
+import type { UserPromptService } from "./user-prompt";
+import type { Pool } from "pg";
+import type { ChatTaskHandler } from "./chat-task-handler";
+import type { MessageTaskHandler } from "./message-task-handler";
+import type { TaskAdder } from "./task-adder";
 
 export class TaskService {
-  private readonly runner: Promise<Runner>;
-  private readonly modelRouteService = inject("modelRouteService");
-  private readonly messageService = inject("messageService");
-  private readonly messageChunkService = inject("messageChunkService");
-  private readonly chatService = inject("chatService");
-  private readonly userPromptService = inject("userPromptService");
-  private readonly pgPool = inject("pgPool");
+  readonly runner: Promise<Runner>;
 
-  constructor() {
+  constructor(
+    private readonly modelRouteService: ModelRouteService,
+    private readonly messageTaskHandler: MessageTaskHandler,
+    private readonly messageChunkService: MessageChunkService,
+    private readonly chatTaskHandler: ChatTaskHandler,
+    private readonly userPromptService: UserPromptService,
+    private readonly pgPool: Pool,
+    private readonly taskAdder: TaskAdder
+  ) {
+    this.taskAdder.setTaskService(this);
+
     const taskMap: TaskMap = {
       model_route_send_message_to_ai: (input) =>
         this.modelRouteService.onSendMessageToAiTask(input),
-      message_cleanup_zombies: () => this.messageService.onCleanupZombiesTask(),
+      message_cleanup_zombies: () =>
+        this.messageTaskHandler.onCleanupZombiesTask(),
       message_chunk_hard_delete: () =>
         this.messageChunkService.onHardDeleteTask(),
-      chat_hard_delete: () => this.chatService.onHardDeleteTask(),
+      chat_hard_delete: () => this.chatTaskHandler.onHardDeleteTask(),
       user_prompt_hard_delete: () => this.userPromptService.onHardDeleteTask(),
     };
     const cronTasks: CronTask[] = [
@@ -107,10 +119,5 @@ export class TaskService {
 
   async waitUntilStart() {
     await this.runner;
-  }
-
-  async add<K extends TaskKey>(key: K, input: TaskInput<K>) {
-    const runner = await this.runner;
-    await runner.addJob(key, input as any);
   }
 }

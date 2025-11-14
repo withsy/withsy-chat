@@ -13,47 +13,23 @@ import {
 import { ChatPromptSelect } from "@/types/chat-prompt";
 import { GratitudeJournalSelect } from "@/types/gratitude-journal";
 import type { MessageId, UserId } from "@/types/id";
-import { MessageEntity, MessageSelect } from "@/types/message";
-import type { UserPromptEntity } from "@/types/user-prompt";
+import { MessageSelect } from "@/types/message";
 import { v7 as uuidv7 } from "uuid";
-import { getHardDeleteCutoffDate } from "../utils";
-import type { Tx } from "./db";
+import type { Db, Tx } from "./db";
 import { IdempotencyInfoService } from "./idempotency-info";
 import { MessageService } from "./message";
 import { UserUsageLimitService } from "./user-usage-limit";
-import { inject } from "../service-registry";
+import type { EncryptionService } from "./encryption";
+import type { ChatMessageDecryptService } from "./chat-message-decrypt";
+import type { TaskAdder } from "./task-adder";
 
 export class ChatService {
-  private readonly encryptionService = inject("encryptionService");
-  private readonly db = inject("db");
-  private readonly messageService = inject("messageService");
-  private readonly userPromptService = inject("userPromptService");
-  private readonly taskService = inject("taskService");
-
-  decrypt(
-    entity: ChatEntity & {
-      parentMessage?: MessageEntity | null;
-      userPrompt?: UserPromptEntity | null;
-    }
-  ): ChatData {
-    const title = this.encryptionService.decrypt(entity.titleEncrypted);
-    const data = {
-      id: entity.id,
-      title,
-      isStarred: entity.isStarred,
-      type: entity.type,
-      parentMessageId: entity.parentMessageId,
-      parentMessage: entity.parentMessage
-        ? this.messageService.decrypt(entity.parentMessage)
-        : null,
-      updatedAt: entity.updatedAt,
-      userPromptId: entity.userPromptId,
-      userPrompt: entity.userPrompt
-        ? this.userPromptService.decrypt(entity.userPrompt)
-        : null,
-    } satisfies ChatData;
-    return data;
-  }
+  constructor(
+    private readonly encryptionService: EncryptionService,
+    private readonly db: Db,
+    private readonly chatMessageDecryptService: ChatMessageDecryptService,
+    private readonly taskAdder: TaskAdder
+  ) {}
 
   async list(userId: UserId): Promise<ChatListOutout> {
     const entities = await this.db.chat.findMany({
@@ -62,7 +38,9 @@ export class ChatService {
       select: ChatSelect,
     });
 
-    const datas = entities.map((x) => this.decrypt(x));
+    const datas = entities.map((x) =>
+      this.chatMessageDecryptService.decryptChat(x)
+    );
     return datas;
   }
 
@@ -73,7 +51,9 @@ export class ChatService {
       select: ChatSelect,
     });
 
-    const datas = entities.map((x) => this.decrypt(x));
+    const datas = entities.map((x) =>
+      this.chatMessageDecryptService.decryptChat(x)
+    );
     return datas;
   }
 
@@ -88,7 +68,7 @@ export class ChatService {
       },
     });
 
-    const data = this.decrypt(entity);
+    const data = this.chatMessageDecryptService.decryptChat(entity);
     return data;
   }
 
@@ -117,7 +97,7 @@ export class ChatService {
       return entity;
     });
 
-    const data = this.decrypt(entity);
+    const data = this.chatMessageDecryptService.decryptChat(entity);
     return data;
   }
 
@@ -140,7 +120,7 @@ export class ChatService {
       select: ChatSelect,
     });
 
-    const data = this.decrypt(entity);
+    const data = this.chatMessageDecryptService.decryptChat(entity);
     return data;
   }
 
@@ -187,7 +167,7 @@ export class ChatService {
       }
     );
 
-    await this.taskService.add("model_route_send_message_to_ai", {
+    await this.taskAdder.add("model_route_send_message_to_ai", {
       userId,
       userMessageId: userMessage.id,
       modelMessageId: modelMessage.id,
@@ -196,35 +176,12 @@ export class ChatService {
     await UserUsageLimitService.decreaseMessage(this.db, { userId });
 
     const res = {
-      chat: this.decrypt(chat),
-      userMessage: this.messageService.decrypt(userMessage),
-      modelMessage: this.messageService.decrypt(modelMessage),
+      chat: this.chatMessageDecryptService.decryptChat(chat),
+      userMessage: this.chatMessageDecryptService.decryptMessage(userMessage),
+      modelMessage: this.chatMessageDecryptService.decryptMessage(modelMessage),
     } satisfies ChatStartOutput;
 
     return res;
-  }
-
-  async onHardDeleteTask() {
-    const cutoffDate = getHardDeleteCutoffDate(new Date());
-
-    await this.db.$transaction(async (tx) => {
-      const chatsToDelete = await tx.chat.findMany({
-        where: { deletedAt: { not: null, lt: cutoffDate } },
-        select: { id: true },
-      });
-
-      if (chatsToDelete.length === 0) return;
-
-      const chatIds = chatsToDelete.map((x) => x.id);
-      console.warn(
-        `Preparing to delete ${chatIds.length}. chats: ${chatIds.join(", ")}`
-      );
-
-      const res = await tx.chat.deleteMany({
-        where: { id: { in: chatIds } },
-      });
-      console.warn(`Successfully hard deleted ${res.count} chats.`);
-    });
   }
 
   static async createChat(

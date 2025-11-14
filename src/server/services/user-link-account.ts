@@ -1,10 +1,13 @@
-import { inject } from "../service-registry";
+import type { Db } from "./db";
+import type { EncryptionService } from "./encryption";
 import { UserService } from "./user";
 import { UserUsageLimitService } from "./user-usage-limit";
 
 export class UserLinkAccountService {
-  private readonly encryptionService = inject("encryptionService");
-  private readonly db = inject("db");
+  constructor(
+    private readonly encryptionService: EncryptionService,
+    private readonly db: Db
+  ) {}
 
   async ensure(input: {
     provider: string;

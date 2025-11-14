@@ -1,9 +1,10 @@
 import { Readable } from "node:stream";
-import { inject } from "../service-registry";
+import type { S3Service } from "./s3";
 
 export class AiProfileStorageService {
   private bucketName = "ai-profiles";
-  private readonly s3Service = inject("s3Service");
+
+  constructor(private readonly s3Service: S3Service) {}
 
   /**
    * Must consume the result stream.

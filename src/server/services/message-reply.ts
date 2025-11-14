@@ -7,13 +7,18 @@ import { HttpServerError } from "../error";
 import { IdempotencyInfoService } from "./idempotency-info";
 import { MessageService } from "./message";
 import { UserUsageLimitService } from "./user-usage-limit";
-import { inject } from "../service-registry";
+import type { EncryptionService } from "./encryption";
+import type { Db } from "./db";
+import type { TaskAdder } from "./task-adder";
+import type { ChatMessageDecryptService } from "./chat-message-decrypt";
 
 export class MessageReplyService {
-  encryptionService = inject("encryptionService");
-  db = inject("db");
-  taskService = inject("taskService");
-  messageService = inject("messageService");
+  constructor(
+    private readonly encryptionService: EncryptionService,
+    private readonly db: Db,
+    private readonly taskAdder: TaskAdder,
+    private readonly chatMessageDecryptService: ChatMessageDecryptService
+  ) {}
 
   async regenerate(
     userId: UserId,
@@ -76,7 +81,7 @@ export class MessageReplyService {
       }
     );
 
-    await this.taskService.add("model_route_send_message_to_ai", {
+    await this.taskAdder.add("model_route_send_message_to_ai", {
       userId,
       userMessageId: userMessage.id,
       modelMessageId: modelMessage.id,
@@ -84,7 +89,7 @@ export class MessageReplyService {
 
     await UserUsageLimitService.decreaseMessage(this.db, { userId });
 
-    const data = this.messageService.decrypt(modelMessage);
+    const data = this.chatMessageDecryptService.decryptMessage(modelMessage);
     return data;
   }
 }

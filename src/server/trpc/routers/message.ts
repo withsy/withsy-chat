@@ -9,29 +9,32 @@ import {
   MessageUpdate,
 } from "@/types/message";
 import { publicProcedure, t } from "../server";
-import { inject } from "@/server/service-registry";
 
 export const messageRouter = t.router({
   get: publicProcedure
     .input(MessageGet)
     .output(MessageGetOutput)
-    .query((opts) => inject("messageService").get(opts.ctx.userId, opts.input)),
+    .query((opts) =>
+      opts.ctx.container.get("messageService").get(opts.ctx.userId, opts.input)
+    ),
   list: publicProcedure
     .input(MessageList)
     .output(MessageListOutput)
     .query((opts) =>
-      inject("messageService").list(opts.ctx.userId, opts.input)
+      opts.ctx.container.get("messageService").list(opts.ctx.userId, opts.input)
     ),
   update: publicProcedure
     .input(MessageUpdate)
     .output(MessageData)
     .mutation((opts) =>
-      inject("messageService").update(opts.ctx.userId, opts.input)
+      opts.ctx.container
+        .get("messageService")
+        .update(opts.ctx.userId, opts.input)
     ),
   send: publicProcedure
     .input(MessageSend)
     .output(MessageSendOutput)
     .mutation((opts) =>
-      inject("messageService").send(opts.ctx.userId, opts.input)
+      opts.ctx.container.get("messageService").send(opts.ctx.userId, opts.input)
     ),
 });

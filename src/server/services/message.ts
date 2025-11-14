@@ -19,41 +19,25 @@ import { Model } from "@/types/model";
 import { Role } from "@/types/role";
 import { UserPromptSelect } from "@/types/user-prompt";
 import { v7 as uuidv7 } from "uuid";
-import type { Tx } from "./db";
+import type { Db, Tx } from "./db";
 import { IdempotencyInfoService } from "./idempotency-info";
 import { UserUsageLimitService } from "./user-usage-limit";
-import { inject } from "../service-registry";
+import type { EncryptionService } from "./encryption";
+import type { MessageChunkService } from "./message-chunk";
+import type { ChatMessageDecryptService } from "./chat-message-decrypt";
+import type { TaskAdder } from "./task-adder";
 
 // TODO: Change limit history length
 const DEFAULT_REMAIN_LENGTH = 10;
 
 export class MessageService {
-  private readonly encryptionService = inject("encryptionService");
-  private readonly chatService = inject("chatService");
-  private readonly db = inject("db");
-  private readonly messageChunkService = inject("messageChunkService");
-  private readonly taskService = inject("taskService");
-
-  decrypt(entity: MessageEntity & { chat?: ChatEntity }): MessageData {
-    const text = this.encryptionService.decrypt(entity.textEncrypted);
-    const reasoningText = this.encryptionService.decrypt(
-      entity.reasoningTextEncrypted
-    );
-    const data = {
-      id: entity.id,
-      chatId: entity.chatId,
-      role: Role.parse(entity.role),
-      model: entity.model ? Model.parse(entity.model) : null,
-      text,
-      reasoningText,
-      status: entity.status,
-      isBookmarked: entity.isBookmarked,
-      createdAt: entity.createdAt,
-      parentMessageId: entity.parentMessageId,
-      chat: entity.chat ? this.chatService.decrypt(entity.chat) : null,
-    } satisfies MessageData;
-    return data;
-  }
+  constructor(
+    private readonly encryptionService: EncryptionService,
+    private readonly chatMessageDecryptService: ChatMessageDecryptService,
+    private readonly db: Db,
+    private readonly messageChunkService: MessageChunkService,
+    private readonly taskAdder: TaskAdder
+  ) {}
 
   async get(userId: UserId, input: MessageGet): Promise<MessageGetOutput> {
     const { messageId } = input;
@@ -62,7 +46,9 @@ export class MessageService {
       select: MessageSelect,
     });
 
-    const data = entity ? this.decrypt(entity) : null;
+    const data = entity
+      ? this.chatMessageDecryptService.decryptMessage(entity)
+      : null;
     return data;
   }
 
@@ -94,7 +80,9 @@ export class MessageService {
       }),
     });
 
-    const datas = entities.map((x) => this.decrypt(x));
+    const datas = entities.map((x) =>
+      this.chatMessageDecryptService.decryptMessage(x)
+    );
     return datas;
   }
 
@@ -219,7 +207,7 @@ export class MessageService {
       select: MessageSelect,
     });
 
-    const data = this.decrypt(entity);
+    const data = this.chatMessageDecryptService.decryptMessage(entity);
     return data;
   }
 
@@ -404,7 +392,7 @@ export class MessageService {
       }
     );
 
-    await this.taskService.add("model_route_send_message_to_ai", {
+    await this.taskAdder.add("model_route_send_message_to_ai", {
       userId,
       userMessageId: userMessage.id,
       modelMessageId: modelMessage.id,
@@ -413,8 +401,8 @@ export class MessageService {
     await UserUsageLimitService.decreaseMessage(this.db, { userId });
 
     return {
-      userMessage: this.decrypt(userMessage),
-      modelMessage: this.decrypt(modelMessage),
+      userMessage: this.chatMessageDecryptService.decryptMessage(userMessage),
+      modelMessage: this.chatMessageDecryptService.decryptMessage(modelMessage),
     };
   }
 

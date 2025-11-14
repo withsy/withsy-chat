@@ -23,19 +23,23 @@ import { fromZonedTime, toZonedTime } from "date-fns-tz";
 import { v7 as uuidv7 } from "uuid";
 import { ChatService } from "./chat";
 import { ChatPromptService } from "./chat-prompt";
-import type { Tx } from "./db";
+import type { Db, Tx } from "./db";
 import { IdempotencyInfoService } from "./idempotency-info";
 import { MessageService } from "./message";
 import { UserService } from "./user";
-import { inject } from "../service-registry";
+import type { EncryptionService } from "./encryption";
+import type { TaskService } from "./task";
+import type { ChatMessageDecryptService } from "./chat-message-decrypt";
+import type { TaskAdder } from "./task-adder";
 
 export class GratitudeJournalService {
-  chatService = inject("chatService");
-  db = inject("db");
-  userService = inject("userService");
-  encryptionService = inject("encryptionService");
-  taskService = inject("taskService");
-  messageService = inject("messageService");
+  constructor(
+    private readonly db: Db,
+    private readonly userService: UserService,
+    private readonly encryptionService: EncryptionService,
+    private readonly chatMessageDecryptService: ChatMessageDecryptService,
+    private readonly taskAdder: TaskAdder
+  ) {}
 
   decrypt(
     entity: GratitudeJournalEntity & { chat?: ChatEntity | null }
@@ -43,7 +47,9 @@ export class GratitudeJournalService {
     const data = {
       id: entity.id,
       chatId: entity.chatId,
-      chat: entity.chat ? this.chatService.decrypt(entity.chat) : null,
+      chat: entity.chat
+        ? this.chatMessageDecryptService.decryptChat(entity.chat)
+        : null,
     } satisfies GratitudeJournalData;
     return data;
   }
@@ -241,16 +247,16 @@ export class GratitudeJournalService {
 
     const { chat, userMessage, modelMessage } = createRes;
 
-    await this.taskService.add("model_route_send_message_to_ai", {
+    await this.taskAdder.add("model_route_send_message_to_ai", {
       userId,
       userMessageId: userMessage.id,
       modelMessageId: modelMessage.id,
     });
 
     return {
-      chat: this.chatService.decrypt(chat),
-      userMessage: this.messageService.decrypt(userMessage),
-      modelMessage: this.messageService.decrypt(modelMessage),
+      chat: this.chatMessageDecryptService.decryptChat(chat),
+      userMessage: this.chatMessageDecryptService.decryptMessage(userMessage),
+      modelMessage: this.chatMessageDecryptService.decryptMessage(modelMessage),
     };
   }
 

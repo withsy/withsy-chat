@@ -14,11 +14,14 @@ import { v7 as uuidv7 } from "uuid";
 import { getHardDeleteCutoffDate } from "../utils";
 import { IdempotencyInfoService } from "./idempotency-info";
 import { UserDefaultPromptService } from "./user-default-prompt";
-import { inject } from "../service-registry";
+import type { EncryptionService } from "./encryption";
+import type { Db } from "./db";
 
 export class UserPromptService {
-  encryptionService = inject("encryptionService");
-  db = inject("db");
+  constructor(
+    private readonly encryptionService: EncryptionService,
+    private readonly db: Db
+  ) {}
 
   decrypt(entity: UserPromptEntity): UserPromptData {
     const title = this.encryptionService.decrypt(entity.titleEncrypted);

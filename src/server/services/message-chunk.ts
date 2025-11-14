@@ -5,11 +5,14 @@ import {
   MessageChunkSelect,
 } from "@/types/message-chunk";
 import { getHardDeleteCutoffDate } from "../utils";
-import { inject } from "../service-registry";
+import type { EncryptionService } from "./encryption";
+import type { Db } from "./db";
 
 export class MessageChunkService {
-  private readonly encryptionService = inject("encryptionService");
-  private readonly db = inject("db");
+  constructor(
+    private readonly encryptionService: EncryptionService,
+    private readonly db: Db
+  ) {}
 
   decrypt(entity: MessageChunkEntity): MessageChunkData {
     const text = this.encryptionService.decrypt(entity.textEncrypted);

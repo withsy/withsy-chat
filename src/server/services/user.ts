@@ -11,16 +11,18 @@ import {
   UserUpdatePrefsOutput,
 } from "@/types/user";
 import { TRPCError } from "@trpc/server";
-import { inject } from "../service-registry";
 import { isValidTimezone } from "../utils";
-import type { Tx } from "./db";
+import type { Db, Tx } from "./db";
+import type { EncryptionService } from "./encryption";
 
 const FALLBACK_TIMEZONE = "UTC";
 const FALLBACK_AI_LANGUAGE = "en";
 
 export class UserService {
-  private readonly encryptionService = inject("encryptionService");
-  private readonly db = inject("db");
+  constructor(
+    private readonly encryptionService: EncryptionService,
+    private readonly db: Db
+  ) {}
 
   decrypt(entity: UserEntity): UserData {
     const name = this.encryptionService.decrypt(entity.nameEncrypted);

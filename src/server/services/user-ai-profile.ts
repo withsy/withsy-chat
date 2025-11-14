@@ -10,12 +10,16 @@ import {
   UserAiProfileSelect,
 } from "@/types/user-ai-profile";
 import { UserUsageLimitService } from "./user-usage-limit";
-import { inject } from "../service-registry";
+import type { EncryptionService } from "./encryption";
+import type { Db } from "./db";
+import type { AiProfileStorageService } from "./ai-profile-storage";
 
 export class UserAiProfileService {
-  private readonly encryptionService = inject("encryptionService");
-  private readonly db = inject("db");
-  private readonly aiProfileStorageService = inject("aiProfileStorageService");
+  constructor(
+    private readonly encryptionService: EncryptionService,
+    private readonly db: Db,
+    private readonly aiProfileStorageService: AiProfileStorageService
+  ) {}
 
   decrypt(entity: UserAiProfileEntity): UserAiProfileData {
     const model = Model.parse(entity.model);
