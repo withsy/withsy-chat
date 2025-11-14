@@ -65,7 +65,15 @@ export class DiContainer<InjectableMap extends AnyInjectableMap> {
     this.#optionsMap = builderContext.optionsMap;
   }
 
+  #checkDestroyed() {
+    if (this.#destroyed) {
+      throw new Error("DI Container is destroyed.");
+    }
+  }
+
   init() {
+    this.#checkDestroyed();
+
     this.#providerMap.keys().forEach((name) => this.get(name));
   }
 
@@ -76,13 +84,13 @@ export class DiContainer<InjectableMap extends AnyInjectableMap> {
 
     this.#destroyed = true;
 
-    await this.destroyInstances();
+    await this.#destroyInstances();
 
     this.#optionsMap.clear();
     this.#providerMap.clear();
   }
 
-  private async destroyInstances() {
+  async #destroyInstances() {
     const instances = this.#instanceMap.entries().toArray().reverse();
     this.#instanceMap.clear();
 
@@ -98,6 +106,8 @@ export class DiContainer<InjectableMap extends AnyInjectableMap> {
   }
 
   get<Name extends keyof InjectableMap>(name: Name): InjectableMap[Name] {
+    this.#checkDestroyed();
+
     const nameString = name.toString();
 
     if (this.#instanceMap.has(nameString)) {
