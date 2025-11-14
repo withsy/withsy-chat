@@ -1,7 +1,7 @@
 import ChatLayout from "@/components/layout/ChatLayout";
 import HomeLayout from "@/components/layout/HomeLayout";
 import LoadAiProfiles from "@/components/LoadAiProfiles";
-import TermlyCMP from "@/components/TermlyCMP";
+// import TermlyCMP from "@/components/TermlyCMP";
 import AppProviders from "@/context/AppProviders";
 import { useSidebarInitializer } from "@/hooks/useSidebarInitializer";
 import { createTrpcClient, getQueryClient, TRPCProvider } from "@/lib/trpc";
@@ -14,7 +14,7 @@ import Head from "next/head";
 import { useState } from "react";
 import { Toaster as Sonner } from "sonner";
 
-const WEBSITE_UUID = "7ad995d7-f4f8-4a3d-837b-335895e58c1b";
+// const WEBSITE_UUID = "7ad995d7-f4f8-4a3d-837b-335895e58c1b";
 const nunito = Nunito({ subsets: ["latin"] });
 
 export default function App({
@@ -52,11 +52,11 @@ export default function App({
             </ChatLayout>
           )}
 
-          <TermlyCMP
+          {/* <TermlyCMP
             websiteUUID={WEBSITE_UUID}
             autoBlock={undefined}
             masterConsentsOrigin={undefined}
-          />
+          /> */}
           <Sonner position="bottom-right" />
           <ReactQueryDevtools />
         </AppProviders>
