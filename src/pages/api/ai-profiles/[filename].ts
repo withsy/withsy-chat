@@ -3,7 +3,7 @@ import {
   createNextPagesApiHandler,
   type Options,
 } from "@/server/next-pages-api-handler";
-import { container } from "@/server/service-registry";
+import { diContainer } from "@/server/service-registry";
 import { UserAiProfileService } from "@/server/services/user-ai-profile";
 import { getReasonPhrase, StatusCodes } from "http-status-codes";
 
@@ -42,7 +42,7 @@ export default createNextPagesApiHandler({ get });
 async function get(opts: Options) {
   const { req, res, ctx } = opts;
   const { userId } = ctx;
-  const aiProfileStorageService = container.get("aiProfileStorageService");
+  const aiProfileStorageService = diContainer.get("aiProfileStorageService");
 
   const fileName = req.query["filename"];
   if (typeof fileName !== "string" || fileName.length === 0)

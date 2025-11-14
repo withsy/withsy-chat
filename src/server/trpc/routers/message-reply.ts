@@ -6,10 +6,10 @@ export const messageReplyRouter = t.router({
   regenerate: publicProcedure
     .input(MessageReplyRegenerate)
     .output(MessageData)
-    .mutation((opts) =>
-      opts.ctx.container
+    .mutation(({ ctx, input }) =>
+      ctx.diContainer
         .get("messageReplyService")
-        .regenerate(opts.ctx.userId, opts.input)
+        .regenerate(ctx.userId, input)
         .then((x) => MessageData.parse(x))
     ),
 });

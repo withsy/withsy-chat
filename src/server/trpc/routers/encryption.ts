@@ -10,12 +10,13 @@ export const encryptionRouter = t.router({
       })
     )
     .output(z.string())
-    .query((opts) => {
+    .query(({ ctx, input }) => {
       if (process.env.NODE_ENV === "production")
         throw new TRPCError({ code: "SERVICE_UNAVAILABLE" });
-      return opts.ctx.container
+
+      return ctx.diContainer
         .get("encryptionService")
-        .decrypt(opts.input.payloadEncoded);
+        .decrypt(input.payloadEncoded);
     }),
   encrypt: publicProcedure
     .input(
@@ -24,11 +25,10 @@ export const encryptionRouter = t.router({
       })
     )
     .output(z.string())
-    .query((opts) => {
+    .query(({ ctx, input }) => {
       if (process.env.NODE_ENV === "production")
         throw new TRPCError({ code: "SERVICE_UNAVAILABLE" });
-      return opts.ctx.container
-        .get("encryptionService")
-        .encrypt(opts.input.text);
+
+      return ctx.diContainer.get("encryptionService").encrypt(input.text);
     }),
 });

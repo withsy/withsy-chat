@@ -8,28 +8,28 @@ import {
 import { publicProcedure, t } from "../server";
 
 export const gratitudeJournalRouter = t.router({
-  getStats: publicProcedure.output(GratitudeJournalStats).query((opts) =>
-    opts.ctx.container
+  getStats: publicProcedure.output(GratitudeJournalStats).query(({ ctx }) =>
+    ctx.diContainer
       .get("gratitudeJournalService")
-      .getStats(opts.ctx.userId)
+      .getStats(ctx.userId)
       .then((x) => GratitudeJournalStats.parse(x))
   ),
   getJournal: publicProcedure
     .input(GratitudeJournalGetJournal)
     .output(GratitudeJournalData)
-    .query((opts) =>
-      opts.ctx.container
+    .query(({ ctx, input }) =>
+      ctx.diContainer
         .get("gratitudeJournalService")
-        .getJournal(opts.ctx.userId, opts.input)
+        .getJournal(ctx.userId, input)
         .then((x) => GratitudeJournalData.parse(x))
     ),
   startChat: publicProcedure
     .input(GratitudeJournalStartChat)
     .output(ChatStartOutput)
-    .mutation((opts) =>
-      opts.ctx.container
+    .mutation(({ ctx, input }) =>
+      ctx.diContainer
         .get("gratitudeJournalService")
-        .startChat(opts.ctx.userId, opts.input)
+        .startChat(ctx.userId, input)
         .then((x) => ChatStartOutput.parse(x))
     ),
 });

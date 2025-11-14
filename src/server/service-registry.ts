@@ -28,9 +28,9 @@ import { UserLinkAccountService } from "./services/user-link-account";
 import { UserPromptService } from "./services/user-prompt";
 import { UserUsageLimitService } from "./services/user-usage-limit";
 import { XAiService } from "./services/x-ai";
-import { Container } from "./tdi";
+import { DiContainer } from "./tdi";
 
-export const container = Container.newBuilder()
+export const diContainer = DiContainer.newBuilder()
   .add("envValidationService", () => new EnvValidationService())
   .add("pgPool", () => createPgPool(), { destroy: (pgPool) => pgPool.end() })
   .add("db", ({ inject }) => createDb(inject("pgPool")), {
@@ -183,4 +183,4 @@ export const container = Container.newBuilder()
   )
   .build();
 
-process.on("SIGTERM", () => container.destroy());
+process.on("SIGTERM", () => diContainer.destroy());

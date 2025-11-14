@@ -6,19 +6,19 @@ export const chatBranchRouter = t.router({
   list: publicProcedure
     .input(ChatBranchList)
     .output(ChatListOutout)
-    .query((opts) =>
-      opts.ctx.container
+    .query(({ ctx, input }) =>
+      ctx.diContainer
         .get("chatBranchService")
-        .list(opts.ctx.userId, opts.input)
+        .list(ctx.userId, input)
         .then((xs) => xs.map((x) => ChatData.parse(x)))
     ),
   start: publicProcedure
     .input(ChatBranchStart)
     .output(ChatData)
-    .mutation((opts) =>
-      opts.ctx.container
+    .mutation(({ ctx, input }) =>
+      ctx.diContainer
         .get("chatBranchService")
-        .start(opts.ctx.userId, opts.input)
+        .start(ctx.userId, input)
         .then((x) => ChatData.parse(x))
     ),
 });

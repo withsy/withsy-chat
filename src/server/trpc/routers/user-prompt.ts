@@ -13,54 +13,50 @@ export const userPromptRouter = t.router({
   get: publicProcedure
     .input(UserPromptGet)
     .output(UserPromptData)
-    .query((opts) =>
-      opts.ctx.container
+    .query(({ ctx, input }) =>
+      ctx.diContainer
         .get("userPromptService")
-        .get(opts.ctx.userId, opts.input)
+        .get(ctx.userId, input)
         .then((x) => UserPromptData.parse(x))
     ),
-  list: publicProcedure.output(UserPromptListOutput).query((opts) =>
-    opts.ctx.container
+  list: publicProcedure.output(UserPromptListOutput).query(({ ctx }) =>
+    ctx.diContainer
       .get("userPromptService")
-      .list(opts.ctx.userId)
+      .list(ctx.userId)
       .then((xs) => xs.map((x) => UserPromptData.parse(x)))
   ),
-  listDeleted: publicProcedure.output(UserPromptListOutput).query((opts) =>
-    opts.ctx.container
+  listDeleted: publicProcedure.output(UserPromptListOutput).query(({ ctx }) =>
+    ctx.diContainer
       .get("userPromptService")
-      .listDeleted(opts.ctx.userId)
+      .listDeleted(ctx.userId)
       .then((xs) => xs.map((x) => UserPromptData.parse(x)))
   ),
   create: publicProcedure
     .input(UserPromptCreate)
     .output(UserPromptData)
-    .mutation((opts) =>
-      opts.ctx.container
+    .mutation(({ ctx, input }) =>
+      ctx.diContainer
         .get("userPromptService")
-        .create(opts.ctx.userId, opts.input)
+        .create(ctx.userId, input)
         .then((x) => UserPromptData.parse(x))
     ),
   update: publicProcedure
     .input(UserPromptUpdate)
     .output(UserPromptData)
-    .mutation((opts) =>
-      opts.ctx.container
+    .mutation(({ ctx, input }) =>
+      ctx.diContainer
         .get("userPromptService")
-        .update(opts.ctx.userId, opts.input)
+        .update(ctx.userId, input)
         .then((x) => UserPromptData.parse(x))
     ),
   delete: publicProcedure
     .input(UserPromptDelete)
-    .mutation((opts) =>
-      opts.ctx.container
-        .get("userPromptService")
-        .delete(opts.ctx.userId, opts.input)
+    .mutation(({ ctx, input }) =>
+      ctx.diContainer.get("userPromptService").delete(ctx.userId, input)
     ),
   restore: publicProcedure
     .input(UserPromptRestore)
-    .mutation((opts) =>
-      opts.ctx.container
-        .get("userPromptService")
-        .restore(opts.ctx.userId, opts.input)
+    .mutation(({ ctx, input }) =>
+      ctx.diContainer.get("userPromptService").restore(ctx.userId, input)
     ),
 });

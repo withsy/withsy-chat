@@ -8,9 +8,7 @@ export const userUsageLimitRouter = t.router({
   list: publicProcedure
     .input(UserUsageLimitList)
     .output(UserUsageLimitListOutput)
-    .query((opts) =>
-      opts.ctx.container
-        .get("userUsageLimitService")
-        .list(opts.ctx.userId, opts.input)
+    .query(({ ctx, input }) =>
+      ctx.diContainer.get("userUsageLimitService").list(ctx.userId, input)
     ),
 });

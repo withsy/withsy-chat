@@ -14,27 +14,25 @@ export const messageRouter = t.router({
   get: publicProcedure
     .input(MessageGet)
     .output(MessageGetOutput)
-    .query((opts) =>
-      opts.ctx.container.get("messageService").get(opts.ctx.userId, opts.input)
+    .query(({ ctx, input }) =>
+      ctx.diContainer.get("messageService").get(ctx.userId, input)
     ),
   list: publicProcedure
     .input(MessageList)
     .output(MessageListOutput)
-    .query((opts) =>
-      opts.ctx.container.get("messageService").list(opts.ctx.userId, opts.input)
+    .query(({ ctx, input }) =>
+      ctx.diContainer.get("messageService").list(ctx.userId, input)
     ),
   update: publicProcedure
     .input(MessageUpdate)
     .output(MessageData)
-    .mutation((opts) =>
-      opts.ctx.container
-        .get("messageService")
-        .update(opts.ctx.userId, opts.input)
+    .mutation(({ ctx, input }) =>
+      ctx.diContainer.get("messageService").update(ctx.userId, input)
     ),
   send: publicProcedure
     .input(MessageSend)
     .output(MessageSendOutput)
-    .mutation((opts) =>
-      opts.ctx.container.get("messageService").send(opts.ctx.userId, opts.input)
+    .mutation(({ ctx, input }) =>
+      ctx.diContainer.get("messageService").send(ctx.userId, input)
     ),
 });

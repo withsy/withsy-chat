@@ -11,19 +11,21 @@ export const userRouter = t.router({
   get: publicProcedure
     .output(UserData)
     .query((opts) =>
-      opts.ctx.container.get("userService").get(opts.ctx.userId)
+      opts.ctx.diContainer.get("userService").get(opts.ctx.userId)
     ),
   ensure: publicProcedure
     .input(UserEnsure)
     .output(UserData)
     .mutation((opts) =>
-      opts.ctx.container.get("userService").ensure(opts.ctx.userId, opts.input)
+      opts.ctx.diContainer
+        .get("userService")
+        .ensure(opts.ctx.userId, opts.input)
     ),
   updatePrefs: publicProcedure
     .input(UserUpdatePrefs)
     .output(UserUpdatePrefsOutput)
     .mutation((opts) =>
-      opts.ctx.container
+      opts.ctx.diContainer
         .get("userService")
         .updatePrefs(opts.ctx.userId, opts.input)
     ),
@@ -31,6 +33,8 @@ export const userRouter = t.router({
     .input(UserUpdate)
     .output(UserData)
     .mutation((opts) =>
-      opts.ctx.container.get("userService").update(opts.ctx.userId, opts.input)
+      opts.ctx.diContainer
+        .get("userService")
+        .update(opts.ctx.userId, opts.input)
     ),
 });

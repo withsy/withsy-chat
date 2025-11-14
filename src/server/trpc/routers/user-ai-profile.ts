@@ -11,22 +11,18 @@ export const userAiProfileRouter = t.router({
   get: publicProcedure
     .input(UserAiProfileGet)
     .output(UserAiProfileGetOutput)
-    .query((opts) =>
-      opts.ctx.container
-        .get("userAiProfileService")
-        .get(opts.ctx.userId, opts.input)
+    .query(({ ctx, input }) =>
+      ctx.diContainer.get("userAiProfileService").get(ctx.userId, input)
     ),
   getAll: publicProcedure
     .output(UserAiProfileGetAllOutput)
-    .query((opts) =>
-      opts.ctx.container.get("userAiProfileService").getAll(opts.ctx.userId)
+    .query(({ ctx }) =>
+      ctx.diContainer.get("userAiProfileService").getAll(ctx.userId)
     ),
   deleteImage: publicProcedure
     .input(UserAiProfileDeleteImage)
     .output(UserAiProfileData)
-    .mutation((opts) =>
-      opts.ctx.container
-        .get("userAiProfileService")
-        .deleteImage(opts.ctx.userId, opts.input)
+    .mutation(({ ctx, input }) =>
+      ctx.diContainer.get("userAiProfileService").deleteImage(ctx.userId, input)
     ),
 });

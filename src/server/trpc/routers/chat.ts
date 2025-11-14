@@ -11,57 +11,57 @@ import {
 import { publicProcedure, t } from "../server";
 
 export const chatRouter = t.router({
-  list: publicProcedure.output(ChatListOutout).query((opts) =>
-    opts.ctx.container
+  list: publicProcedure.output(ChatListOutout).query(({ ctx }) =>
+    ctx.diContainer
       .get("chatService")
-      .list(opts.ctx.userId)
+      .list(ctx.userId)
       .then((xs) => xs.map((x) => ChatData.parse(x)))
   ),
-  listDeleted: publicProcedure.output(ChatListOutout).query((opts) =>
-    opts.ctx.container
+  listDeleted: publicProcedure.output(ChatListOutout).query(({ ctx }) =>
+    ctx.diContainer
       .get("chatService")
-      .listDeleted(opts.ctx.userId)
+      .listDeleted(ctx.userId)
       .then((xs) => xs.map((x) => ChatData.parse(x)))
   ),
   get: publicProcedure
     .input(ChatGet)
     .output(ChatData)
-    .query((opts) =>
-      opts.ctx.container
+    .query(({ ctx, input }) =>
+      ctx.diContainer
         .get("chatService")
-        .get(opts.ctx.userId, opts.input)
+        .get(ctx.userId, input)
         .then((x) => ChatData.parse(x))
     ),
   update: publicProcedure
     .input(ChatUpdate)
     .output(ChatData)
-    .mutation((opts) =>
-      opts.ctx.container
+    .mutation(({ ctx, input }) =>
+      ctx.diContainer
         .get("chatService")
-        .update(opts.ctx.userId, opts.input)
+        .update(ctx.userId, input)
         .then((x) => ChatData.parse(x))
     ),
   delete: publicProcedure
     .input(ChatDelete)
-    .mutation((opts) =>
-      opts.ctx.container.get("chatService").delete(opts.ctx.userId, opts.input)
+    .mutation(({ ctx, input }) =>
+      ctx.diContainer.get("chatService").delete(ctx.userId, input)
     ),
   restore: publicProcedure
     .input(ChatRestore)
     .output(ChatData)
-    .mutation((opts) =>
-      opts.ctx.container
+    .mutation(({ ctx, input }) =>
+      ctx.diContainer
         .get("chatService")
-        .restore(opts.ctx.userId, opts.input)
+        .restore(ctx.userId, input)
         .then((x) => ChatData.parse(x))
     ),
   start: publicProcedure
     .input(ChatStart)
     .output(ChatStartOutput)
-    .mutation((opts) =>
-      opts.ctx.container
+    .mutation(({ ctx, input }) =>
+      ctx.diContainer
         .get("chatService")
-        .start(opts.ctx.userId, opts.input)
+        .start(ctx.userId, input)
         .then((x) => ChatStartOutput.parse(x))
     ),
 });
