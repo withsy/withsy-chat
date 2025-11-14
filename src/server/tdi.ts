@@ -1,70 +1,80 @@
+// #region Helpers
+
+type Merged<A extends object, B extends object> = {
+  [K in keyof A | keyof B]: K extends keyof B
+    ? B[K]
+    : K extends keyof A
+    ? A[K]
+    : never;
+};
+
+// #endregion Helpers
+
+// #region Common types
+
 interface InjectableProvider<Injectable> {
   (): Injectable;
 }
 
-export type InjectableDestroyer = () => void | Promise<void>;
+type InjectableDestroyer<Injectable> = (
+  injectable: Injectable
+) => void | Promise<void>;
 
-export interface InjectableContext<Injectable> {
-  injectable: Injectable;
-  destroy?: InjectableDestroyer;
+interface InjectableOptions<Injectable> {
+  destroy?: InjectableDestroyer<Injectable>;
 }
 
-export abstract class InjectableContextProvider<Injectable> {
-  abstract provide(): InjectableContext<Injectable>;
-}
+type InferInjectable<T> = T extends InjectableProvider<infer I> ? I : never;
 
-type InjectableProviderLike<Injectable> =
-  | InjectableProvider<Injectable>
-  | InjectableContextProvider<Injectable>;
+type AnyInjectable = any;
+type AnyProviderMap = Record<string, InjectableProvider<AnyInjectable>>;
+type AnyOptionsMap = Map<string, InjectableOptions<AnyInjectable>>;
 
-type InferInjectable<T> = T extends InjectableProvider<infer I>
-  ? I
-  : T extends InjectableContextProvider<infer I>
-  ? I
-  : never;
-
-type AnyInjectableProviderMap = Record<string, InjectableProviderLike<any>>;
-
-interface Injector<ProviderMap extends AnyInjectableProviderMap> {
+interface Injector<ProviderMap extends AnyProviderMap> {
   <Name extends keyof ProviderMap>(name: Name): InferInjectable<
     ProviderMap[Name]
   >;
 }
 
-export class Container<ProviderMap extends AnyInjectableProviderMap> {
-  readonly #providerMap: ProviderMap;
-  readonly #providerAddedOrders: Set<string>;
-  readonly #injectableContextMap = new Map<string, InjectableContext<any>>();
-  readonly #injectableInitOrders = new Set<string>();
+// #endregion Common
 
-  constructor(providerMap: ProviderMap, providerAddedOrders: Set<string>) {
-    this.#providerMap = providerMap;
-    this.#providerAddedOrders = providerAddedOrders;
+// #region Container
+
+export class Container<ProviderMap extends AnyProviderMap> {
+  readonly #providerMap: ProviderMap;
+  readonly #optionsMap: AnyOptionsMap;
+  readonly #instanceMap = new Map<string, AnyInjectable>();
+  readonly #currentInitOrders = new Set<string>();
+
+  constructor(builderContext: BuilderContext<ProviderMap>) {
+    this.#providerMap = builderContext.providerMap;
+    this.#optionsMap = builderContext.optionsMap;
   }
 
   init() {
-    this.#providerAddedOrders.forEach((name) => this.getInjectable(name));
+    this.#optionsMap.keys().forEach((name) => this.getInjectable(name));
   }
 
   async destroy() {
-    await this.destroyInjectables();
+    await this.destroyInstances();
 
-    this.#providerAddedOrders.clear();
+    this.#optionsMap.clear();
     Object.keys(this.#providerMap).forEach(
       (key) => delete this.#providerMap[key]
     );
   }
 
-  private async destroyInjectables() {
-    const injectableContextEntries = this.#injectableContextMap
-      .entries()
-      .toArray()
-      .reverse();
-    this.#injectableContextMap.clear();
+  private async destroyInstances() {
+    const instances = this.#instanceMap.entries().toArray().reverse();
+    this.#instanceMap.clear();
 
-    for (const [_, context] of injectableContextEntries) {
-      if (context.destroy) {
-        await context.destroy();
+    for (const [name, instance] of instances) {
+      const options = this.#optionsMap.get(name);
+      if (options) {
+        const { destroy } = options;
+        if (destroy) {
+          await destroy(instance);
+        }
       }
     }
   }
@@ -74,36 +84,31 @@ export class Container<ProviderMap extends AnyInjectableProviderMap> {
   ): InferInjectable<ProviderMap[Name]> {
     const nameString = name.toString();
 
-    const injectableContext = this.#injectableContextMap.get(nameString);
-    if (injectableContext) {
-      return injectableContext.injectable;
-    }
-
-    const provider = this.#providerMap[nameString];
-    if (!provider) {
-      throw new Error(`[${nameString}] provider not exists.`);
-    }
-
-    if (this.#injectableInitOrders.has(nameString)) {
-      const injectableInitOrders = this.#injectableInitOrders.keys().toArray();
-      injectableInitOrders.push(nameString);
-
-      throw new Error(
-        `Circular call detected. init order: [${injectableInitOrders.join(
-          " -> "
-        )}]`
-      );
+    if (this.#instanceMap.has(nameString)) {
+      return this.#instanceMap.get(nameString);
     }
 
     try {
-      this.#injectableInitOrders.add(nameString);
+      if (this.#currentInitOrders.has(nameString)) {
+        const currentInitOrders = this.#currentInitOrders.keys().toArray();
+        currentInitOrders.push(nameString);
+        const order = currentInitOrders.join(" -> ");
+        throw new Error(`Circular initialization detected. order: [${order}]`);
+      }
 
-      const injectableContext = provideInjectableContext(nameString, provider);
-      this.#injectableContextMap.set(nameString, injectableContext);
+      const provider = this.#providerMap[nameString];
+      if (!provider) {
+        throw new Error(`Provider name '${nameString}' not exists.`);
+      }
 
-      return injectableContext.injectable;
+      this.#currentInitOrders.add(nameString);
+
+      const injectable = provider();
+      this.#instanceMap.set(nameString, injectable);
+
+      return injectable;
     } finally {
-      this.#injectableInitOrders.clear();
+      this.#currentInitOrders.clear();
     }
   }
 
@@ -114,64 +119,73 @@ export class Container<ProviderMap extends AnyInjectableProviderMap> {
   static newBuilder(this: void): Builder<{}> {
     return new Builder({
       providerMap: {},
-      providerAddedOrders: new Set(),
+      optionsMap: new Map(),
     });
   }
 }
 
-interface BuilderContext<ProviderMap extends AnyInjectableProviderMap> {
+// #endregion Container
+
+// #region Builder types
+
+interface BuilderContext<ProviderMap extends AnyProviderMap> {
   readonly providerMap: ProviderMap;
-  readonly providerAddedOrders: Set<string>;
+  readonly optionsMap: AnyOptionsMap;
 }
 
-class Builder<ProviderMap extends AnyInjectableProviderMap> {
+type NoDuplicatedName<
+  T extends string,
+  ProviderMap extends object
+> = T extends keyof ProviderMap
+  ? { error: `Provider name '${T}' already exists.` } & T
+  : T;
+
+type MergedProviderMap<
+  ProviderMap extends AnyProviderMap,
+  Name extends string,
+  Injectable
+> = Merged<
+  ProviderMap,
+  {
+    [key in Name]: InjectableProvider<Injectable>;
+  }
+>;
+
+// #endregion Builder types
+
+// #region Builder
+
+class Builder<ProviderMap extends AnyProviderMap> {
   readonly #context: BuilderContext<ProviderMap>;
 
   constructor(context: BuilderContext<ProviderMap>) {
     this.#context = context;
   }
 
-  addProvider<Name extends string, Injectable>(
-    name: Name,
-    provider: InjectableProviderLike<Injectable>
-  ): Builder<
-    ProviderMap & {
-      [key in Name]: InjectableProviderLike<Injectable>;
-    }
-  > {
+  add<Name extends string, Injectable>(
+    name: NoDuplicatedName<Name, ProviderMap>,
+    provider: InjectableProvider<Injectable>,
+    options?: InjectableOptions<Injectable>
+  ): Builder<MergedProviderMap<ProviderMap, Name, Injectable>> {
     if (name in this.#context.providerMap) {
-      throw new Error(`[${name}] provider exists.`);
+      throw new Error(`Provider name '${name}' already exists.`);
     }
 
     Reflect.set(this.#context.providerMap, name, provider);
-    this.#context.providerAddedOrders.add(name);
+    if (options) {
+      this.#context.optionsMap.set(name, options);
+    }
 
-    return new Builder(this.#context);
+    return new Builder(
+      this.#context as BuilderContext<
+        MergedProviderMap<ProviderMap, Name, Injectable>
+      >
+    );
   }
 
   build(): Container<ProviderMap> {
-    return new Container<ProviderMap>(
-      this.#context.providerMap,
-      this.#context.providerAddedOrders
-    );
+    return new Container<ProviderMap>(this.#context);
   }
 }
 
-function provideInjectableContext<Injectable>(
-  name: string,
-  provider: InjectableProviderLike<Injectable>
-): InjectableContext<Injectable> {
-  let injectableContext: InjectableContext<Injectable> | undefined = undefined;
-  if (provider instanceof InjectableContextProvider) {
-    injectableContext = provider.provide();
-  } else {
-    const injectable = provider();
-    injectableContext = { injectable };
-  }
-
-  if (!injectableContext) {
-    throw new Error(`[${name}] injectable context is invalid.`);
-  }
-
-  return injectableContext;
-}
+// #endregion Builder

@@ -2,7 +2,7 @@ import { AiProfileStorageService } from "./services/ai-profile-storage";
 import { ChatService } from "./services/chat";
 import { ChatBranchService } from "./services/chat-branch";
 import { ChatPromptService } from "./services/chat-prompt";
-import { DbProvider } from "./services/db";
+import { createDb } from "./services/db";
 import { EncryptionService } from "./services/encryption";
 import { EnvValidationService } from "./services/env-validation";
 import { GoogleGenAiService } from "./services/google-gen-ai";
@@ -14,7 +14,7 @@ import { MessageReplyService } from "./services/message-reply";
 import { ModelRouteService } from "./services/model-route";
 import { NextAuthCsrfService } from "./services/next-auth-csrf";
 import { OpenAiService } from "./services/open-ai";
-import { PgPoolProvider } from "./services/pg";
+import { createPgPool } from "./services/pg";
 import { S3Service } from "./services/s3";
 import { TaskService } from "./services/task";
 import { UserService } from "./services/user";
@@ -27,32 +27,32 @@ import { XAiService } from "./services/x-ai";
 import { Container } from "./tdi";
 
 export const container = Container.newBuilder()
-  .addProvider("envValidationService", () => new EnvValidationService())
-  .addProvider("pgPool", new PgPoolProvider())
-  .addProvider("db", new DbProvider())
-  .addProvider("userService", () => new UserService())
-  .addProvider("userLinkAccountService", () => new UserLinkAccountService())
-  .addProvider("userUsageLimitService", () => new UserUsageLimitService())
-  .addProvider("userPromptService", () => new UserPromptService())
-  .addProvider("userDefaultPromptService", () => new UserDefaultPromptService())
-  .addProvider("userAiProfileService", () => new UserAiProfileService())
-  .addProvider("chatService", () => new ChatService())
-  .addProvider("chatBranchService", () => new ChatBranchService())
-  .addProvider("chatPromptService", () => new ChatPromptService())
-  .addProvider("gratitudeJournalService", () => new GratitudeJournalService())
-  .addProvider("messageService", () => new MessageService())
-  .addProvider("messageChunkService", () => new MessageChunkService())
-  .addProvider("messageReplyService", () => new MessageReplyService())
-  .addProvider("modelRouteService", () => new ModelRouteService())
-  .addProvider("googleGenAiService", () => new GoogleGenAiService())
-  .addProvider("openAiService", () => new OpenAiService())
-  .addProvider("xAiService", () => new XAiService())
-  .addProvider("idempotencyInfoService", () => new IdempotencyInfoService())
-  .addProvider("taskService", () => new TaskService())
-  .addProvider("encryptionService", () => new EncryptionService())
-  .addProvider("s3Service", () => new S3Service())
-  .addProvider("aiProfileStorageService", () => new AiProfileStorageService())
-  .addProvider("nextAuthCsrfService", () => new NextAuthCsrfService())
+  .add("envValidationService", () => new EnvValidationService())
+  .add("pgPool", () => createPgPool(), { destroy: (pgPool) => pgPool.end() })
+  .add("db", () => createDb(), { destroy: (db) => db.$disconnect() })
+  .add("userService", () => new UserService())
+  .add("userLinkAccountService", () => new UserLinkAccountService())
+  .add("userUsageLimitService", () => new UserUsageLimitService())
+  .add("userPromptService", () => new UserPromptService())
+  .add("userDefaultPromptService", () => new UserDefaultPromptService())
+  .add("userAiProfileService", () => new UserAiProfileService())
+  .add("chatService", () => new ChatService())
+  .add("chatBranchService", () => new ChatBranchService())
+  .add("chatPromptService", () => new ChatPromptService())
+  .add("gratitudeJournalService", () => new GratitudeJournalService())
+  .add("messageService", () => new MessageService())
+  .add("messageChunkService", () => new MessageChunkService())
+  .add("messageReplyService", () => new MessageReplyService())
+  .add("modelRouteService", () => new ModelRouteService())
+  .add("googleGenAiService", () => new GoogleGenAiService())
+  .add("openAiService", () => new OpenAiService())
+  .add("xAiService", () => new XAiService())
+  .add("idempotencyInfoService", () => new IdempotencyInfoService())
+  .add("taskService", () => new TaskService())
+  .add("encryptionService", () => new EncryptionService())
+  .add("s3Service", () => new S3Service())
+  .add("aiProfileStorageService", () => new AiProfileStorageService())
+  .add("nextAuthCsrfService", () => new NextAuthCsrfService())
   .build();
 
 process.on("SIGTERM", () => container.destroy());
