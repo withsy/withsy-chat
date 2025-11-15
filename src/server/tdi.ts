@@ -56,7 +56,7 @@ type AnyOptionsMap = Map<string, Options<AnyInjectable>>;
 export class DiContainer<InjectableMap extends AnyInjectableMap> {
   readonly #providerMap: ProviderMap<InjectableMap>;
   readonly #optionsMap: AnyOptionsMap;
-  readonly #instanceMap = new Map<string, AnyInjectable>();
+  readonly #instanceMap = new Map<string, InjectableMap[keyof InjectableMap]>();
   readonly #currentInitOrders = new Set<string>();
   #destroyed = false;
 
@@ -74,7 +74,7 @@ export class DiContainer<InjectableMap extends AnyInjectableMap> {
   init() {
     this.#checkNotDestroyed();
 
-    this.#providerMap.keys().forEach((name) => this.get(name));
+    this.#providerMap.keys().forEach((name) => void this.get(name));
   }
 
   async destroy() {
@@ -110,8 +110,10 @@ export class DiContainer<InjectableMap extends AnyInjectableMap> {
 
     const nameString = name.toString();
 
-    if (this.#instanceMap.has(nameString)) {
-      return this.#instanceMap.get(nameString);
+    const instance = this.#instanceMap.get(nameString);
+    if (instance) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+      return instance;
     }
 
     try {
@@ -132,6 +134,7 @@ export class DiContainer<InjectableMap extends AnyInjectableMap> {
       const instance = provider({ inject: this.get.bind(this) });
       this.#instanceMap.set(nameString, instance);
 
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return instance as any;
     } finally {
       this.#currentInitOrders.clear();
@@ -192,11 +195,13 @@ class Builder<InjectableMap extends AnyInjectableMap> {
       throw new Error(`Provider name '${name}' already exists.`);
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     this.#context.providerMap.set(name, provider as any);
     if (options) {
       this.#context.optionsMap.set(name, options);
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     return new Builder(this.#context as any);
   }
 
