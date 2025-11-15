@@ -3,7 +3,7 @@ import {
   createNextPagesApiHandler,
   type Options,
 } from "@/server/next-pages-api-handler";
-import { diContainer } from "@/server/service-registry";
+import { serviceRegistry } from "@/server/service-registry";
 import { listen } from "@/server/services/pg";
 import {
   MessageChunkEntity,
@@ -39,11 +39,11 @@ export default createNextPagesApiHandler({ get });
 export async function get(options: Options) {
   const { req, res, ctx } = options;
   const { userId } = ctx;
-  const pgPool = diContainer.get("pgPool");
-  const db = diContainer.get("db");
-  const userUsageLimitService = diContainer.get("userUsageLimitService");
-  const messageChunkService = diContainer.get("messageChunkService");
-  const messageService = diContainer.get("messageService");
+  const pgPool = serviceRegistry.pgPool;
+  const db = serviceRegistry.db;
+  const userUsageLimitService = serviceRegistry.userUsageLimitService;
+  const messageChunkService = serviceRegistry.messageChunkService;
+  const messageService = serviceRegistry.messageService;
 
   const messageId = req.query["messageId"];
   if (typeof messageId !== "string" || messageId.length === 0)

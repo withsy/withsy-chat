@@ -11,24 +11,25 @@ import {
 import { publicProcedure, t } from "../server";
 
 export const chatRouter = t.router({
-  list: publicProcedure.output(ChatListOutout).query(({ ctx }) =>
-    ctx.diContainer
-      .get("chatService")
-      .list(ctx.userId)
-      .then((xs) => xs.map((x) => ChatData.parse(x)))
-  ),
-  listDeleted: publicProcedure.output(ChatListOutout).query(({ ctx }) =>
-    ctx.diContainer
-      .get("chatService")
-      .listDeleted(ctx.userId)
-      .then((xs) => xs.map((x) => ChatData.parse(x)))
-  ),
+  list: publicProcedure
+    .output(ChatListOutout)
+    .query(({ ctx }) =>
+      ctx.serviceRegistry.chatService
+        .list(ctx.userId)
+        .then((xs) => xs.map((x) => ChatData.parse(x)))
+    ),
+  listDeleted: publicProcedure
+    .output(ChatListOutout)
+    .query(({ ctx }) =>
+      ctx.serviceRegistry.chatService
+        .listDeleted(ctx.userId)
+        .then((xs) => xs.map((x) => ChatData.parse(x)))
+    ),
   get: publicProcedure
     .input(ChatGet)
     .output(ChatData)
     .query(({ ctx, input }) =>
-      ctx.diContainer
-        .get("chatService")
+      ctx.serviceRegistry.chatService
         .get(ctx.userId, input)
         .then((x) => ChatData.parse(x))
     ),
@@ -36,22 +37,20 @@ export const chatRouter = t.router({
     .input(ChatUpdate)
     .output(ChatData)
     .mutation(({ ctx, input }) =>
-      ctx.diContainer
-        .get("chatService")
+      ctx.serviceRegistry.chatService
         .update(ctx.userId, input)
         .then((x) => ChatData.parse(x))
     ),
   delete: publicProcedure
     .input(ChatDelete)
     .mutation(({ ctx, input }) =>
-      ctx.diContainer.get("chatService").delete(ctx.userId, input)
+      ctx.serviceRegistry.chatService.delete(ctx.userId, input)
     ),
   restore: publicProcedure
     .input(ChatRestore)
     .output(ChatData)
     .mutation(({ ctx, input }) =>
-      ctx.diContainer
-        .get("chatService")
+      ctx.serviceRegistry.chatService
         .restore(ctx.userId, input)
         .then((x) => ChatData.parse(x))
     ),
@@ -59,8 +58,7 @@ export const chatRouter = t.router({
     .input(ChatStart)
     .output(ChatStartOutput)
     .mutation(({ ctx, input }) =>
-      ctx.diContainer
-        .get("chatStarter")
+      ctx.serviceRegistry.chatStarter
         .start(ctx.userId, input)
         .then((x) => ChatStartOutput.parse(x))
     ),

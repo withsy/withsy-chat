@@ -7,8 +7,7 @@ export const messageReplyRouter = t.router({
     .input(MessageReplyRegenerate)
     .output(MessageData)
     .mutation(({ ctx, input }) =>
-      ctx.diContainer
-        .get("messageReplyService")
+      ctx.serviceRegistry.messageReplyService
         .regenerate(ctx.userId, input)
         .then((x) => MessageData.parse(x))
     ),

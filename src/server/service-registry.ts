@@ -30,192 +30,165 @@ import { UserLinkAccountService } from "./services/user-link-account";
 import { UserPromptService } from "./services/user-prompt";
 import { UserUsageLimitService } from "./services/user-usage-limit";
 import { XAiService } from "./services/x-ai";
-import { DiContainer } from "./tdi";
 
-export const diContainer = DiContainer.newBuilder()
-  .add("envValidationService", () => new EnvValidationService())
-  .add("googleGenAiService", () => new GoogleGenAiService())
-  .add("xAiService", () => new XAiService())
-  .add("encryptionService", () => new EncryptionService())
-  .add("s3Service", () => new S3Service())
-  .add("nextAuthCsrfService", () => new NextAuthCsrfService())
-  .add("chatPromptService", () => new ChatPromptService())
-  .add("pgPool", () => createPgPool(), { destroy: (pgPool) => pgPool.end() })
-  .add("db", ({ inject }) => createDb(inject("pgPool")), {
-    destroy: (db) => db.$disconnect(),
-  })
-  .add(
-    "userService",
-    ({ inject }) => new UserService(inject("encryptionService"), inject("db"))
-  )
-  .add(
-    "userLinkAccountService",
-    ({ inject }) =>
-      new UserLinkAccountService(inject("encryptionService"), inject("db"))
-  )
-  .add(
-    "userUsageLimitService",
-    ({ inject }) => new UserUsageLimitService(inject("db"))
-  )
-  .add(
-    "userPromptService",
-    ({ inject }) =>
-      new UserPromptService(inject("encryptionService"), inject("db"))
-  )
-  .add(
-    "userDefaultPromptService",
-    ({ inject }) =>
-      new UserDefaultPromptService(inject("userPromptService"), inject("db"))
-  )
-  .add(
-    "aiProfileStorageService",
-    ({ inject }) => new AiProfileStorageService(inject("s3Service"))
-  )
-  .add(
-    "userAiProfileService",
-    ({ inject }) =>
-      new UserAiProfileService(
-        inject("encryptionService"),
-        inject("db"),
-        inject("aiProfileStorageService")
-      )
-  )
-  .add(
-    "messageChunkService",
-    ({ inject }) =>
-      new MessageChunkService(inject("encryptionService"), inject("db"))
-  )
-  .add(
-    "idempotencyInfoService",
-    ({ inject }) => new IdempotencyInfoService(inject("db"))
-  )
-  .add(
-    "chatMessageDecryptService",
-    ({ inject }) =>
-      new ChatMessageDecryptService(
-        inject("encryptionService"),
-        inject("userPromptService")
-      )
-  )
-  .add("chatTaskHandler", ({ inject }) => new ChatTaskHandler(inject("db")))
-  .add(
-    "messageTaskHandler",
-    ({ inject }) => new MessageTaskHandler(inject("db"))
-  )
-  .add(
-    "messageService",
-    ({ inject }) =>
-      new MessageService(
-        inject("encryptionService"),
-        inject("chatMessageDecryptService"),
-        inject("db"),
-        inject("messageChunkService")
-      )
-  )
-  .add(
-    "modelRouteService",
-    ({ inject }) =>
-      new ModelRouteService(
-        inject("messageService"),
-        inject("messageChunkService"),
-        inject("pgPool"),
-        inject("googleGenAiService"),
-        inject("xAiService"),
-        inject("db"),
-        inject("encryptionService"),
-        inject("userDefaultPromptService"),
-        inject("chatMessageDecryptService")
-      )
-  )
-  .add(
-    "taskService",
-    ({ inject }) =>
-      new TaskService(
-        inject("modelRouteService"),
-        inject("messageTaskHandler"),
-        inject("messageChunkService"),
-        inject("chatTaskHandler"),
-        inject("userPromptService"),
-        inject("pgPool")
-      )
-  )
-  .add(
-    "chatService",
-    ({ inject }) =>
-      new ChatService(
-        inject("encryptionService"),
-        inject("db"),
-        inject("chatMessageDecryptService")
-      )
-  )
-  .add(
-    "chatBranchService",
-    ({ inject }) =>
-      new ChatBranchService(inject("db"), inject("chatMessageDecryptService"))
-  )
-  .add(
-    "gratitudeJournalService",
-    ({ inject }) =>
-      new GratitudeJournalService(
-        inject("db"),
-        inject("chatMessageDecryptService")
-      )
-  )
-  .add(
-    "messageReplyService",
-    ({ inject }) =>
-      new MessageReplyService(
-        inject("encryptionService"),
-        inject("db"),
-        inject("chatMessageDecryptService"),
-        inject("modelRouteService")
-      )
-  )
-  .add(
-    "messageSender",
-    ({ inject }) =>
-      new MessageSender(
-        inject("db"),
-        inject("encryptionService"),
-        inject("chatMessageDecryptService"),
-        inject("modelRouteService")
-      )
-  )
-  .add(
-    "chatStarter",
-    ({ inject }) =>
-      new ChatStarter(
-        inject("db"),
-        inject("encryptionService"),
-        inject("chatMessageDecryptService"),
-        inject("modelRouteService")
-      )
-  )
-  .add(
-    "chatBranchStarter",
-    ({ inject }) =>
-      new ChatBranchStarter(
-        inject("db"),
-        inject("chatMessageDecryptService"),
-        inject("encryptionService")
-      )
-  )
-  .add(
-    "gratitudeJournalChatStarter",
-    ({ inject }) =>
-      new GratitudeJournalChatStarter(
-        inject("userService"),
-        inject("encryptionService"),
-        inject("db"),
-        inject("chatMessageDecryptService"),
-        inject("modelRouteService")
-      )
-  )
-  .build();
+function createServiceRegistry() {
+  const envValidationService = new EnvValidationService();
+  const googleGenAiService = new GoogleGenAiService();
+  const xAiService = new XAiService();
+  const encryptionService = new EncryptionService();
+  const s3Service = new S3Service();
+  const nextAuthCsrfService = new NextAuthCsrfService();
+  const chatPromptService = new ChatPromptService();
+  const pgPool = createPgPool();
+  const db = createDb(pgPool);
+  const userService = new UserService(encryptionService, db);
+  const userLinkAccountService = new UserLinkAccountService(
+    encryptionService,
+    db
+  );
+  const userUsageLimitService = new UserUsageLimitService(db);
+  const userPromptService = new UserPromptService(encryptionService, db);
+  const userDefaultPromptService = new UserDefaultPromptService(
+    userPromptService,
+    db
+  );
+  const aiProfileStorageService = new AiProfileStorageService(s3Service);
+  const userAiProfileService = new UserAiProfileService(
+    encryptionService,
+    db,
+    aiProfileStorageService
+  );
+  const messageChunkService = new MessageChunkService(encryptionService, db);
+  const idempotencyInfoService = new IdempotencyInfoService(db);
+  const chatMessageDecryptService = new ChatMessageDecryptService(
+    encryptionService,
+    userPromptService
+  );
+  const chatTaskHandler = new ChatTaskHandler(db);
+  const messageTaskHandler = new MessageTaskHandler(db);
+  const messageService = new MessageService(
+    encryptionService,
+    chatMessageDecryptService,
+    db,
+    messageChunkService
+  );
+  const modelRouteService = new ModelRouteService(
+    messageService,
+    messageChunkService,
+    pgPool,
+    googleGenAiService,
+    xAiService,
+    db,
+    encryptionService,
+    userDefaultPromptService,
+    chatMessageDecryptService
+  );
+  const taskService = new TaskService(
+    modelRouteService,
+    messageTaskHandler,
+    messageChunkService,
+    chatTaskHandler,
+    userPromptService,
+    pgPool
+  );
+  const chatService = new ChatService(
+    encryptionService,
+    db,
+    chatMessageDecryptService
+  );
+  const chatBranchService = new ChatBranchService(
+    db,
+    chatMessageDecryptService
+  );
+  const gratitudeJournalService = new GratitudeJournalService(
+    db,
+    chatMessageDecryptService
+  );
+  const messageReplyService = new MessageReplyService(
+    encryptionService,
+    db,
+    chatMessageDecryptService,
+    modelRouteService
+  );
+  const messageSender = new MessageSender(
+    db,
+    encryptionService,
+    chatMessageDecryptService,
+    modelRouteService
+  );
+  const chatStarter = new ChatStarter(
+    db,
+    encryptionService,
+    chatMessageDecryptService,
+    modelRouteService
+  );
+  const chatBranchStarter = new ChatBranchStarter(
+    db,
+    chatMessageDecryptService,
+    encryptionService
+  );
+  const gratitudeJournalChatStarter = new GratitudeJournalChatStarter(
+    userService,
+    encryptionService,
+    db,
+    chatMessageDecryptService,
+    modelRouteService
+  );
 
-diContainer.init();
+  return {
+    serviceRegistry: {
+      envValidationService,
+      googleGenAiService,
+      xAiService,
+      encryptionService,
+      s3Service,
+      nextAuthCsrfService,
+      chatPromptService,
+      pgPool,
+      db,
+      userService,
+      userLinkAccountService,
+      userUsageLimitService,
+      userPromptService,
+      userDefaultPromptService,
+      aiProfileStorageService,
+      userAiProfileService,
+      messageChunkService,
+      idempotencyInfoService,
+      chatMessageDecryptService,
+      chatTaskHandler,
+      messageTaskHandler,
+      messageService,
+      modelRouteService,
+      taskService,
+      chatService,
+      chatBranchService,
+      gratitudeJournalService,
+      messageReplyService,
+      messageSender,
+      chatStarter,
+      chatBranchStarter,
+      gratitudeJournalChatStarter,
+    },
+    destroy: async () => {
+      await db.$disconnect();
+      await pgPool.end();
+    },
+  };
+}
 
-const destroy = () => diContainer.destroy();
+const result = createServiceRegistry();
+export const serviceRegistry = result.serviceRegistry;
+
+let destroyCalled = false;
+const destroy = async () => {
+  if (destroyCalled) {
+    return;
+  }
+
+  destroyCalled = true;
+  await result.destroy();
+};
 
 process.on("SIGINT", destroy);
 process.on("SIGTERM", destroy);

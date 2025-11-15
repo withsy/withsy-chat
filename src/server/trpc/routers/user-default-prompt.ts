@@ -6,18 +6,18 @@ import {
 import { publicProcedure, t } from "../server";
 
 export const userDefaultPromptRouter = t.router({
-  get: publicProcedure.output(UserDefaultPromptGetOutput).query(({ ctx }) =>
-    ctx.diContainer
-      .get("userDefaultPromptService")
-      .get(ctx.userId)
-      .then((x) => UserDefaultPromptGetOutput.parse(x))
-  ),
+  get: publicProcedure
+    .output(UserDefaultPromptGetOutput)
+    .query(({ ctx }) =>
+      ctx.serviceRegistry.userDefaultPromptService
+        .get(ctx.userId)
+        .then((x) => UserDefaultPromptGetOutput.parse(x))
+    ),
   update: publicProcedure
     .input(UserDefaultPromptUpdate)
     .output(UserDefaultPromptData)
     .mutation(({ ctx, input }) =>
-      ctx.diContainer
-        .get("userDefaultPromptService")
+      ctx.serviceRegistry.userDefaultPromptService
         .update(ctx.userId, input)
         .then((x) => UserDefaultPromptData.parse(x))
     ),

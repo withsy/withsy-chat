@@ -10,31 +10,26 @@ import { publicProcedure, t } from "../server";
 export const userRouter = t.router({
   get: publicProcedure
     .output(UserData)
-    .query((opts) =>
-      opts.ctx.diContainer.get("userService").get(opts.ctx.userId)
-    ),
+    .query((opts) => opts.ctx.serviceRegistry.userService.get(opts.ctx.userId)),
   ensure: publicProcedure
     .input(UserEnsure)
     .output(UserData)
     .mutation((opts) =>
-      opts.ctx.diContainer
-        .get("userService")
-        .ensure(opts.ctx.userId, opts.input)
+      opts.ctx.serviceRegistry.userService.ensure(opts.ctx.userId, opts.input)
     ),
   updatePrefs: publicProcedure
     .input(UserUpdatePrefs)
     .output(UserUpdatePrefsOutput)
     .mutation((opts) =>
-      opts.ctx.diContainer
-        .get("userService")
-        .updatePrefs(opts.ctx.userId, opts.input)
+      opts.ctx.serviceRegistry.userService.updatePrefs(
+        opts.ctx.userId,
+        opts.input
+      )
     ),
   update: publicProcedure
     .input(UserUpdate)
     .output(UserData)
     .mutation((opts) =>
-      opts.ctx.diContainer
-        .get("userService")
-        .update(opts.ctx.userId, opts.input)
+      opts.ctx.serviceRegistry.userService.update(opts.ctx.userId, opts.input)
     ),
 });

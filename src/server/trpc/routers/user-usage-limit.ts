@@ -9,6 +9,6 @@ export const userUsageLimitRouter = t.router({
     .input(UserUsageLimitList)
     .output(UserUsageLimitListOutput)
     .query(({ ctx, input }) =>
-      ctx.diContainer.get("userUsageLimitService").list(ctx.userId, input)
+      ctx.serviceRegistry.userUsageLimitService.list(ctx.userId, input)
     ),
 });

@@ -4,7 +4,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import type { Provider } from "next-auth/providers/index";
 import { inspect } from "node:util";
-import { diContainer } from "./service-registry";
+import { serviceRegistry } from "./service-registry";
 
 function createAuthOptions(): AuthOptions {
   const providers: Provider[] = [
@@ -58,16 +58,14 @@ function createAuthOptions(): AuthOptions {
           imageUrl = Reflect.get(profile, "picture");
         }
 
-        const { userId } = await diContainer
-          .get("userLinkAccountService")
-          .ensure({
-            provider,
-            providerAccountId,
-            refreshToken: refresh_token,
-            name,
-            email,
-            imageUrl,
-          });
+        const { userId } = await serviceRegistry.userLinkAccountService.ensure({
+          provider,
+          providerAccountId,
+          refreshToken: refresh_token,
+          name,
+          email,
+          imageUrl,
+        });
 
         const userJwt = UserJwt.parse({ sub: userId });
         return userJwt;

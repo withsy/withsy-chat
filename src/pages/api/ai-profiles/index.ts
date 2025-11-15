@@ -3,7 +3,7 @@ import {
   createNextPagesApiHandler,
   type Options,
 } from "@/server/next-pages-api-handler";
-import { diContainer } from "@/server/service-registry";
+import { serviceRegistry } from "@/server/service-registry";
 import { UserAiProfileService } from "@/server/services/user-ai-profile";
 import { UserUsageLimitService } from "@/server/services/user-usage-limit";
 import { Model } from "@/types/model";
@@ -59,10 +59,10 @@ const Input = z.object({
 async function post(opts: Options) {
   const { req, res, ctx } = opts;
   const { userId } = ctx;
-  const idempotencyInfoService = diContainer.get("idempotencyInfoService");
-  const db = diContainer.get("db");
-  const aiProfileStorageService = diContainer.get("aiProfileStorageService");
-  const userAiProfileService = diContainer.get("userAiProfileService");
+  const idempotencyInfoService = serviceRegistry.idempotencyInfoService;
+  const db = serviceRegistry.db;
+  const aiProfileStorageService = serviceRegistry.aiProfileStorageService;
+  const userAiProfileService = serviceRegistry.userAiProfileService;
 
   const idempotencyKey = req.headers["idempotency-key"];
   if (typeof idempotencyKey != "string" || idempotencyKey.length === 0)
