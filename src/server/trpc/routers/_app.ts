@@ -5,6 +5,7 @@ import { encryptionRouter } from "./encryption";
 import { gratitudeJournalRouter } from "./gratitude-journal";
 import { messageRouter } from "./message";
 import { messageReplyRouter } from "./message-reply";
+import { triggerRouter } from "./trigger";
 import { userRouter } from "./user";
 import { userAiProfileRouter } from "./user-ai-profile";
 import { userDefaultPromptRouter } from "./user-default-prompt";
@@ -23,6 +24,7 @@ export const appRouter = t.router({
   messageReply: messageReplyRouter,
   gratitudeJournal: gratitudeJournalRouter,
   encryption: encryptionRouter,
+  trigger: triggerRouter,
 });
 
 export type AppRouter = typeof appRouter;

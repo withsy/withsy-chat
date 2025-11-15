@@ -1,0 +1,13 @@
+{
+  "scripts": {
+    "dev": "npx trigger.dev dev --env-file .env"
+  },
+  "dependencies": {
+    "@trigger.dev/sdk": "4.1.0"
+  },
+  "devDependencies": {
+    "@dotenvx/dotenvx": "1.51.1",
+    "@trigger.dev/build": "4.1.0",
+    "trigger.dev": "4.1.0"
+  }
+}

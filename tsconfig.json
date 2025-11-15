@@ -25,7 +25,9 @@
     "src/**/*.ts",
     "src/**/*.tsx",
     "scripts/**/*.ts",
-    "prod/dotenv.mts"
+    "prod/dotenv.mts",
+    "trigger/trigger.config.ts",
+    "trigger/src/**/*.ts"
   ],
   "exclude": ["node_modules", "tailwind.config.js"]
 }
