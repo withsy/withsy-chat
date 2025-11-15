@@ -33,7 +33,9 @@ export async function getUser(input: {
     const userSession = UserSession.parse(session);
     try {
       user = await diContainer.get("userService").get(userSession.user.id);
-    } catch (_e) {}
+    } catch (_e) {
+      // noop
+    }
   }
 
   return user;

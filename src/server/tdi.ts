@@ -112,7 +112,6 @@ export class DiContainer<InjectableMap extends AnyInjectableMap> {
 
     const instance = this.#instanceMap.get(nameString);
     if (instance) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return instance;
     }
 
@@ -134,7 +133,6 @@ export class DiContainer<InjectableMap extends AnyInjectableMap> {
       const instance = provider({ inject: this.get.bind(this) });
       this.#instanceMap.set(nameString, instance);
 
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return instance as any;
     } finally {
       this.#currentInitOrders.clear();
@@ -195,13 +193,11 @@ class Builder<InjectableMap extends AnyInjectableMap> {
       throw new Error(`Provider name '${name}' already exists.`);
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     this.#context.providerMap.set(name, provider as any);
     if (options) {
       this.#context.optionsMap.set(name, options);
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     return new Builder(this.#context as any);
   }
 

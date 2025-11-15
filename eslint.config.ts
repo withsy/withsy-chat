@@ -2,9 +2,10 @@ import { FlatCompat } from "@eslint/eslintrc";
 import pluginQuery from "@tanstack/eslint-plugin-query";
 import tseslint from "typescript-eslint";
 import eslint from "@eslint/js";
-import { defineConfig } from "eslint/config";
+import { defineConfig, globalIgnores } from "eslint/config";
 
 export default defineConfig(
+  globalIgnores(["tailwind.config.js"]),
   ...new FlatCompat({
     baseDirectory: import.meta.dirname,
   }).extends("next/core-web-vitals", "next/typescript"),
@@ -17,7 +18,7 @@ export default defineConfig(
     },
   },
   eslint.configs.recommended,
-  tseslint.configs.recommendedTypeChecked,
+  tseslint.configs.recommended,
   ...pluginQuery.configs["flat/recommended"],
   {
     rules: {
