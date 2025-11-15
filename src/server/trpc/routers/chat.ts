@@ -60,7 +60,7 @@ export const chatRouter = t.router({
     .output(ChatStartOutput)
     .mutation(({ ctx, input }) =>
       ctx.diContainer
-        .get("chatService")
+        .get("chatStarter")
         .start(ctx.userId, input)
         .then((x) => ChatStartOutput.parse(x))
     ),

@@ -15,11 +15,13 @@ export default function LoadAiProfiles() {
 
   useEffect(() => {
     setLoading(isLoading);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading]);
 
   useEffect(() => {
     const profileMap = Object.fromEntries(data.map((p) => [p.model, p]));
     setProfiles(profileMap);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
   return null;

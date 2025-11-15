@@ -15,7 +15,7 @@ export default function ChatDrawerHeader({
   if (!user) return null;
 
   const title = capitalizeFirstLetter(openDrawer);
-  const { themeColor, themeOpacity } = user?.preferences;
+  const { themeColor, themeOpacity } = user?.preferences ?? {};
   const handleClick = () => {
     setOpenDrawer(null);
   };

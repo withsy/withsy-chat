@@ -17,7 +17,7 @@ export const chatBranchRouter = t.router({
     .output(ChatData)
     .mutation(({ ctx, input }) =>
       ctx.diContainer
-        .get("chatBranchService")
+        .get("chatBranchStarter")
         .start(ctx.userId, input)
         .then((x) => ChatData.parse(x))
     ),

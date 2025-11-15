@@ -33,6 +33,6 @@ export const messageRouter = t.router({
     .input(MessageSend)
     .output(MessageSendOutput)
     .mutation(({ ctx, input }) =>
-      ctx.diContainer.get("messageService").send(ctx.userId, input)
+      ctx.diContainer.get("messageSender").send(ctx.userId, input)
     ),
 });

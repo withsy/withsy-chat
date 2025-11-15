@@ -1,13 +1,10 @@
 import {
   ChatData,
   ChatDelete,
-  ChatEntity,
   ChatGet,
   ChatListOutout,
   ChatRestore,
   ChatSelect,
-  ChatStart,
-  ChatStartOutput,
   ChatUpdate,
 } from "@/types/chat";
 import { ChatPromptSelect } from "@/types/chat-prompt";
@@ -16,19 +13,14 @@ import type { MessageId, UserId } from "@/types/id";
 import { MessageSelect } from "@/types/message";
 import { v7 as uuidv7 } from "uuid";
 import type { Db, Tx } from "./db";
-import { IdempotencyInfoService } from "./idempotency-info";
-import { MessageService } from "./message";
-import { UserUsageLimitService } from "./user-usage-limit";
 import type { EncryptionService } from "./encryption";
 import type { ChatMessageDecryptService } from "./chat-message-decrypt";
-import type { TaskAdder } from "./task-adder";
 
 export class ChatService {
   constructor(
     private readonly encryptionService: EncryptionService,
     private readonly db: Db,
-    private readonly chatMessageDecryptService: ChatMessageDecryptService,
-    private readonly taskAdder: TaskAdder
+    private readonly chatMessageDecryptService: ChatMessageDecryptService
   ) {}
 
   async list(userId: UserId): Promise<ChatListOutout> {
@@ -122,66 +114,6 @@ export class ChatService {
 
     const data = this.chatMessageDecryptService.decryptChat(entity);
     return data;
-  }
-
-  async start(userId: UserId, input: ChatStart): Promise<ChatStartOutput> {
-    const { model, text, idempotencyKey } = input;
-
-    await this.db.$transaction(async (tx) => {
-      await IdempotencyInfoService.checkDuplicateRequest(tx, idempotencyKey);
-      await UserUsageLimitService.checkMessage(tx, { userId });
-    });
-
-    const modelMessageTextEncrypted = this.encryptionService.encrypt("");
-    const modelMessageReasoningTextEncrypted =
-      this.encryptionService.encrypt("");
-    const userMessageTextEncrypted = this.encryptionService.encrypt(text);
-    const userMessageReasoningTextEncrypted =
-      this.encryptionService.encrypt("");
-    const title = [...text].slice(0, 20).join("");
-    const titleEncrypted = this.encryptionService.encrypt(title);
-
-    const { chat, userMessage, modelMessage } = await this.db.$transaction(
-      async (tx) => {
-        const chat = await ChatService.createChat(tx, {
-          userId,
-          titleEncrypted,
-        });
-
-        const userMessage = await MessageService.createUserMessage(tx, {
-          chatId: chat.id,
-          textEncrypted: userMessageTextEncrypted,
-          reasoningTextEncrypted: userMessageReasoningTextEncrypted,
-          isPublic: true,
-        });
-
-        const modelMessage = await MessageService.createModelMessage(tx, {
-          chatId: chat.id,
-          model,
-          parentMessageId: userMessage.id,
-          textEncrypted: modelMessageTextEncrypted,
-          reasoningTextEncrypted: modelMessageReasoningTextEncrypted,
-        });
-
-        return { chat, userMessage, modelMessage };
-      }
-    );
-
-    await this.taskAdder.add("model_route_send_message_to_ai", {
-      userId,
-      userMessageId: userMessage.id,
-      modelMessageId: modelMessage.id,
-    });
-
-    await UserUsageLimitService.decreaseMessage(this.db, { userId });
-
-    const res = {
-      chat: this.chatMessageDecryptService.decryptChat(chat),
-      userMessage: this.chatMessageDecryptService.decryptMessage(userMessage),
-      modelMessage: this.chatMessageDecryptService.decryptMessage(modelMessage),
-    } satisfies ChatStartOutput;
-
-    return res;
   }
 
   static async createChat(

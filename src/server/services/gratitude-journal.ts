@@ -1,16 +1,14 @@
-import { ChatSelect, ChatStartOutput, type ChatEntity } from "@/types/chat";
+import { ChatSelect, type ChatEntity } from "@/types/chat";
 import {
   GratitudeJournalData,
   GratitudeJournalEntity,
   GratitudeJournalGetJournal,
   GratitudeJournalRecentJournal,
   GratitudeJournalSelect,
-  GratitudeJournalStartChat,
   GratitudeJournalStats,
 } from "@/types/gratitude-journal";
 import type { UserId } from "@/types/id";
 import type { Prisma } from "@prisma/client";
-import { TRPCError } from "@trpc/server";
 import {
   endOfDay,
   format,
@@ -21,24 +19,14 @@ import {
 } from "date-fns";
 import { fromZonedTime, toZonedTime } from "date-fns-tz";
 import { v7 as uuidv7 } from "uuid";
-import { ChatService } from "./chat";
-import { ChatPromptService } from "./chat-prompt";
 import type { Db, Tx } from "./db";
-import { IdempotencyInfoService } from "./idempotency-info";
-import { MessageService } from "./message";
 import { UserService } from "./user";
-import type { EncryptionService } from "./encryption";
-import type { TaskService } from "./task";
 import type { ChatMessageDecryptService } from "./chat-message-decrypt";
-import type { TaskAdder } from "./task-adder";
 
 export class GratitudeJournalService {
   constructor(
     private readonly db: Db,
-    private readonly userService: UserService,
-    private readonly encryptionService: EncryptionService,
-    private readonly chatMessageDecryptService: ChatMessageDecryptService,
-    private readonly taskAdder: TaskAdder
+    private readonly chatMessageDecryptService: ChatMessageDecryptService
   ) {}
 
   decrypt(
@@ -148,116 +136,6 @@ export class GratitudeJournalService {
 
     const data = this.decrypt(entity);
     return data;
-  }
-
-  async startChat(
-    userId: UserId,
-    input: GratitudeJournalStartChat
-  ): Promise<ChatStartOutput> {
-    const { idempotencyKey } = input;
-
-    const user = await this.userService.getForGratitudeJournal({ userId });
-    const userName = this.encryptionService.decrypt(user.nameEncrypted);
-
-    const now = new Date();
-    const prepareRes = await this.db.$transaction(async (tx) => {
-      const timezoneInfo = await GratitudeJournalService.getTimezoneInfo(tx, {
-        userId,
-        now,
-      });
-
-      const promptText = GratitudeJournalService.createPromptText({
-        userName,
-        userAiLanguage: user.aiLanguage,
-        zonedDate: zonedTodayDate,
-      });
-
-      return { timezoneInfo, promptText };
-    });
-
-    const { timezoneInfo, promptText } = prepareRes;
-    const { utcTodayStart, utcTodayEnd, zonedTodayDate } = timezoneInfo;
-
-    const title = `Gratitude Journal - ${zonedTodayDate}`;
-    const titleEncrypted = this.encryptionService.encrypt(title);
-    const promptTextEncrypted = this.encryptionService.encrypt(promptText);
-    const userMessageTextEncrypted = this.encryptionService.encrypt("");
-    const userMessageReasoningTextEncrypted =
-      this.encryptionService.encrypt("");
-    const modelMessageTextEncrypted = this.encryptionService.encrypt("");
-    const modelMessageReasoningTextEncrypted =
-      this.encryptionService.encrypt("");
-
-    const createRes = await this.db.$transaction(async (tx) => {
-      await IdempotencyInfoService.checkDuplicateRequest(tx, idempotencyKey);
-
-      const where = GratitudeJournalService.getTodayJournalWhere({
-        userId,
-        utcTodayStart,
-        utcTodayEnd,
-      });
-      const todayJournal = await tx.gratitudeJournal.findFirst({
-        where,
-        select: GratitudeJournalSelect,
-      });
-      if (todayJournal) {
-        throw new TRPCError({
-          code: "CONFLICT",
-          message: "Today's Gratitude Journal already exists.",
-        });
-      }
-
-      const chat = await ChatService.createGratitudeJournalChat(tx, {
-        userId,
-        titleEncrypted,
-      });
-
-      const prompt = await ChatPromptService.create(tx, {
-        chatId: chat.id,
-        textEncrypted: promptTextEncrypted,
-      });
-      chat.prompts.push(prompt);
-
-      const userMessage = await MessageService.createUserMessage(tx, {
-        chatId: chat.id,
-        textEncrypted: userMessageTextEncrypted,
-        reasoningTextEncrypted: userMessageReasoningTextEncrypted,
-        isPublic: false,
-      });
-      const modelMessage = await MessageService.createModelMessage(tx, {
-        chatId: chat.id,
-        model: "gemini-2.0-flash",
-        parentMessageId: userMessage.id,
-        textEncrypted: modelMessageTextEncrypted,
-        reasoningTextEncrypted: modelMessageReasoningTextEncrypted,
-      });
-
-      const gratitudeJournal = await tx.gratitudeJournal.create({
-        data: {
-          id: GratitudeJournalService.generateId(),
-          userId,
-          chatId: chat.id,
-        },
-        select: GratitudeJournalSelect,
-      });
-      chat.gratitudeJournals.push(gratitudeJournal);
-
-      return { chat, userMessage, modelMessage };
-    });
-
-    const { chat, userMessage, modelMessage } = createRes;
-
-    await this.taskAdder.add("model_route_send_message_to_ai", {
-      userId,
-      userMessageId: userMessage.id,
-      modelMessageId: modelMessage.id,
-    });
-
-    return {
-      chat: this.chatMessageDecryptService.decryptChat(chat),
-      userMessage: this.chatMessageDecryptService.decryptMessage(userMessage),
-      modelMessage: this.chatMessageDecryptService.decryptMessage(modelMessage),
-    };
   }
 
   static generateId() {

@@ -314,9 +314,10 @@ export class UserUsageLimitService {
       case "perSecond":
         entity.resetAt = UserUsageLimitService.getPerSecondResetAt(now);
         return true;
-      default:
+      default: {
         const _: never = entity.period;
         throw new Error(`Unexpected period: ${entity.period}`);
+      }
     }
   }
 

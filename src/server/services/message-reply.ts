@@ -9,15 +9,15 @@ import { MessageService } from "./message";
 import { UserUsageLimitService } from "./user-usage-limit";
 import type { EncryptionService } from "./encryption";
 import type { Db } from "./db";
-import type { TaskAdder } from "./task-adder";
 import type { ChatMessageDecryptService } from "./chat-message-decrypt";
+import type { ModelRouteService } from "./model-route";
 
 export class MessageReplyService {
   constructor(
     private readonly encryptionService: EncryptionService,
     private readonly db: Db,
-    private readonly taskAdder: TaskAdder,
-    private readonly chatMessageDecryptService: ChatMessageDecryptService
+    private readonly chatMessageDecryptService: ChatMessageDecryptService,
+    private readonly modelRouteService: ModelRouteService
   ) {}
 
   async regenerate(
@@ -81,11 +81,15 @@ export class MessageReplyService {
       }
     );
 
-    await this.taskAdder.add("model_route_send_message_to_ai", {
-      userId,
-      userMessageId: userMessage.id,
-      modelMessageId: modelMessage.id,
-    });
+    this.modelRouteService
+      .onSendMessageToAiTask({
+        userId,
+        userMessageId: userMessage.id,
+        modelMessageId: modelMessage.id,
+      })
+      .catch((e) => {
+        console.error("Failed to regenerate message reply.", e);
+      });
 
     await UserUsageLimitService.decreaseMessage(this.db, { userId });
 

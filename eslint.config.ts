@@ -5,7 +5,7 @@ import eslint from "@eslint/js";
 import { defineConfig, globalIgnores } from "eslint/config";
 
 export default defineConfig(
-  globalIgnores(["tailwind.config.js"]),
+  globalIgnores(["tailwind.config.js", "postcss.config.mjs"]),
   ...new FlatCompat({
     baseDirectory: import.meta.dirname,
   }).extends("next/core-web-vitals", "next/typescript"),

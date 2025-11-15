@@ -24,6 +24,7 @@ export default function EmptyChatView() {
       setGreeting(getGreeting());
     }, 1000 * 60 * 10);
     return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (!user) return null;

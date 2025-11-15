@@ -1,9 +1,8 @@
-import { ChatEntity, ChatSelect } from "@/types/chat";
+import { ChatSelect } from "@/types/chat";
 import { ChatPromptSelect } from "@/types/chat-prompt";
 import type { ChatId, MessageId, UserId } from "@/types/id";
 import {
   MessageData,
-  MessageEntity,
   MessageGet,
   MessageGetOutput,
   MessageList,
@@ -11,8 +10,6 @@ import {
   MessageSelect,
   MessageUpdate,
   type MessageEntityForAi,
-  type MessageSend,
-  type MessageSendOutput,
   type MessageStatus,
 } from "@/types/message";
 import { Model } from "@/types/model";
@@ -20,12 +17,9 @@ import { Role } from "@/types/role";
 import { UserPromptSelect } from "@/types/user-prompt";
 import { v7 as uuidv7 } from "uuid";
 import type { Db, Tx } from "./db";
-import { IdempotencyInfoService } from "./idempotency-info";
-import { UserUsageLimitService } from "./user-usage-limit";
 import type { EncryptionService } from "./encryption";
 import type { MessageChunkService } from "./message-chunk";
 import type { ChatMessageDecryptService } from "./chat-message-decrypt";
-import type { TaskAdder } from "./task-adder";
 
 // TODO: Change limit history length
 const DEFAULT_REMAIN_LENGTH = 10;
@@ -35,8 +29,7 @@ export class MessageService {
     private readonly encryptionService: EncryptionService,
     private readonly chatMessageDecryptService: ChatMessageDecryptService,
     private readonly db: Db,
-    private readonly messageChunkService: MessageChunkService,
-    private readonly taskAdder: TaskAdder
+    private readonly messageChunkService: MessageChunkService
   ) {}
 
   async get(userId: UserId, input: MessageGet): Promise<MessageGetOutput> {

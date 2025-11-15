@@ -190,6 +190,7 @@ export function ChatSession({ initialMessages, children }: Props) {
     return () => {
       closeEventSource(source);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [streamMessageId]);
 
   const onSendMessage = (message: string) => {

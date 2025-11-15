@@ -1,13 +1,11 @@
-import type { CronTask, TaskInput, TaskKey, TaskMap } from "@/types/task";
+import type { CronTask, TaskMap } from "@/types/task";
 import { run, type Runner, type TaskList } from "graphile-worker";
 import type { ModelRouteService } from "./model-route";
-import type { MessageService } from "./message";
 import type { MessageChunkService } from "./message-chunk";
 import type { UserPromptService } from "./user-prompt";
 import type { Pool } from "pg";
 import type { ChatTaskHandler } from "./chat-task-handler";
 import type { MessageTaskHandler } from "./message-task-handler";
-import type { TaskAdder } from "./task-adder";
 
 export class TaskService {
   readonly runner: Promise<Runner>;
@@ -18,11 +16,8 @@ export class TaskService {
     private readonly messageChunkService: MessageChunkService,
     private readonly chatTaskHandler: ChatTaskHandler,
     private readonly userPromptService: UserPromptService,
-    private readonly pgPool: Pool,
-    private readonly taskAdder: TaskAdder
+    private readonly pgPool: Pool
   ) {
-    this.taskAdder.setTaskService(this);
-
     const taskMap: TaskMap = {
       model_route_send_message_to_ai: (input) =>
         this.modelRouteService.onSendMessageToAiTask(input),

@@ -28,8 +28,8 @@ export const gratitudeJournalRouter = t.router({
     .output(ChatStartOutput)
     .mutation(({ ctx, input }) =>
       ctx.diContainer
-        .get("gratitudeJournalService")
-        .startChat(ctx.userId, input)
+        .get("gratitudeJournalChatStarter")
+        .start(ctx.userId, input)
         .then((x) => ChatStartOutput.parse(x))
     ),
 });

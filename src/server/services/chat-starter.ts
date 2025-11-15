@@ -1,14 +1,15 @@
+import type { ChatStart, ChatStartOutput } from "@/types/chat";
 import type { UserId } from "@/types/id";
-import type { MessageSend, MessageSendOutput } from "@/types/message";
 import type { Db } from "./db";
 import { IdempotencyInfoService } from "./idempotency-info";
 import { UserUsageLimitService } from "./user-usage-limit";
 import type { EncryptionService } from "./encryption";
+import { ChatService } from "./chat";
 import { MessageService } from "./message";
 import type { ChatMessageDecryptService } from "./chat-message-decrypt";
 import type { ModelRouteService } from "./model-route";
 
-export class MessageSender {
+export class ChatStarter {
   constructor(
     private readonly db: Db,
     private readonly encryptionService: EncryptionService,
@@ -16,39 +17,46 @@ export class MessageSender {
     private readonly modelRouteService: ModelRouteService
   ) {}
 
-  async send(userId: UserId, input: MessageSend): Promise<MessageSendOutput> {
-    const { idempotencyKey, chatId, model, text } = input;
+  async start(userId: UserId, input: ChatStart): Promise<ChatStartOutput> {
+    const { model, text, idempotencyKey } = input;
 
     await this.db.$transaction(async (tx) => {
       await IdempotencyInfoService.checkDuplicateRequest(tx, idempotencyKey);
       await UserUsageLimitService.checkMessage(tx, { userId });
     });
 
-    const userMessageTextEncrypted = this.encryptionService.encrypt(text);
-    const userMessageReasoningTextEncrypted =
-      this.encryptionService.encrypt("");
     const modelMessageTextEncrypted = this.encryptionService.encrypt("");
     const modelMessageReasoningTextEncrypted =
       this.encryptionService.encrypt("");
+    const userMessageTextEncrypted = this.encryptionService.encrypt(text);
+    const userMessageReasoningTextEncrypted =
+      this.encryptionService.encrypt("");
+    const title = [...text].slice(0, 20).join("");
+    const titleEncrypted = this.encryptionService.encrypt(title);
 
-    const { userMessage, modelMessage } = await this.db.$transaction(
+    const { chat, userMessage, modelMessage } = await this.db.$transaction(
       async (tx) => {
+        const chat = await ChatService.createChat(tx, {
+          userId,
+          titleEncrypted,
+        });
+
         const userMessage = await MessageService.createUserMessage(tx, {
-          chatId,
+          chatId: chat.id,
           textEncrypted: userMessageTextEncrypted,
-          isPublic: true,
           reasoningTextEncrypted: userMessageReasoningTextEncrypted,
+          isPublic: true,
         });
 
         const modelMessage = await MessageService.createModelMessage(tx, {
-          chatId,
+          chatId: chat.id,
           model,
           parentMessageId: userMessage.id,
           textEncrypted: modelMessageTextEncrypted,
           reasoningTextEncrypted: modelMessageReasoningTextEncrypted,
         });
 
-        return { userMessage, modelMessage };
+        return { chat, userMessage, modelMessage };
       }
     );
 
@@ -59,14 +67,17 @@ export class MessageSender {
         modelMessageId: modelMessage.id,
       })
       .catch((e) => {
-        console.error("Failed to send message.", e);
+        console.error("Failed to start chat.", e);
       });
 
     await UserUsageLimitService.decreaseMessage(this.db, { userId });
 
-    return {
+    const res = {
+      chat: this.chatMessageDecryptService.decryptChat(chat),
       userMessage: this.chatMessageDecryptService.decryptMessage(userMessage),
       modelMessage: this.chatMessageDecryptService.decryptMessage(modelMessage),
-    };
+    } satisfies ChatStartOutput;
+
+    return res;
   }
 }
