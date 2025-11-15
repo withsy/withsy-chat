@@ -138,7 +138,7 @@ export class DiContainer<InjectableMap extends AnyInjectableMap> {
     }
   }
 
-  static newBuilder(this: void): Builder<{}> {
+  static newBuilder(this: void): Builder<object> {
     const providerMap: ProviderMap<AnyInjectableMap> = new Map();
     return new Builder({
       providerMap,

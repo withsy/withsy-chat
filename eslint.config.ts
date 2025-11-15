@@ -1,14 +1,13 @@
 import { FlatCompat } from "@eslint/eslintrc";
-import eslint from "@eslint/js";
 import pluginQuery from "@tanstack/eslint-plugin-query";
 import tseslint from "typescript-eslint";
+import eslint from "@eslint/js";
+import { defineConfig } from "eslint/config";
 
-const compat = new FlatCompat({
-  baseDirectory: import.meta.dirname,
-});
-
-export default tseslint.config(
-  ...compat.extends("next/core-web-vitals", "next/typescript"),
+export default defineConfig(
+  ...new FlatCompat({
+    baseDirectory: import.meta.dirname,
+  }).extends("next/core-web-vitals", "next/typescript"),
   {
     languageOptions: {
       parserOptions: {
@@ -17,6 +16,9 @@ export default tseslint.config(
       },
     },
   },
+  eslint.configs.recommended,
+  tseslint.configs.recommendedTypeChecked,
+  ...pluginQuery.configs["flat/recommended"],
   {
     rules: {
       "@typescript-eslint/no-explicit-any": "off",
@@ -35,18 +37,6 @@ export default tseslint.config(
     rules: {
       "@typescript-eslint/no-floating-promises": "error",
       "@typescript-eslint/await-thenable": "error",
-    },
-  },
-  ...pluginQuery.configs["flat/recommended"],
-  {
-    plugins: {
-      "@tanstack/query": pluginQuery,
-    },
-    rules: {
-      "@tanstack/query/exhaustive-deps": "error",
-      "@tanstack/query/no-unstable-deps": "error",
-      "@tanstack/query/infinite-query-property-order": "error",
-      "@tanstack/query/no-void-query-fn": "error",
     },
   }
 );

@@ -356,56 +356,6 @@ export class MessageService {
       console.warn(`Marked ${res.count} zombie messages as failed.`);
   }
 
-  async send(userId: UserId, input: MessageSend): Promise<MessageSendOutput> {
-    const { idempotencyKey, chatId, model, text } = input;
-
-    await this.db.$transaction(async (tx) => {
-      await IdempotencyInfoService.checkDuplicateRequest(tx, idempotencyKey);
-      await UserUsageLimitService.checkMessage(tx, { userId });
-    });
-
-    const userMessageTextEncrypted = this.encryptionService.encrypt(text);
-    const userMessageReasoningTextEncrypted =
-      this.encryptionService.encrypt("");
-    const modelMessageTextEncrypted = this.encryptionService.encrypt("");
-    const modelMessageReasoningTextEncrypted =
-      this.encryptionService.encrypt("");
-
-    const { userMessage, modelMessage } = await this.db.$transaction(
-      async (tx) => {
-        const userMessage = await MessageService.createUserMessage(tx, {
-          chatId,
-          textEncrypted: userMessageTextEncrypted,
-          isPublic: true,
-          reasoningTextEncrypted: userMessageReasoningTextEncrypted,
-        });
-
-        const modelMessage = await MessageService.createModelMessage(tx, {
-          chatId,
-          model,
-          parentMessageId: userMessage.id,
-          textEncrypted: modelMessageTextEncrypted,
-          reasoningTextEncrypted: modelMessageReasoningTextEncrypted,
-        });
-
-        return { userMessage, modelMessage };
-      }
-    );
-
-    await this.taskAdder.add("model_route_send_message_to_ai", {
-      userId,
-      userMessageId: userMessage.id,
-      modelMessageId: modelMessage.id,
-    });
-
-    await UserUsageLimitService.decreaseMessage(this.db, { userId });
-
-    return {
-      userMessage: this.chatMessageDecryptService.decryptMessage(userMessage),
-      modelMessage: this.chatMessageDecryptService.decryptMessage(modelMessage),
-    };
-  }
-
   static async createUserMessage(
     tx: Tx,
     input: {
