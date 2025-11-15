@@ -10,7 +10,9 @@ type Merged<A extends object, B extends object> = {
     : never;
 };
 
-type Simplified<T> = T extends infer O ? { [K in keyof O]: O[K] } : never;
+type Simplified<T extends object> = T extends infer O
+  ? { [K in keyof O]: O[K] }
+  : never;
 
 // #endregion Helpers
 
@@ -45,9 +47,7 @@ type ProviderMap<InjectableMap extends AnyInjectableMap> = Map<
   Provider<InjectableMap, InjectableMap[keyof InjectableMap]>
 >;
 
-type AnyOptions = Options<AnyInjectable>;
-
-type AnyOptionsMap = Map<string, AnyOptions>;
+type AnyOptionsMap = Map<string, Options<AnyInjectable>>;
 
 // #endregion Common
 
@@ -65,14 +65,14 @@ export class DiContainer<InjectableMap extends AnyInjectableMap> {
     this.#optionsMap = builderContext.optionsMap;
   }
 
-  #checkDestroyed() {
+  #checkNotDestroyed() {
     if (this.#destroyed) {
       throw new Error("DI Container is destroyed.");
     }
   }
 
   init() {
-    this.#checkDestroyed();
+    this.#checkNotDestroyed();
 
     this.#providerMap.keys().forEach((name) => this.get(name));
   }
@@ -106,7 +106,7 @@ export class DiContainer<InjectableMap extends AnyInjectableMap> {
   }
 
   get<Name extends keyof InjectableMap>(name: Name): InjectableMap[Name] {
-    this.#checkDestroyed();
+    this.#checkNotDestroyed();
 
     const nameString = name.toString();
 
