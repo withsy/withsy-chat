@@ -60,7 +60,8 @@ export const ModelName = {
   Message: 'Message',
   MessageChunk: 'MessageChunk',
   IdempotencyInfo: 'IdempotencyInfo',
-  GratitudeJournal: 'GratitudeJournal'
+  GratitudeJournal: 'GratitudeJournal',
+  ApiKey: 'ApiKey'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -245,6 +246,16 @@ export const GratitudeJournalScalarFieldEnum = {
 } as const
 
 export type GratitudeJournalScalarFieldEnum = (typeof GratitudeJournalScalarFieldEnum)[keyof typeof GratitudeJournalScalarFieldEnum]
+
+
+export const ApiKeyScalarFieldEnum = {
+  id: 'id',
+  token: 'token',
+  isEnabled: 'isEnabled',
+  createdAt: 'createdAt'
+} as const
+
+export type ApiKeyScalarFieldEnum = (typeof ApiKeyScalarFieldEnum)[keyof typeof ApiKeyScalarFieldEnum]
 
 
 export const SortOrder = {

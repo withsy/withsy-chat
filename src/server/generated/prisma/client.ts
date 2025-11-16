@@ -101,3 +101,8 @@ export type IdempotencyInfo = Prisma.IdempotencyInfoModel
  * 
  */
 export type GratitudeJournal = Prisma.GratitudeJournalModel
+/**
+ * Model ApiKey
+ * 
+ */
+export type ApiKey = Prisma.ApiKeyModel

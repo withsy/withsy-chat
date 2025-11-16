@@ -231,3 +231,13 @@ model GratitudeJournal {
   @@index([chatId])
   @@map("gratitude_journals")
 }
+
+model ApiKey {
+  id        Int      @id @default(autoincrement()) @map("id")
+  token     String   @unique @map("token")
+  isEnabled Boolean  @default(true) @map("is_enabled")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@index([token])
+  @@map("api_keys")
+}
