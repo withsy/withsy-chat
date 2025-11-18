@@ -181,7 +181,7 @@ const result = createServiceRegistry();
 export const serviceRegistry = result.serviceRegistry;
 
 let destroyCalled = false;
-const destroy = async () => {
+const destroyServiceRegistry = async () => {
   if (destroyCalled) {
     return;
   }
@@ -190,5 +190,5 @@ const destroy = async () => {
   await result.destroy();
 };
 
-process.on("SIGINT", destroy);
-process.on("SIGTERM", destroy);
+process.on("SIGINT", destroyServiceRegistry);
+process.on("SIGTERM", destroyServiceRegistry);
