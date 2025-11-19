@@ -1,3 +1,4 @@
+import { ApiKeyService } from "./api-key/api-key.service";
 import { AiProfileStorageService } from "./services/ai-profile-storage";
 import { ChatService } from "./services/chat";
 import { ChatBranchService } from "./services/chat-branch";
@@ -30,6 +31,7 @@ import { UserLinkAccountService } from "./services/user-link-account";
 import { UserPromptService } from "./services/user-prompt";
 import { UserUsageLimitService } from "./services/user-usage-limit";
 import { XAiService } from "./services/x-ai";
+import { TickService } from "./tick/tick.service";
 
 function createServiceRegistry() {
   const envValidationService = new EnvValidationService();
@@ -134,7 +136,8 @@ function createServiceRegistry() {
     chatMessageDecryptService,
     modelRouteService
   );
-
+  const apiKeyService = new ApiKeyService(db);
+  const tickService = new TickService();
   return {
     serviceRegistry: {
       envValidationService,
@@ -169,6 +172,8 @@ function createServiceRegistry() {
       chatStarter,
       chatBranchStarter,
       gratitudeJournalChatStarter,
+      apiKeyService,
+      tickService,
     },
     destroy: async () => {
       await db.$disconnect();

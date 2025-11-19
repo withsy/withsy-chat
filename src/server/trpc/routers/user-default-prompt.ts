@@ -3,17 +3,17 @@ import {
   UserDefaultPromptGetOutput,
   UserDefaultPromptUpdate,
 } from "@/types/user-default-prompt";
-import { publicProcedure, t } from "../server";
+import { userProcedure, t } from "../server";
 
 export const userDefaultPromptRouter = t.router({
-  get: publicProcedure
+  get: userProcedure
     .output(UserDefaultPromptGetOutput)
     .query(({ ctx }) =>
       ctx.serviceRegistry.userDefaultPromptService
         .get(ctx.userId)
         .then((x) => UserDefaultPromptGetOutput.parse(x))
     ),
-  update: publicProcedure
+  update: userProcedure
     .input(UserDefaultPromptUpdate)
     .output(UserDefaultPromptData)
     .mutation(({ ctx, input }) =>

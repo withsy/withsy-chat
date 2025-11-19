@@ -36,21 +36,21 @@ export type ApiKeySumAggregateOutputType = {
 
 export type ApiKeyMinAggregateOutputType = {
   id: number | null
-  token: string | null
+  apiKey: string | null
   isEnabled: boolean | null
   createdAt: Date | null
 }
 
 export type ApiKeyMaxAggregateOutputType = {
   id: number | null
-  token: string | null
+  apiKey: string | null
   isEnabled: boolean | null
   createdAt: Date | null
 }
 
 export type ApiKeyCountAggregateOutputType = {
   id: number
-  token: number
+  apiKey: number
   isEnabled: number
   createdAt: number
   _all: number
@@ -67,21 +67,21 @@ export type ApiKeySumAggregateInputType = {
 
 export type ApiKeyMinAggregateInputType = {
   id?: true
-  token?: true
+  apiKey?: true
   isEnabled?: true
   createdAt?: true
 }
 
 export type ApiKeyMaxAggregateInputType = {
   id?: true
-  token?: true
+  apiKey?: true
   isEnabled?: true
   createdAt?: true
 }
 
 export type ApiKeyCountAggregateInputType = {
   id?: true
-  token?: true
+  apiKey?: true
   isEnabled?: true
   createdAt?: true
   _all?: true
@@ -175,7 +175,7 @@ export type ApiKeyGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalA
 
 export type ApiKeyGroupByOutputType = {
   id: number
-  token: string
+  apiKey: string
   isEnabled: boolean
   createdAt: Date
   _count: ApiKeyCountAggregateOutputType | null
@@ -205,31 +205,31 @@ export type ApiKeyWhereInput = {
   OR?: Prisma.ApiKeyWhereInput[]
   NOT?: Prisma.ApiKeyWhereInput | Prisma.ApiKeyWhereInput[]
   id?: Prisma.IntFilter<"ApiKey"> | number
-  token?: Prisma.StringFilter<"ApiKey"> | string
+  apiKey?: Prisma.StringFilter<"ApiKey"> | string
   isEnabled?: Prisma.BoolFilter<"ApiKey"> | boolean
   createdAt?: Prisma.DateTimeFilter<"ApiKey"> | Date | string
 }
 
 export type ApiKeyOrderByWithRelationInput = {
   id?: Prisma.SortOrder
-  token?: Prisma.SortOrder
+  apiKey?: Prisma.SortOrder
   isEnabled?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
 export type ApiKeyWhereUniqueInput = Prisma.AtLeast<{
   id?: number
-  token?: string
+  apiKey?: string
   AND?: Prisma.ApiKeyWhereInput | Prisma.ApiKeyWhereInput[]
   OR?: Prisma.ApiKeyWhereInput[]
   NOT?: Prisma.ApiKeyWhereInput | Prisma.ApiKeyWhereInput[]
   isEnabled?: Prisma.BoolFilter<"ApiKey"> | boolean
   createdAt?: Prisma.DateTimeFilter<"ApiKey"> | Date | string
-}, "id" | "token">
+}, "id" | "apiKey">
 
 export type ApiKeyOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
-  token?: Prisma.SortOrder
+  apiKey?: Prisma.SortOrder
   isEnabled?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.ApiKeyCountOrderByAggregateInput
@@ -244,60 +244,60 @@ export type ApiKeyScalarWhereWithAggregatesInput = {
   OR?: Prisma.ApiKeyScalarWhereWithAggregatesInput[]
   NOT?: Prisma.ApiKeyScalarWhereWithAggregatesInput | Prisma.ApiKeyScalarWhereWithAggregatesInput[]
   id?: Prisma.IntWithAggregatesFilter<"ApiKey"> | number
-  token?: Prisma.StringWithAggregatesFilter<"ApiKey"> | string
+  apiKey?: Prisma.StringWithAggregatesFilter<"ApiKey"> | string
   isEnabled?: Prisma.BoolWithAggregatesFilter<"ApiKey"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"ApiKey"> | Date | string
 }
 
 export type ApiKeyCreateInput = {
-  token: string
+  apiKey: string
   isEnabled?: boolean
   createdAt?: Date | string
 }
 
 export type ApiKeyUncheckedCreateInput = {
   id?: number
-  token: string
+  apiKey: string
   isEnabled?: boolean
   createdAt?: Date | string
 }
 
 export type ApiKeyUpdateInput = {
-  token?: Prisma.StringFieldUpdateOperationsInput | string
+  apiKey?: Prisma.StringFieldUpdateOperationsInput | string
   isEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type ApiKeyUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  token?: Prisma.StringFieldUpdateOperationsInput | string
+  apiKey?: Prisma.StringFieldUpdateOperationsInput | string
   isEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type ApiKeyCreateManyInput = {
   id?: number
-  token: string
+  apiKey: string
   isEnabled?: boolean
   createdAt?: Date | string
 }
 
 export type ApiKeyUpdateManyMutationInput = {
-  token?: Prisma.StringFieldUpdateOperationsInput | string
+  apiKey?: Prisma.StringFieldUpdateOperationsInput | string
   isEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type ApiKeyUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  token?: Prisma.StringFieldUpdateOperationsInput | string
+  apiKey?: Prisma.StringFieldUpdateOperationsInput | string
   isEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type ApiKeyCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  token?: Prisma.SortOrder
+  apiKey?: Prisma.SortOrder
   isEnabled?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
@@ -308,14 +308,14 @@ export type ApiKeyAvgOrderByAggregateInput = {
 
 export type ApiKeyMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  token?: Prisma.SortOrder
+  apiKey?: Prisma.SortOrder
   isEnabled?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
 export type ApiKeyMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  token?: Prisma.SortOrder
+  apiKey?: Prisma.SortOrder
   isEnabled?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
@@ -328,40 +328,40 @@ export type ApiKeySumOrderByAggregateInput = {
 
 export type ApiKeySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  token?: boolean
+  apiKey?: boolean
   isEnabled?: boolean
   createdAt?: boolean
 }, ExtArgs["result"]["apiKey"]>
 
 export type ApiKeySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  token?: boolean
+  apiKey?: boolean
   isEnabled?: boolean
   createdAt?: boolean
 }, ExtArgs["result"]["apiKey"]>
 
 export type ApiKeySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  token?: boolean
+  apiKey?: boolean
   isEnabled?: boolean
   createdAt?: boolean
 }, ExtArgs["result"]["apiKey"]>
 
 export type ApiKeySelectScalar = {
   id?: boolean
-  token?: boolean
+  apiKey?: boolean
   isEnabled?: boolean
   createdAt?: boolean
 }
 
-export type ApiKeyOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "token" | "isEnabled" | "createdAt", ExtArgs["result"]["apiKey"]>
+export type ApiKeyOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "apiKey" | "isEnabled" | "createdAt", ExtArgs["result"]["apiKey"]>
 
 export type $ApiKeyPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "ApiKey"
   objects: {}
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
-    token: string
+    apiKey: string
     isEnabled: boolean
     createdAt: Date
   }, ExtArgs["result"]["apiKey"]>
@@ -788,7 +788,7 @@ export interface Prisma__ApiKeyClient<T, Null = never, ExtArgs extends runtime.T
  */
 export interface ApiKeyFieldRefs {
   readonly id: Prisma.FieldRef<"ApiKey", 'Int'>
-  readonly token: Prisma.FieldRef<"ApiKey", 'String'>
+  readonly apiKey: Prisma.FieldRef<"ApiKey", 'String'>
   readonly isEnabled: Prisma.FieldRef<"ApiKey", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"ApiKey", 'DateTime'>
 }

@@ -1,9 +1,9 @@
 import { MessageData } from "@/types/message";
 import { MessageReplyRegenerate } from "@/types/message-reply";
-import { publicProcedure, t } from "../server";
+import { userProcedure, t } from "../server";
 
 export const messageReplyRouter = t.router({
-  regenerate: publicProcedure
+  regenerate: userProcedure
     .input(MessageReplyRegenerate)
     .output(MessageData)
     .mutation(({ ctx, input }) =>

@@ -1,7 +1,7 @@
 -- CreateTable
 CREATE TABLE "api_keys" (
     "id" SERIAL NOT NULL,
-    "token" TEXT NOT NULL,
+    "api_key" TEXT NOT NULL,
     "is_enabled" BOOLEAN NOT NULL DEFAULT true,
     "created_at" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -9,7 +9,7 @@ CREATE TABLE "api_keys" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "api_keys_token_key" ON "api_keys"("token");
+CREATE UNIQUE INDEX "api_keys_api_key_key" ON "api_keys"("api_key");
 
 -- CreateIndex
-CREATE INDEX "api_keys_token_idx" ON "api_keys"("token");
+CREATE INDEX "api_keys_api_key_idx" ON "api_keys"("api_key");

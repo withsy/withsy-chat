@@ -250,7 +250,7 @@ export type GratitudeJournalScalarFieldEnum = (typeof GratitudeJournalScalarFiel
 
 export const ApiKeyScalarFieldEnum = {
   id: 'id',
-  token: 'token',
+  apiKey: 'apiKey',
   isEnabled: 'isEnabled',
   createdAt: 'createdAt'
 } as const

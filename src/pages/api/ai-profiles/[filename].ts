@@ -40,11 +40,11 @@ export const config = {
 export default createNextPagesApiHandler({ get });
 
 async function get(opts: Options) {
-  const { req, res, ctx } = opts;
-  const { userId } = ctx;
+  const { ctx } = opts;
+  const { userId, request, response } = ctx;
   const aiProfileStorageService = serviceRegistry.aiProfileStorageService;
 
-  const fileName = req.query["filename"];
+  const fileName = request.query["filename"];
   if (typeof fileName !== "string" || fileName.length === 0)
     throw new HttpServerError(
       StatusCodes.BAD_REQUEST,
@@ -60,15 +60,15 @@ async function get(opts: Options) {
     );
 
   const { stream, contentType } = result;
-  res.setHeader("Content-Type", contentType || "application/octet-stream");
-  res.setHeader("Content-Disposition", `inline; filename="${fileName}"`);
-  res.setHeader("Cache-Control", `public, max-age=${365 * 24 * 60 * 60}`); // 1 years
-  res.status(StatusCodes.OK);
+  response.setHeader("Content-Type", contentType || "application/octet-stream");
+  response.setHeader("Content-Disposition", `inline; filename="${fileName}"`);
+  response.setHeader("Cache-Control", `public, max-age=${365 * 24 * 60 * 60}`); // 1 years
+  response.status(StatusCodes.OK);
 
   stream.on("error", (e) => {
-    if (res.headersSent) {
+    if (response.headersSent) {
       stream.destroy();
-      res.end();
+      response.end();
       console.error("Unexpected error occurred. error:", e);
       return;
     }
@@ -76,6 +76,6 @@ async function get(opts: Options) {
     throw e;
   });
 
-  stream.on("end", () => res.end());
-  stream.pipe(res);
+  stream.on("end", () => response.end());
+  stream.pipe(response);
 }

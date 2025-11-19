@@ -1,9 +1,9 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { publicProcedure, t } from "../server";
+import { userProcedure, t } from "../server";
 
 export const encryptionRouter = t.router({
-  decrypt: publicProcedure
+  decrypt: userProcedure
     .input(
       z.object({
         payloadEncoded: z.string(),
@@ -18,7 +18,7 @@ export const encryptionRouter = t.router({
         input.payloadEncoded
       );
     }),
-  encrypt: publicProcedure
+  encrypt: userProcedure
     .input(
       z.object({
         text: z.string(),

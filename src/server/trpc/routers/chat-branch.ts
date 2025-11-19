@@ -1,9 +1,9 @@
 import { ChatData, ChatListOutout } from "@/types/chat";
 import { ChatBranchList, ChatBranchStart } from "@/types/chat-branch";
-import { publicProcedure, t } from "../server";
+import { userProcedure, t } from "../server";
 
 export const chatBranchRouter = t.router({
-  list: publicProcedure
+  list: userProcedure
     .input(ChatBranchList)
     .output(ChatListOutout)
     .query(({ ctx, input }) =>
@@ -11,7 +11,7 @@ export const chatBranchRouter = t.router({
         .list(ctx.userId, input)
         .then((xs) => xs.map((x) => ChatData.parse(x)))
     ),
-  start: publicProcedure
+  start: userProcedure
     .input(ChatBranchStart)
     .output(ChatData)
     .mutation(({ ctx, input }) =>

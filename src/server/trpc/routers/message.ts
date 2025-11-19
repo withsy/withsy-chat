@@ -8,28 +8,28 @@ import {
   MessageSendOutput,
   MessageUpdate,
 } from "@/types/message";
-import { publicProcedure, t } from "../server";
+import { userProcedure, t } from "../server";
 
 export const messageRouter = t.router({
-  get: publicProcedure
+  get: userProcedure
     .input(MessageGet)
     .output(MessageGetOutput)
     .query(({ ctx, input }) =>
       ctx.serviceRegistry.messageService.get(ctx.userId, input)
     ),
-  list: publicProcedure
+  list: userProcedure
     .input(MessageList)
     .output(MessageListOutput)
     .query(({ ctx, input }) =>
       ctx.serviceRegistry.messageService.list(ctx.userId, input)
     ),
-  update: publicProcedure
+  update: userProcedure
     .input(MessageUpdate)
     .output(MessageData)
     .mutation(({ ctx, input }) =>
       ctx.serviceRegistry.messageService.update(ctx.userId, input)
     ),
-  send: publicProcedure
+  send: userProcedure
     .input(MessageSend)
     .output(MessageSendOutput)
     .mutation(({ ctx, input }) =>

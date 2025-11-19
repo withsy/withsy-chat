@@ -8,24 +8,24 @@ import {
   ChatStartOutput,
   ChatUpdate,
 } from "@/types/chat";
-import { publicProcedure, t } from "../server";
+import { userProcedure, t } from "../server";
 
 export const chatRouter = t.router({
-  list: publicProcedure
+  list: userProcedure
     .output(ChatListOutout)
     .query(({ ctx }) =>
       ctx.serviceRegistry.chatService
         .list(ctx.userId)
         .then((xs) => xs.map((x) => ChatData.parse(x)))
     ),
-  listDeleted: publicProcedure
+  listDeleted: userProcedure
     .output(ChatListOutout)
     .query(({ ctx }) =>
       ctx.serviceRegistry.chatService
         .listDeleted(ctx.userId)
         .then((xs) => xs.map((x) => ChatData.parse(x)))
     ),
-  get: publicProcedure
+  get: userProcedure
     .input(ChatGet)
     .output(ChatData)
     .query(({ ctx, input }) =>
@@ -33,7 +33,7 @@ export const chatRouter = t.router({
         .get(ctx.userId, input)
         .then((x) => ChatData.parse(x))
     ),
-  update: publicProcedure
+  update: userProcedure
     .input(ChatUpdate)
     .output(ChatData)
     .mutation(({ ctx, input }) =>
@@ -41,12 +41,12 @@ export const chatRouter = t.router({
         .update(ctx.userId, input)
         .then((x) => ChatData.parse(x))
     ),
-  delete: publicProcedure
+  delete: userProcedure
     .input(ChatDelete)
     .mutation(({ ctx, input }) =>
       ctx.serviceRegistry.chatService.delete(ctx.userId, input)
     ),
-  restore: publicProcedure
+  restore: userProcedure
     .input(ChatRestore)
     .output(ChatData)
     .mutation(({ ctx, input }) =>
@@ -54,7 +54,7 @@ export const chatRouter = t.router({
         .restore(ctx.userId, input)
         .then((x) => ChatData.parse(x))
     ),
-  start: publicProcedure
+  start: userProcedure
     .input(ChatStart)
     .output(ChatStartOutput)
     .mutation(({ ctx, input }) =>

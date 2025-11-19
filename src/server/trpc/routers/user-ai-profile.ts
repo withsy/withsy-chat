@@ -5,21 +5,21 @@ import {
   UserAiProfileGetAllOutput,
   UserAiProfileGetOutput,
 } from "@/types/user-ai-profile";
-import { publicProcedure, t } from "../server";
+import { userProcedure, t } from "../server";
 
 export const userAiProfileRouter = t.router({
-  get: publicProcedure
+  get: userProcedure
     .input(UserAiProfileGet)
     .output(UserAiProfileGetOutput)
     .query(({ ctx, input }) =>
       ctx.serviceRegistry.userAiProfileService.get(ctx.userId, input)
     ),
-  getAll: publicProcedure
+  getAll: userProcedure
     .output(UserAiProfileGetAllOutput)
     .query(({ ctx }) =>
       ctx.serviceRegistry.userAiProfileService.getAll(ctx.userId)
     ),
-  deleteImage: publicProcedure
+  deleteImage: userProcedure
     .input(UserAiProfileDeleteImage)
     .output(UserAiProfileData)
     .mutation(({ ctx, input }) =>

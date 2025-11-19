@@ -3,7 +3,7 @@ import type { Tx } from "../services/db";
 import { isExpectedUniqueConstraintViolation } from "../error";
 import { retry } from "../retry";
 
-function generateApiKeyToken() {
+function generateApiKey() {
   const random = randomBytes(32).toString("base64url");
   return `apikey-${random}`;
 }
@@ -16,22 +16,22 @@ export class ApiKeyRepository {
       async () => {
         const res = await this.tx.apiKey.create({
           data: {
-            token: generateApiKeyToken(),
+            apiKey: generateApiKey(),
           },
         });
         return res;
       },
       {
-        condition: (e) => isExpectedUniqueConstraintViolation(e, ["token"]),
+        condition: (e) => isExpectedUniqueConstraintViolation(e, ["api_key"]),
       }
     );
   }
 
-  async validate(input: { token: string }) {
-    const { token } = input;
+  async validateToken(input: { apiKey: string }) {
+    const { apiKey } = input;
     const count = await this.tx.apiKey.count({
       where: {
-        token,
+        apiKey,
         isEnabled: true,
       },
     });

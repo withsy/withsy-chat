@@ -5,19 +5,19 @@ import {
   UserUpdatePrefs,
   UserUpdatePrefsOutput,
 } from "@/types/user";
-import { publicProcedure, t } from "../server";
+import { userProcedure, t } from "../server";
 
 export const userRouter = t.router({
-  get: publicProcedure
+  get: userProcedure
     .output(UserData)
     .query((opts) => opts.ctx.serviceRegistry.userService.get(opts.ctx.userId)),
-  ensure: publicProcedure
+  ensure: userProcedure
     .input(UserEnsure)
     .output(UserData)
     .mutation((opts) =>
       opts.ctx.serviceRegistry.userService.ensure(opts.ctx.userId, opts.input)
     ),
-  updatePrefs: publicProcedure
+  updatePrefs: userProcedure
     .input(UserUpdatePrefs)
     .output(UserUpdatePrefsOutput)
     .mutation((opts) =>
@@ -26,7 +26,7 @@ export const userRouter = t.router({
         opts.input
       )
     ),
-  update: publicProcedure
+  update: userProcedure
     .input(UserUpdate)
     .output(UserData)
     .mutation((opts) =>

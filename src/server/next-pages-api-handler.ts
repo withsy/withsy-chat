@@ -7,12 +7,14 @@ import {
   isPrismaClientKnownRequestError,
   ServerError,
 } from "./error";
-import { createServerContext, type ServerContext } from "./server-context";
+import {
+  createPublicContext,
+  createUserContext,
+  type UserContext,
+} from "./server-context";
 
 export type Options = {
-  req: NextApiRequest;
-  res: NextApiResponse;
-  ctx: ServerContext;
+  ctx: UserContext;
 };
 
 export type Handler = {
@@ -21,15 +23,23 @@ export type Handler = {
 };
 
 export function createNextPagesApiHandler(handler: Handler) {
-  return async (req: NextApiRequest, res: NextApiResponse) => {
+  return async (request: NextApiRequest, response: NextApiResponse) => {
     try {
-      const ctx = await createServerContext({ req, res });
+      const ctx = await createUserContext(
+        createPublicContext({ request, response })
+      );
 
-      if (req.method === "GET")
-        if (handler.get) return await handler.get({ req, res, ctx });
+      if (request.method === "GET") {
+        if (handler.get) {
+          return await handler.get({ ctx });
+        }
+      }
 
-      if (req.method === "POST")
-        if (handler.post) return await handler.post({ req, res, ctx });
+      if (request.method === "POST") {
+        if (handler.post) {
+          return await handler.post({ ctx });
+        }
+      }
 
       throw new HttpServerError(
         StatusCodes.METHOD_NOT_ALLOWED,
@@ -37,16 +47,18 @@ export function createNextPagesApiHandler(handler: Handler) {
       );
     } catch (e) {
       if (e instanceof HttpServerError) {
-        return res.status(e.code).json(e.toData());
+        return response.status(e.code).json(e.toData());
       }
 
       if (e instanceof ServerError) {
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(e.toData());
+        return response
+          .status(StatusCodes.INTERNAL_SERVER_ERROR)
+          .json(e.toData());
       }
 
       if (isPrismaClientKnownRequestError(e)) {
         const statusCode = getHttpStatusCodeByPrismaCode(e.code);
-        return res
+        return response
           .status(statusCode)
           .json(
             new HttpServerError(
@@ -62,7 +74,7 @@ export function createNextPagesApiHandler(handler: Handler) {
         getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR),
         { cause: e }
       );
-      return res
+      return response
         .status(internalServerError.code)
         .json(internalServerError.toData());
     }

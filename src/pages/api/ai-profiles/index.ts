@@ -57,14 +57,14 @@ const Input = z.object({
 });
 
 async function post(opts: Options) {
-  const { req, res, ctx } = opts;
-  const { userId } = ctx;
+  const { ctx } = opts;
+  const { userId, request, response } = ctx;
   const idempotencyInfoService = serviceRegistry.idempotencyInfoService;
   const db = serviceRegistry.db;
   const aiProfileStorageService = serviceRegistry.aiProfileStorageService;
   const userAiProfileService = serviceRegistry.userAiProfileService;
 
-  const idempotencyKey = req.headers["idempotency-key"];
+  const idempotencyKey = request.headers["idempotency-key"];
   if (typeof idempotencyKey != "string" || idempotencyKey.length === 0)
     throw new HttpServerError(
       StatusCodes.BAD_REQUEST,
@@ -80,7 +80,7 @@ async function post(opts: Options) {
     );
   }
 
-  const stream = busboy(req, {
+  const stream = busboy(request, {
     allowedFileNames: ["image"],
     limits: {
       fields: 2,
@@ -150,7 +150,7 @@ async function post(opts: Options) {
       imagePath,
     });
 
-    return res.status(200).json(data);
+    return response.status(200).json(data);
   } catch (e) {
     if (imagePath) await aiProfileStorageService.delete({ imagePath });
 

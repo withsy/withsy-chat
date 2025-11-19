@@ -5,17 +5,17 @@ import {
   GratitudeJournalStartChat,
   GratitudeJournalStats,
 } from "@/types/gratitude-journal";
-import { publicProcedure, t } from "../server";
+import { userProcedure, t } from "../server";
 
 export const gratitudeJournalRouter = t.router({
-  getStats: publicProcedure
+  getStats: userProcedure
     .output(GratitudeJournalStats)
     .query(({ ctx }) =>
       ctx.serviceRegistry.gratitudeJournalService
         .getStats(ctx.userId)
         .then((x) => GratitudeJournalStats.parse(x))
     ),
-  getJournal: publicProcedure
+  getJournal: userProcedure
     .input(GratitudeJournalGetJournal)
     .output(GratitudeJournalData)
     .query(({ ctx, input }) =>
@@ -23,7 +23,7 @@ export const gratitudeJournalRouter = t.router({
         .getJournal(ctx.userId, input)
         .then((x) => GratitudeJournalData.parse(x))
     ),
-  startChat: publicProcedure
+  startChat: userProcedure
     .input(GratitudeJournalStartChat)
     .output(ChatStartOutput)
     .mutation(({ ctx, input }) =>

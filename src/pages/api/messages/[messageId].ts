@@ -37,15 +37,15 @@ import SuperJSON from "superjson";
 export default createNextPagesApiHandler({ get });
 
 export async function get(options: Options) {
-  const { req, res, ctx } = options;
-  const { userId } = ctx;
+  const { ctx } = options;
+  const { userId, request, response } = ctx;
   const pgPool = serviceRegistry.pgPool;
   const db = serviceRegistry.db;
   const userUsageLimitService = serviceRegistry.userUsageLimitService;
   const messageChunkService = serviceRegistry.messageChunkService;
   const messageService = serviceRegistry.messageService;
 
-  const messageId = req.query["messageId"];
+  const messageId = request.query["messageId"];
   if (typeof messageId !== "string" || messageId.length === 0)
     throw new HttpServerError(
       StatusCodes.BAD_REQUEST,
@@ -58,19 +58,19 @@ export async function get(options: Options) {
     if (isClosed) return;
     isClosed = true;
     if (unlisten) await unlisten();
-    res.end();
+    response.end();
   };
 
-  req.on("close", async () => await close());
-  res.setHeader("Content-Type", "text/event-stream");
-  res.setHeader("Cache-Control", "no-cache");
-  res.setHeader("Connection", "keep-alive");
-  res.setHeader("Content-Encoding", "none");
-  res.status(StatusCodes.OK);
-  res.flushHeaders();
+  request.on("close", async () => await close());
+  response.setHeader("Content-Type", "text/event-stream");
+  response.setHeader("Cache-Control", "no-cache");
+  response.setHeader("Connection", "keep-alive");
+  response.setHeader("Content-Encoding", "none");
+  response.status(StatusCodes.OK);
+  response.flushHeaders();
 
   const write = (event: MessageChunkEvent) => {
-    res.write(`data: ${SuperJSON.stringify(event)}\n\n`);
+    response.write(`data: ${SuperJSON.stringify(event)}\n\n`);
   };
 
   const q: PgEventInput<"message_chunk_created">[] = [];

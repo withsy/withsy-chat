@@ -11,9 +11,13 @@ import {
   isPrismaClientKnownRequestError,
   ServerError,
 } from "../error";
-import type { ServerContext } from "../server-context";
+import {
+  createApiKeyContext,
+  createUserContext,
+  type PublicContext,
+} from "../server-context";
 
-export const t = initTRPC.context<ServerContext>().create({
+export const t = initTRPC.context<PublicContext>().create({
   transformer: SuperJSON,
   errorFormatter: ({ error, shape }) => {
     const { cause } = error;
@@ -53,6 +57,16 @@ export const t = initTRPC.context<ServerContext>().create({
 });
 
 export const publicProcedure = t.procedure;
+
+export const userProcedure = publicProcedure.use(async ({ ctx, next }) => {
+  const userContext = await createUserContext(ctx);
+  return next({ ctx: userContext });
+});
+
+export const apiKeyProcedure = publicProcedure.use(async ({ ctx, next }) => {
+  const apiKeyContext = await createApiKeyContext(ctx);
+  return next({ ctx: apiKeyContext });
+});
 
 function getTrpcErrorCodeKeyByStatusCode(
   code: StatusCodes

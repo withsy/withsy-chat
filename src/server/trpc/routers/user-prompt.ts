@@ -7,10 +7,10 @@ import {
   UserPromptRestore,
   UserPromptUpdate,
 } from "@/types/user-prompt";
-import { publicProcedure, t } from "../server";
+import { userProcedure, t } from "../server";
 
 export const userPromptRouter = t.router({
-  get: publicProcedure
+  get: userProcedure
     .input(UserPromptGet)
     .output(UserPromptData)
     .query(({ ctx, input }) =>
@@ -18,21 +18,21 @@ export const userPromptRouter = t.router({
         .get(ctx.userId, input)
         .then((x) => UserPromptData.parse(x))
     ),
-  list: publicProcedure
+  list: userProcedure
     .output(UserPromptListOutput)
     .query(({ ctx }) =>
       ctx.serviceRegistry.userPromptService
         .list(ctx.userId)
         .then((xs) => xs.map((x) => UserPromptData.parse(x)))
     ),
-  listDeleted: publicProcedure
+  listDeleted: userProcedure
     .output(UserPromptListOutput)
     .query(({ ctx }) =>
       ctx.serviceRegistry.userPromptService
         .listDeleted(ctx.userId)
         .then((xs) => xs.map((x) => UserPromptData.parse(x)))
     ),
-  create: publicProcedure
+  create: userProcedure
     .input(UserPromptCreate)
     .output(UserPromptData)
     .mutation(({ ctx, input }) =>
@@ -40,7 +40,7 @@ export const userPromptRouter = t.router({
         .create(ctx.userId, input)
         .then((x) => UserPromptData.parse(x))
     ),
-  update: publicProcedure
+  update: userProcedure
     .input(UserPromptUpdate)
     .output(UserPromptData)
     .mutation(({ ctx, input }) =>
@@ -48,12 +48,12 @@ export const userPromptRouter = t.router({
         .update(ctx.userId, input)
         .then((x) => UserPromptData.parse(x))
     ),
-  delete: publicProcedure
+  delete: userProcedure
     .input(UserPromptDelete)
     .mutation(({ ctx, input }) =>
       ctx.serviceRegistry.userPromptService.delete(ctx.userId, input)
     ),
-  restore: publicProcedure
+  restore: userProcedure
     .input(UserPromptRestore)
     .mutation(({ ctx, input }) =>
       ctx.serviceRegistry.userPromptService.restore(ctx.userId, input)

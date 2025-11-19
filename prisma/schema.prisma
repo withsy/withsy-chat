@@ -234,10 +234,10 @@ model GratitudeJournal {
 
 model ApiKey {
   id        Int      @id @default(autoincrement()) @map("id")
-  token     String   @unique @map("token")
+  apiKey    String   @unique @map("api_key")
   isEnabled Boolean  @default(true) @map("is_enabled")
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
 
-  @@index([token])
+  @@index([apiKey])
   @@map("api_keys")
 }
