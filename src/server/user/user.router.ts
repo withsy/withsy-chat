@@ -5,7 +5,7 @@ import {
   UserUpdatePrefs,
   UserUpdatePrefsOutput,
 } from "@/types/user";
-import { userProcedure, t } from "../server";
+import { t, userProcedure } from "../trpc/server";
 
 export const userRouter = t.router({
   get: userProcedure

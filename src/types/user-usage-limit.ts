@@ -50,7 +50,7 @@ export const UserUsageLimitError = z.object({
   type: UserUsageLimitType,
   period: UserUsageLimitPeriod,
   remainingAmount: z.number().int(),
-  resetAt: z.string().transform((x) => new Date(x)),
+  resetAt: z.coerce.date<string>(),
 });
 export type UserUsageLimitError = zInfer<typeof UserUsageLimitError>;
 export type UserUsageLimitErrorInput = zInput<typeof UserUsageLimitError>;

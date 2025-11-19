@@ -8,7 +8,7 @@ import {
   ChatStartOutput,
   ChatUpdate,
 } from "@/types/chat";
-import { userProcedure, t } from "../server";
+import { t, userProcedure } from "../trpc/server";
 
 export const chatRouter = t.router({
   list: userProcedure

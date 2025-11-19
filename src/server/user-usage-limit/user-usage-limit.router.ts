@@ -2,7 +2,7 @@ import {
   UserUsageLimitList,
   UserUsageLimitListOutput,
 } from "@/types/user-usage-limit";
-import { userProcedure, t } from "../server";
+import { t, userProcedure } from "../trpc/server";
 
 export const userUsageLimitRouter = t.router({
   list: userProcedure

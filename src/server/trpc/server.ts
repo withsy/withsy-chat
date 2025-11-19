@@ -1,58 +1,27 @@
 import { initTRPC } from "@trpc/server";
-import {
-  TRPC_ERROR_CODES_BY_KEY,
-  type TRPC_ERROR_CODE_KEY,
-} from "@trpc/server/unstable-core-do-not-import";
-import { getReasonPhrase, StatusCodes } from "http-status-codes";
 import { SuperJSON } from "superjson";
-import {
-  getHttpStatusCodeByPrismaCode,
-  HttpServerError,
-  isPrismaClientKnownRequestError,
-  ServerError,
-} from "../error";
 import {
   createApiKeyContext,
   createUserContext,
   type PublicContext,
 } from "../server-context";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
+import { TRPC_ERROR_CODES_BY_KEY } from "@trpc/server/unstable-core-do-not-import";
 
 export const t = initTRPC.context<PublicContext>().create({
   transformer: SuperJSON,
   errorFormatter: ({ error, shape }) => {
     const { cause } = error;
-    if (cause instanceof HttpServerError) {
-      const codeKey = getTrpcErrorCodeKeyByStatusCode(cause.code);
-      const code = TRPC_ERROR_CODES_BY_KEY[codeKey];
-      return {
-        ...shape,
-        data: cause.toData(),
-        code,
-      };
-    }
-
-    if (cause instanceof ServerError) {
-      return {
-        ...shape,
-        data: cause.toData(),
-        code: TRPC_ERROR_CODES_BY_KEY.INTERNAL_SERVER_ERROR,
-      };
-    }
-
-    if (isPrismaClientKnownRequestError(cause)) {
-      const statusCode = getHttpStatusCodeByPrismaCode(cause.code);
-      if (statusCode === StatusCodes.NOT_FOUND) {
+    if (cause instanceof PrismaClientKnownRequestError) {
+      if (cause.code === "P2025") {
         return {
-          message: getReasonPhrase(StatusCodes.NOT_FOUND),
+          ...shape,
           code: TRPC_ERROR_CODES_BY_KEY.NOT_FOUND,
         };
       }
     }
 
-    return {
-      message: getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR),
-      code: TRPC_ERROR_CODES_BY_KEY.INTERNAL_SERVER_ERROR,
-    };
+    return shape;
   },
 });
 
@@ -67,44 +36,3 @@ export const apiKeyProcedure = publicProcedure.use(async ({ ctx, next }) => {
   const apiKeyContext = await createApiKeyContext(ctx);
   return next({ ctx: apiKeyContext });
 });
-
-function getTrpcErrorCodeKeyByStatusCode(
-  code: StatusCodes
-): TRPC_ERROR_CODE_KEY {
-  switch (code) {
-    case StatusCodes.BAD_REQUEST:
-      return "BAD_REQUEST";
-    case StatusCodes.INTERNAL_SERVER_ERROR:
-      return "INTERNAL_SERVER_ERROR";
-    case StatusCodes.NOT_IMPLEMENTED:
-      return "NOT_IMPLEMENTED";
-    case StatusCodes.BAD_GATEWAY:
-      return "BAD_GATEWAY";
-    case StatusCodes.SERVICE_UNAVAILABLE:
-      return "SERVICE_UNAVAILABLE";
-    case StatusCodes.GATEWAY_TIMEOUT:
-      return "GATEWAY_TIMEOUT";
-    case StatusCodes.UNAUTHORIZED:
-      return "UNAUTHORIZED";
-    case StatusCodes.FORBIDDEN:
-      return "FORBIDDEN";
-    case StatusCodes.NOT_FOUND:
-      return "NOT_FOUND";
-    case StatusCodes.METHOD_NOT_ALLOWED:
-      return "METHOD_NOT_SUPPORTED";
-    case StatusCodes.REQUEST_TIMEOUT:
-      return "TIMEOUT";
-    case StatusCodes.CONFLICT:
-      return "CONFLICT";
-    case StatusCodes.PRECONDITION_FAILED:
-      return "PRECONDITION_FAILED";
-    case StatusCodes.REQUEST_TOO_LONG:
-      return "PAYLOAD_TOO_LARGE";
-    case StatusCodes.UNSUPPORTED_MEDIA_TYPE:
-      return "UNSUPPORTED_MEDIA_TYPE";
-    case StatusCodes.UNPROCESSABLE_ENTITY:
-      return "UNPROCESSABLE_CONTENT";
-    default:
-      return "INTERNAL_SERVER_ERROR";
-  }
-}

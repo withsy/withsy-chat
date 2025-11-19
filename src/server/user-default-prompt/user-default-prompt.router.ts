@@ -3,7 +3,7 @@ import {
   UserDefaultPromptGetOutput,
   UserDefaultPromptUpdate,
 } from "@/types/user-default-prompt";
-import { userProcedure, t } from "../server";
+import { t, userProcedure } from "../trpc/server";
 
 export const userDefaultPromptRouter = t.router({
   get: userProcedure

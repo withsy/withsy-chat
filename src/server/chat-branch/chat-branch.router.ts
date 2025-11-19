@@ -1,6 +1,6 @@
 import { ChatData, ChatListOutout } from "@/types/chat";
 import { ChatBranchList, ChatBranchStart } from "@/types/chat-branch";
-import { userProcedure, t } from "../server";
+import { t, userProcedure } from "../trpc/server";
 
 export const chatBranchRouter = t.router({
   list: userProcedure

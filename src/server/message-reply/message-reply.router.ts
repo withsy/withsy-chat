@@ -1,6 +1,6 @@
 import { MessageData } from "@/types/message";
 import { MessageReplyRegenerate } from "@/types/message-reply";
-import { userProcedure, t } from "../server";
+import { t, userProcedure } from "../trpc/server";
 
 export const messageReplyRouter = t.router({
   regenerate: userProcedure

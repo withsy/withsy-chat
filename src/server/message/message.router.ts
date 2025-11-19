@@ -8,7 +8,7 @@ import {
   MessageSendOutput,
   MessageUpdate,
 } from "@/types/message";
-import { userProcedure, t } from "../server";
+import { t, userProcedure } from "../trpc/server";
 
 export const messageRouter = t.router({
   get: userProcedure

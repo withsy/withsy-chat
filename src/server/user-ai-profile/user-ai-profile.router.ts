@@ -5,7 +5,7 @@ import {
   UserAiProfileGetAllOutput,
   UserAiProfileGetOutput,
 } from "@/types/user-ai-profile";
-import { userProcedure, t } from "../server";
+import { t, userProcedure } from "../trpc/server";
 
 export const userAiProfileRouter = t.router({
   get: userProcedure
