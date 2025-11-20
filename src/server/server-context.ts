@@ -1,10 +1,8 @@
 import { UserJwt, UserSession } from "@/types/user";
-import { getReasonPhrase, StatusCodes } from "http-status-codes";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth";
 import { getToken } from "next-auth/jwt";
 import { getAuthOptions } from "./auth";
-import { HttpServerError } from "./error";
 import { serviceRegistry } from "./service-registry";
 import { TRPCError } from "@trpc/server";
 
@@ -36,11 +34,9 @@ export async function createUserContext(ctx: PublicContext) {
     }
   }
 
-  if (!userId)
-    throw new HttpServerError(
-      StatusCodes.UNAUTHORIZED,
-      getReasonPhrase(StatusCodes.UNAUTHORIZED)
-    );
+  if (!userId) {
+    throw new TRPCError({ code: "UNAUTHORIZED" });
+  }
 
   if (
     request.method === "POST" ||
@@ -49,11 +45,9 @@ export async function createUserContext(ctx: PublicContext) {
     request.method === "PATCH"
   ) {
     const csrfToken = request.headers["x-csrf-token"];
-    if (typeof csrfToken !== "string")
-      throw new HttpServerError(
-        StatusCodes.FORBIDDEN,
-        getReasonPhrase(StatusCodes.FORBIDDEN)
-      );
+    if (typeof csrfToken !== "string") {
+      throw new TRPCError({ code: "FORBIDDEN" });
+    }
 
     serviceRegistry.nextAuthCsrfService.validateCsrfTokenWithReq({
       csrfToken,

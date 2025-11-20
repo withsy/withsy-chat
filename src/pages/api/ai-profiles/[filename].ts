@@ -1,11 +1,10 @@
-import { HttpServerError } from "@/server/error";
 import {
   createNextPagesApiHandler,
   type Options,
 } from "@/server/next-pages-api-handler";
 import { serviceRegistry } from "@/server/service-registry";
 import { UserAiProfileService } from "@/server/services/user-ai-profile";
-import { getReasonPhrase, StatusCodes } from "http-status-codes";
+import { TRPCError } from "@trpc/server";
 
 export const config = {
   api: {
@@ -45,25 +44,21 @@ async function get(opts: Options) {
   const aiProfileStorageService = serviceRegistry.aiProfileStorageService;
 
   const fileName = request.query["filename"];
-  if (typeof fileName !== "string" || fileName.length === 0)
-    throw new HttpServerError(
-      StatusCodes.BAD_REQUEST,
-      getReasonPhrase(StatusCodes.BAD_REQUEST)
-    );
+  if (typeof fileName !== "string" || fileName.length === 0) {
+    throw new TRPCError({ code: "BAD_REQUEST" });
+  }
 
   const imagePath = UserAiProfileService.createImagePath({ userId, fileName });
   const result = await aiProfileStorageService.getStream({ imagePath });
-  if (!result)
-    throw new HttpServerError(
-      StatusCodes.NOT_FOUND,
-      getReasonPhrase(StatusCodes.NOT_FOUND)
-    );
+  if (!result) {
+    throw new TRPCError({ code: "NOT_FOUND" });
+  }
 
   const { stream, contentType } = result;
   response.setHeader("Content-Type", contentType || "application/octet-stream");
   response.setHeader("Content-Disposition", `inline; filename="${fileName}"`);
   response.setHeader("Cache-Control", `public, max-age=${365 * 24 * 60 * 60}`); // 1 years
-  response.status(StatusCodes.OK);
+  response.status(200);
 
   stream.on("error", (e) => {
     if (response.headersSent) {

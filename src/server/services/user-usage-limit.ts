@@ -25,6 +25,7 @@ import {
 } from "date-fns";
 import type { Db, Tx } from "./db";
 import { TRPCError } from "@trpc/server";
+import { DataError } from "../error";
 
 export class UserUsageLimitService {
   constructor(private readonly db: Db) {}
@@ -266,22 +267,12 @@ export class UserUsageLimitService {
   }
 
   static createError(entity: UserUsageLimitEntity) {
-    return new TRPCError({
-      code: "TOO_MANY_REQUESTS",
-      message: "Usage limit reached.",
-    });
-    return new HttpServerError(
-      StatusCodes.TOO_MANY_REQUESTS,
-      "Usage limit reached.",
-      {
-        details: {
-          type: entity.type,
-          period: entity.period,
-          remainingAmount: entity.remainingAmount,
-          resetAt: entity.resetAt.toISOString(),
-        } satisfies UserUsageLimitErrorInput,
-      }
-    );
+    return new DataError({
+      type: entity.type,
+      period: entity.period,
+      remainingAmount: entity.remainingAmount,
+      resetAt: entity.resetAt.toISOString(),
+    } satisfies UserUsageLimitErrorInput);
   }
 
   static async save(tx: Tx, entity: UserUsageLimitEntity) {

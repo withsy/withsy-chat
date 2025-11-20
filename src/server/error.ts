@@ -1,5 +1,6 @@
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { isDriverAdapterError } from "@prisma/driver-adapter-utils";
+import type { TRPC_ERROR_CODE_KEY } from "@trpc/server/unstable-core-do-not-import";
 
 export function isExpectedUniqueConstraintViolation(
   e: any,
@@ -39,4 +40,19 @@ export function isExpectedUniqueConstraintViolation(
   }
 
   return true;
+}
+
+export class DataError {
+  constructor(readonly data: Record<string, unknown>) {}
+}
+
+export function getCodeKeyFromPrismaError(
+  e: PrismaClientKnownRequestError
+): TRPC_ERROR_CODE_KEY {
+  switch (e.code) {
+    case "P2025":
+      return "NOT_FOUND";
+    default:
+      return "INTERNAL_SERVER_ERROR";
+  }
 }

@@ -1,4 +1,4 @@
-import { HttpServerError } from "@/server/error";
+import { DataError } from "@/server/error";
 import {
   createNextPagesApiHandler,
   type Options,
@@ -7,8 +7,8 @@ import { serviceRegistry } from "@/server/service-registry";
 import { UserAiProfileService } from "@/server/services/user-ai-profile";
 import { UserUsageLimitService } from "@/server/services/user-usage-limit";
 import { Model } from "@/types/model";
+import { TRPCError } from "@trpc/server";
 import { busboy } from "busboy-async";
-import { getReasonPhrase, StatusCodes } from "http-status-codes";
 import mime from "mime-types";
 import { v7 as uuidv7 } from "uuid";
 import { z } from "zod";
@@ -65,19 +65,17 @@ async function post(opts: Options) {
   const userAiProfileService = serviceRegistry.userAiProfileService;
 
   const idempotencyKey = request.headers["idempotency-key"];
-  if (typeof idempotencyKey != "string" || idempotencyKey.length === 0)
-    throw new HttpServerError(
-      StatusCodes.BAD_REQUEST,
-      "Idempotency-Key is required."
-    );
+  if (typeof idempotencyKey != "string" || idempotencyKey.length === 0) {
+    throw new TRPCError({
+      code: "BAD_REQUEST",
+      message: "Idempotency-Key is required.",
+    });
+  }
 
   try {
     await idempotencyInfoService.checkDuplicateRequest(idempotencyKey);
   } catch (_e) {
-    throw new HttpServerError(
-      StatusCodes.CONFLICT,
-      getReasonPhrase(StatusCodes.CONFLICT)
-    );
+    throw new TRPCError({ code: "CONFLICT" });
   }
 
   const stream = busboy(request, {
@@ -103,11 +101,12 @@ async function post(opts: Options) {
         });
 
         const { mimeType } = event.info;
-        if (!mimeType.startsWith("image/"))
-          throw new HttpServerError(
-            StatusCodes.BAD_REQUEST,
-            "Invalid file type."
-          );
+        if (!mimeType.startsWith("image/")) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Invalid file type.",
+          });
+        }
 
         const ext = mime.extension(mimeType);
         const uuid = uuidv7();
@@ -130,14 +129,16 @@ async function post(opts: Options) {
 
   const inputRes = Input.safeParse(inputRaw);
   if (!inputRes.success) {
-    throw new HttpServerError(StatusCodes.BAD_REQUEST, "Invalid input.", {
-      details: {
+    throw new TRPCError({
+      code: "BAD_REQUEST",
+      message: "Invalid input.",
+      cause: new DataError({
         issues: inputRes.error.issues.map((x) => ({
           code: x.code,
           message: x.message,
           path: x.path.join("."),
         })),
-      },
+      }),
     });
   }
 

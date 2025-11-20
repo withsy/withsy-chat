@@ -2,8 +2,6 @@ import type { UserId } from "@/types/id";
 import { MessageSelect, type MessageData } from "@/types/message";
 import type { MessageReplyRegenerate } from "@/types/message-reply";
 import { Role } from "@/types/role";
-import { StatusCodes } from "http-status-codes";
-import { HttpServerError } from "../error";
 import { IdempotencyInfoService } from "./idempotency-info";
 import { MessageService } from "./message";
 import { UserUsageLimitService } from "./user-usage-limit";
@@ -43,14 +41,8 @@ export class MessageReplyService {
         });
 
         if (!oldModelMessage.parentMessageId) {
-          throw new HttpServerError(
-            StatusCodes.INTERNAL_SERVER_ERROR,
-            "parentMessageId must exist.",
-            {
-              details: {
-                messageId,
-              },
-            }
+          throw new Error(
+            `parentMessageId must exists. messageId: ${messageId}`
           );
         }
 

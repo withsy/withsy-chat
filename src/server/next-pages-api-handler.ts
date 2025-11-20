@@ -1,17 +1,15 @@
 import type { MaybePromise } from "@/types/common";
-import { getReasonPhrase, StatusCodes } from "http-status-codes";
 import type { NextApiRequest, NextApiResponse } from "next";
-import {
-  getHttpStatusCodeByPrismaCode,
-  HttpServerError,
-  isPrismaClientKnownRequestError,
-  ServerError,
-} from "./error";
 import {
   createPublicContext,
   createUserContext,
   type UserContext,
 } from "./server-context";
+import { TRPCError } from "@trpc/server";
+import { getHTTPStatusCodeFromError } from "@trpc/server/http";
+import { DataError, getCodeKeyFromPrismaError } from "./error";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
+import { getStatusCodeFromKey } from "@trpc/server/unstable-core-do-not-import";
 
 export type Options = {
   ctx: UserContext;
@@ -41,42 +39,34 @@ export function createNextPagesApiHandler(handler: Handler) {
         }
       }
 
-      throw new HttpServerError(
-        StatusCodes.METHOD_NOT_ALLOWED,
-        getReasonPhrase(StatusCodes.METHOD_NOT_ALLOWED)
-      );
+      throw new TRPCError({ code: "METHOD_NOT_SUPPORTED" });
     } catch (e) {
-      if (e instanceof HttpServerError) {
-        return response.status(e.code).json(e.toData());
+      if (e instanceof TRPCError) {
+        const body: Record<string, unknown> = {
+          code: e.code,
+          message: e.message,
+        };
+
+        if (e.cause instanceof DataError) {
+          body["data"] = e.cause.data;
+        }
+
+        return response.status(getHTTPStatusCodeFromError(e)).json(body);
       }
 
-      if (e instanceof ServerError) {
-        return response
-          .status(StatusCodes.INTERNAL_SERVER_ERROR)
-          .json(e.toData());
-      }
-
-      if (isPrismaClientKnownRequestError(e)) {
-        const statusCode = getHttpStatusCodeByPrismaCode(e.code);
-        return response
-          .status(statusCode)
-          .json(
-            new HttpServerError(
-              statusCode,
-              getReasonPhrase(statusCode)
-            ).toData()
-          );
+      if (e instanceof PrismaClientKnownRequestError) {
+        const code = getCodeKeyFromPrismaError(e);
+        return response.status(getStatusCodeFromKey(code)).json({
+          code,
+        });
       }
 
       console.error("Unexpected error occurred. error:", e);
-      const internalServerError = new HttpServerError(
-        StatusCodes.INTERNAL_SERVER_ERROR,
-        getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR),
-        { cause: e }
-      );
       return response
-        .status(internalServerError.code)
-        .json(internalServerError.toData());
+        .status(getStatusCodeFromKey("INTERNAL_SERVER_ERROR"))
+        .json({
+          code: "INTERNAL_SERVER_ERROR",
+        });
     }
   };
 }

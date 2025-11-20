@@ -1,4 +1,3 @@
-import { HttpServerError } from "@/server/error";
 import {
   createNextPagesApiHandler,
   type Options,
@@ -12,7 +11,7 @@ import {
 } from "@/types/message-chunk";
 import { PgEvent, type PgEventInput } from "@/types/task";
 import type { UserUsageLimitData } from "@/types/user-usage-limit";
-import { getReasonPhrase, StatusCodes } from "http-status-codes";
+import { TRPCError } from "@trpc/server";
 import SuperJSON from "superjson";
 
 /**
@@ -46,11 +45,9 @@ export async function get(options: Options) {
   const messageService = serviceRegistry.messageService;
 
   const messageId = request.query["messageId"];
-  if (typeof messageId !== "string" || messageId.length === 0)
-    throw new HttpServerError(
-      StatusCodes.BAD_REQUEST,
-      getReasonPhrase(StatusCodes.BAD_REQUEST)
-    );
+  if (typeof messageId !== "string" || messageId.length === 0) {
+    throw new TRPCError({ code: "BAD_REQUEST" });
+  }
 
   let isClosed = false;
   let unlisten: (() => Promise<void>) | null = null;
@@ -66,7 +63,7 @@ export async function get(options: Options) {
   response.setHeader("Cache-Control", "no-cache");
   response.setHeader("Connection", "keep-alive");
   response.setHeader("Content-Encoding", "none");
-  response.status(StatusCodes.OK);
+  response.status(200);
   response.flushHeaders();
 
   const write = (event: MessageChunkEvent) => {
