@@ -1,12 +1,12 @@
 import type { UserId } from "@/types/id";
 import type { MessageSend, MessageSendOutput } from "@/types/message";
+import type { EncryptionService } from "../encryption/encryption.service";
+import { MessageService } from "../message/message.service";
+import type { ChatMessageDecryptService } from "./chat-message-decrypt";
 import type { Db } from "./db";
 import { IdempotencyInfoService } from "./idempotency-info";
-import { UserUsageLimitService } from "./user-usage-limit";
-import type { EncryptionService } from "./encryption";
-import { MessageService } from "./message";
-import type { ChatMessageDecryptService } from "./chat-message-decrypt";
 import type { ModelRouteService } from "./model-route";
+import { UserUsageLimitService } from "./user-usage-limit";
 
 export class MessageSender {
   constructor(

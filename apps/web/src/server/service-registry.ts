@@ -1,37 +1,34 @@
 import { ApiKeyService } from "./api-key/api-key.service";
+import { ChatService } from "./chat/chat.service";
+import { EncryptionService } from "./encryption/encryption.service";
+import { MessageChunkService } from "./message-chunk/message-chunk.service";
+import { MessageService } from "./message/message.service";
 import { AiProfileStorageService } from "./services/ai-profile-storage";
-import { ChatService } from "./services/chat";
 import { ChatBranchService } from "./services/chat-branch";
 import { ChatBranchStarter } from "./services/chat-branch-starter";
 import { ChatMessageDecryptService } from "./services/chat-message-decrypt";
 import { ChatPromptService } from "./services/chat-prompt";
 import { ChatStarter } from "./services/chat-starter";
-import { ChatTaskHandler } from "./services/chat-task-handler";
 import { createDb } from "./services/db";
-import { EncryptionService } from "./services/encryption";
 import { EnvValidationService } from "./services/env-validation";
 import { GoogleGenAiService } from "./services/google-gen-ai";
 import { GratitudeJournalService } from "./services/gratitude-journal";
 import { GratitudeJournalChatStarter } from "./services/gratitude-journal-chat-starter";
 import { IdempotencyInfoService } from "./services/idempotency-info";
-import { MessageService } from "./services/message";
-import { MessageChunkService } from "./services/message-chunk";
 import { MessageReplyService } from "./services/message-reply";
 import { MessageSender } from "./services/message-sender";
-import { MessageTaskHandler } from "./services/message-task-handler";
 import { ModelRouteService } from "./services/model-route";
 import { NextAuthCsrfService } from "./services/next-auth-csrf";
 import { createPgPool } from "./services/pg";
 import { S3Service } from "./services/s3";
-import { TaskService } from "./services/task";
 import { UserService } from "./services/user";
 import { UserAiProfileService } from "./services/user-ai-profile";
 import { UserDefaultPromptService } from "./services/user-default-prompt";
 import { UserLinkAccountService } from "./services/user-link-account";
-import { UserPromptService } from "./services/user-prompt";
 import { UserUsageLimitService } from "./services/user-usage-limit";
 import { XAiService } from "./services/x-ai";
 import { TickService } from "./tick/tick.service";
+import { UserPromptService } from "./user-prompt/user-prompt.service";
 
 function createServiceRegistry() {
   const envValidationService = new EnvValidationService();
@@ -66,8 +63,6 @@ function createServiceRegistry() {
     encryptionService,
     userPromptService
   );
-  const chatTaskHandler = new ChatTaskHandler(db);
-  const messageTaskHandler = new MessageTaskHandler(db);
   const messageService = new MessageService(
     encryptionService,
     chatMessageDecryptService,
@@ -84,14 +79,6 @@ function createServiceRegistry() {
     encryptionService,
     userDefaultPromptService,
     chatMessageDecryptService
-  );
-  const taskService = new TaskService(
-    modelRouteService,
-    messageTaskHandler,
-    messageChunkService,
-    chatTaskHandler,
-    userPromptService,
-    pgPool
   );
   const chatService = new ChatService(
     encryptionService,
@@ -137,7 +124,13 @@ function createServiceRegistry() {
     modelRouteService
   );
   const apiKeyService = new ApiKeyService(db);
-  const tickService = new TickService();
+  const tickService = new TickService(
+    messageService,
+    chatService,
+    messageChunkService,
+    userPromptService
+  );
+
   return {
     serviceRegistry: {
       envValidationService,
@@ -159,11 +152,8 @@ function createServiceRegistry() {
       messageChunkService,
       idempotencyInfoService,
       chatMessageDecryptService,
-      chatTaskHandler,
-      messageTaskHandler,
       messageService,
       modelRouteService,
-      taskService,
       chatService,
       chatBranchService,
       gratitudeJournalService,

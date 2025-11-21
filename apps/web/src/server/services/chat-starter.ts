@@ -1,11 +1,11 @@
 import type { ChatStart, ChatStartOutput } from "@/types/chat";
 import type { UserId } from "@/types/id";
-import { ChatService } from "./chat";
+import { ChatService } from "../chat/chat.service";
+import type { EncryptionService } from "../encryption/encryption.service";
+import { MessageService } from "../message/message.service";
 import type { ChatMessageDecryptService } from "./chat-message-decrypt";
 import type { Db } from "./db";
-import type { EncryptionService } from "./encryption";
 import { IdempotencyInfoService } from "./idempotency-info";
-import { MessageService } from "./message";
 import type { ModelRouteService } from "./model-route";
 import { UserUsageLimitService } from "./user-usage-limit";
 

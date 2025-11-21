@@ -5,19 +5,19 @@ import { Model, ModelProviderMap } from "@/types/model";
 import { Role } from "@/types/role";
 import type { TaskInput } from "@/types/task";
 import { UserDefaultPromptGetOutput } from "@/types/user-default-prompt";
+import type { Pool } from "pg";
 import { match } from "ts-pattern";
 import type { Simplify } from "type-fest";
-import { MessageService } from "./message";
-import { notify } from "./pg";
-import { UserUsageLimitService } from "./user-usage-limit";
-import type { MessageChunkService } from "./message-chunk";
-import type { Pool } from "pg";
-import type { GoogleGenAiService } from "./google-gen-ai";
-import type { XAiService } from "./x-ai";
-import type { Db } from "./db";
-import type { EncryptionService } from "./encryption";
-import type { UserDefaultPromptService } from "./user-default-prompt";
+import type { EncryptionService } from "../encryption/encryption.service";
+import type { MessageChunkService } from "../message-chunk/message-chunk.service";
+import { MessageService } from "../message/message.service";
 import type { ChatMessageDecryptService } from "./chat-message-decrypt";
+import type { Db } from "./db";
+import type { GoogleGenAiService } from "./google-gen-ai";
+import { notify } from "./pg";
+import type { UserDefaultPromptService } from "./user-default-prompt";
+import { UserUsageLimitService } from "./user-usage-limit";
+import type { XAiService } from "./x-ai";
 
 export type ValidatedModelMessage = Simplify<
   Omit<MessageData, "model"> & {

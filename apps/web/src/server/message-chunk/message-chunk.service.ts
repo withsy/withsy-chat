@@ -4,9 +4,9 @@ import {
   MessageChunkEntity,
   MessageChunkSelect,
 } from "@/types/message-chunk";
-import { getHardDeleteCutoffDate } from "../utils";
-import type { EncryptionService } from "./encryption";
-import type { Db } from "./db";
+import type { EncryptionService } from "../encryption/encryption.service";
+import type { Db } from "../services/db";
+import { MessageChunkRepository } from "./message-chunk.repository";
 
 export class MessageChunkService {
   constructor(
@@ -76,12 +76,10 @@ export class MessageChunkService {
     return { text, reasoningText };
   }
 
-  async onHardDeleteTask() {
-    const cutoffDate = getHardDeleteCutoffDate(new Date());
+  async hardDeleteMessageChunks() {
+    const messageChunkRepository = new MessageChunkRepository(this.db);
 
-    const res = await this.db.messageChunk.deleteMany({
-      where: { createdAt: { lt: cutoffDate } },
-    });
+    const res = await messageChunkRepository.hardDeleteMessageChunks();
     console.warn(`Successfully hard deleted ${res.count} messageChunks.`);
   }
 }

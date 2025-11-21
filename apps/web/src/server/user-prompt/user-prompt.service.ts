@@ -11,11 +11,11 @@ import {
   UserPromptUpdate,
 } from "@/types/user-prompt";
 import { v7 as uuidv7 } from "uuid";
-import { getHardDeleteCutoffDate } from "../utils";
-import { IdempotencyInfoService } from "./idempotency-info";
-import { UserDefaultPromptService } from "./user-default-prompt";
-import type { EncryptionService } from "./encryption";
-import type { Db } from "./db";
+import type { EncryptionService } from "../encryption/encryption.service";
+import type { Db } from "../services/db";
+import { IdempotencyInfoService } from "../services/idempotency-info";
+import { UserDefaultPromptService } from "../services/user-default-prompt";
+import { UserPromptRepository } from "./user-prompt.repository";
 
 export class UserPromptService {
   constructor(
@@ -162,27 +162,26 @@ export class UserPromptService {
     return data;
   }
 
-  async onHardDeleteTask() {
-    const cutoffDate = getHardDeleteCutoffDate(new Date());
-
+  async hardDeleteUserPrompts() {
     await this.db.$transaction(async (tx) => {
-      const userPromptsToDelete = await tx.userPrompt.findMany({
-        where: { deletedAt: { not: null, lt: cutoffDate } },
-        select: { id: true },
-      });
+      const userPromptRepository = new UserPromptRepository(tx);
 
-      if (userPromptsToDelete.length === 0) return;
+      const userPrompts =
+        await userPromptRepository.findUserPromptsToHardDelete();
+      if (userPrompts.length === 0) {
+        return;
+      }
 
-      const userPromptIds = userPromptsToDelete.map((x) => x.id);
+      const userPromptIds = userPrompts.map((x) => x.id);
       console.warn(
         `Preparing to delete ${
           userPromptIds.length
         }. userPrompts: ${userPromptIds.join(", ")}`
       );
 
-      const res = await tx.userPrompt.deleteMany({
-        where: { id: { in: userPromptIds } },
-      });
+      const res = await userPromptRepository.hardDeleteUserPrompts(
+        userPromptIds
+      );
       console.warn(`Successfully hard deleted ${res.count} userPrompts.`);
     });
   }

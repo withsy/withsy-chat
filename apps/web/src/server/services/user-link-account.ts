@@ -1,5 +1,5 @@
+import type { EncryptionService } from "../encryption/encryption.service";
 import type { Db } from "./db";
-import type { EncryptionService } from "./encryption";
 import { UserService } from "./user";
 import { UserUsageLimitService } from "./user-usage-limit";
 

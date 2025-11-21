@@ -7,8 +7,8 @@ import {
   UserDefaultPromptUpdate,
 } from "@/types/user-default-prompt";
 import { UserPromptEntity, UserPromptSelect } from "@/types/user-prompt";
+import type { UserPromptService } from "../user-prompt/user-prompt.service";
 import type { Db, Tx } from "./db";
-import type { UserPromptService } from "./user-prompt";
 
 export class UserDefaultPromptService {
   constructor(

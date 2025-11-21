@@ -2,13 +2,13 @@ import type { UserId } from "@/types/id";
 import { MessageSelect, type MessageData } from "@/types/message";
 import type { MessageReplyRegenerate } from "@/types/message-reply";
 import { Role } from "@/types/role";
-import { IdempotencyInfoService } from "./idempotency-info";
-import { MessageService } from "./message";
-import { UserUsageLimitService } from "./user-usage-limit";
-import type { EncryptionService } from "./encryption";
-import type { Db } from "./db";
+import type { EncryptionService } from "../encryption/encryption.service";
+import { MessageService } from "../message/message.service";
 import type { ChatMessageDecryptService } from "./chat-message-decrypt";
+import type { Db } from "./db";
+import { IdempotencyInfoService } from "./idempotency-info";
 import type { ModelRouteService } from "./model-route";
+import { UserUsageLimitService } from "./user-usage-limit";
 
 export class MessageReplyService {
   constructor(

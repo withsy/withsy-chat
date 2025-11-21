@@ -1,10 +1,10 @@
 import type { ChatData, ChatEntity } from "@/types/chat";
-import type { EncryptionService } from "./encryption";
 import type { MessageData, MessageEntity } from "@/types/message";
-import type { UserPromptEntity } from "@/types/user-prompt";
-import type { UserPromptService } from "./user-prompt";
-import { Role } from "@/types/role";
 import { Model } from "@/types/model";
+import { Role } from "@/types/role";
+import type { UserPromptEntity } from "@/types/user-prompt";
+import type { EncryptionService } from "../encryption/encryption.service";
+import type { UserPromptService } from "../user-prompt/user-prompt.service";
 
 export class ChatMessageDecryptService {
   constructor(

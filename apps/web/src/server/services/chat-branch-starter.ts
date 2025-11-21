@@ -1,12 +1,12 @@
 import type { ChatData } from "@/types/chat";
 import type { ChatBranchStart } from "@/types/chat-branch";
 import type { UserId } from "@/types/id";
-import { IdempotencyInfoService } from "./idempotency-info";
-import type { Db } from "./db";
-import { MessageService } from "./message";
+import { ChatService } from "../chat/chat.service";
+import type { EncryptionService } from "../encryption/encryption.service";
+import { MessageService } from "../message/message.service";
 import type { ChatMessageDecryptService } from "./chat-message-decrypt";
-import type { EncryptionService } from "./encryption";
-import { ChatService } from "./chat";
+import type { Db } from "./db";
+import { IdempotencyInfoService } from "./idempotency-info";
 
 export class ChatBranchStarter {
   constructor(

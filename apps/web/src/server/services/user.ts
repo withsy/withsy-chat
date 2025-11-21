@@ -11,9 +11,9 @@ import {
   UserUpdatePrefsOutput,
 } from "@/types/user";
 import { TRPCError } from "@trpc/server";
+import type { EncryptionService } from "../encryption/encryption.service";
 import { isValidTimezone } from "../utils";
 import type { Db, Tx } from "./db";
-import type { EncryptionService } from "./encryption";
 
 const FALLBACK_TIMEZONE = "UTC";
 const FALLBACK_AI_LANGUAGE = "en";

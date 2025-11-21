@@ -9,10 +9,10 @@ import {
   UserAiProfileGetOutput,
   UserAiProfileSelect,
 } from "@/types/user-ai-profile";
-import { UserUsageLimitService } from "./user-usage-limit";
-import type { EncryptionService } from "./encryption";
-import type { Db } from "./db";
+import type { EncryptionService } from "../encryption/encryption.service";
 import type { AiProfileStorageService } from "./ai-profile-storage";
+import type { Db } from "./db";
+import { UserUsageLimitService } from "./user-usage-limit";
 
 export class UserAiProfileService {
   constructor(

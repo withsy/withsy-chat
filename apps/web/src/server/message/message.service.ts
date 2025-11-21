@@ -16,10 +16,11 @@ import { Model } from "@/types/model";
 import { Role } from "@/types/role";
 import { UserPromptSelect } from "@/types/user-prompt";
 import { v7 as uuidv7 } from "uuid";
-import type { Db, Tx } from "./db";
-import type { EncryptionService } from "./encryption";
-import type { MessageChunkService } from "./message-chunk";
-import type { ChatMessageDecryptService } from "./chat-message-decrypt";
+import type { EncryptionService } from "../encryption/encryption.service";
+import type { MessageChunkService } from "../message-chunk/message-chunk.service";
+import type { ChatMessageDecryptService } from "../services/chat-message-decrypt";
+import type { Db, Tx } from "../services/db";
+import { MessageRepository } from "./message.repository";
 
 // TODO: Change limit history length
 const DEFAULT_REMAIN_LENGTH = 10;
@@ -334,19 +335,9 @@ export class MessageService {
     }
   }
 
-  async onCleanupZombiesTask() {
-    const res = await this.db.message.updateMany({
-      where: {
-        status: { in: ["pending", "processing"] },
-        updatedAt: {
-          lt: new Date(Date.now() - 10 * 60_000), // 10 minutes
-        },
-      },
-      data: { status: "failed" },
-    });
-
-    if (res.count > 0)
-      console.warn(`Marked ${res.count} zombie messages as failed.`);
+  async cleanupZombieMessages() {
+    const messageRepository = new MessageRepository(this.db);
+    return await messageRepository.cleanupZombieMessages();
   }
 
   static async createUserMessage(

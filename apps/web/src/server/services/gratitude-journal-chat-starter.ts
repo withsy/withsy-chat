@@ -4,17 +4,17 @@ import {
   type GratitudeJournalStartChat,
 } from "@/types/gratitude-journal";
 import type { UserId } from "@/types/id";
-import type { UserService } from "./user";
-import type { EncryptionService } from "./encryption";
+import { TRPCError } from "@trpc/server";
+import { ChatService } from "../chat/chat.service";
+import type { EncryptionService } from "../encryption/encryption.service";
+import { MessageService } from "../message/message.service";
+import type { ChatMessageDecryptService } from "./chat-message-decrypt";
+import { ChatPromptService } from "./chat-prompt";
 import type { Db } from "./db";
 import { GratitudeJournalService } from "./gratitude-journal";
 import { IdempotencyInfoService } from "./idempotency-info";
-import { TRPCError } from "@trpc/server";
-import { ChatService } from "./chat";
-import { ChatPromptService } from "./chat-prompt";
-import { MessageService } from "./message";
-import type { ChatMessageDecryptService } from "./chat-message-decrypt";
 import type { ModelRouteService } from "./model-route";
+import type { UserService } from "./user";
 
 export class GratitudeJournalChatStarter {
   constructor(
