@@ -23,7 +23,7 @@ const config: runtime.GetPrismaClientConfig = {
       "value": "prisma-client"
     },
     "output": {
-      "value": "/Users/harry/repo/withsy-chat/src/server/generated/prisma",
+      "value": "/Users/harry/repo/withsy-chat/apps/web/src/server/generated/prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -39,7 +39,7 @@ const config: runtime.GetPrismaClientConfig = {
     "previewFeatures": [
       "relationJoins"
     ],
-    "sourceFilePath": "/Users/harry/repo/withsy-chat/prisma/schema.prisma",
+    "sourceFilePath": "/Users/harry/repo/withsy-chat/apps/web/prisma/schema.prisma",
     "isCustomOutput": true
   },
   "relativePath": "../../../../prisma",

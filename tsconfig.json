@@ -13,21 +13,6 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
-    "verbatimModuleSyntax": true,
-    "paths": {
-      "@/*": ["./src/*"]
-    }
-  },
-  "include": [
-    "next-env.d.ts",
-    "eslint.config.ts",
-    "next.config.ts",
-    "src/**/*.ts",
-    "src/**/*.tsx",
-    "scripts/**/*.ts",
-    "prod/dotenv.mts",
-    "trigger/trigger.config.ts",
-    "trigger/src/**/*.ts"
-  ],
-  "exclude": ["node_modules", "tailwind.config.js"]
+    "verbatimModuleSyntax": true
+  }
 }

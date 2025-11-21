@@ -23,9 +23,8 @@ import {
   startOfSecond,
   startOfYear,
 } from "date-fns";
-import type { Db, Tx } from "./db";
-import { TRPCError } from "@trpc/server";
 import { DataError } from "../error";
+import type { Db, Tx } from "./db";
 
 export class UserUsageLimitService {
   constructor(private readonly db: Db) {}

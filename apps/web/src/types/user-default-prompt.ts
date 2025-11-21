@@ -1,8 +1,8 @@
-import type { Prisma } from "@prisma/client";
 import { z } from "zod";
 import type { zInfer } from "./common";
 import { UserPromptId } from "./id";
 import { UserPromptData } from "./user-prompt";
+import type { Prisma } from "@/server/generated/prisma/client";
 
 export const UserDefaultPromptSelect = {
   userPromptId: true,

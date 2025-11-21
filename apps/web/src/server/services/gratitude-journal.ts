@@ -8,7 +8,6 @@ import {
   GratitudeJournalStats,
 } from "@/types/gratitude-journal";
 import type { UserId } from "@/types/id";
-import type { Prisma } from "@prisma/client";
 import {
   endOfDay,
   format,
@@ -22,6 +21,7 @@ import { v7 as uuidv7 } from "uuid";
 import type { Db, Tx } from "./db";
 import { UserService } from "./user";
 import type { ChatMessageDecryptService } from "./chat-message-decrypt";
+import type { Prisma } from "../generated/prisma/client";
 
 export class GratitudeJournalService {
   constructor(

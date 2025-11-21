@@ -14,11 +14,11 @@ node_modules
 /coverage
 
 # next.js
-/.next/
+.next/
 /out/
 
 # production
-/build
+build
 
 # misc
 .DS_Store
@@ -43,7 +43,6 @@ next-env.d.ts
 
 # temporary files
 /temp/
-/src/server/temp/
 
 # vscode
 /.vscode/

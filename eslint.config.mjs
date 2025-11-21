@@ -1,24 +1,33 @@
-import { FlatCompat } from "@eslint/eslintrc";
-import pluginQuery from "@tanstack/eslint-plugin-query";
-import tseslint from "typescript-eslint";
-import eslint from "@eslint/js";
-import { defineConfig, globalIgnores } from "eslint/config";
+// @ts-check
 
-export default defineConfig(
-  globalIgnores(["tailwind.config.js", "postcss.config.mjs"]),
-  ...new FlatCompat({
-    baseDirectory: import.meta.dirname,
-  }).extends("next/core-web-vitals", "next/typescript"),
+import { FlatCompat } from "@eslint/eslintrc";
+import eslint from "@eslint/js";
+import pluginQuery from "@tanstack/eslint-plugin-query";
+import { defineConfig } from "eslint/config";
+import tseslint from "typescript-eslint";
+
+const compat = new FlatCompat({
+  baseDirectory: import.meta.dirname,
+});
+
+export default defineConfig([
+  ...compat.config({
+    extends: ["next/core-web-vitals", "next/typescript"],
+    settings: {
+      next: {
+        rootDir: "apps/web/",
+      },
+    },
+  }),
   {
     languageOptions: {
       parserOptions: {
         projectService: true,
-        tsconfigRootDir: import.meta.dirname,
       },
     },
   },
   eslint.configs.recommended,
-  tseslint.configs.recommended,
+  ...tseslint.configs.recommended,
   ...pluginQuery.configs["flat/recommended"],
   {
     rules: {
@@ -34,10 +43,10 @@ export default defineConfig(
     },
   },
   {
-    files: ["src/server/**/*.ts"],
+    files: ["apps/web/src/server/**/*.ts"],
     rules: {
       "@typescript-eslint/no-floating-promises": "error",
       "@typescript-eslint/await-thenable": "error",
     },
-  }
-);
+  },
+]);

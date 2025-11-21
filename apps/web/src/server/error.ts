@@ -42,8 +42,10 @@ export function isExpectedUniqueConstraintViolation(
   return true;
 }
 
-export class DataError {
-  constructor(readonly data: Record<string, unknown>) {}
+export class DataError extends Error {
+  constructor(readonly data: Record<string, unknown>) {
+    super();
+  }
 }
 
 export function getCodeKeyFromPrismaError(

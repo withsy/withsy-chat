@@ -1,8 +1,8 @@
-import type { Prisma } from "@prisma/client";
 import { z } from "zod";
 import { ChatData } from "./chat";
 import type { zInfer } from "./common";
 import { ChatId, GratitudeJournalId, IdempotencyKey } from "./id";
+import type { Prisma } from "@/server/generated/prisma/client";
 
 export const GratitudeJournalSelect = {
   id: true,

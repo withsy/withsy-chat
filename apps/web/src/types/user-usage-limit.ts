@@ -1,7 +1,7 @@
-import { Prisma } from "@prisma/client";
 import { z } from "zod";
 import type { zInfer, zInput } from "./common";
 import { UserUsageLimitId } from "./id";
+import type { Prisma } from "@/server/generated/prisma/client";
 
 export const UserUsageLimitSelect = {
   id: true,

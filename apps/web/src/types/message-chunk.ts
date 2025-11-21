@@ -1,8 +1,8 @@
-import type { Prisma } from "@prisma/client";
 import { z } from "zod";
 import type { zInfer } from "./common";
 import { MessageChunkIndex } from "./id";
 import { UserUsageLimitData } from "./user-usage-limit";
+import type { Prisma } from "@/server/generated/prisma/client";
 
 export const MessageChunkSelect = {
   index: true,

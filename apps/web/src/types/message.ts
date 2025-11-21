@@ -1,4 +1,3 @@
-import type { Prisma } from "@prisma/client";
 import { z } from "zod";
 import { ChatData } from "./chat";
 import { type zInfer } from "./common";
@@ -6,6 +5,7 @@ import { ChatId, IdempotencyKey, MessageId, UserId } from "./id";
 import { Model } from "./model";
 import { Role } from "./role";
 import { UserUsageLimitError } from "./user-usage-limit";
+import type { Prisma } from "@/server/generated/prisma/client";
 
 export const MessageSelect = {
   id: true,

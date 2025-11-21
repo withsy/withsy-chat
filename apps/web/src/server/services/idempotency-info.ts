@@ -1,8 +1,8 @@
 import type { IdempotencyKey } from "@/types/id";
 import { idempotencyInfoSelect } from "@/types/idempotency";
-import { Prisma } from "@prisma/client";
 import type { Db, Tx } from "./db";
 import { TRPCError } from "@trpc/server";
+import { Prisma } from "../generated/prisma/client";
 
 export class IdempotencyInfoService {
   constructor(private readonly db: Db) {}
