@@ -337,6 +337,7 @@ export class MessageService {
 
   async cleanupZombieMessages() {
     const messageRepository = new MessageRepository(this.db);
+
     return await messageRepository.cleanupZombieMessages();
   }
 

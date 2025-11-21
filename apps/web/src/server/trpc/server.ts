@@ -1,13 +1,13 @@
-import { initTRPC } from "@trpc/server";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
+import { initTRPC, TRPCError } from "@trpc/server";
+import { TRPC_ERROR_CODES_BY_KEY } from "@trpc/server/unstable-core-do-not-import";
 import { SuperJSON } from "superjson";
+import { DataError, getCodeKeyFromPrismaError } from "../error";
 import {
   createApiKeyContext,
   createUserContext,
   type PublicContext,
 } from "../server-context";
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
-import { TRPC_ERROR_CODES_BY_KEY } from "@trpc/server/unstable-core-do-not-import";
-import { DataError, getCodeKeyFromPrismaError } from "../error";
 
 export const t = initTRPC.context<PublicContext>().create({
   transformer: SuperJSON,
@@ -43,4 +43,14 @@ export const userProcedure = publicProcedure.use(async ({ ctx, next }) => {
 export const apiKeyProcedure = publicProcedure.use(async ({ ctx, next }) => {
   const apiKeyContext = await createApiKeyContext(ctx);
   return next({ ctx: apiKeyContext });
+});
+
+export const devProcedure = publicProcedure.use(async ({ ctx, next }) => {
+  if (
+    !(process.env.NODE_ENV === "development" || process.env.NODE_ENV === "test")
+  ) {
+    throw new TRPCError({ code: "SERVICE_UNAVAILABLE" });
+  }
+
+  return next({ ctx });
 });

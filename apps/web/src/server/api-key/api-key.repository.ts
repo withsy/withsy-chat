@@ -1,7 +1,7 @@
 import { randomBytes } from "node:crypto";
-import type { Tx } from "../services/db";
 import { isExpectedUniqueConstraintViolation } from "../error";
 import { retry } from "../retry";
+import type { Tx } from "../services/db";
 
 function generateApiKey() {
   const random = randomBytes(32).toString("base64url");
@@ -11,7 +11,7 @@ function generateApiKey() {
 export class ApiKeyRepository {
   constructor(private readonly tx: Tx) {}
 
-  async create() {
+  async createApiKey() {
     return retry(
       async () => {
         const res = await this.tx.apiKey.create({
@@ -27,7 +27,7 @@ export class ApiKeyRepository {
     );
   }
 
-  async validateToken(input: { apiKey: string }) {
+  async validateApiKey(input: { apiKey: string }) {
     const { apiKey } = input;
     const count = await this.tx.apiKey.count({
       where: {

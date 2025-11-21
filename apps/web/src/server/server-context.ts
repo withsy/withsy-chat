@@ -1,10 +1,10 @@
 import { UserJwt, UserSession } from "@/types/user";
+import { TRPCError } from "@trpc/server";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth";
 import { getToken } from "next-auth/jwt";
 import { getAuthOptions } from "./auth";
 import { serviceRegistry } from "./service-registry";
-import { TRPCError } from "@trpc/server";
 
 export function createPublicContext(input: {
   request: NextApiRequest;
@@ -73,7 +73,7 @@ export async function createApiKeyContext(ctx: PublicContext) {
     });
   }
 
-  const isValid = await serviceRegistry.apiKeyService.validateToken({
+  const isValid = await serviceRegistry.apiKeyService.validateApiKey({
     apiKey,
   });
   if (!isValid) {

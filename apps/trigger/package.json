@@ -1,0 +1,15 @@
+{
+  "name": "trigger",
+  "version": "0.0.0-development",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@trigger.dev/sdk": "4.1.1",
+    "@trpc/client": "11.7.1",
+    "superjson": "2.2.5"
+  },
+  "devDependencies": {
+    "@trigger.dev/build": "4.1.1"
+  }
+}
