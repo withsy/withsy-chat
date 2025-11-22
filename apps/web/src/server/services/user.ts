@@ -1,0 +1,217 @@
+import type { UserId } from "@/types/id";
+import { isValidAiLanguage } from "@/types/languages";
+import {
+  UserData,
+  UserEnsure,
+  UserEntity,
+  UserPrefs,
+  UserSelect,
+  UserUpdate,
+  UserUpdatePrefs,
+  UserUpdatePrefsOutput,
+} from "@/types/user";
+import { TRPCError } from "@trpc/server";
+import type { EncryptionService } from "../encryption/encryption.service";
+import { isValidTimezone } from "../utils";
+import type { Db, Tx } from "./db";
+
+const FALLBACK_TIMEZONE = "UTC";
+const FALLBACK_AI_LANGUAGE = "en";
+
+export class UserService {
+  constructor(
+    private readonly encryptionService: EncryptionService,
+    private readonly db: Db
+  ) {}
+
+  decrypt(entity: UserEntity): UserData {
+    const name = this.encryptionService.decrypt(entity.nameEncrypted);
+    const email = this.encryptionService.decrypt(entity.emailEncrypted);
+    const imageUrl = this.encryptionService.decrypt(entity.imageUrlEncrypted);
+    const preferences = UserPrefs.parse(entity.preferences);
+    const data = {
+      id: entity.id,
+      name,
+      email,
+      imageUrl,
+      aiLanguage: entity.aiLanguage,
+      timezone: entity.timezone,
+      preferences,
+    } satisfies UserData;
+    return data;
+  }
+
+  async get(userId: UserId): Promise<UserData> {
+    const entity = await this.db.user.findUniqueOrThrow({
+      where: { id: userId },
+      select: UserSelect,
+    });
+
+    const data = this.decrypt(entity);
+    return data;
+  }
+
+  async ensure(userId: UserId, input: UserEnsure): Promise<UserData> {
+    const entity = await this.db.$transaction(async (tx) => {
+      const user = await tx.user.findUniqueOrThrow({
+        where: { id: userId },
+        select: UserSelect,
+      });
+
+      let timezone: string | undefined = undefined;
+      if (user.timezone.length === 0) {
+        timezone =
+          input.timezone && isValidTimezone(input.timezone)
+            ? input.timezone
+            : FALLBACK_TIMEZONE;
+      }
+
+      let aiLanguage: string | undefined = undefined;
+      if (user.aiLanguage.length === 0) {
+        aiLanguage =
+          input.aiLanguage && isValidAiLanguage(input.aiLanguage)
+            ? input.aiLanguage
+            : FALLBACK_AI_LANGUAGE;
+      }
+
+      const updated = tx.user.update({
+        where: { id: userId },
+        data: {
+          aiLanguage,
+          timezone,
+        },
+        select: UserSelect,
+      });
+
+      return updated;
+    });
+
+    const data = this.decrypt(entity);
+    return data;
+  }
+
+  async updatePrefs(
+    userId: UserId,
+    input: UserUpdatePrefs
+  ): Promise<UserUpdatePrefsOutput> {
+    const patch = Object.fromEntries(
+      Object.entries(input).filter(([_, value]) => value !== undefined)
+    );
+
+    const entity = await this.db.$transaction(async (tx) => {
+      {
+        const affected =
+          await tx.$executeRaw`SELECT id FROM users WHERE id = ${userId} ::uuid FOR UPDATE`;
+        if (affected === 0)
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "User not found.",
+          });
+      }
+      {
+        const affected = await tx.$executeRaw`
+          UPDATE users 
+          SET preferences = preferences || ${patch} ::jsonb 
+          WHERE id = ${userId} ::uuid`;
+        if (affected === 0)
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "User not found.",
+          });
+      }
+
+      const entity = await tx.user.findUniqueOrThrow({
+        where: { id: userId },
+        select: { preferences: true },
+      });
+
+      return entity;
+    });
+
+    const data = UserUpdatePrefsOutput.parse(entity);
+    return data;
+  }
+
+  async update(userId: UserId, input: UserUpdate): Promise<UserData> {
+    const { aiLanguage, timezone } = input;
+    if (aiLanguage && !isValidAiLanguage(aiLanguage))
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "Invalid aiLanguage.",
+      });
+
+    if (timezone && !isValidTimezone(timezone))
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "Invalid timezone.",
+      });
+
+    const entity = await this.db.user.update({
+      where: { id: userId },
+      data: {
+        aiLanguage,
+        timezone,
+      },
+      select: UserSelect,
+    });
+
+    const data = this.decrypt(entity);
+    return data;
+  }
+
+  static async create(
+    tx: Tx,
+    input: {
+      nameEncrypted: string;
+      emailEncrypted: string;
+      imageUrlEncrypted: string;
+    }
+  ) {
+    const { nameEncrypted, emailEncrypted, imageUrlEncrypted } = input;
+    const entity = await tx.user.create({
+      data: {
+        nameEncrypted,
+        emailEncrypted,
+        imageUrlEncrypted,
+      },
+      select: { id: true },
+    });
+
+    return entity;
+  }
+
+  async getForGratitudeJournal(input: { userId: UserId }) {
+    const { userId } = input;
+    const entity = await this.db.user.findUniqueOrThrow({
+      where: { id: userId },
+      select: {
+        nameEncrypted: true,
+        aiLanguage: true,
+      },
+    });
+
+    return entity;
+  }
+
+  static async getTimezone(tx: Tx, input: { userId: UserId }) {
+    const { userId } = input;
+    const { timezone } = await tx.user.findUniqueOrThrow({
+      where: { id: userId },
+      select: { timezone: true },
+    });
+
+    if (isValidTimezone(timezone)) return timezone;
+    return FALLBACK_TIMEZONE;
+  }
+
+  static async getAiLanguage(tx: Tx, input: { userId: UserId }) {
+    const { userId } = input;
+    const { aiLanguage } = await tx.user.findUniqueOrThrow({
+      where: { id: userId },
+      select: { aiLanguage: true },
+    });
+
+    if (isValidAiLanguage(aiLanguage)) return aiLanguage;
+    return FALLBACK_AI_LANGUAGE;
+  }
+}

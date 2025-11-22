@@ -1,0 +1,243 @@
+generator client {
+  provider        = "prisma-client"
+  output          = "../src/server/generated/prisma"
+  engineType      = "client"
+  previewFeatures = ["relationJoins"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String              @id @default(dbgenerated("gen_random_uuid()")) @map("id") @db.Uuid
+  nameEncrypted     String              @map("name_encrypted")
+  emailEncrypted    String              @map("email_encrypted")
+  imageUrlEncrypted String              @map("image_url_encrypted")
+  aiLanguage        String              @default("") @map("ai_language")
+  timezone          String              @default("") @map("timezone")
+  preferences       Json                @default("{}") @map("preferences")
+  createdAt         DateTime            @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime            @default(now()) @map("updated_at") @db.Timestamptz(6)
+  linkAccounts      UserLinkAccount[]   @relation("user_link_accounts.user_id")
+  usageLimits       UserUsageLimit[]    @relation("user_usage_limits.user_id")
+  prompts           UserPrompt[]        @relation("user_prompts.user_id")
+  defaultPrompts    UserDefaultPrompt[] @relation("user_default_prompts.user_id")
+  chats             Chat[]              @relation("chats.user_id")
+  gratitudeJournals GratitudeJournal[]  @relation("gratitude_journals.user_id")
+  aiProfiles        UserAiProfile[]     @relation("user_ai_profiles.user_id")
+
+  @@map("users")
+}
+
+model UserLinkAccount {
+  id                Int      @id @default(autoincrement()) @map("id")
+  userId            String   @map("user_id") @db.Uuid
+  user              User     @relation("user_link_accounts.user_id", fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  provider          String   @map("provider")
+  providerAccountId String   @map("provider_account_id")
+  refreshToken      String?  @map("refresh_token")
+  createdAt         DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+  @@map("user_link_accounts")
+}
+
+enum UserUsageLimitPeriod {
+  annually
+  monthly
+  daily
+  perHour
+  perMinute
+  perSecond
+}
+
+enum UserUsageLimitType {
+  message
+  aiProfileImage
+}
+
+model UserUsageLimit {
+  id              Int                  @id @default(autoincrement()) @map("id")
+  userId          String               @map("user_id") @db.Uuid
+  user            User                 @relation("user_usage_limits.user_id", fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  type            UserUsageLimitType   @map("type")
+  period          UserUsageLimitPeriod @map("period")
+  allowedAmount   Int                  @map("allowed_amount")
+  remainingAmount Int                  @map("remaining_amount")
+  resetAt         DateTime             @map("reset_at") @db.Timestamptz(6)
+  createdAt       DateTime             @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime             @default(now()) @map("updated_at") @db.Timestamptz(6)
+
+  @@unique([userId, type, period])
+  @@index([userId, type])
+  @@map("user_usage_limits")
+}
+
+model UserPrompt {
+  id             String              @id @map("id") @db.Uuid
+  userId         String              @map("user_id") @db.Uuid
+  user           User                @relation("user_prompts.user_id", fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  titleEncrypted String              @map("title_encrypted")
+  textEncrypted  String              @map("text_encrypted")
+  isStarred      Boolean             @default(false) @map("is_starred")
+  createdAt      DateTime            @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime            @default(now()) @map("updated_at") @db.Timestamptz(6)
+  deletedAt      DateTime?           @map("deleted_at") @db.Timestamptz(6)
+  defaultPrompts UserDefaultPrompt[] @relation("user_default_prompts.user_prompt_id")
+  chats          Chat[]              @relation("chats.user_prompt_id")
+
+  @@index([userId])
+  @@map("user_prompts")
+}
+
+model UserDefaultPrompt {
+  id           Int         @id @default(autoincrement()) @map("id")
+  userId       String      @unique @map("user_id") @db.Uuid
+  user         User        @relation("user_default_prompts.user_id", fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  userPromptId String?     @map("user_prompt_id") @db.Uuid
+  userPrompt   UserPrompt? @relation("user_default_prompts.user_prompt_id", fields: [userPromptId], references: [id], onDelete: SetNull, onUpdate: NoAction)
+  createdAt    DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt    DateTime    @default(now()) @map("updated_at") @db.Timestamptz(6)
+
+  @@index([userId])
+  @@index([userPromptId])
+  @@map("user_default_prompts")
+}
+
+model UserAiProfile {
+  id                 Int      @id @default(autoincrement()) @map("id")
+  userId             String   @map("user_id") @db.Uuid
+  user               User     @relation("user_ai_profiles.user_id", fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  model              String   @map("model")
+  nameEncrypted      String   @map("name_encrypted")
+  imagePathEncrypted String   @map("image_path_encrypted")
+  createdAt          DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
+
+  @@unique([userId, model])
+  @@index([userId])
+  @@map("user_ai_profiles")
+}
+
+enum ChatType {
+  chat
+  branch
+  gratitudeJournal
+}
+
+model Chat {
+  id                String             @id @map("id") @db.Uuid
+  userId            String             @map("user_id") @db.Uuid
+  user              User               @relation("chats.user_id", fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  titleEncrypted    String             @map("title_encrypted")
+  isStarred         Boolean            @default(false) @map("is_starred")
+  type              ChatType           @default(chat) @map("type")
+  parentMessageId   String?            @map("parent_message_id") @db.Uuid
+  parentMessage     Message?           @relation("chats.parent_message_id", fields: [parentMessageId], references: [id], onDelete: SetNull, onUpdate: NoAction)
+  userPromptId      String?            @map("user_prompt_id") @db.Uuid
+  userPrompt        UserPrompt?        @relation("chats.user_prompt_id", fields: [userPromptId], references: [id], onDelete: SetNull, onUpdate: NoAction)
+  createdAt         DateTime           @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime           @default(now()) @map("updated_at") @db.Timestamptz(6)
+  deletedAt         DateTime?          @map("deleted_at") @db.Timestamptz(6)
+  messages          Message[]          @relation("messages.chat_id")
+  prompts           ChatPrompt[]       @relation("chat_prompts.chat_id")
+  gratitudeJournals GratitudeJournal[] @relation("gratitude_journals.chat_id")
+
+  @@index([userId])
+  @@index([parentMessageId])
+  @@map("chats")
+}
+
+model ChatPrompt {
+  id            Int      @id @default(autoincrement()) @map("id")
+  chatId        String   @map("chat_id") @db.Uuid
+  chat          Chat     @relation("chat_prompts.chat_id", fields: [chatId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  textEncrypted String   @map("text_encrypted")
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt     DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
+
+  @@index([chatId])
+  @@map("chat_prompts")
+}
+
+enum MessageStatus {
+  pending
+  processing
+  succeeded
+  failed
+}
+
+model Message {
+  id                     String         @id @map("id") @db.Uuid
+  chatId                 String         @map("chat_id") @db.Uuid
+  chat                   Chat           @relation("messages.chat_id", fields: [chatId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  role                   String         @map("role")
+  model                  String?        @map("model")
+  textEncrypted          String         @map("text_encrypted")
+  reasoningTextEncrypted String         @map("reasoning_text_encrypted")
+  status                 MessageStatus  @default(pending) @map("status")
+  isBookmarked           Boolean        @default(false) @map("is_bookmarked")
+  isPublic               Boolean        @map("is_public")
+  parentMessageId        String?        @map("parent_message_id") @db.Uuid
+  parentMessage          Message?       @relation("messages.parent_message_id", fields: [parentMessageId], references: [id], onDelete: SetNull, onUpdate: NoAction)
+  createdAt              DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt              DateTime       @default(now()) @map("updated_at") @db.Timestamptz(6)
+  chunks                 MessageChunk[] @relation("message_chunks.message_id")
+  childChats             Chat[]         @relation("chats.parent_message_id")
+  childMessages          Message[]      @relation("messages.parent_message_id")
+
+  @@index([parentMessageId])
+  @@index([chatId])
+  @@map("messages")
+}
+
+model MessageChunk {
+  messageId              String   @map("message_id") @db.Uuid
+  message                Message  @relation("message_chunks.message_id", fields: [messageId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  index                  Int      @map("index")
+  rawDataEncrypted       String   @map("raw_data_encrypted")
+  textEncrypted          String   @map("text_encrypted")
+  reasoningTextEncrypted String   @map("reasoning_text_encrypted")
+  isDone                 Boolean  @map("is_done")
+  createdAt              DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt              DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
+
+  @@id([messageId, index])
+  @@map("message_chunks")
+}
+
+model IdempotencyInfo {
+  key       String   @id @map("key") @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
+
+  @@map("idempotency_infos")
+}
+
+model GratitudeJournal {
+  id        String   @id @map("id") @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  user      User     @relation("gratitude_journals.user_id", fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  chatId    String?  @map("chat_id") @db.Uuid
+  chat      Chat?    @relation("gratitude_journals.chat_id", fields: [chatId], references: [id], onDelete: SetNull, onUpdate: NoAction)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
+
+  @@index([userId])
+  @@index([chatId])
+  @@map("gratitude_journals")
+}
+
+model ApiKey {
+  id        Int      @id @default(autoincrement()) @map("id")
+  apiKey    String   @unique @map("api_key")
+  isEnabled Boolean  @default(true) @map("is_enabled")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@index([apiKey])
+  @@map("api_keys")
+}

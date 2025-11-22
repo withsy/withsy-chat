@@ -1,0 +1,20 @@
+import { defineConfig } from "@trigger.dev/sdk";
+
+export default defineConfig({
+  project: "proj_hpzyxktrjcjkcqicsrox",
+  dirs: ["./src/trigger"],
+  maxDuration: 10 * 60 /* 10 minutes */,
+  retries: {
+    enabledInDev: false,
+    default: {
+      maxAttempts: 3,
+      minTimeoutInMs: 1000,
+      maxTimeoutInMs: 10000,
+      factor: 2,
+      randomize: true,
+    },
+  },
+  build: {
+    extensions: [],
+  },
+});
