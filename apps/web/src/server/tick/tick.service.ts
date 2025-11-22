@@ -16,7 +16,7 @@ export class TickService {
     private readonly userPromptService: UserPromptService
   ) {}
 
-  async callEvery5minutes() {
+  async tickEvery5minutes() {
     await this.#call([
       {
         name: "cleanupZombieMessages",
@@ -25,7 +25,7 @@ export class TickService {
     ]);
   }
 
-  async callDaily() {
+  async tickDaily() {
     await this.#call([
       {
         name: "hardDeleteMessageChunks",

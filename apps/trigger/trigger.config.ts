@@ -1,15 +1,11 @@
 import { defineConfig } from "@trigger.dev/sdk";
 
 export default defineConfig({
-  // Your project ref from the Trigger.dev dashboard
-  project: "proj_hpzyxktrjcjkcqicsrox", // e.g., "proj_abc123"
-
-  // Directories containing your tasks
-  dirs: ["./src/trigger"], // Customize based on your project structure
-
-  // Retry configuration
+  project: "proj_hpzyxktrjcjkcqicsrox",
+  dirs: ["./src/trigger"],
+  maxDuration: 10 * 60 /* 10 minutes */,
   retries: {
-    enabledInDev: false, // Enable retries in development
+    enabledInDev: false,
     default: {
       maxAttempts: 3,
       minTimeoutInMs: 1000,
@@ -18,12 +14,7 @@ export default defineConfig({
       randomize: true,
     },
   },
-
-  // Build configuration (optional)
   build: {
-    extensions: [], // Build extensions go here
+    extensions: [],
   },
-
-  // Max duration of a task in seconds
-  maxDuration: 3600,
 });

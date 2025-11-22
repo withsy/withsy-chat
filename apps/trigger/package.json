@@ -2,7 +2,7 @@
   "name": "trigger",
   "version": "0.0.0-development",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "dotenvx run -- npx trigger.dev dev"
   },
   "dependencies": {
     "@trigger.dev/sdk": "4.1.1",
@@ -10,6 +10,8 @@
     "superjson": "2.2.5"
   },
   "devDependencies": {
-    "@trigger.dev/build": "4.1.1"
+    "@dotenvx/dotenvx": "1.51.1",
+    "@trigger.dev/build": "4.1.1",
+    "trigger.dev": "4.1.1"
   }
 }
