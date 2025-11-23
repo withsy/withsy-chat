@@ -1,6 +1,7 @@
 import type { ChatService } from "../chat/chat.service";
 import type { MessageChunkService } from "../message-chunk/message-chunk.service";
 import type { MessageService } from "../message/message.service";
+import type { SupabaseActivityService } from "../supabase-activity/supabase-activity.service";
 import type { UserPromptService } from "../user-prompt/user-prompt.service";
 
 interface Task {
@@ -13,7 +14,8 @@ export class TickService {
     private readonly messageService: MessageService,
     private readonly chatService: ChatService,
     private readonly messageChunkService: MessageChunkService,
-    private readonly userPromptService: UserPromptService
+    private readonly userPromptService: UserPromptService,
+    private readonly supabaseActivityService: SupabaseActivityService
   ) {}
 
   async tickEvery5minutes() {
@@ -38,6 +40,10 @@ export class TickService {
       {
         name: "hardDeleteUserPrompts",
         promise: this.userPromptService.hardDeleteUserPrompts(),
+      },
+      {
+        name: "updateSupabaseActivity",
+        promise: this.supabaseActivityService.updateSupabaseActivity(),
       },
     ]);
   }

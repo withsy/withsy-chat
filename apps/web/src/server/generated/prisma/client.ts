@@ -106,3 +106,8 @@ export type GratitudeJournal = Prisma.GratitudeJournalModel
  * 
  */
 export type ApiKey = Prisma.ApiKeyModel
+/**
+ * Model SupabaseActivity
+ * 
+ */
+export type SupabaseActivity = Prisma.SupabaseActivityModel

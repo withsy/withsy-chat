@@ -241,3 +241,10 @@ model ApiKey {
   @@index([apiKey])
   @@map("api_keys")
 }
+
+model SupabaseActivity {
+  id        Int      @id @default(autoincrement()) @map("id")
+  updatedAt DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
+
+  @@map("supabase_activities")
+}

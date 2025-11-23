@@ -27,6 +27,7 @@ import { UserDefaultPromptService } from "./services/user-default-prompt";
 import { UserLinkAccountService } from "./services/user-link-account";
 import { UserUsageLimitService } from "./services/user-usage-limit";
 import { XAiService } from "./services/x-ai";
+import { SupabaseActivityService } from "./supabase-activity/supabase-activity.service";
 import { TickService } from "./tick/tick.service";
 import { TimeZoneCheckService } from "./time-zone-check/time-zone-check.service";
 import { UserPromptService } from "./user-prompt/user-prompt.service";
@@ -126,11 +127,13 @@ function createServiceRegistry() {
     modelRouteService
   );
   const apiKeyService = new ApiKeyService(db);
+  const supabaseActivityService = new SupabaseActivityService(db);
   const tickService = new TickService(
     messageService,
     chatService,
     messageChunkService,
-    userPromptService
+    userPromptService,
+    supabaseActivityService
   );
 
   return {
@@ -167,6 +170,7 @@ function createServiceRegistry() {
       gratitudeJournalChatStarter,
       apiKeyService,
       tickService,
+      supabaseActivityService,
     },
     destroy: async () => {
       await db.$disconnect();

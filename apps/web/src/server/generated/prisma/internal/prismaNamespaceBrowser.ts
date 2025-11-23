@@ -61,7 +61,8 @@ export const ModelName = {
   MessageChunk: 'MessageChunk',
   IdempotencyInfo: 'IdempotencyInfo',
   GratitudeJournal: 'GratitudeJournal',
-  ApiKey: 'ApiKey'
+  ApiKey: 'ApiKey',
+  SupabaseActivity: 'SupabaseActivity'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -256,6 +257,14 @@ export const ApiKeyScalarFieldEnum = {
 } as const
 
 export type ApiKeyScalarFieldEnum = (typeof ApiKeyScalarFieldEnum)[keyof typeof ApiKeyScalarFieldEnum]
+
+
+export const SupabaseActivityScalarFieldEnum = {
+  id: 'id',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SupabaseActivityScalarFieldEnum = (typeof SupabaseActivityScalarFieldEnum)[keyof typeof SupabaseActivityScalarFieldEnum]
 
 
 export const SortOrder = {

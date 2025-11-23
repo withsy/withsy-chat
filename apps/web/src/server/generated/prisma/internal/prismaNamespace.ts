@@ -402,7 +402,8 @@ export const ModelName = {
   MessageChunk: 'MessageChunk',
   IdempotencyInfo: 'IdempotencyInfo',
   GratitudeJournal: 'GratitudeJournal',
-  ApiKey: 'ApiKey'
+  ApiKey: 'ApiKey',
+  SupabaseActivity: 'SupabaseActivity'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -418,7 +419,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "userLinkAccount" | "userUsageLimit" | "userPrompt" | "userDefaultPrompt" | "userAiProfile" | "chat" | "chatPrompt" | "message" | "messageChunk" | "idempotencyInfo" | "gratitudeJournal" | "apiKey"
+    modelProps: "user" | "userLinkAccount" | "userUsageLimit" | "userPrompt" | "userDefaultPrompt" | "userAiProfile" | "chat" | "chatPrompt" | "message" | "messageChunk" | "idempotencyInfo" | "gratitudeJournal" | "apiKey" | "supabaseActivity"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1384,6 +1385,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    SupabaseActivity: {
+      payload: Prisma.$SupabaseActivityPayload<ExtArgs>
+      fields: Prisma.SupabaseActivityFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.SupabaseActivityFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupabaseActivityPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.SupabaseActivityFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupabaseActivityPayload>
+        }
+        findFirst: {
+          args: Prisma.SupabaseActivityFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupabaseActivityPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.SupabaseActivityFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupabaseActivityPayload>
+        }
+        findMany: {
+          args: Prisma.SupabaseActivityFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupabaseActivityPayload>[]
+        }
+        create: {
+          args: Prisma.SupabaseActivityCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupabaseActivityPayload>
+        }
+        createMany: {
+          args: Prisma.SupabaseActivityCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.SupabaseActivityCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupabaseActivityPayload>[]
+        }
+        delete: {
+          args: Prisma.SupabaseActivityDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupabaseActivityPayload>
+        }
+        update: {
+          args: Prisma.SupabaseActivityUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupabaseActivityPayload>
+        }
+        deleteMany: {
+          args: Prisma.SupabaseActivityDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.SupabaseActivityUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.SupabaseActivityUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupabaseActivityPayload>[]
+        }
+        upsert: {
+          args: Prisma.SupabaseActivityUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupabaseActivityPayload>
+        }
+        aggregate: {
+          args: Prisma.SupabaseActivityAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateSupabaseActivity>
+        }
+        groupBy: {
+          args: Prisma.SupabaseActivityGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SupabaseActivityGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.SupabaseActivityCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SupabaseActivityCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -1599,6 +1674,14 @@ export const ApiKeyScalarFieldEnum = {
 } as const
 
 export type ApiKeyScalarFieldEnum = (typeof ApiKeyScalarFieldEnum)[keyof typeof ApiKeyScalarFieldEnum]
+
+
+export const SupabaseActivityScalarFieldEnum = {
+  id: 'id',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SupabaseActivityScalarFieldEnum = (typeof SupabaseActivityScalarFieldEnum)[keyof typeof SupabaseActivityScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -1879,6 +1962,7 @@ export type GlobalOmitConfig = {
   idempotencyInfo?: Prisma.IdempotencyInfoOmit
   gratitudeJournal?: Prisma.GratitudeJournalOmit
   apiKey?: Prisma.ApiKeyOmit
+  supabaseActivity?: Prisma.SupabaseActivityOmit
 }
 
 /* Types for Logging */
