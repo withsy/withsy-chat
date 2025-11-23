@@ -74,7 +74,7 @@ export class MessageReplyService {
     );
 
     this.modelRouteService
-      .onSendMessageToAiTask({
+      .sendMessageToAi({
         userId,
         userMessageId: userMessage.id,
         modelMessageId: modelMessage.id,

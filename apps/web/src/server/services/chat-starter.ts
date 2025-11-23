@@ -61,7 +61,7 @@ export class ChatStarter {
     );
 
     this.modelRouteService
-      .onSendMessageToAiTask({
+      .sendMessageToAi({
         userId,
         userMessageId: userMessage.id,
         modelMessageId: modelMessage.id,

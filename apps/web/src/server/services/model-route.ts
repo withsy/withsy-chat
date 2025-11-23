@@ -3,7 +3,6 @@ import type { MessageChunkIndex, MessageId, UserId } from "@/types/id";
 import type { MessageData, MessageDataForAi } from "@/types/message";
 import { Model, ModelProviderMap } from "@/types/model";
 import { Role } from "@/types/role";
-import type { TaskInput } from "@/types/task";
 import { UserDefaultPromptGetOutput } from "@/types/user-default-prompt";
 import type { Pool } from "pg";
 import { match } from "ts-pattern";
@@ -54,9 +53,11 @@ export class ModelRouteService {
     private readonly chatMessageDecryptService: ChatMessageDecryptService
   ) {}
 
-  async onSendMessageToAiTask(
-    input: TaskInput<"model_route_send_message_to_ai">
-  ) {
+  async sendMessageToAi(input: {
+    userId: UserId;
+    userMessageId: MessageId;
+    modelMessageId: MessageId;
+  }) {
     const { userId, userMessageId, modelMessageId } = input;
     const chatMessage = await this.messageService.transitPendingToProcessing({
       userId,

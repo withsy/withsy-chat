@@ -123,7 +123,7 @@ export class GratitudeJournalChatStarter {
     const { chat, userMessage, modelMessage } = createRes;
 
     this.modelRouteService
-      .onSendMessageToAiTask({
+      .sendMessageToAi({
         userId,
         userMessageId: userMessage.id,
         modelMessageId: modelMessage.id,
