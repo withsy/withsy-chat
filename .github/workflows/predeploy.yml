@@ -34,3 +34,5 @@ jobs:
 
       - name: Migrate database
         run: npm run db:migrate
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
