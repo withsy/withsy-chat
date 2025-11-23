@@ -3,6 +3,9 @@
   "workspaces": [
     "apps/*"
   ],
+  "scripts": {
+    "lint": "npx eslint ."
+  },
   "devDependencies": {
     "@eslint/eslintrc": "3.3.1",
     "@eslint/js": "9.39.1",

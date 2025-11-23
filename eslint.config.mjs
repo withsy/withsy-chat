@@ -3,7 +3,7 @@
 import { FlatCompat } from "@eslint/eslintrc";
 import eslint from "@eslint/js";
 import pluginQuery from "@tanstack/eslint-plugin-query";
-import { defineConfig } from "eslint/config";
+import { defineConfig, globalIgnores } from "eslint/config";
 import tseslint from "typescript-eslint";
 
 const compat = new FlatCompat({
@@ -11,6 +11,7 @@ const compat = new FlatCompat({
 });
 
 export default defineConfig([
+  globalIgnores(["**/.next/", "**/next-env.d.ts"]),
   ...compat.config({
     extends: ["next/core-web-vitals", "next/typescript"],
     settings: {
