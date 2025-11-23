@@ -28,9 +28,11 @@ import { UserLinkAccountService } from "./services/user-link-account";
 import { UserUsageLimitService } from "./services/user-usage-limit";
 import { XAiService } from "./services/x-ai";
 import { TickService } from "./tick/tick.service";
+import { TimeZoneCheckService } from "./time-zone-check/time-zone-check.service";
 import { UserPromptService } from "./user-prompt/user-prompt.service";
 
 function createServiceRegistry() {
+  const timeZoneCheckService = new TimeZoneCheckService();
   const envValidationService = new EnvValidationService();
   const googleGenAiService = new GoogleGenAiService();
   const xAiService = new XAiService();
@@ -133,6 +135,7 @@ function createServiceRegistry() {
 
   return {
     serviceRegistry: {
+      timeZoneCheckService,
       envValidationService,
       googleGenAiService,
       xAiService,
