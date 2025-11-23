@@ -13,6 +13,3 @@ CREATE UNIQUE INDEX "api_keys_api_key_key" ON "api_keys"("api_key");
 
 -- CreateIndex
 CREATE INDEX "api_keys_api_key_idx" ON "api_keys"("api_key");
-
--- Add API Key seed data
-INSERT INTO api_keys (api_key) values ('apikey-oCt2YrAxTwRcBHJ1Fuiv_5Ik39xZuilSAlB7PORNpbg');

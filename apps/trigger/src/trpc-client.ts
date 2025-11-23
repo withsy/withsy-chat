@@ -1,6 +1,6 @@
 import { createTRPCClient, httpLink } from "@trpc/client";
 import SuperJSON from "superjson";
-import type { AppRouter } from "../../web/src/server/app/app.router";
+import type { AppRouter } from "../../web/dist/src/server/app/app.router";
 
 export function createTrpcClient() {
   let apiUrl = process.env.API_URL;

@@ -11,7 +11,7 @@ const compat = new FlatCompat({
 });
 
 export default defineConfig([
-  globalIgnores(["**/.next/", "**/next-env.d.ts"]),
+  globalIgnores(["**/.next/", "**/next-env.d.ts", "**/dist/"]),
   ...compat.config({
     extends: ["next/core-web-vitals", "next/typescript"],
     settings: {
