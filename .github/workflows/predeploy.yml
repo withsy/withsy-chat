@@ -36,3 +36,8 @@ jobs:
         run: npm run db:migrate
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+      - name: Notify vercel
+        uses: "vercel/repository-dispatch/actions/status@v1"
+        with:
+          name: "Vercel - withsy-chat: predeploy"
