@@ -9,6 +9,7 @@ concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 permissions:
   contents: read # for checkout
+  statuses: write # for notify vercel
 
 jobs:
   predeploy:
