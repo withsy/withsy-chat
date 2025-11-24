@@ -9,8 +9,7 @@ import {
 import { Upload } from "@aws-sdk/lib-storage";
 import type { Readable } from "node:stream";
 
-const PROD_ENDPOINT = "https://nsrzjvlxrwyckjfmfzih.supabase.co/storage/v1/s3";
-const DEV_ENDPOINT = "https://iexsdnahybucxvjpsrol.supabase.co/storage/v1/s3";
+const ENDPOINT = "https://nsrzjvlxrwyckjfmfzih.supabase.co/storage/v1/s3";
 
 export class S3Service {
   private client: S3Client;
@@ -19,8 +18,7 @@ export class S3Service {
     this.client = new S3Client({
       forcePathStyle: true,
       region: "us-east-2",
-      endpoint:
-        process.env.NODE_ENV === "production" ? PROD_ENDPOINT : DEV_ENDPOINT,
+      endpoint: ENDPOINT,
       credentials: {
         accessKeyId: process.env.S3_ACCESS_KEY_ID,
         secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
