@@ -14,7 +14,4 @@ export default defineConfig({
       randomize: true,
     },
   },
-  build: {
-    extensions: [],
-  },
 });
