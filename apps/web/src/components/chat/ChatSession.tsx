@@ -137,6 +137,7 @@ export function ChatSession({ initialMessages, children }: Props) {
 
     const source = new EventSource(`/api/messages/${streamMessageId}`);
     source.addEventListener("open", () => {
+      console.log(`@ open ${streamMessageId}`);
       setMessages((prev) =>
         prev.map((x) =>
           x.id === streamMessageId
@@ -152,6 +153,7 @@ export function ChatSession({ initialMessages, children }: Props) {
 
     let isSuccess = false;
     source.addEventListener("error", () => {
+      console.log(`@ error ${streamMessageId}`);
       closeEventSource(source);
       setMessages((prev) =>
         prev.map((x) =>
@@ -165,6 +167,7 @@ export function ChatSession({ initialMessages, children }: Props) {
     });
 
     source.addEventListener("message", (ev) => {
+      console.log(`@ message ${streamMessageId}`);
       const event = MessageChunkEvent.parse(SuperJSON.parse(ev.data));
       if (event.type === "chunk") {
         const chunk = event.chunk;
