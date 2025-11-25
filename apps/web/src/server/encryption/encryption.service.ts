@@ -1,7 +1,16 @@
 import { Encryptor } from "./encryptor";
 
 export class EncryptionService {
-  #encryptor = new Encryptor(process.env.ENCRYPTION_KEY);
+  #encryptor: Encryptor;
+
+  constructor() {
+    const { ENCRYPTION_SECRET } = process.env;
+    if (!ENCRYPTION_SECRET) {
+      throw new Error("Invalid ENCRYPTION_SECRET.");
+    }
+
+    this.#encryptor = new Encryptor(ENCRYPTION_SECRET);
+  }
 
   encrypt(text: string) {
     return this.#encryptor.encrypt(text);

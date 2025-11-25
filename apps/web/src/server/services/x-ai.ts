@@ -8,8 +8,13 @@ export class XAiService {
   private openai: OpenAI;
 
   constructor() {
+    const { XAI_API_KEY } = process.env;
+    if (!XAI_API_KEY) {
+      throw new Error("Invalid XAI_API_KEY.");
+    }
+
     this.openai = new OpenAI({
-      apiKey: process.env.XAI_API_KEY,
+      apiKey: XAI_API_KEY,
       baseURL: XAI_BASE_URL,
     });
   }

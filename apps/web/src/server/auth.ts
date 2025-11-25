@@ -7,10 +7,19 @@ import { inspect } from "node:util";
 import { serviceRegistry } from "./service-registry";
 
 function createAuthOptions(): AuthOptions {
+  const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } = process.env;
+  if (!GOOGLE_CLIENT_ID) {
+    throw new Error("Invalid GOOGLE_CLIENT_ID.");
+  }
+
+  if (!GOOGLE_CLIENT_SECRET) {
+    throw new Error("Invalid GOOGLE_CLIENT_SECRET.");
+  }
+
   const providers: Provider[] = [
     GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      clientId: GOOGLE_CLIENT_ID,
+      clientSecret: GOOGLE_CLIENT_SECRET,
       authorization: {
         params: {
           prompt: "consent",
@@ -21,19 +30,21 @@ function createAuthOptions(): AuthOptions {
     }),
   ];
 
-  const devAuthProvider = CredentialsProvider({
-    name: "Withsy Developer",
-    credentials: {},
-    authorize() {
-      return {
-        id: "withsy-dev",
-        name: "Withsy Developer",
-        email: "developer@withsy.chat",
-      };
-    },
-  });
+  if (process.env.NODE_ENV !== "production") {
+    const devAuthProvider = CredentialsProvider({
+      name: "Withsy Developer",
+      credentials: {},
+      authorize() {
+        return {
+          id: "withsy-dev",
+          name: "Withsy Developer",
+          email: "developer@withsy.chat",
+        };
+      },
+    });
 
-  if (process.env.NODE_ENV !== "production") providers.push(devAuthProvider);
+    providers.push(devAuthProvider);
+  }
 
   const authOptions: AuthOptions = {
     pages: {
@@ -107,7 +118,9 @@ function createAuthOptions(): AuthOptions {
     },
   };
 
-  if (process.env.NODE_ENV !== "production") authOptions.logger = devLogger;
+  if (process.env.NODE_ENV !== "production") {
+    authOptions.logger = devLogger;
+  }
 
   return authOptions;
 }

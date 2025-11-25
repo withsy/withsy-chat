@@ -15,13 +15,22 @@ export class S3Service {
   private client: S3Client;
 
   constructor() {
+    const { S3_ACCESS_KEY_ID, S3_SECRET_ACCESS_KEY } = process.env;
+    if (!S3_ACCESS_KEY_ID) {
+      throw new Error("Invalid S3_ACCESS_KEY_ID.");
+    }
+
+    if (!S3_SECRET_ACCESS_KEY) {
+      throw new Error("Invalid S3_SECRET_ACCESS_KEY");
+    }
+
     this.client = new S3Client({
       forcePathStyle: true,
       region: "us-east-2",
       endpoint: ENDPOINT,
       credentials: {
-        accessKeyId: process.env.S3_ACCESS_KEY_ID,
-        secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
+        accessKeyId: S3_ACCESS_KEY_ID,
+        secretAccessKey: S3_SECRET_ACCESS_KEY,
       },
     });
   }

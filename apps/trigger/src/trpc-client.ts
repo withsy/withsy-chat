@@ -3,18 +3,18 @@ import SuperJSON from "superjson";
 import type { AppRouter } from "../../web/dist/src/server/app/app.router";
 
 export function createTrpcClient() {
-  let apiUrl = process.env.API_URL;
-  if (!apiUrl) {
-    throw new Error("API_URL must exist.");
+  const { API_URL, API_KEY } = process.env;
+  if (!API_URL) {
+    throw new Error("Invalid API_URL.");
   }
 
+  let apiUrl = API_URL;
   if (apiUrl.endsWith("/")) {
     apiUrl = apiUrl.slice(0, -1);
   }
 
-  const apiKey = process.env.API_KEY;
-  if (!apiKey) {
-    throw new Error("API_KEY must exist.");
+  if (!API_KEY) {
+    throw new Error("Invalid API_KEY.");
   }
 
   const trpcClient = createTRPCClient<AppRouter>({
@@ -23,7 +23,7 @@ export function createTrpcClient() {
         transformer: SuperJSON,
         url: `${apiUrl}/api/trpc`,
         headers: {
-          "X-Api-Key": apiKey,
+          "X-Api-Key": API_KEY,
         },
       }),
     ],

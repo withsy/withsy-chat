@@ -3,8 +3,13 @@ import type { MaybePromise } from "@trpc/server/unstable-core-do-not-import";
 import { type Notification, Pool } from "pg";
 
 export function createPgPool(): Pool {
+  const { DATABASE_URL } = process.env;
+  if (!DATABASE_URL) {
+    throw new Error("Invalid DATABASE_URL.");
+  }
+
   const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
+    connectionString: DATABASE_URL,
   });
 
   const onError = (e: unknown) => {

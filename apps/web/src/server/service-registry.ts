@@ -10,7 +10,6 @@ import { ChatMessageDecryptService } from "./services/chat-message-decrypt";
 import { ChatPromptService } from "./services/chat-prompt";
 import { ChatStarter } from "./services/chat-starter";
 import { createDb } from "./services/db";
-import { EnvValidationService } from "./services/env-validation";
 import { GoogleGenAiService } from "./services/google-gen-ai";
 import { GratitudeJournalService } from "./services/gratitude-journal";
 import { GratitudeJournalChatStarter } from "./services/gratitude-journal-chat-starter";
@@ -34,7 +33,6 @@ import { UserPromptService } from "./user-prompt/user-prompt.service";
 
 function createServiceRegistry() {
   const timeZoneCheckService = new TimeZoneCheckService();
-  const envValidationService = new EnvValidationService();
   const googleGenAiService = new GoogleGenAiService();
   const xAiService = new XAiService();
   const encryptionService = new EncryptionService();
@@ -139,7 +137,6 @@ function createServiceRegistry() {
   return {
     serviceRegistry: {
       timeZoneCheckService,
-      envValidationService,
       googleGenAiService,
       xAiService,
       encryptionService,

@@ -7,7 +7,12 @@ export class GoogleGenAiService {
   private readonly ai: GoogleGenAI;
 
   constructor() {
-    this.ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+    const { GEMINI_API_KEY } = process.env;
+    if (!GEMINI_API_KEY) {
+      throw new Error("Invalid GEMINI_API_KEY.");
+    }
+
+    this.ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
   }
 
   async sendMessageToAi(input: SendMessageToAiInput) {

@@ -2,7 +2,7 @@ import type { AppRouter } from "@/server/app/app.router";
 import { QueryClient } from "@tanstack/react-query";
 import {
   createTRPCClient,
-  httpBatchLink,
+  httpBatchStreamLink,
   httpLink,
   loggerLink,
   splitLink,
@@ -49,7 +49,7 @@ const links: TRPCLink<AppRouter>[] = [
   splitLink({
     condition: (op) => op.context.skipBatch === true,
     true: httpLink(commonLinkOptions),
-    false: httpBatchLink(commonLinkOptions),
+    false: httpBatchStreamLink(commonLinkOptions),
   }),
 ];
 

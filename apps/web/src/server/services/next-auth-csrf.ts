@@ -5,18 +5,26 @@ export class NextAuthCsrfService {
   private cookieName: string;
 
   constructor() {
-    if (!process.env.NEXTAUTH_URL) throw new Error("Please set NEXTAUTH_URL.");
-    const url = new URL(process.env.NEXTAUTH_URL);
+    const { NEXTAUTH_URL } = process.env;
+    if (!NEXTAUTH_URL) {
+      throw new Error("Invalid NEXTAUTH_URL.");
+    }
+
+    const url = new URL(NEXTAUTH_URL);
     const prefix = url.protocol === "https:" ? "__Host-" : "";
     this.cookieName = `${prefix}next-auth.csrf-token`;
   }
 
   createCsrfTokenHash(csrfToken: string): string {
-    if (!process.env.NEXTAUTH_SECRET)
-      throw new Error("Please set NEXTAUTH_SECRET.");
+    const { NEXTAUTH_SECRET } = process.env;
+    if (!NEXTAUTH_SECRET) {
+      throw new Error("Invalid NEXTAUTH_SECRET.");
+    }
+
     const csrfTokenHash = createHash("sha256")
-      .update(`${csrfToken}${process.env.NEXTAUTH_SECRET}`)
+      .update(`${csrfToken}${NEXTAUTH_SECRET}`)
       .digest("hex");
+
     return csrfTokenHash;
   }
 
