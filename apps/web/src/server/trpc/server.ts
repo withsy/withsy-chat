@@ -13,7 +13,6 @@ export const t = initTRPC.context<PublicContext>().create({
   transformer: SuperJSON,
   errorFormatter: ({ error, shape }) => {
     const { cause } = error;
-
     if (cause instanceof DataError) {
       return {
         ...shape,

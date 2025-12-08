@@ -73,7 +73,6 @@ function createServiceRegistry() {
   const modelRouteService = new ModelRouteService(
     messageService,
     messageChunkService,
-    pgPool,
     googleGenAiService,
     xAiService,
     db,

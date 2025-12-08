@@ -82,4 +82,13 @@ export class MessageChunkService {
     const res = await messageChunkRepository.hardDeleteMessageChunks();
     console.warn(`Successfully hard deleted ${res.count} messageChunks.`);
   }
+
+  async findMessageChunks(input: {
+    userId: UserId;
+    messageId: MessageId;
+    index: number;
+  }) {
+    const messageChunkRepository = new MessageChunkRepository(this.db);
+    return await messageChunkRepository.findMessageChunks(input);
+  }
 }

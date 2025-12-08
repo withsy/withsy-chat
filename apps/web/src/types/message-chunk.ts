@@ -1,8 +1,8 @@
+import type { Prisma } from "@/server/generated/prisma/client";
 import { z } from "zod";
 import type { zInfer } from "./common";
-import { MessageChunkIndex } from "./id";
+import { MessageChunkIndex, MessageId } from "./id";
 import { UserUsageLimitData } from "./user-usage-limit";
-import type { Prisma } from "@/server/generated/prisma/client";
 
 export const MessageChunkSelect = {
   index: true,
@@ -44,3 +44,9 @@ export const MessageChunkEvent = z.discriminatedUnion("type", [
   }),
 ]);
 export type MessageChunkEvent = zInfer<typeof MessageChunkEvent>;
+
+export const MessageChunkEntry = z.object({
+  messageId: MessageId,
+  index: MessageChunkIndex,
+});
+export type MessageChunkEntry = zInfer<typeof MessageChunkEntry>;

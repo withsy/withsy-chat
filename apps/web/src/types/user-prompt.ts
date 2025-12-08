@@ -1,7 +1,7 @@
+import type { Prisma } from "@/server/generated/prisma/client";
 import { z } from "zod";
 import type { zInfer } from "./common";
 import { IdempotencyKey, UserPromptId } from "./id";
-import type { Prisma } from "@/server/generated/prisma/client";
 
 export const UserPromptSelect = {
   id: true,

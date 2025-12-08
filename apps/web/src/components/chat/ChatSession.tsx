@@ -19,7 +19,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
-import SuperJSON from "superjson";
+import { SuperJSON } from "superjson";
 import { v4 as uuid } from "uuid";
 import { ChatDrawer } from "./ChatDrawer";
 import ChatHeader from "./ChatHeader";

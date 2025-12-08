@@ -4,7 +4,6 @@ import type { MessageData, MessageDataForAi } from "@/types/message";
 import { Model, ModelProviderMap } from "@/types/model";
 import { Role } from "@/types/role";
 import { UserDefaultPromptGetOutput } from "@/types/user-default-prompt";
-import type { Pool } from "pg";
 import { match } from "ts-pattern";
 import type { Simplify } from "type-fest";
 import type { EncryptionService } from "../encryption/encryption.service";
@@ -13,7 +12,6 @@ import { MessageService } from "../message/message.service";
 import type { ChatMessageDecryptService } from "./chat-message-decrypt";
 import type { Db } from "./db";
 import type { GoogleGenAiService } from "./google-gen-ai";
-import { notify } from "./pg";
 import type { UserDefaultPromptService } from "./user-default-prompt";
 import { UserUsageLimitService } from "./user-usage-limit";
 import type { XAiService } from "./x-ai";
@@ -44,7 +42,6 @@ export class ModelRouteService {
   constructor(
     private readonly messageService: MessageService,
     private readonly messageChunkService: MessageChunkService,
-    private readonly pgPool: Pool,
     private readonly googleGenAiService: GoogleGenAiService,
     private readonly xAiService: XAiService,
     private readonly db: Db,
@@ -101,10 +98,6 @@ export class ModelRouteService {
         reasoningText,
         rawData,
         isDone,
-      });
-      await notify(this.pgPool, "message_chunk_created", {
-        messageId: modelMessage.id,
-        index,
       });
       index += 1;
     };
