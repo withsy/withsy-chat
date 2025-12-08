@@ -13,7 +13,7 @@ const compat = new FlatCompat({
 export default defineConfig([
   globalIgnores(["**/.next/", "**/next-env.d.ts", "**/dist/"]),
   ...compat.config({
-    extends: ["next/core-web-vitals", "next/typescript"],
+    extends: ["next/core-web-vitals"],
     settings: {
       next: {
         rootDir: "apps/web/",
