@@ -168,25 +168,25 @@ function createServiceRegistry() {
       tickService,
       supabaseActivityService,
     },
-    destroy: async () => {
+    close: async () => {
       await db.$disconnect();
       await pgPool.end();
     },
   };
 }
 
-const result = createServiceRegistry();
-export const serviceRegistry = result.serviceRegistry;
+const context = createServiceRegistry();
+export const serviceRegistry = context.serviceRegistry;
 
-let destroyCalled = false;
-const destroyServiceRegistry = async () => {
-  if (destroyCalled) {
+let isCloseCalled = false;
+const closeServiceRegistry = async () => {
+  if (isCloseCalled) {
     return;
   }
 
-  destroyCalled = true;
-  await result.destroy();
+  isCloseCalled = true;
+  await context.close();
 };
 
-process.on("SIGINT", destroyServiceRegistry);
-process.on("SIGTERM", destroyServiceRegistry);
+process.on("SIGINT", closeServiceRegistry);
+process.on("SIGTERM", closeServiceRegistry);
