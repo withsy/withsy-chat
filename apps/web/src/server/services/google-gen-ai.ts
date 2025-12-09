@@ -23,7 +23,7 @@ export class GoogleGenAiService {
       parts: [{ text: x.text }],
     }));
 
-    if (process.env.NODE_ENV === "development")
+    if (process.env.NODE_ENV === "development") {
       console.log(
         "GoogleGenAiService.sendMessageToAi. model:",
         model,
@@ -32,6 +32,7 @@ export class GoogleGenAiService {
         " contents:",
         inspect(contents, { depth: null })
       );
+    }
 
     const stream = await this.ai.models.generateContentStream({
       model,

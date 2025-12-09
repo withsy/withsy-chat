@@ -1,10 +1,10 @@
-import { ChatSelect } from "@/types/chat";
+import { ChatId, ChatSelect } from "@/types/chat";
 import { ChatPromptSelect } from "@/types/chat-prompt";
-import type { ChatId, MessageId, UserId } from "@/types/id";
 import {
   MessageData,
   MessageGet,
   MessageGetOutput,
+  MessageId,
   MessageList,
   MessageListOutput,
   MessageSelect,
@@ -14,6 +14,7 @@ import {
 } from "@/types/message";
 import { Model } from "@/types/model";
 import { Role } from "@/types/role";
+import type { UserId } from "@/types/user";
 import { UserPromptSelect } from "@/types/user-prompt";
 import { v7 as uuidv7 } from "uuid";
 import type { EncryptionService } from "../encryption/encryption.service";

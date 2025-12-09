@@ -97,7 +97,7 @@
     "event-source-polyfill": "1.0.31",
     "prisma": "6.19.0",
     "tailwindcss": "4",
-    "type-fest": "5.2.0",
+    "type-fest": "5.3.1",
     "vitest": "4.0.10"
   },
   "engines": {

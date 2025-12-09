@@ -7,7 +7,7 @@ import {
   GratitudeJournalSelect,
   GratitudeJournalStats,
 } from "@/types/gratitude-journal";
-import type { UserId } from "@/types/id";
+import type { UserId } from "@/types/user";
 import {
   endOfDay,
   format,
@@ -18,10 +18,10 @@ import {
 } from "date-fns";
 import { fromZonedTime, toZonedTime } from "date-fns-tz";
 import { v7 as uuidv7 } from "uuid";
+import type { Prisma } from "../generated/prisma/client";
+import type { ChatMessageDecryptService } from "./chat-message-decrypt";
 import type { Db, Tx } from "./db";
 import { UserService } from "./user";
-import type { ChatMessageDecryptService } from "./chat-message-decrypt";
-import type { Prisma } from "../generated/prisma/client";
 
 export class GratitudeJournalService {
   constructor(

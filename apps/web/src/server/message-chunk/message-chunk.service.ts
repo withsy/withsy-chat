@@ -1,9 +1,11 @@
-import type { MessageChunkIndex, MessageId, UserId } from "@/types/id";
+import type { MessageId } from "@/types/message";
 import {
   MessageChunkData,
   MessageChunkEntity,
+  MessageChunkIndex,
   MessageChunkSelect,
 } from "@/types/message-chunk";
+import type { UserId } from "@/types/user";
 import type { EncryptionService } from "../encryption/encryption.service";
 import type { Db } from "../services/db";
 import { MessageChunkRepository } from "./message-chunk.repository";

@@ -60,9 +60,9 @@ export default function BookmarkPage({
     return filterMessages({
       messages: data,
       sortOrder,
-    }).filter((b) => {
-      const title = b.chat?.title?.toLowerCase() ?? "";
-      const text = b.text?.toLowerCase() ?? "";
+    }).filter((x) => {
+      const title = x.chat?.title?.toLowerCase() ?? "";
+      const text = x.text?.toLowerCase() ?? "";
       return title.includes(keyword) || text.includes(keyword);
     });
   }, [sortOrder, searchText, data]);

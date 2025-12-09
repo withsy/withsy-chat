@@ -1,11 +1,12 @@
-import { z } from "zod";
-import { ChatData } from "./chat";
-import { type zInfer } from "./common";
-import { ChatId, IdempotencyKey, MessageId, UserId } from "./id";
+import type { Prisma } from "@/server/generated/prisma/client";
+import { z, ZodType } from "zod";
+import { ChatId } from "./chat";
+import { DateTimeTz, type zInfer } from "./common";
+import { IdempotencyKey } from "./idempotency";
 import { Model } from "./model";
 import { Role } from "./role";
+import { UserId } from "./user";
 import { UserUsageLimitError } from "./user-usage-limit";
-import type { Prisma } from "@/server/generated/prisma/client";
 
 export const MessageSelect = {
   id: true,
@@ -20,6 +21,9 @@ export const MessageSelect = {
   createdAt: true,
 } satisfies Prisma.MessageSelect;
 
+export const MessageId = z.uuid();
+export type MessageId = zInfer<typeof MessageId>;
+
 export const MessageStatus = z.enum([
   "pending",
   "processing",
@@ -33,18 +37,29 @@ export function isMessageComplete(data: MessageData) {
 }
 
 export const MessageEntity = z.object({
-  id: MessageId,
-  chatId: ChatId,
+  get id() {
+    return MessageId;
+  },
+  get chatId() {
+    return ChatId;
+  },
   role: z.string(),
-  model: z.nullable(z.string()),
+  model: z.string().nullable(),
   textEncrypted: z.string(),
   reasoningTextEncrypted: z.string(),
-  status: MessageStatus,
+  get status() {
+    return MessageStatus;
+  },
   isBookmarked: z.boolean(),
-  parentMessageId: z.nullable(MessageId),
-  createdAt: z.date(),
+  get parentMessageId() {
+    return MessageId.nullable();
+  },
+  get createdAt() {
+    return DateTimeTz;
+  },
 });
 export type MessageEntity = zInfer<typeof MessageEntity>;
+
 const _checkMessage = {} satisfies Omit<
   MessageEntity,
   keyof typeof MessageSelect
@@ -53,19 +68,17 @@ const _checkMessage = {} satisfies Omit<
 export type MessageData = {
   id: MessageId;
   chatId: ChatId;
-  chat?: ChatData | null;
   role: Role;
   model: Model | null;
   text: string;
   reasoningText: string;
   status: MessageStatus;
   isBookmarked: boolean;
-  createdAt: Date;
   parentMessageId: MessageId | null;
-  parentMessage?: MessageData | null;
+  createdAt: DateTimeTz;
   isMessageCollapsed?: boolean;
 };
-export const MessageDataBase: z.ZodType<MessageData> = MessageEntity.omit({
+export const MessageDataBase: ZodType<MessageData> = MessageEntity.omit({
   textEncrypted: true,
   reasoningTextEncrypted: true,
   role: true,
@@ -73,42 +86,60 @@ export const MessageDataBase: z.ZodType<MessageData> = MessageEntity.omit({
 }).extend({
   text: z.string(),
   reasoningText: z.string(),
-  role: Role,
-  model: z.nullable(Model),
-  chat: z.nullable(z.lazy(() => ChatData)).default(null),
-  parentMessage: z.nullable(z.lazy(() => MessageDataBase)).default(null),
+  get role() {
+    return Role;
+  },
+  get model() {
+    return Model.nullable();
+  },
 });
 export const MessageData = MessageDataBase;
 
 export const MessageGet = z.object({
-  messageId: MessageId,
+  get messageId() {
+    return MessageId;
+  },
 });
 export type MessageGet = zInfer<typeof MessageGet>;
 
-export const MessageGetOutput = z.nullable(MessageData);
+export const MessageGetOutput = MessageData.nullable();
 export type MessageGetOutput = zInfer<typeof MessageGetOutput>;
 
 export const MessageList = z.object({
-  role: z.optional(Role),
-  isBookmarked: z.optional(z.boolean()),
+  get role() {
+    return Role.optional();
+  },
+  isBookmarked: z.boolean().optional(),
   options: z.object({
     scope: z.discriminatedUnion("by", [
-      z.object({ by: z.literal("user"), userId: UserId }),
-      z.object({ by: z.literal("chat"), chatId: ChatId }),
-    ]),
-    order: z.optional(z.enum(["asc", "desc"])).default("asc"),
-    limit: z.optional(z.number().int().min(1).max(100)).default(100),
-    afterId: z.optional(MessageId),
-    include: z.optional(
       z.object({
-        chat: z.optional(z.boolean()).default(false),
+        by: z.literal("user"),
+        get userId() {
+          return UserId;
+        },
+      }),
+      z.object({
+        by: z.literal("chat"),
+        get chatId() {
+          return ChatId;
+        },
+      }),
+    ]),
+    order: z.enum(["asc", "desc"]).optional().default("asc"),
+    limit: z.number().int().min(1).max(100).optional().default(100),
+    get afterId() {
+      return MessageId.optional();
+    },
+    include: z
+      .object({
+        chat: z.boolean().optional().default(false),
       })
-    ),
+      .optional(),
   }),
 });
 export type MessageList = zInfer<typeof MessageList>;
 
-export const MessageListOutput = z.array(MessageData);
+export const MessageListOutput = MessageData.array();
 export type MessageListOutput = zInfer<typeof MessageListOutput>;
 
 export type MessageEntityForAi = {
@@ -122,23 +153,36 @@ export type MessageDataForAi = {
 };
 
 export const MessageSend = z.object({
-  idempotencyKey: IdempotencyKey,
-  chatId: ChatId,
+  get idempotencyKey() {
+    return IdempotencyKey;
+  },
+  get chatId() {
+    return ChatId;
+  },
   text: z.string(),
-  model: Model,
+  get model() {
+    return Model;
+  },
 });
 export type MessageSend = zInfer<typeof MessageSend>;
 
 export const MessageSendOutput = z.object({
-  userMessage: MessageData,
-  modelMessage: MessageData,
+  get userMessage() {
+    return MessageData;
+  },
+  get modelMessage() {
+    return MessageData;
+  },
 });
 export type MessageSendOutput = zInfer<typeof MessageSendOutput>;
 
 export const MessageSendError = UserUsageLimitError;
+export type MessageSendError = zInfer<typeof MessageSendError>;
 
 export const MessageUpdate = z.object({
-  messageId: MessageId,
-  isBookmarked: z.optional(z.boolean()),
+  get messageId() {
+    return MessageId;
+  },
+  isBookmarked: z.boolean().optional(),
 });
 export type MessageUpdate = zInfer<typeof MessageUpdate>;

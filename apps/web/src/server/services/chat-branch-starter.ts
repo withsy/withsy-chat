@@ -1,6 +1,6 @@
 import type { ChatData } from "@/types/chat";
 import type { ChatBranchStart } from "@/types/chat-branch";
-import type { UserId } from "@/types/id";
+import type { UserId } from "@/types/user";
 import { ChatService } from "../chat/chat.service";
 import type { EncryptionService } from "../encryption/encryption.service";
 import { MessageService } from "../message/message.service";

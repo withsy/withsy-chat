@@ -1,5 +1,6 @@
-import type { MessageId, UserId } from "@/types/id";
+import type { MessageId } from "@/types/message";
 import { MessageChunkSelect } from "@/types/message-chunk";
+import type { UserId } from "@/types/user";
 import type { Tx } from "../services/db";
 import { getHardDeleteCutoffDate } from "../utils";
 

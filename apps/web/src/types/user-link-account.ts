@@ -1,12 +1,21 @@
 import { z } from "zod";
-import type { zInfer } from "./common";
-import { UserId, UserLinkAccountId } from "./id";
+import { DateTimeTz, type zInfer } from "./common";
+import { UserId } from "./user";
+
+export const UserLinkAccountId = z.number().int();
+export type UserLinkAccountId = zInfer<typeof UserLinkAccountId>;
 
 export const UserLinkAccountEntity = z.object({
-  id: UserLinkAccountId,
-  userId: UserId,
+  get id() {
+    return UserLinkAccountId;
+  },
+  get userId() {
+    return UserId;
+  },
   provider: z.string(),
   providerAccountId: z.string(),
-  createdAt: z.date(),
+  get createdAt() {
+    return DateTimeTz;
+  },
 });
 export type UserLinkAccountEntity = zInfer<typeof UserLinkAccountEntity>;

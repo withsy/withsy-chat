@@ -1,7 +1,6 @@
+import type { Prisma } from "@/server/generated/prisma/client";
 import { z } from "zod";
 import { type zInfer } from "./common";
-import { UserId } from "./id";
-import type { Prisma } from "@/server/generated/prisma/client";
 
 export const UserSelect = {
   id: true,
@@ -12,6 +11,9 @@ export const UserSelect = {
   timezone: true,
   preferences: true,
 } satisfies Prisma.UserSelect;
+
+export const UserId = z.uuid();
+export type UserId = zInfer<typeof UserId>;
 
 export const UserEntity = z.object({
   id: UserId,

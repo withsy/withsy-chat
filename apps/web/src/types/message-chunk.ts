@@ -1,7 +1,6 @@
 import type { Prisma } from "@/server/generated/prisma/client";
 import { z } from "zod";
 import type { zInfer } from "./common";
-import { MessageChunkIndex, MessageId } from "./id";
 import { UserUsageLimitData } from "./user-usage-limit";
 
 export const MessageChunkSelect = {
@@ -11,13 +10,19 @@ export const MessageChunkSelect = {
   isDone: true,
 } satisfies Prisma.MessageChunkSelect;
 
+export const MessageChunkIndex = z.number().int();
+export type MessageChunkIndex = zInfer<typeof MessageChunkIndex>;
+
 export const MessageChunkEntity = z.object({
-  index: MessageChunkIndex,
+  get index() {
+    return MessageChunkIndex;
+  },
   textEncrypted: z.string(),
   reasoningTextEncrypted: z.string(),
   isDone: z.boolean(),
 });
 export type MessageChunkEntity = zInfer<typeof MessageChunkEntity>;
+
 const _checkMessageChunk = {} satisfies Omit<
   MessageChunkEntity,
   keyof typeof MessageChunkSelect
@@ -36,17 +41,15 @@ export type MessageChunkData = zInfer<typeof MessageChunkData>;
 export const MessageChunkEvent = z.discriminatedUnion("type", [
   z.object({
     type: z.literal("chunk"),
-    chunk: MessageChunkData,
+    get chunk() {
+      return MessageChunkData;
+    },
   }),
   z.object({
     type: z.literal("usageLimits"),
-    usageLimits: z.array(UserUsageLimitData),
+    get usageLimits() {
+      return UserUsageLimitData.array();
+    },
   }),
 ]);
 export type MessageChunkEvent = zInfer<typeof MessageChunkEvent>;
-
-export const MessageChunkEntry = z.object({
-  messageId: MessageId,
-  index: MessageChunkIndex,
-});
-export type MessageChunkEntry = zInfer<typeof MessageChunkEntry>;

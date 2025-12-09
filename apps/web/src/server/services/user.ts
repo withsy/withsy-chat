@@ -1,9 +1,9 @@
-import type { UserId } from "@/types/id";
 import { isValidAiLanguage } from "@/types/languages";
 import {
   UserData,
   UserEnsure,
   UserEntity,
+  UserId,
   UserPrefs,
   UserSelect,
   UserUpdate,

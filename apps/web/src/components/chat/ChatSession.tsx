@@ -7,9 +7,9 @@ import { useDrawerStore } from "@/stores/useDrawerStore";
 import { useSelectedModelStore } from "@/stores/useSelectedModelStore";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 import { ChatStartError } from "@/types/chat";
-import { MessageId } from "@/types/id";
 import {
   isMessageComplete,
+  MessageId,
   MessageSendError,
   type MessageData,
 } from "@/types/message";

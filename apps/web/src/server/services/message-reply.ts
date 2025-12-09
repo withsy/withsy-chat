@@ -1,7 +1,7 @@
-import type { UserId } from "@/types/id";
 import { MessageSelect, type MessageData } from "@/types/message";
 import type { MessageReplyRegenerate } from "@/types/message-reply";
 import { Role } from "@/types/role";
+import type { UserId } from "@/types/user";
 import type { EncryptionService } from "../encryption/encryption.service";
 import { MessageService } from "../message/message.service";
 import type { ChatMessageDecryptService } from "./chat-message-decrypt";

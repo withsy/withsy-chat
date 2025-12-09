@@ -1,4 +1,4 @@
-import type { UserId } from "@/types/id";
+import type { UserId } from "@/types/user";
 import {
   UserPromptCreate,
   UserPromptData,

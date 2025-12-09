@@ -1,5 +1,5 @@
 import type { Simplify } from "type-fest";
-import { z, ZodType } from "zod";
+import { z, type ZodType } from "zod";
 
 export type MaybePromise<T> = Promise<T> | T;
 
@@ -27,3 +27,6 @@ export const JsonValueBase: z.ZodType<JsonValue> = z.union([
   ),
 ]);
 export const JsonValue = JsonValueBase;
+
+export const DateTimeTz = z.coerce.date<Date | string>();
+export type DateTimeTz = zInfer<typeof DateTimeTz>;

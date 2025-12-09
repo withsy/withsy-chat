@@ -1,8 +1,9 @@
 import type { MaybePromise } from "@/types/common";
-import type { MessageChunkIndex, MessageId, UserId } from "@/types/id";
-import type { MessageData, MessageDataForAi } from "@/types/message";
+import type { MessageData, MessageDataForAi, MessageId } from "@/types/message";
+import type { MessageChunkIndex } from "@/types/message-chunk";
 import { Model, ModelProviderMap } from "@/types/model";
 import { Role } from "@/types/role";
+import type { UserId } from "@/types/user";
 import { UserDefaultPromptGetOutput } from "@/types/user-default-prompt";
 import { match } from "ts-pattern";
 import type { Simplify } from "type-fest";

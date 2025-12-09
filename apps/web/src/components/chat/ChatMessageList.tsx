@@ -1,7 +1,6 @@
 import { useUser } from "@/context/UserContext";
 import { useChatStore } from "@/stores/useChatStore";
-import { MessageId } from "@/types/id";
-import type { MessageData } from "@/types/message";
+import { MessageId, type MessageData } from "@/types/message";
 import { ChevronsDown } from "lucide-react";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";

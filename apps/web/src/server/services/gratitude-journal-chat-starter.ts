@@ -3,7 +3,7 @@ import {
   GratitudeJournalSelect,
   type GratitudeJournalStartChat,
 } from "@/types/gratitude-journal";
-import type { UserId } from "@/types/id";
+import type { UserId } from "@/types/user";
 import { TRPCError } from "@trpc/server";
 import { ChatService } from "../chat/chat.service";
 import type { EncryptionService } from "../encryption/encryption.service";

@@ -9,8 +9,8 @@ import {
 } from "@/types/chat";
 import { ChatPromptSelect } from "@/types/chat-prompt";
 import { GratitudeJournalSelect } from "@/types/gratitude-journal";
-import type { MessageId, UserId } from "@/types/id";
-import { MessageSelect } from "@/types/message";
+import { MessageId, MessageSelect } from "@/types/message";
+import type { UserId } from "@/types/user";
 import { v7 as uuidv7 } from "uuid";
 import type { EncryptionService } from "../encryption/encryption.service";
 import type { ChatMessageDecryptService } from "../services/chat-message-decrypt";
@@ -68,8 +68,9 @@ export class ChatService {
   async update(userId: UserId, input: ChatUpdate): Promise<ChatData> {
     const { chatId, title, isStarred, userPromptId } = input;
 
-    const titleEncrypted =
-      title != null ? this.encryptionService.encrypt(title) : undefined;
+    const titleEncrypted = title
+      ? this.encryptionService.encrypt(title)
+      : undefined;
 
     const entity = await this.db.$transaction(async (tx) => {
       if (userPromptId)

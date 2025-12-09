@@ -37,7 +37,7 @@ export class ChatMessageDecryptService {
     return data;
   }
 
-  decryptMessage(entity: MessageEntity & { chat?: ChatEntity }): MessageData {
+  decryptMessage(entity: MessageEntity): MessageData {
     const text = this.encryptionService.decrypt(entity.textEncrypted);
     const reasoningText = this.encryptionService.decrypt(
       entity.reasoningTextEncrypted
@@ -53,7 +53,6 @@ export class ChatMessageDecryptService {
       isBookmarked: entity.isBookmarked,
       createdAt: entity.createdAt,
       parentMessageId: entity.parentMessageId,
-      chat: entity.chat ? this.decryptChat(entity.chat) : null,
     } satisfies MessageData;
     return data;
   }

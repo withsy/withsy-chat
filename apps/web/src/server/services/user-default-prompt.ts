@@ -1,4 +1,4 @@
-import type { UserId, UserPromptId } from "@/types/id";
+import type { UserId } from "@/types/user";
 import {
   UserDefaultPromptData,
   UserDefaultPromptEntity,
@@ -6,7 +6,11 @@ import {
   UserDefaultPromptSelect,
   UserDefaultPromptUpdate,
 } from "@/types/user-default-prompt";
-import { UserPromptEntity, UserPromptSelect } from "@/types/user-prompt";
+import {
+  UserPromptEntity,
+  UserPromptId,
+  UserPromptSelect,
+} from "@/types/user-prompt";
 import type { UserPromptService } from "../user-prompt/user-prompt.service";
 import type { Db, Tx } from "./db";
 

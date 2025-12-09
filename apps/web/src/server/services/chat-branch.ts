@@ -1,8 +1,8 @@
 import { ChatListOutout, ChatSelect } from "@/types/chat";
 import type { ChatBranchList } from "@/types/chat-branch";
-import type { UserId } from "@/types/id";
-import type { Db } from "./db";
+import type { UserId } from "@/types/user";
 import type { ChatMessageDecryptService } from "./chat-message-decrypt";
+import type { Db } from "./db";
 
 export class ChatBranchService {
   constructor(

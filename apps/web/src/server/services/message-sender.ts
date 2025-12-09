@@ -1,5 +1,5 @@
-import type { UserId } from "@/types/id";
 import type { MessageSend, MessageSendOutput } from "@/types/message";
+import type { UserId } from "@/types/user";
 import type { EncryptionService } from "../encryption/encryption.service";
 import { MessageService } from "../message/message.service";
 import type { ChatMessageDecryptService } from "./chat-message-decrypt";

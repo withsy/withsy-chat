@@ -1,36 +1,43 @@
-import { z } from "zod";
-import { ChatData } from "./chat";
-import type { zInfer } from "./common";
-import { ChatId, GratitudeJournalId, IdempotencyKey } from "./id";
 import type { Prisma } from "@/server/generated/prisma/client";
+import { z } from "zod";
+import { ChatData, ChatId } from "./chat";
+import type { zInfer } from "./common";
+import { IdempotencyKey } from "./idempotency";
 
 export const GratitudeJournalSelect = {
   id: true,
   chatId: true,
 } satisfies Prisma.GratitudeJournalSelect;
 
+export const GratitudeJournalId = z.uuid();
+export type GratitudeJournalId = zInfer<typeof GratitudeJournalId>;
+
 export const GratitudeJournalEntity = z.object({
-  id: GratitudeJournalId,
-  chatId: z.nullable(ChatId),
+  get id() {
+    return GratitudeJournalId;
+  },
+  get chatId() {
+    return ChatId.nullable();
+  },
 });
 export type GratitudeJournalEntity = zInfer<typeof GratitudeJournalEntity>;
-const _ = {} satisfies Omit<
+
+const _checkGratitudeJournal = {} satisfies Omit<
   GratitudeJournalEntity,
   keyof typeof GratitudeJournalSelect
 >;
 
-export type GratitudeJournalData = {
-  id: GratitudeJournalId;
-  chatId: ChatId | null;
-  chat?: ChatData | null;
-};
-export const GratitudeJournalData: z.ZodType<GratitudeJournalData> =
-  GratitudeJournalEntity.extend({
-    chat: z.nullable(z.lazy(() => ChatData)).default(null),
-  });
+export const GratitudeJournalData = GratitudeJournalEntity.extend({
+  get chat() {
+    return ChatData.nullable().default(null);
+  },
+});
+export type GratitudeJournalData = zInfer<typeof GratitudeJournalData>;
 
 export const GratitudeJournalStartChat = z.object({
-  idempotencyKey: IdempotencyKey,
+  get idempotencyKey() {
+    return IdempotencyKey;
+  },
 });
 export type GratitudeJournalStartChat = zInfer<
   typeof GratitudeJournalStartChat
@@ -38,21 +45,29 @@ export type GratitudeJournalStartChat = zInfer<
 
 export const GratitudeJournalRecentJournal = z.object({
   zonedDate: z.string(),
-  gratitudeJournalId: GratitudeJournalId,
+  get gratitudeJournalId() {
+    return GratitudeJournalId;
+  },
 });
 export type GratitudeJournalRecentJournal = zInfer<
   typeof GratitudeJournalRecentJournal
 >;
 
 export const GratitudeJournalStats = z.object({
-  recentJournals: GratitudeJournalRecentJournal.array(),
+  get recentJournals() {
+    return GratitudeJournalRecentJournal.array();
+  },
   currentStreak: z.number(),
-  todayJournal: z.nullable(GratitudeJournalData),
+  get todayJournal() {
+    return GratitudeJournalData.nullable();
+  },
 });
 export type GratitudeJournalStats = zInfer<typeof GratitudeJournalStats>;
 
 export const GratitudeJournalGetJournal = z.object({
-  gratitudeJournalId: GratitudeJournalId,
+  get gratitudeJournalId() {
+    return GratitudeJournalId;
+  },
 });
 export type GratitudeJournalGetJournal = zInfer<
   typeof GratitudeJournalGetJournal

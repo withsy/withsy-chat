@@ -1,5 +1,5 @@
-import type { UserId } from "@/types/id";
 import { Model } from "@/types/model";
+import type { UserId } from "@/types/user";
 import {
   UserAiProfileData,
   UserAiProfileDeleteImage,

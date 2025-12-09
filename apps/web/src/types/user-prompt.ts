@@ -1,7 +1,7 @@
 import type { Prisma } from "@/server/generated/prisma/client";
 import { z } from "zod";
-import type { zInfer } from "./common";
-import { IdempotencyKey, UserPromptId } from "./id";
+import { DateTimeTz, type zInfer } from "./common";
+import { IdempotencyKey } from "./idempotency";
 
 export const UserPromptSelect = {
   id: true,
@@ -11,14 +11,22 @@ export const UserPromptSelect = {
   updatedAt: true,
 } satisfies Prisma.UserPromptSelect;
 
+export const UserPromptId = z.uuid();
+export type UserPromptId = zInfer<typeof UserPromptId>;
+
 export const UserPromptEntity = z.object({
-  id: UserPromptId,
+  get id() {
+    return UserPromptId;
+  },
   titleEncrypted: z.string(),
   textEncrypted: z.string(),
   isStarred: z.boolean(),
-  updatedAt: z.date(),
+  get updatedAt() {
+    return DateTimeTz;
+  },
 });
 export type UserPromptEntity = zInfer<typeof UserPromptEntity>;
+
 const _checkUserPrompt = {} satisfies Omit<
   UserPromptEntity,
   keyof typeof UserPromptSelect
@@ -34,34 +42,44 @@ export const UserPromptData = UserPromptEntity.omit({
 export type UserPromptData = zInfer<typeof UserPromptData>;
 
 export const UserPromptGet = z.object({
-  userPromptId: UserPromptId,
+  get userPromptId() {
+    return UserPromptId;
+  },
 });
 export type UserPromptGet = zInfer<typeof UserPromptGet>;
 
-export const UserPromptListOutput = z.array(UserPromptData);
+export const UserPromptListOutput = UserPromptData.array();
 export type UserPromptListOutput = zInfer<typeof UserPromptListOutput>;
 
 export const UserPromptCreate = z.object({
-  idempotencyKey: IdempotencyKey,
+  get idempotencyKey() {
+    return IdempotencyKey;
+  },
   title: z.string(),
   text: z.string(),
 });
 export type UserPromptCreate = zInfer<typeof UserPromptCreate>;
 
 export const UserPromptUpdate = z.object({
-  userPromptId: UserPromptId,
-  title: z.optional(z.string()),
-  text: z.optional(z.string()),
-  isStarred: z.optional(z.boolean()),
+  get userPromptId() {
+    return UserPromptId;
+  },
+  title: z.string().optional(),
+  text: z.string().optional(),
+  isStarred: z.boolean().optional(),
 });
 export type UserPromptUpdate = zInfer<typeof UserPromptUpdate>;
 
 export const UserPromptDelete = z.object({
-  userPromptId: UserPromptId,
+  get userPromptId() {
+    return UserPromptId;
+  },
 });
 export type UserPromptDelete = zInfer<typeof UserPromptDelete>;
 
 export const UserPromptRestore = z.object({
-  userPromptId: UserPromptId,
+  get userPromptId() {
+    return UserPromptId;
+  },
 });
 export type UserPromptRestore = zInfer<typeof UserPromptRestore>;

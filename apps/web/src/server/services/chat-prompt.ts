@@ -1,5 +1,5 @@
+import type { ChatId } from "@/types/chat";
 import { ChatPromptSelect } from "@/types/chat-prompt";
-import type { ChatId } from "@/types/id";
 import type { Tx } from "./db";
 
 export class ChatPromptService {
