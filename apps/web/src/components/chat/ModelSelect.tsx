@@ -7,13 +7,9 @@ import { ModelDropdown } from "./ModelDropdown";
 import { ModelSelectButton } from "./ModelSelectButton";
 
 const defaultModelMap = {
-  "gemini-2.0-flash": {
-    label: "Gemini 2.0 Flash",
+  "gemini-2.5-flash": {
+    label: "Gemini 2.5 Flash",
     description: "Fast and lightweight",
-  },
-  "gemini-1.5-pro": {
-    label: "Gemini 1.5 Pro",
-    description: "Strong reasoning, broad context understanding",
   },
   "grok-3": {
     label: "Grok 3",

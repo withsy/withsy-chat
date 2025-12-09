@@ -101,7 +101,7 @@ export class GratitudeJournalChatStarter {
       });
       const modelMessage = await MessageService.createModelMessage(tx, {
         chatId: chat.id,
-        model: "gemini-2.0-flash",
+        model: "gemini-2.5-flash",
         parentMessageId: userMessage.id,
         textEncrypted: modelMessageTextEncrypted,
         reasoningTextEncrypted: modelMessageReasoningTextEncrypted,

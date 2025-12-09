@@ -1,4 +1,3 @@
-// stores/useSelectedModelStore.ts
 import { Model } from "@/types/model";
 import { create } from "zustand";
 
@@ -10,7 +9,7 @@ type SelectedModelState = {
 };
 
 export const useSelectedModelStore = create<SelectedModelState>((set) => ({
-  selectedModel: "gemini-2.0-flash",
+  selectedModel: "gemini-2.5-flash",
   setSelectedModel: (model) => {
     if (typeof window !== "undefined") {
       localStorage.setItem(STORAGE_KEY, model);
