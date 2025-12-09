@@ -8,6 +8,7 @@ export function createPgPool(): Pool {
 
   const pool = new Pool({
     connectionString: DATABASE_URL,
+    max: 5,
   });
 
   const onError = (e: unknown) => {
