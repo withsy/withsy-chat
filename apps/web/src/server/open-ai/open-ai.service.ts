@@ -14,17 +14,13 @@ import type { SendMessageToAiInput } from "./model-route";
 const MAX_CHUNK_BUFFER_LENGTH = 16;
 
 export class OpenAiService {
-  private openai: OpenAI;
+  #openai: OpenAI;
 
-  constructor() {
-    this.openai = new OpenAI();
+  constructor(input: { apiKey: string; baseURL: string }) {
+    this.#openai = new OpenAI(input);
   }
 
   async sendMessageToAi(input: SendMessageToAiInput) {
-    return await OpenAiService.sendMessageToAi(this.openai, input);
-  }
-
-  static async sendMessageToAi(openai: OpenAI, input: SendMessageToAiInput) {
     const { model, promptText, messagesForAi, onMessageChunkReceived } = input;
 
     const histories = messagesForAi.map((x) =>
@@ -68,7 +64,7 @@ export class OpenAiService {
         inspect(messages, { depth: null })
       );
 
-    const stream = await openai.chat.completions.create({
+    const stream = await this.#openai.chat.completions.create({
       model,
       messages,
       stream: true,

@@ -4,7 +4,7 @@ import { inspect } from "node:util";
 import type { SendMessageToAiInput } from "./model-route";
 
 export class GoogleGenAiService {
-  private readonly ai: GoogleGenAI;
+  #ai: GoogleGenAI;
 
   constructor() {
     const { GEMINI_API_KEY } = process.env;
@@ -12,7 +12,7 @@ export class GoogleGenAiService {
       throw new Error("Invalid GEMINI_API_KEY.");
     }
 
-    this.ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
+    this.#ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
   }
 
   async sendMessageToAi(input: SendMessageToAiInput) {
@@ -34,7 +34,7 @@ export class GoogleGenAiService {
       );
     }
 
-    const stream = await this.ai.models.generateContentStream({
+    const stream = await this.#ai.models.generateContentStream({
       model,
       config: {
         systemInstruction: promptText.length > 0 ? promptText : undefined,

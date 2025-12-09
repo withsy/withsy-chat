@@ -1,46 +1,47 @@
 import { ApiKeyService } from "./api-key/api-key.service";
 import { ChatService } from "./chat/chat.service";
+import { createDb } from "./db/db";
+import { createPgPool } from "./db/pg-pool";
 import { EncryptionService } from "./encryption/encryption.service";
+import { GoogleGenAiService } from "./google-gen-ai/google-gen-ai.service";
 import { MessageChunkService } from "./message-chunk/message-chunk.service";
 import { MessageService } from "./message/message.service";
+import { NextAuthCsrfService } from "./next-auth-csrf/next-auth-csrf.service";
+import { S3Service } from "./s3/s3.service";
 import { AiProfileStorageService } from "./services/ai-profile-storage";
 import { ChatBranchService } from "./services/chat-branch";
 import { ChatBranchStarter } from "./services/chat-branch-starter";
 import { ChatMessageDecryptService } from "./services/chat-message-decrypt";
 import { ChatPromptService } from "./services/chat-prompt";
 import { ChatStarter } from "./services/chat-starter";
-import { createDb } from "./services/db";
-import { GoogleGenAiService } from "./services/google-gen-ai";
 import { GratitudeJournalService } from "./services/gratitude-journal";
 import { GratitudeJournalChatStarter } from "./services/gratitude-journal-chat-starter";
 import { IdempotencyInfoService } from "./services/idempotency-info";
 import { MessageReplyService } from "./services/message-reply";
 import { MessageSender } from "./services/message-sender";
 import { ModelRouteService } from "./services/model-route";
-import { NextAuthCsrfService } from "./services/next-auth-csrf";
-import { createPgPool } from "./services/pg";
-import { S3Service } from "./services/s3";
 import { UserService } from "./services/user";
 import { UserAiProfileService } from "./services/user-ai-profile";
 import { UserDefaultPromptService } from "./services/user-default-prompt";
 import { UserLinkAccountService } from "./services/user-link-account";
 import { UserUsageLimitService } from "./services/user-usage-limit";
-import { XAiService } from "./services/x-ai";
 import { SupabaseActivityService } from "./supabase-activity/supabase-activity.service";
 import { TickService } from "./tick/tick.service";
-import { TimeZoneCheckService } from "./time-zone-check/time-zone-check.service";
+import { TimeZoneChecker } from "./time-zone-check/time-zone-checker";
 import { UserPromptService } from "./user-prompt/user-prompt.service";
+import { XAiService } from "./x-ai/x-ai.service";
 
 function createServiceRegistry() {
-  const timeZoneCheckService = new TimeZoneCheckService();
+  new TimeZoneChecker();
+  const [pgPool, closePgPool] = createPgPool();
+  const [db, closeDb] = createDb(pgPool);
+
   const googleGenAiService = new GoogleGenAiService();
   const xAiService = new XAiService();
   const encryptionService = new EncryptionService();
   const s3Service = new S3Service();
   const nextAuthCsrfService = new NextAuthCsrfService();
-  const chatPromptService = new ChatPromptService();
-  const pgPool = createPgPool();
-  const db = createDb(pgPool);
+
   const userService = new UserService(encryptionService, db);
   const userLinkAccountService = new UserLinkAccountService(
     encryptionService,
@@ -169,8 +170,8 @@ function createServiceRegistry() {
       supabaseActivityService,
     },
     close: async () => {
-      await db.$disconnect();
-      await pgPool.end();
+      await closeDb();
+      await closePgPool();
     },
   };
 }

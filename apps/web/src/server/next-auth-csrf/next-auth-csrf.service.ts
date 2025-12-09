@@ -2,27 +2,28 @@ import type { NextApiRequest } from "next";
 import { createHash } from "node:crypto";
 
 export class NextAuthCsrfService {
-  private cookieName: string;
+  #cookieName: string;
+  #secret: string;
 
   constructor() {
     const { NEXTAUTH_URL } = process.env;
     if (!NEXTAUTH_URL) {
       throw new Error("Invalid NEXTAUTH_URL.");
     }
-
     const url = new URL(NEXTAUTH_URL);
     const prefix = url.protocol === "https:" ? "__Host-" : "";
-    this.cookieName = `${prefix}next-auth.csrf-token`;
-  }
+    this.#cookieName = `${prefix}next-auth.csrf-token`;
 
-  createCsrfTokenHash(csrfToken: string): string {
     const { NEXTAUTH_SECRET } = process.env;
     if (!NEXTAUTH_SECRET) {
       throw new Error("Invalid NEXTAUTH_SECRET.");
     }
+    this.#secret = NEXTAUTH_SECRET;
+  }
 
+  createCsrfTokenHash(csrfToken: string): string {
     const csrfTokenHash = createHash("sha256")
-      .update(`${csrfToken}${NEXTAUTH_SECRET}`)
+      .update(`${csrfToken}${this.#secret}`)
       .digest("hex");
 
     return csrfTokenHash;
@@ -47,7 +48,7 @@ export class NextAuthCsrfService {
 
   validateCsrfTokenWithReq(input: { csrfToken: string; req: NextApiRequest }) {
     const { csrfToken, req } = input;
-    const csrfCookie = req.cookies[this.cookieName] ?? "";
+    const csrfCookie = req.cookies[this.#cookieName] ?? "";
     this.validateCsrfToken({ csrfToken, csrfCookie });
   }
 }

@@ -1,4 +1,4 @@
-export class TimeZoneCheckService {
+export class TimeZoneChecker {
   constructor() {
     this.#checkTimeZoneUtc();
   }
