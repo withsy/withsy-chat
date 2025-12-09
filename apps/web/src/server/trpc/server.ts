@@ -7,7 +7,7 @@ import {
   createApiKeyContext,
   createUserContext,
   type PublicContext,
-} from "../server-context";
+} from "../router-context";
 
 export const t = initTRPC.context<PublicContext>().create({
   transformer: SuperJSON,

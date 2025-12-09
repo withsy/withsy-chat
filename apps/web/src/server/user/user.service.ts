@@ -10,14 +10,14 @@ import {
 import { TRPCError } from "@trpc/server";
 import type { Db } from "../db/db";
 import type { EncryptionService } from "../encryption/encryption.service";
-import { UserEncryptor } from "../user/user.encryptor";
+import { UserDecryptor } from "../user/user.decryptor";
 import { UserRepository } from "../user/user.repository";
 import { isValidTimezone } from "../utils";
 
 const FALLBACK_TIMEZONE = "UTC";
 const FALLBACK_AI_LANGUAGE = "en";
 
-export class UserProcessor {
+export class UserService {
   constructor(
     private readonly encryptionService: EncryptionService,
     private readonly db: Db
@@ -27,8 +27,8 @@ export class UserProcessor {
     const userRepository = new UserRepository(this.db);
     const userEntity = await userRepository.getUser({ userId });
 
-    const userEncryptor = new UserEncryptor(this.encryptionService);
-    const userData = userEncryptor.decryptUser(userEntity);
+    const userDecryptor = new UserDecryptor(this.encryptionService);
+    const userData = userDecryptor.decryptUser(userEntity);
     return userData;
   }
 
@@ -59,8 +59,8 @@ export class UserProcessor {
       });
     });
 
-    const userEncryptor = new UserEncryptor(this.encryptionService);
-    const userData = userEncryptor.decryptUser(userEntity);
+    const userDecryptor = new UserDecryptor(this.encryptionService);
+    const userData = userDecryptor.decryptUser(userEntity);
     return userData;
   }
 
@@ -92,30 +92,8 @@ export class UserProcessor {
       timezone,
     });
 
-    const userEncryptor = new UserEncryptor(this.encryptionService);
-    const userData = userEncryptor.decryptUser(userEntity);
+    const userDecryptor = new UserDecryptor(this.encryptionService);
+    const userData = userDecryptor.decryptUser(userEntity);
     return userData;
-  }
-
-  static async getTimezone(tx: Tx, input: { userId: UserId }) {
-    const { userId } = input;
-    const { timezone } = await tx.user.findUniqueOrThrow({
-      where: { id: userId },
-      select: { timezone: true },
-    });
-
-    if (isValidTimezone(timezone)) return timezone;
-    return FALLBACK_TIMEZONE;
-  }
-
-  static async getAiLanguage(tx: Tx, input: { userId: UserId }) {
-    const { userId } = input;
-    const { aiLanguage } = await tx.user.findUniqueOrThrow({
-      where: { id: userId },
-      select: { aiLanguage: true },
-    });
-
-    if (isValidAiLanguage(aiLanguage)) return aiLanguage;
-    return FALLBACK_AI_LANGUAGE;
   }
 }

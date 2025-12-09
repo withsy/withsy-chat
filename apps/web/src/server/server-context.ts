@@ -1,86 +1,173 @@
-import { UserJwt, UserSession } from "@/types/user";
-import { TRPCError } from "@trpc/server";
-import type { NextApiRequest, NextApiResponse } from "next";
-import { getServerSession } from "next-auth";
-import { getToken } from "next-auth/jwt";
-import { getAuthOptions } from "./auth";
-import { serviceRegistry } from "./service-registry";
+import { ApiKeyService } from "./api-key/api-key.service";
+import { ChatService } from "./chat/chat.service";
+import { createDb } from "./db/db";
+import { createPgPool } from "./db/pg-pool";
+import { EncryptionService } from "./encryption/encryption.service";
+import { GoogleGenAiService } from "./google-gen-ai/google-gen-ai.service";
+import { MessageChunkService } from "./message-chunk/message-chunk.service";
+import { MessageService } from "./message/message.service";
+import { NextAuthCsrfService } from "./next-auth-csrf/next-auth-csrf.service";
+import { S3Service } from "./s3/s3.service";
+import { AiProfileStorageService } from "./services/ai-profile-storage";
+import { ChatBranchService } from "./services/chat-branch";
+import { ChatBranchStarter } from "./services/chat-branch-starter";
+import { ChatMessageDecryptService } from "./services/chat-message-decrypt";
+import { ChatPromptService } from "./services/chat-prompt";
+import { ChatStarter } from "./services/chat-starter";
+import { IdempotencyInfoService } from "./services/idempotency-info";
+import { MessageReplyService } from "./services/message-reply";
+import { MessageSender } from "./services/message-sender";
+import { ModelRouteService } from "./services/model-route";
+import { UserAiProfileService } from "./services/user-ai-profile";
+import { UserDefaultPromptService } from "./services/user-default-prompt";
+import { UserLinkAccountService } from "./services/user-link-account";
+import { UserUsageLimitService } from "./services/user-usage-limit";
+import { SupabaseActivityService } from "./supabase-activity/supabase-activity.service";
+import { TickService } from "./tick/tick.service";
+import { TimeZoneChecker } from "./time-zone-check/time-zone-checker";
+import { UserPromptService } from "./user-prompt/user-prompt.service";
+import { XAiService } from "./x-ai/x-ai.service";
 
-export function createPublicContext(input: {
-  request: NextApiRequest;
-  response: NextApiResponse;
-}) {
-  const { request, response } = input;
-  return { serviceRegistry, request, response };
-}
+function createServerContext() {
+  new TimeZoneChecker();
+  const pgPool = createPgPool();
+  const db = createDb(pgPool);
+  const googleGenAiService = new GoogleGenAiService();
+  const xAiService = new XAiService();
+  const encryptionService = new EncryptionService();
+  const s3Service = new S3Service();
+  const nextAuthCsrfService = new NextAuthCsrfService();
 
-export type PublicContext = ReturnType<typeof createPublicContext>;
+  const userLinkAccountService = new UserLinkAccountService(
+    encryptionService,
+    db
+  );
+  const userUsageLimitService = new UserUsageLimitService(db);
+  const userPromptService = new UserPromptService(encryptionService, db);
+  const userDefaultPromptService = new UserDefaultPromptService(
+    userPromptService,
+    db
+  );
+  const aiProfileStorageService = new AiProfileStorageService(s3Service);
+  const userAiProfileService = new UserAiProfileService(
+    encryptionService,
+    db,
+    aiProfileStorageService
+  );
+  const messageChunkService = new MessageChunkService(encryptionService, db);
+  const idempotencyInfoService = new IdempotencyInfoService(db);
+  const chatMessageDecryptService = new ChatMessageDecryptService(
+    encryptionService,
+    userPromptService
+  );
+  const messageService = new MessageService(
+    encryptionService,
+    chatMessageDecryptService,
+    db,
+    messageChunkService
+  );
+  const modelRouteService = new ModelRouteService(
+    messageService,
+    messageChunkService,
+    googleGenAiService,
+    xAiService,
+    db,
+    encryptionService,
+    userDefaultPromptService,
+    chatMessageDecryptService
+  );
+  const chatService = new ChatService(
+    encryptionService,
+    db,
+    chatMessageDecryptService
+  );
+  const chatBranchService = new ChatBranchService(
+    db,
+    chatMessageDecryptService
+  );
+  const messageReplyService = new MessageReplyService(
+    encryptionService,
+    db,
+    chatMessageDecryptService,
+    modelRouteService
+  );
+  const messageSender = new MessageSender(
+    db,
+    encryptionService,
+    chatMessageDecryptService,
+    modelRouteService
+  );
+  const chatStarter = new ChatStarter(
+    db,
+    encryptionService,
+    chatMessageDecryptService,
+    modelRouteService
+  );
+  const chatBranchStarter = new ChatBranchStarter(
+    db,
+    chatMessageDecryptService,
+    encryptionService
+  );
+  const apiKeyService = new ApiKeyService(db);
+  const supabaseActivityService = new SupabaseActivityService(db);
+  const tickService = new TickService(
+    messageService,
+    chatService,
+    messageChunkService,
+    userPromptService,
+    supabaseActivityService
+  );
 
-export async function createUserContext(ctx: PublicContext) {
-  const { request, response } = ctx;
-
-  let userId = "";
-  const session = await getServerSession(request, response, getAuthOptions());
-  if (session) {
-    const userSession = UserSession.parse(session);
-    userId = userSession.user.id;
-  }
-
-  if (!userId) {
-    const token = await getToken({ req: request });
-    if (token) {
-      const userJwt = UserJwt.parse(token);
-      userId = userJwt.sub;
-    }
-  }
-
-  if (!userId) {
-    throw new TRPCError({ code: "UNAUTHORIZED" });
-  }
-
-  if (
-    request.method === "POST" ||
-    request.method === "PUT" ||
-    request.method === "DELETE" ||
-    request.method === "PATCH"
-  ) {
-    const csrfToken = request.headers["x-csrf-token"];
-    if (typeof csrfToken !== "string") {
-      throw new TRPCError({ code: "FORBIDDEN" });
-    }
-
-    serviceRegistry.nextAuthCsrfService.validateCsrfTokenWithReq({
-      csrfToken,
-      req: request,
-    });
-  }
-
+  let isCloseCalled = false;
   return {
-    ...ctx,
-    userId,
+    context: {
+      googleGenAiService,
+      xAiService,
+      encryptionService,
+      s3Service,
+      nextAuthCsrfService,
+      chatPromptService,
+      pgPool,
+      db,
+      userLinkAccountService,
+      userUsageLimitService,
+      userPromptService,
+      userDefaultPromptService,
+      aiProfileStorageService,
+      userAiProfileService,
+      messageChunkService,
+      idempotencyInfoService,
+      chatMessageDecryptService,
+      messageService,
+      modelRouteService,
+      chatService,
+      chatBranchService,
+      messageReplyService,
+      messageSender,
+      chatStarter,
+      chatBranchStarter,
+      apiKeyService,
+      tickService,
+      supabaseActivityService,
+    },
+    close: async () => {
+      if (isCloseCalled) {
+        return;
+      }
+
+      isCloseCalled = true;
+
+      await db.$disconnect();
+      await pgPool.end();
+    },
   };
 }
 
-export type UserContext = Awaited<ReturnType<typeof createUserContext>>;
+const result = createServerContext();
+const { close } = result;
 
-export async function createApiKeyContext(ctx: PublicContext) {
-  const { serviceRegistry, request } = ctx;
-  const apiKey = request.headers["x-api-key"];
-  if (typeof apiKey !== "string") {
-    throw new TRPCError({
-      code: "UNAUTHORIZED",
-      message: "Invalid X-Api-Key header.",
-    });
-  }
+process.on("SIGINT", close);
+process.on("SIGTERM", close);
 
-  const isValid = await serviceRegistry.apiKeyService.validateApiKey({
-    apiKey,
-  });
-  if (!isValid) {
-    throw new TRPCError({ code: "UNAUTHORIZED", message: "Invalid API Key." });
-  }
-
-  return {
-    ...ctx,
-  };
-}
+export const serverContext = result.context;
+export type ServerContext = typeof serverContext;

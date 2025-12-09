@@ -1,9 +1,6 @@
 import { Pool } from "pg";
 
-export function createPgPool(): [
-  pgPool: Pool,
-  closePgPool: () => Promise<void>
-] {
+export function createPgPool(): Pool {
   const { DATABASE_URL } = process.env;
   if (!DATABASE_URL) {
     throw new Error("Invalid DATABASE_URL.");
@@ -22,5 +19,5 @@ export function createPgPool(): [
     client.on("error", onError);
   });
 
-  return [pool, () => pool.end()];
+  return pool;
 }

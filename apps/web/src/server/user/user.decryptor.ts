@@ -2,7 +2,7 @@ import { UserPreferences, type UserData } from "@/types/user";
 import type { EncryptionService } from "../encryption/encryption.service";
 import type { UserModel } from "../generated/prisma/models";
 
-export class UserEncryptor {
+export class UserDecryptor {
   constructor(private readonly encryptionService: EncryptionService) {}
 
   decryptUser(entity: UserModel): UserData {
