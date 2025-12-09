@@ -29,4 +29,4 @@ export const JsonValueBase: z.ZodType<JsonValue> = z.union([
 export const JsonValue = JsonValueBase;
 
 export const DateTimeTz = z.coerce.date<Date | string>();
-export type DateTimeTz = zInfer<typeof DateTimeTz>;
+export type DateTimeTz = Date;

@@ -1,4 +1,3 @@
-import type { Prisma } from "@/server/generated/prisma/client";
 import { z, ZodType } from "zod";
 import { ChatId } from "./chat";
 import { DateTimeTz, type zInfer } from "./common";
@@ -7,19 +6,6 @@ import { Model } from "./model";
 import { Role } from "./role";
 import { UserId } from "./user";
 import { UserUsageLimitError } from "./user-usage-limit";
-
-export const MessageSelect = {
-  id: true,
-  chatId: true,
-  role: true,
-  model: true,
-  textEncrypted: true,
-  reasoningTextEncrypted: true,
-  status: true,
-  isBookmarked: true,
-  parentMessageId: true,
-  createdAt: true,
-} satisfies Prisma.MessageSelect;
 
 export const MessageId = z.uuid();
 export type MessageId = zInfer<typeof MessageId>;
@@ -36,61 +22,40 @@ export function isMessageComplete(data: MessageData) {
   return data.status === "succeeded" || data.status === "failed";
 }
 
-export const MessageEntity = z.object({
+export type MessageData = {
+  id: MessageId;
+  chatId: ChatId;
+  status: MessageStatus;
+  isBookmarked: boolean;
+  role: Role;
+  model: string | null;
+  text: string;
+  reasoningText: string;
+  parentMessageId: MessageId | null;
+  createdAt: DateTimeTz;
+};
+export const MessageDataBase: ZodType<MessageData> = z.object({
   get id() {
     return MessageId;
   },
   get chatId() {
     return ChatId;
   },
-  role: z.string(),
-  model: z.string().nullable(),
-  textEncrypted: z.string(),
-  reasoningTextEncrypted: z.string(),
   get status() {
     return MessageStatus;
   },
   isBookmarked: z.boolean(),
+  get role() {
+    return Role;
+  },
+  model: z.string(),
+  text: z.string(),
+  reasoningText: z.string(),
   get parentMessageId() {
     return MessageId.nullable();
   },
   get createdAt() {
     return DateTimeTz;
-  },
-});
-export type MessageEntity = zInfer<typeof MessageEntity>;
-
-const _checkMessage = {} satisfies Omit<
-  MessageEntity,
-  keyof typeof MessageSelect
->;
-
-export type MessageData = {
-  id: MessageId;
-  chatId: ChatId;
-  role: Role;
-  model: Model | null;
-  text: string;
-  reasoningText: string;
-  status: MessageStatus;
-  isBookmarked: boolean;
-  parentMessageId: MessageId | null;
-  createdAt: DateTimeTz;
-  isMessageCollapsed?: boolean;
-};
-export const MessageDataBase: ZodType<MessageData> = MessageEntity.omit({
-  textEncrypted: true,
-  reasoningTextEncrypted: true,
-  role: true,
-  model: true,
-}).extend({
-  text: z.string(),
-  reasoningText: z.string(),
-  get role() {
-    return Role;
-  },
-  get model() {
-    return Model.nullable();
   },
 });
 export const MessageData = MessageDataBase;
