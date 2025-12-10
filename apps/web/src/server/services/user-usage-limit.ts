@@ -29,16 +29,6 @@ import type { Db, Tx } from "./db";
 export class UserUsageLimitService {
   constructor(private readonly db: Db) {}
 
-  decrypt(entity: UserUsageLimitEntity): UserUsageLimitData {
-    const data = {
-      type: entity.type,
-      period: entity.period,
-      remainingAmount: entity.remainingAmount,
-      resetAt: entity.resetAt,
-    } satisfies UserUsageLimitData;
-    return data;
-  }
-
   async list(
     userId: UserId,
     input: UserUsageLimitList
@@ -61,39 +51,6 @@ export class UserUsageLimitService {
 
     const datas = entities.map((x) => this.decrypt(x));
     return datas;
-  }
-
-  static async create(tx: Tx, input: { userId: UserId }) {
-    const { userId } = input;
-    const now = new Date();
-    await tx.userUsageLimit.createMany({
-      data: [
-        {
-          userId,
-          type: "message",
-          period: "daily",
-          allowedAmount: 30,
-          remainingAmount: 30,
-          resetAt: UserUsageLimitService.getDailyResetAt(now),
-        },
-        {
-          userId,
-          type: "message",
-          period: "perMinute",
-          allowedAmount: 6,
-          remainingAmount: 6,
-          resetAt: UserUsageLimitService.getPerMinuteResetAt(now),
-        },
-        {
-          userId,
-          type: "aiProfileImage",
-          period: "monthly",
-          allowedAmount: 10,
-          remainingAmount: 10,
-          resetAt: UserUsageLimitService.getPerMinuteResetAt(now),
-        },
-      ],
-    });
   }
 
   static async checkAiProfileImage(tx: Tx, input: { userId: UserId }) {
@@ -272,69 +229,5 @@ export class UserUsageLimitService {
       remainingAmount: entity.remainingAmount,
       resetAt: entity.resetAt.toISOString(),
     } satisfies UserUsageLimitErrorInput);
-  }
-
-  static async save(tx: Tx, entity: UserUsageLimitEntity) {
-    await tx.userUsageLimit.update({
-      where: { id: entity.id },
-      data: entity,
-    });
-  }
-
-  static resetIfExpired(entity: UserUsageLimitEntity, now: Date) {
-    if (entity.resetAt > now) return false;
-    entity.remainingAmount = entity.allowedAmount;
-    UserUsageLimitService.updateResetAt(entity, now);
-  }
-
-  static updateResetAt(entity: UserUsageLimitEntity, now: Date) {
-    switch (entity.period) {
-      case "annually":
-        entity.resetAt = UserUsageLimitService.getAnnuallyResetAt(now);
-        return true;
-      case "monthly":
-        entity.resetAt = UserUsageLimitService.getMonthlyResetAt(now);
-        return true;
-      case "daily":
-        entity.resetAt = UserUsageLimitService.getDailyResetAt(now);
-        return true;
-      case "perHour":
-        entity.resetAt = UserUsageLimitService.getPerHourResetAt(now);
-        return true;
-      case "perMinute":
-        entity.resetAt = UserUsageLimitService.getPerMinuteResetAt(now);
-        return true;
-      case "perSecond":
-        entity.resetAt = UserUsageLimitService.getPerSecondResetAt(now);
-        return true;
-      default: {
-        const _: never = entity.period;
-        throw new Error(`Unexpected period: ${entity.period}`);
-      }
-    }
-  }
-
-  static getAnnuallyResetAt(now: Date) {
-    return addYears(startOfYear(now), 1);
-  }
-
-  static getDailyResetAt(now: Date) {
-    return addDays(startOfDay(now), 1);
-  }
-
-  static getMonthlyResetAt(now: Date) {
-    return addMonths(startOfMonth(now), 1);
-  }
-
-  static getPerHourResetAt(now: Date) {
-    return addHours(startOfHour(now), 1);
-  }
-
-  static getPerMinuteResetAt(now: Date) {
-    return addMinutes(startOfMinute(now), 1);
-  }
-
-  static getPerSecondResetAt(now: Date) {
-    return addSeconds(startOfSecond(now), 1);
   }
 }

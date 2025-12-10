@@ -4,7 +4,7 @@ import { UserService } from "./user.service";
 export class UserServiceFactory {
   constructor(private readonly serverContext: ServerContext) {}
 
-  createUserService(): UserService {
+  create(): UserService {
     const { encryptionService, db } = this.serverContext;
     return new UserService(encryptionService, db);
   }

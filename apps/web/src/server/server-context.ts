@@ -20,7 +20,6 @@ import { MessageSender } from "./services/message-sender";
 import { ModelRouteService } from "./services/model-route";
 import { UserAiProfileService } from "./services/user-ai-profile";
 import { UserDefaultPromptService } from "./services/user-default-prompt";
-import { UserLinkAccountService } from "./services/user-link-account";
 import { UserUsageLimitService } from "./services/user-usage-limit";
 import { SupabaseActivityService } from "./supabase-activity/supabase-activity.service";
 import { TickService } from "./tick/tick.service";
@@ -38,10 +37,6 @@ function createServerContext() {
   const s3Service = new S3Service();
   const nextAuthCsrfService = new NextAuthCsrfService();
 
-  const userLinkAccountService = new UserLinkAccountService(
-    encryptionService,
-    db
-  );
   const userUsageLimitService = new UserUsageLimitService(db);
   const userPromptService = new UserPromptService(encryptionService, db);
   const userDefaultPromptService = new UserDefaultPromptService(

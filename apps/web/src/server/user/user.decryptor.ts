@@ -5,7 +5,7 @@ import type { UserModel } from "../generated/prisma/models";
 export class UserDecryptor {
   constructor(private readonly encryptionService: EncryptionService) {}
 
-  decryptUser(entity: UserModel): UserData {
+  decrypt(entity: UserModel): UserData {
     const name = this.encryptionService.decrypt(entity.nameEncrypted);
     const email = this.encryptionService.decrypt(entity.emailEncrypted);
     const imageUrl = this.encryptionService.decrypt(entity.imageUrlEncrypted);

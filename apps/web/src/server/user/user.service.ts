@@ -23,19 +23,19 @@ export class UserService {
     private readonly db: Db
   ) {}
 
-  async getUser(userId: UserId): Promise<UserData> {
+  async get(userId: UserId): Promise<UserData> {
     const userRepository = new UserRepository(this.db);
-    const userEntity = await userRepository.getUser({ userId });
+    const userEntity = await userRepository.get({ userId });
 
     const userDecryptor = new UserDecryptor(this.encryptionService);
-    const userData = userDecryptor.decryptUser(userEntity);
+    const userData = userDecryptor.decrypt(userEntity);
     return userData;
   }
 
-  async ensureUser(userId: UserId, input: UserEnsure): Promise<UserData> {
+  async ensure(userId: UserId, input: UserEnsure): Promise<UserData> {
     const userEntity = await this.db.$transaction(async (tx) => {
       const userRepository = new UserRepository(tx);
-      const userEntity = await userRepository.getUser({ userId });
+      const userEntity = await userRepository.get({ userId });
 
       let timezone: string | undefined = undefined;
       if (userEntity.timezone.length === 0) {
@@ -53,26 +53,26 @@ export class UserService {
             : FALLBACK_AI_LANGUAGE;
       }
 
-      return await userRepository.updateUser(userId, {
+      return await userRepository.update(userId, {
         aiLanguage,
         timezone,
       });
     });
 
     const userDecryptor = new UserDecryptor(this.encryptionService);
-    const userData = userDecryptor.decryptUser(userEntity);
+    const userData = userDecryptor.decrypt(userEntity);
     return userData;
   }
 
-  async updateUserPreferences(
+  async updatePreferences(
     userId: UserId,
     input: UserUpdatePreferences
   ): Promise<UserUpdatePreferencesOutput> {
     const userRepository = new UserRepository(this.db);
-    return await userRepository.updateUserPreferences(userId, input);
+    return await userRepository.updatePreferences(userId, input);
   }
 
-  async updateUser(userId: UserId, input: UserUpdate): Promise<UserData> {
+  async update(userId: UserId, input: UserUpdate): Promise<UserData> {
     const { aiLanguage, timezone } = input;
     if (aiLanguage && !isValidAiLanguage(aiLanguage))
       throw new TRPCError({
@@ -87,13 +87,13 @@ export class UserService {
       });
 
     const userRepository = new UserRepository(this.db);
-    const userEntity = await userRepository.updateUser(userId, {
+    const userEntity = await userRepository.update(userId, {
       aiLanguage,
       timezone,
     });
 
     const userDecryptor = new UserDecryptor(this.encryptionService);
-    const userData = userDecryptor.decryptUser(userEntity);
+    const userData = userDecryptor.decrypt(userEntity);
     return userData;
   }
 }

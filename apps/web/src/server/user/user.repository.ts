@@ -10,7 +10,7 @@ import type { UserModel } from "../generated/prisma/models";
 export class UserRepository {
   constructor(private readonly tx: Tx) {}
 
-  async getUser(input: { userId: UserId }): Promise<UserModel> {
+  async get(input: { userId: UserId }): Promise<UserModel> {
     const { userId } = input;
 
     return await this.tx.user.findUniqueOrThrow({
@@ -20,7 +20,7 @@ export class UserRepository {
     });
   }
 
-  async updateUser(
+  async update(
     userId: UserId,
     input: {
       aiLanguage?: string;
@@ -40,7 +40,7 @@ export class UserRepository {
     });
   }
 
-  async updateUserPreferences(
+  async updatePreferences(
     userId: UserId,
     input: UserUpdatePreferences
   ): Promise<UserUpdatePreferencesOutput> {
@@ -64,14 +64,14 @@ export class UserRepository {
     return UserUpdatePreferencesOutput.parse(rows[0]);
   }
 
-  async createUser(input: {
+  async create(input: {
     nameEncrypted: string;
     emailEncrypted: string;
     imageUrlEncrypted: string;
   }): Promise<UserModel> {
     const { nameEncrypted, emailEncrypted, imageUrlEncrypted } = input;
 
-    const userEntity = await this.tx.user.create({
+    const entity = await this.tx.user.create({
       data: {
         nameEncrypted,
         emailEncrypted,
@@ -79,6 +79,6 @@ export class UserRepository {
       },
     });
 
-    return userEntity;
+    return entity;
   }
 }

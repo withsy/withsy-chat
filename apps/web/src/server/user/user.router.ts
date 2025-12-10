@@ -11,9 +11,7 @@ import { UserServiceFactory } from "./user.service-factory";
 export const userRouter = t.router({
   get: userProcedure.output(UserData).query(({ ctx }) => {
     const { serverContext, userId } = ctx;
-    return new UserServiceFactory(serverContext)
-      .createUserService()
-      .getUser(userId);
+    return new UserServiceFactory(serverContext).create().get(userId);
   }),
   ensure: userProcedure
     .input(UserEnsure)
@@ -21,8 +19,8 @@ export const userRouter = t.router({
     .mutation(({ ctx, input }) => {
       const { serverContext, userId } = ctx;
       return new UserServiceFactory(serverContext)
-        .createUserService()
-        .ensureUser(userId, input);
+        .create()
+        .ensure(userId, input);
     }),
   updatePreferences: userProcedure
     .input(UserUpdatePreferences)
@@ -30,8 +28,8 @@ export const userRouter = t.router({
     .mutation(({ ctx, input }) => {
       const { serverContext, userId } = ctx;
       return new UserServiceFactory(serverContext)
-        .createUserService()
-        .updateUserPreferences(userId, input);
+        .create()
+        .updatePreferences(userId, input);
     }),
   update: userProcedure
     .input(UserUpdate)
@@ -39,7 +37,7 @@ export const userRouter = t.router({
     .mutation(({ ctx, input }) => {
       const { serverContext, userId } = ctx;
       return new UserServiceFactory(serverContext)
-        .createUserService()
-        .updateUser(userId, input);
+        .create()
+        .update(userId, input);
     }),
 });

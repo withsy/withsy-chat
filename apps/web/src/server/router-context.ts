@@ -10,8 +10,7 @@ export function createPublicContext(input: {
   request: NextApiRequest;
   response: NextApiResponse;
 }) {
-  const { request, response } = input;
-  return { serverContext, request, response };
+  return { ...input, serverContext };
 }
 
 export type PublicContext = ReturnType<typeof createPublicContext>;
