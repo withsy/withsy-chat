@@ -25,20 +25,21 @@ export class UserService {
 
   async get(userId: UserId): Promise<UserData> {
     const userRepository = new UserRepository(this.db);
-    const userEntity = await userRepository.get({ userId });
+    const entity = await userRepository.get({ userId });
 
     const userDecryptor = new UserDecryptor(this.encryptionService);
-    const userData = userDecryptor.decrypt(userEntity);
-    return userData;
+    const data = userDecryptor.decrypt(entity);
+
+    return data;
   }
 
   async ensure(userId: UserId, input: UserEnsure): Promise<UserData> {
-    const userEntity = await this.db.$transaction(async (tx) => {
+    const entity = await this.db.$transaction(async (tx) => {
       const userRepository = new UserRepository(tx);
-      const userEntity = await userRepository.get({ userId });
+      const entity = await userRepository.get({ userId });
 
       let timezone: string | undefined = undefined;
-      if (userEntity.timezone.length === 0) {
+      if (entity.timezone.length === 0) {
         timezone =
           input.timezone && isValidTimezone(input.timezone)
             ? input.timezone
@@ -46,7 +47,7 @@ export class UserService {
       }
 
       let aiLanguage: string | undefined = undefined;
-      if (userEntity.aiLanguage.length === 0) {
+      if (entity.aiLanguage.length === 0) {
         aiLanguage =
           input.aiLanguage && isValidAiLanguage(input.aiLanguage)
             ? input.aiLanguage
@@ -60,8 +61,9 @@ export class UserService {
     });
 
     const userDecryptor = new UserDecryptor(this.encryptionService);
-    const userData = userDecryptor.decrypt(userEntity);
-    return userData;
+    const data = userDecryptor.decrypt(entity);
+
+    return data;
   }
 
   async updatePreferences(
@@ -69,7 +71,9 @@ export class UserService {
     input: UserUpdatePreferences
   ): Promise<UserUpdatePreferencesOutput> {
     const userRepository = new UserRepository(this.db);
-    return await userRepository.updatePreferences(userId, input);
+    const output = await userRepository.updatePreferences(userId, input);
+
+    return output;
   }
 
   async update(userId: UserId, input: UserUpdate): Promise<UserData> {
@@ -87,13 +91,14 @@ export class UserService {
       });
 
     const userRepository = new UserRepository(this.db);
-    const userEntity = await userRepository.update(userId, {
+    const entity = await userRepository.update(userId, {
       aiLanguage,
       timezone,
     });
 
     const userDecryptor = new UserDecryptor(this.encryptionService);
-    const userData = userDecryptor.decrypt(userEntity);
-    return userData;
+    const data = userDecryptor.decrypt(entity);
+
+    return data;
   }
 }

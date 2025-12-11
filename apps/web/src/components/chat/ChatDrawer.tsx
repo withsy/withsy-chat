@@ -5,7 +5,12 @@ import { useDrawerStore } from "@/stores/useDrawerStore";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 import type { ChatData } from "@/types/chat";
 import type { MessageData } from "@/types/message";
-import { skipToken, useMutation, useQuery } from "@tanstack/react-query";
+import {
+  skipToken,
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+} from "@tanstack/react-query";
 import { FolderGit2, FolderRoot, GitBranch } from "lucide-react";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -115,8 +120,13 @@ function Prompts() {
       retry: false,
     })
   );
-  const { data: prompts, isLoading: isLoadingPrompts } = useQuery(
-    trpc.userPrompt.list.queryOptions()
+  const { data: prompts, isLoading: isLoadingPrompts } = useInfiniteQuery(
+    trpc.userPrompt.list.infiniteQueryOptions(
+      {},
+      {
+        getNextPageParam: (lastPage) => lastPage.nextCursor,
+      }
+    )
   );
 
   const updateChatPrompt = useMutation(trpc.chat.update.mutationOptions());

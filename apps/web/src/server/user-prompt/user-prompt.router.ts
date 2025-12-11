@@ -3,59 +3,66 @@ import {
   UserPromptData,
   UserPromptDelete,
   UserPromptGet,
+  UserPromptList,
   UserPromptListOutput,
   UserPromptRestore,
   UserPromptUpdate,
 } from "@/types/user-prompt";
 import { t, userProcedure } from "../trpc/server";
+import { UserPromptServiceFactory } from "./user-prompt.service-factory";
 
 export const userPromptRouter = t.router({
   get: userProcedure
     .input(UserPromptGet)
     .output(UserPromptData)
     .query(({ ctx, input }) =>
-      ctx.serviceRegistry.userPromptService
-        .get(ctx.userId, input)
-        .then((x) => UserPromptData.parse(x))
+      new UserPromptServiceFactory(ctx.serverContext)
+        .create()
+        .get({ ...input, userId: ctx.userId })
     ),
   list: userProcedure
+    .input(UserPromptList)
     .output(UserPromptListOutput)
-    .query(({ ctx }) =>
-      ctx.serviceRegistry.userPromptService
-        .list(ctx.userId)
-        .then((xs) => xs.map((x) => UserPromptData.parse(x)))
+    .query(({ ctx, input }) =>
+      new UserPromptServiceFactory(ctx.serverContext)
+        .create()
+        .list({ ...input, userId: ctx.userId })
     ),
   listDeleted: userProcedure
     .output(UserPromptListOutput)
     .query(({ ctx }) =>
-      ctx.serviceRegistry.userPromptService
+      new UserPromptServiceFactory(ctx.serverContext)
+        .create()
         .listDeleted(ctx.userId)
-        .then((xs) => xs.map((x) => UserPromptData.parse(x)))
     ),
   create: userProcedure
     .input(UserPromptCreate)
     .output(UserPromptData)
     .mutation(({ ctx, input }) =>
-      ctx.serviceRegistry.userPromptService
+      new UserPromptServiceFactory(ctx.serverContext)
+        .create()
         .create(ctx.userId, input)
-        .then((x) => UserPromptData.parse(x))
     ),
   update: userProcedure
     .input(UserPromptUpdate)
     .output(UserPromptData)
     .mutation(({ ctx, input }) =>
-      ctx.serviceRegistry.userPromptService
+      new UserPromptServiceFactory(ctx.serverContext)
+        .create()
         .update(ctx.userId, input)
-        .then((x) => UserPromptData.parse(x))
     ),
   delete: userProcedure
     .input(UserPromptDelete)
     .mutation(({ ctx, input }) =>
-      ctx.serviceRegistry.userPromptService.delete(ctx.userId, input)
+      new UserPromptServiceFactory(ctx.serverContext)
+        .create()
+        .delete(ctx.userId, input)
     ),
   restore: userProcedure
     .input(UserPromptRestore)
     .mutation(({ ctx, input }) =>
-      ctx.serviceRegistry.userPromptService.restore(ctx.userId, input)
+      new UserPromptServiceFactory(ctx.serverContext)
+        .create()
+        .restore(ctx.userId, input)
     ),
 });

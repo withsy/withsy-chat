@@ -1,43 +1,20 @@
-import type { Prisma } from "@/server/generated/prisma/client";
 import { z } from "zod";
 import { DateTimeTz, type zInfer } from "./common";
 import { IdempotencyKey } from "./idempotency";
 
-export const UserPromptSelect = {
-  id: true,
-  titleEncrypted: true,
-  textEncrypted: true,
-  isStarred: true,
-  updatedAt: true,
-} satisfies Prisma.UserPromptSelect;
-
 export const UserPromptId = z.uuid();
 export type UserPromptId = zInfer<typeof UserPromptId>;
 
-export const UserPromptEntity = z.object({
+export const UserPromptData = z.object({
   get id() {
     return UserPromptId;
   },
-  titleEncrypted: z.string(),
-  textEncrypted: z.string(),
+  title: z.string(),
+  text: z.string(),
   isStarred: z.boolean(),
   get updatedAt() {
     return DateTimeTz;
   },
-});
-export type UserPromptEntity = zInfer<typeof UserPromptEntity>;
-
-const _checkUserPrompt = {} satisfies Omit<
-  UserPromptEntity,
-  keyof typeof UserPromptSelect
->;
-
-export const UserPromptData = UserPromptEntity.omit({
-  titleEncrypted: true,
-  textEncrypted: true,
-}).extend({
-  title: z.string(),
-  text: z.string(),
 });
 export type UserPromptData = zInfer<typeof UserPromptData>;
 
@@ -48,7 +25,19 @@ export const UserPromptGet = z.object({
 });
 export type UserPromptGet = zInfer<typeof UserPromptGet>;
 
-export const UserPromptListOutput = UserPromptData.array();
+export const UserPromptList = z.object({
+  limit: z.number().int().min(1).max(50).default(50),
+  cursor: z.string().nullable().default(null),
+});
+export type UserPromptList = zInfer<typeof UserPromptList>;
+
+export const UserPromptListOutput = z.object({
+  get items() {
+    return UserPromptData.array();
+  },
+  nextCursor: z.string().nullable().default(null),
+});
+
 export type UserPromptListOutput = zInfer<typeof UserPromptListOutput>;
 
 export const UserPromptCreate = z.object({

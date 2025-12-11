@@ -10,6 +10,7 @@ export class UserDecryptor {
     const email = this.encryptionService.decrypt(entity.emailEncrypted);
     const imageUrl = this.encryptionService.decrypt(entity.imageUrlEncrypted);
     const preferences = UserPreferences.parse(entity.preferences);
+
     const data: UserData = {
       id: entity.id,
       name,
@@ -19,6 +20,7 @@ export class UserDecryptor {
       timezone: entity.timezone,
       preferences,
     };
+
     return data;
   }
 }

@@ -11,6 +11,7 @@ export class UserUsageLimitDecryptor {
       remainingAmount: entity.remainingAmount,
       resetAt: entity.resetAt,
     };
+
     return data;
   }
 }

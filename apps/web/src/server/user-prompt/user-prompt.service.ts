@@ -3,18 +3,18 @@ import {
   UserPromptCreate,
   UserPromptData,
   UserPromptDelete,
-  UserPromptEntity,
   UserPromptGet,
+  UserPromptList,
   UserPromptListOutput,
   UserPromptRestore,
-  UserPromptSelect,
   UserPromptUpdate,
 } from "@/types/user-prompt";
 import { v7 as uuidv7 } from "uuid";
+import type { Db } from "../db/db";
 import type { EncryptionService } from "../encryption/encryption.service";
-import type { Db } from "../services/db";
 import { IdempotencyInfoService } from "../services/idempotency-info";
 import { UserDefaultPromptService } from "../services/user-default-prompt";
+import { UserPromptDecryptor } from "./user-prompt.decryptor";
 import { UserPromptRepository } from "./user-prompt.repository";
 
 export class UserPromptService {
@@ -23,51 +23,32 @@ export class UserPromptService {
     private readonly db: Db
   ) {}
 
-  decrypt(entity: UserPromptEntity): UserPromptData {
-    const title = this.encryptionService.decrypt(entity.titleEncrypted);
-    const text = this.encryptionService.decrypt(entity.textEncrypted);
-    const data = {
-      id: entity.id,
-      title,
-      text,
-      isStarred: entity.isStarred,
-      updatedAt: entity.updatedAt,
-    } satisfies UserPromptData;
+  async get(
+    input: { userId: UserId } & UserPromptGet
+  ): Promise<UserPromptData> {
+    const userPromptRepository = new UserPromptRepository(this.db);
+    const entity = await userPromptRepository.get(input);
+
+    const userPromptDecryptor = new UserPromptDecryptor(this.encryptionService);
+    const data = userPromptDecryptor.decrypt(entity);
+
     return data;
   }
 
-  async get(userId: UserId, input: UserPromptGet): Promise<UserPromptData> {
-    const { userPromptId } = input;
+  async list(
+    input: { userId: UserId } & UserPromptList
+  ): Promise<UserPromptListOutput> {
+    const userPromptRepository = new UserPromptRepository(this.db);
+    const entities = await userPromptRepository.list(input);
 
-    const entity = await this.db.userPrompt.findUniqueOrThrow({
-      where: { userId, deletedAt: null, id: userPromptId },
-      select: UserPromptSelect,
-    });
+    const userPromptDecryptor = new UserPromptDecryptor(this.encryptionService);
+    const items = entities.map((x) => userPromptDecryptor.decrypt(x));
+    const nextCursor = items.at(-1)?.id ?? null;
 
-    const data = this.decrypt(entity);
-    return data;
-  }
-
-  async list(userId: UserId): Promise<UserPromptListOutput> {
-    const entities = await this.db.userPrompt.findMany({
-      where: { userId, deletedAt: null },
-      orderBy: { id: "asc" },
-      select: UserPromptSelect,
-    });
-
-    const datas = entities.map((x) => this.decrypt(x));
-    return datas;
-  }
-
-  async listDeleted(userId: UserId): Promise<UserPromptListOutput> {
-    const entities = await this.db.userPrompt.findMany({
-      where: { userId, deletedAt: { not: null } },
-      orderBy: { id: "asc" },
-      select: UserPromptSelect,
-    });
-
-    const datas = entities.map((x) => this.decrypt(x));
-    return datas;
+    return {
+      items,
+      nextCursor,
+    };
   }
 
   async create(
