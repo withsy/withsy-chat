@@ -6,6 +6,7 @@ export class UserServiceFactory {
 
   create(): UserService {
     const { encryptionService, db } = this.serverContext;
+
     return new UserService(encryptionService, db);
   }
 }

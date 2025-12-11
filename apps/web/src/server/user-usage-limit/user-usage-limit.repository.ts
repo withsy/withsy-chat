@@ -1,7 +1,7 @@
 import type { UserId } from "@/types/user";
 import type {
   UserUsageLimitId,
-  UserUsageLimitList,
+  UserUsageLimitType,
 } from "@/types/user-usage-limit";
 import type { Tx } from "../db/db";
 import type { UserUsageLimitModel } from "../generated/prisma/models";
@@ -45,11 +45,11 @@ export class UserUsageLimitRepository {
     });
   }
 
-  async list(
-    userId: UserId,
-    input: UserUsageLimitList
-  ): Promise<UserUsageLimitModel[]> {
-    const { type } = input;
+  async list(input: {
+    userId: UserId;
+    type: UserUsageLimitType;
+  }): Promise<UserUsageLimitModel[]> {
+    const { userId, type } = input;
 
     return await this.tx.userUsageLimit.findMany({
       where: {

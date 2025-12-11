@@ -9,35 +9,33 @@ import { t, userProcedure } from "../trpc/server";
 import { UserServiceFactory } from "./user.service-factory";
 
 export const userRouter = t.router({
-  get: userProcedure.output(UserData).query(({ ctx }) => {
-    const { serverContext, userId } = ctx;
-    return new UserServiceFactory(serverContext).create().get(userId);
-  }),
+  get: userProcedure
+    .output(UserData)
+    .query(({ ctx }) =>
+      new UserServiceFactory(ctx.serverContext).create().get(ctx.userId)
+    ),
   ensure: userProcedure
     .input(UserEnsure)
     .output(UserData)
-    .mutation(({ ctx, input }) => {
-      const { serverContext, userId } = ctx;
-      return new UserServiceFactory(serverContext)
+    .mutation(({ ctx, input }) =>
+      new UserServiceFactory(ctx.serverContext)
         .create()
-        .ensure(userId, input);
-    }),
+        .ensure(ctx.userId, input)
+    ),
   updatePreferences: userProcedure
     .input(UserUpdatePreferences)
     .output(UserUpdatePreferencesOutput)
-    .mutation(({ ctx, input }) => {
-      const { serverContext, userId } = ctx;
-      return new UserServiceFactory(serverContext)
+    .mutation(({ ctx, input }) =>
+      new UserServiceFactory(ctx.serverContext)
         .create()
-        .updatePreferences(userId, input);
-    }),
+        .updatePreferences(ctx.userId, input)
+    ),
   update: userProcedure
     .input(UserUpdate)
     .output(UserData)
-    .mutation(({ ctx, input }) => {
-      const { serverContext, userId } = ctx;
-      return new UserServiceFactory(serverContext)
+    .mutation(({ ctx, input }) =>
+      new UserServiceFactory(ctx.serverContext)
         .create()
-        .update(userId, input);
-    }),
+        .update(ctx.userId, input)
+    ),
 });

@@ -13,7 +13,6 @@ import {
   startOfSecond,
   startOfYear,
 } from "date-fns";
-import type { UserUsageLimitModel } from "../generated/prisma/models";
 
 export class UserUsageLimitHelper {
   getAnnuallyResetAt(now: Date) {
@@ -46,7 +45,7 @@ export class UserUsageLimitHelper {
     return resetAt <= now;
   }
 
-  getUpdateData(input: {
+  getDataForUpdate(input: {
     allowedAmount: number;
     period: UserUsageLimitPeriod;
     now: Date;
@@ -54,14 +53,18 @@ export class UserUsageLimitHelper {
     const { allowedAmount, period, now } = input;
 
     const remainingAmount = allowedAmount;
-    const resetAt = this.getUpdateResetAt({ period, now });
+    const resetAt = this.getResetAtForUpdate({ period, now });
+
     return {
       remainingAmount,
       resetAt,
     };
   }
 
-  getUpdateResetAt(input: { period: UserUsageLimitPeriod; now: Date }): Date {
+  private getResetAtForUpdate(input: {
+    period: UserUsageLimitPeriod;
+    now: Date;
+  }): Date {
     const { period, now } = input;
 
     switch (period) {

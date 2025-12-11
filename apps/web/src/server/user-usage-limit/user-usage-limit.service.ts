@@ -17,7 +17,10 @@ export class UserUsageLimitService {
   ): Promise<UserUsageLimitListOutput> {
     const entities = await this.db.$transaction(async (tx) => {
       const userUsageLimitRepository = new UserUsageLimitRepository(tx);
-      const entities = await userUsageLimitRepository.list(userId, input);
+      const entities = await userUsageLimitRepository.list({
+        ...input,
+        userId,
+      });
 
       const now = new Date();
       const userUsageLimitHelper = new UserUsageLimitHelper();
@@ -25,15 +28,16 @@ export class UserUsageLimitService {
         const { id, resetAt, allowedAmount, period } = entities[i];
 
         if (userUsageLimitHelper.isExpired({ resetAt, now })) {
-          const updateData = userUsageLimitHelper.getUpdateData({
+          const dataForUpdate = userUsageLimitHelper.getDataForUpdate({
             allowedAmount,
             period,
             now,
           });
           const newEntity = await userUsageLimitRepository.update({
+            ...dataForUpdate,
             userUsageLimitId: id,
-            ...updateData,
           });
+
           entities[i] = newEntity;
         }
       }
@@ -43,6 +47,7 @@ export class UserUsageLimitService {
 
     const userUsageLimitDecryptor = new UserUsageLimitDecryptor();
     const datas = entities.map((x) => userUsageLimitDecryptor.decrypt(x));
+
     return datas;
   }
 }
