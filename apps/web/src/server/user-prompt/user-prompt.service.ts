@@ -6,7 +6,6 @@ import {
   UserPromptGet,
   UserPromptList,
   UserPromptListOutput,
-  UserPromptRestore,
   UserPromptUpdate,
 } from "@/types/user-prompt";
 import { v7 as uuidv7 } from "uuid";
@@ -52,8 +51,7 @@ export class UserPromptService {
   }
 
   async create(
-    userId: UserId,
-    input: UserPromptCreate
+    input: { userId: UserId } & UserPromptCreate
   ): Promise<UserPromptData> {
     const { idempotencyKey, title, text } = input;
 
@@ -127,43 +125,24 @@ export class UserPromptService {
     });
   }
 
-  async restore(
-    userId: UserId,
-    input: UserPromptRestore
-  ): Promise<UserPromptData> {
-    const { userPromptId } = input;
-
-    const entity = await this.db.userPrompt.update({
-      where: { id: userPromptId, userId, deletedAt: { not: null } },
-      data: { deletedAt: null },
-      select: UserPromptSelect,
-    });
-
-    const data = this.decrypt(entity);
-    return data;
-  }
-
-  async hardDeleteUserPrompts() {
+  async doHardDelete() {
     await this.db.$transaction(async (tx) => {
       const userPromptRepository = new UserPromptRepository(tx);
 
-      const userPrompts =
-        await userPromptRepository.findUserPromptsToHardDelete();
-      if (userPrompts.length === 0) {
+      const entities = await userPromptRepository.listForHardDelete();
+      if (entities.length === 0) {
         return;
       }
 
-      const userPromptIds = userPrompts.map((x) => x.id);
+      const userPromptIds = entities.map((x) => x.id);
       console.warn(
         `Preparing to delete ${
           userPromptIds.length
         }. userPrompts: ${userPromptIds.join(", ")}`
       );
 
-      const res = await userPromptRepository.hardDeleteUserPrompts(
-        userPromptIds
-      );
-      console.warn(`Successfully hard deleted ${res.count} userPrompts.`);
+      const count = await userPromptRepository.doHardDelete({ userPromptIds });
+      console.warn(`Successfully hard deleted ${count} userPrompts.`);
     });
   }
 

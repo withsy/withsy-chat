@@ -15,54 +15,43 @@ export const userPromptRouter = t.router({
   get: userProcedure
     .input(UserPromptGet)
     .output(UserPromptData)
-    .query(({ ctx, input }) =>
-      new UserPromptServiceFactory(ctx.serverContext)
+    .query(({ ctx, input }) => {
+      const { serverContext, userId } = ctx;
+      return new UserPromptServiceFactory(serverContext)
         .create()
-        .get({ ...input, userId: ctx.userId })
-    ),
+        .get({ ...input, userId });
+    }),
   list: userProcedure
     .input(UserPromptList)
     .output(UserPromptListOutput)
-    .query(({ ctx, input }) =>
-      new UserPromptServiceFactory(ctx.serverContext)
+    .query(({ ctx, input }) => {
+      const { serverContext, userId } = ctx;
+      return new UserPromptServiceFactory(serverContext)
         .create()
-        .list({ ...input, userId: ctx.userId })
-    ),
-  listDeleted: userProcedure
-    .output(UserPromptListOutput)
-    .query(({ ctx }) =>
-      new UserPromptServiceFactory(ctx.serverContext)
-        .create()
-        .listDeleted(ctx.userId)
-    ),
+        .list({ ...input, userId });
+    }),
   create: userProcedure
     .input(UserPromptCreate)
     .output(UserPromptData)
-    .mutation(({ ctx, input }) =>
-      new UserPromptServiceFactory(ctx.serverContext)
+    .mutation(({ ctx, input }) => {
+      const { serverContext, userId } = ctx;
+      return new UserPromptServiceFactory(serverContext)
         .create()
-        .create(ctx.userId, input)
-    ),
+        .create({ ...input, userId });
+    }),
   update: userProcedure
     .input(UserPromptUpdate)
     .output(UserPromptData)
-    .mutation(({ ctx, input }) =>
-      new UserPromptServiceFactory(ctx.serverContext)
+    .mutation(({ ctx, input }) => {
+      const { serverContext, userId } = ctx;
+      return new UserPromptServiceFactory(serverContext)
         .create()
-        .update(ctx.userId, input)
-    ),
-  delete: userProcedure
-    .input(UserPromptDelete)
-    .mutation(({ ctx, input }) =>
-      new UserPromptServiceFactory(ctx.serverContext)
-        .create()
-        .delete(ctx.userId, input)
-    ),
-  restore: userProcedure
-    .input(UserPromptRestore)
-    .mutation(({ ctx, input }) =>
-      new UserPromptServiceFactory(ctx.serverContext)
-        .create()
-        .restore(ctx.userId, input)
-    ),
+        .update({ ...input, userId });
+    }),
+  delete: userProcedure.input(UserPromptDelete).mutation(({ ctx, input }) => {
+    const { serverContext, userId } = ctx;
+    return new UserPromptServiceFactory(serverContext)
+      .create()
+      .delete({ ...input, userId });
+  }),
 });

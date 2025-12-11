@@ -65,10 +65,3 @@ export const UserPromptDelete = z.object({
   },
 });
 export type UserPromptDelete = zInfer<typeof UserPromptDelete>;
-
-export const UserPromptRestore = z.object({
-  get userPromptId() {
-    return UserPromptId;
-  },
-});
-export type UserPromptRestore = zInfer<typeof UserPromptRestore>;

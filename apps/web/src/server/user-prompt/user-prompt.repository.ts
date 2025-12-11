@@ -20,14 +20,20 @@ export class UserPromptRepository {
     });
   }
 
-  async doHardDelete(userPromptIds: UserPromptId[]): Promise<BatchPayload> {
-    return await this.tx.userPrompt.deleteMany({
+  async doHardDelete(input: {
+    userPromptIds: UserPromptId[];
+  }): Promise<number> {
+    const { userPromptIds } = input;
+
+    const result = await this.tx.userPrompt.deleteMany({
       where: {
         id: {
           in: userPromptIds,
         },
       },
     });
+
+    return result.count;
   }
 
   async get(input: {
