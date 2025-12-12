@@ -11,7 +11,6 @@ import {
 import type { Db } from "../db/db";
 import type { EncryptionService } from "../encryption/encryption.service";
 import { IdempotencyInfoRepository } from "../idempotency-info/idempotency-info.repository";
-import { UserDefaultPromptService } from "../services/user-default-prompt";
 import { UserDefaultPromptRepository } from "../user-default-prompt/user-default-prompt.repository";
 import { UserPromptDecryptor } from "./user-prompt.decryptor";
 import { UserPromptRepository } from "./user-prompt.repository";
@@ -119,7 +118,7 @@ export class UserPromptService {
         userDefaultPrompt.userPromptId &&
         userDefaultPrompt.userPromptId === userPromptId
       ) {
-        await UserDefaultPromptService.update(tx, {
+        await userDefaultPromptRepository.update({
           userId,
           userPromptId: null,
         });
