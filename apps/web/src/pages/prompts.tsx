@@ -72,8 +72,8 @@ function PromptsPage({ csrfToken, user }: Props) {
     })
   );
 
-  const updateDefaultPrompt = useMutation(
-    trpc.userDefaultPrompt.update.mutationOptions({
+  const upsertDefaultPrompt = useMutation(
+    trpc.userDefaultPrompt.upsert.mutationOptions({
       onSuccess: () => {
         refetchPrompts();
         refetchDefaultPrompt();

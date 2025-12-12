@@ -35,7 +35,7 @@ export default function ModelCard({ model, name, image, csrfToken }: Props) {
     trpc.userAiProfile.deleteImage.mutationOptions({
       onSuccess: () => {
         toast.success("Profile image reset");
-        queryClient.invalidateQueries(trpc.userAiProfile.getAll.queryFilter());
+        queryClient.invalidateQueries(trpc.userAiProfile.list.queryFilter());
       },
       onError: () => {
         toast.error("Failed to reset profile image");

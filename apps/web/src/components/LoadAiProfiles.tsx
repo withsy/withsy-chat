@@ -9,7 +9,7 @@ export default function LoadAiProfiles() {
 
   const trpc = useTRPC();
   const { data = [], isLoading } = useQuery(
-    trpc.userAiProfile.getAll.queryOptions(user ? undefined : skipToken)
+    trpc.userAiProfile.list.queryOptions(user ? undefined : skipToken)
   );
   const { setProfiles, setLoading } = useAiProfileStore();
 

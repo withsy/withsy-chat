@@ -9,9 +9,14 @@ export const UserDefaultPromptData = z.object({
 });
 export type UserDefaultPromptData = zInfer<typeof UserDefaultPromptData>;
 
-export const UserDefaultPromptUpdate = z.object({
+export const UserDefaultPromptGetOutput = UserDefaultPromptData.nullable();
+export type UserDefaultPromptGetOutput = zInfer<
+  typeof UserDefaultPromptGetOutput
+>;
+
+export const UserDefaultPromptUpsert = z.object({
   get userPromptId() {
     return UserPromptId.nullable();
   },
 });
-export type UserDefaultPromptUpdate = zInfer<typeof UserDefaultPromptUpdate>;
+export type UserDefaultPromptUpsert = zInfer<typeof UserDefaultPromptUpsert>;

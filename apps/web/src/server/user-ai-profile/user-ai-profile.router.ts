@@ -1,28 +1,25 @@
 import {
   UserAiProfileData,
   UserAiProfileDeleteImage,
-  UserAiProfileGet,
-  UserAiProfileGetAllOutput,
-  UserAiProfileGetOutput,
+  UserAiProfileListOutput,
 } from "@/types/user-ai-profile";
 import { t, userProcedure } from "../trpc/server";
+import { UserAiProfileServiceFactory } from "./user-ai-profile.service-factory";
 
 export const userAiProfileRouter = t.router({
-  get: userProcedure
-    .input(UserAiProfileGet)
-    .output(UserAiProfileGetOutput)
-    .query(({ ctx, input }) =>
-      ctx.serviceRegistry.userAiProfileService.get(ctx.userId, input)
-    ),
-  getAll: userProcedure
-    .output(UserAiProfileGetAllOutput)
+  list: userProcedure
+    .output(UserAiProfileListOutput)
     .query(({ ctx }) =>
-      ctx.serviceRegistry.userAiProfileService.getAll(ctx.userId)
+      new UserAiProfileServiceFactory(ctx.serverContext)
+        .create()
+        .list({ userId: ctx.userId })
     ),
   deleteImage: userProcedure
     .input(UserAiProfileDeleteImage)
     .output(UserAiProfileData)
     .mutation(({ ctx, input }) =>
-      ctx.serviceRegistry.userAiProfileService.deleteImage(ctx.userId, input)
+      new UserAiProfileServiceFactory(ctx.serverContext)
+        .create()
+        .deleteImage(ctx.userId, input)
     ),
 });

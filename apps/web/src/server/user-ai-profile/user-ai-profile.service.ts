@@ -3,52 +3,20 @@ import type { UserId } from "@/types/user";
 import {
   UserAiProfileData,
   UserAiProfileDeleteImage,
-  UserAiProfileEntity,
-  UserAiProfileGet,
-  UserAiProfileGetAllOutput,
-  UserAiProfileGetOutput,
-  UserAiProfileSelect,
+  UserAiProfileListOutput,
 } from "@/types/user-ai-profile";
+import type { Db } from "../db/db";
 import type { EncryptionService } from "../encryption/encryption.service";
-import type { AiProfileStorageService } from "./ai-profile-storage";
-import type { Db } from "./db";
-import { UserUsageLimitService } from "./user-usage-limit";
 
 export class UserAiProfileService {
   constructor(
     private readonly encryptionService: EncryptionService,
-    private readonly db: Db,
-    private readonly aiProfileStorageService: AiProfileStorageService
+    private readonly db: Db
   ) {}
 
-  decrypt(entity: UserAiProfileEntity): UserAiProfileData {
-    const model = Model.parse(entity.model);
-    const name = this.encryptionService.decrypt(entity.nameEncrypted);
-    const imagePath = this.encryptionService.decrypt(entity.imagePathEncrypted);
-    const imageSource = UserAiProfileService.createImageSource({ imagePath });
-    const data = {
-      model,
-      name,
-      imageSource,
-    } satisfies UserAiProfileData;
-    return data;
-  }
+  async list(input: { userId: UserId }): Promise<UserAiProfileListOutput> {
+    const { userId } = input;
 
-  async get(
-    userId: UserId,
-    input: UserAiProfileGet
-  ): Promise<UserAiProfileGetOutput> {
-    const { model } = input;
-    const entity = await this.db.userAiProfile.findUnique({
-      where: { userId_model: { userId, model } },
-      select: UserAiProfileSelect,
-    });
-
-    const data = entity ? this.decrypt(entity) : null;
-    return data;
-  }
-
-  async getAll(userId: UserId): Promise<UserAiProfileGetAllOutput> {
     const entities = await this.db.userAiProfile.findMany({
       where: { userId },
       select: UserAiProfileSelect,
