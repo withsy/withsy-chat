@@ -8,10 +8,9 @@ import {
   UserPromptListOutput,
   UserPromptUpdate,
 } from "@/types/user-prompt";
-import { v7 as uuidv7 } from "uuid";
 import type { Db } from "../db/db";
 import type { EncryptionService } from "../encryption/encryption.service";
-import { IdempotencyInfoService } from "../services/idempotency-info";
+import { IdempotencyInfoRepository } from "../idempotency-info/idempotency-info.repository";
 import { UserDefaultPromptService } from "../services/user-default-prompt";
 import { UserPromptDecryptor } from "./user-prompt.decryptor";
 import { UserPromptRepository } from "./user-prompt.repository";
@@ -53,54 +52,60 @@ export class UserPromptService {
   async create(
     input: { userId: UserId } & UserPromptCreate
   ): Promise<UserPromptData> {
-    const { idempotencyKey, title, text } = input;
+    const { userId, idempotencyKey, title, text } = input;
 
     const titleEncrypted = this.encryptionService.encrypt(title);
     const textEncrypted = this.encryptionService.encrypt(text);
 
     const entity = await this.db.$transaction(async (tx) => {
-      await IdempotencyInfoService.checkDuplicateRequest(tx, idempotencyKey);
+      const idempotencyInfoRepository = new IdempotencyInfoRepository(tx);
+      await idempotencyInfoRepository.createOrThrow({
+        idempotencyKey,
+      });
 
-      const entity = await tx.userPrompt.create({
-        data: {
-          id: UserPromptService.generateId(),
-          userId,
-          titleEncrypted,
-          textEncrypted,
-        },
-        select: UserPromptSelect,
+      const userPromptRepository = new UserPromptRepository(tx);
+      const entity = await userPromptRepository.create({
+        userId,
+        titleEncrypted,
+        textEncrypted,
       });
 
       return entity;
     });
 
-    const data = this.decrypt(entity);
+    const userPromptDecryptor = new UserPromptDecryptor(this.encryptionService);
+    const data = userPromptDecryptor.decrypt(entity);
+
     return data;
   }
 
   async update(
-    userId: UserId,
-    input: UserPromptUpdate
+    input: { userId: UserId } & UserPromptUpdate
   ): Promise<UserPromptData> {
-    const { userPromptId, title, text, isStarred } = input;
+    const { userId, userPromptId, title, text, isStarred } = input;
 
     const titleEncrypted =
       title != null ? this.encryptionService.encrypt(title) : undefined;
     const textEncrypted =
       text != null ? this.encryptionService.encrypt(text) : undefined;
 
-    const entity = await this.db.userPrompt.update({
-      where: { userId, deletedAt: null, id: userPromptId },
-      data: { titleEncrypted, textEncrypted, isStarred },
-      select: UserPromptSelect,
+    const userPromptRepository = new UserPromptRepository(this.db);
+    const entity = await userPromptRepository.update({
+      userId,
+      userPromptId,
+      titleEncrypted,
+      textEncrypted,
+      isStarred,
     });
 
-    const data = this.decrypt(entity);
+    const userPromptDecryptor = new UserPromptDecryptor(this.encryptionService);
+    const data = userPromptDecryptor.decrypt(entity);
+
     return data;
   }
 
-  async delete(userId: UserId, input: UserPromptDelete): Promise<void> {
-    const { userPromptId } = input;
+  async delete(input: { userId: UserId } & UserPromptDelete): Promise<void> {
+    const { userId, userPromptId } = input;
 
     await this.db.$transaction(async (tx) => {
       const userDefaultPrompt = await UserDefaultPromptService.get(tx, {
@@ -125,10 +130,9 @@ export class UserPromptService {
     });
   }
 
-  async doHardDelete() {
+  async doHardDelete(): Promise<void> {
     await this.db.$transaction(async (tx) => {
       const userPromptRepository = new UserPromptRepository(tx);
-
       const entities = await userPromptRepository.listForHardDelete();
       if (entities.length === 0) {
         return;
@@ -144,9 +148,5 @@ export class UserPromptService {
       const count = await userPromptRepository.doHardDelete({ userPromptIds });
       console.warn(`Successfully hard deleted ${count} userPrompts.`);
     });
-  }
-
-  static generateId() {
-    return uuidv7();
   }
 }

@@ -1,7 +1,7 @@
 import type { UserId } from "@/types/user";
 import type { UserPromptId, UserPromptList } from "@/types/user-prompt";
+import { v7 } from "uuid";
 import type { Tx } from "../db/db";
-import type { BatchPayload } from "../generated/prisma/internal/prismaNamespace";
 import type { UserPromptModel } from "../generated/prisma/models";
 import { getHardDeleteCutoffDate } from "../utils";
 
@@ -10,6 +10,7 @@ export class UserPromptRepository {
 
   async listForHardDelete(): Promise<UserPromptModel[]> {
     const cutoffDate = getHardDeleteCutoffDate(new Date());
+
     return await this.tx.userPrompt.findMany({
       where: {
         deletedAt: {
@@ -73,5 +74,46 @@ export class UserPromptRepository {
     });
 
     return entities;
+  }
+
+  async create(input: {
+    userId: UserId;
+    titleEncrypted: string;
+    textEncrypted: string;
+  }): Promise<UserPromptModel> {
+    const { userId, titleEncrypted, textEncrypted } = input;
+
+    return await this.tx.userPrompt.create({
+      data: {
+        id: v7(),
+        userId,
+        titleEncrypted,
+        textEncrypted,
+      },
+    });
+  }
+
+  async update(input: {
+    userId: UserId;
+    userPromptId: UserPromptId;
+    titleEncrypted?: string;
+    textEncrypted?: string;
+    isStarred?: boolean;
+  }): Promise<UserPromptModel> {
+    const { userId, userPromptId, titleEncrypted, textEncrypted, isStarred } =
+      input;
+
+    return await this.tx.userPrompt.update({
+      where: {
+        userId,
+        deletedAt: null,
+        id: userPromptId,
+      },
+      data: {
+        titleEncrypted,
+        textEncrypted,
+        isStarred,
+      },
+    });
   }
 }

@@ -1,4 +1,4 @@
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/client";
 import { isDriverAdapterError } from "@prisma/driver-adapter-utils";
 import type { TRPC_ERROR_CODE_KEY } from "@trpc/server/unstable-core-do-not-import";
 
