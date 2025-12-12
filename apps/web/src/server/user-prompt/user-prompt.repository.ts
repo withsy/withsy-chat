@@ -31,6 +31,9 @@ export class UserPromptRepository {
         id: {
           in: userPromptIds,
         },
+        deletedAt: {
+          not: null,
+        },
       },
     });
 
@@ -53,7 +56,9 @@ export class UserPromptRepository {
   }
 
   async list(
-    input: { userId: UserId } & UserPromptList
+    input: {
+      userId: UserId;
+    } & UserPromptList
   ): Promise<UserPromptModel[]> {
     const { userId, limit, cursor } = input;
 
@@ -113,6 +118,24 @@ export class UserPromptRepository {
         titleEncrypted,
         textEncrypted,
         isStarred,
+      },
+    });
+  }
+
+  async delete(input: {
+    userId: UserId;
+    userPromptId: UserPromptId;
+  }): Promise<UserPromptModel> {
+    const { userId, userPromptId } = input;
+
+    return await this.tx.userPrompt.update({
+      where: {
+        userId,
+        deletedAt: null,
+        id: userPromptId,
+      },
+      data: {
+        deletedAt: new Date(),
       },
     });
   }

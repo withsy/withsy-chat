@@ -5,7 +5,6 @@ import {
   UserPromptGet,
   UserPromptList,
   UserPromptListOutput,
-  UserPromptRestore,
   UserPromptUpdate,
 } from "@/types/user-prompt";
 import { t, userProcedure } from "../trpc/server";

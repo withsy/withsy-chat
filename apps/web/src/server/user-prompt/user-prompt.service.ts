@@ -12,6 +12,7 @@ import type { Db } from "../db/db";
 import type { EncryptionService } from "../encryption/encryption.service";
 import { IdempotencyInfoRepository } from "../idempotency-info/idempotency-info.repository";
 import { UserDefaultPromptService } from "../services/user-default-prompt";
+import { UserDefaultPromptRepository } from "../user-default-prompt/user-default-prompt.repository";
 import { UserPromptDecryptor } from "./user-prompt.decryptor";
 import { UserPromptRepository } from "./user-prompt.repository";
 
@@ -108,7 +109,8 @@ export class UserPromptService {
     const { userId, userPromptId } = input;
 
     await this.db.$transaction(async (tx) => {
-      const userDefaultPrompt = await UserDefaultPromptService.get(tx, {
+      const userDefaultPromptRepository = new UserDefaultPromptRepository(tx);
+      const userDefaultPrompt = await userDefaultPromptRepository.get({
         userId,
       });
 
@@ -123,9 +125,10 @@ export class UserPromptService {
         });
       }
 
-      await tx.userPrompt.update({
-        where: { userId, deletedAt: null, id: userPromptId },
-        data: { deletedAt: new Date() },
+      const userPromptRepository = new UserPromptRepository(tx);
+      await userPromptRepository.delete({
+        userId,
+        userPromptId,
       });
     });
   }
