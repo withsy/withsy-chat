@@ -400,7 +400,7 @@ export const ModelName = {
   ChatPrompt: 'ChatPrompt',
   Message: 'Message',
   MessageChunk: 'MessageChunk',
-  IdempotencyInfo: 'IdempotencyInfo',
+  IdempotencyKey: 'IdempotencyKey',
   ApiKey: 'ApiKey',
   SupabaseActivity: 'SupabaseActivity'
 } as const
@@ -418,7 +418,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "userLinkAccount" | "userUsageLimit" | "userPrompt" | "userDefaultPrompt" | "userAiProfile" | "chat" | "chatPrompt" | "message" | "messageChunk" | "idempotencyInfo" | "apiKey" | "supabaseActivity"
+    modelProps: "user" | "userLinkAccount" | "userUsageLimit" | "userPrompt" | "userDefaultPrompt" | "userAiProfile" | "chat" | "chatPrompt" | "message" | "messageChunk" | "idempotencyKey" | "apiKey" | "supabaseActivity"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1162,77 +1162,77 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
-    IdempotencyInfo: {
-      payload: Prisma.$IdempotencyInfoPayload<ExtArgs>
-      fields: Prisma.IdempotencyInfoFieldRefs
+    IdempotencyKey: {
+      payload: Prisma.$IdempotencyKeyPayload<ExtArgs>
+      fields: Prisma.IdempotencyKeyFieldRefs
       operations: {
         findUnique: {
-          args: Prisma.IdempotencyInfoFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$IdempotencyInfoPayload> | null
+          args: Prisma.IdempotencyKeyFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IdempotencyKeyPayload> | null
         }
         findUniqueOrThrow: {
-          args: Prisma.IdempotencyInfoFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$IdempotencyInfoPayload>
+          args: Prisma.IdempotencyKeyFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IdempotencyKeyPayload>
         }
         findFirst: {
-          args: Prisma.IdempotencyInfoFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$IdempotencyInfoPayload> | null
+          args: Prisma.IdempotencyKeyFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IdempotencyKeyPayload> | null
         }
         findFirstOrThrow: {
-          args: Prisma.IdempotencyInfoFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$IdempotencyInfoPayload>
+          args: Prisma.IdempotencyKeyFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IdempotencyKeyPayload>
         }
         findMany: {
-          args: Prisma.IdempotencyInfoFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$IdempotencyInfoPayload>[]
+          args: Prisma.IdempotencyKeyFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IdempotencyKeyPayload>[]
         }
         create: {
-          args: Prisma.IdempotencyInfoCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$IdempotencyInfoPayload>
+          args: Prisma.IdempotencyKeyCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IdempotencyKeyPayload>
         }
         createMany: {
-          args: Prisma.IdempotencyInfoCreateManyArgs<ExtArgs>
+          args: Prisma.IdempotencyKeyCreateManyArgs<ExtArgs>
           result: BatchPayload
         }
         createManyAndReturn: {
-          args: Prisma.IdempotencyInfoCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$IdempotencyInfoPayload>[]
+          args: Prisma.IdempotencyKeyCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IdempotencyKeyPayload>[]
         }
         delete: {
-          args: Prisma.IdempotencyInfoDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$IdempotencyInfoPayload>
+          args: Prisma.IdempotencyKeyDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IdempotencyKeyPayload>
         }
         update: {
-          args: Prisma.IdempotencyInfoUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$IdempotencyInfoPayload>
+          args: Prisma.IdempotencyKeyUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IdempotencyKeyPayload>
         }
         deleteMany: {
-          args: Prisma.IdempotencyInfoDeleteManyArgs<ExtArgs>
+          args: Prisma.IdempotencyKeyDeleteManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateMany: {
-          args: Prisma.IdempotencyInfoUpdateManyArgs<ExtArgs>
+          args: Prisma.IdempotencyKeyUpdateManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateManyAndReturn: {
-          args: Prisma.IdempotencyInfoUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$IdempotencyInfoPayload>[]
+          args: Prisma.IdempotencyKeyUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IdempotencyKeyPayload>[]
         }
         upsert: {
-          args: Prisma.IdempotencyInfoUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$IdempotencyInfoPayload>
+          args: Prisma.IdempotencyKeyUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IdempotencyKeyPayload>
         }
         aggregate: {
-          args: Prisma.IdempotencyInfoAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateIdempotencyInfo>
+          args: Prisma.IdempotencyKeyAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateIdempotencyKey>
         }
         groupBy: {
-          args: Prisma.IdempotencyInfoGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.IdempotencyInfoGroupByOutputType>[]
+          args: Prisma.IdempotencyKeyGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.IdempotencyKeyGroupByOutputType>[]
         }
         count: {
-          args: Prisma.IdempotencyInfoCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.IdempotencyInfoCountAggregateOutputType> | number
+          args: Prisma.IdempotencyKeyCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.IdempotencyKeyCountAggregateOutputType> | number
         }
       }
     }
@@ -1570,13 +1570,14 @@ export const MessageChunkScalarFieldEnum = {
 export type MessageChunkScalarFieldEnum = (typeof MessageChunkScalarFieldEnum)[keyof typeof MessageChunkScalarFieldEnum]
 
 
-export const IdempotencyInfoScalarFieldEnum = {
-  key: 'key',
+export const IdempotencyKeyScalarFieldEnum = {
+  id: 'id',
+  idempotencyKey: 'idempotencyKey',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
-export type IdempotencyInfoScalarFieldEnum = (typeof IdempotencyInfoScalarFieldEnum)[keyof typeof IdempotencyInfoScalarFieldEnum]
+export type IdempotencyKeyScalarFieldEnum = (typeof IdempotencyKeyScalarFieldEnum)[keyof typeof IdempotencyKeyScalarFieldEnum]
 
 
 export const ApiKeyScalarFieldEnum = {
@@ -1832,7 +1833,7 @@ export type GlobalOmitConfig = {
   chatPrompt?: Prisma.ChatPromptOmit
   message?: Prisma.MessageOmit
   messageChunk?: Prisma.MessageChunkOmit
-  idempotencyInfo?: Prisma.IdempotencyInfoOmit
+  idempotencyKey?: Prisma.IdempotencyKeyOmit
   apiKey?: Prisma.ApiKeyOmit
   supabaseActivity?: Prisma.SupabaseActivityOmit
 }

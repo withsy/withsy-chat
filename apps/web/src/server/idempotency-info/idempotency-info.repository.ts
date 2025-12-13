@@ -7,7 +7,7 @@ import type { IdempotencyInfoModel } from "../generated/prisma/models";
 export class IdempotencyInfoRepository {
   constructor(private readonly tx: Tx) {}
 
-  async create(input: {
+  async tryCreate(input: {
     idempotencyKey: IdempotencyKey;
   }): Promise<IdempotencyInfoModel | null> {
     const { idempotencyKey } = input;
@@ -34,13 +34,13 @@ export class IdempotencyInfoRepository {
   }): Promise<IdempotencyInfoModel> {
     const { idempotencyKey } = input;
 
-    const entity = await this.create({
+    const entity = await this.tryCreate({
       idempotencyKey,
     });
     if (!entity) {
       throw new TRPCError({
         code: "CONFLICT",
-        message: "Duplicate request.",
+        message: "Duplicate idempotency key.",
         cause: new DataError({ idempotencyKey }),
       });
     }

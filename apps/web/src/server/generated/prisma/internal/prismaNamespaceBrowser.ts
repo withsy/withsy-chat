@@ -59,7 +59,7 @@ export const ModelName = {
   ChatPrompt: 'ChatPrompt',
   Message: 'Message',
   MessageChunk: 'MessageChunk',
-  IdempotencyInfo: 'IdempotencyInfo',
+  IdempotencyKey: 'IdempotencyKey',
   ApiKey: 'ApiKey',
   SupabaseActivity: 'SupabaseActivity'
 } as const
@@ -227,13 +227,14 @@ export const MessageChunkScalarFieldEnum = {
 export type MessageChunkScalarFieldEnum = (typeof MessageChunkScalarFieldEnum)[keyof typeof MessageChunkScalarFieldEnum]
 
 
-export const IdempotencyInfoScalarFieldEnum = {
-  key: 'key',
+export const IdempotencyKeyScalarFieldEnum = {
+  id: 'id',
+  idempotencyKey: 'idempotencyKey',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
-export type IdempotencyInfoScalarFieldEnum = (typeof IdempotencyInfoScalarFieldEnum)[keyof typeof IdempotencyInfoScalarFieldEnum]
+export type IdempotencyKeyScalarFieldEnum = (typeof IdempotencyKeyScalarFieldEnum)[keyof typeof IdempotencyKeyScalarFieldEnum]
 
 
 export const ApiKeyScalarFieldEnum = {

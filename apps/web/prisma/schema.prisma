@@ -8,7 +8,7 @@ generator client {
 datasource db {
   provider  = "postgresql"
   url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+  directUrl = env("DATABASE_DIRECT_URL")
 }
 
 model User {
@@ -188,12 +188,14 @@ model MessageChunk {
   @@map("message_chunks")
 }
 
-model IdempotencyInfo {
-  key       String   @id @map("key") @db.Uuid
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+model IdempotencyKey {
+  id             Int      @id @default(autoincrement()) @map("id")
+  idempotencyKey String   @unique @map("idempotency_key") @db.Uuid
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
 
-  @@map("idempotency_infos")
+  @@index([idempotencyKey])
+  @@map("idempotency_keys")
 }
 
 model ApiKey {

@@ -87,3 +87,22 @@ CREATE UNIQUE INDEX "user_usage_limits_user_id_type_period_key" ON "user_usage_l
 
 -- AlterTable
 ALTER TABLE "user_usage_limits" DROP COLUMN "allowed_amount";
+
+-- DropTable
+DROP TABLE "idempotency_infos";
+
+-- CreateTable
+CREATE TABLE "idempotency_keys" (
+    "id" SERIAL NOT NULL,
+    "idempotency_key" UUID NOT NULL,
+    "created_at" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMPTZ(6) NOT NULL,
+
+    CONSTRAINT "idempotency_keys_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateIndex
+CREATE UNIQUE INDEX "idempotency_keys_idempotency_key_key" ON "idempotency_keys"("idempotency_key");
+
+-- CreateIndex
+CREATE INDEX "idempotency_keys_idempotency_key_idx" ON "idempotency_keys"("idempotency_key");

@@ -92,10 +92,10 @@ export type Message = Prisma.MessageModel
  */
 export type MessageChunk = Prisma.MessageChunkModel
 /**
- * Model IdempotencyInfo
+ * Model IdempotencyKey
  * 
  */
-export type IdempotencyInfo = Prisma.IdempotencyInfoModel
+export type IdempotencyKey = Prisma.IdempotencyKeyModel
 /**
  * Model ApiKey
  * 
