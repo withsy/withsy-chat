@@ -29,7 +29,7 @@ export type ChatMinAggregateOutputType = {
   userId: string | null
   titleEncrypted: string | null
   isStarred: boolean | null
-  type: $Enums.ChatType | null
+  type: string | null
   parentMessageId: string | null
   userPromptId: string | null
   createdAt: Date | null
@@ -42,7 +42,7 @@ export type ChatMaxAggregateOutputType = {
   userId: string | null
   titleEncrypted: string | null
   isStarred: boolean | null
-  type: $Enums.ChatType | null
+  type: string | null
   parentMessageId: string | null
   userPromptId: string | null
   createdAt: Date | null
@@ -182,7 +182,7 @@ export type ChatGroupByOutputType = {
   userId: string
   titleEncrypted: string
   isStarred: boolean
-  type: $Enums.ChatType
+  type: string
   parentMessageId: string | null
   userPromptId: string | null
   createdAt: Date
@@ -216,7 +216,7 @@ export type ChatWhereInput = {
   userId?: Prisma.UuidFilter<"Chat"> | string
   titleEncrypted?: Prisma.StringFilter<"Chat"> | string
   isStarred?: Prisma.BoolFilter<"Chat"> | boolean
-  type?: Prisma.EnumChatTypeFilter<"Chat"> | $Enums.ChatType
+  type?: Prisma.StringFilter<"Chat"> | string
   parentMessageId?: Prisma.UuidNullableFilter<"Chat"> | string | null
   userPromptId?: Prisma.UuidNullableFilter<"Chat"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Chat"> | Date | string
@@ -227,7 +227,6 @@ export type ChatWhereInput = {
   userPrompt?: Prisma.XOR<Prisma.UserPromptNullableScalarRelationFilter, Prisma.UserPromptWhereInput> | null
   messages?: Prisma.MessageListRelationFilter
   prompts?: Prisma.ChatPromptListRelationFilter
-  gratitudeJournals?: Prisma.GratitudeJournalListRelationFilter
 }
 
 export type ChatOrderByWithRelationInput = {
@@ -246,7 +245,6 @@ export type ChatOrderByWithRelationInput = {
   userPrompt?: Prisma.UserPromptOrderByWithRelationInput
   messages?: Prisma.MessageOrderByRelationAggregateInput
   prompts?: Prisma.ChatPromptOrderByRelationAggregateInput
-  gratitudeJournals?: Prisma.GratitudeJournalOrderByRelationAggregateInput
 }
 
 export type ChatWhereUniqueInput = Prisma.AtLeast<{
@@ -257,7 +255,7 @@ export type ChatWhereUniqueInput = Prisma.AtLeast<{
   userId?: Prisma.UuidFilter<"Chat"> | string
   titleEncrypted?: Prisma.StringFilter<"Chat"> | string
   isStarred?: Prisma.BoolFilter<"Chat"> | boolean
-  type?: Prisma.EnumChatTypeFilter<"Chat"> | $Enums.ChatType
+  type?: Prisma.StringFilter<"Chat"> | string
   parentMessageId?: Prisma.UuidNullableFilter<"Chat"> | string | null
   userPromptId?: Prisma.UuidNullableFilter<"Chat"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Chat"> | Date | string
@@ -268,7 +266,6 @@ export type ChatWhereUniqueInput = Prisma.AtLeast<{
   userPrompt?: Prisma.XOR<Prisma.UserPromptNullableScalarRelationFilter, Prisma.UserPromptWhereInput> | null
   messages?: Prisma.MessageListRelationFilter
   prompts?: Prisma.ChatPromptListRelationFilter
-  gratitudeJournals?: Prisma.GratitudeJournalListRelationFilter
 }, "id">
 
 export type ChatOrderByWithAggregationInput = {
@@ -295,7 +292,7 @@ export type ChatScalarWhereWithAggregatesInput = {
   userId?: Prisma.UuidWithAggregatesFilter<"Chat"> | string
   titleEncrypted?: Prisma.StringWithAggregatesFilter<"Chat"> | string
   isStarred?: Prisma.BoolWithAggregatesFilter<"Chat"> | boolean
-  type?: Prisma.EnumChatTypeWithAggregatesFilter<"Chat"> | $Enums.ChatType
+  type?: Prisma.StringWithAggregatesFilter<"Chat"> | string
   parentMessageId?: Prisma.UuidNullableWithAggregatesFilter<"Chat"> | string | null
   userPromptId?: Prisma.UuidNullableWithAggregatesFilter<"Chat"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Chat"> | Date | string
@@ -307,7 +304,7 @@ export type ChatCreateInput = {
   id: string
   titleEncrypted: string
   isStarred?: boolean
-  type?: $Enums.ChatType
+  type: string
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -316,7 +313,6 @@ export type ChatCreateInput = {
   userPrompt?: Prisma.UserPromptCreateNestedOneWithoutChatsInput
   messages?: Prisma.MessageCreateNestedManyWithoutChatInput
   prompts?: Prisma.ChatPromptCreateNestedManyWithoutChatInput
-  gratitudeJournals?: Prisma.GratitudeJournalCreateNestedManyWithoutChatInput
 }
 
 export type ChatUncheckedCreateInput = {
@@ -324,7 +320,7 @@ export type ChatUncheckedCreateInput = {
   userId: string
   titleEncrypted: string
   isStarred?: boolean
-  type?: $Enums.ChatType
+  type: string
   parentMessageId?: string | null
   userPromptId?: string | null
   createdAt?: Date | string
@@ -332,14 +328,13 @@ export type ChatUncheckedCreateInput = {
   deletedAt?: Date | string | null
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutChatInput
   prompts?: Prisma.ChatPromptUncheckedCreateNestedManyWithoutChatInput
-  gratitudeJournals?: Prisma.GratitudeJournalUncheckedCreateNestedManyWithoutChatInput
 }
 
 export type ChatUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   titleEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
   isStarred?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  type?: Prisma.EnumChatTypeFieldUpdateOperationsInput | $Enums.ChatType
+  type?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -348,7 +343,6 @@ export type ChatUpdateInput = {
   userPrompt?: Prisma.UserPromptUpdateOneWithoutChatsNestedInput
   messages?: Prisma.MessageUpdateManyWithoutChatNestedInput
   prompts?: Prisma.ChatPromptUpdateManyWithoutChatNestedInput
-  gratitudeJournals?: Prisma.GratitudeJournalUpdateManyWithoutChatNestedInput
 }
 
 export type ChatUncheckedUpdateInput = {
@@ -356,7 +350,7 @@ export type ChatUncheckedUpdateInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   titleEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
   isStarred?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  type?: Prisma.EnumChatTypeFieldUpdateOperationsInput | $Enums.ChatType
+  type?: Prisma.StringFieldUpdateOperationsInput | string
   parentMessageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userPromptId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -364,7 +358,6 @@ export type ChatUncheckedUpdateInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   messages?: Prisma.MessageUncheckedUpdateManyWithoutChatNestedInput
   prompts?: Prisma.ChatPromptUncheckedUpdateManyWithoutChatNestedInput
-  gratitudeJournals?: Prisma.GratitudeJournalUncheckedUpdateManyWithoutChatNestedInput
 }
 
 export type ChatCreateManyInput = {
@@ -372,7 +365,7 @@ export type ChatCreateManyInput = {
   userId: string
   titleEncrypted: string
   isStarred?: boolean
-  type?: $Enums.ChatType
+  type: string
   parentMessageId?: string | null
   userPromptId?: string | null
   createdAt?: Date | string
@@ -384,7 +377,7 @@ export type ChatUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   titleEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
   isStarred?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  type?: Prisma.EnumChatTypeFieldUpdateOperationsInput | $Enums.ChatType
+  type?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -395,7 +388,7 @@ export type ChatUncheckedUpdateManyInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   titleEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
   isStarred?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  type?: Prisma.EnumChatTypeFieldUpdateOperationsInput | $Enums.ChatType
+  type?: Prisma.StringFieldUpdateOperationsInput | string
   parentMessageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userPromptId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -455,11 +448,6 @@ export type ChatMinOrderByAggregateInput = {
 export type ChatScalarRelationFilter = {
   is?: Prisma.ChatWhereInput
   isNot?: Prisma.ChatWhereInput
-}
-
-export type ChatNullableScalarRelationFilter = {
-  is?: Prisma.ChatWhereInput | null
-  isNot?: Prisma.ChatWhereInput | null
 }
 
 export type ChatCreateNestedManyWithoutUserInput = {
@@ -546,10 +534,6 @@ export type ChatUncheckedUpdateManyWithoutUserPromptNestedInput = {
   deleteMany?: Prisma.ChatScalarWhereInput | Prisma.ChatScalarWhereInput[]
 }
 
-export type EnumChatTypeFieldUpdateOperationsInput = {
-  set?: $Enums.ChatType
-}
-
 export type ChatCreateNestedOneWithoutPromptsInput = {
   create?: Prisma.XOR<Prisma.ChatCreateWithoutPromptsInput, Prisma.ChatUncheckedCreateWithoutPromptsInput>
   connectOrCreate?: Prisma.ChatCreateOrConnectWithoutPromptsInput
@@ -620,27 +604,11 @@ export type ChatUncheckedUpdateManyWithoutParentMessageNestedInput = {
   deleteMany?: Prisma.ChatScalarWhereInput | Prisma.ChatScalarWhereInput[]
 }
 
-export type ChatCreateNestedOneWithoutGratitudeJournalsInput = {
-  create?: Prisma.XOR<Prisma.ChatCreateWithoutGratitudeJournalsInput, Prisma.ChatUncheckedCreateWithoutGratitudeJournalsInput>
-  connectOrCreate?: Prisma.ChatCreateOrConnectWithoutGratitudeJournalsInput
-  connect?: Prisma.ChatWhereUniqueInput
-}
-
-export type ChatUpdateOneWithoutGratitudeJournalsNestedInput = {
-  create?: Prisma.XOR<Prisma.ChatCreateWithoutGratitudeJournalsInput, Prisma.ChatUncheckedCreateWithoutGratitudeJournalsInput>
-  connectOrCreate?: Prisma.ChatCreateOrConnectWithoutGratitudeJournalsInput
-  upsert?: Prisma.ChatUpsertWithoutGratitudeJournalsInput
-  disconnect?: Prisma.ChatWhereInput | boolean
-  delete?: Prisma.ChatWhereInput | boolean
-  connect?: Prisma.ChatWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.ChatUpdateToOneWithWhereWithoutGratitudeJournalsInput, Prisma.ChatUpdateWithoutGratitudeJournalsInput>, Prisma.ChatUncheckedUpdateWithoutGratitudeJournalsInput>
-}
-
 export type ChatCreateWithoutUserInput = {
   id: string
   titleEncrypted: string
   isStarred?: boolean
-  type?: $Enums.ChatType
+  type: string
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -648,14 +616,13 @@ export type ChatCreateWithoutUserInput = {
   userPrompt?: Prisma.UserPromptCreateNestedOneWithoutChatsInput
   messages?: Prisma.MessageCreateNestedManyWithoutChatInput
   prompts?: Prisma.ChatPromptCreateNestedManyWithoutChatInput
-  gratitudeJournals?: Prisma.GratitudeJournalCreateNestedManyWithoutChatInput
 }
 
 export type ChatUncheckedCreateWithoutUserInput = {
   id: string
   titleEncrypted: string
   isStarred?: boolean
-  type?: $Enums.ChatType
+  type: string
   parentMessageId?: string | null
   userPromptId?: string | null
   createdAt?: Date | string
@@ -663,7 +630,6 @@ export type ChatUncheckedCreateWithoutUserInput = {
   deletedAt?: Date | string | null
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutChatInput
   prompts?: Prisma.ChatPromptUncheckedCreateNestedManyWithoutChatInput
-  gratitudeJournals?: Prisma.GratitudeJournalUncheckedCreateNestedManyWithoutChatInput
 }
 
 export type ChatCreateOrConnectWithoutUserInput = {
@@ -700,7 +666,7 @@ export type ChatScalarWhereInput = {
   userId?: Prisma.UuidFilter<"Chat"> | string
   titleEncrypted?: Prisma.StringFilter<"Chat"> | string
   isStarred?: Prisma.BoolFilter<"Chat"> | boolean
-  type?: Prisma.EnumChatTypeFilter<"Chat"> | $Enums.ChatType
+  type?: Prisma.StringFilter<"Chat"> | string
   parentMessageId?: Prisma.UuidNullableFilter<"Chat"> | string | null
   userPromptId?: Prisma.UuidNullableFilter<"Chat"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Chat"> | Date | string
@@ -712,7 +678,7 @@ export type ChatCreateWithoutUserPromptInput = {
   id: string
   titleEncrypted: string
   isStarred?: boolean
-  type?: $Enums.ChatType
+  type: string
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -720,7 +686,6 @@ export type ChatCreateWithoutUserPromptInput = {
   parentMessage?: Prisma.MessageCreateNestedOneWithoutChildChatsInput
   messages?: Prisma.MessageCreateNestedManyWithoutChatInput
   prompts?: Prisma.ChatPromptCreateNestedManyWithoutChatInput
-  gratitudeJournals?: Prisma.GratitudeJournalCreateNestedManyWithoutChatInput
 }
 
 export type ChatUncheckedCreateWithoutUserPromptInput = {
@@ -728,14 +693,13 @@ export type ChatUncheckedCreateWithoutUserPromptInput = {
   userId: string
   titleEncrypted: string
   isStarred?: boolean
-  type?: $Enums.ChatType
+  type: string
   parentMessageId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutChatInput
   prompts?: Prisma.ChatPromptUncheckedCreateNestedManyWithoutChatInput
-  gratitudeJournals?: Prisma.GratitudeJournalUncheckedCreateNestedManyWithoutChatInput
 }
 
 export type ChatCreateOrConnectWithoutUserPromptInput = {
@@ -768,7 +732,7 @@ export type ChatCreateWithoutPromptsInput = {
   id: string
   titleEncrypted: string
   isStarred?: boolean
-  type?: $Enums.ChatType
+  type: string
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -776,7 +740,6 @@ export type ChatCreateWithoutPromptsInput = {
   parentMessage?: Prisma.MessageCreateNestedOneWithoutChildChatsInput
   userPrompt?: Prisma.UserPromptCreateNestedOneWithoutChatsInput
   messages?: Prisma.MessageCreateNestedManyWithoutChatInput
-  gratitudeJournals?: Prisma.GratitudeJournalCreateNestedManyWithoutChatInput
 }
 
 export type ChatUncheckedCreateWithoutPromptsInput = {
@@ -784,14 +747,13 @@ export type ChatUncheckedCreateWithoutPromptsInput = {
   userId: string
   titleEncrypted: string
   isStarred?: boolean
-  type?: $Enums.ChatType
+  type: string
   parentMessageId?: string | null
   userPromptId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutChatInput
-  gratitudeJournals?: Prisma.GratitudeJournalUncheckedCreateNestedManyWithoutChatInput
 }
 
 export type ChatCreateOrConnectWithoutPromptsInput = {
@@ -814,7 +776,7 @@ export type ChatUpdateWithoutPromptsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   titleEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
   isStarred?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  type?: Prisma.EnumChatTypeFieldUpdateOperationsInput | $Enums.ChatType
+  type?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -822,7 +784,6 @@ export type ChatUpdateWithoutPromptsInput = {
   parentMessage?: Prisma.MessageUpdateOneWithoutChildChatsNestedInput
   userPrompt?: Prisma.UserPromptUpdateOneWithoutChatsNestedInput
   messages?: Prisma.MessageUpdateManyWithoutChatNestedInput
-  gratitudeJournals?: Prisma.GratitudeJournalUpdateManyWithoutChatNestedInput
 }
 
 export type ChatUncheckedUpdateWithoutPromptsInput = {
@@ -830,21 +791,20 @@ export type ChatUncheckedUpdateWithoutPromptsInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   titleEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
   isStarred?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  type?: Prisma.EnumChatTypeFieldUpdateOperationsInput | $Enums.ChatType
+  type?: Prisma.StringFieldUpdateOperationsInput | string
   parentMessageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userPromptId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   messages?: Prisma.MessageUncheckedUpdateManyWithoutChatNestedInput
-  gratitudeJournals?: Prisma.GratitudeJournalUncheckedUpdateManyWithoutChatNestedInput
 }
 
 export type ChatCreateWithoutMessagesInput = {
   id: string
   titleEncrypted: string
   isStarred?: boolean
-  type?: $Enums.ChatType
+  type: string
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -852,7 +812,6 @@ export type ChatCreateWithoutMessagesInput = {
   parentMessage?: Prisma.MessageCreateNestedOneWithoutChildChatsInput
   userPrompt?: Prisma.UserPromptCreateNestedOneWithoutChatsInput
   prompts?: Prisma.ChatPromptCreateNestedManyWithoutChatInput
-  gratitudeJournals?: Prisma.GratitudeJournalCreateNestedManyWithoutChatInput
 }
 
 export type ChatUncheckedCreateWithoutMessagesInput = {
@@ -860,14 +819,13 @@ export type ChatUncheckedCreateWithoutMessagesInput = {
   userId: string
   titleEncrypted: string
   isStarred?: boolean
-  type?: $Enums.ChatType
+  type: string
   parentMessageId?: string | null
   userPromptId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   prompts?: Prisma.ChatPromptUncheckedCreateNestedManyWithoutChatInput
-  gratitudeJournals?: Prisma.GratitudeJournalUncheckedCreateNestedManyWithoutChatInput
 }
 
 export type ChatCreateOrConnectWithoutMessagesInput = {
@@ -879,7 +837,7 @@ export type ChatCreateWithoutParentMessageInput = {
   id: string
   titleEncrypted: string
   isStarred?: boolean
-  type?: $Enums.ChatType
+  type: string
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -887,7 +845,6 @@ export type ChatCreateWithoutParentMessageInput = {
   userPrompt?: Prisma.UserPromptCreateNestedOneWithoutChatsInput
   messages?: Prisma.MessageCreateNestedManyWithoutChatInput
   prompts?: Prisma.ChatPromptCreateNestedManyWithoutChatInput
-  gratitudeJournals?: Prisma.GratitudeJournalCreateNestedManyWithoutChatInput
 }
 
 export type ChatUncheckedCreateWithoutParentMessageInput = {
@@ -895,14 +852,13 @@ export type ChatUncheckedCreateWithoutParentMessageInput = {
   userId: string
   titleEncrypted: string
   isStarred?: boolean
-  type?: $Enums.ChatType
+  type: string
   userPromptId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutChatInput
   prompts?: Prisma.ChatPromptUncheckedCreateNestedManyWithoutChatInput
-  gratitudeJournals?: Prisma.GratitudeJournalUncheckedCreateNestedManyWithoutChatInput
 }
 
 export type ChatCreateOrConnectWithoutParentMessageInput = {
@@ -930,7 +886,7 @@ export type ChatUpdateWithoutMessagesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   titleEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
   isStarred?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  type?: Prisma.EnumChatTypeFieldUpdateOperationsInput | $Enums.ChatType
+  type?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -938,7 +894,6 @@ export type ChatUpdateWithoutMessagesInput = {
   parentMessage?: Prisma.MessageUpdateOneWithoutChildChatsNestedInput
   userPrompt?: Prisma.UserPromptUpdateOneWithoutChatsNestedInput
   prompts?: Prisma.ChatPromptUpdateManyWithoutChatNestedInput
-  gratitudeJournals?: Prisma.GratitudeJournalUpdateManyWithoutChatNestedInput
 }
 
 export type ChatUncheckedUpdateWithoutMessagesInput = {
@@ -946,14 +901,13 @@ export type ChatUncheckedUpdateWithoutMessagesInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   titleEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
   isStarred?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  type?: Prisma.EnumChatTypeFieldUpdateOperationsInput | $Enums.ChatType
+  type?: Prisma.StringFieldUpdateOperationsInput | string
   parentMessageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userPromptId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   prompts?: Prisma.ChatPromptUncheckedUpdateManyWithoutChatNestedInput
-  gratitudeJournals?: Prisma.GratitudeJournalUncheckedUpdateManyWithoutChatNestedInput
 }
 
 export type ChatUpsertWithWhereUniqueWithoutParentMessageInput = {
@@ -972,87 +926,11 @@ export type ChatUpdateManyWithWhereWithoutParentMessageInput = {
   data: Prisma.XOR<Prisma.ChatUpdateManyMutationInput, Prisma.ChatUncheckedUpdateManyWithoutParentMessageInput>
 }
 
-export type ChatCreateWithoutGratitudeJournalsInput = {
-  id: string
-  titleEncrypted: string
-  isStarred?: boolean
-  type?: $Enums.ChatType
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  deletedAt?: Date | string | null
-  user: Prisma.UserCreateNestedOneWithoutChatsInput
-  parentMessage?: Prisma.MessageCreateNestedOneWithoutChildChatsInput
-  userPrompt?: Prisma.UserPromptCreateNestedOneWithoutChatsInput
-  messages?: Prisma.MessageCreateNestedManyWithoutChatInput
-  prompts?: Prisma.ChatPromptCreateNestedManyWithoutChatInput
-}
-
-export type ChatUncheckedCreateWithoutGratitudeJournalsInput = {
-  id: string
-  userId: string
-  titleEncrypted: string
-  isStarred?: boolean
-  type?: $Enums.ChatType
-  parentMessageId?: string | null
-  userPromptId?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  deletedAt?: Date | string | null
-  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutChatInput
-  prompts?: Prisma.ChatPromptUncheckedCreateNestedManyWithoutChatInput
-}
-
-export type ChatCreateOrConnectWithoutGratitudeJournalsInput = {
-  where: Prisma.ChatWhereUniqueInput
-  create: Prisma.XOR<Prisma.ChatCreateWithoutGratitudeJournalsInput, Prisma.ChatUncheckedCreateWithoutGratitudeJournalsInput>
-}
-
-export type ChatUpsertWithoutGratitudeJournalsInput = {
-  update: Prisma.XOR<Prisma.ChatUpdateWithoutGratitudeJournalsInput, Prisma.ChatUncheckedUpdateWithoutGratitudeJournalsInput>
-  create: Prisma.XOR<Prisma.ChatCreateWithoutGratitudeJournalsInput, Prisma.ChatUncheckedCreateWithoutGratitudeJournalsInput>
-  where?: Prisma.ChatWhereInput
-}
-
-export type ChatUpdateToOneWithWhereWithoutGratitudeJournalsInput = {
-  where?: Prisma.ChatWhereInput
-  data: Prisma.XOR<Prisma.ChatUpdateWithoutGratitudeJournalsInput, Prisma.ChatUncheckedUpdateWithoutGratitudeJournalsInput>
-}
-
-export type ChatUpdateWithoutGratitudeJournalsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  titleEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
-  isStarred?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  type?: Prisma.EnumChatTypeFieldUpdateOperationsInput | $Enums.ChatType
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  user?: Prisma.UserUpdateOneRequiredWithoutChatsNestedInput
-  parentMessage?: Prisma.MessageUpdateOneWithoutChildChatsNestedInput
-  userPrompt?: Prisma.UserPromptUpdateOneWithoutChatsNestedInput
-  messages?: Prisma.MessageUpdateManyWithoutChatNestedInput
-  prompts?: Prisma.ChatPromptUpdateManyWithoutChatNestedInput
-}
-
-export type ChatUncheckedUpdateWithoutGratitudeJournalsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
-  titleEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
-  isStarred?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  type?: Prisma.EnumChatTypeFieldUpdateOperationsInput | $Enums.ChatType
-  parentMessageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  userPromptId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  messages?: Prisma.MessageUncheckedUpdateManyWithoutChatNestedInput
-  prompts?: Prisma.ChatPromptUncheckedUpdateManyWithoutChatNestedInput
-}
-
 export type ChatCreateManyUserInput = {
   id: string
   titleEncrypted: string
   isStarred?: boolean
-  type?: $Enums.ChatType
+  type: string
   parentMessageId?: string | null
   userPromptId?: string | null
   createdAt?: Date | string
@@ -1064,7 +942,7 @@ export type ChatUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   titleEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
   isStarred?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  type?: Prisma.EnumChatTypeFieldUpdateOperationsInput | $Enums.ChatType
+  type?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1072,14 +950,13 @@ export type ChatUpdateWithoutUserInput = {
   userPrompt?: Prisma.UserPromptUpdateOneWithoutChatsNestedInput
   messages?: Prisma.MessageUpdateManyWithoutChatNestedInput
   prompts?: Prisma.ChatPromptUpdateManyWithoutChatNestedInput
-  gratitudeJournals?: Prisma.GratitudeJournalUpdateManyWithoutChatNestedInput
 }
 
 export type ChatUncheckedUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   titleEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
   isStarred?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  type?: Prisma.EnumChatTypeFieldUpdateOperationsInput | $Enums.ChatType
+  type?: Prisma.StringFieldUpdateOperationsInput | string
   parentMessageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userPromptId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1087,14 +964,13 @@ export type ChatUncheckedUpdateWithoutUserInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   messages?: Prisma.MessageUncheckedUpdateManyWithoutChatNestedInput
   prompts?: Prisma.ChatPromptUncheckedUpdateManyWithoutChatNestedInput
-  gratitudeJournals?: Prisma.GratitudeJournalUncheckedUpdateManyWithoutChatNestedInput
 }
 
 export type ChatUncheckedUpdateManyWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   titleEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
   isStarred?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  type?: Prisma.EnumChatTypeFieldUpdateOperationsInput | $Enums.ChatType
+  type?: Prisma.StringFieldUpdateOperationsInput | string
   parentMessageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userPromptId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1107,7 +983,7 @@ export type ChatCreateManyUserPromptInput = {
   userId: string
   titleEncrypted: string
   isStarred?: boolean
-  type?: $Enums.ChatType
+  type: string
   parentMessageId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1118,7 +994,7 @@ export type ChatUpdateWithoutUserPromptInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   titleEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
   isStarred?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  type?: Prisma.EnumChatTypeFieldUpdateOperationsInput | $Enums.ChatType
+  type?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1126,7 +1002,6 @@ export type ChatUpdateWithoutUserPromptInput = {
   parentMessage?: Prisma.MessageUpdateOneWithoutChildChatsNestedInput
   messages?: Prisma.MessageUpdateManyWithoutChatNestedInput
   prompts?: Prisma.ChatPromptUpdateManyWithoutChatNestedInput
-  gratitudeJournals?: Prisma.GratitudeJournalUpdateManyWithoutChatNestedInput
 }
 
 export type ChatUncheckedUpdateWithoutUserPromptInput = {
@@ -1134,14 +1009,13 @@ export type ChatUncheckedUpdateWithoutUserPromptInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   titleEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
   isStarred?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  type?: Prisma.EnumChatTypeFieldUpdateOperationsInput | $Enums.ChatType
+  type?: Prisma.StringFieldUpdateOperationsInput | string
   parentMessageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   messages?: Prisma.MessageUncheckedUpdateManyWithoutChatNestedInput
   prompts?: Prisma.ChatPromptUncheckedUpdateManyWithoutChatNestedInput
-  gratitudeJournals?: Prisma.GratitudeJournalUncheckedUpdateManyWithoutChatNestedInput
 }
 
 export type ChatUncheckedUpdateManyWithoutUserPromptInput = {
@@ -1149,7 +1023,7 @@ export type ChatUncheckedUpdateManyWithoutUserPromptInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   titleEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
   isStarred?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  type?: Prisma.EnumChatTypeFieldUpdateOperationsInput | $Enums.ChatType
+  type?: Prisma.StringFieldUpdateOperationsInput | string
   parentMessageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1161,7 +1035,7 @@ export type ChatCreateManyParentMessageInput = {
   userId: string
   titleEncrypted: string
   isStarred?: boolean
-  type?: $Enums.ChatType
+  type: string
   userPromptId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1172,7 +1046,7 @@ export type ChatUpdateWithoutParentMessageInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   titleEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
   isStarred?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  type?: Prisma.EnumChatTypeFieldUpdateOperationsInput | $Enums.ChatType
+  type?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1180,7 +1054,6 @@ export type ChatUpdateWithoutParentMessageInput = {
   userPrompt?: Prisma.UserPromptUpdateOneWithoutChatsNestedInput
   messages?: Prisma.MessageUpdateManyWithoutChatNestedInput
   prompts?: Prisma.ChatPromptUpdateManyWithoutChatNestedInput
-  gratitudeJournals?: Prisma.GratitudeJournalUpdateManyWithoutChatNestedInput
 }
 
 export type ChatUncheckedUpdateWithoutParentMessageInput = {
@@ -1188,14 +1061,13 @@ export type ChatUncheckedUpdateWithoutParentMessageInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   titleEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
   isStarred?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  type?: Prisma.EnumChatTypeFieldUpdateOperationsInput | $Enums.ChatType
+  type?: Prisma.StringFieldUpdateOperationsInput | string
   userPromptId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   messages?: Prisma.MessageUncheckedUpdateManyWithoutChatNestedInput
   prompts?: Prisma.ChatPromptUncheckedUpdateManyWithoutChatNestedInput
-  gratitudeJournals?: Prisma.GratitudeJournalUncheckedUpdateManyWithoutChatNestedInput
 }
 
 export type ChatUncheckedUpdateManyWithoutParentMessageInput = {
@@ -1203,7 +1075,7 @@ export type ChatUncheckedUpdateManyWithoutParentMessageInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   titleEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
   isStarred?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  type?: Prisma.EnumChatTypeFieldUpdateOperationsInput | $Enums.ChatType
+  type?: Prisma.StringFieldUpdateOperationsInput | string
   userPromptId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1218,13 +1090,11 @@ export type ChatUncheckedUpdateManyWithoutParentMessageInput = {
 export type ChatCountOutputType = {
   messages: number
   prompts: number
-  gratitudeJournals: number
 }
 
 export type ChatCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   messages?: boolean | ChatCountOutputTypeCountMessagesArgs
   prompts?: boolean | ChatCountOutputTypeCountPromptsArgs
-  gratitudeJournals?: boolean | ChatCountOutputTypeCountGratitudeJournalsArgs
 }
 
 /**
@@ -1251,13 +1121,6 @@ export type ChatCountOutputTypeCountPromptsArgs<ExtArgs extends runtime.Types.Ex
   where?: Prisma.ChatPromptWhereInput
 }
 
-/**
- * ChatCountOutputType without action
- */
-export type ChatCountOutputTypeCountGratitudeJournalsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.GratitudeJournalWhereInput
-}
-
 
 export type ChatSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1275,7 +1138,6 @@ export type ChatSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   userPrompt?: boolean | Prisma.Chat$userPromptArgs<ExtArgs>
   messages?: boolean | Prisma.Chat$messagesArgs<ExtArgs>
   prompts?: boolean | Prisma.Chat$promptsArgs<ExtArgs>
-  gratitudeJournals?: boolean | Prisma.Chat$gratitudeJournalsArgs<ExtArgs>
   _count?: boolean | Prisma.ChatCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["chat"]>
 
@@ -1331,7 +1193,6 @@ export type ChatInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   userPrompt?: boolean | Prisma.Chat$userPromptArgs<ExtArgs>
   messages?: boolean | Prisma.Chat$messagesArgs<ExtArgs>
   prompts?: boolean | Prisma.Chat$promptsArgs<ExtArgs>
-  gratitudeJournals?: boolean | Prisma.Chat$gratitudeJournalsArgs<ExtArgs>
   _count?: boolean | Prisma.ChatCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ChatIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1353,14 +1214,13 @@ export type $ChatPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     userPrompt: Prisma.$UserPromptPayload<ExtArgs> | null
     messages: Prisma.$MessagePayload<ExtArgs>[]
     prompts: Prisma.$ChatPromptPayload<ExtArgs>[]
-    gratitudeJournals: Prisma.$GratitudeJournalPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     userId: string
     titleEncrypted: string
     isStarred: boolean
-    type: $Enums.ChatType
+    type: string
     parentMessageId: string | null
     userPromptId: string | null
     createdAt: Date
@@ -1765,7 +1625,6 @@ export interface Prisma__ChatClient<T, Null = never, ExtArgs extends runtime.Typ
   userPrompt<T extends Prisma.Chat$userPromptArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Chat$userPromptArgs<ExtArgs>>): Prisma.Prisma__UserPromptClient<runtime.Types.Result.GetResult<Prisma.$UserPromptPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   messages<T extends Prisma.Chat$messagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Chat$messagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   prompts<T extends Prisma.Chat$promptsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Chat$promptsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ChatPromptPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  gratitudeJournals<T extends Prisma.Chat$gratitudeJournalsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Chat$gratitudeJournalsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$GratitudeJournalPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1799,7 +1658,7 @@ export interface ChatFieldRefs {
   readonly userId: Prisma.FieldRef<"Chat", 'String'>
   readonly titleEncrypted: Prisma.FieldRef<"Chat", 'String'>
   readonly isStarred: Prisma.FieldRef<"Chat", 'Boolean'>
-  readonly type: Prisma.FieldRef<"Chat", 'ChatType'>
+  readonly type: Prisma.FieldRef<"Chat", 'String'>
   readonly parentMessageId: Prisma.FieldRef<"Chat", 'String'>
   readonly userPromptId: Prisma.FieldRef<"Chat", 'String'>
   readonly createdAt: Prisma.FieldRef<"Chat", 'DateTime'>
@@ -2293,30 +2152,6 @@ export type Chat$promptsArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
   take?: number
   skip?: number
   distinct?: Prisma.ChatPromptScalarFieldEnum | Prisma.ChatPromptScalarFieldEnum[]
-}
-
-/**
- * Chat.gratitudeJournals
- */
-export type Chat$gratitudeJournalsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the GratitudeJournal
-   */
-  select?: Prisma.GratitudeJournalSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the GratitudeJournal
-   */
-  omit?: Prisma.GratitudeJournalOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.GratitudeJournalInclude<ExtArgs> | null
-  where?: Prisma.GratitudeJournalWhereInput
-  orderBy?: Prisma.GratitudeJournalOrderByWithRelationInput | Prisma.GratitudeJournalOrderByWithRelationInput[]
-  cursor?: Prisma.GratitudeJournalWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.GratitudeJournalScalarFieldEnum | Prisma.GratitudeJournalScalarFieldEnum[]
 }
 
 /**

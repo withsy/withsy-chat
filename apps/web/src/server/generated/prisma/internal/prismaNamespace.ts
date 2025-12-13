@@ -401,7 +401,6 @@ export const ModelName = {
   Message: 'Message',
   MessageChunk: 'MessageChunk',
   IdempotencyInfo: 'IdempotencyInfo',
-  GratitudeJournal: 'GratitudeJournal',
   ApiKey: 'ApiKey',
   SupabaseActivity: 'SupabaseActivity'
 } as const
@@ -419,7 +418,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "userLinkAccount" | "userUsageLimit" | "userPrompt" | "userDefaultPrompt" | "userAiProfile" | "chat" | "chatPrompt" | "message" | "messageChunk" | "idempotencyInfo" | "gratitudeJournal" | "apiKey" | "supabaseActivity"
+    modelProps: "user" | "userLinkAccount" | "userUsageLimit" | "userPrompt" | "userDefaultPrompt" | "userAiProfile" | "chat" | "chatPrompt" | "message" | "messageChunk" | "idempotencyInfo" | "apiKey" | "supabaseActivity"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1237,80 +1236,6 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
-    GratitudeJournal: {
-      payload: Prisma.$GratitudeJournalPayload<ExtArgs>
-      fields: Prisma.GratitudeJournalFieldRefs
-      operations: {
-        findUnique: {
-          args: Prisma.GratitudeJournalFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$GratitudeJournalPayload> | null
-        }
-        findUniqueOrThrow: {
-          args: Prisma.GratitudeJournalFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$GratitudeJournalPayload>
-        }
-        findFirst: {
-          args: Prisma.GratitudeJournalFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$GratitudeJournalPayload> | null
-        }
-        findFirstOrThrow: {
-          args: Prisma.GratitudeJournalFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$GratitudeJournalPayload>
-        }
-        findMany: {
-          args: Prisma.GratitudeJournalFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$GratitudeJournalPayload>[]
-        }
-        create: {
-          args: Prisma.GratitudeJournalCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$GratitudeJournalPayload>
-        }
-        createMany: {
-          args: Prisma.GratitudeJournalCreateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        createManyAndReturn: {
-          args: Prisma.GratitudeJournalCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$GratitudeJournalPayload>[]
-        }
-        delete: {
-          args: Prisma.GratitudeJournalDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$GratitudeJournalPayload>
-        }
-        update: {
-          args: Prisma.GratitudeJournalUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$GratitudeJournalPayload>
-        }
-        deleteMany: {
-          args: Prisma.GratitudeJournalDeleteManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateMany: {
-          args: Prisma.GratitudeJournalUpdateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateManyAndReturn: {
-          args: Prisma.GratitudeJournalUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$GratitudeJournalPayload>[]
-        }
-        upsert: {
-          args: Prisma.GratitudeJournalUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$GratitudeJournalPayload>
-        }
-        aggregate: {
-          args: Prisma.GratitudeJournalAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateGratitudeJournal>
-        }
-        groupBy: {
-          args: Prisma.GratitudeJournalGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.GratitudeJournalGroupByOutputType>[]
-        }
-        count: {
-          args: Prisma.GratitudeJournalCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.GratitudeJournalCountAggregateOutputType> | number
-        }
-      }
-    }
     ApiKey: {
       payload: Prisma.$ApiKeyPayload<ExtArgs>
       fields: Prisma.ApiKeyFieldRefs
@@ -1539,7 +1464,6 @@ export const UserUsageLimitScalarFieldEnum = {
   userId: 'userId',
   type: 'type',
   period: 'period',
-  allowedAmount: 'allowedAmount',
   remainingAmount: 'remainingAmount',
   resetAt: 'resetAt',
   createdAt: 'createdAt',
@@ -1655,22 +1579,12 @@ export const IdempotencyInfoScalarFieldEnum = {
 export type IdempotencyInfoScalarFieldEnum = (typeof IdempotencyInfoScalarFieldEnum)[keyof typeof IdempotencyInfoScalarFieldEnum]
 
 
-export const GratitudeJournalScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  chatId: 'chatId',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type GratitudeJournalScalarFieldEnum = (typeof GratitudeJournalScalarFieldEnum)[keyof typeof GratitudeJournalScalarFieldEnum]
-
-
 export const ApiKeyScalarFieldEnum = {
   id: 'id',
   apiKey: 'apiKey',
   isEnabled: 'isEnabled',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 } as const
 
 export type ApiKeyScalarFieldEnum = (typeof ApiKeyScalarFieldEnum)[keyof typeof ApiKeyScalarFieldEnum]
@@ -1678,6 +1592,7 @@ export type ApiKeyScalarFieldEnum = (typeof ApiKeyScalarFieldEnum)[keyof typeof 
 
 export const SupabaseActivityScalarFieldEnum = {
   id: 'id',
+  createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
@@ -1787,51 +1702,9 @@ export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel,
 
 
 /**
- * Reference to a field of type 'UserUsageLimitType'
- */
-export type EnumUserUsageLimitTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'UserUsageLimitType'>
-    
-
-
-/**
- * Reference to a field of type 'UserUsageLimitType[]'
- */
-export type ListEnumUserUsageLimitTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'UserUsageLimitType[]'>
-    
-
-
-/**
- * Reference to a field of type 'UserUsageLimitPeriod'
- */
-export type EnumUserUsageLimitPeriodFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'UserUsageLimitPeriod'>
-    
-
-
-/**
- * Reference to a field of type 'UserUsageLimitPeriod[]'
- */
-export type ListEnumUserUsageLimitPeriodFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'UserUsageLimitPeriod[]'>
-    
-
-
-/**
  * Reference to a field of type 'Boolean'
  */
 export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
-    
-
-
-/**
- * Reference to a field of type 'ChatType'
- */
-export type EnumChatTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ChatType'>
-    
-
-
-/**
- * Reference to a field of type 'ChatType[]'
- */
-export type ListEnumChatTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ChatType[]'>
     
 
 
@@ -1960,7 +1833,6 @@ export type GlobalOmitConfig = {
   message?: Prisma.MessageOmit
   messageChunk?: Prisma.MessageChunkOmit
   idempotencyInfo?: Prisma.IdempotencyInfoOmit
-  gratitudeJournal?: Prisma.GratitudeJournalOmit
   apiKey?: Prisma.ApiKeyOmit
   supabaseActivity?: Prisma.SupabaseActivityOmit
 }

@@ -9,35 +9,6 @@
 * 🟢 You can import this file directly.
 */
 
-export const UserUsageLimitPeriod = {
-  annually: 'annually',
-  monthly: 'monthly',
-  daily: 'daily',
-  perHour: 'perHour',
-  perMinute: 'perMinute',
-  perSecond: 'perSecond'
-} as const
-
-export type UserUsageLimitPeriod = (typeof UserUsageLimitPeriod)[keyof typeof UserUsageLimitPeriod]
-
-
-export const UserUsageLimitType = {
-  message: 'message',
-  aiProfileImage: 'aiProfileImage'
-} as const
-
-export type UserUsageLimitType = (typeof UserUsageLimitType)[keyof typeof UserUsageLimitType]
-
-
-export const ChatType = {
-  chat: 'chat',
-  branch: 'branch',
-  gratitudeJournal: 'gratitudeJournal'
-} as const
-
-export type ChatType = (typeof ChatType)[keyof typeof ChatType]
-
-
 export const MessageStatus = {
   pending: 'pending',
   processing: 'processing',

@@ -6,9 +6,6 @@ export const UserAiProfileId = z.number().int();
 export type UserAiProfileId = zInfer<typeof UserAiProfileId>;
 
 export const UserAiProfileData = z.object({
-  get id() {
-    return UserAiProfileId;
-  },
   model: z.string(),
   name: z.string(),
   imageSource: z.string(),

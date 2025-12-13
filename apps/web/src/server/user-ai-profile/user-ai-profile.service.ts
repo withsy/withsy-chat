@@ -7,6 +7,8 @@ import {
 } from "@/types/user-ai-profile";
 import type { Db } from "../db/db";
 import type { EncryptionService } from "../encryption/encryption.service";
+import { UserAiProfileDecryptor } from "./user-ai-profile.decryptor";
+import { UserAiProfileRepository } from "./user-ai-profile.repository";
 
 export class UserAiProfileService {
   constructor(
@@ -17,12 +19,14 @@ export class UserAiProfileService {
   async list(input: { userId: UserId }): Promise<UserAiProfileListOutput> {
     const { userId } = input;
 
-    const entities = await this.db.userAiProfile.findMany({
-      where: { userId },
-      select: UserAiProfileSelect,
-    });
+    const userAiProfileRepository = new UserAiProfileRepository(this.db);
+    const entities = await userAiProfileRepository.list({ userId });
 
-    const datas = entities.map((x) => this.decrypt(x));
+    const userAiProfileDecryptor = new UserAiProfileDecryptor(
+      this.encryptionService
+    );
+    const datas = entities.map((x) => userAiProfileDecryptor.decrypt(x));
+
     return datas;
   }
 
@@ -32,52 +36,26 @@ export class UserAiProfileService {
     name?: string;
     imagePath?: string;
   }): Promise<UserAiProfileData> {
-    const { userId, model, name, imagePath } = input;
+    const { userId, model, name = "", imagePath = "" } = input;
 
-    const nameEncrypted = name
-      ? this.encryptionService.encrypt(name)
-      : undefined;
-    const imagePathEncrypted = imagePath
-      ? this.encryptionService.encrypt(imagePath)
-      : undefined;
-    const emptyNameEncrypted = this.encryptionService.encrypt("");
-    const emptyImagePathEncrypted = this.encryptionService.encrypt("");
+    const nameEncrypted = this.encryptionService.encrypt(name);
+    const imagePathEncrypted = this.encryptionService.encrypt(imagePath);
 
     const res = await this.db.$transaction(async (tx) => {
-      let entity = await tx.userAiProfile.findUnique({
-        where: { userId_model: { userId, model } },
-        select: UserAiProfileSelect,
-      });
-
-      let oldImagePathEncrypted = "";
-      if (!entity) {
-        entity = await tx.userAiProfile.create({
-          data: {
-            userId,
-            model,
-            nameEncrypted: nameEncrypted ?? emptyNameEncrypted,
-            imagePathEncrypted: imagePathEncrypted ?? emptyImagePathEncrypted,
-          },
-          select: UserAiProfileSelect,
+      const userAiProfileRepository = new UserAiProfileRepository(tx);
+      const { oldImagePathEncrypted, ...entity } =
+        await userAiProfileRepository.upsert({
+          userId,
+          model,
+          nameEncrypted,
+          imagePathEncrypted,
         });
-      } else {
-        if (imagePathEncrypted)
-          oldImagePathEncrypted = entity.imagePathEncrypted;
 
-        entity = await tx.userAiProfile.update({
-          where: { userId_model: { userId, model } },
-          data: {
-            nameEncrypted,
-            imagePathEncrypted,
-          },
-          select: UserAiProfileSelect,
-        });
-      }
-
-      if (imagePath)
+      if (imagePath) {
         await UserUsageLimitService.decreaseAiProfileImage(tx, {
           userId,
         });
+      }
 
       return { entity, oldImagePathEncrypted };
     });
@@ -131,19 +109,5 @@ export class UserAiProfileService {
 
     const data = this.decrypt(entity);
     return data;
-  }
-
-  static createImagePath(input: { userId: UserId; fileName: string }) {
-    const { userId, fileName } = input;
-    return `${userId}/${fileName}`;
-  }
-
-  static createImageSource(input: { imagePath: string }) {
-    const { imagePath } = input;
-    const parts = imagePath.split("/"); // e.g.) <userId>/<fileName>
-    const fileName = parts.at(1) ?? "";
-    const imageSource =
-      fileName.length > 0 ? `/api/ai-profiles/${fileName}` : "";
-    return imageSource;
   }
 }

@@ -175,8 +175,10 @@ export class UserUsageLimitService {
     });
     if (UserUsageLimitService.resetIfExpired(entity, now))
       await UserUsageLimitService.save(tx, entity);
+
     if (entity.remainingAmount <= 0)
       throw UserUsageLimitService.createError(entity);
+
     entity.remainingAmount -= 1;
     if (entity.remainingAmount <= 0)
       UserUsageLimitService.updateResetAt(entity, now);

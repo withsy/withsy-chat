@@ -73,11 +73,6 @@ export type MessageChunk = Prisma.MessageChunkModel
  */
 export type IdempotencyInfo = Prisma.IdempotencyInfoModel
 /**
- * Model GratitudeJournal
- * 
- */
-export type GratitudeJournal = Prisma.GratitudeJournalModel
-/**
  * Model ApiKey
  * 
  */

@@ -215,40 +215,6 @@ export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedStringNullableFilter<$PrismaModel>
 }
 
-export type EnumUserUsageLimitTypeFilter<$PrismaModel = never> = {
-  equals?: $Enums.UserUsageLimitType | Prisma.EnumUserUsageLimitTypeFieldRefInput<$PrismaModel>
-  in?: $Enums.UserUsageLimitType[] | Prisma.ListEnumUserUsageLimitTypeFieldRefInput<$PrismaModel>
-  notIn?: $Enums.UserUsageLimitType[] | Prisma.ListEnumUserUsageLimitTypeFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumUserUsageLimitTypeFilter<$PrismaModel> | $Enums.UserUsageLimitType
-}
-
-export type EnumUserUsageLimitPeriodFilter<$PrismaModel = never> = {
-  equals?: $Enums.UserUsageLimitPeriod | Prisma.EnumUserUsageLimitPeriodFieldRefInput<$PrismaModel>
-  in?: $Enums.UserUsageLimitPeriod[] | Prisma.ListEnumUserUsageLimitPeriodFieldRefInput<$PrismaModel>
-  notIn?: $Enums.UserUsageLimitPeriod[] | Prisma.ListEnumUserUsageLimitPeriodFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumUserUsageLimitPeriodFilter<$PrismaModel> | $Enums.UserUsageLimitPeriod
-}
-
-export type EnumUserUsageLimitTypeWithAggregatesFilter<$PrismaModel = never> = {
-  equals?: $Enums.UserUsageLimitType | Prisma.EnumUserUsageLimitTypeFieldRefInput<$PrismaModel>
-  in?: $Enums.UserUsageLimitType[] | Prisma.ListEnumUserUsageLimitTypeFieldRefInput<$PrismaModel>
-  notIn?: $Enums.UserUsageLimitType[] | Prisma.ListEnumUserUsageLimitTypeFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumUserUsageLimitTypeWithAggregatesFilter<$PrismaModel> | $Enums.UserUsageLimitType
-  _count?: Prisma.NestedIntFilter<$PrismaModel>
-  _min?: Prisma.NestedEnumUserUsageLimitTypeFilter<$PrismaModel>
-  _max?: Prisma.NestedEnumUserUsageLimitTypeFilter<$PrismaModel>
-}
-
-export type EnumUserUsageLimitPeriodWithAggregatesFilter<$PrismaModel = never> = {
-  equals?: $Enums.UserUsageLimitPeriod | Prisma.EnumUserUsageLimitPeriodFieldRefInput<$PrismaModel>
-  in?: $Enums.UserUsageLimitPeriod[] | Prisma.ListEnumUserUsageLimitPeriodFieldRefInput<$PrismaModel>
-  notIn?: $Enums.UserUsageLimitPeriod[] | Prisma.ListEnumUserUsageLimitPeriodFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumUserUsageLimitPeriodWithAggregatesFilter<$PrismaModel> | $Enums.UserUsageLimitPeriod
-  _count?: Prisma.NestedIntFilter<$PrismaModel>
-  _min?: Prisma.NestedEnumUserUsageLimitPeriodFilter<$PrismaModel>
-  _max?: Prisma.NestedEnumUserUsageLimitPeriodFilter<$PrismaModel>
-}
-
 export type BoolFilter<$PrismaModel = never> = {
   equals?: boolean | Prisma.BooleanFieldRefInput<$PrismaModel>
   not?: Prisma.NestedBoolFilter<$PrismaModel> | boolean
@@ -312,23 +278,6 @@ export type UuidNullableWithAggregatesFilter<$PrismaModel = never> = {
   _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
   _min?: Prisma.NestedStringNullableFilter<$PrismaModel>
   _max?: Prisma.NestedStringNullableFilter<$PrismaModel>
-}
-
-export type EnumChatTypeFilter<$PrismaModel = never> = {
-  equals?: $Enums.ChatType | Prisma.EnumChatTypeFieldRefInput<$PrismaModel>
-  in?: $Enums.ChatType[] | Prisma.ListEnumChatTypeFieldRefInput<$PrismaModel>
-  notIn?: $Enums.ChatType[] | Prisma.ListEnumChatTypeFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumChatTypeFilter<$PrismaModel> | $Enums.ChatType
-}
-
-export type EnumChatTypeWithAggregatesFilter<$PrismaModel = never> = {
-  equals?: $Enums.ChatType | Prisma.EnumChatTypeFieldRefInput<$PrismaModel>
-  in?: $Enums.ChatType[] | Prisma.ListEnumChatTypeFieldRefInput<$PrismaModel>
-  notIn?: $Enums.ChatType[] | Prisma.ListEnumChatTypeFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumChatTypeWithAggregatesFilter<$PrismaModel> | $Enums.ChatType
-  _count?: Prisma.NestedIntFilter<$PrismaModel>
-  _min?: Prisma.NestedEnumChatTypeFilter<$PrismaModel>
-  _max?: Prisma.NestedEnumChatTypeFilter<$PrismaModel>
 }
 
 export type EnumMessageStatusFilter<$PrismaModel = never> = {
@@ -533,40 +482,6 @@ export type NestedIntNullableFilter<$PrismaModel = never> = {
   not?: Prisma.NestedIntNullableFilter<$PrismaModel> | number | null
 }
 
-export type NestedEnumUserUsageLimitTypeFilter<$PrismaModel = never> = {
-  equals?: $Enums.UserUsageLimitType | Prisma.EnumUserUsageLimitTypeFieldRefInput<$PrismaModel>
-  in?: $Enums.UserUsageLimitType[] | Prisma.ListEnumUserUsageLimitTypeFieldRefInput<$PrismaModel>
-  notIn?: $Enums.UserUsageLimitType[] | Prisma.ListEnumUserUsageLimitTypeFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumUserUsageLimitTypeFilter<$PrismaModel> | $Enums.UserUsageLimitType
-}
-
-export type NestedEnumUserUsageLimitPeriodFilter<$PrismaModel = never> = {
-  equals?: $Enums.UserUsageLimitPeriod | Prisma.EnumUserUsageLimitPeriodFieldRefInput<$PrismaModel>
-  in?: $Enums.UserUsageLimitPeriod[] | Prisma.ListEnumUserUsageLimitPeriodFieldRefInput<$PrismaModel>
-  notIn?: $Enums.UserUsageLimitPeriod[] | Prisma.ListEnumUserUsageLimitPeriodFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumUserUsageLimitPeriodFilter<$PrismaModel> | $Enums.UserUsageLimitPeriod
-}
-
-export type NestedEnumUserUsageLimitTypeWithAggregatesFilter<$PrismaModel = never> = {
-  equals?: $Enums.UserUsageLimitType | Prisma.EnumUserUsageLimitTypeFieldRefInput<$PrismaModel>
-  in?: $Enums.UserUsageLimitType[] | Prisma.ListEnumUserUsageLimitTypeFieldRefInput<$PrismaModel>
-  notIn?: $Enums.UserUsageLimitType[] | Prisma.ListEnumUserUsageLimitTypeFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumUserUsageLimitTypeWithAggregatesFilter<$PrismaModel> | $Enums.UserUsageLimitType
-  _count?: Prisma.NestedIntFilter<$PrismaModel>
-  _min?: Prisma.NestedEnumUserUsageLimitTypeFilter<$PrismaModel>
-  _max?: Prisma.NestedEnumUserUsageLimitTypeFilter<$PrismaModel>
-}
-
-export type NestedEnumUserUsageLimitPeriodWithAggregatesFilter<$PrismaModel = never> = {
-  equals?: $Enums.UserUsageLimitPeriod | Prisma.EnumUserUsageLimitPeriodFieldRefInput<$PrismaModel>
-  in?: $Enums.UserUsageLimitPeriod[] | Prisma.ListEnumUserUsageLimitPeriodFieldRefInput<$PrismaModel>
-  notIn?: $Enums.UserUsageLimitPeriod[] | Prisma.ListEnumUserUsageLimitPeriodFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumUserUsageLimitPeriodWithAggregatesFilter<$PrismaModel> | $Enums.UserUsageLimitPeriod
-  _count?: Prisma.NestedIntFilter<$PrismaModel>
-  _min?: Prisma.NestedEnumUserUsageLimitPeriodFilter<$PrismaModel>
-  _max?: Prisma.NestedEnumUserUsageLimitPeriodFilter<$PrismaModel>
-}
-
 export type NestedBoolFilter<$PrismaModel = never> = {
   equals?: boolean | Prisma.BooleanFieldRefInput<$PrismaModel>
   not?: Prisma.NestedBoolFilter<$PrismaModel> | boolean
@@ -628,23 +543,6 @@ export type NestedUuidNullableWithAggregatesFilter<$PrismaModel = never> = {
   _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
   _min?: Prisma.NestedStringNullableFilter<$PrismaModel>
   _max?: Prisma.NestedStringNullableFilter<$PrismaModel>
-}
-
-export type NestedEnumChatTypeFilter<$PrismaModel = never> = {
-  equals?: $Enums.ChatType | Prisma.EnumChatTypeFieldRefInput<$PrismaModel>
-  in?: $Enums.ChatType[] | Prisma.ListEnumChatTypeFieldRefInput<$PrismaModel>
-  notIn?: $Enums.ChatType[] | Prisma.ListEnumChatTypeFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumChatTypeFilter<$PrismaModel> | $Enums.ChatType
-}
-
-export type NestedEnumChatTypeWithAggregatesFilter<$PrismaModel = never> = {
-  equals?: $Enums.ChatType | Prisma.EnumChatTypeFieldRefInput<$PrismaModel>
-  in?: $Enums.ChatType[] | Prisma.ListEnumChatTypeFieldRefInput<$PrismaModel>
-  notIn?: $Enums.ChatType[] | Prisma.ListEnumChatTypeFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumChatTypeWithAggregatesFilter<$PrismaModel> | $Enums.ChatType
-  _count?: Prisma.NestedIntFilter<$PrismaModel>
-  _min?: Prisma.NestedEnumChatTypeFilter<$PrismaModel>
-  _max?: Prisma.NestedEnumChatTypeFilter<$PrismaModel>
 }
 
 export type NestedEnumMessageStatusFilter<$PrismaModel = never> = {

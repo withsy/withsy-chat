@@ -36,16 +36,19 @@ export type SupabaseActivitySumAggregateOutputType = {
 
 export type SupabaseActivityMinAggregateOutputType = {
   id: number | null
+  createdAt: Date | null
   updatedAt: Date | null
 }
 
 export type SupabaseActivityMaxAggregateOutputType = {
   id: number | null
+  createdAt: Date | null
   updatedAt: Date | null
 }
 
 export type SupabaseActivityCountAggregateOutputType = {
   id: number
+  createdAt: number
   updatedAt: number
   _all: number
 }
@@ -61,16 +64,19 @@ export type SupabaseActivitySumAggregateInputType = {
 
 export type SupabaseActivityMinAggregateInputType = {
   id?: true
+  createdAt?: true
   updatedAt?: true
 }
 
 export type SupabaseActivityMaxAggregateInputType = {
   id?: true
+  createdAt?: true
   updatedAt?: true
 }
 
 export type SupabaseActivityCountAggregateInputType = {
   id?: true
+  createdAt?: true
   updatedAt?: true
   _all?: true
 }
@@ -163,6 +169,7 @@ export type SupabaseActivityGroupByArgs<ExtArgs extends runtime.Types.Extensions
 
 export type SupabaseActivityGroupByOutputType = {
   id: number
+  createdAt: Date
   updatedAt: Date
   _count: SupabaseActivityCountAggregateOutputType | null
   _avg: SupabaseActivityAvgAggregateOutputType | null
@@ -191,11 +198,13 @@ export type SupabaseActivityWhereInput = {
   OR?: Prisma.SupabaseActivityWhereInput[]
   NOT?: Prisma.SupabaseActivityWhereInput | Prisma.SupabaseActivityWhereInput[]
   id?: Prisma.IntFilter<"SupabaseActivity"> | number
+  createdAt?: Prisma.DateTimeFilter<"SupabaseActivity"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"SupabaseActivity"> | Date | string
 }
 
 export type SupabaseActivityOrderByWithRelationInput = {
   id?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
@@ -204,11 +213,13 @@ export type SupabaseActivityWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.SupabaseActivityWhereInput | Prisma.SupabaseActivityWhereInput[]
   OR?: Prisma.SupabaseActivityWhereInput[]
   NOT?: Prisma.SupabaseActivityWhereInput | Prisma.SupabaseActivityWhereInput[]
+  createdAt?: Prisma.DateTimeFilter<"SupabaseActivity"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"SupabaseActivity"> | Date | string
 }, "id">
 
 export type SupabaseActivityOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.SupabaseActivityCountOrderByAggregateInput
   _avg?: Prisma.SupabaseActivityAvgOrderByAggregateInput
@@ -222,43 +233,55 @@ export type SupabaseActivityScalarWhereWithAggregatesInput = {
   OR?: Prisma.SupabaseActivityScalarWhereWithAggregatesInput[]
   NOT?: Prisma.SupabaseActivityScalarWhereWithAggregatesInput | Prisma.SupabaseActivityScalarWhereWithAggregatesInput[]
   id?: Prisma.IntWithAggregatesFilter<"SupabaseActivity"> | number
+  createdAt?: Prisma.DateTimeWithAggregatesFilter<"SupabaseActivity"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"SupabaseActivity"> | Date | string
 }
 
 export type SupabaseActivityCreateInput = {
+  id: number
+  createdAt?: Date | string
   updatedAt?: Date | string
 }
 
 export type SupabaseActivityUncheckedCreateInput = {
-  id?: number
+  id: number
+  createdAt?: Date | string
   updatedAt?: Date | string
 }
 
 export type SupabaseActivityUpdateInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type SupabaseActivityUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type SupabaseActivityCreateManyInput = {
-  id?: number
+  id: number
+  createdAt?: Date | string
   updatedAt?: Date | string
 }
 
 export type SupabaseActivityUpdateManyMutationInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type SupabaseActivityUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type SupabaseActivityCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
@@ -268,11 +291,13 @@ export type SupabaseActivityAvgOrderByAggregateInput = {
 
 export type SupabaseActivityMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
 export type SupabaseActivityMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
@@ -284,31 +309,36 @@ export type SupabaseActivitySumOrderByAggregateInput = {
 
 export type SupabaseActivitySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["supabaseActivity"]>
 
 export type SupabaseActivitySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["supabaseActivity"]>
 
 export type SupabaseActivitySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["supabaseActivity"]>
 
 export type SupabaseActivitySelectScalar = {
   id?: boolean
+  createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type SupabaseActivityOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "updatedAt", ExtArgs["result"]["supabaseActivity"]>
+export type SupabaseActivityOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "createdAt" | "updatedAt", ExtArgs["result"]["supabaseActivity"]>
 
 export type $SupabaseActivityPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "SupabaseActivity"
   objects: {}
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
+    createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["supabaseActivity"]>
   composites: {}
@@ -734,6 +764,7 @@ export interface Prisma__SupabaseActivityClient<T, Null = never, ExtArgs extends
  */
 export interface SupabaseActivityFieldRefs {
   readonly id: Prisma.FieldRef<"SupabaseActivity", 'Int'>
+  readonly createdAt: Prisma.FieldRef<"SupabaseActivity", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"SupabaseActivity", 'DateTime'>
 }
     
@@ -934,7 +965,7 @@ export type SupabaseActivityCreateArgs<ExtArgs extends runtime.Types.Extensions.
   /**
    * The data needed to create a SupabaseActivity.
    */
-  data?: Prisma.XOR<Prisma.SupabaseActivityCreateInput, Prisma.SupabaseActivityUncheckedCreateInput>
+  data: Prisma.XOR<Prisma.SupabaseActivityCreateInput, Prisma.SupabaseActivityUncheckedCreateInput>
   relationLoadStrategy?: Prisma.RelationLoadStrategy
 }
 

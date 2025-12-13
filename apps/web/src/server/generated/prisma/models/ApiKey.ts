@@ -39,6 +39,7 @@ export type ApiKeyMinAggregateOutputType = {
   apiKey: string | null
   isEnabled: boolean | null
   createdAt: Date | null
+  updatedAt: Date | null
 }
 
 export type ApiKeyMaxAggregateOutputType = {
@@ -46,6 +47,7 @@ export type ApiKeyMaxAggregateOutputType = {
   apiKey: string | null
   isEnabled: boolean | null
   createdAt: Date | null
+  updatedAt: Date | null
 }
 
 export type ApiKeyCountAggregateOutputType = {
@@ -53,6 +55,7 @@ export type ApiKeyCountAggregateOutputType = {
   apiKey: number
   isEnabled: number
   createdAt: number
+  updatedAt: number
   _all: number
 }
 
@@ -70,6 +73,7 @@ export type ApiKeyMinAggregateInputType = {
   apiKey?: true
   isEnabled?: true
   createdAt?: true
+  updatedAt?: true
 }
 
 export type ApiKeyMaxAggregateInputType = {
@@ -77,6 +81,7 @@ export type ApiKeyMaxAggregateInputType = {
   apiKey?: true
   isEnabled?: true
   createdAt?: true
+  updatedAt?: true
 }
 
 export type ApiKeyCountAggregateInputType = {
@@ -84,6 +89,7 @@ export type ApiKeyCountAggregateInputType = {
   apiKey?: true
   isEnabled?: true
   createdAt?: true
+  updatedAt?: true
   _all?: true
 }
 
@@ -178,6 +184,7 @@ export type ApiKeyGroupByOutputType = {
   apiKey: string
   isEnabled: boolean
   createdAt: Date
+  updatedAt: Date
   _count: ApiKeyCountAggregateOutputType | null
   _avg: ApiKeyAvgAggregateOutputType | null
   _sum: ApiKeySumAggregateOutputType | null
@@ -208,6 +215,7 @@ export type ApiKeyWhereInput = {
   apiKey?: Prisma.StringFilter<"ApiKey"> | string
   isEnabled?: Prisma.BoolFilter<"ApiKey"> | boolean
   createdAt?: Prisma.DateTimeFilter<"ApiKey"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"ApiKey"> | Date | string
 }
 
 export type ApiKeyOrderByWithRelationInput = {
@@ -215,6 +223,7 @@ export type ApiKeyOrderByWithRelationInput = {
   apiKey?: Prisma.SortOrder
   isEnabled?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
 }
 
 export type ApiKeyWhereUniqueInput = Prisma.AtLeast<{
@@ -225,6 +234,7 @@ export type ApiKeyWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.ApiKeyWhereInput | Prisma.ApiKeyWhereInput[]
   isEnabled?: Prisma.BoolFilter<"ApiKey"> | boolean
   createdAt?: Prisma.DateTimeFilter<"ApiKey"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"ApiKey"> | Date | string
 }, "id" | "apiKey">
 
 export type ApiKeyOrderByWithAggregationInput = {
@@ -232,6 +242,7 @@ export type ApiKeyOrderByWithAggregationInput = {
   apiKey?: Prisma.SortOrder
   isEnabled?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
   _count?: Prisma.ApiKeyCountOrderByAggregateInput
   _avg?: Prisma.ApiKeyAvgOrderByAggregateInput
   _max?: Prisma.ApiKeyMaxOrderByAggregateInput
@@ -247,12 +258,14 @@ export type ApiKeyScalarWhereWithAggregatesInput = {
   apiKey?: Prisma.StringWithAggregatesFilter<"ApiKey"> | string
   isEnabled?: Prisma.BoolWithAggregatesFilter<"ApiKey"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"ApiKey"> | Date | string
+  updatedAt?: Prisma.DateTimeWithAggregatesFilter<"ApiKey"> | Date | string
 }
 
 export type ApiKeyCreateInput = {
   apiKey: string
   isEnabled?: boolean
   createdAt?: Date | string
+  updatedAt?: Date | string
 }
 
 export type ApiKeyUncheckedCreateInput = {
@@ -260,12 +273,14 @@ export type ApiKeyUncheckedCreateInput = {
   apiKey: string
   isEnabled?: boolean
   createdAt?: Date | string
+  updatedAt?: Date | string
 }
 
 export type ApiKeyUpdateInput = {
   apiKey?: Prisma.StringFieldUpdateOperationsInput | string
   isEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type ApiKeyUncheckedUpdateInput = {
@@ -273,6 +288,7 @@ export type ApiKeyUncheckedUpdateInput = {
   apiKey?: Prisma.StringFieldUpdateOperationsInput | string
   isEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type ApiKeyCreateManyInput = {
@@ -280,12 +296,14 @@ export type ApiKeyCreateManyInput = {
   apiKey: string
   isEnabled?: boolean
   createdAt?: Date | string
+  updatedAt?: Date | string
 }
 
 export type ApiKeyUpdateManyMutationInput = {
   apiKey?: Prisma.StringFieldUpdateOperationsInput | string
   isEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type ApiKeyUncheckedUpdateManyInput = {
@@ -293,6 +311,7 @@ export type ApiKeyUncheckedUpdateManyInput = {
   apiKey?: Prisma.StringFieldUpdateOperationsInput | string
   isEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type ApiKeyCountOrderByAggregateInput = {
@@ -300,6 +319,7 @@ export type ApiKeyCountOrderByAggregateInput = {
   apiKey?: Prisma.SortOrder
   isEnabled?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
 }
 
 export type ApiKeyAvgOrderByAggregateInput = {
@@ -311,6 +331,7 @@ export type ApiKeyMaxOrderByAggregateInput = {
   apiKey?: Prisma.SortOrder
   isEnabled?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
 }
 
 export type ApiKeyMinOrderByAggregateInput = {
@@ -318,6 +339,7 @@ export type ApiKeyMinOrderByAggregateInput = {
   apiKey?: Prisma.SortOrder
   isEnabled?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
 }
 
 export type ApiKeySumOrderByAggregateInput = {
@@ -331,6 +353,7 @@ export type ApiKeySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   apiKey?: boolean
   isEnabled?: boolean
   createdAt?: boolean
+  updatedAt?: boolean
 }, ExtArgs["result"]["apiKey"]>
 
 export type ApiKeySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -338,6 +361,7 @@ export type ApiKeySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   apiKey?: boolean
   isEnabled?: boolean
   createdAt?: boolean
+  updatedAt?: boolean
 }, ExtArgs["result"]["apiKey"]>
 
 export type ApiKeySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -345,6 +369,7 @@ export type ApiKeySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   apiKey?: boolean
   isEnabled?: boolean
   createdAt?: boolean
+  updatedAt?: boolean
 }, ExtArgs["result"]["apiKey"]>
 
 export type ApiKeySelectScalar = {
@@ -352,9 +377,10 @@ export type ApiKeySelectScalar = {
   apiKey?: boolean
   isEnabled?: boolean
   createdAt?: boolean
+  updatedAt?: boolean
 }
 
-export type ApiKeyOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "apiKey" | "isEnabled" | "createdAt", ExtArgs["result"]["apiKey"]>
+export type ApiKeyOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "apiKey" | "isEnabled" | "createdAt" | "updatedAt", ExtArgs["result"]["apiKey"]>
 
 export type $ApiKeyPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "ApiKey"
@@ -364,6 +390,7 @@ export type $ApiKeyPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     apiKey: string
     isEnabled: boolean
     createdAt: Date
+    updatedAt: Date
   }, ExtArgs["result"]["apiKey"]>
   composites: {}
 }
@@ -791,6 +818,7 @@ export interface ApiKeyFieldRefs {
   readonly apiKey: Prisma.FieldRef<"ApiKey", 'String'>
   readonly isEnabled: Prisma.FieldRef<"ApiKey", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"ApiKey", 'DateTime'>
+  readonly updatedAt: Prisma.FieldRef<"ApiKey", 'DateTime'>
 }
     
 

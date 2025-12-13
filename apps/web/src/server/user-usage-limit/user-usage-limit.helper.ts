@@ -53,7 +53,7 @@ export class UserUsageLimitHelper {
     const { allowedAmount, period, now } = input;
 
     const remainingAmount = allowedAmount;
-    const resetAt = this.getResetAtForUpdate({ period, now });
+    const resetAt = this.#getResetAtForUpdate({ period, now });
 
     return {
       remainingAmount,
@@ -61,7 +61,7 @@ export class UserUsageLimitHelper {
     };
   }
 
-  private getResetAtForUpdate(input: {
+  #getResetAtForUpdate(input: {
     period: UserUsageLimitPeriod;
     now: Date;
   }): Date {

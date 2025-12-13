@@ -1,6 +1,7 @@
 import type { UserId } from "@/types/user";
 import type {
   UserUsageLimitId,
+  UserUsageLimitPeriod,
   UserUsageLimitType,
 } from "@/types/user-usage-limit";
 import type { Tx } from "../db/db";
@@ -76,4 +77,22 @@ export class UserUsageLimitRepository {
       },
     });
   }
+
+  async check(input: {
+    userId: UserId;
+    type: UserUsageLimitType;
+    period: UserUsageLimitPeriod;
+    now: Date;
+  }) {}
+
+  async decrease(input: {
+    userId: UserId;
+    type: UserUsageLimitType;
+    period: UserUsageLimitPeriod;
+    now: Date;
+  }) {
+    const { userId, type, period, now } = input;
+  }
+
+  async compensate(input: {}) {}
 }

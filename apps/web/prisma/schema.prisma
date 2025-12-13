@@ -12,7 +12,7 @@ datasource db {
 }
 
 model User {
-  id                String              @id @default(dbgenerated("gen_random_uuid()")) @map("id") @db.Uuid
+  id                String              @id @map("id") @db.Uuid
   nameEncrypted     String              @map("name_encrypted")
   emailEncrypted    String              @map("email_encrypted")
   imageUrlEncrypted String              @map("image_url_encrypted")
@@ -20,13 +20,12 @@ model User {
   timezone          String              @default("") @map("timezone")
   preferences       Json                @default("{}") @map("preferences")
   createdAt         DateTime            @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt         DateTime            @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedAt         DateTime            @updatedAt @map("updated_at") @db.Timestamptz(6)
   linkAccounts      UserLinkAccount[]   @relation("user_link_accounts.user_id")
   usageLimits       UserUsageLimit[]    @relation("user_usage_limits.user_id")
   prompts           UserPrompt[]        @relation("user_prompts.user_id")
   defaultPrompts    UserDefaultPrompt[] @relation("user_default_prompts.user_id")
   chats             Chat[]              @relation("chats.user_id")
-  gratitudeJournals GratitudeJournal[]  @relation("gratitude_journals.user_id")
   aiProfiles        UserAiProfile[]     @relation("user_ai_profiles.user_id")
 
   @@map("users")
@@ -40,38 +39,23 @@ model UserLinkAccount {
   providerAccountId String   @map("provider_account_id")
   refreshToken      String?  @map("refresh_token")
   createdAt         DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt         DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedAt         DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
 
   @@unique([provider, providerAccountId])
   @@index([userId])
   @@map("user_link_accounts")
 }
 
-enum UserUsageLimitPeriod {
-  annually
-  monthly
-  daily
-  perHour
-  perMinute
-  perSecond
-}
-
-enum UserUsageLimitType {
-  message
-  aiProfileImage
-}
-
 model UserUsageLimit {
-  id              Int                  @id @default(autoincrement()) @map("id")
-  userId          String               @map("user_id") @db.Uuid
-  user            User                 @relation("user_usage_limits.user_id", fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  type            UserUsageLimitType   @map("type")
-  period          UserUsageLimitPeriod @map("period")
-  allowedAmount   Int                  @map("allowed_amount")
-  remainingAmount Int                  @map("remaining_amount")
-  resetAt         DateTime             @map("reset_at") @db.Timestamptz(6)
-  createdAt       DateTime             @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt       DateTime             @default(now()) @map("updated_at") @db.Timestamptz(6)
+  id              Int      @id @default(autoincrement()) @map("id")
+  userId          String   @map("user_id") @db.Uuid
+  user            User     @relation("user_usage_limits.user_id", fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  type            String   @map("type")
+  period          String   @map("period")
+  remainingAmount Int      @map("remaining_amount")
+  resetAt         DateTime @map("reset_at") @db.Timestamptz(6)
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
 
   @@unique([userId, type, period])
   @@index([userId, type])
@@ -86,7 +70,7 @@ model UserPrompt {
   textEncrypted  String              @map("text_encrypted")
   isStarred      Boolean             @default(false) @map("is_starred")
   createdAt      DateTime            @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt      DateTime            @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedAt      DateTime            @updatedAt @map("updated_at") @db.Timestamptz(6)
   deletedAt      DateTime?           @map("deleted_at") @db.Timestamptz(6)
   defaultPrompts UserDefaultPrompt[] @relation("user_default_prompts.user_prompt_id")
   chats          Chat[]              @relation("chats.user_prompt_id")
@@ -102,7 +86,7 @@ model UserDefaultPrompt {
   userPromptId String?     @map("user_prompt_id") @db.Uuid
   userPrompt   UserPrompt? @relation("user_default_prompts.user_prompt_id", fields: [userPromptId], references: [id], onDelete: SetNull, onUpdate: NoAction)
   createdAt    DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt    DateTime    @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedAt    DateTime    @updatedAt @map("updated_at") @db.Timestamptz(6)
 
   @@index([userId])
   @@index([userPromptId])
@@ -117,36 +101,29 @@ model UserAiProfile {
   nameEncrypted      String   @map("name_encrypted")
   imagePathEncrypted String   @map("image_path_encrypted")
   createdAt          DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt          DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedAt          DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
 
   @@unique([userId, model])
   @@index([userId])
   @@map("user_ai_profiles")
 }
 
-enum ChatType {
-  chat
-  branch
-  gratitudeJournal
-}
-
 model Chat {
-  id                String             @id @map("id") @db.Uuid
-  userId            String             @map("user_id") @db.Uuid
-  user              User               @relation("chats.user_id", fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  titleEncrypted    String             @map("title_encrypted")
-  isStarred         Boolean            @default(false) @map("is_starred")
-  type              ChatType           @default(chat) @map("type")
-  parentMessageId   String?            @map("parent_message_id") @db.Uuid
-  parentMessage     Message?           @relation("chats.parent_message_id", fields: [parentMessageId], references: [id], onDelete: SetNull, onUpdate: NoAction)
-  userPromptId      String?            @map("user_prompt_id") @db.Uuid
-  userPrompt        UserPrompt?        @relation("chats.user_prompt_id", fields: [userPromptId], references: [id], onDelete: SetNull, onUpdate: NoAction)
-  createdAt         DateTime           @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt         DateTime           @default(now()) @map("updated_at") @db.Timestamptz(6)
-  deletedAt         DateTime?          @map("deleted_at") @db.Timestamptz(6)
-  messages          Message[]          @relation("messages.chat_id")
-  prompts           ChatPrompt[]       @relation("chat_prompts.chat_id")
-  gratitudeJournals GratitudeJournal[] @relation("gratitude_journals.chat_id")
+  id              String       @id @map("id") @db.Uuid
+  userId          String       @map("user_id") @db.Uuid
+  user            User         @relation("chats.user_id", fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  titleEncrypted  String       @map("title_encrypted")
+  isStarred       Boolean      @default(false) @map("is_starred")
+  type            String       @map("type")
+  parentMessageId String?      @map("parent_message_id") @db.Uuid
+  parentMessage   Message?     @relation("chats.parent_message_id", fields: [parentMessageId], references: [id], onDelete: SetNull, onUpdate: NoAction)
+  userPromptId    String?      @map("user_prompt_id") @db.Uuid
+  userPrompt      UserPrompt?  @relation("chats.user_prompt_id", fields: [userPromptId], references: [id], onDelete: SetNull, onUpdate: NoAction)
+  createdAt       DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime     @updatedAt @map("updated_at") @db.Timestamptz(6)
+  deletedAt       DateTime?    @map("deleted_at") @db.Timestamptz(6)
+  messages        Message[]    @relation("messages.chat_id")
+  prompts         ChatPrompt[] @relation("chat_prompts.chat_id")
 
   @@index([userId])
   @@index([parentMessageId])
@@ -159,7 +136,7 @@ model ChatPrompt {
   chat          Chat     @relation("chat_prompts.chat_id", fields: [chatId], references: [id], onDelete: Cascade, onUpdate: NoAction)
   textEncrypted String   @map("text_encrypted")
   createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt     DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedAt     DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
 
   @@index([chatId])
   @@map("chat_prompts")
@@ -186,7 +163,7 @@ model Message {
   parentMessageId        String?        @map("parent_message_id") @db.Uuid
   parentMessage          Message?       @relation("messages.parent_message_id", fields: [parentMessageId], references: [id], onDelete: SetNull, onUpdate: NoAction)
   createdAt              DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt              DateTime       @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedAt              DateTime       @updatedAt @map("updated_at") @db.Timestamptz(6)
   chunks                 MessageChunk[] @relation("message_chunks.message_id")
   childChats             Chat[]         @relation("chats.parent_message_id")
   childMessages          Message[]      @relation("messages.parent_message_id")
@@ -205,7 +182,7 @@ model MessageChunk {
   reasoningTextEncrypted String   @map("reasoning_text_encrypted")
   isDone                 Boolean  @map("is_done")
   createdAt              DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt              DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedAt              DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
 
   @@id([messageId, index])
   @@map("message_chunks")
@@ -214,23 +191,9 @@ model MessageChunk {
 model IdempotencyInfo {
   key       String   @id @map("key") @db.Uuid
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
 
   @@map("idempotency_infos")
-}
-
-model GratitudeJournal {
-  id        String   @id @map("id") @db.Uuid
-  userId    String   @map("user_id") @db.Uuid
-  user      User     @relation("gratitude_journals.user_id", fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  chatId    String?  @map("chat_id") @db.Uuid
-  chat      Chat?    @relation("gratitude_journals.chat_id", fields: [chatId], references: [id], onDelete: SetNull, onUpdate: NoAction)
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
-
-  @@index([userId])
-  @@index([chatId])
-  @@map("gratitude_journals")
 }
 
 model ApiKey {
@@ -238,14 +201,16 @@ model ApiKey {
   apiKey    String   @unique @map("api_key")
   isEnabled Boolean  @default(true) @map("is_enabled")
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
 
   @@index([apiKey])
   @@map("api_keys")
 }
 
 model SupabaseActivity {
-  id        Int      @id @default(autoincrement()) @map("id")
-  updatedAt DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
+  id        Int      @id @map("id")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
 
   @@map("supabase_activities")
 }

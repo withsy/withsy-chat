@@ -215,7 +215,6 @@ export type UserWhereInput = {
   prompts?: Prisma.UserPromptListRelationFilter
   defaultPrompts?: Prisma.UserDefaultPromptListRelationFilter
   chats?: Prisma.ChatListRelationFilter
-  gratitudeJournals?: Prisma.GratitudeJournalListRelationFilter
   aiProfiles?: Prisma.UserAiProfileListRelationFilter
 }
 
@@ -234,7 +233,6 @@ export type UserOrderByWithRelationInput = {
   prompts?: Prisma.UserPromptOrderByRelationAggregateInput
   defaultPrompts?: Prisma.UserDefaultPromptOrderByRelationAggregateInput
   chats?: Prisma.ChatOrderByRelationAggregateInput
-  gratitudeJournals?: Prisma.GratitudeJournalOrderByRelationAggregateInput
   aiProfiles?: Prisma.UserAiProfileOrderByRelationAggregateInput
 }
 
@@ -256,7 +254,6 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   prompts?: Prisma.UserPromptListRelationFilter
   defaultPrompts?: Prisma.UserDefaultPromptListRelationFilter
   chats?: Prisma.ChatListRelationFilter
-  gratitudeJournals?: Prisma.GratitudeJournalListRelationFilter
   aiProfiles?: Prisma.UserAiProfileListRelationFilter
 }, "id">
 
@@ -291,7 +288,7 @@ export type UserScalarWhereWithAggregatesInput = {
 }
 
 export type UserCreateInput = {
-  id?: string
+  id: string
   nameEncrypted: string
   emailEncrypted: string
   imageUrlEncrypted: string
@@ -305,12 +302,11 @@ export type UserCreateInput = {
   prompts?: Prisma.UserPromptCreateNestedManyWithoutUserInput
   defaultPrompts?: Prisma.UserDefaultPromptCreateNestedManyWithoutUserInput
   chats?: Prisma.ChatCreateNestedManyWithoutUserInput
-  gratitudeJournals?: Prisma.GratitudeJournalCreateNestedManyWithoutUserInput
   aiProfiles?: Prisma.UserAiProfileCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
-  id?: string
+  id: string
   nameEncrypted: string
   emailEncrypted: string
   imageUrlEncrypted: string
@@ -324,7 +320,6 @@ export type UserUncheckedCreateInput = {
   prompts?: Prisma.UserPromptUncheckedCreateNestedManyWithoutUserInput
   defaultPrompts?: Prisma.UserDefaultPromptUncheckedCreateNestedManyWithoutUserInput
   chats?: Prisma.ChatUncheckedCreateNestedManyWithoutUserInput
-  gratitudeJournals?: Prisma.GratitudeJournalUncheckedCreateNestedManyWithoutUserInput
   aiProfiles?: Prisma.UserAiProfileUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -343,7 +338,6 @@ export type UserUpdateInput = {
   prompts?: Prisma.UserPromptUpdateManyWithoutUserNestedInput
   defaultPrompts?: Prisma.UserDefaultPromptUpdateManyWithoutUserNestedInput
   chats?: Prisma.ChatUpdateManyWithoutUserNestedInput
-  gratitudeJournals?: Prisma.GratitudeJournalUpdateManyWithoutUserNestedInput
   aiProfiles?: Prisma.UserAiProfileUpdateManyWithoutUserNestedInput
 }
 
@@ -362,12 +356,11 @@ export type UserUncheckedUpdateInput = {
   prompts?: Prisma.UserPromptUncheckedUpdateManyWithoutUserNestedInput
   defaultPrompts?: Prisma.UserDefaultPromptUncheckedUpdateManyWithoutUserNestedInput
   chats?: Prisma.ChatUncheckedUpdateManyWithoutUserNestedInput
-  gratitudeJournals?: Prisma.GratitudeJournalUncheckedUpdateManyWithoutUserNestedInput
   aiProfiles?: Prisma.UserAiProfileUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
-  id?: string
+  id: string
   nameEncrypted: string
   emailEncrypted: string
   imageUrlEncrypted: string
@@ -533,22 +526,8 @@ export type UserUpdateOneRequiredWithoutChatsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutChatsInput, Prisma.UserUpdateWithoutChatsInput>, Prisma.UserUncheckedUpdateWithoutChatsInput>
 }
 
-export type UserCreateNestedOneWithoutGratitudeJournalsInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutGratitudeJournalsInput, Prisma.UserUncheckedCreateWithoutGratitudeJournalsInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutGratitudeJournalsInput
-  connect?: Prisma.UserWhereUniqueInput
-}
-
-export type UserUpdateOneRequiredWithoutGratitudeJournalsNestedInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutGratitudeJournalsInput, Prisma.UserUncheckedCreateWithoutGratitudeJournalsInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutGratitudeJournalsInput
-  upsert?: Prisma.UserUpsertWithoutGratitudeJournalsInput
-  connect?: Prisma.UserWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutGratitudeJournalsInput, Prisma.UserUpdateWithoutGratitudeJournalsInput>, Prisma.UserUncheckedUpdateWithoutGratitudeJournalsInput>
-}
-
 export type UserCreateWithoutLinkAccountsInput = {
-  id?: string
+  id: string
   nameEncrypted: string
   emailEncrypted: string
   imageUrlEncrypted: string
@@ -561,12 +540,11 @@ export type UserCreateWithoutLinkAccountsInput = {
   prompts?: Prisma.UserPromptCreateNestedManyWithoutUserInput
   defaultPrompts?: Prisma.UserDefaultPromptCreateNestedManyWithoutUserInput
   chats?: Prisma.ChatCreateNestedManyWithoutUserInput
-  gratitudeJournals?: Prisma.GratitudeJournalCreateNestedManyWithoutUserInput
   aiProfiles?: Prisma.UserAiProfileCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutLinkAccountsInput = {
-  id?: string
+  id: string
   nameEncrypted: string
   emailEncrypted: string
   imageUrlEncrypted: string
@@ -579,7 +557,6 @@ export type UserUncheckedCreateWithoutLinkAccountsInput = {
   prompts?: Prisma.UserPromptUncheckedCreateNestedManyWithoutUserInput
   defaultPrompts?: Prisma.UserDefaultPromptUncheckedCreateNestedManyWithoutUserInput
   chats?: Prisma.ChatUncheckedCreateNestedManyWithoutUserInput
-  gratitudeJournals?: Prisma.GratitudeJournalUncheckedCreateNestedManyWithoutUserInput
   aiProfiles?: Prisma.UserAiProfileUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -613,7 +590,6 @@ export type UserUpdateWithoutLinkAccountsInput = {
   prompts?: Prisma.UserPromptUpdateManyWithoutUserNestedInput
   defaultPrompts?: Prisma.UserDefaultPromptUpdateManyWithoutUserNestedInput
   chats?: Prisma.ChatUpdateManyWithoutUserNestedInput
-  gratitudeJournals?: Prisma.GratitudeJournalUpdateManyWithoutUserNestedInput
   aiProfiles?: Prisma.UserAiProfileUpdateManyWithoutUserNestedInput
 }
 
@@ -631,12 +607,11 @@ export type UserUncheckedUpdateWithoutLinkAccountsInput = {
   prompts?: Prisma.UserPromptUncheckedUpdateManyWithoutUserNestedInput
   defaultPrompts?: Prisma.UserDefaultPromptUncheckedUpdateManyWithoutUserNestedInput
   chats?: Prisma.ChatUncheckedUpdateManyWithoutUserNestedInput
-  gratitudeJournals?: Prisma.GratitudeJournalUncheckedUpdateManyWithoutUserNestedInput
   aiProfiles?: Prisma.UserAiProfileUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutUsageLimitsInput = {
-  id?: string
+  id: string
   nameEncrypted: string
   emailEncrypted: string
   imageUrlEncrypted: string
@@ -649,12 +624,11 @@ export type UserCreateWithoutUsageLimitsInput = {
   prompts?: Prisma.UserPromptCreateNestedManyWithoutUserInput
   defaultPrompts?: Prisma.UserDefaultPromptCreateNestedManyWithoutUserInput
   chats?: Prisma.ChatCreateNestedManyWithoutUserInput
-  gratitudeJournals?: Prisma.GratitudeJournalCreateNestedManyWithoutUserInput
   aiProfiles?: Prisma.UserAiProfileCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutUsageLimitsInput = {
-  id?: string
+  id: string
   nameEncrypted: string
   emailEncrypted: string
   imageUrlEncrypted: string
@@ -667,7 +641,6 @@ export type UserUncheckedCreateWithoutUsageLimitsInput = {
   prompts?: Prisma.UserPromptUncheckedCreateNestedManyWithoutUserInput
   defaultPrompts?: Prisma.UserDefaultPromptUncheckedCreateNestedManyWithoutUserInput
   chats?: Prisma.ChatUncheckedCreateNestedManyWithoutUserInput
-  gratitudeJournals?: Prisma.GratitudeJournalUncheckedCreateNestedManyWithoutUserInput
   aiProfiles?: Prisma.UserAiProfileUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -701,7 +674,6 @@ export type UserUpdateWithoutUsageLimitsInput = {
   prompts?: Prisma.UserPromptUpdateManyWithoutUserNestedInput
   defaultPrompts?: Prisma.UserDefaultPromptUpdateManyWithoutUserNestedInput
   chats?: Prisma.ChatUpdateManyWithoutUserNestedInput
-  gratitudeJournals?: Prisma.GratitudeJournalUpdateManyWithoutUserNestedInput
   aiProfiles?: Prisma.UserAiProfileUpdateManyWithoutUserNestedInput
 }
 
@@ -719,12 +691,11 @@ export type UserUncheckedUpdateWithoutUsageLimitsInput = {
   prompts?: Prisma.UserPromptUncheckedUpdateManyWithoutUserNestedInput
   defaultPrompts?: Prisma.UserDefaultPromptUncheckedUpdateManyWithoutUserNestedInput
   chats?: Prisma.ChatUncheckedUpdateManyWithoutUserNestedInput
-  gratitudeJournals?: Prisma.GratitudeJournalUncheckedUpdateManyWithoutUserNestedInput
   aiProfiles?: Prisma.UserAiProfileUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutPromptsInput = {
-  id?: string
+  id: string
   nameEncrypted: string
   emailEncrypted: string
   imageUrlEncrypted: string
@@ -737,12 +708,11 @@ export type UserCreateWithoutPromptsInput = {
   usageLimits?: Prisma.UserUsageLimitCreateNestedManyWithoutUserInput
   defaultPrompts?: Prisma.UserDefaultPromptCreateNestedManyWithoutUserInput
   chats?: Prisma.ChatCreateNestedManyWithoutUserInput
-  gratitudeJournals?: Prisma.GratitudeJournalCreateNestedManyWithoutUserInput
   aiProfiles?: Prisma.UserAiProfileCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutPromptsInput = {
-  id?: string
+  id: string
   nameEncrypted: string
   emailEncrypted: string
   imageUrlEncrypted: string
@@ -755,7 +725,6 @@ export type UserUncheckedCreateWithoutPromptsInput = {
   usageLimits?: Prisma.UserUsageLimitUncheckedCreateNestedManyWithoutUserInput
   defaultPrompts?: Prisma.UserDefaultPromptUncheckedCreateNestedManyWithoutUserInput
   chats?: Prisma.ChatUncheckedCreateNestedManyWithoutUserInput
-  gratitudeJournals?: Prisma.GratitudeJournalUncheckedCreateNestedManyWithoutUserInput
   aiProfiles?: Prisma.UserAiProfileUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -789,7 +758,6 @@ export type UserUpdateWithoutPromptsInput = {
   usageLimits?: Prisma.UserUsageLimitUpdateManyWithoutUserNestedInput
   defaultPrompts?: Prisma.UserDefaultPromptUpdateManyWithoutUserNestedInput
   chats?: Prisma.ChatUpdateManyWithoutUserNestedInput
-  gratitudeJournals?: Prisma.GratitudeJournalUpdateManyWithoutUserNestedInput
   aiProfiles?: Prisma.UserAiProfileUpdateManyWithoutUserNestedInput
 }
 
@@ -807,12 +775,11 @@ export type UserUncheckedUpdateWithoutPromptsInput = {
   usageLimits?: Prisma.UserUsageLimitUncheckedUpdateManyWithoutUserNestedInput
   defaultPrompts?: Prisma.UserDefaultPromptUncheckedUpdateManyWithoutUserNestedInput
   chats?: Prisma.ChatUncheckedUpdateManyWithoutUserNestedInput
-  gratitudeJournals?: Prisma.GratitudeJournalUncheckedUpdateManyWithoutUserNestedInput
   aiProfiles?: Prisma.UserAiProfileUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutDefaultPromptsInput = {
-  id?: string
+  id: string
   nameEncrypted: string
   emailEncrypted: string
   imageUrlEncrypted: string
@@ -825,12 +792,11 @@ export type UserCreateWithoutDefaultPromptsInput = {
   usageLimits?: Prisma.UserUsageLimitCreateNestedManyWithoutUserInput
   prompts?: Prisma.UserPromptCreateNestedManyWithoutUserInput
   chats?: Prisma.ChatCreateNestedManyWithoutUserInput
-  gratitudeJournals?: Prisma.GratitudeJournalCreateNestedManyWithoutUserInput
   aiProfiles?: Prisma.UserAiProfileCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutDefaultPromptsInput = {
-  id?: string
+  id: string
   nameEncrypted: string
   emailEncrypted: string
   imageUrlEncrypted: string
@@ -843,7 +809,6 @@ export type UserUncheckedCreateWithoutDefaultPromptsInput = {
   usageLimits?: Prisma.UserUsageLimitUncheckedCreateNestedManyWithoutUserInput
   prompts?: Prisma.UserPromptUncheckedCreateNestedManyWithoutUserInput
   chats?: Prisma.ChatUncheckedCreateNestedManyWithoutUserInput
-  gratitudeJournals?: Prisma.GratitudeJournalUncheckedCreateNestedManyWithoutUserInput
   aiProfiles?: Prisma.UserAiProfileUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -877,7 +842,6 @@ export type UserUpdateWithoutDefaultPromptsInput = {
   usageLimits?: Prisma.UserUsageLimitUpdateManyWithoutUserNestedInput
   prompts?: Prisma.UserPromptUpdateManyWithoutUserNestedInput
   chats?: Prisma.ChatUpdateManyWithoutUserNestedInput
-  gratitudeJournals?: Prisma.GratitudeJournalUpdateManyWithoutUserNestedInput
   aiProfiles?: Prisma.UserAiProfileUpdateManyWithoutUserNestedInput
 }
 
@@ -895,12 +859,11 @@ export type UserUncheckedUpdateWithoutDefaultPromptsInput = {
   usageLimits?: Prisma.UserUsageLimitUncheckedUpdateManyWithoutUserNestedInput
   prompts?: Prisma.UserPromptUncheckedUpdateManyWithoutUserNestedInput
   chats?: Prisma.ChatUncheckedUpdateManyWithoutUserNestedInput
-  gratitudeJournals?: Prisma.GratitudeJournalUncheckedUpdateManyWithoutUserNestedInput
   aiProfiles?: Prisma.UserAiProfileUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutAiProfilesInput = {
-  id?: string
+  id: string
   nameEncrypted: string
   emailEncrypted: string
   imageUrlEncrypted: string
@@ -914,11 +877,10 @@ export type UserCreateWithoutAiProfilesInput = {
   prompts?: Prisma.UserPromptCreateNestedManyWithoutUserInput
   defaultPrompts?: Prisma.UserDefaultPromptCreateNestedManyWithoutUserInput
   chats?: Prisma.ChatCreateNestedManyWithoutUserInput
-  gratitudeJournals?: Prisma.GratitudeJournalCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAiProfilesInput = {
-  id?: string
+  id: string
   nameEncrypted: string
   emailEncrypted: string
   imageUrlEncrypted: string
@@ -932,7 +894,6 @@ export type UserUncheckedCreateWithoutAiProfilesInput = {
   prompts?: Prisma.UserPromptUncheckedCreateNestedManyWithoutUserInput
   defaultPrompts?: Prisma.UserDefaultPromptUncheckedCreateNestedManyWithoutUserInput
   chats?: Prisma.ChatUncheckedCreateNestedManyWithoutUserInput
-  gratitudeJournals?: Prisma.GratitudeJournalUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAiProfilesInput = {
@@ -966,7 +927,6 @@ export type UserUpdateWithoutAiProfilesInput = {
   prompts?: Prisma.UserPromptUpdateManyWithoutUserNestedInput
   defaultPrompts?: Prisma.UserDefaultPromptUpdateManyWithoutUserNestedInput
   chats?: Prisma.ChatUpdateManyWithoutUserNestedInput
-  gratitudeJournals?: Prisma.GratitudeJournalUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAiProfilesInput = {
@@ -984,11 +944,10 @@ export type UserUncheckedUpdateWithoutAiProfilesInput = {
   prompts?: Prisma.UserPromptUncheckedUpdateManyWithoutUserNestedInput
   defaultPrompts?: Prisma.UserDefaultPromptUncheckedUpdateManyWithoutUserNestedInput
   chats?: Prisma.ChatUncheckedUpdateManyWithoutUserNestedInput
-  gratitudeJournals?: Prisma.GratitudeJournalUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutChatsInput = {
-  id?: string
+  id: string
   nameEncrypted: string
   emailEncrypted: string
   imageUrlEncrypted: string
@@ -1001,12 +960,11 @@ export type UserCreateWithoutChatsInput = {
   usageLimits?: Prisma.UserUsageLimitCreateNestedManyWithoutUserInput
   prompts?: Prisma.UserPromptCreateNestedManyWithoutUserInput
   defaultPrompts?: Prisma.UserDefaultPromptCreateNestedManyWithoutUserInput
-  gratitudeJournals?: Prisma.GratitudeJournalCreateNestedManyWithoutUserInput
   aiProfiles?: Prisma.UserAiProfileCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutChatsInput = {
-  id?: string
+  id: string
   nameEncrypted: string
   emailEncrypted: string
   imageUrlEncrypted: string
@@ -1019,7 +977,6 @@ export type UserUncheckedCreateWithoutChatsInput = {
   usageLimits?: Prisma.UserUsageLimitUncheckedCreateNestedManyWithoutUserInput
   prompts?: Prisma.UserPromptUncheckedCreateNestedManyWithoutUserInput
   defaultPrompts?: Prisma.UserDefaultPromptUncheckedCreateNestedManyWithoutUserInput
-  gratitudeJournals?: Prisma.GratitudeJournalUncheckedCreateNestedManyWithoutUserInput
   aiProfiles?: Prisma.UserAiProfileUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -1053,7 +1010,6 @@ export type UserUpdateWithoutChatsInput = {
   usageLimits?: Prisma.UserUsageLimitUpdateManyWithoutUserNestedInput
   prompts?: Prisma.UserPromptUpdateManyWithoutUserNestedInput
   defaultPrompts?: Prisma.UserDefaultPromptUpdateManyWithoutUserNestedInput
-  gratitudeJournals?: Prisma.GratitudeJournalUpdateManyWithoutUserNestedInput
   aiProfiles?: Prisma.UserAiProfileUpdateManyWithoutUserNestedInput
 }
 
@@ -1071,95 +1027,6 @@ export type UserUncheckedUpdateWithoutChatsInput = {
   usageLimits?: Prisma.UserUsageLimitUncheckedUpdateManyWithoutUserNestedInput
   prompts?: Prisma.UserPromptUncheckedUpdateManyWithoutUserNestedInput
   defaultPrompts?: Prisma.UserDefaultPromptUncheckedUpdateManyWithoutUserNestedInput
-  gratitudeJournals?: Prisma.GratitudeJournalUncheckedUpdateManyWithoutUserNestedInput
-  aiProfiles?: Prisma.UserAiProfileUncheckedUpdateManyWithoutUserNestedInput
-}
-
-export type UserCreateWithoutGratitudeJournalsInput = {
-  id?: string
-  nameEncrypted: string
-  emailEncrypted: string
-  imageUrlEncrypted: string
-  aiLanguage?: string
-  timezone?: string
-  preferences?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  linkAccounts?: Prisma.UserLinkAccountCreateNestedManyWithoutUserInput
-  usageLimits?: Prisma.UserUsageLimitCreateNestedManyWithoutUserInput
-  prompts?: Prisma.UserPromptCreateNestedManyWithoutUserInput
-  defaultPrompts?: Prisma.UserDefaultPromptCreateNestedManyWithoutUserInput
-  chats?: Prisma.ChatCreateNestedManyWithoutUserInput
-  aiProfiles?: Prisma.UserAiProfileCreateNestedManyWithoutUserInput
-}
-
-export type UserUncheckedCreateWithoutGratitudeJournalsInput = {
-  id?: string
-  nameEncrypted: string
-  emailEncrypted: string
-  imageUrlEncrypted: string
-  aiLanguage?: string
-  timezone?: string
-  preferences?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  linkAccounts?: Prisma.UserLinkAccountUncheckedCreateNestedManyWithoutUserInput
-  usageLimits?: Prisma.UserUsageLimitUncheckedCreateNestedManyWithoutUserInput
-  prompts?: Prisma.UserPromptUncheckedCreateNestedManyWithoutUserInput
-  defaultPrompts?: Prisma.UserDefaultPromptUncheckedCreateNestedManyWithoutUserInput
-  chats?: Prisma.ChatUncheckedCreateNestedManyWithoutUserInput
-  aiProfiles?: Prisma.UserAiProfileUncheckedCreateNestedManyWithoutUserInput
-}
-
-export type UserCreateOrConnectWithoutGratitudeJournalsInput = {
-  where: Prisma.UserWhereUniqueInput
-  create: Prisma.XOR<Prisma.UserCreateWithoutGratitudeJournalsInput, Prisma.UserUncheckedCreateWithoutGratitudeJournalsInput>
-}
-
-export type UserUpsertWithoutGratitudeJournalsInput = {
-  update: Prisma.XOR<Prisma.UserUpdateWithoutGratitudeJournalsInput, Prisma.UserUncheckedUpdateWithoutGratitudeJournalsInput>
-  create: Prisma.XOR<Prisma.UserCreateWithoutGratitudeJournalsInput, Prisma.UserUncheckedCreateWithoutGratitudeJournalsInput>
-  where?: Prisma.UserWhereInput
-}
-
-export type UserUpdateToOneWithWhereWithoutGratitudeJournalsInput = {
-  where?: Prisma.UserWhereInput
-  data: Prisma.XOR<Prisma.UserUpdateWithoutGratitudeJournalsInput, Prisma.UserUncheckedUpdateWithoutGratitudeJournalsInput>
-}
-
-export type UserUpdateWithoutGratitudeJournalsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  nameEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
-  emailEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
-  imageUrlEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
-  aiLanguage?: Prisma.StringFieldUpdateOperationsInput | string
-  timezone?: Prisma.StringFieldUpdateOperationsInput | string
-  preferences?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  linkAccounts?: Prisma.UserLinkAccountUpdateManyWithoutUserNestedInput
-  usageLimits?: Prisma.UserUsageLimitUpdateManyWithoutUserNestedInput
-  prompts?: Prisma.UserPromptUpdateManyWithoutUserNestedInput
-  defaultPrompts?: Prisma.UserDefaultPromptUpdateManyWithoutUserNestedInput
-  chats?: Prisma.ChatUpdateManyWithoutUserNestedInput
-  aiProfiles?: Prisma.UserAiProfileUpdateManyWithoutUserNestedInput
-}
-
-export type UserUncheckedUpdateWithoutGratitudeJournalsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  nameEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
-  emailEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
-  imageUrlEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
-  aiLanguage?: Prisma.StringFieldUpdateOperationsInput | string
-  timezone?: Prisma.StringFieldUpdateOperationsInput | string
-  preferences?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  linkAccounts?: Prisma.UserLinkAccountUncheckedUpdateManyWithoutUserNestedInput
-  usageLimits?: Prisma.UserUsageLimitUncheckedUpdateManyWithoutUserNestedInput
-  prompts?: Prisma.UserPromptUncheckedUpdateManyWithoutUserNestedInput
-  defaultPrompts?: Prisma.UserDefaultPromptUncheckedUpdateManyWithoutUserNestedInput
-  chats?: Prisma.ChatUncheckedUpdateManyWithoutUserNestedInput
   aiProfiles?: Prisma.UserAiProfileUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -1174,7 +1041,6 @@ export type UserCountOutputType = {
   prompts: number
   defaultPrompts: number
   chats: number
-  gratitudeJournals: number
   aiProfiles: number
 }
 
@@ -1184,7 +1050,6 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   prompts?: boolean | UserCountOutputTypeCountPromptsArgs
   defaultPrompts?: boolean | UserCountOutputTypeCountDefaultPromptsArgs
   chats?: boolean | UserCountOutputTypeCountChatsArgs
-  gratitudeJournals?: boolean | UserCountOutputTypeCountGratitudeJournalsArgs
   aiProfiles?: boolean | UserCountOutputTypeCountAiProfilesArgs
 }
 
@@ -1236,13 +1101,6 @@ export type UserCountOutputTypeCountChatsArgs<ExtArgs extends runtime.Types.Exte
 /**
  * UserCountOutputType without action
  */
-export type UserCountOutputTypeCountGratitudeJournalsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.GratitudeJournalWhereInput
-}
-
-/**
- * UserCountOutputType without action
- */
 export type UserCountOutputTypeCountAiProfilesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.UserAiProfileWhereInput
 }
@@ -1263,7 +1121,6 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   prompts?: boolean | Prisma.User$promptsArgs<ExtArgs>
   defaultPrompts?: boolean | Prisma.User$defaultPromptsArgs<ExtArgs>
   chats?: boolean | Prisma.User$chatsArgs<ExtArgs>
-  gratitudeJournals?: boolean | Prisma.User$gratitudeJournalsArgs<ExtArgs>
   aiProfiles?: boolean | Prisma.User$aiProfilesArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
@@ -1311,7 +1168,6 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   prompts?: boolean | Prisma.User$promptsArgs<ExtArgs>
   defaultPrompts?: boolean | Prisma.User$defaultPromptsArgs<ExtArgs>
   chats?: boolean | Prisma.User$chatsArgs<ExtArgs>
-  gratitudeJournals?: boolean | Prisma.User$gratitudeJournalsArgs<ExtArgs>
   aiProfiles?: boolean | Prisma.User$aiProfilesArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
@@ -1326,7 +1182,6 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     prompts: Prisma.$UserPromptPayload<ExtArgs>[]
     defaultPrompts: Prisma.$UserDefaultPromptPayload<ExtArgs>[]
     chats: Prisma.$ChatPayload<ExtArgs>[]
-    gratitudeJournals: Prisma.$GratitudeJournalPayload<ExtArgs>[]
     aiProfiles: Prisma.$UserAiProfilePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
@@ -1738,7 +1593,6 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   prompts<T extends Prisma.User$promptsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$promptsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserPromptPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   defaultPrompts<T extends Prisma.User$defaultPromptsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$defaultPromptsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserDefaultPromptPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   chats<T extends Prisma.User$chatsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$chatsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ChatPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  gratitudeJournals<T extends Prisma.User$gratitudeJournalsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$gratitudeJournalsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$GratitudeJournalPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   aiProfiles<T extends Prisma.User$aiProfilesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$aiProfilesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserAiProfilePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -2292,30 +2146,6 @@ export type User$chatsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs
   take?: number
   skip?: number
   distinct?: Prisma.ChatScalarFieldEnum | Prisma.ChatScalarFieldEnum[]
-}
-
-/**
- * User.gratitudeJournals
- */
-export type User$gratitudeJournalsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the GratitudeJournal
-   */
-  select?: Prisma.GratitudeJournalSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the GratitudeJournal
-   */
-  omit?: Prisma.GratitudeJournalOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.GratitudeJournalInclude<ExtArgs> | null
-  where?: Prisma.GratitudeJournalWhereInput
-  orderBy?: Prisma.GratitudeJournalOrderByWithRelationInput | Prisma.GratitudeJournalOrderByWithRelationInput[]
-  cursor?: Prisma.GratitudeJournalWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.GratitudeJournalScalarFieldEnum | Prisma.GratitudeJournalScalarFieldEnum[]
 }
 
 /**

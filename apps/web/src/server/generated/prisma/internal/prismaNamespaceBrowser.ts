@@ -60,7 +60,6 @@ export const ModelName = {
   Message: 'Message',
   MessageChunk: 'MessageChunk',
   IdempotencyInfo: 'IdempotencyInfo',
-  GratitudeJournal: 'GratitudeJournal',
   ApiKey: 'ApiKey',
   SupabaseActivity: 'SupabaseActivity'
 } as const
@@ -122,7 +121,6 @@ export const UserUsageLimitScalarFieldEnum = {
   userId: 'userId',
   type: 'type',
   period: 'period',
-  allowedAmount: 'allowedAmount',
   remainingAmount: 'remainingAmount',
   resetAt: 'resetAt',
   createdAt: 'createdAt',
@@ -238,22 +236,12 @@ export const IdempotencyInfoScalarFieldEnum = {
 export type IdempotencyInfoScalarFieldEnum = (typeof IdempotencyInfoScalarFieldEnum)[keyof typeof IdempotencyInfoScalarFieldEnum]
 
 
-export const GratitudeJournalScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  chatId: 'chatId',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type GratitudeJournalScalarFieldEnum = (typeof GratitudeJournalScalarFieldEnum)[keyof typeof GratitudeJournalScalarFieldEnum]
-
-
 export const ApiKeyScalarFieldEnum = {
   id: 'id',
   apiKey: 'apiKey',
   isEnabled: 'isEnabled',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 } as const
 
 export type ApiKeyScalarFieldEnum = (typeof ApiKeyScalarFieldEnum)[keyof typeof ApiKeyScalarFieldEnum]
@@ -261,6 +249,7 @@ export type ApiKeyScalarFieldEnum = (typeof ApiKeyScalarFieldEnum)[keyof typeof 
 
 export const SupabaseActivityScalarFieldEnum = {
   id: 'id',
+  createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 

@@ -54,12 +54,13 @@ export class UserDefaultPromptRepository {
     const { userId, userPromptId } = input;
 
     const rows = await this.tx.$queryRaw<Record<string, unknown>[]>`
-INSERT INTO user_default_prompts
-  (user_id, user_prompt_id)
-VALUES
-  (${userId}, ${userPromptId})
-ON CONFLICT (user_id)
-DO UPDATE SET
+INSERT INTO user_default_prompts (
+  user_id, user_prompt_id
+) VALUES (
+  ${userId}, ${userPromptId}
+) ON CONFLICT (
+  user_id
+) DO UPDATE SET
   user_prompt_id = EXCLUDED.user_prompt_id
 RETURNING *;
 `;
