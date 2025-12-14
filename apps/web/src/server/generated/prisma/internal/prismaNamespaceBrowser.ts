@@ -122,7 +122,6 @@ export const UserUsageLimitScalarFieldEnum = {
   type: 'type',
   period: 'period',
   remainingAmount: 'remainingAmount',
-  resetAt: 'resetAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -214,6 +213,7 @@ export type MessageScalarFieldEnum = (typeof MessageScalarFieldEnum)[keyof typeo
 
 
 export const MessageChunkScalarFieldEnum = {
+  id: 'id',
   messageId: 'messageId',
   index: 'index',
   rawDataEncrypted: 'rawDataEncrypted',

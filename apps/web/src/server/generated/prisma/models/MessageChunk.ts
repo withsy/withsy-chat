@@ -27,14 +27,17 @@ export type AggregateMessageChunk = {
 }
 
 export type MessageChunkAvgAggregateOutputType = {
+  id: number | null
   index: number | null
 }
 
 export type MessageChunkSumAggregateOutputType = {
+  id: number | null
   index: number | null
 }
 
 export type MessageChunkMinAggregateOutputType = {
+  id: number | null
   messageId: string | null
   index: number | null
   rawDataEncrypted: string | null
@@ -46,6 +49,7 @@ export type MessageChunkMinAggregateOutputType = {
 }
 
 export type MessageChunkMaxAggregateOutputType = {
+  id: number | null
   messageId: string | null
   index: number | null
   rawDataEncrypted: string | null
@@ -57,6 +61,7 @@ export type MessageChunkMaxAggregateOutputType = {
 }
 
 export type MessageChunkCountAggregateOutputType = {
+  id: number
   messageId: number
   index: number
   rawDataEncrypted: number
@@ -70,14 +75,17 @@ export type MessageChunkCountAggregateOutputType = {
 
 
 export type MessageChunkAvgAggregateInputType = {
+  id?: true
   index?: true
 }
 
 export type MessageChunkSumAggregateInputType = {
+  id?: true
   index?: true
 }
 
 export type MessageChunkMinAggregateInputType = {
+  id?: true
   messageId?: true
   index?: true
   rawDataEncrypted?: true
@@ -89,6 +97,7 @@ export type MessageChunkMinAggregateInputType = {
 }
 
 export type MessageChunkMaxAggregateInputType = {
+  id?: true
   messageId?: true
   index?: true
   rawDataEncrypted?: true
@@ -100,6 +109,7 @@ export type MessageChunkMaxAggregateInputType = {
 }
 
 export type MessageChunkCountAggregateInputType = {
+  id?: true
   messageId?: true
   index?: true
   rawDataEncrypted?: true
@@ -198,6 +208,7 @@ export type MessageChunkGroupByArgs<ExtArgs extends runtime.Types.Extensions.Int
 }
 
 export type MessageChunkGroupByOutputType = {
+  id: number
   messageId: string
   index: number
   rawDataEncrypted: string
@@ -232,6 +243,7 @@ export type MessageChunkWhereInput = {
   AND?: Prisma.MessageChunkWhereInput | Prisma.MessageChunkWhereInput[]
   OR?: Prisma.MessageChunkWhereInput[]
   NOT?: Prisma.MessageChunkWhereInput | Prisma.MessageChunkWhereInput[]
+  id?: Prisma.IntFilter<"MessageChunk"> | number
   messageId?: Prisma.UuidFilter<"MessageChunk"> | string
   index?: Prisma.IntFilter<"MessageChunk"> | number
   rawDataEncrypted?: Prisma.StringFilter<"MessageChunk"> | string
@@ -244,6 +256,7 @@ export type MessageChunkWhereInput = {
 }
 
 export type MessageChunkOrderByWithRelationInput = {
+  id?: Prisma.SortOrder
   messageId?: Prisma.SortOrder
   index?: Prisma.SortOrder
   rawDataEncrypted?: Prisma.SortOrder
@@ -256,6 +269,7 @@ export type MessageChunkOrderByWithRelationInput = {
 }
 
 export type MessageChunkWhereUniqueInput = Prisma.AtLeast<{
+  id?: number
   messageId_index?: Prisma.MessageChunkMessageIdIndexCompoundUniqueInput
   AND?: Prisma.MessageChunkWhereInput | Prisma.MessageChunkWhereInput[]
   OR?: Prisma.MessageChunkWhereInput[]
@@ -269,9 +283,10 @@ export type MessageChunkWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"MessageChunk"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"MessageChunk"> | Date | string
   message?: Prisma.XOR<Prisma.MessageScalarRelationFilter, Prisma.MessageWhereInput>
-}, "messageId_index">
+}, "id" | "messageId_index">
 
 export type MessageChunkOrderByWithAggregationInput = {
+  id?: Prisma.SortOrder
   messageId?: Prisma.SortOrder
   index?: Prisma.SortOrder
   rawDataEncrypted?: Prisma.SortOrder
@@ -291,6 +306,7 @@ export type MessageChunkScalarWhereWithAggregatesInput = {
   AND?: Prisma.MessageChunkScalarWhereWithAggregatesInput | Prisma.MessageChunkScalarWhereWithAggregatesInput[]
   OR?: Prisma.MessageChunkScalarWhereWithAggregatesInput[]
   NOT?: Prisma.MessageChunkScalarWhereWithAggregatesInput | Prisma.MessageChunkScalarWhereWithAggregatesInput[]
+  id?: Prisma.IntWithAggregatesFilter<"MessageChunk"> | number
   messageId?: Prisma.UuidWithAggregatesFilter<"MessageChunk"> | string
   index?: Prisma.IntWithAggregatesFilter<"MessageChunk"> | number
   rawDataEncrypted?: Prisma.StringWithAggregatesFilter<"MessageChunk"> | string
@@ -313,6 +329,7 @@ export type MessageChunkCreateInput = {
 }
 
 export type MessageChunkUncheckedCreateInput = {
+  id?: number
   messageId: string
   index: number
   rawDataEncrypted: string
@@ -335,6 +352,7 @@ export type MessageChunkUpdateInput = {
 }
 
 export type MessageChunkUncheckedUpdateInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
   messageId?: Prisma.StringFieldUpdateOperationsInput | string
   index?: Prisma.IntFieldUpdateOperationsInput | number
   rawDataEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
@@ -346,6 +364,7 @@ export type MessageChunkUncheckedUpdateInput = {
 }
 
 export type MessageChunkCreateManyInput = {
+  id?: number
   messageId: string
   index: number
   rawDataEncrypted: string
@@ -367,6 +386,7 @@ export type MessageChunkUpdateManyMutationInput = {
 }
 
 export type MessageChunkUncheckedUpdateManyInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
   messageId?: Prisma.StringFieldUpdateOperationsInput | string
   index?: Prisma.IntFieldUpdateOperationsInput | number
   rawDataEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
@@ -393,6 +413,7 @@ export type MessageChunkMessageIdIndexCompoundUniqueInput = {
 }
 
 export type MessageChunkCountOrderByAggregateInput = {
+  id?: Prisma.SortOrder
   messageId?: Prisma.SortOrder
   index?: Prisma.SortOrder
   rawDataEncrypted?: Prisma.SortOrder
@@ -404,10 +425,12 @@ export type MessageChunkCountOrderByAggregateInput = {
 }
 
 export type MessageChunkAvgOrderByAggregateInput = {
+  id?: Prisma.SortOrder
   index?: Prisma.SortOrder
 }
 
 export type MessageChunkMaxOrderByAggregateInput = {
+  id?: Prisma.SortOrder
   messageId?: Prisma.SortOrder
   index?: Prisma.SortOrder
   rawDataEncrypted?: Prisma.SortOrder
@@ -419,6 +442,7 @@ export type MessageChunkMaxOrderByAggregateInput = {
 }
 
 export type MessageChunkMinOrderByAggregateInput = {
+  id?: Prisma.SortOrder
   messageId?: Prisma.SortOrder
   index?: Prisma.SortOrder
   rawDataEncrypted?: Prisma.SortOrder
@@ -430,6 +454,7 @@ export type MessageChunkMinOrderByAggregateInput = {
 }
 
 export type MessageChunkSumOrderByAggregateInput = {
+  id?: Prisma.SortOrder
   index?: Prisma.SortOrder
 }
 
@@ -486,6 +511,7 @@ export type MessageChunkCreateWithoutMessageInput = {
 }
 
 export type MessageChunkUncheckedCreateWithoutMessageInput = {
+  id?: number
   index: number
   rawDataEncrypted: string
   textEncrypted: string
@@ -525,6 +551,7 @@ export type MessageChunkScalarWhereInput = {
   AND?: Prisma.MessageChunkScalarWhereInput | Prisma.MessageChunkScalarWhereInput[]
   OR?: Prisma.MessageChunkScalarWhereInput[]
   NOT?: Prisma.MessageChunkScalarWhereInput | Prisma.MessageChunkScalarWhereInput[]
+  id?: Prisma.IntFilter<"MessageChunk"> | number
   messageId?: Prisma.UuidFilter<"MessageChunk"> | string
   index?: Prisma.IntFilter<"MessageChunk"> | number
   rawDataEncrypted?: Prisma.StringFilter<"MessageChunk"> | string
@@ -536,6 +563,7 @@ export type MessageChunkScalarWhereInput = {
 }
 
 export type MessageChunkCreateManyMessageInput = {
+  id?: number
   index: number
   rawDataEncrypted: string
   textEncrypted: string
@@ -556,6 +584,7 @@ export type MessageChunkUpdateWithoutMessageInput = {
 }
 
 export type MessageChunkUncheckedUpdateWithoutMessageInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
   index?: Prisma.IntFieldUpdateOperationsInput | number
   rawDataEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
   textEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
@@ -566,6 +595,7 @@ export type MessageChunkUncheckedUpdateWithoutMessageInput = {
 }
 
 export type MessageChunkUncheckedUpdateManyWithoutMessageInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
   index?: Prisma.IntFieldUpdateOperationsInput | number
   rawDataEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
   textEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
@@ -578,6 +608,7 @@ export type MessageChunkUncheckedUpdateManyWithoutMessageInput = {
 
 
 export type MessageChunkSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
+  id?: boolean
   messageId?: boolean
   index?: boolean
   rawDataEncrypted?: boolean
@@ -590,6 +621,7 @@ export type MessageChunkSelect<ExtArgs extends runtime.Types.Extensions.Internal
 }, ExtArgs["result"]["messageChunk"]>
 
 export type MessageChunkSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
+  id?: boolean
   messageId?: boolean
   index?: boolean
   rawDataEncrypted?: boolean
@@ -602,6 +634,7 @@ export type MessageChunkSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
 }, ExtArgs["result"]["messageChunk"]>
 
 export type MessageChunkSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
+  id?: boolean
   messageId?: boolean
   index?: boolean
   rawDataEncrypted?: boolean
@@ -614,6 +647,7 @@ export type MessageChunkSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
 }, ExtArgs["result"]["messageChunk"]>
 
 export type MessageChunkSelectScalar = {
+  id?: boolean
   messageId?: boolean
   index?: boolean
   rawDataEncrypted?: boolean
@@ -624,7 +658,7 @@ export type MessageChunkSelectScalar = {
   updatedAt?: boolean
 }
 
-export type MessageChunkOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"messageId" | "index" | "rawDataEncrypted" | "textEncrypted" | "reasoningTextEncrypted" | "isDone" | "createdAt" | "updatedAt", ExtArgs["result"]["messageChunk"]>
+export type MessageChunkOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "messageId" | "index" | "rawDataEncrypted" | "textEncrypted" | "reasoningTextEncrypted" | "isDone" | "createdAt" | "updatedAt", ExtArgs["result"]["messageChunk"]>
 export type MessageChunkInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   message?: boolean | Prisma.MessageDefaultArgs<ExtArgs>
 }
@@ -641,6 +675,7 @@ export type $MessageChunkPayload<ExtArgs extends runtime.Types.Extensions.Intern
     message: Prisma.$MessagePayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
+    id: number
     messageId: string
     index: number
     rawDataEncrypted: string
@@ -732,8 +767,8 @@ export interface MessageChunkDelegate<ExtArgs extends runtime.Types.Extensions.I
    * // Get first 10 MessageChunks
    * const messageChunks = await prisma.messageChunk.findMany({ take: 10 })
    * 
-   * // Only select the `messageId`
-   * const messageChunkWithMessageIdOnly = await prisma.messageChunk.findMany({ select: { messageId: true } })
+   * // Only select the `id`
+   * const messageChunkWithIdOnly = await prisma.messageChunk.findMany({ select: { id: true } })
    * 
    */
   findMany<T extends MessageChunkFindManyArgs>(args?: Prisma.SelectSubset<T, MessageChunkFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MessageChunkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
@@ -777,9 +812,9 @@ export interface MessageChunkDelegate<ExtArgs extends runtime.Types.Extensions.I
    *   ]
    * })
    * 
-   * // Create many MessageChunks and only return the `messageId`
-   * const messageChunkWithMessageIdOnly = await prisma.messageChunk.createManyAndReturn({
-   *   select: { messageId: true },
+   * // Create many MessageChunks and only return the `id`
+   * const messageChunkWithIdOnly = await prisma.messageChunk.createManyAndReturn({
+   *   select: { id: true },
    *   data: [
    *     // ... provide data here
    *   ]
@@ -868,9 +903,9 @@ export interface MessageChunkDelegate<ExtArgs extends runtime.Types.Extensions.I
    *   ]
    * })
    * 
-   * // Update zero or more MessageChunks and only return the `messageId`
-   * const messageChunkWithMessageIdOnly = await prisma.messageChunk.updateManyAndReturn({
-   *   select: { messageId: true },
+   * // Update zero or more MessageChunks and only return the `id`
+   * const messageChunkWithIdOnly = await prisma.messageChunk.updateManyAndReturn({
+   *   select: { id: true },
    *   where: {
    *     // ... provide filter here
    *   },
@@ -1073,6 +1108,7 @@ export interface Prisma__MessageChunkClient<T, Null = never, ExtArgs extends run
  * Fields of the MessageChunk model
  */
 export interface MessageChunkFieldRefs {
+  readonly id: Prisma.FieldRef<"MessageChunk", 'Int'>
   readonly messageId: Prisma.FieldRef<"MessageChunk", 'String'>
   readonly index: Prisma.FieldRef<"MessageChunk", 'Int'>
   readonly rawDataEncrypted: Prisma.FieldRef<"MessageChunk", 'String'>

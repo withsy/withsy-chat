@@ -106,3 +106,26 @@ CREATE UNIQUE INDEX "idempotency_keys_idempotency_key_key" ON "idempotency_keys"
 
 -- CreateIndex
 CREATE INDEX "idempotency_keys_idempotency_key_idx" ON "idempotency_keys"("idempotency_key");
+
+-- DropIndex
+DROP INDEX "api_keys_api_key_idx";
+
+-- DropIndex
+DROP INDEX "idempotency_keys_idempotency_key_idx";
+
+-- DropIndex
+DROP INDEX "user_default_prompts_user_id_idx";
+
+-- DropIndex
+DROP INDEX "user_usage_limits_user_id_type_idx";
+
+-- AlterTable
+ALTER TABLE "message_chunks" DROP CONSTRAINT "message_chunks_pkey",
+ADD COLUMN     "id" SERIAL NOT NULL,
+ADD CONSTRAINT "message_chunks_pkey" PRIMARY KEY ("id");
+
+-- AlterTable
+ALTER TABLE "user_usage_limits" DROP COLUMN "reset_at";
+
+-- CreateIndex
+CREATE UNIQUE INDEX "message_chunks_message_id_index_key" ON "message_chunks"("message_id", "index");

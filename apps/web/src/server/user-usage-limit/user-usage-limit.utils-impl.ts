@@ -1,4 +1,8 @@
-import type { UserUsageLimitPeriod } from "@/types/user-usage-limit";
+import {
+  UserUsageLimitPeriod,
+  UserUsageLimitType,
+  type UserUsageLimitData,
+} from "@/types/user-usage-limit";
 import {
   addDays,
   addHours,
@@ -14,6 +18,7 @@ import {
   startOfYear,
 } from "date-fns";
 import type { Db } from "../db/db";
+import type { UserUsageLimitModel } from "../generated/prisma/models";
 import { UserUsageLimitService } from "./user-usage-limit.service";
 
 export function createService(context: { db: Db }): UserUsageLimitService {
@@ -22,27 +27,27 @@ export function createService(context: { db: Db }): UserUsageLimitService {
   return new UserUsageLimitService(db);
 }
 
-export function getAnnuallyResetAt(now: Date) {
+export function createAnnuallyResetAt(now: Date): Date {
   return addYears(startOfYear(now), 1);
 }
 
-export function getDailyResetAt(now: Date) {
+export function createDailyResetAt(now: Date): Date {
   return addDays(startOfDay(now), 1);
 }
 
-export function getMonthlyResetAt(now: Date) {
+export function createMonthlyResetAt(now: Date): Date {
   return addMonths(startOfMonth(now), 1);
 }
 
-export function getPerHourResetAt(now: Date) {
+export function createPerHourResetAt(now: Date): Date {
   return addHours(startOfHour(now), 1);
 }
 
-export function getPerMinuteResetAt(now: Date) {
+export function createPerMinuteResetAt(now: Date): Date {
   return addMinutes(startOfMinute(now), 1);
 }
 
-export function getPerSecondResetAt(now: Date) {
+export function createPerSecondResetAt(now: Date): Date {
   return addSeconds(startOfSecond(now), 1);
 }
 
@@ -52,50 +57,39 @@ export function isExpired(input: { resetAt: Date; now: Date }): boolean {
   return resetAt <= now;
 }
 
-export function getDataForUpdate(input: {
-  allowedAmount: number;
-  period: UserUsageLimitPeriod;
-  now: Date;
-}): { remainingAmount: number; resetAt: Date } {
-  const { allowedAmount, period, now } = input;
-
-  const remainingAmount = allowedAmount;
-  const resetAt = getResetAtForUpdate({ period, now });
-
-  return {
-    remainingAmount,
-    resetAt,
-  };
-}
-
-export function getResetAtForUpdate(input: {
+export function createResetAt(input: {
   period: UserUsageLimitPeriod;
   now: Date;
 }): Date {
   const { period, now } = input;
 
   switch (period) {
-    case "annually": {
-      return getAnnuallyResetAt(now);
-    }
     case "monthly": {
-      return getMonthlyResetAt(now);
+      return createMonthlyResetAt(now);
     }
     case "daily": {
-      return getDailyResetAt(now);
-    }
-    case "perHour": {
-      return getPerHourResetAt(now);
+      return createDailyResetAt(now);
     }
     case "perMinute": {
-      return getPerMinuteResetAt(now);
-    }
-    case "perSecond": {
-      return getPerSecondResetAt(now);
+      return createPerMinuteResetAt(now);
     }
     default: {
       const _: never = period;
       throw new Error(`Unexpected period: ${period}`);
     }
   }
+}
+
+export function entityToData(entity: UserUsageLimitModel): UserUsageLimitData {
+  const type = UserUsageLimitType.parse(entity.type);
+  const period = UserUsageLimitPeriod.parse(entity.period);
+
+  const data: UserUsageLimitData = {
+    type,
+    period,
+    remainingAmount: entity.remainingAmount,
+    resetAt: entity.resetAt,
+  };
+
+  return data;
 }

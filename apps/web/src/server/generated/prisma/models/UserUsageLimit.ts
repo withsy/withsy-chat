@@ -42,7 +42,6 @@ export type UserUsageLimitMinAggregateOutputType = {
   type: string | null
   period: string | null
   remainingAmount: number | null
-  resetAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -53,7 +52,6 @@ export type UserUsageLimitMaxAggregateOutputType = {
   type: string | null
   period: string | null
   remainingAmount: number | null
-  resetAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -64,7 +62,6 @@ export type UserUsageLimitCountAggregateOutputType = {
   type: number
   period: number
   remainingAmount: number
-  resetAt: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -87,7 +84,6 @@ export type UserUsageLimitMinAggregateInputType = {
   type?: true
   period?: true
   remainingAmount?: true
-  resetAt?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -98,7 +94,6 @@ export type UserUsageLimitMaxAggregateInputType = {
   type?: true
   period?: true
   remainingAmount?: true
-  resetAt?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -109,7 +104,6 @@ export type UserUsageLimitCountAggregateInputType = {
   type?: true
   period?: true
   remainingAmount?: true
-  resetAt?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -207,7 +201,6 @@ export type UserUsageLimitGroupByOutputType = {
   type: string
   period: string
   remainingAmount: number
-  resetAt: Date
   createdAt: Date
   updatedAt: Date
   _count: UserUsageLimitCountAggregateOutputType | null
@@ -241,7 +234,6 @@ export type UserUsageLimitWhereInput = {
   type?: Prisma.StringFilter<"UserUsageLimit"> | string
   period?: Prisma.StringFilter<"UserUsageLimit"> | string
   remainingAmount?: Prisma.IntFilter<"UserUsageLimit"> | number
-  resetAt?: Prisma.DateTimeFilter<"UserUsageLimit"> | Date | string
   createdAt?: Prisma.DateTimeFilter<"UserUsageLimit"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"UserUsageLimit"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
@@ -253,7 +245,6 @@ export type UserUsageLimitOrderByWithRelationInput = {
   type?: Prisma.SortOrder
   period?: Prisma.SortOrder
   remainingAmount?: Prisma.SortOrder
-  resetAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
@@ -269,7 +260,6 @@ export type UserUsageLimitWhereUniqueInput = Prisma.AtLeast<{
   type?: Prisma.StringFilter<"UserUsageLimit"> | string
   period?: Prisma.StringFilter<"UserUsageLimit"> | string
   remainingAmount?: Prisma.IntFilter<"UserUsageLimit"> | number
-  resetAt?: Prisma.DateTimeFilter<"UserUsageLimit"> | Date | string
   createdAt?: Prisma.DateTimeFilter<"UserUsageLimit"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"UserUsageLimit"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
@@ -281,7 +271,6 @@ export type UserUsageLimitOrderByWithAggregationInput = {
   type?: Prisma.SortOrder
   period?: Prisma.SortOrder
   remainingAmount?: Prisma.SortOrder
-  resetAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.UserUsageLimitCountOrderByAggregateInput
@@ -300,7 +289,6 @@ export type UserUsageLimitScalarWhereWithAggregatesInput = {
   type?: Prisma.StringWithAggregatesFilter<"UserUsageLimit"> | string
   period?: Prisma.StringWithAggregatesFilter<"UserUsageLimit"> | string
   remainingAmount?: Prisma.IntWithAggregatesFilter<"UserUsageLimit"> | number
-  resetAt?: Prisma.DateTimeWithAggregatesFilter<"UserUsageLimit"> | Date | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"UserUsageLimit"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"UserUsageLimit"> | Date | string
 }
@@ -309,7 +297,6 @@ export type UserUsageLimitCreateInput = {
   type: string
   period: string
   remainingAmount: number
-  resetAt: Date | string
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutUsageLimitsInput
@@ -321,7 +308,6 @@ export type UserUsageLimitUncheckedCreateInput = {
   type: string
   period: string
   remainingAmount: number
-  resetAt: Date | string
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -330,7 +316,6 @@ export type UserUsageLimitUpdateInput = {
   type?: Prisma.StringFieldUpdateOperationsInput | string
   period?: Prisma.StringFieldUpdateOperationsInput | string
   remainingAmount?: Prisma.IntFieldUpdateOperationsInput | number
-  resetAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutUsageLimitsNestedInput
@@ -342,7 +327,6 @@ export type UserUsageLimitUncheckedUpdateInput = {
   type?: Prisma.StringFieldUpdateOperationsInput | string
   period?: Prisma.StringFieldUpdateOperationsInput | string
   remainingAmount?: Prisma.IntFieldUpdateOperationsInput | number
-  resetAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -353,7 +337,6 @@ export type UserUsageLimitCreateManyInput = {
   type: string
   period: string
   remainingAmount: number
-  resetAt: Date | string
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -362,7 +345,6 @@ export type UserUsageLimitUpdateManyMutationInput = {
   type?: Prisma.StringFieldUpdateOperationsInput | string
   period?: Prisma.StringFieldUpdateOperationsInput | string
   remainingAmount?: Prisma.IntFieldUpdateOperationsInput | number
-  resetAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -373,7 +355,6 @@ export type UserUsageLimitUncheckedUpdateManyInput = {
   type?: Prisma.StringFieldUpdateOperationsInput | string
   period?: Prisma.StringFieldUpdateOperationsInput | string
   remainingAmount?: Prisma.IntFieldUpdateOperationsInput | number
-  resetAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -400,7 +381,6 @@ export type UserUsageLimitCountOrderByAggregateInput = {
   type?: Prisma.SortOrder
   period?: Prisma.SortOrder
   remainingAmount?: Prisma.SortOrder
-  resetAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -416,7 +396,6 @@ export type UserUsageLimitMaxOrderByAggregateInput = {
   type?: Prisma.SortOrder
   period?: Prisma.SortOrder
   remainingAmount?: Prisma.SortOrder
-  resetAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -427,7 +406,6 @@ export type UserUsageLimitMinOrderByAggregateInput = {
   type?: Prisma.SortOrder
   period?: Prisma.SortOrder
   remainingAmount?: Prisma.SortOrder
-  resetAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -483,7 +461,6 @@ export type UserUsageLimitCreateWithoutUserInput = {
   type: string
   period: string
   remainingAmount: number
-  resetAt: Date | string
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -493,7 +470,6 @@ export type UserUsageLimitUncheckedCreateWithoutUserInput = {
   type: string
   period: string
   remainingAmount: number
-  resetAt: Date | string
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -533,7 +509,6 @@ export type UserUsageLimitScalarWhereInput = {
   type?: Prisma.StringFilter<"UserUsageLimit"> | string
   period?: Prisma.StringFilter<"UserUsageLimit"> | string
   remainingAmount?: Prisma.IntFilter<"UserUsageLimit"> | number
-  resetAt?: Prisma.DateTimeFilter<"UserUsageLimit"> | Date | string
   createdAt?: Prisma.DateTimeFilter<"UserUsageLimit"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"UserUsageLimit"> | Date | string
 }
@@ -543,7 +518,6 @@ export type UserUsageLimitCreateManyUserInput = {
   type: string
   period: string
   remainingAmount: number
-  resetAt: Date | string
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -552,7 +526,6 @@ export type UserUsageLimitUpdateWithoutUserInput = {
   type?: Prisma.StringFieldUpdateOperationsInput | string
   period?: Prisma.StringFieldUpdateOperationsInput | string
   remainingAmount?: Prisma.IntFieldUpdateOperationsInput | number
-  resetAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -562,7 +535,6 @@ export type UserUsageLimitUncheckedUpdateWithoutUserInput = {
   type?: Prisma.StringFieldUpdateOperationsInput | string
   period?: Prisma.StringFieldUpdateOperationsInput | string
   remainingAmount?: Prisma.IntFieldUpdateOperationsInput | number
-  resetAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -572,7 +544,6 @@ export type UserUsageLimitUncheckedUpdateManyWithoutUserInput = {
   type?: Prisma.StringFieldUpdateOperationsInput | string
   period?: Prisma.StringFieldUpdateOperationsInput | string
   remainingAmount?: Prisma.IntFieldUpdateOperationsInput | number
-  resetAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -585,7 +556,6 @@ export type UserUsageLimitSelect<ExtArgs extends runtime.Types.Extensions.Intern
   type?: boolean
   period?: boolean
   remainingAmount?: boolean
-  resetAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -597,7 +567,6 @@ export type UserUsageLimitSelectCreateManyAndReturn<ExtArgs extends runtime.Type
   type?: boolean
   period?: boolean
   remainingAmount?: boolean
-  resetAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -609,7 +578,6 @@ export type UserUsageLimitSelectUpdateManyAndReturn<ExtArgs extends runtime.Type
   type?: boolean
   period?: boolean
   remainingAmount?: boolean
-  resetAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -621,12 +589,11 @@ export type UserUsageLimitSelectScalar = {
   type?: boolean
   period?: boolean
   remainingAmount?: boolean
-  resetAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type UserUsageLimitOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "type" | "period" | "remainingAmount" | "resetAt" | "createdAt" | "updatedAt", ExtArgs["result"]["userUsageLimit"]>
+export type UserUsageLimitOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "type" | "period" | "remainingAmount" | "createdAt" | "updatedAt", ExtArgs["result"]["userUsageLimit"]>
 export type UserUsageLimitInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
@@ -648,7 +615,6 @@ export type $UserUsageLimitPayload<ExtArgs extends runtime.Types.Extensions.Inte
     type: string
     period: string
     remainingAmount: number
-    resetAt: Date
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["userUsageLimit"]>
@@ -1080,7 +1046,6 @@ export interface UserUsageLimitFieldRefs {
   readonly type: Prisma.FieldRef<"UserUsageLimit", 'String'>
   readonly period: Prisma.FieldRef<"UserUsageLimit", 'String'>
   readonly remainingAmount: Prisma.FieldRef<"UserUsageLimit", 'Int'>
-  readonly resetAt: Prisma.FieldRef<"UserUsageLimit", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"UserUsageLimit", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"UserUsageLimit", 'DateTime'>
 }

@@ -1,15 +1,5 @@
-import type { Prisma } from "@/server/generated/prisma/client";
 import { z } from "zod";
 import { DateTimeTz, type zInfer, type zInput } from "./common";
-
-export const UserUsageLimitSelect = {
-  id: true,
-  type: true,
-  period: true,
-  allowedAmount: true,
-  remainingAmount: true,
-  resetAt: true,
-} satisfies Prisma.UserUsageLimitSelect;
 
 export const UserUsageLimitId = z.number().int();
 export type UserUsageLimitId = zInfer<typeof UserUsageLimitId>;
@@ -17,43 +7,20 @@ export type UserUsageLimitId = zInfer<typeof UserUsageLimitId>;
 export const UserUsageLimitType = z.enum(["message", "aiProfileImage"]);
 export type UserUsageLimitType = zInfer<typeof UserUsageLimitType>;
 
-export const UserUsageLimitPeriod = z.enum([
-  "annually",
-  "monthly",
-  "daily",
-  "perHour",
-  "perMinute",
-  "perSecond",
-]);
+export const UserUsageLimitPeriod = z.enum(["monthly", "daily", "perMinute"]);
 export type UserUsageLimitPeriod = zInfer<typeof UserUsageLimitPeriod>;
 
-export const UserUsageLimitEntity = z.object({
-  get id() {
-    return UserUsageLimitId;
-  },
+export const UserUsageLimitData = z.object({
   get type() {
     return UserUsageLimitType;
   },
   get period() {
     return UserUsageLimitPeriod;
   },
-  allowedAmount: z.number().int(),
   remainingAmount: z.number().int(),
   get resetAt() {
     return DateTimeTz;
   },
-});
-
-export type UserUsageLimitEntity = zInfer<typeof UserUsageLimitEntity>;
-
-const _checkUserUsageLimit = {} satisfies Omit<
-  UserUsageLimitEntity,
-  keyof typeof UserUsageLimitSelect
->;
-
-export const UserUsageLimitData = UserUsageLimitEntity.omit({
-  id: true,
-  allowedAmount: true,
 });
 export type UserUsageLimitData = zInfer<typeof UserUsageLimitData>;
 

@@ -1,98 +1,70 @@
 import type { UserId } from "@/types/user";
-import type {
-  UserUsageLimitId,
+import {
   UserUsageLimitPeriod,
   UserUsageLimitType,
+  type UserUsageLimitId,
 } from "@/types/user-usage-limit";
+import camelcaseKeys from "camelcase-keys";
 import type { Tx } from "../db/db";
 import type { UserUsageLimitModel } from "../generated/prisma/models";
-import { UserUsageLimitHelper } from "./user-usage-limit.helper";
 
 export class UserUsageLimitRepo {
   constructor(private readonly tx: Tx) {}
 
-  async create(input: { userId: UserId }): Promise<void> {
-    const { userId } = input;
-
-    const now = new Date();
-    const userUsageLimitHelper = new UserUsageLimitHelper();
-    await this.tx.userUsageLimit.createMany({
-      data: [
-        {
-          userId,
-          type: "message",
-          period: "daily",
-          allowedAmount: 30,
-          remainingAmount: 30,
-          resetAt: userUsageLimitHelper.getDailyResetAt(now),
-        },
-        {
-          userId,
-          type: "message",
-          period: "perMinute",
-          allowedAmount: 6,
-          remainingAmount: 6,
-          resetAt: userUsageLimitHelper.getPerMinuteResetAt(now),
-        },
-        {
-          userId,
-          type: "aiProfileImage",
-          period: "monthly",
-          allowedAmount: 10,
-          remainingAmount: 10,
-          resetAt: userUsageLimitHelper.getPerMinuteResetAt(now),
-        },
-      ],
-    });
-  }
-
-  async list(input: {
+  async tryGet(input: {
     userId: UserId;
     type: UserUsageLimitType;
-  }): Promise<UserUsageLimitModel[]> {
-    const { userId, type } = input;
+    period: UserUsageLimitPeriod;
+  }): Promise<UserUsageLimitModel | null> {
+    const { userId, type, period } = input;
 
-    return await this.tx.userUsageLimit.findMany({
+    return await this.tx.userUsageLimit.findUnique({
       where: {
-        userId,
-        type,
+        userId_type_period: {
+          userId,
+          type,
+          period,
+        },
       },
     });
   }
 
-  async update(input: {
-    userUsageLimitId: UserUsageLimitId;
+  async createOrUpdate(input: {
+    userId: UserId;
+    type: UserUsageLimitType;
+    period: UserUsageLimitPeriod;
     remainingAmount: number;
     resetAt: Date;
   }): Promise<UserUsageLimitModel> {
-    const { userUsageLimitId, remainingAmount, resetAt } = input;
+    const { userId, type, period, remainingAmount, resetAt } = input;
 
-    return await this.tx.userUsageLimit.update({
-      where: {
-        id: userUsageLimitId,
-      },
-      data: {
-        remainingAmount,
-        resetAt,
-      },
-    });
+    UserUsageLimitType.parse(type);
+    UserUsageLimitPeriod.parse(period);
+
+    const rows = await this.tx.$queryRaw<Record<string, unknown>[]>`
+INSERT INTO user_usage_limits (
+  user_id, type, period, remaining_amount, reset_at, updated_at
+) VALUES (
+  ${userId}, ${type}, ${period}, ${remainingAmount}, ${resetAt}, NOW()
+) ON CONFLICT (
+  user_id, type, period
+) DO UPDATE SET
+  remaining_amount = EXCLUDED.remaining_amount,
+  reset_at = EXCLUDED.reset_at,
+  updated_at = EXCLUDED.updated_at
+RETURNING *;
+`;
+
+    const entity = camelcaseKeys(rows[0]);
+    return entity as UserUsageLimitModel;
   }
 
-  async check(input: {
+  async consume(input: {
     userId: UserId;
     type: UserUsageLimitType;
     period: UserUsageLimitPeriod;
     now: Date;
   }) {}
-
-  async decrease(input: {
-    userId: UserId;
-    type: UserUsageLimitType;
-    period: UserUsageLimitPeriod;
-    now: Date;
-  }) {
-    const { userId, type, period, now } = input;
-  }
 
   async compensate(input: {}) {}
 }
