@@ -8,7 +8,7 @@ import {
 import type { Db } from "../db/db";
 import type { EncryptionService } from "../encryption/encryption.service";
 import { UserAiProfileDecryptor } from "./user-ai-profile.decryptor";
-import { UserAiProfileRepository } from "./user-ai-profile.repository";
+import { UserAiProfileRepo } from "./user-ai-profile.repo";
 
 export class UserAiProfileService {
   constructor(
@@ -19,8 +19,8 @@ export class UserAiProfileService {
   async list(input: { userId: UserId }): Promise<UserAiProfileListOutput> {
     const { userId } = input;
 
-    const userAiProfileRepository = new UserAiProfileRepository(this.db);
-    const entities = await userAiProfileRepository.list({ userId });
+    const userAiProfileRepo = new UserAiProfileRepo(this.db);
+    const entities = await userAiProfileRepo.list({ userId });
 
     const userAiProfileDecryptor = new UserAiProfileDecryptor(
       this.encryptionService
@@ -42,9 +42,9 @@ export class UserAiProfileService {
     const imagePathEncrypted = this.encryptionService.encrypt(imagePath);
 
     const res = await this.db.$transaction(async (tx) => {
-      const userAiProfileRepository = new UserAiProfileRepository(tx);
+      const userAiProfileRepo = new UserAiProfileRepo(tx);
       const { oldImagePathEncrypted, ...entity } =
-        await userAiProfileRepository.upsert({
+        await userAiProfileRepo.upsert({
           userId,
           model,
           nameEncrypted,

@@ -7,7 +7,7 @@ export type UpsertOutput = UserAiProfileModel & {
   oldImagePathEncrypted: string | null;
 };
 
-export class UserAiProfileRepository {
+export class UserAiProfileRepo {
   constructor(private readonly tx: Tx) {}
 
   async list(input: { userId: UserId }): Promise<UserAiProfileModel[]> {

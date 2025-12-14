@@ -15,7 +15,7 @@ import { v7 as uuidv7 } from "uuid";
 import type { EncryptionService } from "../encryption/encryption.service";
 import type { ChatMessageDecryptService } from "../services/chat-message-decrypt";
 import type { Db, Tx } from "../services/db";
-import { ChatRepository } from "./chat.repository";
+import { ChatRepo } from "./chat.repo";
 
 export class ChatService {
   constructor(
@@ -120,9 +120,9 @@ export class ChatService {
 
   async hardDeleteChats() {
     await this.db.$transaction(async (tx) => {
-      const chatRepository = new ChatRepository(tx);
+      const chatRepo = new ChatRepo(tx);
 
-      const chats = await chatRepository.findChatsToHardDelete();
+      const chats = await chatRepo.findChatsToHardDelete();
       if (chats.length === 0) {
         return;
       }
@@ -132,7 +132,7 @@ export class ChatService {
         `Preparing to delete ${chatIds.length}. chats: ${chatIds.join(", ")}`
       );
 
-      const res = await chatRepository.hardDeleteChats(chatIds);
+      const res = await chatRepo.hardDeleteChats(chatIds);
       console.warn(`Successfully hard deleted ${res.count} chats.`);
     });
   }

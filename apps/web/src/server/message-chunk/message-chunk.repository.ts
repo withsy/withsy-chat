@@ -4,7 +4,7 @@ import type { UserId } from "@/types/user";
 import type { Tx } from "../services/db";
 import { getHardDeleteCutoffDate } from "../utils";
 
-export class MessageChunkRepository {
+export class MessageChunkRepo {
   constructor(private readonly tx: Tx) {}
 
   async hardDeleteMessageChunks() {

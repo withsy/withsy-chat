@@ -1,7 +1,7 @@
 import type { Tx } from "../services/db";
 import { getHardDeleteCutoffDate } from "../utils";
 
-export class ChatRepository {
+export class ChatRepo {
   constructor(private readonly tx: Tx) {}
 
   async findChatsToHardDelete() {

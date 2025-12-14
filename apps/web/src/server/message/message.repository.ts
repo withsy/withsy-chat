@@ -2,7 +2,7 @@ import type { Tx } from "../services/db";
 
 const _10_MINUTES_IN_MS = 10 * 60_000;
 
-export class MessageRepository {
+export class MessageRepo {
   constructor(private readonly tx: Tx) {}
 
   async cleanupZombieMessages() {

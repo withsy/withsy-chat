@@ -5,7 +5,7 @@ import type { Tx } from "../db/db";
 import type { UserPromptModel } from "../generated/prisma/models";
 import { getHardDeleteCutoffDate } from "../utils";
 
-export class UserPromptRepository {
+export class UserPromptRepo {
   constructor(private readonly tx: Tx) {}
 
   async listForHardDelete(): Promise<UserPromptModel[]> {

@@ -8,7 +8,7 @@ import {
 import type { UserId } from "@/types/user";
 import type { EncryptionService } from "../encryption/encryption.service";
 import type { Db } from "../services/db";
-import { MessageChunkRepository } from "./message-chunk.repository";
+import { MessageChunkRepo } from "./message-chunk.repo";
 
 export class MessageChunkService {
   constructor(
@@ -79,9 +79,9 @@ export class MessageChunkService {
   }
 
   async hardDeleteMessageChunks() {
-    const messageChunkRepository = new MessageChunkRepository(this.db);
+    const messageChunkRepo = new MessageChunkRepo(this.db);
 
-    const res = await messageChunkRepository.hardDeleteMessageChunks();
+    const res = await messageChunkRepo.hardDeleteMessageChunks();
     console.warn(`Successfully hard deleted ${res.count} messageChunks.`);
   }
 
@@ -90,7 +90,7 @@ export class MessageChunkService {
     messageId: MessageId;
     index: number;
   }) {
-    const messageChunkRepository = new MessageChunkRepository(this.db);
-    return await messageChunkRepository.findMessageChunks(input);
+    const messageChunkRepo = new MessageChunkRepo(this.db);
+    return await messageChunkRepo.findMessageChunks(input);
   }
 }

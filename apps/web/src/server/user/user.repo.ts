@@ -4,10 +4,11 @@ import {
   type UserUpdatePreferences,
 } from "@/types/user";
 import { TRPCError } from "@trpc/server";
+import { v4 } from "uuid";
 import type { Tx } from "../db/db";
 import type { UserModel } from "../generated/prisma/models";
 
-export class UserRepository {
+export class UserRepo {
   constructor(private readonly tx: Tx) {}
 
   async get(input: { userId: UserId }): Promise<UserModel> {
@@ -71,8 +72,10 @@ export class UserRepository {
   }): Promise<UserModel> {
     const { nameEncrypted, emailEncrypted, imageUrlEncrypted } = input;
 
+    const id = v4();
     const entity = await this.tx.user.create({
       data: {
+        id,
         nameEncrypted,
         emailEncrypted,
         imageUrlEncrypted,

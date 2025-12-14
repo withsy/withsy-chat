@@ -21,7 +21,7 @@ import type { EncryptionService } from "../encryption/encryption.service";
 import type { MessageChunkService } from "../message-chunk/message-chunk.service";
 import type { ChatMessageDecryptService } from "../services/chat-message-decrypt";
 import type { Db, Tx } from "../services/db";
-import { MessageRepository } from "./message.repository";
+import { MessageRepo } from "./message.repo";
 
 // TODO: Change limit history length
 const DEFAULT_REMAIN_LENGTH = 10;
@@ -337,9 +337,9 @@ export class MessageService {
   }
 
   async cleanupZombieMessages() {
-    const messageRepository = new MessageRepository(this.db);
+    const messageRepo = new MessageRepo(this.db);
 
-    return await messageRepository.cleanupZombieMessages();
+    return await messageRepo.cleanupZombieMessages();
   }
 
   static async createUserMessage(

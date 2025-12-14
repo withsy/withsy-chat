@@ -1,10 +1,10 @@
 import type { Db } from "../db/db";
 import type { EncryptionService } from "../encryption/encryption.service";
 import type { UserLinkAccountModel } from "../generated/prisma/models";
-import { IdempotencyInfoRepository } from "../idempotency-info/idempotency-info.repository";
-import { UserUsageLimitRepository } from "../user-usage-limit/user-usage-limit.repository";
-import { UserRepository } from "../user/user.repository";
-import { UserLinkAccountRepository } from "./user-link-account.repository";
+import { IdempotencyKeyRepo } from "../idempotency-key/idempotency-key.repo";
+import { UserUsageLimitRepo } from "../user-usage-limit/user-usage-limit.repo";
+import { UserRepo } from "../user/user.repo";
+import { UserLinkAccountRepo } from "./user-link-account.repo";
 
 export class UserLinkAccountService {
   constructor(
@@ -36,37 +36,38 @@ export class UserLinkAccountService {
     const imageUrlEncrypted = this.encryptionService.encrypt(imageUrl);
 
     return await this.db.$transaction(async (tx) => {
-      const idempotencyInfoRepository = new IdempotencyInfoRepository(tx);
-      await idempotencyInfoRepository.createOrThrow({ idempotencyKey });
+      const idempotencyKeyRepo = new IdempotencyKeyRepo(tx);
+      await idempotencyKeyRepo.create({
+        idempotencyKey,
+      });
 
-      const userLinkAccountRepository = new UserLinkAccountRepository(tx);
-      let userLinkAccountEntity =
-        await userLinkAccountRepository.getByProviderData({
-          provider,
-          providerAccountId,
-        });
+      const userLinkAccountRepo = new UserLinkAccountRepo(tx);
+      let userLinkAccountEntity = await userLinkAccountRepo.getByProviderData({
+        provider,
+        providerAccountId,
+      });
 
-      const userRepository = new UserRepository(tx);
+      const userRepo = new UserRepo(tx);
       if (!userLinkAccountEntity) {
-        const userEntity = await userRepository.create({
+        const userEntity = await userRepo.create({
           nameEncrypted,
           emailEncrypted,
           imageUrlEncrypted,
         });
 
         const userId = userEntity.id;
-        userLinkAccountEntity = await userLinkAccountRepository.create({
+        userLinkAccountEntity = await userLinkAccountRepo.create({
           userId,
           provider,
           providerAccountId,
         });
 
-        const userUsageLimitRepository = new UserUsageLimitRepository(tx);
-        await userUsageLimitRepository.create({ userId });
+        const userUsageLimitRepo = new UserUsageLimitRepo(tx);
+        await userUsageLimitRepo.create({ userId });
       }
 
       if (refreshToken) {
-        await userLinkAccountRepository.update({
+        await userLinkAccountRepo.update({
           userLinkAccountId: userLinkAccountEntity.id,
           refreshToken,
         });

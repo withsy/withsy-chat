@@ -10,10 +10,10 @@ import {
 } from "@/types/user-prompt";
 import type { Db } from "../db/db";
 import type { EncryptionService } from "../encryption/encryption.service";
-import { IdempotencyInfoRepository } from "../idempotency-info/idempotency-info.repository";
-import { UserDefaultPromptRepository } from "../user-default-prompt/user-default-prompt.repository";
+import { IdempotencyInfoRepo } from "../idempotency-info/idempotency-info.repo";
+import { UserDefaultPromptRepo } from "../user-default-prompt/user-default-prompt.repo";
 import { UserPromptDecryptor } from "./user-prompt.decryptor";
-import { UserPromptRepository } from "./user-prompt.repository";
+import { UserPromptRepo } from "./user-prompt.repo";
 
 export class UserPromptService {
   constructor(
@@ -24,8 +24,8 @@ export class UserPromptService {
   async get(
     input: { userId: UserId } & UserPromptGet
   ): Promise<UserPromptData> {
-    const userPromptRepository = new UserPromptRepository(this.db);
-    const entity = await userPromptRepository.get(input);
+    const userPromptRepo = new UserPromptRepo(this.db);
+    const entity = await userPromptRepo.get(input);
 
     const userPromptDecryptor = new UserPromptDecryptor(this.encryptionService);
     const data = userPromptDecryptor.decrypt(entity);
@@ -36,8 +36,8 @@ export class UserPromptService {
   async list(
     input: { userId: UserId } & UserPromptList
   ): Promise<UserPromptListOutput> {
-    const userPromptRepository = new UserPromptRepository(this.db);
-    const entities = await userPromptRepository.list(input);
+    const userPromptRepo = new UserPromptRepo(this.db);
+    const entities = await userPromptRepo.list(input);
 
     const userPromptDecryptor = new UserPromptDecryptor(this.encryptionService);
     const items = entities.map((x) => userPromptDecryptor.decrypt(x));
@@ -58,13 +58,13 @@ export class UserPromptService {
     const textEncrypted = this.encryptionService.encrypt(text);
 
     const entity = await this.db.$transaction(async (tx) => {
-      const idempotencyInfoRepository = new IdempotencyInfoRepository(tx);
-      await idempotencyInfoRepository.createOrThrow({
+      const idempotencyInfoRepo = new IdempotencyInfoRepo(tx);
+      await idempotencyInfoRepo.createOrThrow({
         idempotencyKey,
       });
 
-      const userPromptRepository = new UserPromptRepository(tx);
-      const entity = await userPromptRepository.create({
+      const userPromptRepo = new UserPromptRepo(tx);
+      const entity = await userPromptRepo.create({
         userId,
         titleEncrypted,
         textEncrypted,
@@ -89,8 +89,8 @@ export class UserPromptService {
     const textEncrypted =
       text != null ? this.encryptionService.encrypt(text) : undefined;
 
-    const userPromptRepository = new UserPromptRepository(this.db);
-    const entity = await userPromptRepository.update({
+    const userPromptRepo = new UserPromptRepo(this.db);
+    const entity = await userPromptRepo.update({
       userId,
       userPromptId,
       titleEncrypted,
@@ -108,8 +108,8 @@ export class UserPromptService {
     const { userId, userPromptId } = input;
 
     await this.db.$transaction(async (tx) => {
-      const userDefaultPromptRepository = new UserDefaultPromptRepository(tx);
-      const userDefaultPrompt = await userDefaultPromptRepository.get({
+      const userDefaultPromptRepo = new UserDefaultPromptRepo(tx);
+      const userDefaultPrompt = await userDefaultPromptRepo.get({
         userId,
       });
 
@@ -118,14 +118,14 @@ export class UserPromptService {
         userDefaultPrompt.userPromptId &&
         userDefaultPrompt.userPromptId === userPromptId
       ) {
-        await userDefaultPromptRepository.update({
+        await userDefaultPromptRepo.update({
           userId,
           userPromptId: null,
         });
       }
 
-      const userPromptRepository = new UserPromptRepository(tx);
-      await userPromptRepository.delete({
+      const userPromptRepo = new UserPromptRepo(tx);
+      await userPromptRepo.delete({
         userId,
         userPromptId,
       });
@@ -134,8 +134,8 @@ export class UserPromptService {
 
   async doHardDelete(): Promise<void> {
     await this.db.$transaction(async (tx) => {
-      const userPromptRepository = new UserPromptRepository(tx);
-      const entities = await userPromptRepository.listForHardDelete();
+      const userPromptRepo = new UserPromptRepo(tx);
+      const entities = await userPromptRepo.listForHardDelete();
       if (entities.length === 0) {
         return;
       }
@@ -147,7 +147,7 @@ export class UserPromptService {
         }. userPrompts: ${userPromptIds.join(", ")}`
       );
 
-      const count = await userPromptRepository.doHardDelete({ userPromptIds });
+      const count = await userPromptRepo.doHardDelete({ userPromptIds });
       console.warn(`Successfully hard deleted ${count} userPrompts.`);
     });
   }

@@ -4,7 +4,7 @@ import camelcaseKeys from "camelcase-keys";
 import type { Tx } from "../db/db";
 import type { UserDefaultPromptModel } from "../generated/prisma/models";
 
-export class UserDefaultPromptRepository {
+export class UserDefaultPromptRepo {
   constructor(private readonly tx: Tx) {}
 
   async get(input: { userId: UserId }): Promise<UserDefaultPromptModel | null> {

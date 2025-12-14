@@ -3,7 +3,7 @@ import type { UserLinkAccountId } from "@/types/user-link-account";
 import type { Tx } from "../db/db";
 import type { UserLinkAccountModel } from "../generated/prisma/models";
 
-export class UserLinkAccountRepository {
+export class UserLinkAccountRepo {
   constructor(private readonly tx: Tx) {}
 
   async getByProviderData(input: {

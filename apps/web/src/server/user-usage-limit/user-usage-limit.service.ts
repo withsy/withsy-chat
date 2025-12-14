@@ -6,7 +6,7 @@ import type {
 import type { Db } from "../db/db";
 import { UserUsageLimitDecryptor } from "./user-usage-limit.decryptor";
 import { UserUsageLimitHelper } from "./user-usage-limit.helper";
-import { UserUsageLimitRepository } from "./user-usage-limit.repository";
+import { UserUsageLimitRepo } from "./user-usage-limit.repo";
 
 export class UserUsageLimitService {
   constructor(private readonly db: Db) {}
@@ -16,8 +16,8 @@ export class UserUsageLimitService {
     input: UserUsageLimitList
   ): Promise<UserUsageLimitListOutput> {
     const entities = await this.db.$transaction(async (tx) => {
-      const userUsageLimitRepository = new UserUsageLimitRepository(tx);
-      const entities = await userUsageLimitRepository.list({
+      const userUsageLimitRepo = new UserUsageLimitRepo(tx);
+      const entities = await userUsageLimitRepo.list({
         ...input,
         userId,
       });
@@ -33,7 +33,7 @@ export class UserUsageLimitService {
             period,
             now,
           });
-          const newEntity = await userUsageLimitRepository.update({
+          const newEntity = await userUsageLimitRepo.update({
             ...dataForUpdate,
             userUsageLimitId: id,
           });

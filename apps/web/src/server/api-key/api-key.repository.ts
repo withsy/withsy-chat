@@ -8,7 +8,7 @@ function generateApiKey() {
   return `apikey-${random}`;
 }
 
-export class ApiKeyRepository {
+export class ApiKeyRepo {
   constructor(private readonly tx: Tx) {}
 
   async createApiKey() {

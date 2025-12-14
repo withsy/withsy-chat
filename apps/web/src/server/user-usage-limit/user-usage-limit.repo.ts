@@ -8,7 +8,7 @@ import type { Tx } from "../db/db";
 import type { UserUsageLimitModel } from "../generated/prisma/models";
 import { UserUsageLimitHelper } from "./user-usage-limit.helper";
 
-export class UserUsageLimitRepository {
+export class UserUsageLimitRepo {
   constructor(private readonly tx: Tx) {}
 
   async create(input: { userId: UserId }): Promise<void> {

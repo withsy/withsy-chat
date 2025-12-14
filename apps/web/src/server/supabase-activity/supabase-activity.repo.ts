@@ -2,10 +2,10 @@ import camelcaseKeys from "camelcase-keys";
 import type { Tx } from "../db/db";
 import type { SupabaseActivityModel } from "../generated/prisma/models";
 
-export class SupabaseActivityRepository {
+export class SupabaseActivityRepo {
   constructor(private readonly tx: Tx) {}
 
-  async upsert(): Promise<SupabaseActivityModel> {
+  async createOrUpdate(): Promise<SupabaseActivityModel> {
     const rows = await this.tx.$queryRaw<Record<string, unknown>[]>`
 INSERT INTO supabase_activities (
   id, updated_at

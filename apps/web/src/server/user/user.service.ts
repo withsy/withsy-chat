@@ -11,7 +11,7 @@ import { TRPCError } from "@trpc/server";
 import type { Db } from "../db/db";
 import type { EncryptionService } from "../encryption/encryption.service";
 import { UserDecryptor } from "../user/user.decryptor";
-import { UserRepository } from "../user/user.repository";
+import { UserRepo } from "../user/user.repo";
 import { isValidTimezone } from "../utils";
 
 const FALLBACK_TIMEZONE = "UTC";
@@ -24,8 +24,8 @@ export class UserService {
   ) {}
 
   async get(userId: UserId): Promise<UserData> {
-    const userRepository = new UserRepository(this.db);
-    const entity = await userRepository.get({ userId });
+    const userRepo = new UserRepo(this.db);
+    const entity = await userRepo.get({ userId });
 
     const userDecryptor = new UserDecryptor(this.encryptionService);
     const data = userDecryptor.decrypt(entity);
@@ -35,8 +35,8 @@ export class UserService {
 
   async ensure(userId: UserId, input: UserEnsure): Promise<UserData> {
     const entity = await this.db.$transaction(async (tx) => {
-      const userRepository = new UserRepository(tx);
-      const entity = await userRepository.get({ userId });
+      const userRepo = new UserRepo(tx);
+      const entity = await userRepo.get({ userId });
 
       let timezone: string | undefined = undefined;
       if (entity.timezone.length === 0) {
@@ -54,7 +54,7 @@ export class UserService {
             : FALLBACK_AI_LANGUAGE;
       }
 
-      return await userRepository.update(userId, {
+      return await userRepo.update(userId, {
         aiLanguage,
         timezone,
       });
@@ -70,8 +70,8 @@ export class UserService {
     userId: UserId,
     input: UserUpdatePreferences
   ): Promise<UserUpdatePreferencesOutput> {
-    const userRepository = new UserRepository(this.db);
-    const output = await userRepository.updatePreferences(userId, input);
+    const userRepo = new UserRepo(this.db);
+    const output = await userRepo.updatePreferences(userId, input);
 
     return output;
   }
@@ -90,8 +90,8 @@ export class UserService {
         message: "Invalid timezone.",
       });
 
-    const userRepository = new UserRepository(this.db);
-    const entity = await userRepository.update(userId, {
+    const userRepo = new UserRepo(this.db);
+    const entity = await userRepo.update(userId, {
       aiLanguage,
       timezone,
     });
