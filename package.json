@@ -1,7 +1,9 @@
 {
   "private": true,
   "workspaces": [
-    "apps/*"
+    "apps/api",
+    "apps/trigger",
+    "apps/web"
   ],
   "scripts": {
     "check-types": "npm run check-types:web && npm run check-types:trigger",
