@@ -81,10 +81,31 @@ RETURNING *;
     type: UserUsageLimitType;
     period: UserUsageLimitPeriod;
     amount: number;
-  }) {
+  }): Promise<UserUsageLimitModel> {
     const { userId, type, period, amount } = input;
 
     UserUsageLimitType.parse(type);
     UserUsageLimitPeriod.parse(period);
+
+    if (amount <= 0) {
+      throw new Error(`Invalid compensate data. amount: ${amount}.`);
+    }
+
+    const rows = await this.tx.$queryRaw<Record<string, unknown>[]>`
+UPDATE user_usage_limits SET
+  remaining_amount = remaining_amount + ${amount}
+WHERE user_id = ${userId}
+  AND type = ${type}
+  AND period = ${period}
+RETURNING *;
+`;
+    if (rows.length === 0) {
+      throw new Error(
+        `User usage limit column not found. userId: ${userId}, type: ${type}, period: ${period}.`
+      );
+    }
+
+    const entity = camelcaseKeys(rows[0]);
+    return entity as UserUsageLimitModel;
   }
 }
