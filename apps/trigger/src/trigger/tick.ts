@@ -1,20 +1,29 @@
 import { schedules } from "@trigger.dev/sdk";
 import { createTrpcClient } from "../trpc-client";
 
-export const tickEvery5minutesTask = schedules.task({
-  id: "tick-every-5-minutes",
-  cron: "*/5 * * * *",
+export const tickMinuteTask = schedules.task({
+  id: "tick-minute",
+  cron: "* * * * *",
   run: async () => {
     const trpcClient = createTrpcClient();
-    await trpcClient.tick.tickEvery5minutes.mutate();
+    await trpcClient.tick.tickMinute.mutate();
   },
 });
 
 export const tickDailyTask = schedules.task({
   id: "tick-daily",
-  cron: "5 0 * * *",
+  cron: "1 0 * * *",
   run: async () => {
     const trpcClient = createTrpcClient();
     await trpcClient.tick.tickDaily.mutate();
+  },
+});
+
+export const tickMonthlyTask = schedules.task({
+  id: "tick-monthly",
+  cron: "1 0 1 * *",
+  run: async () => {
+    const trpcClient = createTrpcClient();
+    await trpcClient.tick.tickMonthly.mutate();
   },
 });
