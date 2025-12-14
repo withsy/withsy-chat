@@ -18,24 +18,10 @@ export const UserUsageLimitData = z.object({
     return UserUsageLimitPeriod;
   },
   remainingAmount: z.number().int(),
-  get resetAt() {
-    return DateTimeTz;
-  },
 });
 export type UserUsageLimitData = zInfer<typeof UserUsageLimitData>;
 
-export const UserUsageLimitError = z.object({
-  get type() {
-    return UserUsageLimitType;
-  },
-  get period() {
-    return UserUsageLimitPeriod;
-  },
-  remainingAmount: z.number().int(),
-  get resetAt() {
-    return DateTimeTz;
-  },
-});
+export const UserUsageLimitError = UserUsageLimitData;
 export type UserUsageLimitError = zInfer<typeof UserUsageLimitError>;
 export type UserUsageLimitErrorInput = zInput<typeof UserUsageLimitError>;
 

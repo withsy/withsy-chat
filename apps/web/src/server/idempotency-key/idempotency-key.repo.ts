@@ -29,7 +29,7 @@ export class IdempotencyKeyRepo {
     }
   }
 
-  async create(input: {
+  async check(input: {
     idempotencyKey: IdempotencyKey;
   }): Promise<IdempotencyKeyModel> {
     const { idempotencyKey } = input;

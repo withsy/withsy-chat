@@ -6,6 +6,7 @@ import {
 import { TRPCError } from "@trpc/server";
 import { v4 } from "uuid";
 import type { Tx } from "../db/db";
+import { DataError } from "../error";
 import type { UserModel } from "../generated/prisma/models";
 
 export class UserRepo {
@@ -27,7 +28,7 @@ export class UserRepo {
       aiLanguage?: string;
       timezone?: string;
     }
-  ) {
+  ): Promise<UserModel> {
     const { aiLanguage, timezone } = input;
 
     return await this.tx.user.update({
@@ -49,20 +50,26 @@ export class UserRepo {
       Object.entries(input).filter(([_, value]) => value !== undefined)
     );
 
-    const rows = await this.tx.$queryRaw<{ preferences?: unknown }[]>`
-          UPDATE users 
-          SET preferences = preferences || ${patch}::jsonb 
-          WHERE id = ${userId}::uuid
-          RETURNING preferences`;
+    const rows = await this.tx.$queryRaw<Record<string, unknown>[]>`
+UPDATE users 
+SET
+  preferences = preferences || ${patch}::jsonb 
+WHERE
+  id = ${userId}::uuid
+RETURNING *`;
 
     if (rows.length === 0) {
       throw new TRPCError({
         code: "NOT_FOUND",
         message: "User not found.",
+        cause: new DataError({
+          userId,
+        }),
       });
     }
 
-    return UserUpdatePreferencesOutput.parse(rows[0]);
+    const { preferences } = rows[0];
+    return preferences as UserUpdatePreferencesOutput;
   }
 
   async create(input: {

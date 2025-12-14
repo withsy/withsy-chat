@@ -5,8 +5,8 @@ import {
   UserUpdatePreferences,
   UserUpdatePreferencesOutput,
 } from "@/types/user";
+import z from "zod";
 import { t, userProcedure } from "../trpc/server";
-import { UserServiceFactory } from "./user.service-factory";
 
 export const userRouter = t.router({
   get: userProcedure

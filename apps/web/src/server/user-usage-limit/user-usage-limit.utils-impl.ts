@@ -88,7 +88,6 @@ export function entityToData(entity: UserUsageLimitModel): UserUsageLimitData {
     type,
     period,
     remainingAmount: entity.remainingAmount,
-    resetAt: entity.resetAt,
   };
 
   return data;

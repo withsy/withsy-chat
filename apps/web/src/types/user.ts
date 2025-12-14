@@ -23,9 +23,7 @@ export const UserData = z.object({
   name: z.string(),
   email: z.string(),
   imageUrl: z.string(),
-  get preferences() {
-    return UserPreferences;
-  },
+  preferences: z.record(z.string(), z.unknown()),
 });
 export type UserData = zInfer<typeof UserData>;
 
@@ -38,9 +36,7 @@ export type UserEnsure = zInfer<typeof UserEnsure>;
 export const UserUpdatePreferences = UserPreferences.partial();
 export type UserUpdatePreferences = zInfer<typeof UserUpdatePreferences>;
 
-export const UserUpdatePreferencesOutput = UserData.pick({
-  preferences: true,
-});
+export const UserUpdatePreferencesOutput = z.record(z.string(), z.unknown());
 export type UserUpdatePreferencesOutput = zInfer<
   typeof UserUpdatePreferencesOutput
 >;

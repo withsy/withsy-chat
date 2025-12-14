@@ -1,16 +1,16 @@
-import type { Db } from "../services/db";
+import type { Db } from "../db/db";
 import { ApiKeyRepo } from "./api-key.repo";
 
 export class ApiKeyService {
   constructor(private readonly db: Db) {}
 
-  async createApiKey() {
+  async create(): Promise<void> {
     const apiKeyRepo = new ApiKeyRepo(this.db);
-    return await apiKeyRepo.createApiKey();
+    await apiKeyRepo.create();
   }
 
-  async validateApiKey(input: { apiKey: string }) {
+  async validate(input: { apiKey: string }): Promise<boolean> {
     const apiKeyRepo = new ApiKeyRepo(this.db);
-    return await apiKeyRepo.validateApiKey(input);
+    return await apiKeyRepo.validate(input);
   }
 }

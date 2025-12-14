@@ -18,7 +18,7 @@ export class TickService {
     private readonly supabaseActivityService: SupabaseActivityService
   ) {}
 
-  async tickEvery5minutes() {
+  async tickMinute() {
     await this.#call([
       {
         name: "cleanupZombieMessages",
@@ -47,6 +47,8 @@ export class TickService {
       },
     ]);
   }
+
+  async tickMonthly() {}
 
   async #call(tasks: Task[]) {
     const results = await Promise.allSettled(

@@ -5,7 +5,7 @@ import type { SupabaseActivityModel } from "../generated/prisma/models";
 export class SupabaseActivityRepo {
   constructor(private readonly tx: Tx) {}
 
-  async createOrUpdate(): Promise<SupabaseActivityModel> {
+  async refresh(): Promise<SupabaseActivityModel> {
     const rows = await this.tx.$queryRaw<Record<string, unknown>[]>`
 INSERT INTO supabase_activities (
   id, updated_at

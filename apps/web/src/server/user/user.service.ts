@@ -10,9 +10,9 @@ import {
 import { TRPCError } from "@trpc/server";
 import type { Db } from "../db/db";
 import type { EncryptionService } from "../encryption/encryption.service";
-import { UserDecryptor } from "../user/user.decryptor";
 import { UserRepo } from "../user/user.repo";
 import { isValidTimezone } from "../utils";
+import { UserUtils } from "./user.utils";
 
 const FALLBACK_TIMEZONE = "UTC";
 const FALLBACK_AI_LANGUAGE = "en";
@@ -27,8 +27,10 @@ export class UserService {
     const userRepo = new UserRepo(this.db);
     const entity = await userRepo.get({ userId });
 
-    const userDecryptor = new UserDecryptor(this.encryptionService);
-    const data = userDecryptor.decrypt(entity);
+    const data = UserUtils.entityToData(
+      { encryptionService: this.encryptionService },
+      entity
+    );
 
     return data;
   }
