@@ -27,10 +27,8 @@ export class UserService {
     const userRepo = new UserRepo(this.db);
     const entity = await userRepo.get({ userId });
 
-    const data = UserUtils.entityToData(
-      { encryptionService: this.encryptionService },
-      entity
-    );
+    const entityToData = UserUtils.createEntityToData(this.encryptionService);
+    const data = entityToData(entity);
 
     return data;
   }

@@ -16,7 +16,7 @@ export default defineConfig([
     extends: ["next/core-web-vitals"],
     settings: {
       next: {
-        rootDir: "apps/web/",
+        rootDir: "apps/web",
       },
     },
   }),
@@ -44,7 +44,7 @@ export default defineConfig([
     },
   },
   {
-    files: ["apps/web/src/server/**/*.ts"],
+    files: ["apps/api/src/**/*.ts"],
     rules: {
       "@typescript-eslint/no-floating-promises": "error",
       "@typescript-eslint/await-thenable": "error",

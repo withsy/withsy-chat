@@ -1,6 +1,7 @@
 {
   "name": "trigger",
   "version": "0.0.0-development",
+  "private": true,
   "scripts": {
     "check-types": "tsc -b",
     "dev": "dotenvx run -- npx trigger.dev dev"

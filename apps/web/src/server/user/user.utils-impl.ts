@@ -13,26 +13,25 @@ export function createService(context: {
   return new UserService(encryptionService, db);
 }
 
-export function entityToData(
-  context: { encryptionService: EncryptionService },
-  entity: UserModel
-): UserData {
-  const { encryptionService } = context;
+export function createEntityToData(
+  encryptionService: EncryptionService
+): (entity: UserModel) => UserData {
+  return (entity) => {
+    const name = encryptionService.decrypt(entity.nameEncrypted);
+    const email = encryptionService.decrypt(entity.emailEncrypted);
+    const imageUrl = encryptionService.decrypt(entity.imageUrlEncrypted);
+    const preferences = UserPreferences.parse(entity.preferences);
 
-  const name = encryptionService.decrypt(entity.nameEncrypted);
-  const email = encryptionService.decrypt(entity.emailEncrypted);
-  const imageUrl = encryptionService.decrypt(entity.imageUrlEncrypted);
-  const preferences = UserPreferences.parse(entity.preferences);
+    const data: UserData = {
+      id: entity.id,
+      name,
+      email,
+      imageUrl,
+      aiLanguage: entity.aiLanguage,
+      timezone: entity.timezone,
+      preferences,
+    };
 
-  const data: UserData = {
-    id: entity.id,
-    name,
-    email,
-    imageUrl,
-    aiLanguage: entity.aiLanguage,
-    timezone: entity.timezone,
-    preferences,
+    return data;
   };
-
-  return data;
 }
