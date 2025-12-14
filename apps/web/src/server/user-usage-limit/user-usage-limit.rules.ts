@@ -3,7 +3,7 @@ import type {
   UserUsageLimitType,
 } from "@/types/user-usage-limit";
 
-export const USER_USAGE_LIMIT_RULES: Record<
+export const QUOTA_MAP: Record<
   UserUsageLimitType,
   Partial<Record<UserUsageLimitPeriod, number>>
 > = {

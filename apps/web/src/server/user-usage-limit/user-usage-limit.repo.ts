@@ -2,11 +2,11 @@ import type { UserId } from "@/types/user";
 import {
   UserUsageLimitPeriod,
   UserUsageLimitType,
-  type UserUsageLimitId,
 } from "@/types/user-usage-limit";
 import camelcaseKeys from "camelcase-keys";
 import type { Tx } from "../db/db";
 import type { UserUsageLimitModel } from "../generated/prisma/models";
+import { QUOTA_MAP } from "./user-usage-limit.rules";
 
 export class UserUsageLimitRepo {
   constructor(private readonly tx: Tx) {}
@@ -29,42 +29,62 @@ export class UserUsageLimitRepo {
     });
   }
 
-  async createOrUpdate(input: {
+  async tryConsume(input: {
     userId: UserId;
     type: UserUsageLimitType;
     period: UserUsageLimitPeriod;
-    remainingAmount: number;
-    resetAt: Date;
-  }): Promise<UserUsageLimitModel> {
-    const { userId, type, period, remainingAmount, resetAt } = input;
+    amount: number;
+  }): Promise<UserUsageLimitModel | null> {
+    const { userId, type, period, amount } = input;
 
     UserUsageLimitType.parse(type);
     UserUsageLimitPeriod.parse(period);
 
+    const quota = QUOTA_MAP[type][period];
+    const createError = () =>
+      new Error(
+        `Invalid consume data. type: ${type}, period: ${period}, quota: ${quota}, amount: ${amount}.`
+      );
+    if (!quota || quota <= 0 || amount <= 0) {
+      throw createError();
+    }
+
+    const remainingAmount = quota - amount;
+    if (remainingAmount < 0) {
+      throw createError();
+    }
+
     const rows = await this.tx.$queryRaw<Record<string, unknown>[]>`
 INSERT INTO user_usage_limits (
-  user_id, type, period, remaining_amount, reset_at, updated_at
+  user_id, type, period, remaining_amount, updated_at
 ) VALUES (
-  ${userId}, ${type}, ${period}, ${remainingAmount}, ${resetAt}, NOW()
+  ${userId}, ${type}, ${period}, ${remainingAmount}, NOW()
 ) ON CONFLICT (
   user_id, type, period
 ) DO UPDATE SET
-  remaining_amount = EXCLUDED.remaining_amount,
-  reset_at = EXCLUDED.reset_at,
-  updated_at = EXCLUDED.updated_at
+    remaining_amount = remaining_amount - ${amount},
+    updated_at = NOW()
+  WHERE
+    remaining_amount >= ${amount}
 RETURNING *;
 `;
+    if (rows.length === 0) {
+      return null;
+    }
 
     const entity = camelcaseKeys(rows[0]);
     return entity as UserUsageLimitModel;
   }
 
-  async consume(input: {
+  async compensate(input: {
     userId: UserId;
     type: UserUsageLimitType;
     period: UserUsageLimitPeriod;
-    now: Date;
-  }) {}
+    amount: number;
+  }) {
+    const { userId, type, period, amount } = input;
 
-  async compensate(input: {}) {}
+    UserUsageLimitType.parse(type);
+    UserUsageLimitPeriod.parse(period);
+  }
 }
