@@ -1,17 +1,18 @@
 import {
+  UserUsageLimitData,
   UserUsageLimitList,
-  UserUsageLimitListOutput,
 } from "@/types/user-usage-limit";
 import { t, userProcedure } from "../trpc/server";
-import { UserUsageLimitServiceFactory } from "./user-usage-limit.service-factory";
+import { UserUsageLimitUtils } from "./user-usage-limit.utils";
 
 export const userUsageLimitRouter = t.router({
   list: userProcedure
     .input(UserUsageLimitList)
-    .output(UserUsageLimitListOutput)
+    .output(UserUsageLimitData.array())
     .query(({ ctx, input }) =>
-      new UserUsageLimitServiceFactory(ctx.serverContext)
-        .create()
-        .list(ctx.userId, input)
+      UserUsageLimitUtils.createService(ctx.serverContext).list(
+        ctx.userId,
+        input
+      )
     ),
 });

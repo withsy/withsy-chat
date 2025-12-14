@@ -4,15 +4,15 @@ export class EncryptionService {
   #encryptor: Encryptor;
 
   constructor() {
-    const { ENCRYPTION_SECRET } = process.env;
-    if (!ENCRYPTION_SECRET) {
-      throw new Error("Invalid ENCRYPTION_SECRET.");
+    const { ENCRYPTION_KEY } = process.env;
+    if (!ENCRYPTION_KEY) {
+      throw new Error("Invalid ENCRYPTION_KEY.");
     }
 
-    this.#encryptor = new Encryptor(ENCRYPTION_SECRET);
+    this.#encryptor = new Encryptor(ENCRYPTION_KEY);
   }
 
-  encrypt(text: string) {
+  encrypt(text: string): string {
     return this.#encryptor.encrypt(text);
   }
 
