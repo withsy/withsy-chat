@@ -36,7 +36,7 @@ export class Encryptor {
     this.#encryptionKey = buffer;
   }
 
-  encrypt(text: string) {
+  encrypt(text: string): string {
     const iv = randomBytes(IV_SIZE);
     const algorithm = ALGORITHM;
     const cipher = createCipheriv(algorithm, this.#encryptionKey, iv);
@@ -56,7 +56,7 @@ export class Encryptor {
     return payloadEncoded;
   }
 
-  decrypt(payloadEncoded: string) {
+  decrypt(payloadEncoded: string): string {
     try {
       return this.#decrypt(payloadEncoded);
     } catch (e) {
@@ -65,7 +65,7 @@ export class Encryptor {
     }
   }
 
-  #decrypt(payloadEncoded: string) {
+  #decrypt(payloadEncoded: string): string {
     const payloadString = Buffer.from(payloadEncoded, "base64").toString(
       "utf8"
     );
