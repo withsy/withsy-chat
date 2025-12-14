@@ -1,11 +1,14 @@
 import type { UserId } from "@/types/user";
 import type { UserAiProfileData } from "@/types/user-ai-profile";
+import type { Db } from "../db/db";
 import type { EncryptionService } from "../encryption/encryption.service";
 import type { UserAiProfileModel } from "../generated/prisma/models";
-import type { ServerContext } from "../server-context";
 import { UserAiProfileService } from "./user-ai-profile.service";
 
-export function createService(context: ServerContext): UserAiProfileService {
+export function createService(context: {
+  encryptionService: EncryptionService;
+  db: Db;
+}): UserAiProfileService {
   const { encryptionService, db } = context;
 
   return new UserAiProfileService(encryptionService, db);
