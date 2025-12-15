@@ -10,7 +10,8 @@ export class PgPoolHost {
   constructor(configService: ConfigService) {
     const pool = new Pool({
       connectionString: configService.databaseUrl,
-      max: 5,
+      min: 5,
+      max: 15,
     });
 
     const onError = (e: unknown) => {
