@@ -1,17 +1,15 @@
 {
   "private": true,
   "workspaces": [
-    "apps/api",
-    "apps/trigger",
-    "apps/web",
-    "packages/common"
+    "apps/*",
+    "packages/*"
   ],
   "scripts": {
     "check-types": "npm run check-types:web && npm run check-types:trigger",
     "check-types:trigger": "npm run check-types -w apps/trigger",
     "check-types:web": "npm run check-types -w apps/web",
     "db:migrate": "npm run db:migrate -w apps/api",
-    "lint": "npx eslint"
+    "lint": "eslint"
   },
   "devDependencies": {
     "@eslint/eslintrc": "3.3.1",
@@ -21,7 +19,6 @@
     "eslint": "9.39.1",
     "eslint-config-next": "15.5.6",
     "markdown-toc": "1.2.0",
-    "npm-check-updates": "19.1.2",
     "sort-package-json": "3.4.0",
     "tsx": "4.20.6",
     "turbo": "2.6.3",

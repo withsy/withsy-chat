@@ -1,5 +1,5 @@
 {
-  "name": "@withsy-chat/web",
+  "name": "@monorepo/web",
   "version": "0.0.0-development",
   "private": true,
   "scripts": {
