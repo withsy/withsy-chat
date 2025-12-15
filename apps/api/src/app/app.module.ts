@@ -1,9 +1,11 @@
-import { Module } from "@nestjs/common";
+import { MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
 import { GracefulShutdownModule } from "@tygra/nestjs-graceful-shutdown";
 import { ConfigModule } from "src/config/config.module";
 import { DbModule } from "src/db/db.module";
 import { ShutdownModule } from "src/shutdown/shutdown.module";
 import { TrpcModule } from "src/trpc/trpc.module";
+import { UserModule } from "src/user/user.module";
+import { AppTrpcRouter } from "./app.trpc-router";
 
 @Module({
   imports: [
@@ -12,6 +14,14 @@ import { TrpcModule } from "src/trpc/trpc.module";
     DbModule,
     ShutdownModule,
     TrpcModule,
+    UserModule,
   ],
+  providers: [AppTrpcRouter],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  constructor(private readonly appTrpcRouter: AppTrpcRouter) {}
+
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(this.appTrpcRouter.createMiddleware()).forRoutes("/trpc");
+  }
+}

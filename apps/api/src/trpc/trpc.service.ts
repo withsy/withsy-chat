@@ -1,9 +1,5 @@
 import { Injectable } from "@nestjs/common";
 import { initTRPC, TRPCErrorFormatter, TRPCErrorShape } from "@trpc/server";
-import {
-  NodeHTTPCreateContextFnOptions,
-  NodeHTTPRequest,
-} from "@trpc/server/adapters/node-http";
 import { TRPC_ERROR_CODES_BY_KEY } from "@trpc/server/rpc";
 import { DataError, getCodeKeyFromPrismaError } from "src/error";
 import { PrismaClientKnownRequestError } from "src/generated/prisma/internal/prismaNamespace";

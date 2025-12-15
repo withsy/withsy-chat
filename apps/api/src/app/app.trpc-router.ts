@@ -1,14 +1,15 @@
 import { Injectable } from "@nestjs/common";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
-import { TrpcService } from "./trpc.service";
+import { TrpcService } from "src/trpc/trpc.service";
+import { UserTrpcRouter } from "src/user/user.trpc-router";
 
 @Injectable()
-export class TrpcRouterService {
-  readonly appRouter;
+export class AppTrpcRouter {
+  readonly router;
 
-  constructor(trpcService: TrpcService) {
-    this.appRouter = trpcService.trpc.router({
-      // user: userRouter,
+  constructor(trpcService: TrpcService, userTrpcRouter: UserTrpcRouter) {
+    this.router = trpcService.trpc.router({
+      user: userTrpcRouter.router,
       // userUsageLimit: userUsageLimitRouter,
       // userPrompt: userPromptRouter,
       // userDefaultPrompt: userDefaultPromptRouter,
@@ -25,9 +26,10 @@ export class TrpcRouterService {
 
   createMiddleware() {
     return createExpressMiddleware({
-      router: this.appRouter,
+      router: this.router,
+      createContext: () => ({}),
     });
   }
 }
 
-export type AppRouter = TrpcRouterService["appRouter"];
+export type AppRouter = AppTrpcRouter["router"];
