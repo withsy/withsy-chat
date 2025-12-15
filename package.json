@@ -9,7 +9,7 @@
     "check-types": "npm run check-types:web && npm run check-types:trigger",
     "check-types:trigger": "npm run check-types -w apps/trigger",
     "check-types:web": "npm run check-types -w apps/web",
-    "db:migrate": "npm run db:migrate -w apps/web",
+    "db:migrate": "npm run db:migrate -w apps/api",
     "lint": "npx eslint"
   },
   "devDependencies": {

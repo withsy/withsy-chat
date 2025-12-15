@@ -1,10 +1,7 @@
-import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { Module } from "@nestjs/common";
+import { GracefulShutdownModule } from "@tygra/nestjs-graceful-shutdown";
 
 @Module({
-  imports: [],
-  controllers: [AppController],
-  providers: [AppService],
+  imports: [GracefulShutdownModule.forRoot()],
 })
 export class AppModule {}
