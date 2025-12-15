@@ -47,3 +47,6 @@ temp/
 
 # vscode
 /.vscode/
+
+# Turborepo
+.turbo/

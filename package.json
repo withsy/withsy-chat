@@ -9,7 +9,8 @@
     "check-types:trigger": "npm run check-types -w apps/trigger",
     "check-types:web": "npm run check-types -w apps/web",
     "db:migrate": "npm run db:migrate -w apps/api",
-    "lint": "eslint"
+    "lint": "eslint",
+    "sort-package-json": "sort-package-json package.json apps/*/package.json packages/*/package.json"
   },
   "devDependencies": {
     "@eslint/eslintrc": "3.3.1",
@@ -24,5 +25,6 @@
     "turbo": "2.6.3",
     "typescript": "5.9.3",
     "typescript-eslint": "8.47.0"
-  }
+  },
+  "packageManager": "pnpm@10.16.1"
 }
