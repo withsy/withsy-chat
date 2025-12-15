@@ -7,9 +7,9 @@ import { PgPoolHost } from "./pg-pool.host";
 export type Tx = Parameters<Parameters<PrismaClient["$transaction"]>[0]>[0];
 
 @Injectable()
-export class DbClientHost {
-  private readonly logger = new Logger(DbClientHost.name);
-  readonly client: PrismaClient;
+export class DbHost {
+  private readonly logger = new Logger(DbHost.name);
+  readonly db: PrismaClient;
 
   constructor(configService: ConfigService, pgPoolHost: PgPoolHost) {
     const adapter = new PrismaPg(pgPoolHost.pool);
@@ -40,6 +40,6 @@ export class DbClientHost {
       this.logger.error(e);
     });
 
-    this.client = client;
+    this.db = client;
   }
 }

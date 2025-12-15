@@ -1,10 +1,4 @@
-import { UserJwt, UserSession } from "@/types/user";
 import { TRPCError } from "@trpc/server";
-import type { NextApiRequest, NextApiResponse } from "next";
-import { getServerSession } from "next-auth";
-import { getToken } from "next-auth/jwt";
-import { getAuthOptions } from "./auth";
-import { serverContext } from "./server-context";
 
 export function createPublicContext(input: {
   request: NextApiRequest;

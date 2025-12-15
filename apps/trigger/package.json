@@ -1,5 +1,5 @@
 {
-  "name": "trigger",
+  "name": "@withsy-chat/trigger",
   "version": "0.0.0-development",
   "private": true,
   "scripts": {

@@ -3,7 +3,8 @@
   "workspaces": [
     "apps/api",
     "apps/trigger",
-    "apps/web"
+    "apps/web",
+    "packages/common"
   ],
   "scripts": {
     "check-types": "npm run check-types:web && npm run check-types:trigger",

@@ -1,9 +1,9 @@
 import { Module } from "@nestjs/common";
-import { DbClientHost } from "./db-client.host";
+import { DbHost } from "./db.host";
 import { PgPoolHost } from "./pg-pool.host";
 
 @Module({
-  providers: [PgPoolHost, DbClientHost],
-  exports: [DbClientHost],
+  providers: [PgPoolHost, DbHost],
+  exports: [DbHost],
 })
 export class DbModule {}

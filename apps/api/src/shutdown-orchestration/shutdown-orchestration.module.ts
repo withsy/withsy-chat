@@ -1,4 +1,7 @@
 import { Module } from "@nestjs/common";
+import { ShutdownOrchestrationService } from "./shutdown-orchestration.service";
 
-@Module({})
+@Module({
+  providers: [ShutdownOrchestrationService],
+})
 export class ShutdownOrchestrationModule {}
