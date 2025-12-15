@@ -1,5 +1,13 @@
 {
   "name": "@monorepo/common",
   "version": "0.0.0-development",
-  "private": true
+  "private": true,
+  "dependencies": {
+    "zod": "4.1.12"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "check-types": "tsc --noEmit"
+  }
 }

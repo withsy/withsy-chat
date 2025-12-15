@@ -1,23 +1,9 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "noEmit": false,
-    "composite": true,
-    "declaration": true,
-    "emitDeclarationOnly": true,
     "outDir": "dist",
-    "tsBuildInfoFile": "tsconfig.tsbuildinfo",
-    "paths": {
-      "@/*": ["./src/*"]
-    }
+    "baseUrl": "."
   },
-  "include": [
-    "next-env.d.ts",
-    "next.config.ts",
-    "src/**/*.ts",
-    "src/**/*.tsx",
-    "scripts/**/*.ts",
-    "prod/dotenv.mts"
-  ],
+  "include": ["next-env.d.ts", "next.config.ts", "src/**/*.ts", "src/**/*.tsx"],
   "exclude": ["node_modules", "tailwind.config.js"]
 }

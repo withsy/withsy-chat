@@ -3,6 +3,7 @@
   "version": "0.0.0-development",
   "private": true,
   "scripts": {
+    "check-types": "tsc --noEmit",
     "build": "nest build",
     "db:migrate": "prisma migrate deploy",
     "debug": "nest start --debug --watch --env-file .env",
@@ -10,6 +11,7 @@
     "start": "node dist/main"
   },
   "dependencies": {
+    "@monorepo/common": "link:../../packages/common",
     "@nestjs/common": "11.1.9",
     "@nestjs/config": "4.0.2",
     "@nestjs/core": "11.1.9",
