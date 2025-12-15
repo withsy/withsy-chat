@@ -2,12 +2,18 @@
   "name": "@monorepo/common",
   "version": "0.0.0-development",
   "private": true,
-  "dependencies": {
-    "zod": "4.1.12"
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "require": "./dist/index.js"
+    }
   },
   "scripts": {
     "build": "tsc",
-    "dev": "tsc --watch",
-    "check-types": "tsc --noEmit"
+    "check-types": "tsc --noEmit",
+    "dev": "tsc --watch"
+  },
+  "dependencies": {
+    "zod": "4.1.12"
   }
 }

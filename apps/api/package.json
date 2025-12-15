@@ -3,8 +3,8 @@
   "version": "0.0.0-development",
   "private": true,
   "scripts": {
-    "check-types": "tsc --noEmit",
     "build": "nest build",
+    "check-types": "tsc --noEmit",
     "db:migrate": "prisma migrate deploy",
     "debug": "nest start --debug --watch --env-file .env",
     "dev": "nest start --watch --env-file .env",
