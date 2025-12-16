@@ -6,7 +6,7 @@ import { inspect } from "node:util";
 import { v4 } from "uuid";
 import { getServerContext } from "./context";
 
-const { envVars } = getServerContext();
+const { envVars, trpc } = getServerContext();
 
 const providers: Provider[] = [
   GoogleProvider({
@@ -72,7 +72,6 @@ export const authOptions: AuthOptions = {
         const email = user.email ?? undefined;
         const imageUrl = user.image ?? undefined;
 
-        const { trpc } = getServerContext();
         const { userId } = await trpc.user.login.mutate({
           idempotencyKey: v4(),
           provider,
