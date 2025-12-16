@@ -1,9 +1,6 @@
 import { z } from "zod";
 import { type zInfer } from "./common";
 
-export const UserId = z.uuid();
-export type UserId = zInfer<typeof UserId>;
-
 export const UserPreferences = z.object({
   wideView: z.boolean().default(false),
   largeText: z.boolean().default(false),

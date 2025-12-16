@@ -1,11 +1,11 @@
 import z from "zod";
 
-const NodeEnv = z.enum(["production", "development"]);
+export const NodeEnv = z.enum(["production", "development"]);
 export type NodeEnv = z.infer<typeof NodeEnv>;
 
-const EnvVars = z.object({
+export const EnvVars = z.object({
   NODE_ENV: NodeEnv,
-  TZ: z.string(),
+  TZ: z.literal("UTC"),
   DATABASE_URL: z.string(),
   DATABASE_DIRECT_URL: z.string(),
   ENCRYPTION_KEY: z.string(),
@@ -15,9 +15,3 @@ const EnvVars = z.object({
   S3_SECRET_ACCESS_KEY: z.string(),
 });
 export type EnvVars = z.infer<typeof EnvVars>;
-
-export function validate(
-  config: Record<string, unknown>
-): Record<string, unknown> {
-  return EnvVars.parse(config);
-}

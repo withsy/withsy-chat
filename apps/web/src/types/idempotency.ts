@@ -6,9 +6,6 @@ export const idempotencyInfoSelect = {
   key: true,
 } satisfies Prisma.IdempotencyInfoSelect;
 
-export const IdempotencyKey = z.uuid();
-export type IdempotencyKey = zInfer<typeof IdempotencyKey>;
-
 export const IdempotencyInfo = z.object({
   get key() {
     return IdempotencyKey;

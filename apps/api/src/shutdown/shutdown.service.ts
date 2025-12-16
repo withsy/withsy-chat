@@ -1,16 +1,16 @@
 import { Injectable, OnApplicationShutdown } from "@nestjs/common";
-import { DbService } from "src/db/db.service";
-import { PgPoolService } from "src/db/pg-pool.service";
+import { DbHost } from "src/db/db.host";
+import { PgPoolHost } from "src/db/pg-pool.host";
 
 @Injectable()
 export class ShutdownService implements OnApplicationShutdown {
   constructor(
-    private readonly dbService: DbService,
-    private readonly pgPoolService: PgPoolService
+    private readonly dbHost: DbHost,
+    private readonly pgPoolHost: PgPoolHost
   ) {}
 
   async onApplicationShutdown(): Promise<void> {
-    await this.dbService.db.$disconnect();
-    await this.pgPoolService.pool.end();
+    await this.dbHost.db.$disconnect();
+    await this.pgPoolHost.pool.end();
   }
 }

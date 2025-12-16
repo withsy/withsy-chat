@@ -2,18 +2,17 @@ import { Injectable, Logger } from "@nestjs/common";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { ConfigService } from "src/config/config.service";
 import { PrismaClient } from "src/generated/prisma/client";
-import { PgPoolService } from "./pg-pool.service";
+import { PgPoolHost } from "./pg-pool.host";
 
 export type Tx = Parameters<Parameters<PrismaClient["$transaction"]>[0]>[0];
 
 @Injectable()
-export class DbService {
-  private readonly logger = new Logger(DbService.name);
+export class DbHost {
+  private readonly logger = new Logger(DbHost.name);
   readonly db: PrismaClient;
 
-  constructor(configService: ConfigService, pgPoolService: PgPoolService) {
-    const adapter = new PrismaPg(pgPoolService.pool);
-
+  constructor(configService: ConfigService, pgPoolHost: PgPoolHost) {
+    const adapter = new PrismaPg(pgPoolHost.pool);
     const client = new PrismaClient({
       adapter,
       log:

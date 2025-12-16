@@ -1,5 +1,6 @@
 import { MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
 import { GracefulShutdownModule } from "@tygra/nestjs-graceful-shutdown";
+import { ApiKeyModule } from "src/api-key/api-key.module";
 import { ConfigModule } from "src/config/config.module";
 import { DbModule } from "src/db/db.module";
 import { ShutdownModule } from "src/shutdown/shutdown.module";
@@ -15,6 +16,7 @@ import { AppTrpcRouter } from "./app.trpc-router";
     ShutdownModule,
     TrpcModule,
     UserModule,
+    ApiKeyModule,
   ],
   providers: [AppTrpcRouter],
 })

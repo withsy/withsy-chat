@@ -27,7 +27,12 @@ export class AppTrpcRouter {
   createMiddleware() {
     return createExpressMiddleware({
       router: this.router,
-      createContext: () => ({}),
+      createContext: (opts) => {
+        const { req } = opts;
+        return {
+          req,
+        };
+      },
     });
   }
 }

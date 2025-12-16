@@ -3,8 +3,8 @@ import { Pool } from "pg";
 import { ConfigService } from "src/config/config.service";
 
 @Injectable()
-export class PgPoolService {
-  private readonly logger = new Logger(PgPoolService.name);
+export class PgPoolHost {
+  private readonly logger = new Logger(PgPoolHost.name);
   readonly pool: Pool;
 
   constructor(configService: ConfigService) {

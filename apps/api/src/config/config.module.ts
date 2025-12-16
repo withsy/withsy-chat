@@ -1,13 +1,13 @@
 import { Global, Module } from "@nestjs/common";
 import { ConfigModule as NestConfigModule } from "@nestjs/config";
-import { validate } from "./config-common";
+import { EnvVars } from "./config-env-vars";
 import { ConfigService } from "./config.service";
 
 @Global()
 @Module({
   imports: [
     NestConfigModule.forRoot({
-      validate,
+      validate: (config) => EnvVars.parse(config),
     }),
   ],
   providers: [ConfigService],
