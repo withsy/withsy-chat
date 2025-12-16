@@ -54,7 +54,6 @@ function createAuthOptions(): AuthOptions {
     session: {
       strategy: "jwt",
       maxAge: 7 * 24 * 60 * 60, // 7 days
-      updateAge: 1 * 24 * 60 * 60, // 1 days
     },
     callbacks: {
       async jwt(params) {
