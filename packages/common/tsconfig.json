@@ -4,6 +4,9 @@
     "outDir": "./dist",
     "baseUrl": "./",
     "declaration": true,
-    "tsBuildInfoFile": "tsconfig.tsbuildinfo"
+    "tsBuildInfoFile": "tsconfig.tsbuildinfo",
+    "module": "commonjs",
+    "moduleResolution": "node10",
+    "verbatimModuleSyntax": false
   }
 }

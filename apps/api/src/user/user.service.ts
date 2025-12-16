@@ -4,7 +4,13 @@ import { EncryptionService } from "src/encryption/encryption.service";
 import { IdempotencyKeyRepo } from "src/idempotency-key/idempotency-key-repo";
 import { RefreshTokenService } from "src/refresh-token/refresh-token.service";
 import { UserLinkAccountRepo } from "src/user-link-account/user-link-account-repo";
-import { UserLogin, UserLoginOutput } from "./user-schemas";
+import {
+  UserId,
+  UserLogin,
+  UserLoginOutput,
+  UserUpdatePreferences,
+  UserUpdatePreferencesOutput,
+} from "./user-schemas";
 import { UserRepo } from "./user.repo";
 
 @Injectable()
@@ -68,6 +74,16 @@ export class UserService {
     });
   }
 
+  async updatePreferences(
+    userId: UserId,
+    input: UserUpdatePreferences
+  ): Promise<UserUpdatePreferencesOutput> {
+    const userRepo = new UserRepo(this.dbHost.db);
+    const output = await userRepo.updatePreferences(userId, input);
+
+    return output;
+  }
+
   // async get(userId: UserId): Promise<UserData> {
   //   const userRepo = new UserRepo(this.db);
   //   const entity = await userRepo.get({ userId });
@@ -109,16 +125,6 @@ export class UserService {
   //   const data = userDecryptor.decrypt(entity);
 
   //   return data;
-  // }
-
-  // async updatePreferences(
-  //   userId: UserId,
-  //   input: UserUpdatePreferences
-  // ): Promise<UserUpdatePreferencesOutput> {
-  //   const userRepo = new UserRepo(this.db);
-  //   const output = await userRepo.updatePreferences(userId, input);
-
-  //   return output;
   // }
 
   // async update(userId: UserId, input: UserUpdate): Promise<UserData> {

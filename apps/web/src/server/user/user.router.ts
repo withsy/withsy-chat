@@ -22,14 +22,6 @@ export const userRouter = t.router({
         .create()
         .ensure(ctx.userId, input)
     ),
-  updatePreferences: userProcedure
-    .input(UserUpdatePreferences)
-    .output(UserUpdatePreferencesOutput)
-    .mutation(({ ctx, input }) =>
-      new UserServiceFactory(ctx.serverContext)
-        .create()
-        .updatePreferences(ctx.userId, input)
-    ),
   update: userProcedure
     .input(UserUpdate)
     .output(UserData)

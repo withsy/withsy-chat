@@ -1,8 +1,18 @@
+import { Logger } from "@nestjs/common";
+import { TRPCError } from "@trpc/server";
 import { Tx } from "src/db/db.host";
+import { DataError } from "src/error";
 import { v4 } from "uuid";
 import type { UserModel } from "../generated/prisma/models";
+import {
+  UserId,
+  UserUpdatePreferences,
+  UserUpdatePreferencesOutput,
+} from "./user-schemas";
 
 export class UserRepo {
+  private readonly logger = new Logger(UserRepo.name);
+
   constructor(private readonly tx: Tx) {}
 
   //   async get(input: { userId: UserId }): Promise<UserModel> {
@@ -35,35 +45,35 @@ export class UserRepo {
   //     });
   //   }
 
-  //   async updatePreferences(
-  //     userId: UserId,
-  //     input: UserUpdatePreferences
-  //   ): Promise<UserUpdatePreferencesOutput> {
-  //     const patch = Object.fromEntries(
-  //       Object.entries(input).filter(([_, value]) => value !== undefined)
-  //     );
+  async updatePreferences(
+    userId: UserId,
+    input: UserUpdatePreferences
+  ): Promise<UserUpdatePreferencesOutput> {
+    const inputFiltered = Object.fromEntries(
+      Object.entries(input).filter(([_, value]) => value != null)
+    );
 
-  //     const rows = await this.tx.$queryRaw<Record<string, unknown>[]>`
-  // UPDATE users
-  // SET
-  //   preferences = preferences || ${patch}::jsonb
-  // WHERE
-  //   id = ${userId}::uuid
-  // RETURNING *`;
+    const rows = await this.tx.$queryRaw<Record<string, unknown>[]>`
+  UPDATE users
+  SET
+    preferences = preferences || ${inputFiltered}::jsonb
+  WHERE
+    id = ${userId}::uuid
+  RETURNING *`;
 
-  //     if (rows.length === 0) {
-  //       throw new TRPCError({
-  //         code: "NOT_FOUND",
-  //         message: "User not found.",
-  //         cause: new DataError({
-  //           userId,
-  //         }),
-  //       });
-  //     }
+    if (rows.length === 0) {
+      const message = "User not found.";
+      this.logger.error({ message, userId });
 
-  //     const { preferences } = rows[0];
-  //     return preferences as UserUpdatePreferencesOutput;
-  //   }
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message,
+      });
+    }
+
+    const { preferences } = rows[0];
+    return preferences as UserUpdatePreferencesOutput;
+  }
 
   async create(input: {
     nameEncrypted: string;

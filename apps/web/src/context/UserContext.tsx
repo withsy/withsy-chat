@@ -1,5 +1,3 @@
-import { useTRPC } from "@/lib/trpc";
-import { UserPrefs, type UserData, type UserUpdatePrefs } from "@/types/user";
 import { skipToken, useMutation, useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import {
@@ -9,11 +7,12 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import { useTRPC } from "src/lib/trpc";
 
 type UserPrefLoadings = Partial<Record<keyof UserUpdatePrefs, boolean>>;
 type SetUserPrefsAndSave = (input: UserUpdatePrefs) => void;
 
-type UserContextType = {
+type UserContext = {
   user: UserData | null;
   userGetStatus: "error" | "pending" | "success";
   setUser: (user: UserData) => void;
@@ -21,7 +20,7 @@ type UserContextType = {
   userPrefLoadings: UserPrefLoadings;
 };
 
-const UserContext = createContext<UserContextType | undefined>(undefined);
+const UserContext = createContext<UserContext | undefined>(undefined);
 
 export function UserProvider({ children }: { children: ReactNode }) {
   const trpc = useTRPC();
@@ -106,6 +105,9 @@ export function UserProvider({ children }: { children: ReactNode }) {
 
 export function useUser() {
   const context = useContext(UserContext);
-  if (!context) throw new Error("useUser must be used within UserProvider");
+  if (!context) {
+    throw new Error("useUser must be used within UserProvider");
+  }
+
   return context;
 }

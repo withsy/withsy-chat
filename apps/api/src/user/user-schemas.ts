@@ -1,3 +1,4 @@
+import { UserPreferences } from "@repo/common";
 import { IdempotencyKey } from "src/idempotency-key/idempotency-key-schemas";
 import z from "zod";
 
@@ -23,3 +24,11 @@ export const UserLoginOutput = z.object({
   },
 });
 export type UserLoginOutput = z.infer<typeof UserLoginOutput>;
+
+export const UserUpdatePreferences = UserPreferences.partial();
+export type UserUpdatePreferences = z.infer<typeof UserUpdatePreferences>;
+
+export const UserUpdatePreferencesOutput = z.record(z.string(), z.unknown());
+export type UserUpdatePreferencesOutput = z.infer<
+  typeof UserUpdatePreferencesOutput
+>;
