@@ -19,7 +19,6 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
-import { SuperJSON } from "superjson";
 import { v4 as uuid } from "uuid";
 import { ChatDrawer } from "./ChatDrawer";
 import ChatHeader from "./ChatHeader";
@@ -165,7 +164,7 @@ export function ChatSession({ initialMessages, children }: Props) {
     });
 
     source.addEventListener("message", (ev) => {
-      const event = MessageChunkEvent.parse(SuperJSON.parse(ev.data));
+      const event = MessageChunkEvent.parse(JSON.parse(ev.data));
       if (event.type === "chunk") {
         const chunk = event.chunk;
         setMessages((prev) =>

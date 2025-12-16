@@ -128,6 +128,8 @@ function createAuthOptions(): AuthOptions {
 let authOptions: AuthOptions | null = null;
 
 export function getAuthOptions(): AuthOptions {
-  if (!authOptions) authOptions = createAuthOptions();
+  if (!authOptions) {
+    authOptions = createAuthOptions();
+  }
   return authOptions;
 }

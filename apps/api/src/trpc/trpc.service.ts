@@ -3,7 +3,6 @@ import { initTRPC, TRPCErrorFormatter, TRPCErrorShape } from "@trpc/server";
 import { TRPC_ERROR_CODES_BY_KEY } from "@trpc/server/rpc";
 import { DataError, getCodeKeyFromPrismaError } from "src/error";
 import { PrismaClientKnownRequestError } from "src/generated/prisma/internal/prismaNamespace";
-import SuperJSON from "superjson";
 
 export interface Context {}
 
@@ -14,7 +13,6 @@ export class TrpcService {
 
   constructor() {
     this.trpc = initTRPC.context<Context>().create({
-      transformer: SuperJSON,
       errorFormatter: this.errorFormatter,
     });
     this.publicProcedure = this.trpc.procedure;

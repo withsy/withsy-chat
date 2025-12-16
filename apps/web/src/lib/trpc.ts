@@ -2,7 +2,6 @@ import type { AppRouter } from "@/server/app/app.router";
 import { QueryClient } from "@tanstack/react-query";
 import { createTRPCClient, httpLink, loggerLink } from "@trpc/client";
 import { createTRPCContext } from "@trpc/tanstack-react-query";
-import { SuperJSON } from "superjson";
 
 function getBaseUrl() {
   if (typeof window !== "undefined") {
@@ -62,7 +61,6 @@ export function createTrpcClient() {
           (opts.direction === "down" && opts.result instanceof Error),
       }),
       httpLink({
-        transformer: SuperJSON,
         url: `${getBaseUrl()}/api/trpc`,
         headers: () => {
           const headers: Record<string, string> = {};

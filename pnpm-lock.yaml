@@ -86,9 +86,6 @@ importers:
       rxjs:
         specifier: 7.8.2
         version: 7.8.2
-      superjson:
-        specifier: 2.2.6
-        version: 2.2.6
       zod:
         specifier: 4.1.12
         version: 4.1.12
@@ -129,9 +126,6 @@ importers:
       '@trpc/client':
         specifier: 11.7.1
         version: 11.7.1(@trpc/server@11.7.1(typescript@5.9.3))(typescript@5.9.3)
-      superjson:
-        specifier: 2.2.6
-        version: 2.2.6
     devDependencies:
       '@dotenvx/dotenvx':
         specifier: 1.51.1
@@ -313,9 +307,6 @@ importers:
       sonner:
         specifier: 2.0.3
         version: 2.0.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
-      superjson:
-        specifier: 2.2.6
-        version: 2.2.6
       swagger-ui-dist:
         specifier: 5.21.0
         version: 5.21.0

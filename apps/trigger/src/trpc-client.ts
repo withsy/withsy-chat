@@ -1,5 +1,4 @@
 import { createTRPCClient, httpLink } from "@trpc/client";
-import SuperJSON from "superjson";
 import type { AppRouter } from "../../web/dist/src/server/app/app.router";
 
 export function createTrpcClient() {
@@ -20,7 +19,6 @@ export function createTrpcClient() {
   const trpcClient = createTRPCClient<AppRouter>({
     links: [
       httpLink({
-        transformer: SuperJSON,
         url: `${apiUrl}/api/trpc`,
         headers: {
           "X-Api-Key": API_KEY,

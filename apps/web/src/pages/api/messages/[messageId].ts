@@ -6,7 +6,6 @@ import { serviceRegistry } from "@/server/service-registry";
 import { MessageChunkEntity, MessageChunkEvent } from "@/types/message-chunk";
 import type { UserUsageLimitData } from "@/types/user-usage-limit";
 import { TRPCError } from "@trpc/server";
-import { SuperJSON } from "superjson";
 
 /**
  * @openapi
@@ -56,7 +55,7 @@ export async function get(options: Options) {
   response.flushHeaders();
 
   const write = (event: MessageChunkEvent) => {
-    response.write(`data: ${SuperJSON.stringify(event)}\n\n`);
+    response.write(`data: ${JSON.stringify(event)}\n\n`);
   };
 
   try {
