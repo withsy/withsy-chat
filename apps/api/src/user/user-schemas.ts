@@ -25,10 +25,8 @@ export const UserLoginOutput = z.object({
 });
 export type UserLoginOutput = z.infer<typeof UserLoginOutput>;
 
+export const UserPreferencesRaw = z.record(z.string(), z.unknown());
+export type UserPreferencesRaw = z.infer<typeof UserPreferencesRaw>;
+
 export const UserUpdatePreferences = UserPreferences.partial();
 export type UserUpdatePreferences = z.infer<typeof UserUpdatePreferences>;
-
-export const UserUpdatePreferencesOutput = z.record(z.string(), z.unknown());
-export type UserUpdatePreferencesOutput = z.infer<
-  typeof UserUpdatePreferencesOutput
->;

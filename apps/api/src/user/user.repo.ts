@@ -6,8 +6,8 @@ import { v4 } from "uuid";
 import type { UserModel } from "../generated/prisma/models";
 import {
   UserId,
+  UserPreferencesRaw,
   UserUpdatePreferences,
-  UserUpdatePreferencesOutput,
 } from "./user-schemas";
 
 export class UserRepo {
@@ -45,10 +45,23 @@ export class UserRepo {
   //     });
   //   }
 
+  async getPreferences(userId: UserId): Promise<UserPreferencesRaw> {
+    const { preferences } = await this.tx.user.findUniqueOrThrow({
+      where: {
+        id: userId,
+      },
+      select: {
+        preferences: true,
+      },
+    });
+
+    return preferences as UserPreferencesRaw;
+  }
+
   async updatePreferences(
     userId: UserId,
     input: UserUpdatePreferences
-  ): Promise<UserUpdatePreferencesOutput> {
+  ): Promise<UserPreferencesRaw> {
     const inputFiltered = Object.fromEntries(
       Object.entries(input).filter(([_, value]) => value != null)
     );
@@ -72,7 +85,7 @@ export class UserRepo {
     }
 
     const { preferences } = rows[0];
-    return preferences as UserUpdatePreferencesOutput;
+    return preferences as UserPreferencesRaw;
   }
 
   async create(input: {

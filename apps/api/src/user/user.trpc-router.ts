@@ -4,8 +4,8 @@ import { TrpcService } from "src/trpc/trpc.service";
 import {
   UserLogin,
   UserLoginOutput,
+  UserPreferencesRaw,
   UserUpdatePreferences,
-  UserUpdatePreferencesOutput,
 } from "./user-schemas";
 import { UserService } from "./user.service";
 import { UserTrpcProcedure } from "./user.trpc-procedure";
@@ -25,9 +25,12 @@ export class UserTrpcRouter {
         .input(UserLogin)
         .output(UserLoginOutput)
         .mutation((opts) => userService.login(opts.input)),
+      getPreferences: userTrpcProcedure.procedure
+        .output(UserPreferencesRaw)
+        .query(({ ctx }) => userService.getPreferences(ctx.userId)),
       updatePreferences: userTrpcProcedure.procedure
         .input(UserUpdatePreferences)
-        .output(UserUpdatePreferencesOutput)
+        .output(UserPreferencesRaw)
         .mutation(({ ctx, input }) =>
           userService.updatePreferences(ctx.userId, input)
         ),

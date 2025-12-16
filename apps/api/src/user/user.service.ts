@@ -8,8 +8,8 @@ import {
   UserId,
   UserLogin,
   UserLoginOutput,
+  UserPreferencesRaw,
   UserUpdatePreferences,
-  UserUpdatePreferencesOutput,
 } from "./user-schemas";
 import { UserRepo } from "./user.repo";
 
@@ -74,14 +74,17 @@ export class UserService {
     });
   }
 
+  async getPreferences(userId: UserId): Promise<UserPreferencesRaw> {
+    const userRepo = new UserRepo(this.dbHost.db);
+    return await userRepo.getPreferences(userId);
+  }
+
   async updatePreferences(
     userId: UserId,
     input: UserUpdatePreferences
-  ): Promise<UserUpdatePreferencesOutput> {
+  ): Promise<UserPreferencesRaw> {
     const userRepo = new UserRepo(this.dbHost.db);
-    const output = await userRepo.updatePreferences(userId, input);
-
-    return output;
+    return await userRepo.updatePreferences(userId, input);
   }
 
   // async get(userId: UserId): Promise<UserData> {

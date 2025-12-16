@@ -7,6 +7,8 @@
     "tsBuildInfoFile": "tsconfig.tsbuildinfo",
     "module": "commonjs",
     "moduleResolution": "node10",
-    "verbatimModuleSyntax": false
+    "verbatimModuleSyntax": false,
+    "sourceMap": true,
+    "declarationMap": true
   }
 }
