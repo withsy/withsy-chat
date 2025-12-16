@@ -28,6 +28,11 @@ export type User = Prisma.UserModel
  */
 export type UserLinkAccount = Prisma.UserLinkAccountModel
 /**
+ * Model RefreshToken
+ * 
+ */
+export type RefreshToken = Prisma.RefreshTokenModel
+/**
  * Model UserUsageLimit
  * 
  */

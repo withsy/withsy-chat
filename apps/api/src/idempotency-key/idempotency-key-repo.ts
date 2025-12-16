@@ -1,13 +1,13 @@
-import type { IdempotencyKey } from "@/types/idempotency";
 import { TRPCError } from "@trpc/server";
-import type { Tx } from "../db/db";
+import { Tx } from "src/db/db.host";
 import { DataError, isExpectedUniqueConstraintViolation } from "../error";
 import type { IdempotencyKeyModel } from "../generated/prisma/models";
+import { IdempotencyKey } from "./idempotency-key-schemas";
 
 export class IdempotencyKeyRepo {
   constructor(private readonly tx: Tx) {}
 
-  async tryCreate(input: {
+  private async tryCreate(input: {
     idempotencyKey: IdempotencyKey;
   }): Promise<IdempotencyKeyModel | null> {
     const { idempotencyKey } = input;
@@ -29,9 +29,7 @@ export class IdempotencyKeyRepo {
     }
   }
 
-  async check(input: {
-    idempotencyKey: IdempotencyKey;
-  }): Promise<IdempotencyKeyModel> {
+  async check(input: { idempotencyKey: IdempotencyKey }): Promise<void> {
     const { idempotencyKey } = input;
 
     const entity = await this.tryCreate({
@@ -44,7 +42,5 @@ export class IdempotencyKeyRepo {
         cause: new DataError({ idempotencyKey }),
       });
     }
-
-    return entity;
   }
 }

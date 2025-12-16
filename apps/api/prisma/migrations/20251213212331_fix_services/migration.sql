@@ -129,3 +129,18 @@ ALTER TABLE "user_usage_limits" DROP COLUMN "reset_at";
 
 -- CreateIndex
 CREATE UNIQUE INDEX "message_chunks_message_id_index_key" ON "message_chunks"("message_id", "index");
+
+-- CreateTable
+CREATE TABLE "refresh_tokens" (
+    "id" SERIAL NOT NULL,
+    "provider" TEXT NOT NULL,
+    "provider_account_id" TEXT NOT NULL,
+    "refresh_token" TEXT,
+    "created_at" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMPTZ(6) NOT NULL,
+
+    CONSTRAINT "refresh_tokens_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateIndex
+CREATE UNIQUE INDEX "refresh_tokens_provider_provider_account_id_key" ON "refresh_tokens"("provider", "provider_account_id");

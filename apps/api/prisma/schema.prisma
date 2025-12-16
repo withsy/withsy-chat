@@ -47,6 +47,18 @@ model UserLinkAccount {
   @@map("user_link_accounts")
 }
 
+model RefreshToken {
+  id                Int      @id @default(autoincrement()) @map("id")
+  provider          String   @map("provider")
+  providerAccountId String   @map("provider_account_id")
+  refreshToken      String?  @map("refresh_token")
+  createdAt         DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@unique([provider, providerAccountId])
+  @@map("refresh_tokens")
+}
+
 model UserUsageLimit {
   id              Int      @id @default(autoincrement()) @map("id")
   userId          String   @map("user_id") @db.Uuid

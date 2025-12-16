@@ -51,6 +51,7 @@ export const AnyNull = runtime.objectEnumValues.instances.AnyNull
 export const ModelName = {
   User: 'User',
   UserLinkAccount: 'UserLinkAccount',
+  RefreshToken: 'RefreshToken',
   UserUsageLimit: 'UserUsageLimit',
   UserPrompt: 'UserPrompt',
   UserDefaultPrompt: 'UserDefaultPrompt',
@@ -114,6 +115,18 @@ export const UserLinkAccountScalarFieldEnum = {
 } as const
 
 export type UserLinkAccountScalarFieldEnum = (typeof UserLinkAccountScalarFieldEnum)[keyof typeof UserLinkAccountScalarFieldEnum]
+
+
+export const RefreshTokenScalarFieldEnum = {
+  id: 'id',
+  provider: 'provider',
+  providerAccountId: 'providerAccountId',
+  refreshToken: 'refreshToken',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type RefreshTokenScalarFieldEnum = (typeof RefreshTokenScalarFieldEnum)[keyof typeof RefreshTokenScalarFieldEnum]
 
 
 export const UserUsageLimitScalarFieldEnum = {

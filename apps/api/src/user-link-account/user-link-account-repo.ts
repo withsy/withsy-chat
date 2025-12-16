@@ -1,6 +1,4 @@
-import type { UserId } from "@/types/user";
-import type { UserLinkAccountId } from "@/types/user-link-account";
-import type { Tx } from "../db/db";
+import { Tx } from "src/db/db.host";
 import type { UserLinkAccountModel } from "../generated/prisma/models";
 
 export class UserLinkAccountRepo {

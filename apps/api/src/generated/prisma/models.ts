@@ -10,6 +10,7 @@
  */
 export type * from './models/User.js'
 export type * from './models/UserLinkAccount.js'
+export type * from './models/RefreshToken.js'
 export type * from './models/UserUsageLimit.js'
 export type * from './models/UserPrompt.js'
 export type * from './models/UserDefaultPrompt.js'

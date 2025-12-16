@@ -3,8 +3,10 @@ import { GracefulShutdownModule } from "@tygra/nestjs-graceful-shutdown";
 import { ApiKeyModule } from "src/api-key/api-key.module";
 import { ConfigModule } from "src/config/config.module";
 import { DbModule } from "src/db/db.module";
+import { EncryptionModule } from "src/encryption/encryption.module";
 import { ShutdownModule } from "src/shutdown/shutdown.module";
 import { TrpcModule } from "src/trpc/trpc.module";
+import { UserLinkAccountModule } from "src/user-link-account/user-link-account.module";
 import { UserModule } from "src/user/user.module";
 import { AppTrpcRouter } from "./app.trpc-router";
 
@@ -17,6 +19,8 @@ import { AppTrpcRouter } from "./app.trpc-router";
     TrpcModule,
     UserModule,
     ApiKeyModule,
+    EncryptionModule,
+    UserLinkAccountModule,
   ],
   providers: [AppTrpcRouter],
 })
