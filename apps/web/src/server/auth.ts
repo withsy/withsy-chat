@@ -68,7 +68,10 @@ export const authOptions: AuthOptions = {
       // Response to `/api/auth/callback/google` request.
       if (account) {
         const { provider, providerAccountId, refresh_token } = account;
-        const { name, email, image } = user;
+        const name = user.name ?? undefined;
+        const email = user.email ?? undefined;
+        const imageUrl = user.image ?? undefined;
+
         const { trpc } = getServerContext();
         const { userId } = await trpc.user.login.mutate({
           idempotencyKey: v4(),
@@ -77,7 +80,7 @@ export const authOptions: AuthOptions = {
           refreshToken: refresh_token,
           name,
           email,
-          imageUrl: image,
+          imageUrl,
         });
 
         return {
