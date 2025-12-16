@@ -1,6 +1,8 @@
+import { Injectable } from "@nestjs/common";
 import { ConfigService } from "src/config/config.service";
 import { Encryptor } from "./encryptor";
 
+@Injectable()
 export class EncryptionService {
   private readonly encryptor: Encryptor;
 

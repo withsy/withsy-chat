@@ -1,5 +1,7 @@
 import { Tx } from "src/db/db.host";
+import { UserId } from "src/user/user-schemas";
 import type { UserLinkAccountModel } from "../generated/prisma/models";
+import { UserLinkAccountId } from "./user-link-account-schemas";
 
 export class UserLinkAccountRepo {
   constructor(private readonly tx: Tx) {}
@@ -32,22 +34,6 @@ export class UserLinkAccountRepo {
         userId,
         provider,
         providerAccountId,
-      },
-    });
-  }
-
-  async update(input: {
-    userLinkAccountId: UserLinkAccountId;
-    refreshToken?: string;
-  }): Promise<UserLinkAccountModel> {
-    const { userLinkAccountId, refreshToken } = input;
-
-    return await this.tx.userLinkAccount.update({
-      data: {
-        refreshToken,
-      },
-      where: {
-        id: userLinkAccountId,
       },
     });
   }

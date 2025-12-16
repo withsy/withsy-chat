@@ -2,14 +2,17 @@ import { Injectable } from "@nestjs/common";
 import { DbHost } from "src/db/db.host";
 import { EncryptionService } from "src/encryption/encryption.service";
 import { IdempotencyKeyRepo } from "src/idempotency-key/idempotency-key-repo";
+import { RefreshTokenService } from "src/refresh-token/refresh-token.service";
 import { UserLinkAccountRepo } from "src/user-link-account/user-link-account-repo";
 import { UserLogin, UserLoginOutput } from "./user-schemas";
+import { UserRepo } from "./user.repo";
 
 @Injectable()
 export class UserService {
   constructor(
     private readonly encryptionService: EncryptionService,
-    private readonly dbHost: DbHost
+    private readonly dbHost: DbHost,
+    private readonly refreshTokenService: RefreshTokenService
   ) {}
 
   async login(input: UserLogin): Promise<UserLoginOutput> {
@@ -18,49 +21,50 @@ export class UserService {
     const email = input.email ?? "";
     const imageUrl = input.imageUrl ?? "";
 
+    if (refreshToken) {
+      await this.refreshTokenService.save({
+        provider,
+        providerAccountId,
+        refreshToken,
+      });
+    }
+
     const nameEncrypted = this.encryptionService.encrypt(name);
     const emailEncrypted = this.encryptionService.encrypt(email);
     const imageUrlEncrypted = this.encryptionService.encrypt(imageUrl);
 
     return await this.dbHost.db.$transaction(async (tx) => {
       const idempotencyKeyRepo = new IdempotencyKeyRepo(tx);
-      await idempotencyKeyRepo.check({
+      await idempotencyKeyRepo.create({
         idempotencyKey,
       });
 
       const userLinkAccountRepo = new UserLinkAccountRepo(tx);
-      let userLinkAccountEntity = await userLinkAccountRepo.getByProviderData({
+      let userLinkAccount = await userLinkAccountRepo.getByProviderData({
         provider,
         providerAccountId,
       });
 
-      const userRepo = new UserRepo(tx);
-      if (!userLinkAccountEntity) {
-        const userEntity = await userRepo.create({
+      if (!userLinkAccount) {
+        const userRepo = new UserRepo(tx);
+        const user = await userRepo.create({
           nameEncrypted,
           emailEncrypted,
           imageUrlEncrypted,
         });
 
-        const userId = userEntity.id;
-        userLinkAccountEntity = await userLinkAccountRepo.create({
-          userId,
+        userLinkAccount = await userLinkAccountRepo.create({
+          userId: user.id,
           provider,
           providerAccountId,
         });
-
-        const userUsageLimitRepo = new UserUsageLimitRepo(tx);
-        await userUsageLimitRepo.create({ userId });
       }
 
-      if (refreshToken) {
-        await userLinkAccountRepo.update({
-          userLinkAccountId: userLinkAccountEntity.id,
-          refreshToken,
-        });
-      }
+      const { userId } = userLinkAccount;
 
-      return userLinkAccountEntity;
+      return {
+        userId,
+      };
     });
   }
 

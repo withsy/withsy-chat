@@ -4,6 +4,7 @@ import { ApiKeyModule } from "src/api-key/api-key.module";
 import { ConfigModule } from "src/config/config.module";
 import { DbModule } from "src/db/db.module";
 import { EncryptionModule } from "src/encryption/encryption.module";
+import { RefreshTokenModule } from "src/refresh-token/refresh-token.module";
 import { ShutdownModule } from "src/shutdown/shutdown.module";
 import { TrpcModule } from "src/trpc/trpc.module";
 import { UserLinkAccountModule } from "src/user-link-account/user-link-account.module";
@@ -21,6 +22,7 @@ import { AppTrpcRouter } from "./app.trpc-router";
     ApiKeyModule,
     EncryptionModule,
     UserLinkAccountModule,
+    RefreshTokenModule,
   ],
   providers: [AppTrpcRouter],
 })

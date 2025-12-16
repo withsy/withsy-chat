@@ -11,9 +11,9 @@ export const UserLogin = z.object({
   provider: z.string().min(1),
   providerAccountId: z.string().min(1),
   refreshToken: z.string().nullish(),
-  name: z.string().nullish(),
-  email: z.string().nullish(),
-  imageUrl: z.string().nullish(),
+  name: z.string().optional(),
+  email: z.string().optional(),
+  imageUrl: z.string().optional(),
 });
 export type UserLogin = z.infer<typeof UserLogin>;
 
