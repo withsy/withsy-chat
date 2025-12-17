@@ -62,14 +62,14 @@ export class UserRepo {
     userId: UserId,
     input: UserUpdatePreferences
   ): Promise<UserPreferencesRaw> {
-    const inputFiltered = Object.fromEntries(
+    const patch = Object.fromEntries(
       Object.entries(input).filter(([_, value]) => value != null)
     );
 
     const rows = await this.tx.$queryRaw<Record<string, unknown>[]>`
   UPDATE users
   SET
-    preferences = preferences || ${inputFiltered}::jsonb
+    preferences = preferences || ${patch}::jsonb
   WHERE
     id = ${userId}::uuid
   RETURNING *`;
