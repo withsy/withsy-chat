@@ -1,38 +1,38 @@
-import { UserPreferences } from "@repo/common";
-import type z from "zod";
+import {
+  filterUserPreferences,
+  UserPreferences,
+  type PartialUserPreferences,
+} from "@repo/common";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
-const SetPreferences = UserPreferences.partial();
-type SetPreferences = z.infer<typeof SetPreferences>;
-
 interface PreferencesStore {
-  preferences: UserPreferences;
-  setPreferences: (patch: SetPreferences) => void;
-  resetPreferences: () => void;
+  getPreference: <Key extends keyof UserPreferences>(
+    key: Key
+  ) => UserPreferences[Key];
+  setPreferences: (partial: PartialUserPreferences) => void;
 }
 
-function createDefault() {
-  return UserPreferences.parse({});
-}
+const DEFAULT_DATA = UserPreferences.parse({});
 
-export const usePreferencesStore = create<PreferencesStore>()(
+export const usePreferencesStore = create<
+  PreferencesStore & { data: PartialUserPreferences }
+>()(
   persist(
-    (set) => ({
-      preferences: createDefault(),
-      setPreferences: (patch) =>
-        set((state) => {
-          const preferences = UserPreferences.parse({
-            ...state.preferences,
-            ...patch,
-          });
-
-          return { preferences };
-        }),
-      resetPreferences: () =>
-        set({
-          preferences: createDefault(),
-        }),
+    (set, get) => ({
+      data: {},
+      getPreference: (key) => {
+        const { data } = get();
+        return data[key] ?? DEFAULT_DATA[key];
+      },
+      setPreferences: (partial) => {
+        set((state) => ({
+          data: {
+            ...state.data,
+            ...filterUserPreferences(partial),
+          },
+        }));
+      },
     }),
     {
       name: "preferences",

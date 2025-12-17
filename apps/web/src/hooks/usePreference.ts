@@ -1,18 +1,28 @@
 import type { UserPreferences } from "@repo/common";
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTRPC, useTRPCClient } from "src/lib/trpc";
 import { usePreferencesStore } from "src/stores/usePreferencesStore";
 
-export function usePreference<K extends keyof UserPreferences>(key: K) {
-  const { data: session, status } = useSession();
-  const isAuthed = status === "authenticated" && !!session?.userId;
+export function usePreference<Key extends keyof UserPreferences>(key: Key) {
+  const { status } = useSession();
+  const isAuthed = status === "authenticated";
 
-  const value = usePreferencesStore((s) => s.preferences[key]);
+  const value = usePreferencesStore((s) => s.getPreference(key));
   const setPreferences = usePreferencesStore((s) => s.setPreferences);
   const trpc = useTRPC();
   const [isLoading, setIsLoading] = useState(false);
 
-  const a = useQuery(trpc.user.getPreferences.queryOptions());
+  const query = useQuery(
+    trpc.user.getPreferences.queryOptions(undefined, {
+      enabled: isAuthed,
+    })
+  );
+
+  useEffect(() => {
+    if (query.isSuccess) {
+      setPreferences(query.data);
+    }
+  }, [query.isSuccess]);
 }

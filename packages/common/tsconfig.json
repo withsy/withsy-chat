@@ -10,5 +10,6 @@
     "verbatimModuleSyntax": false,
     "sourceMap": true,
     "declarationMap": true
-  }
+  },
+  "include": ["src/**/*.ts"]
 }

@@ -1,4 +1,5 @@
 import { Logger } from "@nestjs/common";
+import { filterUserPreferences } from "@repo/common";
 import { TRPCError } from "@trpc/server";
 import { Tx } from "src/db/db.host";
 import { DataError } from "src/error";
@@ -62,9 +63,7 @@ export class UserRepo {
     userId: UserId,
     input: UserUpdatePreferences
   ): Promise<UserPreferencesRaw> {
-    const patch = Object.fromEntries(
-      Object.entries(input).filter(([_, value]) => value != null)
-    );
+    const patch = filterUserPreferences(input);
 
     const rows = await this.tx.$queryRaw<Record<string, unknown>[]>`
   UPDATE users
