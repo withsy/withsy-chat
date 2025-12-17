@@ -1,18 +1,17 @@
 import type { UserPreferences } from "@repo/common";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
-import { useTRPC, useTRPCClient } from "src/lib/trpc";
+import { useEffect } from "react";
+import { useTRPC } from "src/lib/trpc";
 import { usePreferencesStore } from "src/stores/usePreferencesStore";
 
 export function usePreference<Key extends keyof UserPreferences>(key: Key) {
   const { status } = useSession();
   const isAuthed = status === "authenticated";
 
-  const value = usePreferencesStore((s) => s.getPreference(key));
-  const setPreferences = usePreferencesStore((s) => s.setPreferences);
+  const value = usePreferencesStore((s) => s.get(key));
+  const update = usePreferencesStore((s) => s.update);
   const trpc = useTRPC();
-  const [isLoading, setIsLoading] = useState(false);
 
   const query = useQuery(
     trpc.user.getPreferences.queryOptions(undefined, {
@@ -22,7 +21,9 @@ export function usePreference<Key extends keyof UserPreferences>(key: Key) {
 
   useEffect(() => {
     if (query.isSuccess) {
-      setPreferences(query.data);
+      update(query.data);
     }
   }, [query.isSuccess]);
+
+  const mutation = useMutation(trpc.user.updatePreferences.mutationOptions());
 }
