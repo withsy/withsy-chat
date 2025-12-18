@@ -1,9 +1,6 @@
 import { usePreferences } from "@/context/PreferencesContext";
-import { useUser } from "@/context/UserContext";
-import { useHasMounted } from "@/hooks/useHasMounted";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import { useEffect, type ReactNode } from "react";
+import { type ReactNode } from "react";
 import Main from "./Main";
 import Sidebar from "./sidebar/Sidebar";
 

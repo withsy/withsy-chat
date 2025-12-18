@@ -35,10 +35,7 @@ export default function App({
   return (
     <QueryClientProvider client={queryClient}>
       <TRPCProvider trpcClient={trpcClient} queryClient={queryClient}>
-        <SessionProvider
-          session={session}
-          refetchInterval={18 * 60 * 60} // 18 hours
-        >
+        <SessionProvider session={session}>
           <PreferencesProvider>
             <Head>
               <link rel="icon" href="/favicon.ico" />
