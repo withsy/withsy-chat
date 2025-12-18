@@ -1,23 +1,19 @@
-import { randomBytes } from "node:crypto";
 import { Tx } from "src/db/db.host";
 import { retry } from "src/retry";
 import { isExpectedUniqueConstraintViolation } from "../error";
 import type { ApiKeyModel } from "../generated/prisma/models";
 
-function generateApiKey() {
-  const random = randomBytes(32).toString("base64url");
-  return `apikey-${random}`;
-}
-
 export class ApiKeyRepo {
   constructor(private readonly tx: Tx) {}
 
-  async create(): Promise<ApiKeyModel> {
+  async create(input: { apiKey: string }): Promise<ApiKeyModel> {
+    const { apiKey } = input;
+
     return await retry(
       async () => {
         const entity = await this.tx.apiKey.create({
           data: {
-            apiKey: generateApiKey(),
+            apiKey,
           },
         });
         return entity;

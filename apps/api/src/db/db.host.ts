@@ -1,5 +1,6 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { PrismaPg } from "@prisma/adapter-pg";
+import { inspect } from "node:util";
 import { ConfigService } from "src/config/config.service";
 import { PrismaClient } from "src/generated/prisma/client";
 import { PgPoolHost } from "./pg-pool.host";
@@ -26,17 +27,17 @@ export class DbHost {
           : [{ emit: "event", level: "error" }],
     });
 
-    client.$on("query", (e) => {
-      this.logger.log(e);
+    client.$on("query", (ev) => {
+      this.logger.log(inspect(ev, { depth: null }));
     });
-    client.$on("info", (e) => {
-      this.logger.log(e);
+    client.$on("info", (ev) => {
+      this.logger.log(inspect(ev, { depth: null }));
     });
-    client.$on("warn", (e) => {
-      this.logger.warn(e);
+    client.$on("warn", (ev) => {
+      this.logger.warn(inspect(ev, { depth: null }));
     });
-    client.$on("error", (e) => {
-      this.logger.error(e);
+    client.$on("error", (ev) => {
+      this.logger.error(inspect(ev, { depth: null }));
     });
 
     this.db = client;
