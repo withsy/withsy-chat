@@ -10,8 +10,12 @@ export type NodeEnv = z.infer<typeof NodeEnv>;
 
 // #region User
 
-export const PrimitiveValue = z.union([z.number(), z.boolean(), z.string()]);
-export type PrimitiveValue = z.infer<typeof PrimitiveValue>;
+export const UserPreferenceValue = z.union([
+  z.number(),
+  z.boolean(),
+  z.string(),
+]);
+export type UserPreferenceValue = z.infer<typeof UserPreferenceValue>;
 
 export const UserPreferences = z.object({
   wideView: z.boolean().default(false),
@@ -20,7 +24,7 @@ export const UserPreferences = z.object({
   themeColor: z.string().default("255,187,0"),
   themeOpacity: z.number().default(0.5),
   avatarStyle: z.string().default("thumbs"),
-}) satisfies z.ZodObject<Record<string, z.ZodType<PrimitiveValue>>>;
+}) satisfies z.ZodObject<Record<string, z.ZodType<UserPreferenceValue>>>;
 export type UserPreferences = z.infer<typeof UserPreferences>;
 
 export type PartialUserPreferences = Simplify<Partial<UserPreferences>>;
@@ -29,7 +33,7 @@ export function filterUserPreferences(
   partial: PartialUserPreferences
 ): PartialUserPreferences {
   return Object.fromEntries(
-    Object.entries(partial).filter(([_, v]) => v != null)
+    Object.entries(partial).filter(([_, v]) => v !== undefined)
   );
 }
 
