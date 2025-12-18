@@ -1,13 +1,15 @@
 import ChatLayout from "@/components/layout/ChatLayout";
 import HomeLayout from "@/components/layout/HomeLayout";
 import LoadAiProfiles from "@/components/LoadAiProfiles";
+import { PreferencesProvider } from "@/context/PreferencesContext";
 // import TermlyCMP from "@/components/TermlyCMP";
-import AppProviders from "@/context/AppProviders";
+import { UserProvider } from "@/context/UserContext";
 import { useSidebarInitializer } from "@/hooks/useSidebarInitializer";
 import { createTrpcClient, getQueryClient, TRPCProvider } from "@/lib/trpc";
 import "@/styles/globals.css";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { SessionProvider } from "next-auth/react";
 import type { AppProps } from "next/app";
 import { Nunito } from "next/font/google";
 import Head from "next/head";
@@ -22,6 +24,7 @@ export default function App({
   pageProps: { session, ...pageProps },
 }: AppProps) {
   useSidebarInitializer();
+
   let title = "Withsy";
   if (process.env.NODE_ENV === "development") title = `[DEV] ${title}`;
 
@@ -29,37 +32,45 @@ export default function App({
   const [trpcClient] = useState(() => createTrpcClient());
 
   const layoutType = (Component as any).layoutType ?? "none";
+
   return (
     <QueryClientProvider client={queryClient}>
       <TRPCProvider trpcClient={trpcClient} queryClient={queryClient}>
-        <AppProviders session={session}>
-          <Head>
-            <link rel="icon" href="/favicon.ico" />
-            <title>{title}</title>
-          </Head>
-          {layoutType == "none" ? (
-            <main className={nunito.className}>
-              <Component {...pageProps} />
-            </main>
-          ) : layoutType == "home" ? (
-            <HomeLayout className={nunito.className}>
-              <Component {...pageProps} />
-            </HomeLayout>
-          ) : (
-            <ChatLayout className={nunito.className}>
-              <LoadAiProfiles />
-              <Component {...pageProps} />
-            </ChatLayout>
-          )}
+        <SessionProvider
+          session={session}
+          refetchInterval={18 * 60 * 60} // 18 hours
+        >
+          <PreferencesProvider>
+            <UserProvider>
+              <Head>
+                <link rel="icon" href="/favicon.ico" />
+                <title>{title}</title>
+              </Head>
+              {layoutType == "none" ? (
+                <main className={nunito.className}>
+                  <Component {...pageProps} />
+                </main>
+              ) : layoutType == "home" ? (
+                <HomeLayout className={nunito.className}>
+                  <Component {...pageProps} />
+                </HomeLayout>
+              ) : (
+                <ChatLayout className={nunito.className}>
+                  <LoadAiProfiles />
+                  <Component {...pageProps} />
+                </ChatLayout>
+              )}
 
-          {/* <TermlyCMP
+              {/* <TermlyCMP
             websiteUUID={WEBSITE_UUID}
             autoBlock={undefined}
             masterConsentsOrigin={undefined}
           /> */}
-          <Sonner position="bottom-right" />
-          <ReactQueryDevtools />
-        </AppProviders>
+              <Sonner position="bottom-right" />
+              <ReactQueryDevtools />
+            </UserProvider>
+          </PreferencesProvider>
+        </SessionProvider>
       </TRPCProvider>
     </QueryClientProvider>
   );
