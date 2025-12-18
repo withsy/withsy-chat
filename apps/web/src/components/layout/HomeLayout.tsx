@@ -1,7 +1,6 @@
-import { useUser } from "@/context/UserContext";
 import { type ReactNode } from "react";
-import Header from "../home/Header";
 import BmcWidget from "../BmcWidget";
+import Header from "../home/Header";
 
 type LayoutProps = {
   children: ReactNode;
@@ -9,11 +8,9 @@ type LayoutProps = {
 };
 
 export default function HomeLayout({ children, className }: LayoutProps) {
-  const { user } = useUser();
-
   return (
     <div className={`flex flex-col min-h-screen ${className}`}>
-      <Header user={user} />
+      <Header />
       <div>
         <main>{children}</main>
         <BmcWidget />

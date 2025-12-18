@@ -104,7 +104,7 @@ const DEFAULT = UserPreferences.parse({});
 
 interface PreferencesContext {
   usePreference: <Key extends PreferenceKey>(key: Key) => UserPreferences[Key];
-  useUpdatePreferences: (input: PartialUserPreferences) => void;
+  updatePreferences: (input: PartialUserPreferences) => void;
   useIsFetching: <Key extends PreferenceKey>(key: Key) => boolean;
 }
 
@@ -184,7 +184,7 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
     []
   );
 
-  const useUpdatePreferences = useCallback(
+  const updatePreferences = useCallback(
     (input: PartialUserPreferences) => {
       if (isAuthed) {
         mutate(input);
@@ -203,7 +203,7 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
     <PreferencesContext.Provider
       value={{
         usePreference,
-        useUpdatePreferences,
+        updatePreferences,
         useIsFetching,
       }}
     >

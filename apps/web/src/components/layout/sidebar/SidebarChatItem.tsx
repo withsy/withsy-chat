@@ -13,7 +13,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useUser } from "@/context/UserContext";
+import { usePreferences } from "@/context/PreferencesContext";
 import { useTRPC } from "@/lib/trpc";
 import { useChatStore } from "@/stores/useChatStore";
 import { useDrawerStore } from "@/stores/useDrawerStore";
@@ -44,8 +44,8 @@ export function SidebarChatItem({
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const { isMobile, setCollapsed } = useSidebarStore();
-  const { user } = useUser();
-  if (!user) throw new Error("User must exist.");
+  const { usePreference } = usePreferences();
+  const themeColor = usePreference("themeColor");
 
   const updateChatMut = useMutation(
     trpc.chat.update.mutationOptions({
@@ -189,7 +189,7 @@ export function SidebarChatItem({
               style={
                 chat.isStarred
                   ? {
-                      fill: `rgb(${user.preferences.themeColor})`,
+                      fill: `rgb(${themeColor})`,
                     }
                   : {}
               }

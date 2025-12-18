@@ -1,8 +1,7 @@
-import type { UserData } from "@/types/user";
 import { GitBranch, Save, Settings, Sparkles } from "lucide-react";
 import ResponsiveButton from "./ResponsiveButton";
 
-export function Hero({ user }: { user: UserData | null }) {
+export function Hero() {
   return (
     <section className="w-full bg-transparent pt-16 pb-10 text-center relative overflow-hidden z-0">
       <div className="absolute top-[-100px] left-[-100px] w-[200px] h-[200px] bg-[#EA9257] rounded-full z-[-1]" />
@@ -64,7 +63,7 @@ export function Hero({ user }: { user: UserData | null }) {
           </div>
         </div>
 
-        <ResponsiveButton user={user} size="lg" message="Try Withsy Free Now" />
+        <ResponsiveButton size="lg" message="Try Withsy Free Now" />
       </div>
     </section>
   );

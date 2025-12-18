@@ -1,3 +1,4 @@
+import { Drawer, DrawerContent } from "@/components/ui/drawer";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -5,8 +6,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Drawer, DrawerContent } from "@/components/ui/drawer";
-import { useUser } from "@/context/UserContext";
+import { Label } from "@/components/ui/label";
+import { usePreferences } from "@/context/PreferencesContext";
 import { cn } from "@/lib/utils";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 import {
@@ -18,11 +19,10 @@ import {
   Text,
   type LucideIcon,
 } from "lucide-react";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { useState } from "react";
 import { ModelAvatar } from "./ModelAvatar";
 import { ThemeSettingsModal } from "./modal/ThemeSettingsModal";
-import { Label } from "@/components/ui/label";
 
 interface UserMenuItemProps {
   icon: LucideIcon;
@@ -95,12 +95,21 @@ function UserMenuItem({
 
 export default function UserDropdownMenu() {
   const { isMobile } = useSidebarStore();
-  const { user, setUserPrefsAndSave } = useUser();
   const [themeModalOpen, setThemeModalOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
-  if (!user) return null;
+  const { usePreference, updatePreferences } = usePreferences();
+  const enterToSend = usePreference("enterToSend");
+  const largeText = usePreference("largeText");
+  const wideView = usePreference("wideView");
+  const themeColor = usePreference("themeColor");
+
+  const { data: session } = useSession({
+    required: true,
+  });
+  const name = session?.user?.name ?? "";
+  const image = session?.user?.image ?? "";
 
   // Theme 메뉴 아이템 클릭 시 드롭다운과 드로어를 닫고 테마 모달 열기
   const handleThemeClick = () => {
@@ -122,23 +131,20 @@ export default function UserDropdownMenu() {
     {
       icon: CornerDownLeft,
       label: "Enter to send",
-      checked: user.preferences.enterToSend,
-      onClick: () =>
-        setUserPrefsAndSave({ enterToSend: !user.preferences.enterToSend }),
+      checked: enterToSend,
+      onClick: () => updatePreferences({ enterToSend: !enterToSend }),
     },
     {
       icon: Text,
       label: "Large text",
-      checked: user.preferences.largeText,
-      onClick: () =>
-        setUserPrefsAndSave({ largeText: !user.preferences.largeText }),
+      checked: largeText,
+      onClick: () => updatePreferences({ largeText: !largeText }),
     },
     {
       icon: Layout,
       label: "Wide view",
-      checked: user.preferences.wideView,
-      onClick: () =>
-        setUserPrefsAndSave({ wideView: !user.preferences.wideView }),
+      checked: wideView,
+      onClick: () => updatePreferences({ wideView: !wideView }),
     },
   ];
 
@@ -164,7 +170,7 @@ export default function UserDropdownMenu() {
           key={item.label}
           icon={item.icon}
           label={item.label}
-          largeText={user.preferences.largeText}
+          largeText={largeText}
           onClick={item.onClick}
           checked={item.checked}
           preventClose
@@ -178,7 +184,7 @@ export default function UserDropdownMenu() {
             key={item.label}
             icon={item.icon}
             label={item.label}
-            largeText={user.preferences.largeText}
+            largeText={largeText}
             onClick={item.onClick}
           />
         )
@@ -186,10 +192,7 @@ export default function UserDropdownMenu() {
       <DropdownMenuSeparator className="px-4" />
       <div className="flex justify-center p-2">
         <span className="text-xs text-muted-foreground select-none">
-          withsy with{" "}
-          <span style={{ color: `rgb(${user.preferences.themeColor})` }}>
-            ♥
-          </span>
+          withsy with <span style={{ color: `rgb(${themeColor})` }}>♥</span>
         </span>
       </div>
     </>
@@ -207,12 +210,8 @@ export default function UserDropdownMenu() {
               "cursor-pointer flex items-center rounded-md w-full gap-2 px-2.5 py-3 hover:bg-white active:bg-white font-semibold select-none"
             )}
           >
-            <ModelAvatar
-              name={user.name ?? ""}
-              image={user.imageUrl}
-              size="sm"
-            />
-            <span>{user.name}</span>
+            <ModelAvatar size="sm" name={name} image={image} />
+            {name && <span>{name}</span>}
           </button>
           <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
             <DrawerContent className="p-4 space-y-2">
@@ -230,19 +229,15 @@ export default function UserDropdownMenu() {
                 dropdownOpen ? "bg-white" : "hover:bg-white active:bg-white"
               )}
             >
-              <ModelAvatar
-                name={user.name ?? ""}
-                image={user.imageUrl}
-                size="sm"
-              />
-              <span>{user.name}</span>
+              <ModelAvatar size="sm" name={name} image={image} />
+              {name && <span>{name}</span>}
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent
             align="end"
             className={cn(
               "w-48 p-2 m-2 justify-between",
-              user.preferences.largeText ? "text-lg" : "text-base"
+              largeText ? "text-lg" : "text-base"
             )}
           >
             {renderMenuItems()}

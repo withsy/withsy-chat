@@ -17,6 +17,10 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  transpilePackages: ["@repo/common"],
+  experimental: {
+    externalDir: true,
+  },
 };
 
 export default nextConfig;

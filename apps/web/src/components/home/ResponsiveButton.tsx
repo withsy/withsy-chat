@@ -1,4 +1,4 @@
-import type { UserData } from "@/types/user";
+import { useSession } from "next-auth/react";
 import LoginButton from "../login/LoginButton";
 import ReturnButton from "./ReturnButton";
 
@@ -11,14 +11,14 @@ import ReturnButton from "./ReturnButton";
  */
 export default function ResponsiveButton({
   message,
-  user,
   size = "sm",
 }: {
   message?: string;
-  user: UserData | null;
   size?: "default" | "sm" | "lg" | "icon";
 }) {
-  return user ? (
+  const { status } = useSession();
+
+  return status === "authenticated" ? (
     <ReturnButton size={size} message={message} />
   ) : (
     <LoginButton size={size} message={message} />

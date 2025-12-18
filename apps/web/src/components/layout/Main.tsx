@@ -1,7 +1,9 @@
-import { useUser } from "@/context/UserContext";
+import { usePreferences } from "@/context/PreferencesContext";
 import { cn } from "@/lib/utils";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 import type { ReactNode } from "react";
+
+const HEADER_HEIGHT = 64;
 
 type MainProps = {
   children: ReactNode;
@@ -9,9 +11,8 @@ type MainProps = {
 
 export default function Main({ children }: MainProps) {
   const { isMobile } = useSidebarStore();
-  const { user } = useUser();
-
-  const HEADER_HEIGHT = 64;
+  const { usePreference } = usePreferences();
+  const largeText = usePreference("largeText");
 
   const mainStyle: React.CSSProperties = {
     overflow: "hidden",
@@ -35,7 +36,7 @@ export default function Main({ children }: MainProps) {
         className={cn(
           "transition-all h-full",
           "text-base",
-          user?.preferences.largeText && "text-lg"
+          largeText && "text-lg"
         )}
       >
         {children}

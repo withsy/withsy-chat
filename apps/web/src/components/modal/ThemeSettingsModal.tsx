@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
-import { useUser } from "@/context/UserContext";
+import { usePreferences } from "@/context/PreferencesContext";
 import { useEffect, useState } from "react";
 
 const recommendedThemes = [
@@ -26,23 +26,22 @@ export function ThemeSettingsModal({
   open: boolean;
   setThemeModalOpen: (open: boolean) => void;
 }) {
-  const { user, setUserPrefsAndSave } = useUser();
-  if (!user) throw new Error("User must exist.");
+  const { usePreference, updatePreferences } = usePreferences();
+  const themeColor = usePreference("themeColor");
+  const themeOpacity = usePreference("themeOpacity");
 
-  const [customColor, setCustomColor] = useState(user.preferences.themeColor);
-  const [customOpacity, setCustomOpacity] = useState(
-    user.preferences.themeOpacity
-  );
+  const [customColor, setCustomColor] = useState(themeColor);
+  const [customOpacity, setCustomOpacity] = useState(themeOpacity);
 
   useEffect(() => {
     if (open) {
-      setCustomColor(user.preferences.themeColor);
-      setCustomOpacity(user.preferences.themeOpacity);
+      setCustomColor(themeColor);
+      setCustomOpacity(themeOpacity);
     }
-  }, [open, user.preferences.themeColor, user.preferences.themeOpacity]);
+  }, [open, themeColor, themeOpacity]);
 
   const handleApply = () => {
-    setUserPrefsAndSave({
+    updatePreferences({
       themeColor: customColor,
       themeOpacity: customOpacity,
     });
@@ -133,7 +132,7 @@ export function ThemeSettingsModal({
           onClick={handleApply}
           className="w-full mt-4"
           style={{
-            backgroundColor: `rgba(${user.preferences.themeColor})`,
+            backgroundColor: `rgba(${themeColor})`,
           }}
         >
           SAVE

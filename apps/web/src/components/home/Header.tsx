@@ -1,12 +1,11 @@
 import { useHeaderScroll } from "@/hooks/useHeaderScroll";
 import { useSidebarStore } from "@/stores/useSidebarStore";
-import type { UserData } from "@/types/user";
 import { useRouter } from "next/router";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import ResponsiveButton from "./ResponsiveButton";
 import CategoryButton from "./CategoryDrawerButton";
+import ResponsiveButton from "./ResponsiveButton";
 
-export default function Component({ user }: { user: UserData | null }) {
+export default function Header() {
   const router = useRouter();
   const scrolled = useHeaderScroll();
   const { isMobile, hydrated } = useSidebarStore();
@@ -69,7 +68,7 @@ export default function Component({ user }: { user: UserData | null }) {
         )}
 
         <div className="flex items-center gap-2">
-          <ResponsiveButton user={user} />
+          <ResponsiveButton />
           {isMobile && <CategoryButton categories={categories} />}
         </div>
       </div>

@@ -1,15 +1,17 @@
-import { useUser } from "@/context/UserContext";
 import { useTRPC } from "@/lib/trpc";
 import { useAiProfileStore } from "@/stores/useAiProfileStore";
-import { skipToken, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
+import { useSession } from "next-auth/react";
 import { useEffect } from "react";
 
 export default function LoadAiProfiles() {
-  const { user } = useUser();
+  const { status } = useSession();
 
   const trpc = useTRPC();
   const { data = [], isLoading } = useQuery(
-    trpc.userAiProfile.list.queryOptions(user ? undefined : skipToken)
+    trpc.userAiProfile.list.queryOptions(undefined, {
+      enabled: status === "authenticated",
+    })
   );
   const { setProfiles, setLoading } = useAiProfileStore();
 

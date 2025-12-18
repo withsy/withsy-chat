@@ -1,4 +1,4 @@
-import { useUser } from "@/context/UserContext";
+import { usePreferences } from "@/context/PreferencesContext";
 import { type LucideIcon } from "lucide-react";
 
 interface IconWithLabelProps {
@@ -16,11 +16,10 @@ export function IconWithLabel({
   fill = false,
   size = 16,
 }: IconWithLabelProps) {
-  const { user } = useUser();
-  if (!user) throw new Error("User must exist.");
-
-  const { themeColor } = user.preferences;
+  const { usePreference } = usePreferences();
+  const themeColor = usePreference("themeColor");
   const className = `transition-colors hover:text-black active:text-black group-hover:text-black select-none`;
+
   return (
     <>
       <Icon size={size} className={className} fill="none" />
