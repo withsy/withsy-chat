@@ -93,9 +93,15 @@ export const authOptions: AuthOptions = {
     },
     session: (params) => {
       const { token, session } = params;
+
+      const { userId } = token;
+      if (!userId) {
+        throw new Error("Invalid session.");
+      }
+
       return {
         ...session,
-        userId: token.userId,
+        userId,
       };
     },
   },

@@ -6,17 +6,17 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useChatSession } from "@/context/ChatSessionContext";
-import { useUser } from "@/context/UserContext";
+import { usePreferences } from "@/context/PreferencesContext";
 import { useTRPC } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
 import type { ChatType } from "@/types/chat";
 import { MessageReplyRegenerateError } from "@/types/message-reply";
-import type { Model } from "@/types/model";
+import type { Model } from "@repo/common";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Bookmark, Copy, GitBranch, RefreshCw } from "lucide-react";
 import { useRouter } from "next/router";
 import { toast } from "sonner";
-import { v4 as uuid } from "uuid";
+import { v4 as uuid, v4 } from "uuid";
 import { ModelSelect } from "./ModelSelect";
 
 interface ChatBubbleTooltipsProps {
@@ -43,10 +43,9 @@ export const ChatBubbleTooltips: React.FC<ChatBubbleTooltipsProps> = ({
   const trpc = useTRPC();
   const queryClient = useQueryClient();
   const { onRegenerateSuccess } = useChatSession();
-
   const router = useRouter();
-
-  const { user } = useUser();
+  const { usePreference } = usePreferences();
+  const themeColor = usePreference("themeColor");
 
   const chatBranchStart = useMutation(
     trpc.chatBranch.start.mutationOptions({
@@ -75,7 +74,7 @@ export const ChatBubbleTooltips: React.FC<ChatBubbleTooltipsProps> = ({
 
   const handleBranch = () => {
     chatBranchStart.mutate({
-      idempotencyKey: uuid(),
+      idempotencyKey: v4(),
       messageId,
     });
 
@@ -85,9 +84,6 @@ export const ChatBubbleTooltips: React.FC<ChatBubbleTooltipsProps> = ({
     });
   };
 
-  if (!user) return null;
-
-  const { themeColor } = user.preferences;
   return (
     <TooltipProvider>
       <div className={cn("flex gap-2", className)}>
@@ -129,7 +125,7 @@ export const ChatBubbleTooltips: React.FC<ChatBubbleTooltipsProps> = ({
                 description={"Switch model & regenerate"}
                 onSelectModel={(selectedModel) => {
                   messageReplyRegenerate.mutate({
-                    idempotencyKey: uuid(),
+                    idempotencyKey: v4(),
                     messageId,
                     model: selectedModel,
                   });
