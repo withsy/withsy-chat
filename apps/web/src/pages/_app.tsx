@@ -3,7 +3,6 @@ import HomeLayout from "@/components/layout/HomeLayout";
 import LoadAiProfiles from "@/components/LoadAiProfiles";
 import { PreferencesProvider } from "@/context/PreferencesContext";
 // import TermlyCMP from "@/components/TermlyCMP";
-import { UserProvider } from "@/context/UserContext";
 import { useSidebarInitializer } from "@/hooks/useSidebarInitializer";
 import { createTrpcClient, getQueryClient, TRPCProvider } from "@/lib/trpc";
 import "@/styles/globals.css";
@@ -41,34 +40,32 @@ export default function App({
           refetchInterval={18 * 60 * 60} // 18 hours
         >
           <PreferencesProvider>
-            <UserProvider>
-              <Head>
-                <link rel="icon" href="/favicon.ico" />
-                <title>{title}</title>
-              </Head>
-              {layoutType == "none" ? (
-                <main className={nunito.className}>
-                  <Component {...pageProps} />
-                </main>
-              ) : layoutType == "home" ? (
-                <HomeLayout className={nunito.className}>
-                  <Component {...pageProps} />
-                </HomeLayout>
-              ) : (
-                <ChatLayout className={nunito.className}>
-                  <LoadAiProfiles />
-                  <Component {...pageProps} />
-                </ChatLayout>
-              )}
+            <Head>
+              <link rel="icon" href="/favicon.ico" />
+              <title>{title}</title>
+            </Head>
+            {layoutType == "none" ? (
+              <main className={nunito.className}>
+                <Component {...pageProps} />
+              </main>
+            ) : layoutType == "home" ? (
+              <HomeLayout className={nunito.className}>
+                <Component {...pageProps} />
+              </HomeLayout>
+            ) : (
+              <ChatLayout className={nunito.className}>
+                <LoadAiProfiles />
+                <Component {...pageProps} />
+              </ChatLayout>
+            )}
 
-              {/* <TermlyCMP
+            {/* <TermlyCMP
             websiteUUID={WEBSITE_UUID}
             autoBlock={undefined}
             masterConsentsOrigin={undefined}
           /> */}
-              <Sonner position="bottom-right" />
-              <ReactQueryDevtools />
-            </UserProvider>
+            <Sonner position="bottom-right" />
+            <ReactQueryDevtools />
           </PreferencesProvider>
         </SessionProvider>
       </TRPCProvider>
