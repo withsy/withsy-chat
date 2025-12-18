@@ -1,8 +1,8 @@
+import { getServerContext } from "@/server/context";
 import { createProxyMiddleware } from "http-proxy-middleware";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { getToken } from "next-auth/jwt";
 import { IncomingMessage } from "node:http";
-import { getServerContext } from "src/server/context";
 
 export const config = {
   api: {

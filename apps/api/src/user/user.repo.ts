@@ -2,7 +2,6 @@ import { Logger } from "@nestjs/common";
 import { filterUserPreferences } from "@repo/common";
 import { TRPCError } from "@trpc/server";
 import { Tx } from "src/db/db.host";
-import { DataError } from "src/error";
 import { v4 } from "uuid";
 import type { UserModel } from "../generated/prisma/models";
 import {
@@ -15,36 +14,6 @@ export class UserRepo {
   private readonly logger = new Logger(UserRepo.name);
 
   constructor(private readonly tx: Tx) {}
-
-  //   async get(input: { userId: UserId }): Promise<UserModel> {
-  //     const { userId } = input;
-
-  //     return await this.tx.user.findUniqueOrThrow({
-  //       where: {
-  //         id: userId,
-  //       },
-  //     });
-  //   }
-
-  //   async update(
-  //     userId: UserId,
-  //     input: {
-  //       aiLanguage?: string;
-  //       timezone?: string;
-  //     }
-  //   ): Promise<UserModel> {
-  //     const { aiLanguage, timezone } = input;
-
-  //     return await this.tx.user.update({
-  //       where: {
-  //         id: userId,
-  //       },
-  //       data: {
-  //         aiLanguage,
-  //         timezone,
-  //       },
-  //     });
-  //   }
 
   async getPreferences(userId: UserId): Promise<UserPreferencesRaw> {
     const { preferences } = await this.tx.user.findUniqueOrThrow({

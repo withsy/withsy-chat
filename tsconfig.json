@@ -13,5 +13,10 @@
     "jsx": "preserve",
     "incremental": true,
     "verbatimModuleSyntax": true
-  }
+  },
+  "include": [
+    "apps/*/src/**/*.ts",
+    "apps/*/src/**/*.tsx",
+    "packages/*/src/**/*.ts"
+  ]
 }
