@@ -8,8 +8,6 @@ import {
 import { filterMessages } from "@/lib/filter-utils";
 import { useTRPC } from "@/lib/trpc";
 import { useSidebarStore } from "@/stores/useSidebarStore";
-import type { MessageData } from "@/types/message";
-import type { UserData } from "@/types/user";
 import { useQuery } from "@tanstack/react-query";
 import { Eye, EyeOff, RotateCcw } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
@@ -20,10 +18,8 @@ import { PartialLoading } from "../Loading";
 import { Button } from "../ui/button";
 
 export default function BookmarkPage({
-  user,
   headerStyle,
 }: {
-  user: UserData;
   headerStyle: React.CSSProperties;
 }) {
   const trpc = useTRPC();

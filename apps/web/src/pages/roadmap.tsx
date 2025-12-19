@@ -2,7 +2,7 @@ import { Badge } from "@/components/ui/badge";
 import { Search, Sparkles } from "lucide-react";
 import Link from "next/link";
 
-function RoadmapPage() {
+function Page() {
   const getIconForRelease = (name: string) => {
     switch (name.toLowerCase()) {
       case "clear. yours.":
@@ -129,5 +129,5 @@ function RoadmapPage() {
   );
 }
 
-(RoadmapPage as any).layoutType = "home";
-export default RoadmapPage;
+(Page as any).layoutType = "home";
+export default Page;

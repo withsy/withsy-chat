@@ -3,42 +3,23 @@ import { PartialLoading } from "@/components/Loading";
 import { EditPromptModal } from "@/components/prompts/EditPromptModal";
 import { PromptCard } from "@/components/prompts/PromptCard";
 import { Button } from "@/components/ui/button";
-import { useUser } from "@/context/UserContext";
-import { setTrpcCsrfToken, useTRPC } from "@/lib/trpc";
-import { getUser } from "@/server/utils";
+import { usePreferences } from "@/context/PreferencesContext";
+import { useTRPC } from "@/lib/trpc";
 import { useChatStore } from "@/stores/useChatStore";
 import { useSidebarStore } from "@/stores/useSidebarStore";
-import type { UserData } from "@/types/user";
-import type { UserPromptData } from "@/types/user-prompt";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import type { GetServerSideProps } from "next";
-import { getCsrfToken } from "next-auth/react";
-import { useEffect, useState } from "react";
-import { v4 as uuid } from "uuid";
+import { useState } from "react";
+import { v4 } from "uuid";
 
-type Props = {
-  csrfToken: string;
-  user: UserData | null;
-};
-
-export const getServerSideProps: GetServerSideProps<Props> = async ({
-  req,
-  res,
-}) => {
-  const csrfToken = (await getCsrfToken({ req })) ?? "";
-  const user = await getUser({ req, res });
-  return { props: { csrfToken, user } };
-};
-
-function PromptsPage({ csrfToken, user }: Props) {
+function Page() {
   const trpc = useTRPC();
-  const { setUser } = useUser();
   const { chat, setChat } = useChatStore();
   const { collapsed } = useSidebarStore();
 
   if (chat != null) {
     setChat(null);
   }
+
   const {
     data: prompts,
     refetch: refetchPrompts,
@@ -110,19 +91,14 @@ function PromptsPage({ csrfToken, user }: Props) {
     isDefault?: boolean;
   } | null>(null);
 
-  useEffect(() => {
-    if (csrfToken) setTrpcCsrfToken(csrfToken);
-  }, [csrfToken]);
+  const { usePreference } = usePreferences();
+  const themeColor = usePreference("themeColor");
+  const themeOpacity = usePreference("themeOpacity");
 
-  useEffect(() => {
-    if (user) setUser(user);
-  }, [user, setUser]);
-
-  if (!user || isLoadingPrompts || isLoadingDefaultPrompt) {
+  if (isLoadingPrompts || isLoadingDefaultPrompt) {
     return <PartialLoading />;
   }
 
-  const { themeColor, themeOpacity } = user.preferences;
   const headerStyle: React.CSSProperties = {
     backgroundColor: `rgba(${themeColor}, ${themeOpacity / 2})`,
   };
@@ -233,7 +209,7 @@ function PromptsPage({ csrfToken, user }: Props) {
                   createPrompt.mutate({
                     title: savedPrompt.title,
                     text: savedPrompt.text,
-                    idempotencyKey: uuid(),
+                    idempotencyKey: v4(),
                   });
                 } else {
                   updatePrompt.mutate({
@@ -253,5 +229,5 @@ function PromptsPage({ csrfToken, user }: Props) {
   );
 }
 
-(PromptsPage as any).layoutType = "chat";
-export default PromptsPage;
+(Page as any).layoutType = "chat";
+export default Page;

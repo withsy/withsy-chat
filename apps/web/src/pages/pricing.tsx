@@ -1,21 +1,7 @@
 import ResponsiveButton from "@/components/home/ResponsiveButton";
-import { getUser } from "@/server/utils";
-import type { UserData } from "@/types/user";
-import type { GetServerSideProps } from "next";
 import Link from "next/link";
 
-type Props = {
-  user: UserData | null;
-};
-
-export const getServerSideProps: GetServerSideProps<Props> = async (
-  context
-) => {
-  const user = await getUser({ req: context.req, res: context.res });
-  return { props: { user } };
-};
-
-export default function Page({ user }: Props) {
+export default function Page() {
   return (
     <div className="flex flex-col items-start text-start px-6 py-12 max-w-3xl mx-auto">
       <div className="text-center md:text-left">
@@ -37,11 +23,7 @@ export default function Page({ user }: Props) {
             <li>✓ Fast, reliable responses</li>
             <li>✓ Access to core Withsy features</li>
           </ul>
-          <ResponsiveButton
-            user={user}
-            size="default"
-            message="Try Withsy Free"
-          />
+          <ResponsiveButton size="default" message="Try Withsy Free" />
         </div>
 
         {/* Future Plans */}

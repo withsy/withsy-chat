@@ -4,7 +4,7 @@ import PromptTransparency from "@/components/home/PromptTransparency";
 import SaveStar from "@/components/home/SaveStar";
 import ThemeAndPrefsSection from "@/components/home/ThemeAndPrefs";
 
-function HomePage() {
+function Page() {
   return (
     <div>
       <Hero />
@@ -16,5 +16,5 @@ function HomePage() {
   );
 }
 
-(HomePage as any).layoutType = "home";
-export default HomePage;
+(Page as any).layoutType = "home";
+export default Page;

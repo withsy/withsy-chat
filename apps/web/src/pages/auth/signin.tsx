@@ -6,9 +6,9 @@ import {
   SquareArrowOutUpRight,
   User,
 } from "lucide-react";
-import type { GetServerSideProps } from "next";
 import { getProviders, signIn } from "next-auth/react";
 import Image from "next/image";
+import { useEffect, useState } from "react";
 
 const iconMap: Record<string, React.ReactNode> = {
   email: <Mail size={18} />,
@@ -17,11 +17,15 @@ const iconMap: Record<string, React.ReactNode> = {
   google: <CircleUserRound size={18} />,
 };
 
-type Props = {
-  providers: Record<string, any> | null;
-};
+export default function Page() {
+  const [providers, setProviders] = useState<Record<string, any> | null>(null);
 
-export default function SignInPage({ providers }: Props) {
+  useEffect(() => {
+    getProviders().then((providers) => {
+      setProviders(providers);
+    });
+  }, []);
+
   return (
     <div className="min-h-[100dvh] flex items-center justify-center bg-gray-50 px-4 select-none">
       <div className="max-w-lg w-full space-y-8 p-10">
@@ -108,10 +112,3 @@ export default function SignInPage({ providers }: Props) {
     </div>
   );
 }
-
-export const getServerSideProps: GetServerSideProps = async () => {
-  const providers = await getProviders();
-  return {
-    props: { providers: providers ?? null },
-  };
-};

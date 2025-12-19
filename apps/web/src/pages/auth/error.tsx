@@ -1,7 +1,7 @@
-import { useRouter } from "next/router";
-import Link from "next/link";
-import { useEffect } from "react";
 import { Cat } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { useEffect } from "react";
 
 const errorMessages: Record<string, string> = {
   Configuration:
@@ -18,7 +18,7 @@ const errorMessages: Record<string, string> = {
   default: "An error occurred during sign-in. Please try again.",
 };
 
-export default function AuthErrorPage() {
+export default function Page() {
   const router = useRouter();
   const { error } = router.query;
 

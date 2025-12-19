@@ -11,12 +11,6 @@ function getBaseUrl() {
   return `${process.env.NEXTAUTH_URL ?? "http://localhost:3000"}`;
 }
 
-let csrfToken: string | null = null;
-
-export const setTrpcCsrfToken = (token: string) => {
-  csrfToken = token;
-};
-
 export const { TRPCProvider, useTRPC, useTRPCClient } =
   createTRPCContext<AppRouter>();
 
@@ -59,15 +53,6 @@ export function createTrpcClient() {
       }),
       httpLink({
         url: `${getBaseUrl()}/api/trpc`,
-        headers: () => {
-          const headers: Record<string, string> = {};
-
-          if (csrfToken) {
-            headers["X-Csrf-Token"] = csrfToken;
-          }
-
-          return headers;
-        },
       }),
     ],
   });

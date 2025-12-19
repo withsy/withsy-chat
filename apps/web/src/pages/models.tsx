@@ -2,51 +2,24 @@ import { CollapseButton } from "@/components/CollapseButton";
 import LoadAiProfiles from "@/components/LoadAiProfiles";
 import { PartialLoading } from "@/components/Loading";
 import ModelCard from "@/components/models/ModelCard";
-import { useUser } from "@/context/UserContext";
-import { setTrpcCsrfToken } from "@/lib/trpc";
-import { getUser } from "@/server/utils";
+import { usePreferences } from "@/context/PreferencesContext";
 import { useAiProfileStore } from "@/stores/useAiProfileStore";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 import { Model } from "@/types/model";
-import type { UserData } from "@/types/user";
-import type { GetServerSideProps } from "next";
-import { getCsrfToken } from "next-auth/react";
-import { useEffect } from "react";
 
-type Props = {
-  csrfToken: string;
-  user: UserData | null;
-};
+const MODELS = Model.options;
 
-export const getServerSideProps: GetServerSideProps<Props> = async ({
-  req,
-  res,
-}) => {
-  const csrfToken = (await getCsrfToken({ req })) ?? "";
-  const user = await getUser({ req, res });
-  return { props: { csrfToken, user } };
-};
-
-function ModelsPage({ csrfToken, user }: Props) {
-  const { setUser } = useUser();
+function Page() {
   const { collapsed } = useSidebarStore();
   const { profiles, isLoading } = useAiProfileStore();
+  const { usePreference } = usePreferences();
+  const themeColor = usePreference("themeColor");
+  const themeOpacity = usePreference("themeOpacity");
 
-  const MODELS = Model.options;
-
-  useEffect(() => {
-    if (csrfToken) setTrpcCsrfToken(csrfToken);
-  }, [csrfToken]);
-
-  useEffect(() => {
-    if (user) setUser(user);
-  }, [user, setUser]);
-
-  if (!user || isLoading) {
+  if (isLoading) {
     return <PartialLoading />;
   }
 
-  const { themeColor, themeOpacity } = user.preferences;
   const headerStyle: React.CSSProperties = {
     backgroundColor: `rgba(${themeColor}, ${themeOpacity / 2})`,
   };
@@ -77,7 +50,6 @@ function ModelsPage({ csrfToken, user }: Props) {
                 model={model}
                 name={profile?.name ?? model}
                 image={profile?.imageSource}
-                csrfToken={csrfToken}
               />
             );
           })}
@@ -87,5 +59,5 @@ function ModelsPage({ csrfToken, user }: Props) {
   );
 }
 
-(ModelsPage as any).layoutType = "chat";
-export default ModelsPage;
+(Page as any).layoutType = "chat";
+export default Page;

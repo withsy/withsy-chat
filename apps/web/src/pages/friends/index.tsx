@@ -9,19 +9,24 @@ import {
 } from "@/components/town/withsyFriends";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useSidebarStore } from "@/stores/useSidebarStore";
-import type { GetServerSideProps } from "next";
+import { useEffect, useState } from "react";
 
-type Props = {
-  recommendedFriends: RecommendedFriends;
-};
+export default function Page() {
+  const [recommendedFriends, SetRecommendedFriends] =
+    useState<RecommendedFriends | null>(null);
 
-export const getServerSideProps: GetServerSideProps<Props> = async () => {
-  const recommendedFriends = getRecommendedFriends();
-  return { props: { recommendedFriends } };
-};
-
-export default function Page({ recommendedFriends }: Props) {
   const { collapsed } = useSidebarStore();
+
+  useEffect(() => {
+    getRecommendedFriends().then((recommendedFriends) => {
+      SetRecommendedFriends(recommendedFriends);
+    });
+  }, []);
+
+  if (!recommendedFriends) {
+    return null;
+  }
+
   return (
     <div className="flex flex-col h-screen">
       <div className="w-full sticky top-0 z-50 max-w-6xl mx-auto p-2 flex justify-between items-center select-none">

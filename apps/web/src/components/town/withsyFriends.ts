@@ -58,7 +58,7 @@ export type RecommendedFriends = {
   extraFriend: WithsyFriend;
 };
 
-export function getRecommendedFriends(): RecommendedFriends {
+export async function getRecommendedFriends(): Promise<RecommendedFriends> {
   const hour = new Date().getHours();
 
   if (hour >= 5 && hour < 11) {
