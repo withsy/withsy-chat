@@ -91,18 +91,23 @@ export const authOptions: AuthOptions = {
       // Response to `/api/auth/session` request.
       return token;
     },
-    session: (params) => {
+    session: async (params) => {
       const { token, session } = params;
 
       const { userId } = token;
       if (!userId) {
-        throw new Error("Invalid session.");
+        throw new Error("User id not found.");
       }
 
-      return {
-        ...session,
-        userId,
-      };
+      const userPreferences = await trpc.user.getPreferences.query({
+        userId: String(userId),
+      });
+
+      session.user ??= {};
+      Reflect.set(session.user, "id", userId);
+      Reflect.set(session.user, "preferences", userPreferences);
+
+      return session;
     },
   },
 };

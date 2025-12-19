@@ -41,6 +41,13 @@ export const UserPreferences = z.object({
 }) satisfies z.ZodObject<Record<string, z.ZodType<UserPreferenceValue>>>;
 export type UserPreferences = z.infer<typeof UserPreferences>;
 
+export const UserGetPreferences = z.object({
+  get userId() {
+    return UserId;
+  },
+});
+export type UserGetPreferences = z.infer<typeof UserGetPreferences>;
+
 export const UserPreferencesRaw = z.record(z.string(), UserPreferenceValue);
 export type UserPreferencesRaw = z.infer<typeof UserPreferencesRaw>;
 

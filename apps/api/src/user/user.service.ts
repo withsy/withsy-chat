@@ -5,6 +5,7 @@ import { IdempotencyKeyRepo } from "src/idempotency-key/idempotency-key-repo";
 import { RefreshTokenService } from "src/refresh-token/refresh-token.service";
 import { UserLinkAccountRepo } from "src/user-link-account/user-link-account-repo";
 import {
+  UserGetPreferences,
   UserId,
   UserLogin,
   UserLoginOutput,
@@ -74,7 +75,9 @@ export class UserService {
     });
   }
 
-  async getPreferences(userId: UserId): Promise<UserPreferencesRaw> {
+  async getPreferences(input: UserGetPreferences): Promise<UserPreferencesRaw> {
+    const { userId } = input;
+
     const userRepo = new UserRepo(this.dbService.db);
     return await userRepo.getPreferences(userId);
   }

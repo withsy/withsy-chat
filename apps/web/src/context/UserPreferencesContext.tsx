@@ -39,7 +39,7 @@ interface UpdateUserPreferences {
 }
 
 interface SetUserPreferences {
-  (raw: inferOutput<TrpcOptions["user"]["updatePreferences"]>): void;
+  (raw: inferOutput<TrpcOptions["user"]["getPreferences"]>): void;
 }
 
 interface UserPreferencesStore {
@@ -148,20 +148,15 @@ const UserPreferencesContext = createContext<UserPreferencesContext | null>(
 
 export function UserPreferencesProvider({ children }: { children: ReactNode }) {
   const trpc = useTRPC();
-  const session = useSession();
-  const isAuthed = session.status === "authenticated";
-
-  const { data: userPreferencesRaw } = useQuery(
-    trpc.user.getPreferences.queryOptions(undefined, {
-      enabled: isAuthed,
-    })
-  );
+  const { data: session } = useSession();
 
   useEffect(() => {
-    if (userPreferencesRaw) {
-      USE_STORE.getState().setUserPreferences(userPreferencesRaw);
+    if (session) {
+      const userPreferences =
+        Reflect.get(session.user ?? {}, "preferences") ?? {};
+      USE_STORE.getState().setUserPreferences(userPreferences);
     }
-  }, [userPreferencesRaw]);
+  }, [session]);
 
   const { mutate } = useMutation(
     trpc.user.updatePreferences.mutationOptions({
@@ -222,11 +217,11 @@ export function UserPreferencesProvider({ children }: { children: ReactNode }) {
 
   const updateUserPreferences = useCallback(
     (input: PartialUserPreferences) => {
-      if (isAuthed) {
+      if (session) {
         mutate(input);
       }
     },
-    [isAuthed, mutate]
+    [session, mutate]
   );
 
   const useUserPreferenceIsFetching = useCallback(
