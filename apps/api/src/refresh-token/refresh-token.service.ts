@@ -1,5 +1,5 @@
 import { Injectable, Logger } from "@nestjs/common";
-import { DbHost } from "src/db/db.host";
+import { DbService } from "src/db/db.service";
 import { EncryptionService } from "src/encryption/encryption.service";
 import { RefreshTokenRepo } from "./refresh-token-repo";
 
@@ -8,7 +8,7 @@ export class RefreshTokenService {
   private readonly logger = new Logger(RefreshTokenService.name);
 
   constructor(
-    private readonly dbHost: DbHost,
+    private readonly dbService: DbService,
     private readonly encryptionService: EncryptionService
   ) {}
 
@@ -18,7 +18,7 @@ export class RefreshTokenService {
     refreshToken: string;
   }) {
     try {
-      const refreshTokenRepo = new RefreshTokenRepo(this.dbHost.db);
+      const refreshTokenRepo = new RefreshTokenRepo(this.dbService.db);
       await refreshTokenRepo.upsert(input);
     } catch (e) {
       const { provider, providerAccountId, refreshToken } = input;

@@ -1,4 +1,4 @@
-import { Tx } from "src/db/db.host";
+import { Tx } from "src/db/db.service";
 import { retry } from "src/retry";
 import { isExpectedUniqueConstraintViolation } from "../error";
 import type { ApiKeyModel } from "../generated/prisma/models";

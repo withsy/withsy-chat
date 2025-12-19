@@ -1,7 +1,7 @@
 import { Logger } from "@nestjs/common";
 import { filterUserPreferences } from "@repo/common";
 import { TRPCError } from "@trpc/server";
-import { Tx } from "src/db/db.host";
+import { Tx } from "src/db/db.service";
 import { v4 } from "uuid";
 import type { UserModel } from "../generated/prisma/models";
 import {

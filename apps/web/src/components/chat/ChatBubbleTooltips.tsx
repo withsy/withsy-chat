@@ -9,8 +9,6 @@ import { useChatSession } from "@/context/ChatSessionContext";
 import { usePreferences } from "@/context/PreferencesContext";
 import { useTRPC } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
-import type { ChatType } from "@/types/chat";
-import { MessageReplyRegenerateError } from "@/types/message-reply";
 import type { Model } from "@repo/common";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Bookmark, Copy, GitBranch, RefreshCw } from "lucide-react";
@@ -47,8 +45,8 @@ export const ChatBubbleTooltips: React.FC<ChatBubbleTooltipsProps> = ({
   const { usePreference } = usePreferences();
   const themeColor = usePreference("themeColor");
 
-  const chatBranchStart = useMutation(
-    trpc.chatBranch.start.mutationOptions({
+  const chatStartBranch = useMutation(
+    trpc.chat.startBranch.mutationOptions({
       onSuccess(data) {
         router.push(`/chat/${data.id}`);
         queryClient.invalidateQueries(trpc.chat.list.queryFilter());
@@ -56,24 +54,16 @@ export const ChatBubbleTooltips: React.FC<ChatBubbleTooltipsProps> = ({
     })
   );
 
-  const messageReplyRegenerate = useMutation(
-    trpc.messageReply.regenerate.mutationOptions({
+  const messageRegenerateReply = useMutation(
+    trpc.message.regenerateReply.mutationOptions({
       onSuccess(data) {
         onRegenerateSuccess(data);
-      },
-      onError(error) {
-        const res = MessageReplyRegenerateError.safeParse(error.data);
-        toast.error(
-          `Message reply regenerating failed. error data: ${JSON.stringify(
-            res.data
-          )}`
-        );
       },
     })
   );
 
   const handleBranch = () => {
-    chatBranchStart.mutate({
+    chatStartBranch.mutate({
       idempotencyKey: v4(),
       messageId,
     });
@@ -124,7 +114,7 @@ export const ChatBubbleTooltips: React.FC<ChatBubbleTooltipsProps> = ({
                 messageModel={messageModel}
                 description={"Switch model & regenerate"}
                 onSelectModel={(selectedModel) => {
-                  messageReplyRegenerate.mutate({
+                  messageRegenerateReply.mutate({
                     idempotencyKey: v4(),
                     messageId,
                     model: selectedModel,

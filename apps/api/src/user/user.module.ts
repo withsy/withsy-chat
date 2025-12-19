@@ -17,6 +17,6 @@ import { UserTrpcRouter } from "./user.trpc-router";
     RefreshTokenModule,
   ],
   providers: [UserTrpcRouter, UserService, UserTrpcProcedure],
-  exports: [UserTrpcRouter],
+  exports: [UserTrpcRouter, UserTrpcProcedure],
 })
 export class UserModule {}

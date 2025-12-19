@@ -1,5 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
+import { ChatTrpcRouter } from "src/chat/chat.trpc-router";
+import { MessageTrpcRouter } from "src/message/message.trpc-router";
 import { TrpcService } from "src/trpc/trpc.service";
 import { UserTrpcRouter } from "src/user/user.trpc-router";
 
@@ -7,20 +9,16 @@ import { UserTrpcRouter } from "src/user/user.trpc-router";
 export class AppTrpcRouter {
   readonly router;
 
-  constructor(trpcService: TrpcService, userTrpcRouter: UserTrpcRouter) {
+  constructor(
+    trpcService: TrpcService,
+    userTrpcRouter: UserTrpcRouter,
+    chatTrpcRouter: ChatTrpcRouter,
+    messageTrpcRouter: MessageTrpcRouter
+  ) {
     this.router = trpcService.trpc.router({
       user: userTrpcRouter.router,
-      // userUsageLimit: userUsageLimitRouter,
-      // userPrompt: userPromptRouter,
-      // userDefaultPrompt: userDefaultPromptRouter,
-      // userAiProfile: userAiProfileRouter,
-      // chat: chatRouter,
-      // chatBranch: chatBranchRouter,
-      // message: messageRouter,
-      // messageReply: messageReplyRouter,
-      // gratitudeJournal: gratitudeJournalRouter,
-      // tick: tickRouter,
-      // apiKey: apiKeyRouter,
+      chat: chatTrpcRouter.router,
+      message: messageTrpcRouter.router,
     });
   }
 

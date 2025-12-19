@@ -1,13 +1,13 @@
 import { Injectable, OnModuleInit } from "@nestjs/common";
 import { ConfigService } from "src/config/config.service";
-import { DbHost } from "src/db/db.host";
+import { DbService } from "src/db/db.service";
 import { ApiKeyRepo } from "./api-key-repo";
 import { generateApiKey, getDevApiKey } from "./api-key-utils";
 
 @Injectable()
 export class ApiKeyService implements OnModuleInit {
   constructor(
-    private readonly dbHost: DbHost,
+    private readonly dbService: DbService,
     private readonly configService: ConfigService
   ) {}
 
@@ -18,7 +18,7 @@ export class ApiKeyService implements OnModuleInit {
   }
 
   private async ensureDevApiKey() {
-    await this.dbHost.db.$transaction(async (tx) => {
+    await this.dbService.db.$transaction(async (tx) => {
       const apiKeyRepo = new ApiKeyRepo(tx);
       const apiKey = getDevApiKey();
 
@@ -29,14 +29,14 @@ export class ApiKeyService implements OnModuleInit {
   }
 
   async create(): Promise<void> {
-    const apiKeyRepo = new ApiKeyRepo(this.dbHost.db);
+    const apiKeyRepo = new ApiKeyRepo(this.dbService.db);
     await apiKeyRepo.create({
       apiKey: generateApiKey(),
     });
   }
 
   async validate(input: { apiKey: string }): Promise<boolean> {
-    const apiKeyRepo = new ApiKeyRepo(this.dbHost.db);
+    const apiKeyRepo = new ApiKeyRepo(this.dbService.db);
     return await apiKeyRepo.validate(input);
   }
 }

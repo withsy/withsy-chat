@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { DbHost } from "src/db/db.host";
+import { DbService } from "src/db/db.service";
 import { EncryptionService } from "src/encryption/encryption.service";
 import { IdempotencyKeyRepo } from "src/idempotency-key/idempotency-key-repo";
 import { RefreshTokenService } from "src/refresh-token/refresh-token.service";
@@ -17,7 +17,7 @@ import { UserRepo } from "./user.repo";
 export class UserService {
   constructor(
     private readonly encryptionService: EncryptionService,
-    private readonly dbHost: DbHost,
+    private readonly dbService: DbService,
     private readonly refreshTokenService: RefreshTokenService
   ) {}
 
@@ -39,7 +39,7 @@ export class UserService {
     const emailEncrypted = this.encryptionService.encrypt(email);
     const imageUrlEncrypted = this.encryptionService.encrypt(imageUrl);
 
-    return await this.dbHost.db.$transaction(async (tx) => {
+    return await this.dbService.db.$transaction(async (tx) => {
       const idempotencyKeyRepo = new IdempotencyKeyRepo(tx);
       await idempotencyKeyRepo.create({
         idempotencyKey,
@@ -75,7 +75,7 @@ export class UserService {
   }
 
   async getPreferences(userId: UserId): Promise<UserPreferencesRaw> {
-    const userRepo = new UserRepo(this.dbHost.db);
+    const userRepo = new UserRepo(this.dbService.db);
     return await userRepo.getPreferences(userId);
   }
 
@@ -83,76 +83,7 @@ export class UserService {
     userId: UserId,
     input: UserUpdatePreferences
   ): Promise<UserPreferencesRaw> {
-    const userRepo = new UserRepo(this.dbHost.db);
+    const userRepo = new UserRepo(this.dbService.db);
     return await userRepo.updatePreferences(userId, input);
   }
-
-  // async get(userId: UserId): Promise<UserData> {
-  //   const userRepo = new UserRepo(this.db);
-  //   const entity = await userRepo.get({ userId });
-
-  //   const entityToData = UserUtils.createEntityToData(this.encryptionService);
-  //   const data = entityToData(entity);
-
-  //   return data;
-  // }
-
-  // async ensure(userId: UserId, input: UserEnsure): Promise<UserData> {
-  //   const entity = await this.db.$transaction(async (tx) => {
-  //     const userRepo = new UserRepo(tx);
-  //     const entity = await userRepo.get({ userId });
-
-  //     let timezone: string | undefined = undefined;
-  //     if (entity.timezone.length === 0) {
-  //       timezone =
-  //         input.timezone && isValidTimezone(input.timezone)
-  //           ? input.timezone
-  //           : FALLBACK_TIMEZONE;
-  //     }
-
-  //     let aiLanguage: string | undefined = undefined;
-  //     if (entity.aiLanguage.length === 0) {
-  //       aiLanguage =
-  //         input.aiLanguage && isValidAiLanguage(input.aiLanguage)
-  //           ? input.aiLanguage
-  //           : FALLBACK_AI_LANGUAGE;
-  //     }
-
-  //     return await userRepo.update(userId, {
-  //       aiLanguage,
-  //       timezone,
-  //     });
-  //   });
-
-  //   const userDecryptor = new UserDecryptor(this.encryptionService);
-  //   const data = userDecryptor.decrypt(entity);
-
-  //   return data;
-  // }
-
-  // async update(userId: UserId, input: UserUpdate): Promise<UserData> {
-  //   const { aiLanguage, timezone } = input;
-  //   if (aiLanguage && !isValidAiLanguage(aiLanguage))
-  //     throw new TRPCError({
-  //       code: "BAD_REQUEST",
-  //       message: "Invalid aiLanguage.",
-  //     });
-
-  //   if (timezone && !isValidTimezone(timezone))
-  //     throw new TRPCError({
-  //       code: "BAD_REQUEST",
-  //       message: "Invalid timezone.",
-  //     });
-
-  //   const userRepo = new UserRepo(this.db);
-  //   const entity = await userRepo.update(userId, {
-  //     aiLanguage,
-  //     timezone,
-  //   });
-
-  //   const userDecryptor = new UserDecryptor(this.encryptionService);
-  //   const data = userDecryptor.decrypt(entity);
-
-  //   return data;
-  // }
 }

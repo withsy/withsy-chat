@@ -1,20 +1,10 @@
 import { ChatSessionProvider } from "@/context/ChatSessionContext";
-import { useUser } from "@/context/UserContext";
 import { useTRPC } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
 import { useChatStore } from "@/stores/useChatStore";
 import { useDrawerStore } from "@/stores/useDrawerStore";
 import { useSelectedModelStore } from "@/stores/useSelectedModelStore";
 import { useSidebarStore } from "@/stores/useSidebarStore";
-import { ChatStartError } from "@/types/chat";
-import {
-  isMessageComplete,
-  MessageId,
-  MessageSendError,
-  type MessageData,
-} from "@/types/message";
-import { MessageChunkEvent } from "@/types/message-chunk";
-import type { UserUsageLimitData } from "@/types/user-usage-limit";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { useEffect, useMemo, useState } from "react";
@@ -39,7 +29,6 @@ export function ChatSession({ initialMessages, children }: Props) {
 
   const { collapsed, isMobile } = useSidebarStore();
   const { selectedModel } = useSelectedModelStore();
-  const { user } = useUser();
 
   const [messages, setMessages] = useState<MessageData[]>([]);
   const [streamMessageId, setStreamMessageId] = useState<string | null>(null);
@@ -60,10 +49,6 @@ export function ChatSession({ initialMessages, children }: Props) {
 
   const chatStart = useMutation(
     trpc.chat.start.mutationOptions({
-      onError(error) {
-        const _res = ChatStartError.safeParse(error.data);
-        toast.error(`Chat starting failed.`);
-      },
       onSuccess(data) {
         queryClient.invalidateQueries(trpc.chat.list.queryFilter());
         router.push(

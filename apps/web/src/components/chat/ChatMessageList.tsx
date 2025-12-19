@@ -1,6 +1,5 @@
-import { useUser } from "@/context/UserContext";
+import { usePreferences } from "@/context/PreferencesContext";
 import { useChatStore } from "@/stores/useChatStore";
-import { MessageId, type MessageData } from "@/types/message";
 import { ChevronsDown } from "lucide-react";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
@@ -15,7 +14,6 @@ type Props = {
 export function ChatMessageList({ messages, onToggleSaved }: Props) {
   const { chat } = useChatStore();
   const router = useRouter();
-  const { user } = useUser();
 
   const bottomRef = useRef<HTMLDivElement | null>(null);
   const listRef = useRef<HTMLDivElement | null>(null);
@@ -24,6 +22,9 @@ export function ChatMessageList({ messages, onToggleSaved }: Props) {
 
   const hasMounted = useRef(false);
   const prevMessageLength = useRef(messages.length);
+
+  const { usePreference } = usePreferences();
+  const themeColor = usePreference("themeColor");
 
   const messageId = router.query.messageId as string | undefined;
 
@@ -99,8 +100,6 @@ export function ChatMessageList({ messages, onToggleSaved }: Props) {
     bottomRef.current?.scrollIntoView({ behavior: "auto" });
   };
 
-  if (!user) return null;
-
   return (
     <div className="relative h-full">
       <div
@@ -130,7 +129,7 @@ export function ChatMessageList({ messages, onToggleSaved }: Props) {
         <button
           onClick={scrollToBottom}
           className="absolute left-1/2 bottom-5 transform -translate-x-1/2 text-white p-2 rounded-full shadow-md transition"
-          style={{ backgroundColor: `rgb(${user.preferences.themeColor})` }}
+          style={{ backgroundColor: `rgb(${themeColor})` }}
         >
           <ChevronsDown size={16} />
         </button>

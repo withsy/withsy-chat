@@ -1,4 +1,4 @@
-import { Tx } from "src/db/db.host";
+import { Tx } from "src/db/db.service";
 
 export class RefreshTokenRepo {
   constructor(private readonly tx: Tx) {}
