@@ -1,7 +1,7 @@
 import ChatLayout from "@/components/layout/ChatLayout";
 import HomeLayout from "@/components/layout/HomeLayout";
 import LoadAiProfiles from "@/components/LoadAiProfiles";
-import { PreferencesProvider } from "@/context/PreferencesContext";
+import { UserPreferencesProvider } from "@/context/UserPreferencesContext";
 // import TermlyCMP from "@/components/TermlyCMP";
 import { useSidebarInitializer } from "@/hooks/useSidebarInitializer";
 import { createTrpcClient, getQueryClient, TRPCProvider } from "@/lib/trpc";
@@ -36,7 +36,7 @@ export default function App({
     <QueryClientProvider client={queryClient}>
       <TRPCProvider trpcClient={trpcClient} queryClient={queryClient}>
         <SessionProvider session={session}>
-          <PreferencesProvider>
+          <UserPreferencesProvider>
             <Head>
               <link rel="icon" href="/favicon.ico" />
               <title>{title}</title>
@@ -63,7 +63,7 @@ export default function App({
           /> */}
             <Sonner position="bottom-right" />
             <ReactQueryDevtools />
-          </PreferencesProvider>
+          </UserPreferencesProvider>
         </SessionProvider>
       </TRPCProvider>
     </QueryClientProvider>

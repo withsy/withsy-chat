@@ -7,7 +7,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Label } from "@/components/ui/label";
-import { usePreferences } from "@/context/PreferencesContext";
+import { useUserPreferences } from "@/context/UserPreferencesContext";
 import { cn } from "@/lib/utils";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 import {
@@ -99,11 +99,11 @@ export default function UserDropdownMenu() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
-  const { usePreference, updatePreferences } = usePreferences();
-  const enterToSend = usePreference("enterToSend");
-  const largeText = usePreference("largeText");
-  const wideView = usePreference("wideView");
-  const themeColor = usePreference("themeColor");
+  const { useUserPreference, updateUserPreferences } = useUserPreferences();
+  const enterToSend = useUserPreference("enterToSend");
+  const largeText = useUserPreference("largeText");
+  const wideView = useUserPreference("wideView");
+  const themeColor = useUserPreference("themeColor");
 
   const { data: session } = useSession({
     required: true,
@@ -132,19 +132,19 @@ export default function UserDropdownMenu() {
       icon: CornerDownLeft,
       label: "Enter to send",
       checked: enterToSend,
-      onClick: () => updatePreferences({ enterToSend: !enterToSend }),
+      onClick: () => updateUserPreferences({ enterToSend: !enterToSend }),
     },
     {
       icon: Text,
       label: "Large text",
       checked: largeText,
-      onClick: () => updatePreferences({ largeText: !largeText }),
+      onClick: () => updateUserPreferences({ largeText: !largeText }),
     },
     {
       icon: Layout,
       label: "Wide view",
       checked: wideView,
-      onClick: () => updatePreferences({ wideView: !wideView }),
+      onClick: () => updateUserPreferences({ wideView: !wideView }),
     },
   ];
 

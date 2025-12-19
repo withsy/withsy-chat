@@ -2,7 +2,7 @@ import { CollapseButton } from "@/components/CollapseButton";
 import LoadAiProfiles from "@/components/LoadAiProfiles";
 import { PartialLoading } from "@/components/Loading";
 import ModelCard from "@/components/models/ModelCard";
-import { usePreferences } from "@/context/PreferencesContext";
+import { useUserPreferences } from "@/context/UserPreferencesContext";
 import { useAiProfileStore } from "@/stores/useAiProfileStore";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 import { Model } from "@/types/model";
@@ -12,9 +12,9 @@ const MODELS = Model.options;
 function Page() {
   const { collapsed } = useSidebarStore();
   const { profiles, isLoading } = useAiProfileStore();
-  const { usePreference } = usePreferences();
-  const themeColor = usePreference("themeColor");
-  const themeOpacity = usePreference("themeOpacity");
+  const { useUserPreference } = useUserPreferences();
+  const themeColor = useUserPreference("themeColor");
+  const themeOpacity = useUserPreference("themeOpacity");
 
   if (isLoading) {
     return <PartialLoading />;

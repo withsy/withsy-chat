@@ -14,6 +14,8 @@ function getBaseUrl() {
 export const { TRPCProvider, useTRPC, useTRPCClient } =
   createTRPCContext<AppRouter>();
 
+export type TrpcOptions = ReturnType<typeof useTRPC>;
+
 function makeQueryClient() {
   return new QueryClient({
     defaultOptions: {

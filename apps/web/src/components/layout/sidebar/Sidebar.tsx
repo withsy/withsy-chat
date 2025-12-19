@@ -1,4 +1,4 @@
-import { usePreferences } from "@/context/PreferencesContext";
+import { useUserPreferences } from "@/context/UserPreferencesContext";
 import { cn } from "@/lib/utils";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 import SidebarChatList from "./SidebarChatList";
@@ -6,9 +6,9 @@ import SidebarTooltipList from "./SidebarTooltipList";
 
 export default function Sidebar() {
   const { isMobile, collapsed } = useSidebarStore();
-  const { usePreference } = usePreferences();
-  const themeColor = usePreference("themeColor");
-  const themeOpacity = usePreference("themeOpacity");
+  const { useUserPreference } = useUserPreferences();
+  const themeColor = useUserPreference("themeColor");
+  const themeOpacity = useUserPreference("themeOpacity");
 
   const bgStyle = () => {
     if (themeColor == "30,30,30" && themeOpacity == 0) {

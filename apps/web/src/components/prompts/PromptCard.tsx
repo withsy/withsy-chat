@@ -4,7 +4,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { usePreferences } from "@/context/PreferencesContext";
+import { useUserPreferences } from "@/context/UserPreferencesContext";
 import { useTRPC } from "@/lib/trpc";
 import { useChatStore } from "@/stores/useChatStore";
 import { useMutation } from "@tanstack/react-query";
@@ -32,8 +32,8 @@ export function PromptCard({
   isDefault,
 }: PromptCardProps) {
   const trpc = useTRPC();
-  const { usePreference } = usePreferences();
-  const themeColor = usePreference("themeColor");
+  const { useUserPreference } = useUserPreferences();
+  const themeColor = useUserPreference("themeColor");
 
   const { chat, updatePromptId } = useChatStore();
   const updateChat = useMutation(

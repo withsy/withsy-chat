@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
-import { usePreferences } from "@/context/PreferencesContext";
+import { useUserPreferences } from "@/context/UserPreferencesContext";
 import { useEffect, useState } from "react";
 
 const recommendedThemes = [
@@ -26,9 +26,9 @@ export function ThemeSettingsModal({
   open: boolean;
   setThemeModalOpen: (open: boolean) => void;
 }) {
-  const { usePreference, updatePreferences } = usePreferences();
-  const themeColor = usePreference("themeColor");
-  const themeOpacity = usePreference("themeOpacity");
+  const { useUserPreference, updateUserPreferences } = useUserPreferences();
+  const themeColor = useUserPreference("themeColor");
+  const themeOpacity = useUserPreference("themeOpacity");
 
   const [customColor, setCustomColor] = useState(themeColor);
   const [customOpacity, setCustomOpacity] = useState(themeOpacity);
@@ -41,7 +41,7 @@ export function ThemeSettingsModal({
   }, [open, themeColor, themeOpacity]);
 
   const handleApply = () => {
-    updatePreferences({
+    updateUserPreferences({
       themeColor: customColor,
       themeOpacity: customOpacity,
     });

@@ -1,4 +1,4 @@
-import { usePreferences } from "@/context/PreferencesContext";
+import { useUserPreferences } from "@/context/UserPreferencesContext";
 import { cn } from "@/lib/utils";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 import type { ReactNode } from "react";
@@ -11,8 +11,8 @@ type MainProps = {
 
 export default function Main({ children }: MainProps) {
   const { isMobile } = useSidebarStore();
-  const { usePreference } = usePreferences();
-  const largeText = usePreference("largeText");
+  const { useUserPreference } = useUserPreferences();
+  const largeText = useUserPreference("largeText");
 
   const mainStyle: React.CSSProperties = {
     overflow: "hidden",

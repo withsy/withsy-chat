@@ -1,4 +1,4 @@
-import { usePreferences } from "@/context/PreferencesContext";
+import { useUserPreferences } from "@/context/UserPreferencesContext";
 import { capitalizeFirstLetter } from "@/lib/string-utils";
 import { CircleX } from "lucide-react";
 
@@ -11,9 +11,9 @@ export default function ChatDrawerHeader({
   openDrawer,
   setOpenDrawer,
 }: ChatHeaderProps) {
-  const { usePreference } = usePreferences();
-  const themeColor = usePreference("themeColor");
-  const themeOpacity = usePreference("themeOpacity");
+  const { useUserPreference } = useUserPreferences();
+  const themeColor = useUserPreference("themeColor");
+  const themeOpacity = useUserPreference("themeOpacity");
 
   const title = capitalizeFirstLetter(openDrawer);
 

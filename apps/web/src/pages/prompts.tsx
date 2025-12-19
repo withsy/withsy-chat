@@ -3,7 +3,7 @@ import { PartialLoading } from "@/components/Loading";
 import { EditPromptModal } from "@/components/prompts/EditPromptModal";
 import { PromptCard } from "@/components/prompts/PromptCard";
 import { Button } from "@/components/ui/button";
-import { usePreferences } from "@/context/PreferencesContext";
+import { useUserPreferences } from "@/context/UserPreferencesContext";
 import { useTRPC } from "@/lib/trpc";
 import { useChatStore } from "@/stores/useChatStore";
 import { useSidebarStore } from "@/stores/useSidebarStore";
@@ -91,9 +91,9 @@ function Page() {
     isDefault?: boolean;
   } | null>(null);
 
-  const { usePreference } = usePreferences();
-  const themeColor = usePreference("themeColor");
-  const themeOpacity = usePreference("themeOpacity");
+  const { useUserPreference } = useUserPreferences();
+  const themeColor = useUserPreference("themeColor");
+  const themeOpacity = useUserPreference("themeOpacity");
 
   if (isLoadingPrompts || isLoadingDefaultPrompt) {
     return <PartialLoading />;

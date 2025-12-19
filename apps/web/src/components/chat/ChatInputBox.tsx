@@ -1,4 +1,4 @@
-import { usePreferences } from "@/context/PreferencesContext";
+import { useUserPreferences } from "@/context/UserPreferencesContext";
 import { cn } from "@/lib/utils";
 import { Send } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
@@ -17,9 +17,9 @@ export function ChatInputBox({
   usageLimits,
   shouldFocus = false,
 }: Props) {
-  const { usePreference } = usePreferences();
-  const enterToSend = usePreference("enterToSend");
-  const themeColor = usePreference("themeColor");
+  const { useUserPreference } = useUserPreferences();
+  const enterToSend = useUserPreference("enterToSend");
+  const themeColor = useUserPreference("themeColor");
 
   const [message, setMessage] = useState("");
   const [isComposing, setIsComposing] = useState(false);

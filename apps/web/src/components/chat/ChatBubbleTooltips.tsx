@@ -6,7 +6,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useChatSession } from "@/context/ChatSessionContext";
-import { usePreferences } from "@/context/PreferencesContext";
+import { useUserPreferences } from "@/context/UserPreferencesContext";
 import { useTRPC } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
 import type { Model } from "@repo/common";
@@ -42,8 +42,8 @@ export const ChatBubbleTooltips: React.FC<ChatBubbleTooltipsProps> = ({
   const queryClient = useQueryClient();
   const { onRegenerateSuccess } = useChatSession();
   const router = useRouter();
-  const { usePreference } = usePreferences();
-  const themeColor = usePreference("themeColor");
+  const { useUserPreference } = useUserPreferences();
+  const themeColor = useUserPreference("themeColor");
 
   const chatStartBranch = useMutation(
     trpc.chat.startBranch.mutationOptions({

@@ -1,5 +1,5 @@
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { usePreferences } from "@/context/PreferencesContext";
+import { useUserPreferences } from "@/context/UserPreferencesContext";
 import { Badge, TriangleAlert } from "lucide-react";
 
 interface StatusIndicatorProps {
@@ -7,8 +7,8 @@ interface StatusIndicatorProps {
 }
 
 export const StatusIndicator = ({ status }: StatusIndicatorProps) => {
-  const { usePreference } = usePreferences();
-  const themeColor = usePreference("themeColor");
+  const { useUserPreference } = useUserPreferences();
+  const themeColor = useUserPreference("themeColor");
 
   if (status === "succeeded") return null;
   if (status === "failed") {

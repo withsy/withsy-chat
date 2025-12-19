@@ -5,7 +5,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { usePreferences } from "@/context/PreferencesContext";
+import { useUserPreferences } from "@/context/UserPreferencesContext";
 import { useDrawerStore } from "@/stores/useDrawerStore";
 import {
   Bookmark,
@@ -31,9 +31,9 @@ export default function MobileChatHeader({
   const router = useRouter();
   const { openDrawer, setOpenDrawer } = useDrawerStore();
   const [open, setOpen] = useState(false);
-  const { usePreference } = usePreferences();
-  const themeColor = usePreference("themeColor");
-  const themeOpacity = usePreference("themeOpacity");
+  const { useUserPreference } = useUserPreferences();
+  const themeColor = useUserPreference("themeColor");
+  const themeOpacity = useUserPreference("themeOpacity");
 
   const headerStyle: React.CSSProperties = {
     backgroundColor: `rgba(${themeColor}, ${themeOpacity / 2})`,
