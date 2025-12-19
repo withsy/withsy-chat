@@ -3,14 +3,10 @@ import { TrpcService } from "src/trpc/trpc.service";
 import { UserTrpcProcedure } from "src/user/user.trpc-procedure";
 
 @Injectable()
-export class MessageTrpcRouter {
+export class UserAiProfileTrpcRouter {
   readonly router;
 
   constructor(trpcService: TrpcService, userTrpcProcedure: UserTrpcProcedure) {
-    this.router = trpcService.trpc.router({
-      regenerateReply: userTrpcProcedure.procedure.mutation(() => {}),
-      update: userTrpcProcedure.procedure.mutation(() => {}),
-      list: userTrpcProcedure.procedure.query(() => {}),
-    });
+    this.router = trpcService.trpc.router({});
   }
 }

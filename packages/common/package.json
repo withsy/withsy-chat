@@ -16,8 +16,5 @@
   },
   "dependencies": {
     "zod": "4.2.1"
-  },
-  "devDependencies": {
-    "type-fest": "5.3.1"
   }
 }

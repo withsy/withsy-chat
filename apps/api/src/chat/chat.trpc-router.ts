@@ -8,9 +8,11 @@ export class ChatTrpcRouter {
 
   constructor(trpcService: TrpcService, userTrpcProcedure: UserTrpcProcedure) {
     this.router = trpcService.trpc.router({
+      list: userTrpcProcedure.procedure.query(() => {}),
       start: userTrpcProcedure.procedure.mutation(() => {}),
-      startBranch: userTrpcProcedure.procedure.mutation(() => {}),
       update: userTrpcProcedure.procedure.mutation(() => {}),
+      listBranch: userTrpcProcedure.procedure.query(() => {}),
+      startBranch: userTrpcProcedure.procedure.mutation(() => {}),
     });
   }
 }

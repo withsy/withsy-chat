@@ -1,4 +1,3 @@
-import { Simplify } from "type-fest";
 import z from "zod";
 
 //#region Node.js
@@ -26,16 +25,6 @@ export const UserPreferences = z.object({
   avatarStyle: z.string().default("thumbs"),
 }) satisfies z.ZodObject<Record<string, z.ZodType<UserPreferenceValue>>>;
 export type UserPreferences = z.infer<typeof UserPreferences>;
-
-export type PartialUserPreferences = Simplify<Partial<UserPreferences>>;
-
-export function filterUserPreferences(
-  partial: PartialUserPreferences
-): PartialUserPreferences {
-  return Object.fromEntries(
-    Object.entries(partial).filter(([_, v]) => v !== undefined)
-  );
-}
 
 //#endregion User
 

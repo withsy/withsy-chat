@@ -9,7 +9,10 @@ import { MessageModule } from "src/message/message.module";
 import { RefreshTokenModule } from "src/refresh-token/refresh-token.module";
 import { ShutdownModule } from "src/shutdown/shutdown.module";
 import { TrpcModule } from "src/trpc/trpc.module";
+import { UserAiProfileModule } from "src/user-ai-profile/user-ai-profile.module";
+import { UserDefaultPromptModule } from "src/user-default-prompt/user-default-prompt.module";
 import { UserLinkAccountModule } from "src/user-link-account/user-link-account.module";
+import { UserPromptModule } from "src/user-prompt/user-prompt.module";
 import { UserModule } from "src/user/user.module";
 import { AppTrpcRouter } from "./app.trpc-router";
 
@@ -27,6 +30,9 @@ import { AppTrpcRouter } from "./app.trpc-router";
     RefreshTokenModule,
     ChatModule,
     MessageModule,
+    UserPromptModule,
+    UserDefaultPromptModule,
+    UserAiProfileModule,
   ],
   providers: [AppTrpcRouter],
 })
