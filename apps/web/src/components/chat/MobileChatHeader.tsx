@@ -5,9 +5,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useUser } from "@/context/UserContext";
+import { usePreferences } from "@/context/PreferencesContext";
 import { useDrawerStore } from "@/stores/useDrawerStore";
-import type { ChatType } from "@/types/chat";
 import {
   Bookmark,
   ChevronDown,
@@ -18,9 +17,9 @@ import {
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { CollapseButton } from "../CollapseButton";
+import HoverSwitchIcon from "../HoverSwitchIcon";
 import { IconWithLabel } from "../IconWithLabel";
 import { getChatTypeIcon } from "./ChatTypeIcon";
-import HoverSwitchIcon from "../HoverSwitchIcon";
 
 export default function MobileChatHeader({
   chatTitle,
@@ -31,12 +30,10 @@ export default function MobileChatHeader({
 }) {
   const router = useRouter();
   const { openDrawer, setOpenDrawer } = useDrawerStore();
-  const { user } = useUser();
   const [open, setOpen] = useState(false);
-
-  if (!user) return null;
-
-  const { themeColor, themeOpacity } = user.preferences;
+  const { usePreference } = usePreferences();
+  const themeColor = usePreference("themeColor");
+  const themeOpacity = usePreference("themeOpacity");
 
   const headerStyle: React.CSSProperties = {
     backgroundColor: `rgba(${themeColor}, ${themeOpacity / 2})`,

@@ -4,10 +4,9 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useUser } from "@/context/UserContext";
+import { usePreferences } from "@/context/PreferencesContext";
 import { useDrawerStore } from "@/stores/useDrawerStore";
 import { useSidebarStore } from "@/stores/useSidebarStore";
-import type { ChatType } from "@/types/chat";
 import { Bookmark, FolderGit2, PenLine, TableProperties } from "lucide-react";
 import { useRouter } from "next/router";
 import { CollapseButton } from "../CollapseButton";
@@ -25,15 +24,13 @@ export default function ChatHeader({
   const router = useRouter();
   const { collapsed } = useSidebarStore();
   const { openDrawer, setOpenDrawer } = useDrawerStore();
-  const { user } = useUser();
+  const { usePreference } = usePreferences();
+  const themeColor = usePreference("themeColor");
+  const themeOpacity = usePreference("themeOpacity");
 
   const handleClick = (id: string) => {
     setOpenDrawer(openDrawer === id ? null : id);
   };
-
-  if (!user) return null;
-
-  const { themeColor, themeOpacity } = user.preferences;
 
   const buttons = chatTitle
     ? [

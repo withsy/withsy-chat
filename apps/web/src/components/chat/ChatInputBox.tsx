@@ -1,6 +1,5 @@
-import { useUser } from "@/context/UserContext";
+import { usePreferences } from "@/context/PreferencesContext";
 import { cn } from "@/lib/utils";
-import type { UserUsageLimitData } from "@/types/user-usage-limit";
 import { Send } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import TextareaAutosize from "react-textarea-autosize";
@@ -18,7 +17,10 @@ export function ChatInputBox({
   usageLimits,
   shouldFocus = false,
 }: Props) {
-  const { user } = useUser();
+  const { usePreference } = usePreferences();
+  const enterToSend = usePreference("enterToSend");
+  const themeColor = usePreference("themeColor");
+
   const [message, setMessage] = useState("");
   const [isComposing, setIsComposing] = useState(false);
 
@@ -91,16 +93,11 @@ export function ChatInputBox({
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (
-      user?.preferences.enterToSend &&
-      e.key === "Enter" &&
-      !e.shiftKey &&
-      !isComposing
-    ) {
+    if (enterToSend && e.key === "Enter" && !e.shiftKey && !isComposing) {
       e.preventDefault();
       handleSend();
     } else if (
-      !user?.preferences.enterToSend &&
+      !enterToSend &&
       e.key === "Enter" &&
       e.shiftKey &&
       !isComposing
@@ -109,8 +106,6 @@ export function ChatInputBox({
       handleSend();
     }
   };
-
-  if (!user) return null;
 
   return (
     <div className={inputBoxClass}>
@@ -139,7 +134,7 @@ export function ChatInputBox({
           aria-label="Send message"
           disabled={isSendDisabled}
           style={{
-            ["--theme-color" as any]: `rgb(${user.preferences.themeColor})`,
+            ["--theme-color" as any]: `rgb(${themeColor})`,
             cursor: isSendDisabled ? "not-allowed" : "pointer",
           }}
         >

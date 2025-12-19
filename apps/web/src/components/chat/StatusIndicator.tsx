@@ -1,5 +1,5 @@
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { useUser } from "@/context/UserContext";
+import { usePreferences } from "@/context/PreferencesContext";
 import { Badge, TriangleAlert } from "lucide-react";
 
 interface StatusIndicatorProps {
@@ -7,8 +7,8 @@ interface StatusIndicatorProps {
 }
 
 export const StatusIndicator = ({ status }: StatusIndicatorProps) => {
-  const { user } = useUser();
-  if (!user) return null;
+  const { usePreference } = usePreferences();
+  const themeColor = usePreference("themeColor");
 
   if (status === "succeeded") return null;
   if (status === "failed") {
@@ -31,7 +31,7 @@ export const StatusIndicator = ({ status }: StatusIndicatorProps) => {
       <span className="flex items-center gap-1 text-muted-foreground text-sm mt-5 justify-end">
         <Badge
           className="animate-bounce"
-          fill={`rgb(${user.preferences.themeColor})`}
+          fill={`rgb(${themeColor})`}
           color="none"
         />
       </span>

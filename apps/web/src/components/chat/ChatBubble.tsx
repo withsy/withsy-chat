@@ -1,8 +1,6 @@
-import { useUser } from "@/context/UserContext";
 import { cn } from "@/lib/utils";
 import { useAiProfileStore } from "@/stores/useAiProfileStore";
-import type { ChatType } from "@/types/chat";
-import type { MessageData } from "@/types/message";
+import { useSession } from "next-auth/react";
 import { memo, useState } from "react";
 import { toast } from "sonner";
 import { CollapseToggle } from "../CollapseToggle";
@@ -19,7 +17,8 @@ type Props = {
 };
 
 const ChatBubbleComponent = ({ message, chatType, onToggleSaved }: Props) => {
-  const { user } = useUser();
+  const { data: session } = useSession();
+
   const { profiles } = useAiProfileStore();
 
   const { role, text, reasoningText, status, isMessageCollapsed } = message;
@@ -52,16 +51,15 @@ const ChatBubbleComponent = ({ message, chatType, onToggleSaved }: Props) => {
     onToggleSaved?.(message.id, !message.isBookmarked);
   };
 
-  if (!user) return null;
-
   const userProfile =
     role === "model" && message.model ? profiles[message.model] : null;
-  const image = role === "model" ? userProfile?.imageSource : user.imageUrl;
+  const image =
+    role === "model" ? userProfile?.imageSource : session?.user?.image;
   const name =
     role === "model"
       ? userProfile?.name ||
         (message.model ? GetModelLabel(message.model) : "AI")
-      : user.name ?? "username";
+      : session?.user?.name ?? "username";
 
   const collapseToggleProps = {
     show: isLongMessage && status === "succeeded",

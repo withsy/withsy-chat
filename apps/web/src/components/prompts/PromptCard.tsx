@@ -4,10 +4,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useUser } from "@/context/UserContext";
+import { usePreferences } from "@/context/PreferencesContext";
 import { useTRPC } from "@/lib/trpc";
 import { useChatStore } from "@/stores/useChatStore";
-import type { UserPromptData } from "@/types/user-prompt";
 import { useMutation } from "@tanstack/react-query";
 import { MoreVertical, Star } from "lucide-react";
 import { toast } from "sonner";
@@ -33,8 +32,8 @@ export function PromptCard({
   isDefault,
 }: PromptCardProps) {
   const trpc = useTRPC();
-  const { user } = useUser();
-  if (!user) throw new Error("User must exist.");
+  const { usePreference } = usePreferences();
+  const themeColor = usePreference("themeColor");
 
   const { chat, updatePromptId } = useChatStore();
   const updateChat = useMutation(
@@ -61,9 +60,7 @@ export function PromptCard({
   );
 
   const cornerButton = isDefault ? (
-    <Badge style={{ backgroundColor: `rgb(${user.preferences.themeColor})` }}>
-      default
-    </Badge>
+    <Badge style={{ backgroundColor: `rgb(${themeColor})` }}>default</Badge>
   ) : chat != null ? (
     isActive ? (
       <button

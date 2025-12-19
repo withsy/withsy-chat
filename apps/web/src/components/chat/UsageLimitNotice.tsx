@@ -1,5 +1,4 @@
-import { useUser } from "@/context/UserContext";
-import type { UserUsageLimitData } from "@/types/user-usage-limit";
+import { usePreferences } from "@/context/PreferencesContext";
 import React from "react";
 
 type Props = {
@@ -70,8 +69,8 @@ const buildMessage = (
 };
 
 export const UsageLimitNotice: React.FC<Props> = ({ usageLimits }) => {
-  const { user } = useUser();
-  if (!user) return null;
+  const { usePreference } = usePreferences();
+  const themeColor = usePreference("themeColor");
 
   let message: React.ReactNode = null;
   const messageDaily = usageLimits.find(
@@ -103,7 +102,7 @@ export const UsageLimitNotice: React.FC<Props> = ({ usageLimits }) => {
     <span
       className="select-none text-xs text-gray-500"
       style={{
-        color: `rgb(${user.preferences.themeColor})`,
+        color: `rgb(${themeColor})`,
         overflow: "hidden",
         whiteSpace: "nowrap",
         textOverflow: "ellipsis",

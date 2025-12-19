@@ -10,6 +10,7 @@ export class ChatTrpcRouter {
     this.router = trpcService.trpc.router({
       start: userTrpcProcedure.procedure.mutation(() => {}),
       startBranch: userTrpcProcedure.procedure.mutation(() => {}),
+      update: userTrpcProcedure.procedure.mutation(() => {}),
     });
   }
 }

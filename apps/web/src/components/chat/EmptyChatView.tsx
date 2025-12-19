@@ -1,7 +1,7 @@
-import { useUser } from "@/context/UserContext";
+import { useChatStore } from "@/stores/useChatStore";
+import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { ChatSession } from "./ChatSession";
-import { useChatStore } from "@/stores/useChatStore";
 
 function getGreeting() {
   const hour = new Date().getHours();
@@ -12,8 +12,9 @@ function getGreeting() {
 }
 
 export default function EmptyChatView() {
-  const { user } = useUser();
-  const name = user?.name;
+  const { data: session } = useSession();
+  const name = session?.user?.name;
+
   const [greeting, setGreeting] = useState("Good day");
   const setChat = useChatStore((state) => state.setChat);
 
@@ -26,8 +27,6 @@ export default function EmptyChatView() {
     return () => clearInterval(interval);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  if (!user) return null;
 
   return (
     <ChatSession initialMessages={[]}>

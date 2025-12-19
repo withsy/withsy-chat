@@ -1,4 +1,4 @@
-import { Model } from "@/lib/schemas";
+import { Model } from "@repo/common";
 import { create } from "zustand";
 
 const STORAGE_KEY = "selectedChatModel";

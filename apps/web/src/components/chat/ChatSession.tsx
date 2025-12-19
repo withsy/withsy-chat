@@ -1,4 +1,5 @@
 import { ChatSessionProvider } from "@/context/ChatSessionContext";
+import { usePreferences } from "@/context/PreferencesContext";
 import { useTRPC } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
 import { useChatStore } from "@/stores/useChatStore";
@@ -26,9 +27,10 @@ export function ChatSession({ initialMessages, children }: Props) {
   const queryClient = useQueryClient();
   const { chat } = useChatStore();
   const router = useRouter();
-
   const { collapsed, isMobile } = useSidebarStore();
   const { selectedModel } = useSelectedModelStore();
+  const { usePreference } = usePreferences();
+  const wideView = usePreference("wideView");
 
   const [messages, setMessages] = useState<MessageData[]>([]);
   const [streamMessageId, setStreamMessageId] = useState<string | null>(null);
@@ -240,8 +242,6 @@ export function ChatSession({ initialMessages, children }: Props) {
     [messages]
   );
 
-  if (!user) return null;
-
   return (
     <div className="flex h-full relative">
       <div
@@ -258,9 +258,7 @@ export function ChatSession({ initialMessages, children }: Props) {
         <div
           className={cn(
             "flex-1 overflow-y-auto mt-[50px] w-full transition-all duration-300",
-            user.preferences.wideView
-              ? "md:w-[95%] md:mx-auto"
-              : "md:w-[80%] md:mx-auto"
+            wideView ? "md:w-[95%] md:mx-auto" : "md:w-[80%] md:mx-auto"
           )}
         >
           {(chat || messages.length > 0) && (

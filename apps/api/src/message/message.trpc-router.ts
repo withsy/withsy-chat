@@ -9,6 +9,7 @@ export class MessageTrpcRouter {
   constructor(trpcService: TrpcService, userTrpcProcedure: UserTrpcProcedure) {
     this.router = trpcService.trpc.router({
       regenerateReply: userTrpcProcedure.procedure.mutation(() => {}),
+      update: userTrpcProcedure.procedure.mutation(() => {}),
     });
   }
 }
