@@ -23,13 +23,13 @@ export default function Header() {
 
   return (
     <div
-      className={`w-full backdrop-blur-lg sticky top-0 z-50 transition-all duration-300 ${
-        scrolled ? "bg-white/80 border-b" : "bg-transparent"
+      className={`sticky top-0 z-50 w-full backdrop-blur-lg transition-all duration-300 ${
+        scrolled ? "border-b bg-white/80" : "bg-transparent"
       }`}
     >
-      <div className="max-w-6xl mx-auto p-2 px-4 flex justify-between items-center select-none">
+      <div className="mx-auto flex max-w-6xl items-center justify-between p-2 px-4 select-none">
         <div
-          className="flex items-center gap-2 p-2 cursor-pointer"
+          className="flex cursor-pointer items-center gap-2 p-2"
           onClick={() => {
             router.push("/");
           }}
@@ -54,7 +54,7 @@ export default function Header() {
                 <button
                   key={category.value}
                   onClick={() => router.push(`/${category.value}`)}
-                  className={`transition-colors font-semibold ${
+                  className={`font-semibold transition-colors ${
                     isActive
                       ? "text-[rgb(40,90,128)]"
                       : "text-muted-foreground hover:text-primary"

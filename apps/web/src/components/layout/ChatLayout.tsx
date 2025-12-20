@@ -21,11 +21,11 @@ export default function ChatLayout({ children, className }: LayoutProps) {
 
   return (
     <div
-      className={`flex overflow-hidden h-[100dvh] relative ${className}`}
+      className={`relative flex h-[100dvh] overflow-hidden ${className}`}
       style={{ backgroundColor }}
     >
       <Sidebar />
-      <div className="flex flex-col flex-1 h-full z-20 min-w-0">
+      <div className="z-20 flex h-full min-w-0 flex-1 flex-col">
         <Main>{children}</Main>
       </div>
     </div>

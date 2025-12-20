@@ -47,11 +47,11 @@ export function BookmarkCardActions({
 
   return (
     <TooltipProvider>
-      <div className="absolute right-2 z-10 transition-opacity flex rounded-md ">
+      <div className="absolute right-2 z-10 flex rounded-md transition-opacity">
         <Tooltip>
           <TooltipTrigger asChild>
             <Button variant="ghost" size="icon" onClick={handleGoToMessage}>
-              <Footprints className="w-4 h-4" />
+              <Footprints className="h-4 w-4" />
             </Button>
           </TooltipTrigger>
           <TooltipContent side="top">Go to message</TooltipContent>
@@ -60,7 +60,7 @@ export function BookmarkCardActions({
         <Tooltip>
           <TooltipTrigger asChild>
             <Button variant="ghost" size="icon" onClick={handleCopy}>
-              <Copy className="w-4 h-4" />
+              <Copy className="h-4 w-4" />
             </Button>
           </TooltipTrigger>
           <TooltipContent side="top">Copy</TooltipContent>
@@ -70,7 +70,7 @@ export function BookmarkCardActions({
             <TooltipTrigger asChild>
               <Button variant="ghost" size="icon" onClick={onUnsave}>
                 <BookmarkIcon
-                  className="w-8 h-8"
+                  className="h-8 w-8"
                   style={{
                     fill: `rgb(${themeColor})`,
                   }}

@@ -28,17 +28,17 @@ export default function Page() {
   }
 
   return (
-    <div className="flex flex-col h-screen">
-      <div className="w-full sticky top-0 z-50 max-w-6xl mx-auto p-2 flex justify-between items-center select-none">
+    <div className="flex h-screen flex-col">
+      <div className="sticky top-0 z-50 mx-auto flex w-full max-w-6xl items-center justify-between p-2 select-none">
         <div>{collapsed && <CollapseButton hoverColor="bg-gray-100" />}</div>
         <div>
           <CustomFriendModal />
         </div>
       </div>
-      <div className="flex-1 h-full overflow-y-auto pb-30">
+      <div className="h-full flex-1 overflow-y-auto pb-30">
         <Tabs
           defaultValue="discover"
-          className="w-full max-w-6xl mx-auto px-4 pt-4 h-full select-none"
+          className="mx-auto h-full w-full max-w-6xl px-4 pt-4 select-none"
         >
           <TabsList className="flex justify-center gap-2 bg-transparent">
             <TabsTrigger
@@ -62,22 +62,22 @@ export default function Page() {
           </TabsList>
           <TabsContent value="discover">
             <RecommendedSection recommendedFriends={recommendedFriends} />
-            <div className="grid gap-4 sm:grid-cols-3 gap-y-5 p-5 items-stretch">
+            <div className="grid items-stretch gap-4 gap-y-5 p-5 sm:grid-cols-3">
               {withsyFriends.map((friend) => (
                 <FriendCard key={friend.name} friend={friend} />
               ))}
             </div>
           </TabsContent>
           <TabsContent value="withsy">
-            <div className="grid gap-4 sm:grid-cols-3 gap-y-5 p-5 items-stretch">
+            <div className="grid items-stretch gap-4 gap-y-5 p-5 sm:grid-cols-3">
               {withsyFriends.map((friend) => (
                 <FriendCard key={friend.name} friend={friend} />
               ))}
             </div>
           </TabsContent>
           <TabsContent value="custom" className="h-full">
-            <div className="flex flex-col items-center justify-center h-full text-center">
-              <p className="text-2xl font-semibold mb-4">
+            <div className="flex h-full flex-col items-center justify-center text-center">
+              <p className="mb-4 text-2xl font-semibold">
                 Invite your new friend!
               </p>
             </div>

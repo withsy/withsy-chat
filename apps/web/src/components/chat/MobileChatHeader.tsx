@@ -53,7 +53,7 @@ export default function MobileChatHeader({
 
   return (
     <div
-      className="absolute top-0 left-0 w-full h-[50px] px-4 flex items-center justify-between"
+      className="absolute top-0 left-0 flex h-[50px] w-full items-center justify-between px-4"
       style={headerStyle}
     >
       {/* Left: CollapseButton */}
@@ -62,11 +62,11 @@ export default function MobileChatHeader({
       </div>
 
       {/* Center: Chat Title + Drawer */}
-      <div className="flex-1 flex justify-center">
+      <div className="flex flex-1 justify-center">
         {chatTitle && (
           <Drawer open={open} onOpenChange={setOpen}>
             <DrawerTrigger asChild>
-              <button className="max-w-[180px] flex items-center px-2 py-1 gap-3 rounded-md hover:bg-white active:bg-white select-none">
+              <button className="flex max-w-[180px] items-center gap-3 rounded-md px-2 py-1 select-none hover:bg-white active:bg-white">
                 {chatType && (
                   <span className="shrink-0">
                     {getChatTypeIcon(chatType, "")}
@@ -77,9 +77,9 @@ export default function MobileChatHeader({
               </button>
             </DrawerTrigger>
             <DrawerContent className="p-5">
-              <div className="flex flex-col gap-2 py-5 w-full max-w-sm mx-auto">
-                <h2 className="text-xl font-semibold mb-2">Chat Options</h2>
-                <p className="text-sm text-muted-foreground mb-4">
+              <div className="mx-auto flex w-full max-w-sm flex-col gap-2 py-5">
+                <h2 className="mb-2 text-xl font-semibold">Chat Options</h2>
+                <p className="text-muted-foreground mb-4 text-sm">
                   View prompts, access your saved items, or browse branches
                   created in this chat.
                 </p>
@@ -93,7 +93,7 @@ export default function MobileChatHeader({
                   <button
                     key={id}
                     onClick={() => handleSelectDrawer(id)}
-                    className="flex items-center gap-2 w-full text-left hover:bg-gray-100 active:bg-gray-100 px-2 py-2 rounded text-lg"
+                    className="flex w-full items-center gap-2 rounded px-2 py-2 text-left text-lg hover:bg-gray-100 active:bg-gray-100"
                   >
                     <HoverSwitchIcon
                       DefaultIcon={Icon}

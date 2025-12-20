@@ -89,33 +89,33 @@
   }
 }
 
-
 /* #######################################  custom start  ####################################### */
 
-input, textarea {
+input,
+textarea {
   font-size: 16px;
 }
 
 .prose pre {
-  @apply bg-gray-100 dark:bg-[#2d2d2d] text-sm text-gray-800 dark:text-gray-100  mt-4 mb-4 rounded-md overflow-x-auto;
+  @apply mt-4 mb-4 overflow-x-auto rounded-md bg-gray-100 text-sm text-gray-800 dark:bg-[#2d2d2d] dark:text-gray-100;
   line-height: 1.6;
   white-space: pre-wrap;
 }
 
 .prose pre code {
-  @apply bg-transparent text-inherit font-mono text-sm p-0;
+  @apply bg-transparent p-0 font-mono text-sm text-inherit;
 }
 
 .prose table {
-  @apply border-collapse text-sm mt-6 mb-6 w-full; /* w-full 유지 */
+  @apply mt-6 mb-6 w-full border-collapse text-sm; /* w-full 유지 */
 }
 
 .prose thead {
-  @apply bg-[#f7f7f8] dark:bg-[#1e1e1e] border-b;
+  @apply border-b bg-[#f7f7f8] dark:bg-[#1e1e1e];
 }
 
 .prose thead th {
-  @apply text-left font-semibold p-3 text-gray-700 dark:text-gray-300;
+  @apply p-3 text-left font-semibold text-gray-700 dark:text-gray-300;
 }
 
 .prose tbody tr {
@@ -130,25 +130,24 @@ input, textarea {
   @apply p-3 align-top text-gray-800 dark:text-gray-200;
 }
 
-
 .prose h1 {
-  @apply text-3xl font-bold text-gray-900 mb-4;
+  @apply mb-4 text-3xl font-bold text-gray-900;
 }
 
 .prose h2 {
-  @apply text-2xl font-semibold text-gray-800 mt-10 mb-4;
+  @apply mt-10 mb-4 text-2xl font-semibold text-gray-800;
 }
 
 .prose h3 {
-  @apply text-xl font-medium text-gray-700 mt-8 mb-3;
+  @apply mt-8 mb-3 text-xl font-medium text-gray-700;
 }
 
 .prose ul {
-  @apply list-disc list-outside my-0 pl-5 text-gray-800 dark:text-gray-200;
+  @apply my-0 list-outside list-disc pl-5 text-gray-800 dark:text-gray-200;
 }
 
 .prose ol {
-  @apply list-decimal list-outside my-0 pl-5 text-gray-800 dark:text-gray-200;
+  @apply my-0 list-outside list-decimal pl-5 text-gray-800 dark:text-gray-200;
 }
 
 .prose li {
@@ -160,13 +159,12 @@ input, textarea {
   margin: 0 !important;
 }
 
-
 .prose blockquote {
-  @apply border-l-4 border-gray-300 dark:border-gray-700 pl-4 text-gray-600 dark:text-gray-400 my-6;
+  @apply my-6 border-l-4 border-gray-300 pl-4 text-gray-600 dark:border-gray-700 dark:text-gray-400;
 }
 
 .prose code {
-  @apply bg-gray-100 dark:bg-gray-800 text-orange-500 dark:text-pink-400 px-1 py-0.5 rounded text-sm font-mono;
+  @apply rounded bg-gray-100 px-1 py-0.5 font-mono text-sm text-orange-500 dark:bg-gray-800 dark:text-pink-400;
 }
 
 .prose p {
@@ -174,7 +172,6 @@ input, textarea {
 }
 
 /* #######################################  custom end  ####################################### */
-
 
 body {
   background: var(--background);

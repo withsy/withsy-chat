@@ -20,7 +20,7 @@ export function BookmarkFilters({
 }: Props) {
   return (
     <div className="flex flex-col gap-4 pb-4">
-      <div className="flex flex-wrap gap-4 items-end">
+      <div className="flex flex-wrap items-end gap-4">
         <div className="flex gap-2">
           <FilterSelect
             value={sortOrder}
@@ -31,7 +31,7 @@ export function BookmarkFilters({
           />
         </div>
 
-        <div className="flex-1 min-w-[200px]">
+        <div className="min-w-[200px] flex-1">
           <Input
             type="text"
             placeholder="Search title or content..."

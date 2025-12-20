@@ -86,7 +86,7 @@ export default function CustomFriendModal() {
         Start an Invite
       </Button>
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-2xl h-[80vh] flex flex-col">
+        <DialogContent className="flex h-[80vh] max-w-2xl flex-col">
           <DialogHeader>
             <DialogTitle>{"Create Your Invitation"}</DialogTitle>
             <DialogDescription className="mt-2 text-gray-500">
@@ -94,16 +94,16 @@ export default function CustomFriendModal() {
               right.
             </DialogDescription>
           </DialogHeader>
-          <div className="flex-1 overflow-y-auto space-y-6 mt-4">
+          <div className="mt-4 flex-1 space-y-6 overflow-y-auto">
             {fields.map((field) => (
               <div key={field.title}>
-                <h3 className="text-lg font-semibold mb-2">{field.title}</h3>
+                <h3 className="mb-2 text-lg font-semibold">{field.title}</h3>
                 <div className="flex flex-wrap gap-2">
                   {field.options.map((option) => (
                     <Badge
                       key={option}
                       variant="outline"
-                      className={`cursor-pointer text-md ${
+                      className={`text-md cursor-pointer ${
                         selections[field.title]?.includes(option)
                           ? "border-primary text-primary"
                           : "border-muted text-muted-foreground"

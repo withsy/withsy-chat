@@ -6,9 +6,9 @@ function Page() {
   const getIconForRelease = (name: string) => {
     switch (name.toLowerCase()) {
       case "clear. yours.":
-        return <Sparkles className="w-5 h-5 text-[#EA9257] mr-3" />;
+        return <Sparkles className="mr-3 h-5 w-5 text-[#EA9257]" />;
       case "search":
-        return <Search className="w-5 h-5 text-[#EA9257] mr-3" />;
+        return <Search className="mr-3 h-5 w-5 text-[#EA9257]" />;
       default:
         return null;
     }
@@ -62,9 +62,9 @@ function Page() {
   ];
 
   return (
-    <div className="flex flex-col items-start text-start px-6 py-12 max-w-3xl mx-auto">
-      <h2 className="text-3xl font-bold mb-4">Roadmap</h2>
-      <p className="text-base leading-relaxed mb-6">
+    <div className="mx-auto flex max-w-3xl flex-col items-start px-6 py-12 text-start">
+      <h2 className="mb-4 text-3xl font-bold">Roadmap</h2>
+      <p className="mb-6 text-base leading-relaxed">
         Explore our upcoming releases and the exciting features we’re building
         to enhance your AI chat experience.
       </p>
@@ -72,11 +72,11 @@ function Page() {
       <div className="space-y-16 py-8">
         {releases.map((release) => (
           <div key={release.name}>
-            <h2 className="text-2xl font-semibold mb-2 text-gray-800 flex items-center">
+            <h2 className="mb-2 flex items-center text-2xl font-semibold text-gray-800">
               {getIconForRelease(release.name)}
               {capitalize(release.tagline)}
               <Badge
-                className={`ml-3 text-white font-semibold ${
+                className={`ml-3 font-semibold text-white ${
                   release.status === "Upcoming" ? "bg-[#EA9257]" : "bg-gray-500"
                 }`}
                 aria-label={`Status: ${release.status}`}
@@ -85,33 +85,33 @@ function Page() {
               </Badge>
             </h2>
             {release.releaseDate && (
-              <p className="text-gray-600 text-sm mb-2">
+              <p className="mb-2 text-sm text-gray-600">
                 Released in {release.releaseDate}
               </p>
             )}
-            <p className="text-gray-800 text-base mb-4">
+            <p className="mb-4 text-base text-gray-800">
               {release.description}
             </p>
             <ul className="space-y-4">
               {release.features.map((feature) =>
                 typeof feature === "string" ? (
                   <li key={feature} className="flex items-center">
-                    <span className="text-[#EA9257] mr-2">•</span>
-                    <span className="text-black text-lg">{feature}</span>
+                    <span className="mr-2 text-[#EA9257]">•</span>
+                    <span className="text-lg text-black">{feature}</span>
                   </li>
                 ) : (
                   <li key={feature.name} className="flex flex-col">
                     <div className="flex items-center">
-                      <span className="text-[#EA9257] mr-2">•</span>
-                      <span className="text-black text-lg">{feature.name}</span>
+                      <span className="mr-2 text-[#EA9257]">•</span>
+                      <span className="text-lg text-black">{feature.name}</span>
                     </div>
                     <div className="ml-6 space-y-2">
                       {feature.links.map((link) => (
                         <div key={link} className="flex items-center">
-                          <span className="text-[#EA9257] mr-2">•</span>
+                          <span className="mr-2 text-[#EA9257]">•</span>
                           <Link
                             href={link}
-                            className="text-[#285A80] hover:underline text-md mr-2"
+                            className="text-md mr-2 text-[#285A80] hover:underline"
                           >
                             {link.split("/").pop()?.replace(/-/g, " ")}
                           </Link>
@@ -119,7 +119,7 @@ function Page() {
                       ))}
                     </div>
                   </li>
-                )
+                ),
               )}
             </ul>
           </div>

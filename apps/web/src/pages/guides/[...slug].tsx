@@ -18,16 +18,16 @@ type Props = {
 
 function Page({ source, frontMatter, related }: Props) {
   return (
-    <div className="max-w-3xl mx-auto py-16 px-4">
+    <div className="mx-auto max-w-3xl px-4 py-16">
       <Link
         href="/guides"
-        className="mb-6 inline-flex items-center text-sm text-muted-foreground hover:underline"
+        className="text-muted-foreground mb-6 inline-flex items-center text-sm hover:underline"
       >
-        <ChevronLeft className="w-4 h-4 mr-1" />
+        <ChevronLeft className="mr-1 h-4 w-4" />
         Back to Guides
       </Link>
 
-      <h1 className="text-3xl font-bold mb-4">{frontMatter.title}</h1>
+      <h1 className="mb-4 text-3xl font-bold">{frontMatter.title}</h1>
       {frontMatter.description && (
         <p className="text-muted-foreground mb-8">{frontMatter.description}</p>
       )}
@@ -38,8 +38,8 @@ function Page({ source, frontMatter, related }: Props) {
 
       {related.length > 0 && (
         <div className="mt-16">
-          <h2 className="text-2xl font-semibold mb-4">Related Guides</h2>
-          <ul className="list-disc list-inside space-y-2">
+          <h2 className="mb-4 text-2xl font-semibold">Related Guides</h2>
+          <ul className="list-inside list-disc space-y-2">
             {related.map((r) => (
               <li key={r.slug.join("/")}>
                 <Link
@@ -57,9 +57,9 @@ function Page({ source, frontMatter, related }: Props) {
       <div className="mt-12">
         <Link
           href="/guides"
-          className="inline-flex items-center text-sm text-muted-foreground hover:underline"
+          className="text-muted-foreground inline-flex items-center text-sm hover:underline"
         >
-          <ChevronLeft className="w-4 h-4 mr-1" />
+          <ChevronLeft className="mr-1 h-4 w-4" />
           Back to Guides
         </Link>
       </div>
@@ -113,7 +113,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   const dir = path.join(
     process.cwd(),
     "src/content/guides",
-    ...slug.slice(0, -1)
+    ...slug.slice(0, -1),
   );
   const allFiles = fs.readdirSync(dir);
   const related: { slug: string[]; title: string }[] = [];

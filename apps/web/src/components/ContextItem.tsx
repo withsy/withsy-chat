@@ -7,8 +7,8 @@ interface ContextItemProps {
 
 export function ContextItem({ icon, date }: ContextItemProps) {
   return (
-    <div className="flex items-center gap-1 text-muted-foreground cursor-default">
-      <div className="w-4 h-4">{icon}</div>
+    <div className="text-muted-foreground flex cursor-default items-center gap-1">
+      <div className="h-4 w-4">{icon}</div>
       <span>{new Date(date).toLocaleString()}</span>
     </div>
   );

@@ -51,7 +51,7 @@ export const ChatBubbleTooltips: React.FC<ChatBubbleTooltipsProps> = ({
         router.push(`/chat/${data.id}`);
         queryClient.invalidateQueries(trpc.chat.list.queryFilter());
       },
-    })
+    }),
   );
 
   const messageRegenerateReply = useMutation(
@@ -59,7 +59,7 @@ export const ChatBubbleTooltips: React.FC<ChatBubbleTooltipsProps> = ({
       onSuccess(data) {
         onRegenerateSuccess(data);
       },
-    })
+    }),
   );
 
   const handleBranch = () => {
@@ -80,7 +80,7 @@ export const ChatBubbleTooltips: React.FC<ChatBubbleTooltipsProps> = ({
         <Tooltip>
           <TooltipTrigger asChild>
             <Button size="icon" variant="ghost" onClick={onCopy}>
-              <Copy className="w-4 h-4" />
+              <Copy className="h-4 w-4" />
             </Button>
           </TooltipTrigger>
           <TooltipContent>Copy</TooltipContent>
@@ -90,7 +90,7 @@ export const ChatBubbleTooltips: React.FC<ChatBubbleTooltipsProps> = ({
           <TooltipTrigger asChild>
             <Button size="icon" variant="ghost" onClick={onSave}>
               <Bookmark
-                className="w-4 h-4"
+                className="h-4 w-4"
                 fill={isSaved ? `rgb(${themeColor})` : "transparent"}
               />
             </Button>
@@ -103,7 +103,7 @@ export const ChatBubbleTooltips: React.FC<ChatBubbleTooltipsProps> = ({
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button size="icon" variant="ghost" onClick={handleBranch}>
-                  <GitBranch className="w-4 h-4" />
+                  <GitBranch className="h-4 w-4" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent>Branch</TooltipContent>
@@ -123,7 +123,7 @@ export const ChatBubbleTooltips: React.FC<ChatBubbleTooltipsProps> = ({
                 button={
                   <TooltipTrigger asChild>
                     <Button size="icon" variant="ghost">
-                      <RefreshCw className="w-4 h-4" />
+                      <RefreshCw className="h-4 w-4" />
                     </Button>
                   </TooltipTrigger>
                 }

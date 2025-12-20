@@ -36,8 +36,8 @@ export const ChatDrawer = ({ savedMessages }: ChatDrawerProps) => {
   const chatId = chat?.id;
   const chatBranchList = useQuery(
     trpc.chatBranch.list.queryOptions(
-      chatId && openDrawer === "branches" ? { chatId } : skipToken
-    )
+      chatId && openDrawer === "branches" ? { chatId } : skipToken,
+    ),
   );
 
   const [ready, setReady] = useState(false);
@@ -49,7 +49,7 @@ export const ChatDrawer = ({ savedMessages }: ChatDrawerProps) => {
       router.replace(
         { pathname: router.pathname, query: restQuery },
         undefined,
-        { shallow: true }
+        { shallow: true },
       );
     }
   }, [router.query.parentId, setOpenDrawer, router]);
@@ -69,7 +69,7 @@ export const ChatDrawer = ({ savedMessages }: ChatDrawerProps) => {
 
   let body;
   if (openDrawer == null) {
-    body = <div className="text-sm text-muted-foreground">No content</div>;
+    body = <div className="text-muted-foreground text-sm">No content</div>;
   } else if (openDrawer === "saved") {
     body = <SavedMessages messages={savedMessages ?? []} />;
   } else if (openDrawer === "branches") {
@@ -77,7 +77,7 @@ export const ChatDrawer = ({ savedMessages }: ChatDrawerProps) => {
   } else if (openDrawer === "prompt") {
     body = <Prompts />;
   } else {
-    body = <div className="text-sm text-muted-foreground">No content</div>;
+    body = <div className="text-muted-foreground text-sm">No content</div>;
   }
 
   if (isMobile) {
@@ -89,7 +89,7 @@ export const ChatDrawer = ({ savedMessages }: ChatDrawerProps) => {
           else setOpenDrawer(openDrawer);
         }}
       >
-        <DrawerContent className="h-full rounded-t-2xl flex flex-col">
+        <DrawerContent className="flex h-full flex-col rounded-t-2xl">
           {ready && body}
         </DrawerContent>
       </Drawer>
@@ -99,8 +99,8 @@ export const ChatDrawer = ({ savedMessages }: ChatDrawerProps) => {
   return (
     <div
       className={cn(
-        "h-full transition-all duration-300 pb-15",
-        isDrawerOpen ? "w-[30%] border-l" : "w-0 overflow-hidden"
+        "h-full pb-15 transition-all duration-300",
+        isDrawerOpen ? "w-[30%] border-l" : "w-0 overflow-hidden",
       )}
     >
       <ChatDrawerHeader
@@ -118,15 +118,15 @@ function Prompts() {
   const { data: defaultPrompt, isLoading: isLoadingDefaultPrompt } = useQuery(
     trpc.userDefaultPrompt.get.queryOptions(undefined, {
       retry: false,
-    })
+    }),
   );
   const { data: prompts, isLoading: isLoadingPrompts } = useInfiniteQuery(
     trpc.userPrompt.list.infiniteQueryOptions(
       {},
       {
         getNextPageParam: (lastPage) => lastPage.nextCursor,
-      }
-    )
+      },
+    ),
   );
 
   const updateChatPrompt = useMutation(trpc.chat.update.mutationOptions());
@@ -147,14 +147,14 @@ function Prompts() {
   const remainingPrompts =
     prompts?.filter(
       (p) =>
-        p.id !== defaultPrompt?.userPrompt?.id && p.id !== chat?.userPromptId
+        p.id !== defaultPrompt?.userPrompt?.id && p.id !== chat?.userPromptId,
     ) ?? [];
 
   return (
-    <div className="overflow-y-auto max-h-[100%] flex flex-col space-y-6 p-4 select-none">
+    <div className="flex max-h-[100%] flex-col space-y-6 overflow-y-auto p-4 select-none">
       <div className="space-y-2">
-        <p className="text-sm text-black font-semibold">Applied</p>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-sm font-semibold text-black">Applied</p>
+        <p className="text-muted-foreground text-sm">
           These prompts are currently applied to this chat.
         </p>
         {defaultPrompt?.userPrompt && (
@@ -180,8 +180,8 @@ function Prompts() {
       {/* Prompts Section */}
       {remainingPrompts.length > 0 && (
         <div className="space-y-2">
-          <p className="text-sm text-black font-semibold">Prompts</p>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm font-semibold text-black">Prompts</p>
+          <p className="text-muted-foreground text-sm">
             Click to apply a new prompt. It will replace the currently applied
             prompt.
           </p>
@@ -203,14 +203,14 @@ function Prompts() {
 function SavedMessages({ messages }: { messages: MessageData[] }) {
   if (messages.length === 0) {
     return (
-      <div className="h-full w-full flex items-center justify-center text-muted-foreground">
+      <div className="text-muted-foreground flex h-full w-full items-center justify-center">
         No saved items yet.
       </div>
     );
   }
 
   return (
-    <div className="overflow-y-auto max-h-[100%] m-2 flex flex-col gap-y-4 bg-transparent">
+    <div className="m-2 flex max-h-[100%] flex-col gap-y-4 overflow-y-auto bg-transparent">
       <span className="text-sm select-none">
         {"Here you can find the messages you've saved from this chat."}
       </span>
@@ -243,7 +243,7 @@ function Branches({ chatBranchList }: { chatBranchList: any }) {
       const parentMessageText = chat.parentMessage.text;
       originalChat = (
         <div className="m-2">
-          <div className="flex gap-2 items-center font-semibold text-sm mb-3 select-none">
+          <div className="mb-3 flex items-center gap-2 text-sm font-semibold select-none">
             <FolderRoot size={16} />
             Original Chat
           </div>
@@ -252,7 +252,7 @@ function Branches({ chatBranchList }: { chatBranchList: any }) {
           </span>
           <div
             key={chat.parentMessageId}
-            className="flex gap-2 p-3 mt-2 items-center select-none border shadow-xs  hover:bg-gray-100 hover:font-semibold active:bg-gray-100 active:font-semibold"
+            className="mt-2 flex items-center gap-2 border p-3 shadow-xs select-none hover:bg-gray-100 hover:font-semibold active:bg-gray-100 active:font-semibold"
             onClick={() =>
               router.push(`/chat/${chatId}?messageId=${messageId}`)
             }
@@ -271,15 +271,15 @@ function Branches({ chatBranchList }: { chatBranchList: any }) {
     if (chatBranchList.data.length == 0) {
       if (originalChat) return originalChat;
       return (
-        <div className="h-full w-full flex items-center justify-center text-muted-foreground">
+        <div className="text-muted-foreground flex h-full w-full items-center justify-center">
           No Branches Yet.
         </div>
       );
     }
     return (
-      <div className="overflow-y-auto max-h-[100%] m-2 flex flex-col gap-y-4 bg-transparent">
+      <div className="m-2 flex max-h-[100%] flex-col gap-y-4 overflow-y-auto bg-transparent">
         {originalChat}
-        <div className="flex gap-2 items-center font-semibold text-sm select-none">
+        <div className="flex items-center gap-2 text-sm font-semibold select-none">
           <FolderGit2 size={16} />
           Branch List
         </div>
@@ -290,7 +290,7 @@ function Branches({ chatBranchList }: { chatBranchList: any }) {
           return (
             <div
               key={x.id}
-              className="flex gap-2 p-3 items-center select-none border shadow-xs hover:bg-gray-100 hover:font-semibold active:bg-gray-100 active:font-semibold"
+              className="flex items-center gap-2 border p-3 shadow-xs select-none hover:bg-gray-100 hover:font-semibold active:bg-gray-100 active:font-semibold"
               onClick={() => router.push(`/chat/${x.id}`)}
               style={{
                 borderRadius: 10,
@@ -305,7 +305,7 @@ function Branches({ chatBranchList }: { chatBranchList: any }) {
     );
   }
   return (
-    <div className="h-full w-full flex items-center justify-center text-muted-foreground">
+    <div className="text-muted-foreground flex h-full w-full items-center justify-center">
       No Branches Yet.
     </div>
   );

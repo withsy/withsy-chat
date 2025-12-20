@@ -32,7 +32,7 @@ function Page() {
   } = useQuery(
     trpc.userDefaultPrompt.get.queryOptions(undefined, {
       retry: false,
-    })
+    }),
   );
 
   const createPrompt = useMutation(
@@ -41,7 +41,7 @@ function Page() {
         refetchPrompts();
         refetchDefaultPrompt();
       },
-    })
+    }),
   );
 
   const updatePrompt = useMutation(
@@ -50,7 +50,7 @@ function Page() {
         refetchPrompts();
         refetchDefaultPrompt();
       },
-    })
+    }),
   );
 
   const upsertDefaultPrompt = useMutation(
@@ -59,7 +59,7 @@ function Page() {
         refetchPrompts();
         refetchDefaultPrompt();
       },
-    })
+    }),
   );
 
   const deletePrompt = useMutation(
@@ -68,7 +68,7 @@ function Page() {
         refetchPrompts();
         refetchDefaultPrompt();
       },
-    })
+    }),
   );
 
   const toggleStarPrompt = (prompt: UserPromptData) => {
@@ -104,9 +104,9 @@ function Page() {
   };
 
   return (
-    <div className="flex h-full relative">
+    <div className="relative flex h-full">
       <div
-        className="absolute top-0 left-0 w-full h-[50px] px-4 flex items-center justify-between select-none"
+        className="absolute top-0 left-0 flex h-[50px] w-full items-center justify-between px-4 select-none"
         style={headerStyle}
       >
         <div>{collapsed && <CollapseButton />}</div>
@@ -129,15 +129,15 @@ function Page() {
           Add
         </Button>
       </div>
-      <div className="flex-1 p-6 mt-[50px] select-none overflow-y-auto space-y-6">
+      <div className="mt-[50px] flex-1 space-y-6 overflow-y-auto p-6 select-none">
         <div>
           <h1 className="text-2xl font-semibold text-black">Default</h1>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             This prompt is automatically applied to all chats by default, and
             each user can set only one default prompt.
           </p>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3">
           {defaultPrompt?.userPrompt && (
             <PromptCard
               key={defaultPrompt.userPrompt.id}
@@ -164,12 +164,12 @@ function Page() {
 
         <div>
           <h1 className="text-2xl font-semibold text-black">Prompts</h1>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             These prompts can be individually selected and applied to specific
             chats.
           </p>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3">
           {prompts
             ?.filter((p) => p.id !== defaultPrompt?.userPrompt?.id)
             .slice()

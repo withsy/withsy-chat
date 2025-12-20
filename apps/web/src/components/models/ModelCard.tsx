@@ -43,7 +43,7 @@ export default function ModelCard({ model, name, image }: Props) {
         setLoading(false);
         setResetModalOpen(false);
       },
-    })
+    }),
   );
 
   const handleReset = () => {
@@ -97,7 +97,7 @@ export default function ModelCard({ model, name, image }: Props) {
 
   const handleImageClick = () => {
     const fileInput = document.getElementById(
-      `file-${model}`
+      `file-${model}`,
     ) as HTMLInputElement;
     fileInput?.click();
   };
@@ -128,10 +128,10 @@ export default function ModelCard({ model, name, image }: Props) {
   };
 
   return (
-    <div className="border rounded-xl p-4 flex items-center gap-4">
+    <div className="flex items-center gap-4 rounded-xl border p-4">
       <div className="cursor-pointer" onClick={handleImageClick}>
         {image ? (
-          <Avatar className="w-16 h-16">
+          <Avatar className="h-16 w-16">
             <AvatarImage src={image} alt={model} />
             <AvatarFallback>{model.slice(0, 2).toUpperCase()}</AvatarFallback>
           </Avatar>
@@ -146,7 +146,7 @@ export default function ModelCard({ model, name, image }: Props) {
           <Button
             size="sm"
             variant="ghost"
-            className="text-xs text-muted-foreground hover:text-destructive"
+            className="text-muted-foreground hover:text-destructive text-xs"
             onClick={() => setResetModalOpen(true)}
           >
             Remove Custom Image

@@ -15,7 +15,7 @@ export function HoverInvertButton({
 }: HoverInvertButtonProps) {
   return (
     <button
-      className="text-sm font-semibold underline underline-offset-4 p-1 rounded transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+      className="rounded p-1 text-sm font-semibold underline underline-offset-4 transition-colors duration-200 disabled:cursor-not-allowed disabled:opacity-50"
       style={{
         color: textColor,
       }}

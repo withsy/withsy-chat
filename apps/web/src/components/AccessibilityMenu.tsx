@@ -56,7 +56,7 @@ export function AccessibilityMenu() {
         {label}
         {value && (
           <Check
-            className="w-4 h-4"
+            className="h-4 w-4"
             style={{ color: `rgb(${user.preferences.themeColor})` }}
           />
         )}
@@ -68,7 +68,7 @@ export function AccessibilityMenu() {
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogTrigger asChild>
           <button className={buttonClassName} aria-label="Accessibility">
-            <WandSparkles className="w-4 h-4" />
+            <WandSparkles className="h-4 w-4" />
           </button>
         </DialogTrigger>
         <DialogContent className="p-4">
@@ -77,13 +77,13 @@ export function AccessibilityMenu() {
             {items.map(({ label, value, onToggle, key }) => (
               <div
                 key={key}
-                className="flex items-center justify-between p-2 rounded cursor-pointer active:bg-gray-100"
+                className="flex cursor-pointer items-center justify-between rounded p-2 active:bg-gray-100"
                 onClick={onToggle}
               >
                 {label}
                 {value && (
                   <Check
-                    className="w-4 h-4"
+                    className="h-4 w-4"
                     style={{ color: `rgb(${user.preferences.themeColor})` }}
                   />
                 )}

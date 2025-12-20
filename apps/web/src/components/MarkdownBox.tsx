@@ -7,7 +7,7 @@ import { remarkRemoveParagraphInList } from "@/lib/remark-remove-li-paragraph";
 
 export function MarkdownBox({ content }: { content: string | null }) {
   return (
-    <div className="prose prose-sm dark:prose-invert break-all max-w-full overflow-x-auto [&_li>p]:inline [&_li>p]:m-0">
+    <div className="prose prose-sm dark:prose-invert max-w-full overflow-x-auto break-all [&_li>p]:m-0 [&_li>p]:inline">
       <ReactMarkdown
         remarkPlugins={[remarkGfm, remarkRemoveParagraphInList]}
         rehypePlugins={[rehypeHighlight]}
@@ -15,7 +15,8 @@ export function MarkdownBox({ content }: { content: string | null }) {
           li: ({ children, ...props }) => {
             const filteredChildren = Array.isArray(children)
               ? children.filter(
-                  (child) => !(typeof child === "string" && child.trim() === "")
+                  (child) =>
+                    !(typeof child === "string" && child.trim() === ""),
                 )
               : children;
 
@@ -26,7 +27,7 @@ export function MarkdownBox({ content }: { content: string | null }) {
             return (
               <CodeBlock
                 {...props}
-                className={`${existingClassName} whitespace-pre-wrap break-all px-4`}
+                className={`${existingClassName} px-4 break-all whitespace-pre-wrap`}
               >
                 {children}
               </CodeBlock>
@@ -37,7 +38,7 @@ export function MarkdownBox({ content }: { content: string | null }) {
           },
           table: ({ children, ...props }) => (
             <div className="overflow-x-auto">
-              <table {...props} className="table-fixed w-full">
+              <table {...props} className="w-full table-fixed">
                 {children}
               </table>
             </div>

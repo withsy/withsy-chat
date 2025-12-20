@@ -36,24 +36,24 @@ export function CodeBlock({ children, ...props }: CodeBlockProps) {
   };
 
   return (
-    <div className="relative rounded-md border bg-gray-100 mt-4 mb-4">
-      <div className="flex justify-between items-center px-3 py-2 bg-gray-200 text-muted-foreground">
-        <span className="capitalize font-medium select-none text-sm">
+    <div className="relative mt-4 mb-4 rounded-md border bg-gray-100">
+      <div className="text-muted-foreground flex items-center justify-between bg-gray-200 px-3 py-2">
+        <span className="text-sm font-medium capitalize select-none">
           {language || "code"}
         </span>
         <Button
           variant="ghost"
           size="sm"
           onClick={handleCopy}
-          className="h-auto px-1 py-0 text-muted-foreground hover:bg-gray-200 active:bg-gray-200"
+          className="text-muted-foreground h-auto px-1 py-0 hover:bg-gray-200 active:bg-gray-200"
         >
-          <Copy className="w-4 h-4" />
+          <Copy className="h-4 w-4" />
           {copied ? "Copied!" : "Copy"}
         </Button>
       </div>
 
       <pre
-        className={clsx("overflow-x-auto max-w-full px-4 py-3", className)}
+        className={clsx("max-w-full overflow-x-auto px-4 py-3", className)}
         {...props}
       >
         <code className="break-all">

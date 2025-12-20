@@ -3,23 +3,23 @@ import Image from "next/image";
 
 export default function ThemeAndPrefsSection() {
   return (
-    <section className="py-16 px-4 md:px-12 bg-white">
-      <div className="max-w-6xl mx-auto flex flex-col-reverse md:flex-row items-center gap-12">
+    <section className="bg-white px-4 py-16 md:px-12">
+      <div className="mx-auto flex max-w-6xl flex-col-reverse items-center gap-12 md:flex-row">
         {/* Text Section */}
-        <div className="w-full md:w-1/2 text-center md:text-left">
-          <h2 className="text-3xl font-bold mb-4">Make It Yours</h2>
-          <p className="text-muted-foreground text-lg mb-4">
+        <div className="w-full text-center md:w-1/2 md:text-left">
+          <h2 className="mb-4 text-3xl font-bold">Make It Yours</h2>
+          <p className="text-muted-foreground mb-4 text-lg">
             Choose from 6 beautiful presets — or go beyond. Adjust RGB color and
             opacity exactly the way you like. Not limited. Always yours.
           </p>
 
-          <p className="text-muted-foreground text-lg mb-4">
+          <p className="text-muted-foreground mb-4 text-lg">
             {
               "Personalize the experience with flexible layout and behavior settings. You can even choose your AI companion's profile image and name."
             }
           </p>
 
-          <ul className="list-disc list-inside text-left text-base text-muted-foreground space-y-2">
+          <ul className="text-muted-foreground list-inside list-disc space-y-2 text-left text-base">
             <li>
               <strong>Theme:</strong> 6 presets or fully custom color + opacity
             </li>
@@ -39,7 +39,7 @@ export default function ThemeAndPrefsSection() {
         </div>
 
         {/* Media Section */}
-        <div className="w-full md:w-1/2 flex flex-col gap-6 items-center">
+        <div className="flex w-full flex-col items-center gap-6 md:w-1/2">
           <Image
             unoptimized
             src="/home/change-theme.webp"

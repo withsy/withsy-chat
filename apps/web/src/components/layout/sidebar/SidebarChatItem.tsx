@@ -52,7 +52,7 @@ export function SidebarChatItem({
       onMutate: () => queryClient.cancelQueries(trpc.chat.list.queryFilter()),
       onSuccess: () =>
         queryClient.invalidateQueries(trpc.chat.list.queryFilter()),
-    })
+    }),
   );
   const deleteChat = useMutation(
     trpc.chat.delete.mutationOptions({
@@ -61,7 +61,7 @@ export function SidebarChatItem({
         if (isActive) router.push("/chat");
         queryClient.invalidateQueries(trpc.chat.list.queryFilter());
       },
-    })
+    }),
   );
 
   const isActive = router.asPath === `/chat/${chat.id}`;
@@ -92,7 +92,7 @@ export function SidebarChatItem({
       queryClient.invalidateQueries(
         trpc.message.list.queryFilter({
           options: { scope: { by: "chat", chatId: chat.id } },
-        })
+        }),
       );
       router.push(`/chat/${chat.id}`);
     }
@@ -113,7 +113,7 @@ export function SidebarChatItem({
               useChatStore.getState().setChat(updatedChat);
             }
           },
-        }
+        },
       );
     }
     setEditMode(false);
@@ -132,7 +132,7 @@ export function SidebarChatItem({
         onSuccess: () => {
           queryClient.invalidateQueries(trpc.chat.list.queryFilter());
         },
-      }
+      },
     );
   };
 
@@ -168,20 +168,20 @@ export function SidebarChatItem({
 
   return (
     <div
-      className={`group relative flex items-center gap-2 no-underline px-2 ${mobileClassName} select-none rounded-md transition-colors hover:bg-white cursor-pointer active:bg-white ${isHoveredOrDropdown}`}
+      className={`group relative flex items-center gap-2 px-2 no-underline ${mobileClassName} cursor-pointer rounded-md transition-colors select-none hover:bg-white active:bg-white ${isHoveredOrDropdown}`}
     >
       <div
-        className={`flex items-center gap-2 flex-1 min-w-0 group-hover:font-semibold active:font-semibold`}
+        className={`flex min-w-0 flex-1 items-center gap-2 group-hover:font-semibold active:font-semibold`}
         onClick={handleLinkClick}
       >
-        <div className="w-5 h-5 flex items-center justify-center relative">
+        <div className="relative flex h-5 w-5 items-center justify-center">
           {getChatTypeIcon(chatType, iconClassName)}
           <button
             onClick={(e) => {
               e.stopPropagation();
               handleToggleStar();
             }}
-            className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+            className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity group-hover:opacity-100"
           >
             <Star
               size={16}
@@ -211,10 +211,10 @@ export function SidebarChatItem({
               }
             }}
             onBlur={handleTitleSave}
-            className="flex-1 px-1 py-0.5 border rounded bg-white text-foreground"
+            className="text-foreground flex-1 rounded border bg-white px-1 py-0.5"
           />
         ) : (
-          <span className="truncate text-foreground flex-1">
+          <span className="text-foreground flex-1 truncate">
             {isSidebar
               ? chat.title
               : (() => {
@@ -235,7 +235,7 @@ export function SidebarChatItem({
             <Button
               variant="ghost"
               size="icon"
-              className="h-5 w-5 p-0 transition-opacity bg-transparent hover:bg-transparent"
+              className="h-5 w-5 bg-transparent p-0 transition-opacity hover:bg-transparent"
               onClick={(e) => {
                 e.stopPropagation();
                 setIsDropdownOpen(true);
@@ -257,14 +257,14 @@ export function SidebarChatItem({
                           onClick(e);
                           setIsDropdownOpen(false);
                         }}
-                        className={`flex items-center px-3 py-2 rounded-md text-left hover:bg-gray-100 ${
+                        className={`flex items-center rounded-md px-3 py-2 text-left hover:bg-gray-100 ${
                           className ?? ""
                         }`}
                       >
                         <Icon size={16} className={`mr-2 ${iconClass ?? ""}`} />
                         {label}
                       </button>
-                    )
+                    ),
                   )}
                 </div>
               </DialogContent>
@@ -279,7 +279,7 @@ export function SidebarChatItem({
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-5 w-5 p-0 transition-opacity bg-transparent hover:bg-transparent"
+                className="h-5 w-5 bg-transparent p-0 transition-opacity hover:bg-transparent"
                 onClick={(e) => e.stopPropagation()}
               >
                 <EllipsisVertical size={14} />
@@ -301,7 +301,7 @@ export function SidebarChatItem({
                     className={className}
                     iconClass={iconClass}
                   />
-                )
+                ),
               )}
             </DropdownMenuContent>
           </DropdownMenu>

@@ -11,7 +11,7 @@ export default function LoadAiProfiles() {
   const { data = [], isLoading } = useQuery(
     trpc.userAiProfile.list.queryOptions(undefined, {
       enabled: status === "authenticated",
-    })
+    }),
   );
   const { setProfiles, setLoading } = useAiProfileStore();
 

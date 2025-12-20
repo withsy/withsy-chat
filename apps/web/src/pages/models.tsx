@@ -24,14 +24,14 @@ function Page() {
   };
 
   return (
-    <div className="flex flex-col h-full relative">
+    <div className="relative flex h-full flex-col">
       <div
-        className="absolute top-0 left-0 w-full h-[50px] px-4 flex items-center justify-between select-none"
+        className="absolute top-0 left-0 flex h-[50px] w-full items-center justify-between px-4 select-none"
         style={headerStyle}
       >
         <div>{collapsed && <CollapseButton />}</div>
       </div>
-      <div className="mt-[50px] p-5 overflow-y-auto">
+      <div className="mt-[50px] overflow-y-auto p-5">
         <p className="text-muted-foreground mb-6">
           Make each AI model feel a little more personal by giving it a friendly
           name and a unique profile image. Images should be under 1MB, and names

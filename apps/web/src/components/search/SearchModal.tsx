@@ -19,18 +19,18 @@ interface SearchModalProps {
 export function SearchModal({ open, onClose }: SearchModalProps) {
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-xl w-full h-[80vh] flex flex-col p-0">
-        <DialogHeader className="p-4 border-b">
+      <DialogContent className="flex h-[80vh] w-full max-w-xl flex-col p-0">
+        <DialogHeader className="border-b p-4">
           <VisuallyHidden>
             <DialogTitle>Search Chats</DialogTitle>
           </VisuallyHidden>
           <Input
             placeholder="Search chats..."
-            className="w-full border-none shadow-none focus:outline-none focus-visible:ring-0 focus:border-transparent"
+            className="w-full border-none shadow-none focus:border-transparent focus:outline-none focus-visible:ring-0"
           />
         </DialogHeader>
 
-        <div className="flex-1 h-0 overflow-y-auto px-4 pb-4 mb-2">
+        <div className="mb-2 h-0 flex-1 overflow-y-auto px-4 pb-4">
           <ChatItem
             href="/chat"
             title="Start a new chat"
@@ -96,7 +96,7 @@ function ChatItem({
 }) {
   return (
     <Link href={href}>
-      <div className="flex items-center gap-2 px-2 py-2 hover:bg-gray-200 active:bg-gray-200 rounded-md cursor-pointer">
+      <div className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-2 hover:bg-gray-200 active:bg-gray-200">
         {icon}
         <span>{title}</span>
       </div>

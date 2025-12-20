@@ -89,11 +89,11 @@ export default function ChatHeader({
 
   return (
     <div
-      className="absolute top-0 left-0 w-full h-[50px] px-4 flex items-center justify-between"
+      className="absolute top-0 left-0 flex h-[50px] w-full items-center justify-between px-4"
       style={headerStyle}
     >
       {collapsed && (
-        <div className="flex items-center gap-5 min-w-0">
+        <div className="flex min-w-0 items-center gap-5">
           <CollapseButton />
           <TooltipProvider>
             <Tooltip>
@@ -108,12 +108,12 @@ export default function ChatHeader({
         </div>
       )}
       {collapsed ? (
-        <div className="flex items-center text-center truncate px-2 select-none font-semibold">
+        <div className="flex items-center truncate px-2 text-center font-semibold select-none">
           {chatType && getChatTypeIcon(chatType, "")}
           <span className="ml-2">{chatTitle}</span>
         </div>
       ) : (
-        <div className="flex items-center text-left truncate select-none font-semibold">
+        <div className="flex items-center truncate text-left font-semibold select-none">
           {chatType && getChatTypeIcon(chatType, "")}
           <span className="ml-2">{chatTitle}</span>
         </div>

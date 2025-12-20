@@ -10,8 +10,8 @@ export function FullPageEmpty() {
 
 export function PartialEmpty({ message }: { message: string }) {
   return (
-    <div className="flex flex-col items-center justify-center w-full h-full select-none">
-      <p className="text-2xl font-semibold p-4">{message}</p>
+    <div className="flex h-full w-full flex-col items-center justify-center select-none">
+      <p className="p-4 text-2xl font-semibold">{message}</p>
     </div>
   );
 }

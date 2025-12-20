@@ -2,12 +2,12 @@ import Image from "next/image";
 
 export default function SaveStar() {
   return (
-    <section className="py-16 px-4 md:px-12 bg-white">
-      <div className="max-w-6xl mx-auto flex flex-col items-center gap-12">
+    <section className="bg-white px-4 py-16 md:px-12">
+      <div className="mx-auto flex max-w-6xl flex-col items-center gap-12">
         {/* 제목과 설명 */}
         <div className="text-center">
-          <h2 className="text-3xl font-bold mb-4">Save What Matters</h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+          <h2 className="mb-4 text-3xl font-bold">Save What Matters</h2>
+          <p className="text-muted-foreground mx-auto max-w-2xl text-lg">
             Whether it’s a key message or an entire chat, Withsy helps you keep
             track of what’s important.
           </p>
@@ -24,7 +24,7 @@ export default function SaveStar() {
           blurDataURL="/home/save-itmes.jpg"
         />
         {/* 기능 요약 리스트 */}
-        <ul className="list-disc list-inside text-muted-foreground text-base max-w-2xl mx-auto space-y-2">
+        <ul className="text-muted-foreground mx-auto max-w-2xl list-inside list-disc space-y-2 text-base">
           <li>
             <strong>Save Messages:</strong> Bookmark key messages and view them
             inside the chat

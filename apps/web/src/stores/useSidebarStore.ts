@@ -20,5 +20,5 @@ export const useSidebarStore = create(
     setCollapsed: (value) => set({ collapsed: value }),
     setIsMobile: (value) => set({ isMobile: value }),
     setHydrated: (value) => set({ hydrated: value }),
-  }))
+  })),
 );

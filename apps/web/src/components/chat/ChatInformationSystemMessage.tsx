@@ -17,18 +17,18 @@ const ChatInformationSystemMessage: React.FC<
     if (chatType === "chat") {
       const message = getRandomMessage(newChatMessages);
       return (
-        <div className="text-muted-foreground italic text-center select-none">
+        <div className="text-muted-foreground text-center italic select-none">
           {message}
         </div>
       );
     } else if (chatType === "branch" && chatId && messageId) {
       const message = getRandomMessage(branchChatMessages);
       return (
-        <div className="text-muted-foreground italic text-center select-none">
+        <div className="text-muted-foreground text-center italic select-none">
           {message.prefix}
           <Link
             href={`/chat/${chatId}?messageId=${messageId}`}
-            className="underline text-blue-500"
+            className="text-blue-500 underline"
           >
             {message.linkText}
           </Link>
@@ -39,7 +39,7 @@ const ChatInformationSystemMessage: React.FC<
   }, [chatType, chatId, messageId]);
 
   return (
-    <div key={chat.id} className="flex justify-center my-4 p-4">
+    <div key={chat.id} className="my-4 flex justify-center p-4">
       {content}
     </div>
   );
@@ -69,7 +69,7 @@ const branchChatMessages = [
 ];
 
 function getRandomMessage<T extends { prefix?: string } | string>(
-  messages: T[]
+  messages: T[],
 ): T {
   const index = Math.floor(Math.random() * messages.length);
   return messages[index];

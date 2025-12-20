@@ -26,7 +26,7 @@ export function IconWithLabel({
       {fill && (
         <Icon
           size={size}
-          className="absolute opacity-0 group-hover:opacity-100 text-black transition-all"
+          className="absolute text-black opacity-0 transition-all group-hover:opacity-100"
           style={{
             fill: `rgb(${themeColor})`,
           }}

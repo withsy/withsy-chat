@@ -27,8 +27,8 @@ export default function Page() {
   }, []);
 
   return (
-    <div className="min-h-[100dvh] flex items-center justify-center bg-gray-50 px-4 select-none">
-      <div className="max-w-lg w-full space-y-8 p-10">
+    <div className="flex min-h-[100dvh] items-center justify-center bg-gray-50 px-4 select-none">
+      <div className="w-full max-w-lg space-y-8 p-10">
         <div className="text-center">
           <Image
             className="mx-auto"
@@ -54,7 +54,7 @@ export default function Page() {
                     onClick={() =>
                       signIn(provider.id, { callbackUrl: "/chat" })
                     }
-                    className="w-full flex items-center justify-center gap-3 py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-100 transition"
+                    className="flex w-full items-center justify-center gap-3 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-100"
                     style={{ fontFamily: "Roboto, sans-serif" }}
                   >
                     <Image
@@ -70,7 +70,7 @@ export default function Page() {
                     onClick={() =>
                       signIn(provider.id, { callbackUrl: "/chat" })
                     }
-                    className="w-full flex items-center justify-center gap-3 py-3 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-200 active:bg-gray-200 transition"
+                    className="flex w-full items-center justify-center gap-3 rounded-md border border-gray-300 bg-white px-4 py-3 text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-200 active:bg-gray-200"
                   >
                     {iconMap[provider.id] || <LogIn size={18} />}
                     Continue with {provider.name}
@@ -80,11 +80,11 @@ export default function Page() {
             ))}
 
           <div>
-            <p className="text-xs text-gray-500 mt-1 flex flex-row flex-wrap space-x-1">
+            <p className="mt-1 flex flex-row flex-wrap space-x-1 text-xs text-gray-500">
               <span>by signing in you agree to our</span>
               <a
                 href="/privacy-policy.html"
-                className="underline inline-flex items-center ml-1"
+                className="ml-1 inline-flex items-center underline"
                 target="_blank"
               >
                 Privacy Policy
@@ -96,7 +96,7 @@ export default function Page() {
               <span>and</span>
               <a
                 href="/terms-of-service.html"
-                className="underline inline-flex items-center ml-1"
+                className="ml-1 inline-flex items-center underline"
                 target="_blank"
               >
                 Terms of Service

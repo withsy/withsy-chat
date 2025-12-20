@@ -27,7 +27,7 @@ export function ModelDropdown({
 
   const content = (
     <>
-      <div className="text-gray-400 px-2 py-1">
+      <div className="px-2 py-1 text-gray-400">
         {description ?? "Switch model"}
       </div>
       {models.map((model) => (
@@ -61,7 +61,7 @@ export function ModelDropdown({
   if (!isOpen) return null;
 
   return (
-    <ul className="absolute z-10 bottom-full mb-1 w-max min-w-full rounded-lg border border-gray-200 bg-white shadow-md p-2">
+    <ul className="absolute bottom-full z-10 mb-1 w-max min-w-full rounded-lg border border-gray-200 bg-white p-2 shadow-md">
       {content}
     </ul>
   );

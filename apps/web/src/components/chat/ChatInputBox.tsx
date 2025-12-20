@@ -40,7 +40,7 @@ export function ChatInputBox({
 
   const inputBoxClass = cn(
     "relative max-w-screen-lg w-full px-4 py-3 border rounded-xl bg-white",
-    "transition-all"
+    "transition-all",
   );
 
   const [randomPlaceholder, setRandomPlaceholder] = useState("");
@@ -51,8 +51,8 @@ export function ChatInputBox({
       setRandomPlaceholder(
         placeholderMessages[
           Math.floor(Math.random() * placeholderMessages.length)
-        ]
-      )
+        ],
+      ),
     );
   }, [setRandomPlaceholder]);
 
@@ -129,11 +129,11 @@ export function ChatInputBox({
         onChange={(e) => setMessage(e.target.value)}
         onKeyDown={handleKeyDown}
         placeholder={randomPlaceholder}
-        className="w-full resize-none text-[16px] focus:outline-none bg-transparent mb-5 max-h-[40vh]"
+        className="mb-5 max-h-[40vh] w-full resize-none bg-transparent text-[16px] focus:outline-none"
         onCompositionStart={() => setIsComposing(true)}
         onCompositionEnd={() => setIsComposing(false)}
       />
-      <div className="absolute bottom-0 left-4 right-4 flex items-center justify-between">
+      <div className="absolute right-4 bottom-0 left-4 flex items-center justify-between">
         <div>
           {usageLimits.length > 0 && (
             <UsageLimitNotice usageLimits={usageLimits} />
@@ -141,7 +141,7 @@ export function ChatInputBox({
         </div>
         <button
           onClick={handleSend}
-          className="group p-2 rounded-md"
+          className="group rounded-md p-2"
           aria-label="Send message"
           disabled={isSendDisabled}
           style={{
@@ -154,10 +154,10 @@ export function ChatInputBox({
               "rounded-md p-2 transition-all",
               isSendDisabled
                 ? "bg-gray-500 opacity-50"
-                : "bg-[var(--theme-color)] opacity-100 group-hover:opacity-80 group-active:opacity-80"
+                : "bg-[var(--theme-color)] opacity-100 group-hover:opacity-80 group-active:opacity-80",
             )}
           >
-            <Send className="w-4 h-4 text-white" />
+            <Send className="h-4 w-4 text-white" />
           </div>
         </button>
       </div>

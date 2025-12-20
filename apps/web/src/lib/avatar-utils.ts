@@ -4,7 +4,7 @@ export function getModelAvatar(name: string, style: string) {
   const key = name;
   if (!avatarCache.has(key)) {
     const url = `https://api.dicebear.com/7.x/${style}/svg?seed=${encodeURIComponent(
-      key
+      key,
     )}`;
     avatarCache.set(key, url);
   }
@@ -13,7 +13,7 @@ export function getModelAvatar(name: string, style: string) {
 
 export function getCroppedImg(
   imageSrc: string,
-  pixelCrop: { x: number; y: number; width: number; height: number }
+  pixelCrop: { x: number; y: number; width: number; height: number },
 ): Promise<string> {
   return new Promise((resolve, reject) => {
     const image = new Image();
@@ -33,7 +33,7 @@ export function getCroppedImg(
         0,
         0,
         pixelCrop.width,
-        pixelCrop.height
+        pixelCrop.height,
       );
       resolve(canvas.toDataURL("image/jpeg", 0.9));
     };

@@ -13,7 +13,7 @@ export default function ReturnButton({
   return (
     <Button
       size={size}
-      className={`text-${size} font-semibold cursor-pointer bg-[rgb(40,90,128)] text-white select-none`}
+      className={`text-${size} cursor-pointer bg-[rgb(40,90,128)] font-semibold text-white select-none`}
     >
       <Link href="/chat">{message}</Link>
     </Button>

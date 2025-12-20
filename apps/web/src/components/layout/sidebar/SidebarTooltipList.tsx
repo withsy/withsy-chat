@@ -6,7 +6,7 @@ import { SidebarTooltip } from "./SidebarTooltip";
 export default function SidebarTooltipList() {
   return (
     <div className="space-y-2">
-      <div className="flex justify-between items-center">
+      <div className="flex items-center justify-between">
         <UserDropdownMenu />
         <CollapseButton />
       </div>

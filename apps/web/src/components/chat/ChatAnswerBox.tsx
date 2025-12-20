@@ -8,25 +8,25 @@ type Props = {
 
 export function ChatAnswerBox({ content }: Props) {
   return (
-    <div className="border rounded-lg bg-background shadow-sm p-4 space-y-2">
+    <div className="bg-background space-y-2 rounded-lg border p-4 shadow-sm">
       <MarkdownBox content={content} />
 
-      <div className="flex gap-2 justify-end pt-2 border-t mt-2">
+      <div className="mt-2 flex justify-end gap-2 border-t pt-2">
         <IconButtonWithTooltip
-          icon={<Copy className="w-4 h-4" />}
+          icon={<Copy className="h-4 w-4" />}
           label="Copy"
           onClick={() => navigator.clipboard.writeText(content)}
         />
         <IconButtonWithTooltip
-          icon={<ThumbsUp className="w-4 h-4" />}
+          icon={<ThumbsUp className="h-4 w-4" />}
           label="Like"
         />
         <IconButtonWithTooltip
-          icon={<ThumbsDown className="w-4 h-4" />}
+          icon={<ThumbsDown className="h-4 w-4" />}
           label="Dislike"
         />
         <IconButtonWithTooltip
-          icon={<Settings className="w-4 h-4" />}
+          icon={<Settings className="h-4 w-4" />}
           label="Switch Model"
         />
       </div>

@@ -15,6 +15,6 @@ export const useAvatarStyleStore = create<State>()(
     }),
     {
       name: "avatar-style",
-    }
-  )
+    },
+  ),
 );

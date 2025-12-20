@@ -2,10 +2,10 @@ import { Avatar, AvatarImage } from "@/components/ui/avatar";
 
 function Page() {
   return (
-    <div className="flex flex-col md:flex-row items-center md:items-start gap-6 md:gap-10 px-6 py-12 max-w-4xl mx-auto">
+    <div className="mx-auto flex max-w-4xl flex-col items-center gap-6 px-6 py-12 md:flex-row md:items-start md:gap-10">
       {/* Avatar on the left */}
-      <div className="flex flex-col items-center shrink-0">
-        <Avatar className="w-24 h-24 md:w-32 md:h-32 border rounded-full">
+      <div className="flex shrink-0 flex-col items-center">
+        <Avatar className="h-24 w-24 rounded-full border md:h-32 md:w-32">
           <AvatarImage
             src="/characters/sara.svg"
             alt="Withsy Sara, our friendly guide"
@@ -15,8 +15,8 @@ function Page() {
 
       {/* Description on the right */}
       <div className="text-center md:text-left">
-        <h2 className="text-3xl font-bold mb-4">About Withsy</h2>
-        <p className="text-base leading-relaxed mb-6">
+        <h2 className="mb-4 text-3xl font-bold">About Withsy</h2>
+        <p className="mb-6 text-base leading-relaxed">
           Withsy is your home for thoughtful, user-focused tools. Starting with
           Withsy Chat, we’re building a village of products that are gentle,
           customizable, and designed to grow with you. Our mission is to create
@@ -24,9 +24,9 @@ function Page() {
         </p>
 
         {/* Key Values */}
-        <div className="border rounded-lg p-6 mb-6">
-          <h3 className="text-xl font-semibold mb-2">Our Philosophy</h3>
-          <ul className="text-base leading-relaxed space-y-2">
+        <div className="mb-6 rounded-lg border p-6">
+          <h3 className="mb-2 text-xl font-semibold">Our Philosophy</h3>
+          <ul className="space-y-2 text-base leading-relaxed">
             <li>
               <strong>Gentle</strong>: Tools that feel intuitive and human.
             </li>

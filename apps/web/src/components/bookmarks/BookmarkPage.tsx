@@ -41,7 +41,7 @@ export default function BookmarkPage({
         include: { chat: true },
       },
       isBookmarked: true,
-    })
+    }),
   );
 
   useEffect(() => {
@@ -72,9 +72,9 @@ export default function BookmarkPage({
   if (loading) return <PartialLoading />;
 
   return (
-    <div className="flex flex-col h-full w-full p-6 relative">
+    <div className="relative flex h-full w-full flex-col p-6">
       <div
-        className="absolute top-0 left-0 w-full h-[50px] px-4 flex items-center justify-between select-none"
+        className="absolute top-0 left-0 flex h-[50px] w-full items-center justify-between px-4 select-none"
         style={headerStyle}
       >
         <div>{collapsed && <CollapseButton hoverColor="white" />}</div>
@@ -87,7 +87,7 @@ export default function BookmarkPage({
                 onClick={reset}
                 className="flex items-center gap-1 text-sm hover:bg-white"
               >
-                <RotateCcw className="w-4 h-4" />
+                <RotateCcw className="h-4 w-4" />
               </Button>
             </TooltipTrigger>
             <TooltipContent side="bottom">Reset Filters</TooltipContent>
@@ -102,9 +102,9 @@ export default function BookmarkPage({
                 className="flex items-center gap-1 text-sm hover:bg-white"
               >
                 {isFilterOpen ? (
-                  <EyeOff className="w-4 h-4" />
+                  <EyeOff className="h-4 w-4" />
                 ) : (
-                  <Eye className="w-4 h-4" />
+                  <Eye className="h-4 w-4" />
                 )}
               </Button>
             </TooltipTrigger>
@@ -124,7 +124,7 @@ export default function BookmarkPage({
           />
         )}
       </div>
-      <div className="flex-1 overflow-y-auto space-y-4">
+      <div className="flex-1 space-y-4 overflow-y-auto">
         {filteredMessages.length === 0 ? (
           <PartialEmpty message="You haven’t saved any items yet." />
         ) : (

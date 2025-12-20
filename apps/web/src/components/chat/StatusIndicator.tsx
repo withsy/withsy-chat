@@ -28,7 +28,7 @@ export const StatusIndicator = ({ status }: StatusIndicatorProps) => {
 
   if (status === "pending" || status === "processing") {
     return (
-      <span className="flex items-center gap-1 text-muted-foreground text-sm mt-5 justify-end">
+      <span className="text-muted-foreground mt-5 flex items-center justify-end gap-1 text-sm">
         <Badge
           className="animate-bounce"
           fill={`rgb(${themeColor})`}

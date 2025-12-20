@@ -24,19 +24,19 @@ export default function Sidebar() {
   return (
     <div
       className={cn(
-        "transition-all duration-300 ease-in-out h-[100dvh] fixed top-0 left-0 z-40 flex flex-col",
+        "fixed top-0 left-0 z-40 flex h-[100dvh] flex-col transition-all duration-300 ease-in-out",
         collapsed && "w-0 overflow-hidden",
         !collapsed && isMobile && "w-[100vw] px-4",
-        !collapsed && !isMobile && "w-[240px] px-4 flex-shrink-0",
-        "relative"
+        !collapsed && !isMobile && "w-[240px] flex-shrink-0 px-4",
+        "relative",
       )}
       style={bgStyle()}
     >
       <div
         className={cn(
-          "transition-opacity duration-500 delay-200 flex-1 flex flex-col min-h-0 pt-4 pb-4 relative space-y-4",
-          collapsed ? "opacity-0 pointer-events-none" : "opacity-100",
-          isMobile && "text-lg"
+          "relative flex min-h-0 flex-1 flex-col space-y-4 pt-4 pb-4 transition-opacity delay-200 duration-500",
+          collapsed ? "pointer-events-none opacity-0" : "opacity-100",
+          isMobile && "text-lg",
         )}
       >
         {!collapsed && (

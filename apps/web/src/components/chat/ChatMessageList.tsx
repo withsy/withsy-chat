@@ -67,7 +67,7 @@ export function ChatMessageList({ messages, onToggleSaved }: Props) {
             query: rest,
           },
           undefined,
-          { shallow: true }
+          { shallow: true },
         );
       }, 100);
       return () => clearTimeout(timeout);
@@ -104,7 +104,7 @@ export function ChatMessageList({ messages, onToggleSaved }: Props) {
     <div className="relative h-full">
       <div
         ref={listRef}
-        className="space-y-12 overflow-x-hidden overflow-y-auto h-full pr-2"
+        className="h-full space-y-12 overflow-x-hidden overflow-y-auto pr-2"
       >
         {chat != null && <ChatInformationSystemMessage chat={chat} />}
         {messages.map((msg) => (
@@ -128,7 +128,7 @@ export function ChatMessageList({ messages, onToggleSaved }: Props) {
       {showScrollToBottom && (
         <button
           onClick={scrollToBottom}
-          className="absolute left-1/2 bottom-5 transform -translate-x-1/2 text-white p-2 rounded-full shadow-md transition"
+          className="absolute bottom-5 left-1/2 -translate-x-1/2 transform rounded-full p-2 text-white shadow-md transition"
           style={{ backgroundColor: `rgb(${themeColor})` }}
         >
           <ChevronsDown size={16} />

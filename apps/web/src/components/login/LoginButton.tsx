@@ -14,7 +14,7 @@ export default function LoginButton({
     <Button
       size={size}
       onClick={() => signIn()}
-      className={`text-${size} font-semibold cursor-pointer bg-[rgb(40,90,128)] text-white select-none`}
+      className={`text-${size} cursor-pointer bg-[rgb(40,90,128)] font-semibold text-white select-none`}
     >
       {message}
     </Button>

@@ -42,7 +42,7 @@ export function BookmarkCard({
   const messageLink = `/chat/${chatId}?messageId=${messageId}`;
 
   const updateMessageMutation = useMutation(
-    trpc.message.update.mutationOptions()
+    trpc.message.update.mutationOptions(),
   );
 
   const handleToggleSaved = () => {
@@ -60,7 +60,7 @@ export function BookmarkCard({
             description: "Please try again or contact support.",
           });
         },
-      }
+      },
     );
   };
 
@@ -68,7 +68,7 @@ export function BookmarkCard({
   if (!text) return null;
 
   return (
-    <div className="relative group">
+    <div className="group relative">
       <Card>
         {title && (
           <>
@@ -81,12 +81,12 @@ export function BookmarkCard({
           </>
         )}
         <CardContent className="mt-2 space-y-3 overflow-x-auto">
-          <div className={`transition-all overflow-hidden relative`}>
+          <div className={`relative overflow-hidden transition-all`}>
             <MarkdownBox content={displayedText} />
           </div>
         </CardContent>
 
-        <CardFooter className="flex justify-between pl-4 pr-4 pb-2">
+        <CardFooter className="flex justify-between pr-4 pb-2 pl-4">
           <CollapseToggle
             show={isLongMessage}
             collapsed={collapsed}

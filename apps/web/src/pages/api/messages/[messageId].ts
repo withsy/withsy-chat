@@ -73,7 +73,7 @@ export async function get(options: Options) {
             "User usage limit getting failed. userId:",
             userId,
             " error:",
-            e
+            e,
           );
         }
 

@@ -45,8 +45,8 @@ export function ChatSession({ initialMessages, children }: Props) {
       { type: "message" },
       {
         enabled: !!chat?.id,
-      }
-    )
+      },
+    ),
   );
 
   const chatStart = useMutation(
@@ -54,10 +54,10 @@ export function ChatSession({ initialMessages, children }: Props) {
       onSuccess(data) {
         queryClient.invalidateQueries(trpc.chat.list.queryFilter());
         router.push(
-          `/chat/${data.chat.id}?streamMessageId=${data.modelMessage.id}`
+          `/chat/${data.chat.id}?streamMessageId=${data.modelMessage.id}`,
         );
       },
-    })
+    }),
   );
 
   const messageSend = useMutation(
@@ -75,7 +75,7 @@ export function ChatSession({ initialMessages, children }: Props) {
         setStreamMessageId(data.modelMessage.id);
         queryClient.invalidateQueries(trpc.chat.list.queryFilter());
       },
-    })
+    }),
   );
 
   useEffect(() => {
@@ -84,7 +84,7 @@ export function ChatSession({ initialMessages, children }: Props) {
       initialMessages.map((msg) => ({
         ...msg,
         isMessageCollapsed: collapseStatus,
-      }))
+      })),
     );
     const lastMessage = initialMessages.at(-1);
     const streamMessageId =
@@ -131,8 +131,8 @@ export function ChatSession({ initialMessages, children }: Props) {
                 text: "",
                 status: "processing",
               }
-            : x
-        )
+            : x,
+        ),
       );
     });
 
@@ -143,8 +143,8 @@ export function ChatSession({ initialMessages, children }: Props) {
         prev.map((x) =>
           x.id === streamMessageId
             ? { ...x, status: isSuccess ? "succeeded" : "failed" }
-            : x
-        )
+            : x,
+        ),
       );
       setStreamMessageId(null);
       if (!isSuccess) toast.error("Receive chat message failed.");
@@ -162,8 +162,8 @@ export function ChatSession({ initialMessages, children }: Props) {
                   text: x.text + chunk.text,
                   reasoningText: x.reasoningText + chunk.reasoningText,
                 }
-              : x
-          )
+              : x,
+          ),
         );
       } else if (event.type === "usageLimits") {
         const usageLimits = event.usageLimits;
@@ -205,8 +205,8 @@ export function ChatSession({ initialMessages, children }: Props) {
         onSuccess: () => {
           setMessages((prev) =>
             prev.map((msg) =>
-              msg.id === id ? { ...msg, isBookmarked: newValue } : msg
-            )
+              msg.id === id ? { ...msg, isBookmarked: newValue } : msg,
+            ),
           );
 
           if (newValue) {
@@ -224,7 +224,7 @@ export function ChatSession({ initialMessages, children }: Props) {
             description: "Please try again or contact support.",
           });
         },
-      }
+      },
     );
   };
 
@@ -239,15 +239,15 @@ export function ChatSession({ initialMessages, children }: Props) {
 
   const savedMessages = useMemo(
     () => messages.filter((msg) => msg.isBookmarked),
-    [messages]
+    [messages],
   );
 
   return (
-    <div className="flex h-full relative">
+    <div className="relative flex h-full">
       <div
         className={cn(
-          "flex flex-col h-full relative items-center transition-all duration-300",
-          isMobile ? "w-full" : openDrawer ? "w-[70%]" : "w-full"
+          "relative flex h-full flex-col items-center transition-all duration-300",
+          isMobile ? "w-full" : openDrawer ? "w-[70%]" : "w-full",
         )}
       >
         {isMobile ? (
@@ -257,8 +257,8 @@ export function ChatSession({ initialMessages, children }: Props) {
         )}
         <div
           className={cn(
-            "flex-1 overflow-y-auto mt-[50px] w-full transition-all duration-300",
-            wideView ? "md:w-[95%] md:mx-auto" : "md:w-[80%] md:mx-auto"
+            "mt-[50px] w-full flex-1 overflow-y-auto transition-all duration-300",
+            wideView ? "md:mx-auto md:w-[95%]" : "md:mx-auto md:w-[80%]",
           )}
         >
           {(chat || messages.length > 0) && (
@@ -271,13 +271,13 @@ export function ChatSession({ initialMessages, children }: Props) {
           )}
         </div>
         {children}
-        <div className="w-full px-4 sticky bottom-0 bg-white z-10 flex flex-col items-center">
+        <div className="sticky bottom-0 z-10 flex w-full flex-col items-center bg-white px-4">
           <ChatInputBox
             onSendMessage={onSendMessage}
             shouldFocus={shouldFocusInput}
             usageLimits={usageLimits}
           />
-          <div className="text-xs text-gray-500 mt-2 mb-2">
+          <div className="mt-2 mb-2 text-xs text-gray-500">
             AI can make mistakes — please double-check.
           </div>
         </div>

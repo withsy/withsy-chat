@@ -11,7 +11,7 @@ export default function BmcWidget() {
     script.setAttribute("data-description", "Support me on Buy me a coffee!");
     script.setAttribute(
       "data-message",
-      "Your coffee helps cover server costs — thank you!"
+      "Your coffee helps cover server costs — thank you!",
     );
     script.setAttribute("data-color", "#FF813F");
     script.setAttribute("data-position", "Right");
@@ -24,7 +24,7 @@ export default function BmcWidget() {
         new Event("DOMContentLoaded", {
           bubbles: false,
           cancelable: false,
-        })
+        }),
       );
     });
 

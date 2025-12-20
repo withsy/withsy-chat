@@ -29,7 +29,7 @@ export const useSidebarInitializer = () => {
         if (typeof window !== "undefined") {
           localStorage.setItem("sidebarCollapsed", String(collapsed));
         }
-      }
+      },
     );
     return () => unsub();
   }, []);

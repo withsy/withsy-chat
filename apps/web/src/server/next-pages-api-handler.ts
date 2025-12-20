@@ -24,7 +24,7 @@ export function createNextPagesApiHandler(handler: Handler) {
   return async (request: NextApiRequest, response: NextApiResponse) => {
     try {
       const ctx = await createUserContext(
-        createPublicContext({ request, response })
+        createPublicContext({ request, response }),
       );
 
       if (request.method === "GET") {

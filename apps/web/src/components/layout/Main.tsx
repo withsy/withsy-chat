@@ -28,15 +28,15 @@ export default function Main({ children }: MainProps) {
     <main
       className={cn(
         `flex-1 transition-all duration-300`,
-        !isMobile && "rounded-xl"
+        !isMobile && "rounded-xl",
       )}
       style={mainStyle}
     >
       <div
         className={cn(
-          "transition-all h-full",
+          "h-full transition-all",
           "text-base",
-          largeText && "text-lg"
+          largeText && "text-lg",
         )}
       >
         {children}

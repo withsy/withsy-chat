@@ -14,7 +14,7 @@ const buildMessage = (
     minutesLeft?: number;
     resetAt: Date;
     remaining?: number;
-  }
+  },
 ) => {
   switch (type) {
     case "daily":
@@ -74,10 +74,10 @@ export const UsageLimitNotice: React.FC<Props> = ({ usageLimits }) => {
 
   let message: React.ReactNode = null;
   const messageDaily = usageLimits.find(
-    (x) => x.type === "message" && x.period === "daily"
+    (x) => x.type === "message" && x.period === "daily",
   );
   const messagePerMinute = usageLimits.find(
-    (x) => x.type === "message" && x.period === "perMinute"
+    (x) => x.type === "message" && x.period === "perMinute",
   );
   if (messageDaily && messageDaily.remainingAmount === 0) {
     const minutesLeft = getMinutesLeft(messageDaily.resetAt);
@@ -100,7 +100,7 @@ export const UsageLimitNotice: React.FC<Props> = ({ usageLimits }) => {
 
   return message ? (
     <span
-      className="select-none text-xs text-gray-500"
+      className="text-xs text-gray-500 select-none"
       style={{
         color: `rgb(${themeColor})`,
         overflow: "hidden",

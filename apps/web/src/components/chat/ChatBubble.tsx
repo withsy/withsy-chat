@@ -25,7 +25,7 @@ const ChatBubbleComponent = ({ message, chatType, onToggleSaved }: Props) => {
 
   const isLongMessage = text.length > 150;
   const [collapsed, setCollapsed] = useState(
-    isMessageCollapsed ?? (role === "user" && isLongMessage)
+    isMessageCollapsed ?? (role === "user" && isLongMessage),
   );
   const [showReasoning, setShowReasoning] = useState(false);
 
@@ -59,7 +59,7 @@ const ChatBubbleComponent = ({ message, chatType, onToggleSaved }: Props) => {
     role === "model"
       ? userProfile?.name ||
         (message.model ? GetModelLabel(message.model) : "AI")
-      : session?.user?.name ?? "username";
+      : (session?.user?.name ?? "username");
 
   const collapseToggleProps = {
     show: isLongMessage && status === "succeeded",
@@ -91,23 +91,23 @@ const ChatBubbleComponent = ({ message, chatType, onToggleSaved }: Props) => {
   return (
     <div
       className={cn(
-        "flex w-full gap-3 items-start px-4",
+        "flex w-full items-start gap-3 px-4",
         role === "model" ? "items-start" : "items-end",
-        "flex-col gap-2"
+        "flex-col gap-2",
       )}
     >
       <ModelAvatar name={name} image={image} />
 
       <div
-        className={`flex flex-col items-start flex-1 ${
+        className={`flex flex-1 flex-col items-start ${
           role == "model" ? "w-full" : ""
         }`}
       >
         <div
           className={cn(
-            "text-muted-foreground text-sm mb-1 select-none flex justify-between items-center",
-            role === "model" ? "text-left w-full" : "text-right",
-            role === "user" && "self-end"
+            "text-muted-foreground mb-1 flex items-center justify-between text-sm select-none",
+            role === "model" ? "w-full text-left" : "text-right",
+            role === "user" && "self-end",
           )}
         >
           <div>
@@ -116,7 +116,7 @@ const ChatBubbleComponent = ({ message, chatType, onToggleSaved }: Props) => {
           </div>
           {role === "model" && reasoningText && (
             <div
-              className="ml-auto -mt-1 mb-1 text-sm text-muted-foreground flex items-center gap-1 cursor-pointer select-none"
+              className="text-muted-foreground -mt-1 mb-1 ml-auto flex cursor-pointer items-center gap-1 text-sm select-none"
               onClick={() => setShowReasoning((prev) => !prev)}
             >
               <button
@@ -132,8 +132,8 @@ const ChatBubbleComponent = ({ message, chatType, onToggleSaved }: Props) => {
 
         <div
           className={cn(
-            "inline-block rounded-md mx-4 py-2 px-2 whitespace-pre-wrap break-all",
-            role === "user" ? "self-end " : "self-start"
+            "mx-4 inline-block rounded-md px-2 py-2 break-all whitespace-pre-wrap",
+            role === "user" ? "self-end" : "self-start",
           )}
           style={
             role == "user"
@@ -149,7 +149,7 @@ const ChatBubbleComponent = ({ message, chatType, onToggleSaved }: Props) => {
           <MarkdownBox content={collapseText} />
           <StatusIndicator status={status} />
         </div>
-        <div className="flex justify-between w-full mt-2">{items}</div>
+        <div className="mt-2 flex w-full justify-between">{items}</div>
       </div>
     </div>
   );

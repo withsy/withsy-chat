@@ -25,7 +25,7 @@ export default function SidebarChatList() {
     const prev = chats;
 
     setChats((prev) =>
-      prev.map((chat) => (chat.id === updatedChat.id ? updatedChat : chat))
+      prev.map((chat) => (chat.id === updatedChat.id ? updatedChat : chat)),
     );
 
     updateChatMut.mutate(
@@ -38,7 +38,7 @@ export default function SidebarChatList() {
         onError: () => setChats(prev),
         onSuccess: () =>
           queryClient.invalidateQueries(trpc.chat.list.queryFilter()),
-      }
+      },
     );
   };
 
@@ -59,7 +59,7 @@ export default function SidebarChatList() {
   });
   starred.sort((a, b) => toNewest(a.updatedAt, b.updatedAt));
   nonStarredMap.forEach((chats) =>
-    chats.sort((a, b) => toNewest(a.updatedAt, b.updatedAt))
+    chats.sort((a, b) => toNewest(a.updatedAt, b.updatedAt)),
   );
   const orderedEntries = [...nonStarredMap.entries()].sort(([a], [b]) => {
     if (a === "Today") return -1;
@@ -75,7 +75,7 @@ export default function SidebarChatList() {
         <div>
           <button
             onClick={() => setStarredOpen(!starredOpen)}
-            className="w-full flex items-center justify-between py-2 px-2 mb-1 text-sm rounded-md font-semibold select-none hover:bg-white active:bg-white"
+            className="mb-1 flex w-full items-center justify-between rounded-md px-2 py-2 text-sm font-semibold select-none hover:bg-white active:bg-white"
           >
             <span>Starred</span>
             <span>
@@ -87,7 +87,7 @@ export default function SidebarChatList() {
             </span>
           </button>
           {starredOpen && (
-            <div className="space-y-1 mt-1">
+            <div className="mt-1 space-y-1">
               {starred.map((chat) => (
                 <SidebarChatItem
                   key={chat.id}
@@ -101,16 +101,16 @@ export default function SidebarChatList() {
         </div>
       )}
       <div>
-        <div className="space-y-4 mt-1">
+        <div className="mt-1 space-y-4">
           {orderedEntries.map(([date, chats]) => {
             if (chats.length === 0) return null;
 
             return (
               <div key={date}>
-                <div className="py-1 px-2 mb-1 text-sm font-semibold select-none">
+                <div className="mb-1 px-2 py-1 text-sm font-semibold select-none">
                   {date}
                 </div>
-                <div className="space-y-1 mt-1">
+                <div className="mt-1 space-y-1">
                   {chats.map((chat) => (
                     <SidebarChatItem
                       key={chat.id}

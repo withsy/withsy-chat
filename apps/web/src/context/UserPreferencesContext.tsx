@@ -46,7 +46,7 @@ interface SetUserPreferences {
 interface UserPreferencesStore {
   userPreferences: PartialUserPreferences;
   getUserPreference: <Key extends UserPreferenceKey>(
-    key: Key
+    key: Key,
   ) => PartialUserPreferences[Key];
   setUserPreferences: SetUserPreferences;
   updateUserPreferences: UpdateUserPreferences;
@@ -67,7 +67,7 @@ const USE_STORE = create<UserPreferencesStore>()(
           const userPreferences = Object.fromEntries(
             Object.entries(raw)
               .filter(([key, _]) => allowedKeys.includes(key))
-              .filter(([_, value]) => value !== undefined)
+              .filter(([_, value]) => value !== undefined),
           );
 
           return {
@@ -125,8 +125,8 @@ const USE_STORE = create<UserPreferencesStore>()(
       name: LOCAL_STORAGE_KEY,
       storage: createJSONStorage(() => localStorage),
       partialize: ({ userPreferences }) => ({ userPreferences }),
-    }
-  )
+    },
+  ),
 );
 
 //#endregion Store
@@ -135,16 +135,16 @@ const USE_STORE = create<UserPreferencesStore>()(
 
 interface UserPreferencesContext {
   useUserPreference: <Key extends UserPreferenceKey>(
-    key: Key
+    key: Key,
   ) => UserPreferences[Key];
   updateUserPreferences: (input: PartialUserPreferences) => void;
   useUserPreferenceIsFetching: <Key extends UserPreferenceKey>(
-    key: Key
+    key: Key,
   ) => boolean;
 }
 
 const UserPreferencesContext = createContext<UserPreferencesContext | null>(
-  null
+  null,
 );
 
 export function UserPreferencesProvider({ children }: { children: ReactNode }) {
@@ -168,7 +168,7 @@ export function UserPreferencesProvider({ children }: { children: ReactNode }) {
           throw new Error(
             `Conflict request. fetching keys: ${USE_STORE.getState()
               .fetchingKeySet.keys()
-              .toArray()}, input keys: ${keys}.`
+              .toArray()}, input keys: ${keys}.`,
           );
         }
 
@@ -195,7 +195,7 @@ export function UserPreferencesProvider({ children }: { children: ReactNode }) {
           const { rollbackMap } = res;
 
           USE_STORE.getState().updateUserPreferences(
-            Object.fromEntries(rollbackMap)
+            Object.fromEntries(rollbackMap),
           );
         }
       },
@@ -206,14 +206,14 @@ export function UserPreferencesProvider({ children }: { children: ReactNode }) {
           USE_STORE.getState().deleteFetchingKeys(keys);
         }
       },
-    })
+    }),
   );
 
   const useUserPreference = useCallback(
     <Key extends UserPreferenceKey>(key: Key) =>
       USE_STORE((s) => s.getUserPreference(key)) ??
       DEFAULT_USER_PREFERENCES[key],
-    []
+    [],
   );
 
   const updateUserPreferences = useCallback(
@@ -222,13 +222,13 @@ export function UserPreferencesProvider({ children }: { children: ReactNode }) {
         mutate(input);
       }
     },
-    [session, mutate]
+    [session, mutate],
   );
 
   const useUserPreferenceIsFetching = useCallback(
     <Key extends UserPreferenceKey>(key: Key): boolean =>
       USE_STORE((s) => s.hasFetchingKey(key)),
-    []
+    [],
   );
 
   return (
@@ -248,7 +248,7 @@ export function useUserPreferences(): UserPreferencesContext {
   const context = useContext(UserPreferencesContext);
   if (!context) {
     throw new Error(
-      "useUserPreferences must be used within UserPreferencesContext."
+      "useUserPreferences must be used within UserPreferencesContext.",
     );
   }
 

@@ -20,13 +20,13 @@ function Page({ categories }: { categories: GuideCategory[] }) {
   const getIconForCategory = (name: string) => {
     switch (name.toLowerCase()) {
       case "prompts":
-        return <TableProperties className="w-5 h-5 text-[#EA9257] mr-3" />;
+        return <TableProperties className="mr-3 h-5 w-5 text-[#EA9257]" />;
       case "saved":
-        return <Bookmark className="w-5 h-5 text-[#EA9257] mr-3" />;
+        return <Bookmark className="mr-3 h-5 w-5 text-[#EA9257]" />;
       case "customization":
-        return <Sparkles className="w-5 h-5 text-[#EA9257] mr-3" />;
+        return <Sparkles className="mr-3 h-5 w-5 text-[#EA9257]" />;
       case "general":
-        return <CircleHelp className="w-5 h-5 text-[#EA9257] mr-3" />;
+        return <CircleHelp className="mr-3 h-5 w-5 text-[#EA9257]" />;
       default:
         return null;
     }
@@ -40,9 +40,9 @@ function Page({ categories }: { categories: GuideCategory[] }) {
     return 0;
   });
   return (
-    <div className="flex flex-col items-start text-start px-6 py-12 max-w-3xl mx-auto">
-      <h2 className="text-3xl font-bold mb-4">User Guides</h2>
-      <p className="text-base leading-relaxed mb-6">
+    <div className="mx-auto flex max-w-3xl flex-col items-start px-6 py-12 text-start">
+      <h2 className="mb-4 text-3xl font-bold">User Guides</h2>
+      <p className="mb-6 text-base leading-relaxed">
         Discover all you need to master, personalize, and optimize your AI chat
         experience.
       </p>
@@ -50,7 +50,7 @@ function Page({ categories }: { categories: GuideCategory[] }) {
       <div className="space-y-12 py-4">
         {categories.map((category) => (
           <div key={category.name}>
-            <h2 className="text-xl font-semibold mb-4 text-gray-800 flex items-center">
+            <h2 className="mb-4 flex items-center text-xl font-semibold text-gray-800">
               {getIconForCategory(category.name)}
               {capitalize(category.name)}
             </h2>
@@ -59,12 +59,12 @@ function Page({ categories }: { categories: GuideCategory[] }) {
                 <li key={guide.slug.join("/")}>
                   <Link
                     href={`/guides/${guide.slug.join("/")}`}
-                    className="text-[rgb(40,90,128)] hover:underline text-lg"
+                    className="text-lg text-[rgb(40,90,128)] hover:underline"
                   >
                     {guide.title}
                   </Link>
                   {guide.description && (
-                    <p className="text-gray-500 text-sm">{guide.description}</p>
+                    <p className="text-sm text-gray-500">{guide.description}</p>
                   )}
                 </li>
               ))}

@@ -55,7 +55,7 @@ export function ThemeSettingsModal({
   return (
     <Dialog open={open} onOpenChange={setThemeModalOpen}>
       <DialogContent
-        className="z-[150] max-w-lg max-h-[80%] w-full h-full"
+        className="z-[150] h-full max-h-[80%] w-full max-w-lg"
         aria-describedby="Customize the theme color and opacity for your application."
         style={{ pointerEvents: "auto" }}
         onPointerDownOutside={handleClose}
@@ -68,7 +68,7 @@ export function ThemeSettingsModal({
             Customize the theme color and opacity for your application.
           </p>
           <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4 items-start">
+            <div className="grid grid-cols-2 items-start gap-4">
               <div className="space-y-4">
                 <div>
                   <Label>Custom Color</Label>
@@ -76,7 +76,7 @@ export function ThemeSettingsModal({
                     type="color"
                     value={rgbToHex(customColor)}
                     onChange={(e) => setCustomColor(hexToRgb(e.target.value))}
-                    className="w-full h-10 rounded-md cursor-pointer mt-2"
+                    className="mt-2 h-10 w-full cursor-pointer rounded-md"
                   />
                 </div>
                 <div>
@@ -96,22 +96,22 @@ export function ThemeSettingsModal({
               <div>
                 <Label>Preview</Label>
                 <div
-                  className="w-full h-28 rounded-md border mt-2"
+                  className="mt-2 h-28 w-full rounded-md border"
                   style={{
                     backgroundColor: `rgba(${customColor}, ${customOpacity})`,
                   }}
                 />
-                <p className="text-xs text-muted-foreground mt-2">
+                <p className="text-muted-foreground mt-2 text-xs">
                   rgba({customColor}, {customOpacity.toFixed(2)})
                 </p>
               </div>
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-4 my-4">
+          <div className="my-4 grid grid-cols-2 gap-4">
             {recommendedThemes.map((theme) => (
               <button
                 key={theme.name}
-                className="rounded-xl p-4 border hover:border-blue-500 flex flex-col items-start text-left"
+                className="flex flex-col items-start rounded-xl border p-4 text-left hover:border-blue-500"
                 style={{
                   backgroundColor: `rgba(${theme.color}, ${theme.opacity})`,
                 }}
@@ -120,8 +120,8 @@ export function ThemeSettingsModal({
                   setCustomOpacity(theme.opacity);
                 }}
               >
-                <span className="text-sm mb-1">{theme.name}</span>
-                <span className="text-xs text-muted-foreground">
+                <span className="mb-1 text-sm">{theme.name}</span>
+                <span className="text-muted-foreground text-xs">
                   {theme.color} / {theme.opacity}
                 </span>
               </button>
@@ -130,7 +130,7 @@ export function ThemeSettingsModal({
         </div>
         <Button
           onClick={handleApply}
-          className="w-full mt-4"
+          className="mt-4 w-full"
           style={{
             backgroundColor: `rgba(${themeColor})`,
           }}
@@ -152,6 +152,6 @@ function hexToRgb(hex: string): string {
   if (!result) return "255,255,255";
   return `${parseInt(result[1], 16)},${parseInt(result[2], 16)},${parseInt(
     result[3],
-    16
+    16,
   )}`;
 }

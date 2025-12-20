@@ -19,7 +19,7 @@ export function BookmarkCardHeaderContext({ icon, date }: Props) {
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <div className="flex items-center gap-1 text-xs text-muted-foreground min-w-0">
+          <div className="text-muted-foreground flex min-w-0 items-center gap-1 text-xs">
             {icon}
             <span className="truncate">{display}</span>
           </div>

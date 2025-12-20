@@ -35,7 +35,7 @@ export default function CategoryButton({
         <Button
           variant="outline"
           size="sm"
-          className="text-sm font-semibold cursor-pointer border-[rgb(40,90,128)] text-[rgb(40,90,128)] bg-white"
+          className="cursor-pointer border-[rgb(40,90,128)] bg-white text-sm font-semibold text-[rgb(40,90,128)]"
         >
           <AlignJustify />
         </Button>
@@ -45,7 +45,7 @@ export default function CategoryButton({
         <DrawerHeader>
           <DrawerTitle>Select Category</DrawerTitle>
         </DrawerHeader>
-        <div className="flex flex-col gap-4 mt-2">
+        <div className="mt-2 flex flex-col gap-4">
           {categories.map((category) => {
             const isActive = router.pathname === `/${category.value}`;
             return (
@@ -53,8 +53,8 @@ export default function CategoryButton({
                 key={category.value}
                 variant="ghost"
                 className={clsx(
-                  "justify-start text-lg py-2",
-                  isActive ? "bg-gray-100 font-semibold" : "active:bg-gray-200"
+                  "justify-start py-2 text-lg",
+                  isActive ? "bg-gray-100 font-semibold" : "active:bg-gray-200",
                 )}
                 onClick={() => handleClick(category.value)}
               >

@@ -24,9 +24,12 @@ export default function EmptyChatView() {
     // NOTE: Use Promise to avoid client/server hydration mismatch.
     Promise.try(() => setGreeting(getGreeting()));
 
-    const interval = setInterval(() => {
-      setGreeting(getGreeting());
-    }, 1000 * 60 * 10);
+    const interval = setInterval(
+      () => {
+        setGreeting(getGreeting());
+      },
+      1000 * 60 * 10,
+    );
     return () => clearInterval(interval);
   }, [setChat, setGreeting]);
 
@@ -36,7 +39,7 @@ export default function EmptyChatView() {
 
   return (
     <ChatSession initialMessages={[]}>
-      <div className="flex flex-col items-center justify-center w-full px-4 h-full select-none">
+      <div className="flex h-full w-full flex-col items-center justify-center px-4 select-none">
         <h1 className="text-2xl font-semibold">
           {greeting}
           {name && `, ${name}`}

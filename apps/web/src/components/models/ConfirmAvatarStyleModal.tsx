@@ -25,7 +25,7 @@ export function ConfirmAvatarStyleModal({
         <DialogHeader>
           <DialogTitle>Change Avatar Style</DialogTitle>
         </DialogHeader>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-muted-foreground text-sm">
           Are you sure you want to change the avatar style to{" "}
           <span className="font-medium">{newStyleLabel}</span>?
         </p>

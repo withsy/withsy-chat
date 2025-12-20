@@ -33,7 +33,7 @@ export function PromptsTable({
 }: PromptsTableProps) {
   return (
     <div className="overflow-x-auto">
-      <div className="border rounded-md" style={{ width: "auto" }}>
+      <div className="rounded-md border" style={{ width: "auto" }}>
         <Table>
           <TableHeader>
             <TableRow>
@@ -57,23 +57,23 @@ export function PromptsTable({
                   }
                   onEdit(prompt.id);
                 }}
-                className="cursor-pointer hover:bg-muted"
+                className="hover:bg-muted cursor-pointer"
               >
                 <TableCell>
                   <div className="flex items-center gap-2">
                     <button
                       type="button"
                       onClick={() => onToggleStar(prompt.id)}
-                      className="flex items-center justify-center hover:text-yellow-500 transition-colors w-5 h-5"
+                      className="flex h-5 w-5 items-center justify-center transition-colors hover:text-yellow-500"
                       data-ignore-row-click
                     >
                       {prompt.isStarred ? (
                         <Star
-                          className="w-4 h-4 text-black"
+                          className="h-4 w-4 text-black"
                           style={{ fill: `rgb(${themeColor})` }}
                         />
                       ) : (
-                        <Star className="w-4 h-4 text-black" />
+                        <Star className="h-4 w-4 text-black" />
                       )}
                     </button>
                     <span className="text-sm">{prompt.title}</span>
@@ -92,7 +92,7 @@ export function PromptsTable({
                         className="h-8 w-8"
                         data-ignore-row-click
                       >
-                        <MoreVertical className="w-4 h-4" />
+                        <MoreVertical className="h-4 w-4" />
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">

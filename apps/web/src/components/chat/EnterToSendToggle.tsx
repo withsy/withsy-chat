@@ -16,7 +16,7 @@ export function EnterToSendToggle() {
   const isLoading = userPrefLoadings["enterToSend"];
 
   return (
-    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+    <div className="text-muted-foreground flex items-center gap-2 text-sm">
       <Switch
         id="enter-toggle"
         checked={enterToSend ?? false}
@@ -58,7 +58,7 @@ export function EnterToSendToggle() {
 
 function KeyCap({ children }: { children: React.ReactNode }) {
   return (
-    <span className="inline-block px-1 py-0.5 bg-gray-100 rounded border text-xs mx-1">
+    <span className="mx-1 inline-block rounded border bg-gray-100 px-1 py-0.5 text-xs">
       {children}
     </span>
   );

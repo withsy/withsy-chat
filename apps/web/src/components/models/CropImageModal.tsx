@@ -33,8 +33,8 @@ export default function CropImageModal({
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="w-[90vw] max-w-[400px] h-[500px]">
-        <div className="relative w-full h-[400px] bg-gray-200 rounded-md overflow-hidden">
+      <DialogContent className="h-[500px] w-[90vw] max-w-[400px]">
+        <div className="relative h-[400px] w-full overflow-hidden rounded-md bg-gray-200">
           <Cropper
             image={imageUrl}
             crop={crop}

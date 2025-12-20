@@ -34,13 +34,13 @@ export default function Page() {
   }, [error]);
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-8 text-center bg-gray-50">
-      <Cat size={48} className="text-blue-600 mb-4" />{" "}
+    <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50 p-8 text-center">
+      <Cat size={48} className="mb-4 text-blue-600" />{" "}
       <h1 className="text-2xl font-bold">Sign-in Error</h1>
       <p className="mt-4 text-gray-700">{message}</p>
       <Link
         href="/auth/signin"
-        className="mt-6 inline-block px-4 py-2 text-white bg-blue-600 rounded hover:bg-blue-700 transition"
+        className="mt-6 inline-block rounded bg-blue-600 px-4 py-2 text-white transition hover:bg-blue-700"
       >
         Try Signing In Again
       </Link>

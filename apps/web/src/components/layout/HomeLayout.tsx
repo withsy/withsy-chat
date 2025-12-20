@@ -9,13 +9,13 @@ type LayoutProps = {
 
 export default function HomeLayout({ children, className }: LayoutProps) {
   return (
-    <div className={`flex flex-col min-h-screen ${className}`}>
+    <div className={`flex min-h-screen flex-col ${className}`}>
       <Header />
       <div>
         <main>{children}</main>
         <BmcWidget />
       </div>
-      <footer className="text-center text-xs text-muted-foreground p-4 select-none flex flex-wrap justify-center gap-x-4 gap-y-2">
+      <footer className="text-muted-foreground flex flex-wrap justify-center gap-x-4 gap-y-2 p-4 text-center text-xs select-none">
         <div>© {new Date().getFullYear()} Withsy. All rights reserved.</div>
         <a href="#" className="termly-display-preferences">
           Consent Preferences

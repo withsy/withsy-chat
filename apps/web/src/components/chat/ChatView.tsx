@@ -18,7 +18,7 @@ export default function ChatView({ chatId }: Props) {
   const messageList = useQuery(
     trpc.message.list.queryOptions({
       options: { scope: { by: "chat", chatId } },
-    })
+    }),
   );
   const setChat = useChatStore((state) => state.setChat);
   useEffect(() => {

@@ -6,8 +6,8 @@ interface ChatInterfaceProps {
 
 export default function ChatInterface({ children }: ChatInterfaceProps) {
   return (
-    <div className="overflow-auto flex flex-col items-center">
-      <div className="flex flex-col items-center justify-center min-h-[70vh]">
+    <div className="flex flex-col items-center overflow-auto">
+      <div className="flex min-h-[70vh] flex-col items-center justify-center">
         {children}
       </div>
       {/* <ChatInputBox /> */}

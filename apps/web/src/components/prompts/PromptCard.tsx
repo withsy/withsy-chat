@@ -56,7 +56,7 @@ export function PromptCard({
           description: error.message ?? "Something went wrong.",
         });
       },
-    })
+    }),
   );
 
   const cornerButton = isDefault ? (
@@ -64,7 +64,7 @@ export function PromptCard({
   ) : chat != null ? (
     isActive ? (
       <button
-        className="text-xs font-medium text-primary hover:underline rounded-sm bg-gray-200 px-2 py-1"
+        className="text-primary rounded-sm bg-gray-200 px-2 py-1 text-xs font-medium hover:underline"
         onClick={(e) => {
           e.stopPropagation();
           updateChat.mutate({
@@ -77,7 +77,7 @@ export function PromptCard({
       </button>
     ) : (
       <button
-        className="text-xs font-medium text-primary hover:underline rounded-sm bg-gray-200 px-2 py-1"
+        className="text-primary rounded-sm bg-gray-200 px-2 py-1 text-xs font-medium hover:underline"
         onClick={(e) => {
           e.stopPropagation();
           updateChat.mutate({
@@ -94,15 +94,15 @@ export function PromptCard({
   );
 
   return (
-    <div className="p-4 rounded-lg border shadow-sm hover:shadow-md transition relative group">
+    <div className="group relative rounded-lg border p-4 shadow-sm transition hover:shadow-md">
       <div
-        className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition"
+        className="absolute top-2 right-2 opacity-0 transition group-hover:opacity-100"
         onClick={(e) => e.stopPropagation()}
       >
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             {(onToggleStar || onMakeDefault || onDelete) && (
-              <button className="p-1 hover:bg-muted rounded">
+              <button className="hover:bg-muted rounded p-1">
                 <MoreVertical size={16} />
               </button>
             )}
@@ -136,13 +136,13 @@ export function PromptCard({
       </div>
 
       <div
-        className="h-[120px] overflow-hidden text-sm whitespace-pre-wrap cursor-pointer"
+        className="h-[120px] cursor-pointer overflow-hidden text-sm whitespace-pre-wrap"
         onClick={() => onClick(prompt)}
       >
         {prompt.text}
       </div>
-      <div className="mt-4 font-semibold flex justify-between items-center gap-1">
-        <div className="flex items-center gap-1 min-w-0">
+      <div className="mt-4 flex items-center justify-between gap-1 font-semibold">
+        <div className="flex min-w-0 items-center gap-1">
           {prompt.isStarred && (
             <Star
               size={16}
@@ -150,7 +150,7 @@ export function PromptCard({
               className="shrink-0"
             />
           )}
-          <span className="truncate block leading-none">{prompt.title}</span>
+          <span className="block truncate leading-none">{prompt.title}</span>
         </div>
         {cornerButton}
       </div>

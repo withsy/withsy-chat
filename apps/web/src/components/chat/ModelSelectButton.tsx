@@ -12,7 +12,7 @@ export function ModelSelectButton({
   return (
     <button
       onClick={onClick}
-      className="inline-flex items-center gap-1 rounded px-2 py-[2px] font-medium text-gray-500 hover:bg-gray-200 active:bg-gray-200 transition"
+      className="inline-flex items-center gap-1 rounded px-2 py-[2px] font-medium text-gray-500 transition hover:bg-gray-200 active:bg-gray-200"
     >
       <AtSign size={12} />
       <span>{selectedLabel || "Select model"}</span>

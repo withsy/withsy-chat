@@ -12,6 +12,6 @@ export const useChatStore = create<ChatStore>((set, _get) => ({
   setChat: (chat) => set({ chat }),
   updatePromptId: (promptId) =>
     set((state) =>
-      state.chat ? { chat: { ...state.chat, userPromptId: promptId } } : {}
+      state.chat ? { chat: { ...state.chat, userPromptId: promptId } } : {},
     ),
 }));

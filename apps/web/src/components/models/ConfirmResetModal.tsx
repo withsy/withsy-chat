@@ -20,7 +20,7 @@ export default function ConfirmResetModal({ open, onClose, onConfirm }: Props) {
         <DialogHeader>
           <DialogTitle>Remove Custom Image</DialogTitle>
         </DialogHeader>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-muted-foreground text-sm">
           Are you sure you want to reset the image for this AI model? This will
           remove your custom image and show the default avatar instead.
         </p>

@@ -34,15 +34,15 @@ export function AvatarStyleSelector() {
 
   return (
     <>
-      <div className="space-x-2 flex flex-row items-center mb-6">
-        <div className="flex gap-3 flex-wrap">
+      <div className="mb-6 flex flex-row items-center space-x-2">
+        <div className="flex flex-wrap gap-3">
           {avatarStyles.map((style) => (
             <button
               key={style.id}
               onClick={() => setSelectedStyle(style.id)}
-              className={`relative border rounded-full w-12 h-12 overflow-hidden transition hover:scale-105 ${
+              className={`relative h-12 w-12 overflow-hidden rounded-full border transition hover:scale-105 ${
                 currentStyle === style.id
-                  ? "ring-2 ring-primary"
+                  ? "ring-primary ring-2"
                   : "opacity-50 hover:opacity-100"
               }`}
               aria-label={`Select ${style.label}`}
@@ -52,7 +52,7 @@ export function AvatarStyleSelector() {
                 alt={style.label}
                 width={48}
                 height={48}
-                className="w-full h-full object-cover"
+                className="h-full w-full object-cover"
               />
             </button>
           ))}
