@@ -1,6 +1,5 @@
 import ChatLayout from "@/components/layout/ChatLayout";
 import HomeLayout from "@/components/layout/HomeLayout";
-import LoadAiProfiles from "@/components/LoadAiProfiles";
 import { UserPreferencesProvider } from "@/context/UserPreferencesContext";
 // import TermlyCMP from "@/components/TermlyCMP";
 import { useSidebarInitializer } from "@/hooks/useSidebarInitializer";
@@ -51,7 +50,6 @@ export default function App({
               </HomeLayout>
             ) : (
               <ChatLayout className={nunito.className}>
-                <LoadAiProfiles />
                 <Component {...pageProps} />
               </ChatLayout>
             )}

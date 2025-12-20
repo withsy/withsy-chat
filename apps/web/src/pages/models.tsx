@@ -1,5 +1,4 @@
 import { CollapseButton } from "@/components/CollapseButton";
-import LoadAiProfiles from "@/components/LoadAiProfiles";
 import { PartialLoading } from "@/components/Loading";
 import ModelCard from "@/components/models/ModelCard";
 import { useUserPreferences } from "@/context/UserPreferencesContext";
@@ -26,8 +25,6 @@ function Page() {
 
   return (
     <div className="flex flex-col h-full relative">
-      <LoadAiProfiles />
-
       <div
         className="absolute top-0 left-0 w-full h-[50px] px-4 flex items-center justify-between select-none"
         style={headerStyle}

@@ -59,8 +59,8 @@ function UserMenuItem({
         onClick?.();
       }}
       className={cn(
-        "flex items-center justify-between rounded px-2 py-2 hover:bg-gray-100 cursor-pointer w-full",
-        largeText ? "text-lg" : "text-sm"
+        "flex w-full cursor-pointer items-center justify-between rounded px-2 py-2 hover:bg-gray-100",
+        largeText ? "text-lg" : "text-sm",
       )}
     >
       <div className="flex items-center">
@@ -187,11 +187,11 @@ export default function UserDropdownMenu() {
             largeText={largeText}
             onClick={item.onClick}
           />
-        )
+        ),
       )}
       <DropdownMenuSeparator className="px-4" />
       <div className="flex justify-center p-2">
-        <span className="text-xs text-muted-foreground select-none">
+        <span className="text-muted-foreground text-xs select-none">
           withsy with <span style={{ color: `rgb(${themeColor})` }}>♥</span>
         </span>
       </div>
@@ -207,14 +207,14 @@ export default function UserDropdownMenu() {
             type="button"
             onClick={() => setDrawerOpen(true)}
             className={cn(
-              "cursor-pointer flex items-center rounded-md w-full gap-2 px-2.5 py-3 hover:bg-white active:bg-white font-semibold select-none"
+              "flex w-full cursor-pointer items-center gap-2 rounded-md px-2.5 py-3 font-semibold select-none hover:bg-white active:bg-white",
             )}
           >
             <ModelAvatar size="sm" name={name} image={image} />
             {name && <span>{name}</span>}
           </button>
           <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
-            <DrawerContent className="p-4 space-y-2">
+            <DrawerContent className="space-y-2 p-4">
               {renderMenuItems()}
             </DrawerContent>
           </Drawer>
@@ -225,8 +225,8 @@ export default function UserDropdownMenu() {
             <button
               type="button"
               className={cn(
-                "cursor-pointer flex items-center rounded-md w-full gap-2 px-2.5 py-2 font-semibold select-none",
-                dropdownOpen ? "bg-white" : "hover:bg-white active:bg-white"
+                "flex w-full cursor-pointer items-center gap-2 rounded-md px-2.5 py-2 font-semibold select-none",
+                dropdownOpen ? "bg-white" : "hover:bg-white active:bg-white",
               )}
             >
               <ModelAvatar size="sm" name={name} image={image} />
@@ -236,8 +236,8 @@ export default function UserDropdownMenu() {
           <DropdownMenuContent
             align="end"
             className={cn(
-              "w-48 p-2 m-2 justify-between",
-              largeText ? "text-lg" : "text-base"
+              "m-2 w-48 justify-between p-2",
+              largeText ? "text-lg" : "text-base",
             )}
           >
             {renderMenuItems()}
