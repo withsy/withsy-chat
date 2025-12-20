@@ -46,10 +46,14 @@ export function ChatInputBox({
   const [randomPlaceholder, setRandomPlaceholder] = useState("");
 
   useEffect(() => {
-    Promise.try(() => {
-      const index = Math.floor(Math.random() * placeholderMessages.length);
-      setRandomPlaceholder(placeholderMessages[index]);
-    });
+    // NOTE: Use Promise to avoid client/server hydration mismatch.
+    Promise.try(() =>
+      setRandomPlaceholder(
+        placeholderMessages[
+          Math.floor(Math.random() * placeholderMessages.length)
+        ]
+      )
+    );
   }, [setRandomPlaceholder]);
 
   useEffect(() => {

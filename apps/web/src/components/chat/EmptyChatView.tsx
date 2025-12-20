@@ -20,6 +20,8 @@ export default function EmptyChatView() {
 
   useEffect(() => {
     setChat(null);
+
+    // NOTE: Use Promise to avoid client/server hydration mismatch.
     Promise.try(() => setGreeting(getGreeting()));
 
     const interval = setInterval(() => {
