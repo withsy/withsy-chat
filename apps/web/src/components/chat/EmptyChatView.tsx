@@ -12,21 +12,25 @@ function getGreeting() {
 }
 
 export default function EmptyChatView() {
-  const { data: session } = useSession();
+  const { data: session } = useSession({ required: true });
   const name = session?.user?.name;
 
-  const [greeting, setGreeting] = useState("Good day");
+  const [greeting, setGreeting] = useState("");
   const setChat = useChatStore((state) => state.setChat);
 
   useEffect(() => {
     setChat(null);
-    setGreeting(getGreeting());
+    Promise.try(() => setGreeting(getGreeting()));
+
     const interval = setInterval(() => {
       setGreeting(getGreeting());
     }, 1000 * 60 * 10);
     return () => clearInterval(interval);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [setChat, setGreeting]);
+
+  if (!session || !greeting) {
+    return null;
+  }
 
   return (
     <ChatSession initialMessages={[]}>

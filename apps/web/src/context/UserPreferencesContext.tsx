@@ -1,5 +1,6 @@
 import { useTRPC, type TrpcOptions } from "@/lib/trpc";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import type { AuthSession } from "@/server/auth";
+import { useMutation } from "@tanstack/react-query";
 import type { inferInput, inferOutput } from "@trpc/tanstack-react-query";
 import { useSession } from "next-auth/react";
 import {
@@ -152,8 +153,8 @@ export function UserPreferencesProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (session) {
-      const userPreferences =
-        Reflect.get(session.user ?? {}, "preferences") ?? {};
+      const authSession = session as AuthSession;
+      const userPreferences = authSession.user?.preferences ?? {};
       USE_STORE.getState().setUserPreferences(userPreferences);
     }
   }, [session]);

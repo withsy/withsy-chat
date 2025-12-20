@@ -20,7 +20,7 @@ function createServerContext() {
 
 const serverContext = createServerContext();
 
-type ServerContext = NonNullable<typeof serverContext>;
+export type ServerContext = NonNullable<typeof serverContext>;
 
 export function getServerContext(): ServerContext {
   if (!serverContext) {

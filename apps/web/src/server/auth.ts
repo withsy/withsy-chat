@@ -1,10 +1,24 @@
-import type { AuthOptions, LoggerInstance } from "next-auth";
+import type { TrpcOptions } from "@/lib/trpc";
+import type { inferOutput } from "@trpc/tanstack-react-query";
+import type { AuthOptions, LoggerInstance, Session } from "next-auth";
+import type { JWT } from "next-auth/jwt";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import type { Provider } from "next-auth/providers/index";
 import { inspect } from "node:util";
 import { v4 } from "uuid";
 import { getServerContext } from "./context";
+
+export interface AuthToken extends JWT {
+  userId?: string;
+}
+
+export interface AuthSession extends Session {
+  user?: Session["user"] & {
+    id?: string;
+    preferences?: inferOutput<TrpcOptions["user"]["getPreferences"]>;
+  };
+}
 
 const { envVars, trpc } = getServerContext();
 
@@ -82,17 +96,20 @@ export const authOptions: AuthOptions = {
           imageUrl,
         });
 
-        return {
+        const authToken: AuthToken = {
           ...token,
           userId,
         };
+
+        return authToken;
       }
 
       // Response to `/api/auth/session` request.
       return token;
     },
     session: async (params) => {
-      const { token, session } = params;
+      const token = params.token as AuthToken;
+      const session = params.session as AuthSession;
 
       const { userId } = token;
       if (!userId) {
@@ -100,12 +117,12 @@ export const authOptions: AuthOptions = {
       }
 
       const userPreferences = await trpc.user.getPreferences.query({
-        userId: String(userId),
+        userId,
       });
 
       session.user ??= {};
-      Reflect.set(session.user, "id", userId);
-      Reflect.set(session.user, "preferences", userPreferences);
+      session.user.id = userId;
+      session.user.preferences = userPreferences;
 
       return session;
     },

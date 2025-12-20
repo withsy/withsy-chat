@@ -12,6 +12,14 @@ type Props = {
   shouldFocus?: boolean;
 };
 
+const placeholderMessages = [
+  "What's on your mind?",
+  "Wanna talk?",
+  "Feel free to say anything",
+  "I'm all ears!",
+  "Say hi or just share a thought",
+];
+
 export function ChatInputBox({
   onSendMessage,
   usageLimits,
@@ -35,19 +43,14 @@ export function ChatInputBox({
     "transition-all"
   );
 
-  const placeholderMessages = [
-    "What's on your mind?",
-    "Wanna talk?",
-    "Feel free to say anything",
-    "I'm all ears!",
-    "Say hi or just share a thought",
-  ];
+  const [randomPlaceholder, setRandomPlaceholder] = useState("");
 
-  const [randomPlaceholder] = useState(() => {
-    return placeholderMessages[
-      Math.floor(Math.random() * placeholderMessages.length)
-    ];
-  });
+  useEffect(() => {
+    Promise.try(() => {
+      const index = Math.floor(Math.random() * placeholderMessages.length);
+      setRandomPlaceholder(placeholderMessages[index]);
+    });
+  }, [setRandomPlaceholder]);
 
   useEffect(() => {
     if (textareaRef.current && document.activeElement !== textareaRef.current) {
@@ -106,6 +109,10 @@ export function ChatInputBox({
       handleSend();
     }
   };
+
+  if (!randomPlaceholder) {
+    return null;
+  }
 
   return (
     <div className={inputBoxClass}>

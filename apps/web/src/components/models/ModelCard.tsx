@@ -17,10 +17,9 @@ type Props = {
   model: Model;
   name?: string;
   image?: string;
-  csrfToken: string;
 };
 
-export default function ModelCard({ model, name, image, csrfToken }: Props) {
+export default function ModelCard({ model, name, image }: Props) {
   const [newName, setNewName] = useState(name ?? "");
   const [loading, setLoading] = useState(false);
   const [cropModalOpen, setCropModalOpen] = useState(false);
