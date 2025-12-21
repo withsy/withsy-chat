@@ -80,6 +80,11 @@ export type UserAiProfile = Prisma.UserAiProfileModel
  */
 export type Chat = Prisma.ChatModel
 /**
+ * Model ChatParentMessage
+ * 
+ */
+export type ChatParentMessage = Prisma.ChatParentMessageModel
+/**
  * Model ChatPrompt
  * 
  */

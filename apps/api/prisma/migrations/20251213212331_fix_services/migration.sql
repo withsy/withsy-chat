@@ -144,3 +144,32 @@ CREATE TABLE "refresh_tokens" (
 
 -- CreateIndex
 CREATE UNIQUE INDEX "refresh_tokens_provider_provider_account_id_key" ON "refresh_tokens"("provider", "provider_account_id");
+
+-- DropForeignKey
+ALTER TABLE "chats" DROP CONSTRAINT "chats_parent_message_id_fkey";
+
+-- DropIndex
+DROP INDEX "chats_parent_message_id_idx";
+
+-- AlterTable
+ALTER TABLE "chats" DROP COLUMN "parent_message_id";
+
+-- CreateTable
+CREATE TABLE "chat_parent_messages" (
+    "id" SERIAL NOT NULL,
+    "chat_id" UUID NOT NULL,
+    "message_id" UUID NOT NULL,
+    "created_at" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMPTZ(6) NOT NULL,
+
+    CONSTRAINT "chat_parent_messages_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateIndex
+CREATE UNIQUE INDEX "chat_parent_messages_chat_id_message_id_key" ON "chat_parent_messages"("chat_id", "message_id");
+
+-- AddForeignKey
+ALTER TABLE "chat_parent_messages" ADD CONSTRAINT "chat_parent_messages_chat_id_fkey" FOREIGN KEY ("chat_id") REFERENCES "chats"("id") ON DELETE CASCADE ON UPDATE NO ACTION;
+
+-- AddForeignKey
+ALTER TABLE "chat_parent_messages" ADD CONSTRAINT "chat_parent_messages_message_id_fkey" FOREIGN KEY ("message_id") REFERENCES "messages"("id") ON DELETE CASCADE ON UPDATE NO ACTION;

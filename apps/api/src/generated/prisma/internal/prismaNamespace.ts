@@ -398,6 +398,7 @@ export const ModelName = {
   UserDefaultPrompt: 'UserDefaultPrompt',
   UserAiProfile: 'UserAiProfile',
   Chat: 'Chat',
+  ChatParentMessage: 'ChatParentMessage',
   ChatPrompt: 'ChatPrompt',
   Message: 'Message',
   MessageChunk: 'MessageChunk',
@@ -419,7 +420,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "userLinkAccount" | "refreshToken" | "userUsageLimit" | "userPrompt" | "userDefaultPrompt" | "userAiProfile" | "chat" | "chatPrompt" | "message" | "messageChunk" | "idempotencyKey" | "apiKey" | "supabaseActivity"
+    modelProps: "user" | "userLinkAccount" | "refreshToken" | "userUsageLimit" | "userPrompt" | "userDefaultPrompt" | "userAiProfile" | "chat" | "chatParentMessage" | "chatPrompt" | "message" | "messageChunk" | "idempotencyKey" | "apiKey" | "supabaseActivity"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1015,6 +1016,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    ChatParentMessage: {
+      payload: Prisma.$ChatParentMessagePayload<ExtArgs>
+      fields: Prisma.ChatParentMessageFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ChatParentMessageFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatParentMessagePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ChatParentMessageFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatParentMessagePayload>
+        }
+        findFirst: {
+          args: Prisma.ChatParentMessageFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatParentMessagePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ChatParentMessageFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatParentMessagePayload>
+        }
+        findMany: {
+          args: Prisma.ChatParentMessageFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatParentMessagePayload>[]
+        }
+        create: {
+          args: Prisma.ChatParentMessageCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatParentMessagePayload>
+        }
+        createMany: {
+          args: Prisma.ChatParentMessageCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ChatParentMessageCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatParentMessagePayload>[]
+        }
+        delete: {
+          args: Prisma.ChatParentMessageDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatParentMessagePayload>
+        }
+        update: {
+          args: Prisma.ChatParentMessageUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatParentMessagePayload>
+        }
+        deleteMany: {
+          args: Prisma.ChatParentMessageDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ChatParentMessageUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ChatParentMessageUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatParentMessagePayload>[]
+        }
+        upsert: {
+          args: Prisma.ChatParentMessageUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatParentMessagePayload>
+        }
+        aggregate: {
+          args: Prisma.ChatParentMessageAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateChatParentMessage>
+        }
+        groupBy: {
+          args: Prisma.ChatParentMessageGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ChatParentMessageGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ChatParentMessageCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ChatParentMessageCountAggregateOutputType> | number
+        }
+      }
+    }
     ChatPrompt: {
       payload: Prisma.$ChatPromptPayload<ExtArgs>
       fields: Prisma.ChatPromptFieldRefs
@@ -1603,7 +1678,6 @@ export const ChatScalarFieldEnum = {
   titleEncrypted: 'titleEncrypted',
   isStarred: 'isStarred',
   type: 'type',
-  parentMessageId: 'parentMessageId',
   userPromptId: 'userPromptId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
@@ -1611,6 +1685,17 @@ export const ChatScalarFieldEnum = {
 } as const
 
 export type ChatScalarFieldEnum = (typeof ChatScalarFieldEnum)[keyof typeof ChatScalarFieldEnum]
+
+
+export const ChatParentMessageScalarFieldEnum = {
+  id: 'id',
+  chatId: 'chatId',
+  messageId: 'messageId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ChatParentMessageScalarFieldEnum = (typeof ChatParentMessageScalarFieldEnum)[keyof typeof ChatParentMessageScalarFieldEnum]
 
 
 export const ChatPromptScalarFieldEnum = {
@@ -1918,6 +2003,7 @@ export type GlobalOmitConfig = {
   userDefaultPrompt?: Prisma.UserDefaultPromptOmit
   userAiProfile?: Prisma.UserAiProfileOmit
   chat?: Prisma.ChatOmit
+  chatParentMessage?: Prisma.ChatParentMessageOmit
   chatPrompt?: Prisma.ChatPromptOmit
   message?: Prisma.MessageOmit
   messageChunk?: Prisma.MessageChunkOmit

@@ -119,25 +119,36 @@ model UserAiProfile {
 }
 
 model Chat {
-  id              String       @id @map("id") @db.Uuid
-  userId          String       @map("user_id") @db.Uuid
-  user            User         @relation("chats.user_id", fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  titleEncrypted  String       @map("title_encrypted")
-  isStarred       Boolean      @default(false) @map("is_starred")
-  type            String       @map("type")
-  parentMessageId String?      @map("parent_message_id") @db.Uuid
-  parentMessage   Message?     @relation("chats.parent_message_id", fields: [parentMessageId], references: [id], onDelete: SetNull, onUpdate: NoAction)
-  userPromptId    String?      @map("user_prompt_id") @db.Uuid
-  userPrompt      UserPrompt?  @relation("chats.user_prompt_id", fields: [userPromptId], references: [id], onDelete: SetNull, onUpdate: NoAction)
-  createdAt       DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt       DateTime     @updatedAt @map("updated_at") @db.Timestamptz(6)
-  deletedAt       DateTime?    @map("deleted_at") @db.Timestamptz(6)
-  messages        Message[]    @relation("messages.chat_id")
-  prompts         ChatPrompt[] @relation("chat_prompts.chat_id")
+  id                 String              @id @map("id") @db.Uuid
+  userId             String              @map("user_id") @db.Uuid
+  user               User                @relation("chats.user_id", fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  titleEncrypted     String              @map("title_encrypted")
+  isStarred          Boolean             @default(false) @map("is_starred")
+  type               String              @map("type")
+  userPromptId       String?             @map("user_prompt_id") @db.Uuid
+  userPrompt         UserPrompt?         @relation("chats.user_prompt_id", fields: [userPromptId], references: [id], onDelete: SetNull, onUpdate: NoAction)
+  createdAt          DateTime            @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime            @updatedAt @map("updated_at") @db.Timestamptz(6)
+  deletedAt          DateTime?           @map("deleted_at") @db.Timestamptz(6)
+  messages           Message[]           @relation("messages.chat_id")
+  prompts            ChatPrompt[]        @relation("chat_prompts.chat_id")
+  chatParentMessages ChatParentMessage[] @relation("chat_parent_messages.chat_id")
 
   @@index([userId])
-  @@index([parentMessageId])
   @@map("chats")
+}
+
+model ChatParentMessage {
+  id        Int      @id @default(autoincrement()) @map("id")
+  chatId    String   @map("chat_id") @db.Uuid
+  chat      Chat     @relation("chat_parent_messages.chat_id", fields: [chatId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  messageId String   @map("message_id") @db.Uuid
+  message   Message  @relation("chat_parent_messages.message_id", fields: [messageId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@unique([chatId, messageId])
+  @@map("chat_parent_messages")
 }
 
 model ChatPrompt {
@@ -160,23 +171,23 @@ enum MessageStatus {
 }
 
 model Message {
-  id                     String         @id @map("id") @db.Uuid
-  chatId                 String         @map("chat_id") @db.Uuid
-  chat                   Chat           @relation("messages.chat_id", fields: [chatId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  role                   String         @map("role")
-  model                  String?        @map("model")
-  textEncrypted          String         @map("text_encrypted")
-  reasoningTextEncrypted String         @map("reasoning_text_encrypted")
-  status                 MessageStatus  @default(pending) @map("status")
-  isBookmarked           Boolean        @default(false) @map("is_bookmarked")
-  isPublic               Boolean        @map("is_public")
-  parentMessageId        String?        @map("parent_message_id") @db.Uuid
-  parentMessage          Message?       @relation("messages.parent_message_id", fields: [parentMessageId], references: [id], onDelete: SetNull, onUpdate: NoAction)
-  createdAt              DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt              DateTime       @updatedAt @map("updated_at") @db.Timestamptz(6)
-  chunks                 MessageChunk[] @relation("message_chunks.message_id")
-  childChats             Chat[]         @relation("chats.parent_message_id")
-  childMessages          Message[]      @relation("messages.parent_message_id")
+  id                     String              @id @map("id") @db.Uuid
+  chatId                 String              @map("chat_id") @db.Uuid
+  chat                   Chat                @relation("messages.chat_id", fields: [chatId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  role                   String              @map("role")
+  model                  String?             @map("model")
+  textEncrypted          String              @map("text_encrypted")
+  reasoningTextEncrypted String              @map("reasoning_text_encrypted")
+  status                 MessageStatus       @default(pending) @map("status")
+  isBookmarked           Boolean             @default(false) @map("is_bookmarked")
+  isPublic               Boolean             @map("is_public")
+  parentMessageId        String?             @map("parent_message_id") @db.Uuid
+  parentMessage          Message?            @relation("messages.parent_message_id", fields: [parentMessageId], references: [id], onDelete: SetNull, onUpdate: NoAction)
+  createdAt              DateTime            @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt              DateTime            @updatedAt @map("updated_at") @db.Timestamptz(6)
+  chunks                 MessageChunk[]      @relation("message_chunks.message_id")
+  childMessages          Message[]           @relation("messages.parent_message_id")
+  chatParentMessages     ChatParentMessage[] @relation("chat_parent_messages.message_id")
 
   @@index([parentMessageId])
   @@index([chatId])

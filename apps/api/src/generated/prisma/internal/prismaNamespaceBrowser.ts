@@ -57,6 +57,7 @@ export const ModelName = {
   UserDefaultPrompt: 'UserDefaultPrompt',
   UserAiProfile: 'UserAiProfile',
   Chat: 'Chat',
+  ChatParentMessage: 'ChatParentMessage',
   ChatPrompt: 'ChatPrompt',
   Message: 'Message',
   MessageChunk: 'MessageChunk',
@@ -186,7 +187,6 @@ export const ChatScalarFieldEnum = {
   titleEncrypted: 'titleEncrypted',
   isStarred: 'isStarred',
   type: 'type',
-  parentMessageId: 'parentMessageId',
   userPromptId: 'userPromptId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
@@ -194,6 +194,17 @@ export const ChatScalarFieldEnum = {
 } as const
 
 export type ChatScalarFieldEnum = (typeof ChatScalarFieldEnum)[keyof typeof ChatScalarFieldEnum]
+
+
+export const ChatParentMessageScalarFieldEnum = {
+  id: 'id',
+  chatId: 'chatId',
+  messageId: 'messageId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ChatParentMessageScalarFieldEnum = (typeof ChatParentMessageScalarFieldEnum)[keyof typeof ChatParentMessageScalarFieldEnum]
 
 
 export const ChatPromptScalarFieldEnum = {
