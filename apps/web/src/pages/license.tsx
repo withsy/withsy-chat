@@ -1,4 +1,4 @@
-function License() {
+function Page() {
   return (
     <div className="mx-auto flex max-w-3xl flex-col items-start px-6 py-12 text-start">
       <h2 className="mb-4 text-3xl font-bold">License</h2>
@@ -13,5 +13,5 @@ function License() {
   );
 }
 
-(License as any).layoutType = "home";
-export default License;
+(Page as any).layoutType = "home";
+export default Page;

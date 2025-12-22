@@ -28,11 +28,12 @@ export default function App({
   useSidebarInitializer();
 
   let title = "Withsy";
-  if (process.env.NODE_ENV === "development") title = `[DEV] ${title}`;
+  if (process.env.NODE_ENV === "development") {
+    title = `[DEV] ${title}`;
+  }
 
   const queryClient = getQueryClient();
   const [trpcClient] = useState(() => createTrpcClient());
-
   const layoutType = (Component as any).layoutType ?? "none";
 
   return (
