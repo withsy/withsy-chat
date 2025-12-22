@@ -3,7 +3,7 @@ import { PartialLoading } from "@/components/Loading";
 import { EditPromptModal } from "@/components/prompts/EditPromptModal";
 import { PromptCard } from "@/components/prompts/PromptCard";
 import { Button } from "@/components/ui/button";
-import { useUserPreferences } from "@/context/UserPreferencesContext";
+import { useUserPreference } from "@/hooks/useUserPreference";
 import { useTRPC } from "@/lib/trpc";
 import { useChatStore } from "@/stores/useChatStore";
 import { useSidebarStore } from "@/stores/useSidebarStore";
@@ -91,7 +91,6 @@ function Page() {
     isDefault?: boolean;
   } | null>(null);
 
-  const { useUserPreference } = useUserPreferences();
   const themeColor = useUserPreference("themeColor");
   const themeOpacity = useUserPreference("themeOpacity");
 

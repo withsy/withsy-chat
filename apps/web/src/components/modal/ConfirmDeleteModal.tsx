@@ -8,7 +8,7 @@ import {
   DialogPortal,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { useUserPreferences } from "@/context/UserPreferencesContext";
+import { useUserPreference } from "@/hooks/useUserPreference";
 
 export function ConfirmDeleteModal({
   open,
@@ -23,7 +23,6 @@ export function ConfirmDeleteModal({
   onCancel: () => void;
   onConfirm: () => void;
 }) {
-  const { useUserPreference } = useUserPreferences();
   const themeColor = useUserPreference("themeColor");
 
   return (

@@ -1,4 +1,4 @@
-import { useUserPreferences } from "@/context/UserPreferencesContext";
+import { useUserPreference } from "@/hooks/useUserPreference";
 import { cn } from "@/lib/utils";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 import SidebarChatList from "./SidebarChatList";
@@ -6,7 +6,6 @@ import SidebarTooltipList from "./SidebarTooltipList";
 
 export default function Sidebar() {
   const { isMobile, collapsed } = useSidebarStore();
-  const { useUserPreference } = useUserPreferences();
   const themeColor = useUserPreference("themeColor");
   const themeOpacity = useUserPreference("themeOpacity");
 

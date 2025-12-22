@@ -1,4 +1,4 @@
-import { useUserPreferences } from "@/context/UserPreferencesContext";
+import { useUserPreference } from "@/hooks/useUserPreference";
 import { type LucideIcon } from "lucide-react";
 
 interface IconWithLabelProps {
@@ -16,7 +16,6 @@ export function IconWithLabel({
   fill = false,
   size = 16,
 }: IconWithLabelProps) {
-  const { useUserPreference } = useUserPreferences();
   const themeColor = useUserPreference("themeColor");
   const className = `transition-colors hover:text-black active:text-black group-hover:text-black select-none`;
 

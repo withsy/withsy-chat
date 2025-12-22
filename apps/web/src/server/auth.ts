@@ -1,24 +1,21 @@
-import type { TrpcOptions } from "@/lib/trpc";
-import type { inferOutput } from "@trpc/tanstack-react-query";
-import type { AuthOptions, LoggerInstance, Session } from "next-auth";
+import type { AuthSession } from "@/common/schemas";
+import type { AuthOptions, LoggerInstance } from "next-auth";
 import type { JWT } from "next-auth/jwt";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import type { Provider } from "next-auth/providers/index";
 import { inspect } from "node:util";
 import { v4 } from "uuid";
+import z from "zod";
 import { getServerContext } from "./context";
 
-export interface AuthToken extends JWT {
-  userId?: string;
+interface AuthToken extends JWT {
+  userId: string;
 }
 
-export interface AuthSession extends Session {
-  user?: Session["user"] & {
-    id?: string;
-    preferences?: inferOutput<TrpcOptions["user"]["getPreferences"]>;
-  };
-}
+const AuthToken = z.object({
+  userId: z.string(),
+});
 
 const { envVars, trpc } = getServerContext();
 
@@ -108,21 +105,21 @@ export const authOptions: AuthOptions = {
       return token;
     },
     session: async (params) => {
-      const token = params.token as AuthToken;
-      const session = params.session as AuthSession;
-
+      const token = AuthToken.parse(params.token);
       const { userId } = token;
-      if (!userId) {
-        throw new Error("User id not found.");
-      }
 
-      const userPreferences = await trpc.user.getPreferences.query({
+      const userPreferencesRaw = await trpc.user.getPreferences.query({
         userId,
       });
 
-      session.user ??= {};
-      session.user.id = userId;
-      session.user.preferences = userPreferences;
+      const session: AuthSession = {
+        ...params.session,
+        user: {
+          ...params.session.user,
+          id: userId,
+          preferencesRaw: userPreferencesRaw,
+        },
+      };
 
       return session;
     },

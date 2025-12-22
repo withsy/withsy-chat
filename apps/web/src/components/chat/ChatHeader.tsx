@@ -4,7 +4,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useUserPreferences } from "@/context/UserPreferencesContext";
+import { useUserPreference } from "@/hooks/useUserPreference";
 import { useDrawerStore } from "@/stores/useDrawerStore";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 import { Bookmark, FolderGit2, PenLine, TableProperties } from "lucide-react";
@@ -24,7 +24,6 @@ export default function ChatHeader({
   const router = useRouter();
   const { collapsed } = useSidebarStore();
   const { openDrawer, setOpenDrawer } = useDrawerStore();
-  const { useUserPreference } = useUserPreferences();
   const themeColor = useUserPreference("themeColor");
   const themeOpacity = useUserPreference("themeOpacity");
 

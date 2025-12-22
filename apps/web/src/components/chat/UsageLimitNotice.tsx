@@ -1,4 +1,4 @@
-import { useUserPreferences } from "@/context/UserPreferencesContext";
+import { useUserPreference } from "@/hooks/useUserPreference";
 import React from "react";
 
 type Props = {
@@ -69,7 +69,6 @@ const buildMessage = (
 };
 
 export const UsageLimitNotice: React.FC<Props> = ({ usageLimits }) => {
-  const { useUserPreference } = useUserPreferences();
   const themeColor = useUserPreference("themeColor");
 
   let message: React.ReactNode = null;

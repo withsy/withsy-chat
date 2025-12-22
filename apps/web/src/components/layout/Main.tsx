@@ -1,4 +1,4 @@
-import { useUserPreferences } from "@/context/UserPreferencesContext";
+import { useUserPreference } from "@/hooks/useUserPreference";
 import { cn } from "@/lib/utils";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 import type { ReactNode } from "react";
@@ -11,7 +11,6 @@ type MainProps = {
 
 export default function Main({ children }: MainProps) {
   const { isMobile } = useSidebarStore();
-  const { useUserPreference } = useUserPreferences();
   const largeText = useUserPreference("largeText");
 
   const mainStyle: React.CSSProperties = {

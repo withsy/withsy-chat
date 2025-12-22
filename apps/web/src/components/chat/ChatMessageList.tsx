@@ -1,4 +1,4 @@
-import { useUserPreferences } from "@/context/UserPreferencesContext";
+import { useUserPreference } from "@/hooks/useUserPreference";
 import { useChatStore } from "@/stores/useChatStore";
 import { ChevronsDown } from "lucide-react";
 import { useRouter } from "next/router";
@@ -19,12 +19,10 @@ export function ChatMessageList({ messages, onToggleSaved }: Props) {
   const listRef = useRef<HTMLDivElement | null>(null);
   const messageRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const [showScrollToBottom, setShowScrollToBottom] = useState(false);
+  const themeColor = useUserPreference("themeColor");
 
   const hasMounted = useRef(false);
   const prevMessageLength = useRef(messages.length);
-
-  const { useUserPreference } = useUserPreferences();
-  const themeColor = useUserPreference("themeColor");
 
   const messageId = router.query.messageId as string | undefined;
 

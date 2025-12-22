@@ -1,13 +1,10 @@
 import { Logger } from "@nestjs/common";
+import { UserPreferencesRaw } from "@repo/common";
 import { TRPCError } from "@trpc/server";
 import { Tx } from "src/db/db.service";
 import { v4 } from "uuid";
 import type { UserModel } from "../generated/prisma/models";
-import {
-  UserId,
-  UserPreferencesRaw,
-  UserUpdatePreferences,
-} from "./user-schemas";
+import { UserId, UserUpdatePreferences } from "./user-schemas";
 
 export class UserRepo {
   private readonly logger = new Logger(UserRepo.name);
@@ -29,10 +26,10 @@ export class UserRepo {
 
   async updatePreferences(
     userId: UserId,
-    input: UserUpdatePreferences
+    input: UserUpdatePreferences,
   ): Promise<UserPreferencesRaw> {
     const filteredInput = Object.fromEntries(
-      Object.entries(input).filter(([_, v]) => v !== undefined)
+      Object.entries(input).filter(([_, v]) => v !== undefined),
     );
 
     const rows = await this.tx.$queryRaw<Record<string, unknown>[]>`

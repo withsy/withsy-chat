@@ -1,4 +1,4 @@
-import { useUserPreferences } from "@/context/UserPreferencesContext";
+import { useUserPreference } from "@/hooks/useUserPreference";
 
 type Props = {
   show: boolean;
@@ -7,7 +7,6 @@ type Props = {
 };
 
 export function CollapseToggle({ show, collapsed, setCollapsed }: Props) {
-  const { useUserPreference } = useUserPreferences();
   const themeColor = useUserPreference("themeColor");
 
   if (!show) return <div />;

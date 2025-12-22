@@ -1,3 +1,4 @@
+import { UserPreferenceValue } from "@repo/common";
 import { IdempotencyKey } from "src/idempotency-key/idempotency-key-schemas";
 import z from "zod";
 
@@ -24,13 +25,6 @@ export const UserLoginOutput = z.object({
 });
 export type UserLoginOutput = z.infer<typeof UserLoginOutput>;
 
-export const UserPreferenceValue = z.union([
-  z.number(),
-  z.boolean(),
-  z.string(),
-]);
-export type UserPreferenceValue = z.infer<typeof UserPreferenceValue>;
-
 export const UserPreferences = z.object({
   wideView: z.boolean(),
   largeText: z.boolean(),
@@ -47,9 +41,6 @@ export const UserGetPreferences = z.object({
   },
 });
 export type UserGetPreferences = z.infer<typeof UserGetPreferences>;
-
-export const UserPreferencesRaw = z.record(z.string(), UserPreferenceValue);
-export type UserPreferencesRaw = z.infer<typeof UserPreferencesRaw>;
 
 export const UserUpdatePreferences = UserPreferences.partial();
 export type UserUpdatePreferences = z.infer<typeof UserUpdatePreferences>;

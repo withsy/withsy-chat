@@ -1,4 +1,4 @@
-import { useUserPreferences } from "@/context/UserPreferencesContext";
+import { useUserPreference } from "@/hooks/useUserPreference";
 import { capitalizeFirstLetter } from "@/lib/string-utils";
 import { CircleX } from "lucide-react";
 
@@ -11,7 +11,6 @@ export default function ChatDrawerHeader({
   openDrawer,
   setOpenDrawer,
 }: ChatHeaderProps) {
-  const { useUserPreference } = useUserPreferences();
   const themeColor = useUserPreference("themeColor");
   const themeOpacity = useUserPreference("themeOpacity");
 

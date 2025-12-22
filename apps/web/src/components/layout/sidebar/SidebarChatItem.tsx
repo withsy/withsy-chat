@@ -13,7 +13,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useUserPreferences } from "@/context/UserPreferencesContext";
+import { useUserPreference } from "@/hooks/useUserPreference";
 import { useTRPC } from "@/lib/trpc";
 import { useChatStore } from "@/stores/useChatStore";
 import { useDrawerStore } from "@/stores/useDrawerStore";
@@ -44,7 +44,6 @@ export function SidebarChatItem({
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const { isMobile, setCollapsed } = useSidebarStore();
-  const { useUserPreference } = useUserPreferences();
   const themeColor = useUserPreference("themeColor");
 
   const updateChatMut = useMutation(

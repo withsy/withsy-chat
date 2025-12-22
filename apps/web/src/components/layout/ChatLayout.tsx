@@ -1,4 +1,4 @@
-import { useUserPreferences } from "@/context/UserPreferencesContext";
+import { useUserPreference } from "@/hooks/useUserPreference";
 import { useSession } from "next-auth/react";
 import { type ReactNode } from "react";
 import Main from "./Main";
@@ -14,7 +14,6 @@ export default function ChatLayout({ children, className }: LayoutProps) {
     required: true,
   });
 
-  const { useUserPreference } = useUserPreferences();
   const themeColor = useUserPreference("themeColor");
   const themeOpacity = useUserPreference("themeOpacity");
   const backgroundColor = `rgba(${themeColor}, ${themeOpacity})`;

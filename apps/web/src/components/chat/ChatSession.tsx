@@ -1,5 +1,5 @@
 import { ChatSessionProvider } from "@/context/ChatSessionContext";
-import { useUserPreferences } from "@/context/UserPreferencesContext";
+import { useUserPreference } from "@/hooks/useUserPreference";
 import { useTRPC } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
 import { useChatStore } from "@/stores/useChatStore";
@@ -29,7 +29,6 @@ export function ChatSession({ initialMessages, children }: Props) {
   const router = useRouter();
   const { collapsed, isMobile } = useSidebarStore();
   const { selectedModel } = useSelectedModelStore();
-  const { useUserPreference } = useUserPreferences();
   const wideView = useUserPreference("wideView");
 
   const [messages, setMessages] = useState<MessageData[]>([]);

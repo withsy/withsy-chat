@@ -1,7 +1,7 @@
 import { CollapseButton } from "@/components/CollapseButton";
 import { PartialLoading } from "@/components/Loading";
 import ModelCard from "@/components/models/ModelCard";
-import { useUserPreferences } from "@/context/UserPreferencesContext";
+import { useUserPreference } from "@/hooks/useUserPreference";
 import { useAiProfileStore } from "@/stores/useAiProfileStore";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 import { Model } from "@repo/common";
@@ -11,7 +11,6 @@ const MODELS = Model.options;
 function Page() {
   const { collapsed } = useSidebarStore();
   const { profiles, isLoading } = useAiProfileStore();
-  const { useUserPreference } = useUserPreferences();
   const themeColor = useUserPreference("themeColor");
   const themeOpacity = useUserPreference("themeOpacity");
 

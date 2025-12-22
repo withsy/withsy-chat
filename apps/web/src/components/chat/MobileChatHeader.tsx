@@ -5,7 +5,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useUserPreferences } from "@/context/UserPreferencesContext";
+import { useUserPreference } from "@/hooks/useUserPreference";
 import { useDrawerStore } from "@/stores/useDrawerStore";
 import {
   Bookmark,
@@ -31,7 +31,6 @@ export default function MobileChatHeader({
   const router = useRouter();
   const { openDrawer, setOpenDrawer } = useDrawerStore();
   const [open, setOpen] = useState(false);
-  const { useUserPreference } = useUserPreferences();
   const themeColor = useUserPreference("themeColor");
   const themeOpacity = useUserPreference("themeOpacity");
 

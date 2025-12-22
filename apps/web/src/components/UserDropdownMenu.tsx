@@ -7,7 +7,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Label } from "@/components/ui/label";
-import { useUserPreferences } from "@/context/UserPreferencesContext";
+import { useUpdateUserPreferences } from "@/hooks/useUpdateUserPreferences";
+import { useUserPreference } from "@/hooks/useUserPreference";
 import { cn } from "@/lib/utils";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 import {
@@ -98,12 +99,11 @@ export default function UserDropdownMenu() {
   const [themeModalOpen, setThemeModalOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-
-  const { useUserPreference, updateUserPreferences } = useUserPreferences();
   const enterToSend = useUserPreference("enterToSend");
   const largeText = useUserPreference("largeText");
   const wideView = useUserPreference("wideView");
   const themeColor = useUserPreference("themeColor");
+  const { updateUserPreferences } = useUpdateUserPreferences();
 
   const { data: session } = useSession({
     required: true,

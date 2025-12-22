@@ -18,3 +18,17 @@ export const Model = z.enum([
 export type Model = z.infer<typeof Model>;
 
 //#endregion Model
+
+//#region User
+
+export const UserPreferenceValue = z.union([
+  z.number(),
+  z.boolean(),
+  z.string(),
+]);
+export type UserPreferenceValue = z.infer<typeof UserPreferenceValue>;
+
+export const UserPreferencesRaw = z.record(z.string(), UserPreferenceValue);
+export type UserPreferencesRaw = z.infer<typeof UserPreferencesRaw>;
+
+//#endregion User

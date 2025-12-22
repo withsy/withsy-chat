@@ -2,7 +2,7 @@ import { MarkdownBox } from "@/components/MarkdownBox";
 import { BookmarkCardHeader } from "@/components/bookmarks/BookmarkCardHeader";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { useUserPreferences } from "@/context/UserPreferencesContext";
+import { useUserPreference } from "@/hooks/useUserPreference";
 import { useTRPC } from "@/lib/trpc";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
@@ -28,7 +28,6 @@ export function BookmarkCard({
   hideUnsave,
 }: BookmarkCardProps) {
   const trpc = useTRPC();
-  const { useUserPreference } = useUserPreferences();
   const themeColor = useUserPreference("themeColor");
 
   const isLongMessage = text ? text.length > 150 : false;

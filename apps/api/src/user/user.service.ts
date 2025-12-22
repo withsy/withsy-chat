@@ -1,4 +1,5 @@
 import { Injectable } from "@nestjs/common";
+import { UserPreferencesRaw } from "@repo/common";
 import { DbService } from "src/db/db.service";
 import { EncryptionService } from "src/encryption/encryption.service";
 import { IdempotencyKeyRepo } from "src/idempotency-key/idempotency-key-repo";
@@ -9,7 +10,6 @@ import {
   UserId,
   UserLogin,
   UserLoginOutput,
-  UserPreferencesRaw,
   UserUpdatePreferences,
 } from "./user-schemas";
 import { UserRepo } from "./user.repo";
@@ -19,7 +19,7 @@ export class UserService {
   constructor(
     private readonly encryptionService: EncryptionService,
     private readonly dbService: DbService,
-    private readonly refreshTokenService: RefreshTokenService
+    private readonly refreshTokenService: RefreshTokenService,
   ) {}
 
   async login(input: UserLogin): Promise<UserLoginOutput> {
@@ -84,7 +84,7 @@ export class UserService {
 
   async updatePreferences(
     userId: UserId,
-    input: UserUpdatePreferences
+    input: UserUpdatePreferences,
   ): Promise<UserPreferencesRaw> {
     const userRepo = new UserRepo(this.dbService.db);
     return await userRepo.updatePreferences(userId, input);
