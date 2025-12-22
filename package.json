@@ -12,6 +12,11 @@
     "lint": "eslint",
     "sort-package-json": "sort-package-json package.json apps/*/package.json packages/*/package.json"
   },
+  "prettier": {
+    "plugins": [
+      "prettier-plugin-tailwindcss"
+    ]
+  },
   "devDependencies": {
     "@eslint/eslintrc": "3.3.1",
     "@eslint/js": "9.39.1",
@@ -30,10 +35,5 @@
     "typescript": "5.9.3",
     "typescript-eslint": "8.50.0"
   },
-  "packageManager": "pnpm@10.16.1",
-  "prettier": {
-    "plugins": [
-      "prettier-plugin-tailwindcss"
-    ]
-  }
+  "packageManager": "pnpm@10.16.1"
 }
