@@ -17,7 +17,7 @@ export class ChatTrpcRouter {
       list: userTrpcProcedure.procedure
         .input(ChatList)
         .output(ChatListOutput)
-        .query(({ input }) => chatService.list(input)),
+        .query(({ ctx, input }) => chatService.list(ctx.userId, input)),
       start: userTrpcProcedure.procedure.mutation(() => {}),
       update: userTrpcProcedure.procedure.mutation(() => {}),
       listBranch: userTrpcProcedure.procedure.query(() => {}),
