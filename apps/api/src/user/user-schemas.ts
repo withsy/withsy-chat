@@ -1,6 +1,6 @@
 import { UserPreferenceValue } from "@repo/common";
-import { IdempotencyKey } from "src/idempotency-key/idempotency-key-schemas";
 import z from "zod";
+import { IdempotencyKey } from "../idempotency-key/idempotency-key-schemas";
 
 export const UserId = z.uuid();
 export type UserId = z.infer<typeof UserId>;

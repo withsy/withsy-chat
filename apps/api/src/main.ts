@@ -1,6 +1,6 @@
 import { NestFactory } from "@nestjs/core";
 import { setupGracefulShutdown } from "@tygra/nestjs-graceful-shutdown";
-import { AppModule } from "./app/app.module";
+import { AppModule } from "./app/app-module";
 import { checkTimeZoneUtc } from "./utils";
 
 async function bootstrap() {

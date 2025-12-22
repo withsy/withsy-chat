@@ -1,5 +1,5 @@
-import { DateTimeTz } from "src/common-schemas";
 import z from "zod";
+import { DateTimeTz } from "../common-schemas";
 
 export const ChatId = z.uuid();
 export type ChatId = z.infer<typeof ChatId>;

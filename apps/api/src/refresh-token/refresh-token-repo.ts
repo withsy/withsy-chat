@@ -1,9 +1,9 @@
-import { Tx } from "src/db/db.service";
+import { Tx } from "../db/db-service";
 
 export class RefreshTokenRepo {
   constructor(private readonly tx: Tx) {}
 
-  async upsert(input: {
+  async createOrUpdate(input: {
     provider: string;
     providerAccountId: string;
     refreshToken: string;

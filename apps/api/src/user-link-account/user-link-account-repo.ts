@@ -1,6 +1,6 @@
-import { Tx } from "src/db/db.service";
-import { UserId } from "src/user/user-schemas";
+import { Tx } from "../db/db-service";
 import type { UserLinkAccountModel } from "../generated/prisma/models";
+import { UserId } from "../user/user-schemas";
 
 export class UserLinkAccountRepo {
   constructor(private readonly tx: Tx) {}

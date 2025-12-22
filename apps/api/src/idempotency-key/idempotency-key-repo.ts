@@ -1,5 +1,5 @@
 import { TRPCError } from "@trpc/server";
-import { Tx } from "src/db/db.service";
+import { Tx } from "../db/db-service";
 import { DataError, isExpectedUniqueConstraintViolation } from "../error";
 import type { IdempotencyKeyModel } from "../generated/prisma/models";
 import { IdempotencyKey } from "./idempotency-key-schemas";
