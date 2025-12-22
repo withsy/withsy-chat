@@ -1,4 +1,3 @@
-import ChatLayout from "@/components/layout/ChatLayout";
 import HomeLayout from "@/components/layout/HomeLayout";
 import { UserProvider } from "@/context/UserContext";
 // import TermlyCMP from "@/components/TermlyCMP";
@@ -9,6 +8,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { SessionProvider } from "next-auth/react";
 import type { AppProps } from "next/app";
+import dynamic from "next/dynamic";
 import { Nunito } from "next/font/google";
 import Head from "next/head";
 import { useState } from "react";
@@ -16,6 +16,10 @@ import { Toaster as Sonner } from "sonner";
 
 // const WEBSITE_UUID = "7ad995d7-f4f8-4a3d-837b-335895e58c1b";
 const nunito = Nunito({ subsets: ["latin"] });
+
+const ChatLayout = dynamic(() => import("@/components/layout/ChatLayout"), {
+  ssr: false,
+});
 
 export default function App({
   Component,

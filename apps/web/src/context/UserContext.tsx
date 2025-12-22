@@ -1,7 +1,13 @@
 import { AuthSession } from "@/common/schemas";
 import { useUserPreferencesStore } from "@/stores/useUserPreferencesStore";
 import { useSession } from "next-auth/react";
-import { createContext, useContext, useMemo, type ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  type ReactNode,
+} from "react";
 
 interface UserContext {
   id: AuthSession["user"]["id"];
@@ -12,25 +18,40 @@ interface UserContext {
 const UserContext = createContext<UserContext | null | undefined>(undefined);
 
 export function UserProvider({ children }: { children: ReactNode }) {
-  const { data: session } = useSession();
+  const { data: session, status: sessionStatus } = useSession();
+  const { set: setUserPreferences, reset: resetUserPreferences } =
+    useUserPreferencesStore();
 
-  const value: UserContext | null = useMemo(() => {
-    if (session) {
-      const authSession = AuthSession.parse(session);
-      const { id, preferencesRaw } = authSession.user;
-
-      return {
-        id,
-        preferencesRaw,
-        preferenceIsFetchingSet: new Set(),
-      };
-    } else {
-      useUserPreferencesStore.getState().reset();
+  const context: UserContext | null = useMemo(() => {
+    if (!session) {
       return null;
     }
+
+    const authSession = AuthSession.parse(session);
+    const { id, preferencesRaw } = authSession.user;
+
+    return {
+      id,
+      preferencesRaw,
+      preferenceIsFetchingSet: new Set(),
+    };
   }, [session]);
 
-  return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
+  useEffect(() => {
+    if (context) {
+      setUserPreferences(context.preferencesRaw);
+    }
+  }, [context, setUserPreferences]);
+
+  useEffect(() => {
+    if (sessionStatus === "unauthenticated") {
+      resetUserPreferences();
+    }
+  }, [sessionStatus, resetUserPreferences]);
+
+  return (
+    <UserContext.Provider value={context}>{children}</UserContext.Provider>
+  );
 }
 
 export function useUser(): UserContext | null {

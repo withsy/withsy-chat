@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { useUpdateUserPreferences } from "@/hooks/useUpdateUserPreferences";
 import { useUserPreference } from "@/hooks/useUserPreference";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 const recommendedThemes = [
   { name: "Sunset Orange", color: "255,87,34", opacity: 0.2 },
