@@ -1,25 +1,40 @@
 import { PartialError } from "@/components/Error";
 import { PartialLoading } from "@/components/Loading";
+import { useUser } from "@/context/UserContext";
 import { formatDateLabel, toNewest } from "@/lib/date-utils";
 import { useTRPC } from "@/lib/trpc";
-import type { ChatData } from "@/types/chat";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { ChevronDown, ChevronUp } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { SidebarChatItem } from "./SidebarChatItem";
 
 export default function SidebarChatList() {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
-  const listChats = useQuery(trpc.chat.list.queryOptions());
-  const updateChatMut = useMutation(trpc.chat.update.mutationOptions());
-  const [chats, setChats] = useState<ChatData[]>([]);
-  const [starredOpen, setStarredOpen] = useState(true);
+  const user = useUser();
 
-  useEffect(() => {
-    if (!listChats.data) return;
-    setChats(listChats.data);
-  }, [listChats.data]);
+  const { data: chatListOutput } = useInfiniteQuery(
+    trpc.chat.list.infiniteQueryOptions(
+      {},
+      {
+        enabled: !!user,
+        getNextPageParam: (lastPage) => lastPage.nextCursor,
+        select: (data) => {
+          // TODO: flatten chats
+          return {
+            ...data,
+          };
+        },
+      },
+    ),
+  );
+
+  const updateChatMut = useMutation(trpc.chat.update.mutationOptions());
+  const [starredOpen, setStarredOpen] = useState(true);
 
   const updateChat = (updatedChat: ChatData) => {
     const prev = chats;

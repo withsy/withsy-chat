@@ -1,4 +1,4 @@
-import { AuthSession } from "@/common/schemas";
+import { AuthSession, type ChatData } from "@/common-schemas";
 import { useUserPreferencesStore } from "@/stores/useUserPreferencesStore";
 import { useSession } from "next-auth/react";
 import {
@@ -13,6 +13,7 @@ interface UserContext {
   id: AuthSession["user"]["id"];
   preferencesRaw: AuthSession["user"]["preferencesRaw"];
   preferenceIsFetchingSet: Set<string>;
+  chatMap: Map<string, ChatData>;
 }
 
 const UserContext = createContext<UserContext | null | undefined>(undefined);
@@ -34,6 +35,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
       id,
       preferencesRaw,
       preferenceIsFetchingSet: new Set(),
+      chatMap: new Map(),
     };
   }, [session]);
 
