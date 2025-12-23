@@ -1,5 +1,12 @@
 import { create } from "zustand";
+import { devtools } from "zustand/middleware";
 
-interface UserContext {}
+const STORE_NAME = "user";
 
-export const useUserStore = create<UserContext>((setState, getState) => ({}));
+interface UserStore {}
+
+export const useUserStore = create<UserStore>()(
+  devtools((set, get) => ({}), {
+    name: STORE_NAME,
+  }),
+);

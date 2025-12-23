@@ -1,10 +1,5 @@
-import type { TrpcOptions } from "@/lib/trpc";
-import { useUserPreferencesStore } from "@/stores/useUserPreferencesStore";
-import type { inferInput } from "@trpc/tanstack-react-query";
-
-type Preferences = Required<
-  inferInput<TrpcOptions["user"]["updatePreferences"]>
->;
+import type { Preferences } from "@/common-schemas";
+import { useUserSessionStore } from "@/stores/useUserSessionStore";
 
 const DEFAULT: Preferences = {
   wideView: false,
@@ -18,5 +13,6 @@ const DEFAULT: Preferences = {
 export function useUserPreference<Key extends keyof Preferences>(
   key: Key,
 ): Preferences[Key] {
-  return useUserPreferencesStore((s) => s.getByKey(key)) ?? DEFAULT[key];
+  const value = useUserSessionStore((s) => s.preferences[key]);
+  return value ?? DEFAULT[key];
 }

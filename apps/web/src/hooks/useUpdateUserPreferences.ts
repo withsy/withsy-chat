@@ -1,17 +1,14 @@
+import type {
+  PartialUserPreferences,
+  UserPreferenceKey,
+} from "@/common-schemas";
 import { useUser } from "@/context/UserContext";
-import { useTRPC, type TrpcOptions } from "@/lib/trpc";
-import { useUserPreferencesStore } from "@/stores/useUserPreferencesStore";
+import { useTRPC } from "@/lib/trpc";
+import { useUserSessionStore } from "@/stores/useUserSessionStore";
 import { useMutation } from "@tanstack/react-query";
-import type { inferInput } from "@trpc/tanstack-react-query";
-
-type UpdateUserPreferencesInput = inferInput<
-  TrpcOptions["user"]["updatePreferences"]
->;
-
-export type UserPreferenceKey = keyof UpdateUserPreferencesInput;
 
 interface UpdateUserPreferences {
-  (input: UpdateUserPreferencesInput): Promise<void>;
+  (input: PartialUserPreferences): Promise<void>;
 }
 
 export function useUpdateUserPreferences(): {
@@ -23,7 +20,7 @@ export function useUpdateUserPreferences(): {
   const { mutateAsync } = useMutation(
     trpc.user.updatePreferences.mutationOptions(),
   );
-  const { getByKey, update } = useUserPreferencesStore();
+  const { preferences, updatePreferences } = useUserSessionStore();
 
   const updateUserPreferences: UpdateUserPreferences = async (input) => {
     if (!user) {
@@ -46,15 +43,15 @@ export function useUpdateUserPreferences(): {
 
     const rollbackMap = new Map<
       string,
-      UpdateUserPreferencesInput[UserPreferenceKey]
+      PartialUserPreferences[UserPreferenceKey]
     >();
     keys.forEach((key) => {
-      const value = getByKey(key as UserPreferenceKey);
+      const value = Reflect.get(preferences, key);
       rollbackMap.set(key, value);
     });
 
     // Optimistic update.
-    update(filteredInput);
+    updatePreferences(filteredInput);
 
     // Lock keys.
     keys.forEach((key) => preferenceIsFetchingSet.add(key));
@@ -62,7 +59,7 @@ export function useUpdateUserPreferences(): {
       await mutateAsync(filteredInput);
     } catch (_e) {
       // Rollback update.
-      update(Object.fromEntries(rollbackMap));
+      updatePreferences(Object.fromEntries(rollbackMap));
     } finally {
       // Unlock keys.
       keys.forEach((key) => preferenceIsFetchingSet.delete(key));

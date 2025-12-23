@@ -1,5 +1,5 @@
 import { AuthSession, type ChatData } from "@/common-schemas";
-import { useUserPreferencesStore } from "@/stores/useUserPreferencesStore";
+import { useUserSessionStore } from "@/stores/useUserSessionStore";
 import { useSession } from "next-auth/react";
 import {
   createContext,
@@ -20,8 +20,7 @@ const UserContext = createContext<UserContext | null | undefined>(undefined);
 
 export function UserProvider({ children }: { children: ReactNode }) {
   const { data: session, status: sessionStatus } = useSession();
-  const { set: setUserPreferences, reset: resetUserPreferences } =
-    useUserPreferencesStore();
+  const { setPreferences, clear } = useUserSessionStore();
 
   const context: UserContext | null = useMemo(() => {
     if (!session) {
@@ -41,15 +40,15 @@ export function UserProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (context) {
-      setUserPreferences(context.preferencesRaw);
+      setPreferences(context.preferencesRaw);
     }
-  }, [context, setUserPreferences]);
+  }, [context, setPreferences]);
 
   useEffect(() => {
     if (sessionStatus === "unauthenticated") {
-      resetUserPreferences();
+      clear();
     }
-  }, [sessionStatus, resetUserPreferences]);
+  }, [sessionStatus, clear]);
 
   return (
     <UserContext.Provider value={context}>{children}</UserContext.Provider>
