@@ -1,3 +1,4 @@
+import { useUser } from "@/hooks/useUser";
 import { nunito } from "@/lib/fonts";
 import { type ReactNode } from "react";
 import BmcWidget from "../BmcWidget";
@@ -8,6 +9,8 @@ type LayoutProps = {
 };
 
 export default function HomeLayout({ children }: LayoutProps) {
+  useUser();
+
   return (
     <div className={`flex min-h-screen flex-col ${nunito.className}`}>
       <Header />

@@ -1,5 +1,5 @@
 import { CollapseButton } from "@/components/CollapseButton";
-import { DynamicChatLayout } from "@/components/layout/DynamicChatLayout";
+import { ChatLayout } from "@/components/layout/ChatLayout";
 import { PartialLoading } from "@/components/Loading";
 import ModelCard from "@/components/models/ModelCard";
 import { useUserPreference } from "@/hooks/useUserPreference";
@@ -24,7 +24,7 @@ export default function Page() {
   };
 
   return (
-    <DynamicChatLayout>
+    <ChatLayout>
       <div className="relative flex h-full flex-col">
         <div
           className="absolute top-0 left-0 flex h-[50px] w-full items-center justify-between px-4 select-none"
@@ -54,6 +54,6 @@ export default function Page() {
           </div>
         </div>
       </div>
-    </DynamicChatLayout>
+    </ChatLayout>
   );
 }

@@ -1,6 +1,5 @@
 import { PartialError } from "@/components/Error";
 import { PartialLoading } from "@/components/Loading";
-import { useUser } from "@/context/UserContext";
 import { formatDateLabel, toNewest } from "@/lib/date-utils";
 import { useTRPC } from "@/lib/trpc";
 import {
@@ -9,19 +8,20 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { ChevronDown, ChevronUp } from "lucide-react";
+import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { SidebarChatItem } from "./SidebarChatItem";
 
 export default function SidebarChatList() {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
-  const user = useUser();
+  const session = useSession();
 
   const { data: chatListOutput } = useInfiniteQuery(
     trpc.chat.list.infiniteQueryOptions(
       {},
       {
-        enabled: !!user,
+        enabled: !!session,
         getNextPageParam: (lastPage) => lastPage.nextCursor,
         select: (data) => {
           // TODO: flatten chats

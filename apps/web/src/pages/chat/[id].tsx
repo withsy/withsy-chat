@@ -1,6 +1,6 @@
 import ChatView from "@/components/chat/ChatView";
 import { PartialError } from "@/components/Error";
-import { DynamicChatLayout } from "@/components/layout/DynamicChatLayout";
+import { ChatLayout } from "@/components/layout/ChatLayout";
 import { useRouter } from "next/router";
 
 export default function Page() {
@@ -11,8 +11,8 @@ export default function Page() {
   if (!chatId) return <PartialError message="Invalid chat id" />;
 
   return (
-    <DynamicChatLayout>
-      <ChatView chatId={chatId} />{" "}
-    </DynamicChatLayout>
+    <ChatLayout>
+      <ChatView chatId={chatId} />
+    </ChatLayout>
   );
 }

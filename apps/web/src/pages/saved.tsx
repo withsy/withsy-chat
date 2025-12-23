@@ -1,5 +1,5 @@
 import BookmarkPage from "@/components/bookmarks/BookmarkPage";
-import { DynamicChatLayout } from "@/components/layout/DynamicChatLayout";
+import { ChatLayout } from "@/components/layout/ChatLayout";
 import { useUserPreference } from "@/hooks/useUserPreference";
 
 export default function Page() {
@@ -11,8 +11,8 @@ export default function Page() {
   };
 
   return (
-    <DynamicChatLayout>
+    <ChatLayout>
       <BookmarkPage headerStyle={headerStyle} />{" "}
-    </DynamicChatLayout>
+    </ChatLayout>
   );
 }
