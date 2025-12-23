@@ -13,17 +13,14 @@ export function useUser() {
       const { id, rawPreferences } = authSession.user;
 
       useUserSessionStorageStore.getState().setPreferences(rawPreferences);
-      useUserStore.setState((state) => ({
-        ...state,
-        id,
-      }));
+      useUserStore.getState().setId(id);
     }
   }, [session.data]);
 
   useEffect(() => {
     if (session.status === "unauthenticated") {
       useUserSessionStorageStore.getState().clear();
-      useUserStore.setState(() => ({}));
+      useUserStore.getState().clear();
     }
   }, [session.status]);
 }

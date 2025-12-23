@@ -2,6 +2,7 @@ import { PartialError } from "@/components/Error";
 import { PartialLoading } from "@/components/Loading";
 import { formatDateLabel, toNewest } from "@/lib/date-utils";
 import { useTRPC } from "@/lib/trpc";
+import { useUserStore } from "@/stores/useUserStore";
 import {
   useInfiniteQuery,
   useMutation,
@@ -9,29 +10,29 @@ import {
 } from "@tanstack/react-query";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { useSession } from "next-auth/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SidebarChatItem } from "./SidebarChatItem";
 
 export default function SidebarChatList() {
   const trpc = useTRPC();
-  const queryClient = useQueryClient();
   const session = useSession();
 
-  const { data: chatListOutput } = useInfiniteQuery(
+  const chatList = useInfiniteQuery(
     trpc.chat.list.infiniteQueryOptions(
       {},
       {
-        enabled: !!session,
+        enabled: session.status === "authenticated",
         getNextPageParam: (lastPage) => lastPage.nextCursor,
-        select: (data) => {
-          // TODO: flatten chats
-          return {
-            ...data,
-          };
-        },
       },
     ),
   );
+
+  useEffect(() => {
+    if (chatList.data) {
+      const chats = chatList.data.pages.flatMap((page) => page.items);
+      useUserStore.getState().setChats(chats);
+    }
+  }, [chatList.data]);
 
   const updateChatMut = useMutation(trpc.chat.update.mutationOptions());
   const [starredOpen, setStarredOpen] = useState(true);

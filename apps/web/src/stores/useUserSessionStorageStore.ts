@@ -5,12 +5,13 @@ import type {
 import type { RawUserPreferences } from "@repo/common";
 import { create } from "zustand";
 import { createJSONStorage, devtools, persist } from "zustand/middleware";
+import { immer } from "zustand/middleware/immer";
 
 const STORE_NAME = "userSession";
 
 interface UserSessionStorageStore {
-  preferences: PartialUserPreferences;
   clear: () => void;
+  preferences: PartialUserPreferences;
   setPreferences: (raw: RawUserPreferences) => void;
   updatePreferences: (partial: PartialUserPreferences) => void;
 }
@@ -18,45 +19,35 @@ interface UserSessionStorageStore {
 export const useUserSessionStorageStore = create<UserSessionStorageStore>()(
   devtools(
     persist(
-      (set) => ({
-        preferences: {},
+      immer((set) => ({
         clear: () => {
-          set({});
+          set((state) => {
+            state.preferences = {};
+          });
           useUserSessionStorageStore.persist.clearStorage();
         },
+        preferences: {},
         setPreferences: (raw) => {
           set((state) => {
             const filteredRaw = Object.fromEntries(
               Object.entries(raw).filter(([_, value]) => value !== undefined),
             );
 
-            return {
-              ...state,
-              preferences: filteredRaw,
-            };
+            state.preferences = filteredRaw;
           });
         },
         updatePreferences: (partial) => {
           set((state) => {
-            const preferences = {
-              ...state.preferences,
-            };
-
             Object.entries(partial).forEach(([key, value]) => {
               if (value === undefined) {
-                delete preferences[key as UserPreferenceKey];
+                delete state.preferences[key as UserPreferenceKey];
               } else {
-                Reflect.set(preferences, key, value);
+                Reflect.set(state.preferences, key, value);
               }
             });
-
-            return {
-              ...state,
-              preferences,
-            };
           });
         },
-      }),
+      })),
       {
         name: STORE_NAME,
         storage: createJSONStorage(() => sessionStorage),
