@@ -3,18 +3,16 @@ import { Hero } from "@/components/home/Hero";
 import PromptTransparency from "@/components/home/PromptTransparency";
 import SaveStar from "@/components/home/SaveStar";
 import ThemeAndPrefsSection from "@/components/home/ThemeAndPrefs";
+import HomeLayout from "@/components/layout/HomeLayout";
 
-function Page() {
+export default function Page() {
   return (
-    <div>
+    <HomeLayout>
       <Hero />
       <ThemeAndPrefsSection />
       <PromptTransparency />
       <SaveStar />
       <BranchHistory />
-    </div>
+    </HomeLayout>
   );
 }
-
-(Page as any).layoutType = "home";
-export default Page;

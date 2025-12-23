@@ -1,5 +1,5 @@
 import type { Preferences } from "@/common-schemas";
-import { useUserSessionStore } from "@/stores/useUserSessionStore";
+import { useUserSessionStorageStore } from "@/stores/useUserSessionStorageStore";
 
 const DEFAULT: Preferences = {
   wideView: false,
@@ -13,6 +13,6 @@ const DEFAULT: Preferences = {
 export function useUserPreference<Key extends keyof Preferences>(
   key: Key,
 ): Preferences[Key] {
-  const value = useUserSessionStore((s) => s.preferences[key]);
+  const value = useUserSessionStorageStore((s) => s.preferences[key]);
   return value ?? DEFAULT[key];
 }

@@ -2,24 +2,28 @@ import type {
   PartialUserPreferences,
   UserPreferenceKey,
 } from "@/common-schemas";
-import type { UserPreferencesRaw } from "@repo/common";
+import type { RawUserPreferences } from "@repo/common";
 import { create } from "zustand";
 import { createJSONStorage, devtools, persist } from "zustand/middleware";
 
 const STORE_NAME = "userSession";
 
-interface UserSessionStore {
+interface UserSessionStorageStore {
   preferences: PartialUserPreferences;
-  setPreferences: (raw: UserPreferencesRaw) => void;
-  updatePreferences: (partial: PartialUserPreferences) => void;
   clear: () => void;
+  setPreferences: (raw: RawUserPreferences) => void;
+  updatePreferences: (partial: PartialUserPreferences) => void;
 }
 
-export const useUserSessionStore = create<UserSessionStore>()(
+export const useUserSessionStorageStore = create<UserSessionStorageStore>()(
   devtools(
     persist(
-      (set, get) => ({
+      (set) => ({
         preferences: {},
+        clear: () => {
+          set({});
+          useUserSessionStorageStore.persist.clearStorage();
+        },
         setPreferences: (raw) => {
           set((state) => {
             const filteredRaw = Object.fromEntries(
@@ -51,10 +55,6 @@ export const useUserSessionStore = create<UserSessionStore>()(
               preferences,
             };
           });
-        },
-        clear: () => {
-          get().setPreferences({});
-          useUserSessionStore.persist.clearStorage();
         },
       }),
       {

@@ -28,7 +28,7 @@ export const UserPreferenceValue = z.union([
 ]);
 export type UserPreferenceValue = z.infer<typeof UserPreferenceValue>;
 
-export const UserPreferencesRaw = z.record(z.string(), UserPreferenceValue);
-export type UserPreferencesRaw = z.infer<typeof UserPreferencesRaw>;
+export const RawUserPreferences = z.record(z.string(), UserPreferenceValue);
+export type RawUserPreferences = z.infer<typeof RawUserPreferences>;
 
 //#endregion User

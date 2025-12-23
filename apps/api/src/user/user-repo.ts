@@ -1,5 +1,5 @@
 import { Logger } from "@nestjs/common";
-import { UserPreferencesRaw } from "@repo/common";
+import { RawUserPreferences } from "@repo/common";
 import { TRPCError } from "@trpc/server";
 import { v4 } from "uuid";
 import { Tx } from "../db/db-service";
@@ -11,7 +11,7 @@ export class UserRepo {
 
   constructor(private readonly tx: Tx) {}
 
-  async getPreferences(userId: UserId): Promise<UserPreferencesRaw> {
+  async getPreferences(userId: UserId): Promise<RawUserPreferences> {
     const { preferences } = await this.tx.user.findUniqueOrThrow({
       where: {
         id: userId,
@@ -21,13 +21,13 @@ export class UserRepo {
       },
     });
 
-    return preferences as UserPreferencesRaw;
+    return preferences as RawUserPreferences;
   }
 
   async updatePreferences(
     userId: UserId,
     input: UserUpdatePreferences,
-  ): Promise<UserPreferencesRaw> {
+  ): Promise<RawUserPreferences> {
     const filteredInput = Object.fromEntries(
       Object.entries(input).filter(([_, v]) => v !== undefined),
     );
@@ -51,7 +51,7 @@ export class UserRepo {
     }
 
     const { preferences } = rows[0];
-    return preferences as UserPreferencesRaw;
+    return preferences as RawUserPreferences;
   }
 
   async create(input: {

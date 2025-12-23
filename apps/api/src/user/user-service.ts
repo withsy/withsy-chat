@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { UserPreferencesRaw } from "@repo/common";
+import { RawUserPreferences } from "@repo/common";
 import { DbService } from "../db/db-service";
 import { EncryptionService } from "../encryption/encryption-service";
 import { IdempotencyKeyRepo } from "../idempotency-key/idempotency-key-repo";
@@ -75,7 +75,7 @@ export class UserService {
     });
   }
 
-  async getPreferences(input: UserGetPreferences): Promise<UserPreferencesRaw> {
+  async getPreferences(input: UserGetPreferences): Promise<RawUserPreferences> {
     const { userId } = input;
 
     const userRepo = new UserRepo(this.dbService.db);
@@ -85,7 +85,7 @@ export class UserService {
   async updatePreferences(
     userId: UserId,
     input: UserUpdatePreferences,
-  ): Promise<UserPreferencesRaw> {
+  ): Promise<RawUserPreferences> {
     const userRepo = new UserRepo(this.dbService.db);
     return await userRepo.updatePreferences(userId, input);
   }

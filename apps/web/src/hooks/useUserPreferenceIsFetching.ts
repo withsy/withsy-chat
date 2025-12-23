@@ -1,14 +1,8 @@
-import { useUser } from "@/context/UserContext";
-import type { UserPreferenceKey } from "./useUpdateUserPreferences";
+import type { UserPreferenceKey } from "@/common-schemas";
+import { useUserStore } from "@/stores/useUserStore";
 
 export function useUserPreferenceIsFetching<Key extends UserPreferenceKey>(
   key: Key,
 ): boolean {
-  const user = useUser();
-  if (!user) {
-    return false;
-  }
-
-  const { preferenceIsFetchingSet } = user;
-  return preferenceIsFetchingSet.has(key);
+  return useUserStore((s) => s.preferenceFetchingKeySet.has(key));
 }

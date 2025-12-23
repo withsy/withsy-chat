@@ -2,41 +2,40 @@ import type {
   PartialUserPreferences,
   UserPreferenceKey,
 } from "@/common-schemas";
-import { useUser } from "@/context/UserContext";
 import { useTRPC } from "@/lib/trpc";
-import { useUserSessionStore } from "@/stores/useUserSessionStore";
+import { useUserSessionStorageStore } from "@/stores/useUserSessionStorageStore";
+import { useUserStore } from "@/stores/useUserStore";
 import { useMutation } from "@tanstack/react-query";
 
 interface UpdateUserPreferences {
   (input: PartialUserPreferences): Promise<void>;
 }
 
-export function useUpdateUserPreferences(): {
-  updateUserPreferences: UpdateUserPreferences;
-  isEnabled: boolean;
-} {
+export function useUpdateUserPreferences(): UpdateUserPreferences {
   const trpc = useTRPC();
-  const user = useUser();
   const { mutateAsync } = useMutation(
     trpc.user.updatePreferences.mutationOptions(),
   );
-  const { preferences, updatePreferences } = useUserSessionStore();
 
   const updateUserPreferences: UpdateUserPreferences = async (input) => {
-    if (!user) {
-      throw new Error("User is not defined.");
+    if (!useUserStore.getState().isValid()) {
+      throw new Error("User is invalid.");
     }
 
-    const { preferenceIsFetchingSet } = user;
     const filteredInput = Object.fromEntries(
       Object.entries(input).filter(([_, value]) => value !== undefined),
     );
-    const keys = Object.keys(filteredInput);
+    const keys = Object.keys(filteredInput) as UserPreferenceKey[];
 
-    if (keys.some((key) => preferenceIsFetchingSet.has(key))) {
+    if (
+      keys.some((key) =>
+        useUserStore.getState().preferenceFetchingKeySet.has(key),
+      )
+    ) {
       throw new Error(
-        `Conflict request. fetching keys: ${preferenceIsFetchingSet
-          .keys()
+        `Conflict request. fetching keys: ${useUserStore
+          .getState()
+          .preferenceFetchingKeySet.keys()
           .toArray()}, input keys: ${keys}.`,
       );
     }
@@ -46,25 +45,31 @@ export function useUpdateUserPreferences(): {
       PartialUserPreferences[UserPreferenceKey]
     >();
     keys.forEach((key) => {
-      const value = Reflect.get(preferences, key);
+      const value = Reflect.get(
+        useUserSessionStorageStore.getState().preferences,
+        key,
+      );
       rollbackMap.set(key, value);
     });
 
     // Optimistic update.
-    updatePreferences(filteredInput);
+    useUserSessionStorageStore.getState().updatePreferences(filteredInput);
 
     // Lock keys.
-    keys.forEach((key) => preferenceIsFetchingSet.add(key));
+    useUserStore.getState().addPreferenceFetchingKeys(keys);
+
     try {
       await mutateAsync(filteredInput);
     } catch (_e) {
       // Rollback update.
-      updatePreferences(Object.fromEntries(rollbackMap));
+      useUserSessionStorageStore
+        .getState()
+        .updatePreferences(Object.fromEntries(rollbackMap));
     } finally {
       // Unlock keys.
-      keys.forEach((key) => preferenceIsFetchingSet.delete(key));
+      useUserStore.getState().deletePreferenceFetchingKeys(keys);
     }
   };
 
-  return { updateUserPreferences, isEnabled: !!user };
+  return updateUserPreferences;
 }

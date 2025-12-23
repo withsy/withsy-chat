@@ -1,5 +1,5 @@
 import type { TrpcOptions } from "@/lib/trpc";
-import { UserPreferencesRaw } from "@repo/common";
+import { RawUserPreferences } from "@repo/common";
 import type { inferInput, inferOutput } from "@trpc/tanstack-react-query";
 import type { Session } from "next-auth";
 import type { Simplify } from "type-fest";
@@ -8,14 +8,14 @@ import z from "zod";
 export interface AuthSession extends Session {
   user: Session["user"] & {
     id: string;
-    preferencesRaw: UserPreferencesRaw;
+    rawPreferences: RawUserPreferences;
   };
 }
 
 export const AuthSession = z.object({
   user: z.object({
     id: z.string(),
-    preferencesRaw: UserPreferencesRaw,
+    rawPreferences: RawUserPreferences,
   }),
 });
 

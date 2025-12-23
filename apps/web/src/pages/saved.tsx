@@ -1,7 +1,8 @@
 import BookmarkPage from "@/components/bookmarks/BookmarkPage";
+import { DynamicChatLayout } from "@/components/layout/DynamicChatLayout";
 import { useUserPreference } from "@/hooks/useUserPreference";
 
-function Page() {
+export default function Page() {
   const themeColor = useUserPreference("themeColor");
   const themeOpacity = useUserPreference("themeOpacity");
 
@@ -9,8 +10,9 @@ function Page() {
     backgroundColor: `rgba(${themeColor}, ${themeOpacity / 2})`,
   };
 
-  return <BookmarkPage headerStyle={headerStyle} />;
+  return (
+    <DynamicChatLayout>
+      <BookmarkPage headerStyle={headerStyle} />{" "}
+    </DynamicChatLayout>
+  );
 }
-
-(Page as any).layoutType = "chat";
-export default Page;

@@ -1,11 +1,12 @@
+import HomeLayout from "@/components/layout/HomeLayout";
 import fs from "fs";
-import path from "path";
 import matter from "gray-matter";
-import { serialize } from "next-mdx-remote/serialize";
-import { MDXRemote, type MDXRemoteSerializeResult } from "next-mdx-remote";
-import type { GetStaticPaths, GetStaticProps } from "next";
-import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
+import type { GetStaticPaths, GetStaticProps } from "next";
+import { MDXRemote, type MDXRemoteSerializeResult } from "next-mdx-remote";
+import { serialize } from "next-mdx-remote/serialize";
+import Link from "next/link";
+import path from "path";
 
 type Props = {
   source: MDXRemoteSerializeResult;
@@ -16,54 +17,58 @@ type Props = {
   related: { slug: string[]; title: string }[];
 };
 
-function Page({ source, frontMatter, related }: Props) {
+export default function Page({ source, frontMatter, related }: Props) {
   return (
-    <div className="mx-auto max-w-3xl px-4 py-16">
-      <Link
-        href="/guides"
-        className="text-muted-foreground mb-6 inline-flex items-center text-sm hover:underline"
-      >
-        <ChevronLeft className="mr-1 h-4 w-4" />
-        Back to Guides
-      </Link>
-
-      <h1 className="mb-4 text-3xl font-bold">{frontMatter.title}</h1>
-      {frontMatter.description && (
-        <p className="text-muted-foreground mb-8">{frontMatter.description}</p>
-      )}
-
-      <article className="prose prose-neutral dark:prose-invert">
-        <MDXRemote {...source} />
-      </article>
-
-      {related.length > 0 && (
-        <div className="mt-16">
-          <h2 className="mb-4 text-2xl font-semibold">Related Guides</h2>
-          <ul className="list-inside list-disc space-y-2">
-            {related.map((r) => (
-              <li key={r.slug.join("/")}>
-                <Link
-                  href={`/guides/${r.slug.join("/")}`}
-                  className="text-[rgb(40,90,128)] hover:underline"
-                >
-                  {r.title}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-
-      <div className="mt-12">
+    <HomeLayout>
+      <div className="mx-auto max-w-3xl px-4 py-16">
         <Link
           href="/guides"
-          className="text-muted-foreground inline-flex items-center text-sm hover:underline"
+          className="text-muted-foreground mb-6 inline-flex items-center text-sm hover:underline"
         >
           <ChevronLeft className="mr-1 h-4 w-4" />
           Back to Guides
         </Link>
+
+        <h1 className="mb-4 text-3xl font-bold">{frontMatter.title}</h1>
+        {frontMatter.description && (
+          <p className="text-muted-foreground mb-8">
+            {frontMatter.description}
+          </p>
+        )}
+
+        <article className="prose prose-neutral dark:prose-invert">
+          <MDXRemote {...source} />
+        </article>
+
+        {related.length > 0 && (
+          <div className="mt-16">
+            <h2 className="mb-4 text-2xl font-semibold">Related Guides</h2>
+            <ul className="list-inside list-disc space-y-2">
+              {related.map((r) => (
+                <li key={r.slug.join("/")}>
+                  <Link
+                    href={`/guides/${r.slug.join("/")}`}
+                    className="text-[rgb(40,90,128)] hover:underline"
+                  >
+                    {r.title}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        <div className="mt-12">
+          <Link
+            href="/guides"
+            className="text-muted-foreground inline-flex items-center text-sm hover:underline"
+          >
+            <ChevronLeft className="mr-1 h-4 w-4" />
+            Back to Guides
+          </Link>
+        </div>
       </div>
-    </div>
+    </HomeLayout>
   );
 }
 
@@ -141,6 +146,3 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     },
   };
 };
-
-(Page as any).layoutType = "home";
-export default Page;

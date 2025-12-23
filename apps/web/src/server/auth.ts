@@ -1,4 +1,4 @@
-import type { AuthSession } from "@/common/schemas";
+import type { AuthSession } from "@/common-schemas";
 import type { AuthOptions, LoggerInstance } from "next-auth";
 import type { JWT } from "next-auth/jwt";
 import CredentialsProvider from "next-auth/providers/credentials";
@@ -108,7 +108,7 @@ export const authOptions: AuthOptions = {
       const token = AuthToken.parse(params.token);
       const { userId } = token;
 
-      const userPreferencesRaw = await trpc.user.getPreferences.query({
+      const rawUserPreferences = await trpc.user.getPreferences.query({
         userId,
       });
 
@@ -117,7 +117,7 @@ export const authOptions: AuthOptions = {
         user: {
           ...params.session.user,
           id: userId,
-          preferencesRaw: userPreferencesRaw,
+          rawPreferences: rawUserPreferences,
         },
       };
 

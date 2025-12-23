@@ -1,4 +1,5 @@
 // pages/guides/index.tsx
+import HomeLayout from "@/components/layout/HomeLayout";
 import fs from "fs";
 import matter from "gray-matter";
 import { Bookmark, CircleHelp, Sparkles, TableProperties } from "lucide-react";
@@ -16,7 +17,7 @@ type GuideCategory = {
   guides: Guide[];
 };
 
-function Page({ categories }: { categories: GuideCategory[] }) {
+export default function Page({ categories }: { categories: GuideCategory[] }) {
   const getIconForCategory = (name: string) => {
     switch (name.toLowerCase()) {
       case "prompts":
@@ -39,40 +40,45 @@ function Page({ categories }: { categories: GuideCategory[] }) {
     if (b.name.toLowerCase() === "general") return -1;
     return 0;
   });
-  return (
-    <div className="mx-auto flex max-w-3xl flex-col items-start px-6 py-12 text-start">
-      <h2 className="mb-4 text-3xl font-bold">User Guides</h2>
-      <p className="mb-6 text-base leading-relaxed">
-        Discover all you need to master, personalize, and optimize your AI chat
-        experience.
-      </p>
 
-      <div className="space-y-12 py-4">
-        {categories.map((category) => (
-          <div key={category.name}>
-            <h2 className="mb-4 flex items-center text-xl font-semibold text-gray-800">
-              {getIconForCategory(category.name)}
-              {capitalize(category.name)}
-            </h2>
-            <ul className="space-y-2">
-              {category.guides.map((guide) => (
-                <li key={guide.slug.join("/")}>
-                  <Link
-                    href={`/guides/${guide.slug.join("/")}`}
-                    className="text-lg text-[rgb(40,90,128)] hover:underline"
-                  >
-                    {guide.title}
-                  </Link>
-                  {guide.description && (
-                    <p className="text-sm text-gray-500">{guide.description}</p>
-                  )}
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
+  return (
+    <HomeLayout>
+      <div className="mx-auto flex max-w-3xl flex-col items-start px-6 py-12 text-start">
+        <h2 className="mb-4 text-3xl font-bold">User Guides</h2>
+        <p className="mb-6 text-base leading-relaxed">
+          Discover all you need to master, personalize, and optimize your AI
+          chat experience.
+        </p>
+
+        <div className="space-y-12 py-4">
+          {categories.map((category) => (
+            <div key={category.name}>
+              <h2 className="mb-4 flex items-center text-xl font-semibold text-gray-800">
+                {getIconForCategory(category.name)}
+                {capitalize(category.name)}
+              </h2>
+              <ul className="space-y-2">
+                {category.guides.map((guide) => (
+                  <li key={guide.slug.join("/")}>
+                    <Link
+                      href={`/guides/${guide.slug.join("/")}`}
+                      className="text-lg text-[rgb(40,90,128)] hover:underline"
+                    >
+                      {guide.title}
+                    </Link>
+                    {guide.description && (
+                      <p className="text-sm text-gray-500">
+                        {guide.description}
+                      </p>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
       </div>
-    </div>
+    </HomeLayout>
   );
 }
 
@@ -116,6 +122,3 @@ export async function getStaticProps() {
     },
   };
 }
-
-(Page as any).layoutType = "home";
-export default Page;

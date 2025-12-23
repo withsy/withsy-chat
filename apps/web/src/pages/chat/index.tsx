@@ -1,8 +1,10 @@
 import EmptyChatView from "@/components/chat/EmptyChatView";
+import { DynamicChatLayout } from "@/components/layout/DynamicChatLayout";
 
-function Page() {
-  return <EmptyChatView />;
+export default function Page() {
+  return (
+    <DynamicChatLayout>
+      <EmptyChatView />
+    </DynamicChatLayout>
+  );
 }
-
-(Page as any).layoutType = "chat";
-export default Page;

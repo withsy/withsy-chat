@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { UserPreferencesRaw } from "@repo/common";
+import { RawUserPreferences } from "@repo/common";
 import { ApiKeyTrpcProcedure } from "../api-key/api-key-trpc-procedure";
 import { TrpcService } from "../trpc/trpc-service";
 import {
@@ -28,11 +28,11 @@ export class UserTrpcRouter {
         .mutation(({ input }) => userService.login(input)),
       getPreferences: apiKeyTrpcProcedure.procedure
         .input(UserGetPreferences)
-        .output(UserPreferencesRaw)
+        .output(RawUserPreferences)
         .query(({ input }) => userService.getPreferences(input)),
       updatePreferences: userTrpcProcedure.procedure
         .input(UserUpdatePreferences)
-        .output(UserPreferencesRaw)
+        .output(RawUserPreferences)
         .mutation(({ ctx, input }) =>
           userService.updatePreferences(ctx.userId, input),
         ),

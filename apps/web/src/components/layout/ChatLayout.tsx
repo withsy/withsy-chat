@@ -1,4 +1,5 @@
 import { useUserPreference } from "@/hooks/useUserPreference";
+import { nunito } from "@/lib/fonts";
 import { useSession } from "next-auth/react";
 import { type ReactNode } from "react";
 import Main from "./Main";
@@ -6,10 +7,9 @@ import Sidebar from "./sidebar/Sidebar";
 
 type LayoutProps = {
   children: ReactNode;
-  className: string;
 };
 
-export default function ChatLayout({ children, className }: LayoutProps) {
+export default function ChatLayout({ children }: LayoutProps) {
   useSession({
     required: true,
   });
@@ -20,7 +20,7 @@ export default function ChatLayout({ children, className }: LayoutProps) {
 
   return (
     <div
-      className={`relative flex h-[100dvh] overflow-hidden ${className}`}
+      className={`relative flex h-[100dvh] overflow-hidden ${nunito.className}`}
       style={{ backgroundColor }}
     >
       <Sidebar />
