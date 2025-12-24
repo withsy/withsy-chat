@@ -19,8 +19,6 @@ export const AuthSession = z.object({
   }),
 });
 
-export type ChatData = inferOutput<TrpcOptions["chat"]["list"]>["items"][0];
-
 export type Preferences = Simplify<
   Required<inferInput<TrpcOptions["user"]["updatePreferences"]>>
 >;
@@ -28,3 +26,9 @@ export type Preferences = Simplify<
 export type PartialUserPreferences = Partial<Preferences>;
 
 export type UserPreferenceKey = keyof PartialUserPreferences;
+
+export type ChatData = inferOutput<TrpcOptions["chat"]["list"]>["items"][0];
+
+export type MessageData = inferOutput<
+  TrpcOptions["message"]["list"]
+>["items"][0];

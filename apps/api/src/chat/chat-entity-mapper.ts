@@ -4,10 +4,10 @@ import { ChatModel } from "../generated/prisma/models";
 import { ChatData } from "./chat-schemas";
 
 @Injectable()
-export class ChatDecryptor {
+export class ChatEntityMapper {
   constructor(private readonly encryptionService: EncryptionService) {}
 
-  decrypt(entity: ChatModel): ChatData {
+  toData(entity: ChatModel): ChatData {
     const title = this.encryptionService.decrypt(entity.titleEncrypted);
 
     const data: ChatData = {
@@ -15,6 +15,7 @@ export class ChatDecryptor {
       title,
       isStarred: entity.isStarred,
       updatedAt: entity.updatedAt,
+      type: entity.type,
     };
 
     return data;

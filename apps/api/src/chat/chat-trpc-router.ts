@@ -6,6 +6,8 @@ import {
   ChatData,
   ChatDelete,
   ChatList,
+  ChatListBranch,
+  ChatListBranchOutput,
   ChatListOutput,
   ChatUpdate,
 } from "./chat-schemas";
@@ -34,7 +36,10 @@ export class ChatTrpcRouter {
         .output(z.void())
         .mutation(({ ctx, input }) => chatService.delete(ctx.userId, input)),
       start: userTrpcProcedure.procedure.mutation(() => {}),
-      listBranch: userTrpcProcedure.procedure.query(() => {}),
+      listBranch: userTrpcProcedure.procedure
+        .input(ChatListBranch)
+        .output(ChatListBranchOutput)
+        .query(({ ctx, input }) => chatService.listBranch(ctx.userId, input)),
       startBranch: userTrpcProcedure.procedure.mutation(() => {}),
     });
   }

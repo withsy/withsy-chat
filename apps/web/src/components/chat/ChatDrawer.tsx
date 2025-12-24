@@ -1,7 +1,9 @@
+import type { MessageData } from "@/common-schemas";
 import { useTRPC } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
 import { useDrawerStore } from "@/stores/useDrawerStore";
 import { useSidebarStore } from "@/stores/useSidebarStore";
+import { useUserStore } from "@/stores/useUserStore";
 import {
   skipToken,
   useInfiniteQuery,
@@ -24,16 +26,19 @@ type ChatDrawerProps = {
 
 export const ChatDrawer = ({ savedMessages }: ChatDrawerProps) => {
   const trpc = useTRPC();
-  const { chat } = useChatStore();
-  const { isMobile } = useSidebarStore();
-  const { openDrawer, setOpenDrawer } = useDrawerStore();
-
   const router = useRouter();
+  const { isMobile } = useSidebarStore();
+
+  const { openDrawer, setOpenDrawer } = useDrawerStore();
   const isDrawerOpen = !!openDrawer;
-  const chatId = chat?.id;
+
+  const currentChatId = useUserStore((s) => s.currentChatId);
   const chatBranchList = useQuery(
-    trpc.chatBranch.list.queryOptions(
-      chatId && openDrawer === "branches" ? { chatId } : skipToken,
+    trpc.chat.listBranch.queryOptions(
+      { chatId: currentChatId },
+      {
+        enabled: !!currentChatId && openDrawer === "branches",
+      },
     ),
   );
 
@@ -56,7 +61,7 @@ export const ChatDrawer = ({ savedMessages }: ChatDrawerProps) => {
       const timer = setTimeout(() => setReady(true), 50);
       return () => clearTimeout(timer);
     } else {
-      setReady(false);
+      Promise.try(() => setReady(false));
     }
   }, [isDrawerOpen]);
 

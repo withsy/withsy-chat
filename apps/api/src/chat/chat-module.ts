@@ -3,13 +3,13 @@ import { DbModule } from "../db/db-module";
 import { EncryptionModule } from "../encryption/encryption-module";
 import { TrpcModule } from "../trpc/trpc-module";
 import { UserModule } from "../user/user-module";
-import { ChatDecryptor } from "./chat-decryptor";
+import { ChatEntityMapper } from "./chat-entity-mapper";
 import { ChatService } from "./chat-service";
 import { ChatTrpcRouter } from "./chat-trpc-router";
 
 @Module({
   imports: [TrpcModule, UserModule, DbModule, EncryptionModule],
-  providers: [ChatTrpcRouter, ChatService, ChatDecryptor],
+  providers: [ChatTrpcRouter, ChatService, ChatEntityMapper],
   exports: [ChatTrpcRouter],
 })
 export class ChatModule {}

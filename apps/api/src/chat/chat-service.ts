@@ -1,12 +1,14 @@
 import { Injectable } from "@nestjs/common";
 import { DbService } from "../db/db-service";
 import { UserId } from "../user/user-schemas";
-import { ChatDecryptor } from "./chat-decryptor";
+import { ChatEntityMapper } from "./chat-entity-mapper";
 import { ChatRepo } from "./chat-repo";
 import {
   ChatData,
   ChatDelete,
   ChatList,
+  ChatListBranch,
+  ChatListBranchOutput,
   ChatListOutput,
   ChatUpdate,
 } from "./chat-schemas";
@@ -15,13 +17,15 @@ import {
 export class ChatService {
   constructor(
     private readonly dbService: DbService,
-    private readonly chatDecryptor: ChatDecryptor,
+    private readonly chatEntityMapper: ChatEntityMapper,
   ) {}
 
   async list(userId: UserId, input: ChatList): Promise<ChatListOutput> {
     const chatRepo = new ChatRepo(this.dbService.db);
     const entities = await chatRepo.list(userId, input);
-    const items = entities.map((entity) => this.chatDecryptor.decrypt(entity));
+    const items = entities.map((entity) =>
+      this.chatEntityMapper.toData(entity),
+    );
     const nextCursor = items.at(-1)?.id ?? null;
 
     return {
@@ -30,7 +34,18 @@ export class ChatService {
     };
   }
 
-  async update(userId: UserId, input: ChatUpdate): Promise<ChatData> {}
+  async update(userId: UserId, input: ChatUpdate): Promise<ChatData> {
+    throw new Error();
+  }
 
-  async delete(userId: UserId, input: ChatDelete): Promise<void> {}
+  async delete(userId: UserId, input: ChatDelete): Promise<void> {
+    throw new Error();
+  }
+
+  async listBranch(
+    userId: UserId,
+    input: ChatListBranch,
+  ): Promise<ChatListBranchOutput> {
+    throw new Error();
+  }
 }

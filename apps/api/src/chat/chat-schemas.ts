@@ -1,5 +1,5 @@
 import z from "zod";
-import { DateTimeTz } from "../common-schemas";
+import { createListSchemas, DateTimeTz } from "../common-schemas";
 
 export const ChatId = z.uuid();
 export type ChatId = z.infer<typeof ChatId>;
@@ -15,18 +15,12 @@ export const ChatData = z.object({
 });
 export type ChatData = z.infer<typeof ChatData>;
 
-export const ChatList = z.object({
-  limit: z.number().int().min(1).max(20).default(20),
-  cursor: z.string().nullable().default(null),
-});
+const chatListSchemas = createListSchemas(ChatData);
+
+export const ChatList = chatListSchemas.list;
 export type ChatList = z.infer<typeof ChatList>;
 
-export const ChatListOutput = z.object({
-  get items() {
-    return ChatData.array();
-  },
-  nextCursor: z.string().nullable().default(null),
-});
+export const ChatListOutput = chatListSchemas.listOutput;
 export type ChatListOutput = z.infer<typeof ChatListOutput>;
 
 export const ChatUpdate = z.object({
@@ -44,3 +38,15 @@ export const ChatDelete = z.object({
   },
 });
 export type ChatDelete = z.infer<typeof ChatDelete>;
+
+const chatListBranchSchemas = createListSchemas(ChatData);
+
+export const ChatListBranch = chatListBranchSchemas.list.extend({
+  get chatId() {
+    return ChatId;
+  },
+});
+export type ChatListBranch = z.infer<typeof ChatListBranch>;
+
+export const ChatListBranchOutput = chatListBranchSchemas.listOutput;
+export type ChatListBranchOutput = z.infer<typeof ChatListBranchOutput>;
