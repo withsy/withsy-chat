@@ -16,12 +16,14 @@ export function ConfirmDeleteModal({
   description = "Are you sure you want to delete this chat? This action cannot be undone.",
   onCancel,
   onConfirm,
+  isPending,
 }: {
   open: boolean;
   title?: string;
   description?: string;
   onCancel: () => void;
   onConfirm: () => void;
+  isPending: boolean;
 }) {
   const themeColor = useUserPreference("themeColor");
 
@@ -43,6 +45,7 @@ export function ConfirmDeleteModal({
               style={{
                 background: `rgb(${themeColor})`,
               }}
+              disabled={isPending}
             >
               Confirm
             </Button>

@@ -1,8 +1,4 @@
-import type {
-  AuthSession,
-  ChatData,
-  UserPreferenceKey,
-} from "@/common-schemas";
+import type { ChatData, UserPreferenceKey } from "@/common-schemas";
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
@@ -18,7 +14,7 @@ interface UserStore {
   addPreferenceFetchingKeys: (keys: UserPreferenceKey[]) => void;
   deletePreferenceFetchingKeys: (keys: UserPreferenceKey[]) => void;
   chatMap: Map<string, ChatData>;
-  setChats: (chats: ChatData[]) => void;
+  currentChatId: string;
 }
 
 export const useUserStore = create<UserStore>()(
@@ -50,11 +46,7 @@ export const useUserStore = create<UserStore>()(
         });
       },
       chatMap: new Map(),
-      setChats: (chats) => {
-        set((state) => {
-          chats.forEach((chat) => state.chatMap.set(chat.id, chat));
-        });
-      },
+      currentChatId: "",
     })),
     {
       name: STORE_NAME,

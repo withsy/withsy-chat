@@ -10,6 +10,7 @@ export const ChatData = z.object({
   },
   title: z.string(),
   isStarred: z.boolean(),
+  type: z.string(),
   updatedAt: DateTimeTz,
 });
 export type ChatData = z.infer<typeof ChatData>;
@@ -27,3 +28,19 @@ export const ChatListOutput = z.object({
   nextCursor: z.string().nullable().default(null),
 });
 export type ChatListOutput = z.infer<typeof ChatListOutput>;
+
+export const ChatUpdate = z.object({
+  get chatId() {
+    return ChatId;
+  },
+  title: z.string().optional(),
+  isStarred: z.boolean().optional(),
+});
+export type ChatUpdate = z.infer<typeof ChatUpdate>;
+
+export const ChatDelete = z.object({
+  get chatId() {
+    return ChatId;
+  },
+});
+export type ChatDelete = z.infer<typeof ChatDelete>;

@@ -1,10 +1,7 @@
 import { useTRPC } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
-import { useChatStore } from "@/stores/useChatStore";
 import { useDrawerStore } from "@/stores/useDrawerStore";
 import { useSidebarStore } from "@/stores/useSidebarStore";
-import type { ChatData } from "@/types/chat";
-import type { MessageData } from "@/types/message";
 import {
   skipToken,
   useInfiniteQuery,

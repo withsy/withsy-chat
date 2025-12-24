@@ -1,32 +1,23 @@
 import type { ChatData } from "@/common-schemas";
 import { PartialError } from "@/components/Error";
 import { PartialLoading } from "@/components/Loading";
+import { useChatList } from "@/hooks/useChat";
 import { formatDateLabel, toNewest } from "@/lib/date-utils";
-import { useTRPC } from "@/lib/trpc";
 import { useUserStore } from "@/stores/useUserStore";
-import { useInfiniteQuery } from "@tanstack/react-query";
 import { ChevronDown, ChevronUp } from "lucide-react";
-import { useSession } from "next-auth/react";
 import { useEffect, useMemo, useState } from "react";
 import { SidebarChatItem } from "./SidebarChatItem";
 
 export default function SidebarChatList() {
-  const trpc = useTRPC();
-  const session = useSession();
-  const chatList = useInfiniteQuery(
-    trpc.chat.list.infiniteQueryOptions(
-      {},
-      {
-        enabled: session.status === "authenticated",
-        getNextPageParam: (lastPage) => lastPage.nextCursor,
-      },
-    ),
-  );
+  const chatList = useChatList();
 
   useEffect(() => {
     if (chatList.data) {
       const chats = chatList.data.pages.flatMap((page) => page.items);
-      useUserStore.getState().setChats(chats);
+      useUserStore.setState((state) => {
+        state.chatMap.clear();
+        chats.forEach((chat) => state.chatMap.set(chat.id, chat));
+      });
     }
   }, [chatList.data]);
 

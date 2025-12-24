@@ -1,7 +1,13 @@
 import { Injectable } from "@nestjs/common";
 import { TrpcService } from "../trpc/trpc-service";
 import { UserTrpcProcedure } from "../user/user-trpc-procedure";
-import { ChatList, ChatListOutput } from "./chat-schemas";
+import {
+  ChatData,
+  ChatDelete,
+  ChatList,
+  ChatListOutput,
+  ChatUpdate,
+} from "./chat-schemas";
 import { ChatService } from "./chat-service";
 
 @Injectable()
@@ -19,7 +25,13 @@ export class ChatTrpcRouter {
         .output(ChatListOutput)
         .query(({ ctx, input }) => chatService.list(ctx.userId, input)),
       start: userTrpcProcedure.procedure.mutation(() => {}),
-      update: userTrpcProcedure.procedure.mutation(() => {}),
+      update: userTrpcProcedure.procedure
+        .input(ChatUpdate)
+        .output(ChatData)
+        .mutation(({ ctx, input }) => chatService.update(ctx.userId, input)),
+      delete: userTrpcProcedure.procedure
+        .input(ChatDelete)
+        .mutation(({ ctx, input }) => chatService.delete(ctx.userId, input)),
       listBranch: userTrpcProcedure.procedure.query(() => {}),
       startBranch: userTrpcProcedure.procedure.mutation(() => {}),
     });

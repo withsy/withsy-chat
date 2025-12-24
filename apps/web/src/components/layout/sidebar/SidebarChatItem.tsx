@@ -14,12 +14,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useChatDelete, useChatUpdate } from "@/hooks/useChat";
 import { useUserPreference } from "@/hooks/useUserPreference";
-import { useTRPC } from "@/lib/trpc";
-import { useChatStore } from "@/stores/useChatStore";
 import { useDrawerStore } from "@/stores/useDrawerStore";
 import { useSidebarStore } from "@/stores/useSidebarStore";
-import { useMutation } from "@tanstack/react-query";
 import { EllipsisVertical, Pencil, Star, StarOff, Trash2 } from "lucide-react";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -31,34 +29,16 @@ export function SidebarChatItem({
   chat: ChatData;
   isSidebar?: boolean;
 }) {
-  const trpc = useTRPC();
   const router = useRouter();
   const { setOpenDrawer } = useDrawerStore();
-
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [editedTitle, setEditedTitle] = useState(chat.title);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-
   const { isMobile, setCollapsed } = useSidebarStore();
   const themeColor = useUserPreference("themeColor");
-
-  const updateChatMut = useMutation(
-    trpc.chat.update.mutationOptions({
-      onMutate: () => queryClient.cancelQueries(trpc.chat.list.queryFilter()),
-      onSuccess: () =>
-        queryClient.invalidateQueries(trpc.chat.list.queryFilter()),
-    }),
-  );
-  const deleteChat = useMutation(
-    trpc.chat.delete.mutationOptions({
-      onMutate: () => queryClient.cancelQueries(trpc.chat.list.queryFilter()),
-      onSuccess: () => {
-        if (isActive) router.push("/chat");
-        queryClient.invalidateQueries(trpc.chat.list.queryFilter());
-      },
-    }),
-  );
+  const chatDelete = useChatDelete();
+  const chatUpdate = useChatUpdate();
 
   const isActive = router.asPath === `/chat/${chat.id}`;
   const chatType = chat.type;
@@ -85,11 +65,6 @@ export function SidebarChatItem({
         setCollapsed(true);
       }
       setOpenDrawer(null);
-      queryClient.invalidateQueries(
-        trpc.message.list.queryFilter({
-          options: { scope: { by: "chat", chatId: chat.id } },
-        }),
-      );
       router.push(`/chat/${chat.id}`);
     }
   };
@@ -97,39 +72,19 @@ export function SidebarChatItem({
   const handleTitleSave = () => {
     if (editedTitle.trim() !== chat.title) {
       const newTitle = editedTitle.trim();
-      updateChatMut.mutate(
-        { chatId: chat.id, title: newTitle },
-        {
-          onSuccess: () => {
-            const updatedChat = { ...chat, title: newTitle };
-            onChatUpdate(updatedChat);
-
-            const currentChat = useChatStore.getState().chat;
-            if (currentChat?.id === chat.id) {
-              useChatStore.getState().setChat(updatedChat);
-            }
-          },
-        },
-      );
+      chatUpdate.mutate({
+        chatId: chat.id,
+        title: newTitle,
+      });
     }
     setEditMode(false);
   };
 
   const handleToggleStar = () => {
-    const updatedChat = { ...chat, isStarred: !chat.isStarred };
-    onChatUpdate(updatedChat);
-
-    updateChatMut.mutate(
-      { chatId: chat.id, isStarred: updatedChat.isStarred },
-      {
-        onError: () => {
-          onChatUpdate(chat);
-        },
-        onSuccess: () => {
-          queryClient.invalidateQueries(trpc.chat.list.queryFilter());
-        },
-      },
-    );
+    chatUpdate.mutate({
+      chatId: chat.id,
+      isStarred: !chat.isStarred,
+    });
   };
 
   const dropdownItems = [
@@ -309,8 +264,14 @@ export function SidebarChatItem({
           onCancel={() => setShowDeleteModal(false)}
           onConfirm={() => {
             setShowDeleteModal(false);
-            deleteChat.mutate({ chatId: chat.id });
+
+            chatDelete.mutateAsync({ chatId: chat.id }).then(() => {
+              if (isActive) {
+                router.push("/chat");
+              }
+            });
           }}
+          isPending={chatDelete.isPending}
         />
       )}
     </div>

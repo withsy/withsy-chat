@@ -3,7 +3,13 @@ import { DbService } from "../db/db-service";
 import { UserId } from "../user/user-schemas";
 import { ChatDecryptor } from "./chat-decryptor";
 import { ChatRepo } from "./chat-repo";
-import { ChatList, ChatListOutput } from "./chat-schemas";
+import {
+  ChatData,
+  ChatDelete,
+  ChatList,
+  ChatListOutput,
+  ChatUpdate,
+} from "./chat-schemas";
 
 @Injectable()
 export class ChatService {
@@ -23,4 +29,8 @@ export class ChatService {
       nextCursor,
     };
   }
+
+  async update(userId: UserId, input: ChatUpdate): Promise<ChatData> {}
+
+  async delete(userId: UserId, input: ChatDelete): Promise<void> {}
 }
