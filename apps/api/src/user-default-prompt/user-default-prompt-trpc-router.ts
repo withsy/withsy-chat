@@ -1,14 +1,24 @@
 import { Injectable } from "@nestjs/common";
+import z from "zod";
 import { TrpcService } from "../trpc/trpc-service";
 import { UserTrpcProcedure } from "../user/user-trpc-procedure";
+import { UserDefaultPromptTryGetOutput } from "./user-default-prompt-schemas";
+import { UserDefaultPromptService } from "./user-default-prompt-service";
 
 @Injectable()
 export class UserDefaultPromptTrpcRouter {
   readonly router;
 
-  constructor(trpcService: TrpcService, userTrpcProcedure: UserTrpcProcedure) {
+  constructor(
+    trpcService: TrpcService,
+    userTrpcProcedure: UserTrpcProcedure,
+    userDefaultPromptService: UserDefaultPromptService,
+  ) {
     this.router = trpcService.trpc.router({
-      get: userTrpcProcedure.procedure.query(() => {}),
+      tryGet: userTrpcProcedure.procedure
+        .input(z.void())
+        .output(UserDefaultPromptTryGetOutput)
+        .query(({ ctx }) => userDefaultPromptService.tryGet(ctx.userId)),
     });
   }
 }

@@ -7,3 +7,8 @@ export const UserDefaultPromptData = z.object({
   },
 });
 export type UserDefaultPromptData = z.infer<typeof UserDefaultPromptData>;
+
+export const UserDefaultPromptTryGetOutput = UserDefaultPromptData.nullable();
+export type UserDefaultPromptTryGetOutput = z.infer<
+  typeof UserDefaultPromptTryGetOutput
+>;

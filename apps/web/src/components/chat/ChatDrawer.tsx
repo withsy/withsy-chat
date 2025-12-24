@@ -118,11 +118,10 @@ export const ChatDrawer = ({ savedMessages }: ChatDrawerProps) => {
 function Prompts() {
   const trpc = useTRPC();
   const currentChatId = useUserStore((s) => s.currentChatId);
-  const { data: defaultPrompt, isLoading: isLoadingDefaultPrompt } = useQuery(
-    trpc.userDefaultPrompt.get.queryOptions(undefined, {
-      retry: false,
-    }),
+  const userDefaultPromptTryGet = useQuery(
+    trpc.userDefaultPrompt.tryGet.queryOptions(),
   );
+
   const { data: prompts, isLoading: isLoadingPrompts } = useInfiniteQuery(
     trpc.userPrompt.list.infiniteQueryOptions(
       {},

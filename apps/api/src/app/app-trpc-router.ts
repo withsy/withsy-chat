@@ -23,7 +23,7 @@ export class AppTrpcRouter {
   ) {
     this.router = trpcService.trpc.router({
       user: userTrpcRouter.router,
-      userProfile: userPromptTrpcRouter.router,
+      userPrompt: userPromptTrpcRouter.router,
       userDefaultPrompt: userDefaultPromptTrpcRouter.router,
       userAiProfile: userAiProfileTrpcRouter.router,
       chat: chatTrpcRouter.router,
