@@ -11,10 +11,10 @@ export const MessageData = z.object({
 });
 export type MessageData = z.infer<typeof MessageData>;
 
-const { list, listOutput } = createListSchemas(MessageData);
+const messageListSchemas = createListSchemas(MessageData);
 
-export const MessageList = list;
+export const MessageList = messageListSchemas.list;
 export type MessageList = z.infer<typeof MessageList>;
 
-export const MessageListOutput = listOutput;
+export const MessageListOutput = messageListSchemas.listOutput;
 export type MessageListOutput = z.infer<typeof MessageListOutput>;
