@@ -33,11 +33,12 @@ export const ChatDrawer = ({ savedMessages }: ChatDrawerProps) => {
   const isDrawerOpen = !!openDrawer;
 
   const currentChatId = useUserStore((s) => s.currentChatId);
-  const chatBranchList = useQuery(
-    trpc.chat.listBranch.queryOptions(
+  const chatBranchList = useInfiniteQuery(
+    trpc.chat.listBranch.infiniteQueryOptions(
       { chatId: currentChatId },
       {
         enabled: !!currentChatId && openDrawer === "branches",
+        getNextPageParam: (lastPage) => lastPage.nextCursor,
       },
     ),
   );
