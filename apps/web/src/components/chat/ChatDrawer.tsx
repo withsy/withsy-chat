@@ -118,20 +118,25 @@ export const ChatDrawer = ({ savedMessages }: ChatDrawerProps) => {
 function Prompts() {
   const trpc = useTRPC();
   const currentChatId = useUserStore((s) => s.currentChatId);
+
   const userDefaultPromptTryGet = useQuery(
-    trpc.userDefaultPrompt.tryGet.queryOptions(),
+    trpc.userDefaultPrompt.tryGet.queryOptions(undefined, {
+      enabled: true,
+    }),
   );
 
-  const { data: prompts, isLoading: isLoadingPrompts } = useInfiniteQuery(
+  const userPromptList = useInfiniteQuery(
     trpc.userPrompt.list.infiniteQueryOptions(
       {},
       {
+        enabled: true,
         getNextPageParam: (lastPage) => lastPage.nextCursor,
       },
     ),
   );
 
   const updateChatPrompt = useMutation(trpc.chat.update.mutationOptions());
+
   if (isLoadingDefaultPrompt || isLoadingPrompts) {
     return <div>Loading...</div>;
   }
