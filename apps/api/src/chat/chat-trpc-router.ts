@@ -1,4 +1,5 @@
 import { Injectable } from "@nestjs/common";
+import z from "zod";
 import { TrpcService } from "../trpc/trpc-service";
 import { UserTrpcProcedure } from "../user/user-trpc-procedure";
 import {
@@ -24,14 +25,15 @@ export class ChatTrpcRouter {
         .input(ChatList)
         .output(ChatListOutput)
         .query(({ ctx, input }) => chatService.list(ctx.userId, input)),
-      start: userTrpcProcedure.procedure.mutation(() => {}),
       update: userTrpcProcedure.procedure
         .input(ChatUpdate)
         .output(ChatData)
         .mutation(({ ctx, input }) => chatService.update(ctx.userId, input)),
       delete: userTrpcProcedure.procedure
         .input(ChatDelete)
+        .output(z.void())
         .mutation(({ ctx, input }) => chatService.delete(ctx.userId, input)),
+      start: userTrpcProcedure.procedure.mutation(() => {}),
       listBranch: userTrpcProcedure.procedure.query(() => {}),
       startBranch: userTrpcProcedure.procedure.mutation(() => {}),
     });
