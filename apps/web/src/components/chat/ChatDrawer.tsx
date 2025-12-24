@@ -1,4 +1,7 @@
 import type { MessageData } from "@/common-schemas";
+import { useChatListBranch, useChatUpdate } from "@/hooks/useChat";
+import { useUserDefaultPromptTryGet } from "@/hooks/useUserDefaultPrompt";
+import { useUserPromptList } from "@/hooks/useUserPrompt";
 import { useTRPC } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
 import { useDrawerStore } from "@/stores/useDrawerStore";
@@ -25,7 +28,6 @@ type ChatDrawerProps = {
 };
 
 export const ChatDrawer = ({ savedMessages }: ChatDrawerProps) => {
-  const trpc = useTRPC();
   const router = useRouter();
   const { isMobile } = useSidebarStore();
 
@@ -33,15 +35,10 @@ export const ChatDrawer = ({ savedMessages }: ChatDrawerProps) => {
   const isDrawerOpen = !!openDrawer;
 
   const currentChatId = useUserStore((s) => s.currentChatId);
-  const chatBranchList = useInfiniteQuery(
-    trpc.chat.listBranch.infiniteQueryOptions(
-      { chatId: currentChatId },
-      {
-        enabled: !!currentChatId && openDrawer === "branches",
-        getNextPageParam: (lastPage) => lastPage.nextCursor,
-      },
-    ),
-  );
+  const chatListBranch = useChatListBranch({
+    chatId: currentChatId,
+    enabled: !!currentChatId && openDrawer === "branches",
+  });
 
   const [ready, setReady] = useState(false);
 
@@ -118,26 +115,11 @@ export const ChatDrawer = ({ savedMessages }: ChatDrawerProps) => {
 function Prompts() {
   const trpc = useTRPC();
   const currentChatId = useUserStore((s) => s.currentChatId);
+  const userDefaultPromptTryGet = useUserDefaultPromptTryGet();
+  const userPromptList = useUserPromptList();
+  const chatUpdate = useChatUpdate();
 
-  const userDefaultPromptTryGet = useQuery(
-    trpc.userDefaultPrompt.tryGet.queryOptions(undefined, {
-      enabled: true,
-    }),
-  );
-
-  const userPromptList = useInfiniteQuery(
-    trpc.userPrompt.list.infiniteQueryOptions(
-      {},
-      {
-        enabled: true,
-        getNextPageParam: (lastPage) => lastPage.nextCursor,
-      },
-    ),
-  );
-
-  const updateChatPrompt = useMutation(trpc.chat.update.mutationOptions());
-
-  if (isLoadingDefaultPrompt || isLoadingPrompts) {
+  if (userDefaultPromptTryGet.isPending || userPromptList.isPending) {
     return <div>Loading...</div>;
   }
 

@@ -24,19 +24,24 @@ export function useChatUpdate() {
   return useMutation(
     trpc.chat.update.mutationOptions({
       onMutate: (input) => {
-        const old = useUserStore.getState().chatMap.get(input.chatId);
+        const { chatId, ...partialInput } = input;
+
+        const old = useUserStore.getState().chatMap.get(chatId);
         if (!old) {
           throw new Error("Chat not found.");
         }
 
         const chat = {
           ...old,
+          ...Object.fromEntries(
+            Object.entries(partialInput).filter(
+              ([_, value]) => value !== undefined,
+            ),
+          ),
         };
-        if (input.title) chat.title = input.title;
-        if (input.isStarred) chat.isStarred = input.isStarred;
 
         useUserStore.setState((state) => {
-          state.chatMap.set(input.chatId, chat);
+          state.chatMap.set(chatId, chat);
         });
 
         return {
@@ -105,5 +110,22 @@ export function useChatDelete() {
         });
       },
     }),
+  );
+}
+
+export function useChatListBranch(input: { chatId: string; enabled: boolean }) {
+  const { chatId, enabled } = input;
+
+  const trpc = useTRPC();
+  const session = useSession();
+
+  return useInfiniteQuery(
+    trpc.chat.listBranch.infiniteQueryOptions(
+      { chatId },
+      {
+        enabled: session.status === "authenticated" && enabled,
+        getNextPageParam: (lastPage) => lastPage.nextCursor,
+      },
+    ),
   );
 }

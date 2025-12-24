@@ -1,5 +1,6 @@
 import z from "zod";
 import { createListSchemas, DateTimeTz } from "../common-schemas";
+import { UserPromptId } from "../user-prompt/user-prompt-schemas";
 
 export const ChatId = z.uuid();
 export type ChatId = z.infer<typeof ChatId>;
@@ -11,7 +12,12 @@ export const ChatData = z.object({
   title: z.string(),
   isStarred: z.boolean(),
   type: z.string(),
-  updatedAt: DateTimeTz,
+  get userPromptId() {
+    return UserPromptId.nullable();
+  },
+  get updatedAt() {
+    return DateTimeTz;
+  },
 });
 export type ChatData = z.infer<typeof ChatData>;
 
@@ -29,6 +35,9 @@ export const ChatUpdate = z.object({
   },
   title: z.string().optional(),
   isStarred: z.boolean().optional(),
+  get userPromptId() {
+    return UserPromptId.nullish();
+  },
 });
 export type ChatUpdate = z.infer<typeof ChatUpdate>;
 
