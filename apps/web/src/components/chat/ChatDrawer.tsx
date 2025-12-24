@@ -117,7 +117,7 @@ export const ChatDrawer = ({ savedMessages }: ChatDrawerProps) => {
 
 function Prompts() {
   const trpc = useTRPC();
-  const { chat } = useChatStore();
+  const currentChatId = useUserStore((s) => s.currentChatId);
   const { data: defaultPrompt, isLoading: isLoadingDefaultPrompt } = useQuery(
     trpc.userDefaultPrompt.get.queryOptions(undefined, {
       retry: false,
