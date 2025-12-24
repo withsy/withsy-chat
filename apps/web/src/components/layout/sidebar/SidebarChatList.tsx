@@ -1,22 +1,18 @@
+import type { ChatData } from "@/common-schemas";
 import { PartialError } from "@/components/Error";
 import { PartialLoading } from "@/components/Loading";
 import { formatDateLabel, toNewest } from "@/lib/date-utils";
 import { useTRPC } from "@/lib/trpc";
 import { useUserStore } from "@/stores/useUserStore";
-import {
-  useInfiniteQuery,
-  useMutation,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { SidebarChatItem } from "./SidebarChatItem";
 
 export default function SidebarChatList() {
   const trpc = useTRPC();
   const session = useSession();
-
   const chatList = useInfiniteQuery(
     trpc.chat.list.infiniteQueryOptions(
       {},
@@ -34,56 +30,52 @@ export default function SidebarChatList() {
     }
   }, [chatList.data]);
 
-  const updateChatMut = useMutation(trpc.chat.update.mutationOptions());
   const [starredOpen, setStarredOpen] = useState(true);
 
-  const updateChat = (updatedChat: ChatData) => {
-    const prev = chats;
+  const chatMap = useUserStore((s) => s.chatMap);
 
-    setChats((prev) =>
-      prev.map((chat) => (chat.id === updatedChat.id ? updatedChat : chat)),
+  const { starred, orderedEntries } = useMemo(() => {
+    const starred: ChatData[] = [];
+    const nonStarredMap = new Map<string, ChatData[]>();
+
+    chatMap.forEach((chat) => {
+      if (chat.isStarred) {
+        starred.push(chat);
+      } else {
+        const dateLabel = formatDateLabel(new Date(chat.updatedAt));
+        if (!nonStarredMap.has(dateLabel)) nonStarredMap.set(dateLabel, []);
+        nonStarredMap.get(dateLabel)?.push(chat);
+      }
+    });
+    starred.sort((a, b) =>
+      toNewest(new Date(a.updatedAt), new Date(b.updatedAt)),
     );
-
-    updateChatMut.mutate(
-      {
-        chatId: updatedChat.id,
-        isStarred: updatedChat.isStarred,
-        title: updatedChat.title,
-      },
-      {
-        onError: () => setChats(prev),
-        onSuccess: () =>
-          queryClient.invalidateQueries(trpc.chat.list.queryFilter()),
-      },
+    nonStarredMap.forEach((chats) =>
+      chats.sort((a, b) =>
+        toNewest(new Date(a.updatedAt), new Date(b.updatedAt)),
+      ),
     );
-  };
+    const orderedEntries = [...nonStarredMap.entries()].sort(([a], [b]) => {
+      if (a === "Today") return -1;
+      if (b === "Today") return 1;
+      if (a === "Yesterday") return b === "Today" ? 1 : -1;
+      if (b === "Yesterday") return a === "Today" ? -1 : 1;
+      return new Date(b).getTime() - new Date(a).getTime();
+    });
 
-  if (listChats.isLoading) return <PartialLoading />;
-  if (listChats.isError) return <PartialError message="loading chat list" />;
-  if (!listChats.data) return <></>;
+    return {
+      starred,
+      orderedEntries,
+    };
+  }, [chatMap]);
 
-  const starred: ChatData[] = [];
-  const nonStarredMap: Map<string, ChatData[]> = new Map();
-  listChats.data.forEach((chat) => {
-    if (chat.isStarred) {
-      starred.push(chat);
-    } else {
-      const dateLabel = formatDateLabel(chat.updatedAt);
-      if (!nonStarredMap.has(dateLabel)) nonStarredMap.set(dateLabel, []);
-      nonStarredMap.get(dateLabel)?.push(chat);
-    }
-  });
-  starred.sort((a, b) => toNewest(a.updatedAt, b.updatedAt));
-  nonStarredMap.forEach((chats) =>
-    chats.sort((a, b) => toNewest(a.updatedAt, b.updatedAt)),
-  );
-  const orderedEntries = [...nonStarredMap.entries()].sort(([a], [b]) => {
-    if (a === "Today") return -1;
-    if (b === "Today") return 1;
-    if (a === "Yesterday") return b === "Today" ? 1 : -1;
-    if (b === "Yesterday") return a === "Today" ? -1 : 1;
-    return new Date(b).getTime() - new Date(a).getTime();
-  });
+  if (chatList.isPending) {
+    return <PartialLoading />;
+  }
+
+  if (chatList.error) {
+    return <PartialError message="loading chat list" />;
+  }
 
   return (
     <div className="space-y-4">
@@ -105,12 +97,7 @@ export default function SidebarChatList() {
           {starredOpen && (
             <div className="mt-1 space-y-1">
               {starred.map((chat) => (
-                <SidebarChatItem
-                  key={chat.id}
-                  chat={chat}
-                  isSidebar={true}
-                  onChatUpdate={updateChat}
-                />
+                <SidebarChatItem key={chat.id} chat={chat} isSidebar={true} />
               ))}
             </div>
           )}
@@ -132,7 +119,6 @@ export default function SidebarChatList() {
                       key={chat.id}
                       chat={chat}
                       isSidebar={true}
-                      onChatUpdate={updateChat}
                     />
                   ))}
                 </div>

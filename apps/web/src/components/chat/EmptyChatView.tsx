@@ -12,7 +12,7 @@ function getGreeting() {
 }
 
 export default function EmptyChatView() {
-  const { data: session } = useSession({ required: true });
+  const { data: session } = useSession();
   const name = session?.user?.name;
 
   const [greeting, setGreeting] = useState("");

@@ -1,3 +1,4 @@
+import type { ChatData } from "@/common-schemas";
 import { getChatTypeIcon } from "@/components/chat/ChatTypeIcon";
 import { ConfirmDeleteModal } from "@/components/modal/ConfirmDeleteModal";
 import { Button } from "@/components/ui/button";
@@ -18,8 +19,7 @@ import { useTRPC } from "@/lib/trpc";
 import { useChatStore } from "@/stores/useChatStore";
 import { useDrawerStore } from "@/stores/useDrawerStore";
 import { useSidebarStore } from "@/stores/useSidebarStore";
-import type { ChatData } from "@/types/chat";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { EllipsisVertical, Pencil, Star, StarOff, Trash2 } from "lucide-react";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -27,14 +27,11 @@ import { useState } from "react";
 export function SidebarChatItem({
   chat,
   isSidebar,
-  onChatUpdate,
 }: {
   chat: ChatData;
   isSidebar?: boolean;
-  onChatUpdate: (chat: ChatData) => void;
 }) {
   const trpc = useTRPC();
-  const queryClient = useQueryClient();
   const router = useRouter();
   const { setOpenDrawer } = useDrawerStore();
 

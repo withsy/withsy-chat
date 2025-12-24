@@ -105,9 +105,7 @@ export default function UserDropdownMenu() {
   const themeColor = useUserPreference("themeColor");
   const { updateUserPreferences } = useUpdateUserPreferences();
 
-  const { data: session } = useSession({
-    required: true,
-  });
+  const { data: session } = useSession();
   const name = session?.user?.name ?? "";
   const image = session?.user?.image ?? "";
 
