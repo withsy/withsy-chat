@@ -74,23 +74,16 @@ export const authOptions: AuthOptions = {
   },
   callbacks: {
     jwt: async (params) => {
-      const { account, token, user } = params;
+      const { account, token } = params;
 
       // Response to `/api/auth/callback/google` request.
       if (account) {
-        const { provider, providerAccountId, refresh_token } = account;
-        const name = user.name ?? undefined;
-        const email = user.email ?? undefined;
-        const imageUrl = user.image ?? undefined;
+        const { provider, providerAccountId } = account;
 
-        const { userId } = await trpc.user.login.mutate({
+        const { userId } = await trpc.user.signUpIn.mutate({
           idempotencyKey: v4(),
           provider,
           providerAccountId,
-          refreshToken: refresh_token,
-          name,
-          email,
-          imageUrl,
         });
 
         const authToken: AuthToken = {
@@ -108,7 +101,7 @@ export const authOptions: AuthOptions = {
       const token = AuthToken.parse(params.token);
       const { userId } = token;
 
-      const rawUserPreferences = await trpc.user.getPreferences.query({
+      const user = await trpc.user.get.query({
         userId,
       });
 
@@ -116,8 +109,7 @@ export const authOptions: AuthOptions = {
         ...params.session,
         user: {
           ...params.session.user,
-          id: userId,
-          rawPreferences: rawUserPreferences,
+          ...user,
         },
       };
 

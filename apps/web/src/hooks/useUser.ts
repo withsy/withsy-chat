@@ -10,9 +10,9 @@ export function useUser() {
   useEffect(() => {
     if (session.data) {
       const authSession = AuthSession.parse(session.data);
-      const { id, rawPreferences } = authSession.user;
+      const { preferences } = authSession.user;
 
-      useUserSessionStorageStore.getState().setPreferences(rawPreferences);
+      useUserSessionStorageStore.getState().setPreferences(preferences);
       useUserStore.getState().setId(id);
     }
   }, [session.data]);

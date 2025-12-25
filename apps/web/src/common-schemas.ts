@@ -5,22 +5,21 @@ import type { Session } from "next-auth";
 import type { Simplify } from "type-fest";
 import z from "zod";
 
+export type UserData = inferOutput<TrpcOptions["user"]["get"]>;
+
 export interface AuthSession extends Session {
-  user: Session["user"] & {
-    id: string;
-    rawPreferences: RawUserPreferences;
-  };
+  user: Session["user"] & UserData;
 }
 
 export const AuthSession = z.object({
   user: z.object({
     id: z.string(),
-    rawPreferences: RawUserPreferences,
+    preferences: RawUserPreferences,
   }),
 });
 
 export type Preferences = Simplify<
-  Required<inferInput<TrpcOptions["user"]["updatePreferences"]>>
+  Required<inferInput<TrpcOptions["user"]["update"]>["preferences"]>
 >;
 
 export type PartialUserPreferences = Partial<Preferences>;
@@ -29,8 +28,8 @@ export type UserPreferenceKey = keyof PartialUserPreferences;
 
 export type ChatData = inferOutput<TrpcOptions["chat"]["list"]>["items"][0];
 
-export type MessageData = inferOutput<
-  TrpcOptions["message"]["list"]
+export type ChatMessageData = inferOutput<
+  TrpcOptions["chatMessage"]["list"]
 >["items"][0];
 
 export type UserPromptData = inferOutput<

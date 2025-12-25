@@ -1,12 +1,11 @@
 import { MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
 import { GracefulShutdownModule } from "@tygra/nestjs-graceful-shutdown";
 import { ApiKeyModule } from "../api-key/api-key-module";
+import { ChatMessageModule } from "../chat-message/chat-message-module";
 import { ChatModule } from "../chat/chat-module";
 import { ConfigModule } from "../config/config-module";
 import { DbModule } from "../db/db-module";
 import { EncryptionModule } from "../encryption/encryption-module";
-import { MessageModule } from "../message/message-module";
-import { RefreshTokenModule } from "../refresh-token/refresh-token-module";
 import { ShutdownModule } from "../shutdown/shutdown-module";
 import { TrpcModule } from "../trpc/trpc-module";
 import { UserAiProfileModule } from "../user-ai-profile/user-ai-profile-module";
@@ -25,14 +24,13 @@ import { AppTrpcRouter } from "./app-trpc-router";
     TrpcModule,
     ApiKeyModule,
     EncryptionModule,
-    RefreshTokenModule,
     UserModule,
     UserPromptModule,
     UserDefaultPromptModule,
     UserAiProfileModule,
     UserLinkAccountModule,
     ChatModule,
-    MessageModule,
+    ChatMessageModule,
   ],
   providers: [AppTrpcRouter],
 })

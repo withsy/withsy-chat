@@ -1,5 +1,6 @@
 import type {
   ChatData,
+  UserData,
   UserPreferenceKey,
   UserPromptData,
 } from "@/common-schemas";
@@ -11,9 +12,7 @@ const STORE_NAME = "user";
 
 interface UserStore {
   clear: () => void;
-  id: string;
-  setId: (id: string) => void;
-  isValid: () => boolean;
+  user: UserData | null;
   preferenceFetchingKeySet: Set<string>;
   addPreferenceFetchingKeys: (keys: UserPreferenceKey[]) => void;
   deletePreferenceFetchingKeys: (keys: UserPreferenceKey[]) => void;
@@ -23,21 +22,15 @@ interface UserStore {
 
 export const useUserStore = create<UserStore>()(
   devtools(
-    immer((set, get) => ({
+    immer((set) => ({
       clear: () => {
         set((state) => {
-          state.id = "";
+          state.user = null;
           state.preferenceFetchingKeySet.clear();
           state.chatMap.clear();
         });
       },
-      id: "",
-      setId: (id) => {
-        set((state) => {
-          state.id = id;
-        });
-      },
-      isValid: () => !!get().id,
+      user: null,
       preferenceFetchingKeySet: new Set(),
       addPreferenceFetchingKeys: (keys) => {
         set((state) => {

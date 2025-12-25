@@ -43,7 +43,6 @@
     "@trpc/client": "11.8.0",
     "@trpc/tanstack-react-query": "11.8.0",
     "busboy-async": "0.1.0",
-    "camelcase-keys": "10.0.1",
     "chroma-js": "3.1.2",
     "class-variance-authority": "0.7.1",
     "clsx": "2.1.1",

@@ -1,44 +1,27 @@
 import { Injectable } from "@nestjs/common";
-import { RawUserPreferences } from "@repo/common";
 import { DbService } from "../db/db-service";
-import { EncryptionService } from "../encryption/encryption-service";
 import { IdempotencyKeyRepo } from "../idempotency-key/idempotency-key-repo";
-import { RefreshTokenService } from "../refresh-token/refresh-token-service";
 import { UserLinkAccountRepo } from "../user-link-account/user-link-account-repo";
+import { UserEntityMapper } from "./user-entity-mapper";
 import { UserRepo } from "./user-repo";
 import {
-  UserGetPreferences,
+  UserData,
+  UserGet,
   UserId,
-  UserLogin,
-  UserLoginOutput,
-  UserUpdatePreferences,
+  UserSignUpIn,
+  UserSignUpInOutput,
+  UserUpdate,
 } from "./user-schemas";
 
 @Injectable()
 export class UserService {
   constructor(
-    private readonly encryptionService: EncryptionService,
     private readonly dbService: DbService,
-    private readonly refreshTokenService: RefreshTokenService,
+    private readonly userEntityMapper: UserEntityMapper,
   ) {}
 
-  async login(input: UserLogin): Promise<UserLoginOutput> {
-    const { idempotencyKey, provider, providerAccountId, refreshToken } = input;
-    const name = input.name ?? "";
-    const email = input.email ?? "";
-    const imageUrl = input.imageUrl ?? "";
-
-    if (refreshToken) {
-      await this.refreshTokenService.save({
-        provider,
-        providerAccountId,
-        refreshToken,
-      });
-    }
-
-    const nameEncrypted = this.encryptionService.encrypt(name);
-    const emailEncrypted = this.encryptionService.encrypt(email);
-    const imageUrlEncrypted = this.encryptionService.encrypt(imageUrl);
+  async signUpIn(input: UserSignUpIn): Promise<UserSignUpInOutput> {
+    const { idempotencyKey, provider, providerAccountId } = input;
 
     return await this.dbService.db.$transaction(async (tx) => {
       const idempotencyKeyRepo = new IdempotencyKeyRepo(tx);
@@ -54,11 +37,7 @@ export class UserService {
 
       if (!userLinkAccount) {
         const userRepo = new UserRepo(tx);
-        const user = await userRepo.create({
-          nameEncrypted,
-          emailEncrypted,
-          imageUrlEncrypted,
-        });
+        const user = await userRepo.create();
 
         userLinkAccount = await userLinkAccountRepo.create({
           userId: user.id,
@@ -75,18 +54,19 @@ export class UserService {
     });
   }
 
-  async getPreferences(input: UserGetPreferences): Promise<RawUserPreferences> {
-    const { userId } = input;
-
+  async get(input: UserGet): Promise<UserData> {
     const userRepo = new UserRepo(this.dbService.db);
-    return await userRepo.getPreferences(userId);
+    const entity = await userRepo.get(input);
+    const data = this.userEntityMapper.toData(entity);
+
+    return data;
   }
 
-  async updatePreferences(
-    userId: UserId,
-    input: UserUpdatePreferences,
-  ): Promise<RawUserPreferences> {
+  async update(userId: UserId, input: UserUpdate): Promise<UserData> {
     const userRepo = new UserRepo(this.dbService.db);
-    return await userRepo.updatePreferences(userId, input);
+    const entity = await userRepo.update(userId, input);
+    const data = this.userEntityMapper.toData(entity);
+
+    return data;
   }
 }

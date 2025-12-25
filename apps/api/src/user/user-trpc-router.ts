@@ -3,10 +3,11 @@ import { RawUserPreferences } from "@repo/common";
 import { ApiKeyTrpcProcedure } from "../api-key/api-key-trpc-procedure";
 import { TrpcService } from "../trpc/trpc-service";
 import {
-  UserGetPreferences,
-  UserLogin,
-  UserLoginOutput,
-  UserUpdatePreferences,
+  UserData,
+  UserGet,
+  UserSignUpIn,
+  UserSignUpInOutput,
+  UserUpdate,
 } from "./user-schemas";
 import { UserService } from "./user-service";
 import { UserTrpcProcedure } from "./user-trpc-procedure";
@@ -22,20 +23,18 @@ export class UserTrpcRouter {
     userService: UserService,
   ) {
     this.router = trpcService.trpc.router({
-      login: apiKeyTrpcProcedure.procedure
-        .input(UserLogin)
-        .output(UserLoginOutput)
-        .mutation(({ input }) => userService.login(input)),
-      getPreferences: apiKeyTrpcProcedure.procedure
-        .input(UserGetPreferences)
-        .output(RawUserPreferences)
-        .query(({ input }) => userService.getPreferences(input)),
-      updatePreferences: userTrpcProcedure.procedure
-        .input(UserUpdatePreferences)
-        .output(RawUserPreferences)
-        .mutation(({ ctx, input }) =>
-          userService.updatePreferences(ctx.userId, input),
-        ),
+      signUpIn: apiKeyTrpcProcedure.procedure
+        .input(UserSignUpIn)
+        .output(UserSignUpInOutput)
+        .mutation(({ input }) => userService.signUpIn(input)),
+      get: apiKeyTrpcProcedure.procedure
+        .input(UserGet)
+        .output(UserData)
+        .query(({ input }) => userService.get(input)),
+      update: userTrpcProcedure.procedure
+        .input(UserUpdate)
+        .output(UserData)
+        .mutation(({ ctx, input }) => userService.update(ctx.userId, input)),
     });
   }
 }

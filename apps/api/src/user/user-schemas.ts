@@ -1,29 +1,42 @@
-import { UserPreferenceValue } from "@repo/common";
+import { RawUserPreferences, UserPreferenceValue } from "@repo/common";
 import z from "zod";
 import { IdempotencyKey } from "../idempotency-key/idempotency-key-schemas";
 
 export const UserId = z.uuid();
 export type UserId = z.infer<typeof UserId>;
 
-export const UserLogin = z.object({
+export const UserData = z.object({
+  get id() {
+    return UserId;
+  },
+  get preferences() {
+    return RawUserPreferences;
+  },
+});
+export type UserData = z.infer<typeof UserData>;
+
+export const UserSignUpIn = z.object({
   get idempotencyKey() {
     return IdempotencyKey;
   },
   provider: z.string().min(1),
   providerAccountId: z.string().min(1),
-  refreshToken: z.string().nullish(),
-  name: z.string().optional(),
-  email: z.string().optional(),
-  imageUrl: z.string().optional(),
 });
-export type UserLogin = z.infer<typeof UserLogin>;
+export type UserSignUpIn = z.infer<typeof UserSignUpIn>;
 
-export const UserLoginOutput = z.object({
+export const UserSignUpInOutput = z.object({
   get userId() {
     return UserId;
   },
 });
-export type UserLoginOutput = z.infer<typeof UserLoginOutput>;
+export type UserSignUpInOutput = z.infer<typeof UserSignUpInOutput>;
+
+export const UserGet = z.object({
+  get userId() {
+    return UserId;
+  },
+});
+export type UserGet = z.infer<typeof UserGet>;
 
 export const UserPreferences = z.object({
   wideView: z.boolean(),
@@ -35,12 +48,12 @@ export const UserPreferences = z.object({
 }) satisfies z.ZodObject<Record<string, z.ZodType<UserPreferenceValue>>>;
 export type UserPreferences = z.infer<typeof UserPreferences>;
 
-export const UserGetPreferences = z.object({
-  get userId() {
-    return UserId;
+export const PartialUserPreferences = UserPreferences.partial();
+export type PartialUserPreferences = z.infer<typeof PartialUserPreferences>;
+
+export const UserUpdate = z.object({
+  get preferences() {
+    return UserPreferences.partial();
   },
 });
-export type UserGetPreferences = z.infer<typeof UserGetPreferences>;
-
-export const UserUpdatePreferences = UserPreferences.partial();
-export type UserUpdatePreferences = z.infer<typeof UserUpdatePreferences>;
+export type UserUpdate = z.infer<typeof UserUpdate>;
