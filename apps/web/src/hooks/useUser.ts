@@ -58,6 +58,7 @@ export function useUserPreferenceIsFetching<Key extends UserPreferenceKey>(
 
 export function useUserUpdate() {
   const trpc = useTRPC();
+
   return useMutation(
     trpc.user.update.mutationOptions({
       onMutate: (input) => {
