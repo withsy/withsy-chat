@@ -1,14 +1,13 @@
 import { useUserInit } from "@/hooks/useUser";
 import { nunito } from "@/lib/fonts";
 import { type ReactNode } from "react";
-import BmcWidget from "../BmcWidget";
 import Header from "../home/Header";
 
-type LayoutProps = {
-  children: ReactNode;
+type Props = {
+  children?: ReactNode;
 };
 
-export default function HomeLayout({ children }: LayoutProps) {
+export default function HomeLayout({ children }: Props) {
   useUserInit();
 
   return (
@@ -16,7 +15,6 @@ export default function HomeLayout({ children }: LayoutProps) {
       <Header />
       <div>
         <main>{children}</main>
-        <BmcWidget />
       </div>
       <footer className="text-muted-foreground flex flex-wrap justify-center gap-x-4 gap-y-2 p-4 text-center text-xs select-none">
         <div>© {new Date().getFullYear()} Withsy. All rights reserved.</div>

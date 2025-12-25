@@ -42,7 +42,7 @@ export class UserRepo {
 UPDATE users
 SET preferences = preferences || ${filteredPreferences}::jsonb
 WHERE id = ${userId}::uuid
-  AND deleted_at IS NOT NULL
+  AND deleted_at IS NULL
 RETURNING *`;
 
     if (rows.length === 0) {

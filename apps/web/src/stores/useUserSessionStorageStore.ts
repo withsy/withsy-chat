@@ -7,7 +7,7 @@ import { create } from "zustand";
 import { createJSONStorage, devtools, persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 
-const STORE_NAME = "userSession";
+const STORE_NAME = "user";
 
 interface UserSessionStorageStore {
   clear: () => void;
