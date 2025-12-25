@@ -30,3 +30,19 @@ export function createListSchemas<T extends z.ZodType>(
     listOutput,
   };
 }
+
+export function createResultSchema<T extends z.ZodType, E extends z.ZodType>(
+  dataSchema: T,
+  errorSchema: E,
+) {
+  return z.discriminatedUnion("isSuccess", [
+    z.object({
+      isSuccess: z.literal(true),
+      data: dataSchema,
+    }),
+    z.object({
+      isSuccess: z.literal(false),
+      error: errorSchema,
+    }),
+  ]);
+}

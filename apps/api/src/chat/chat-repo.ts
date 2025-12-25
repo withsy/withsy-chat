@@ -11,7 +11,10 @@ export class ChatRepo {
 
     const entities = await this.tx.chat.findMany({
       where: {
-        userId,
+        user: {
+          id: userId,
+          deletedAt: null,
+        },
         deletedAt: null,
       },
       orderBy: {

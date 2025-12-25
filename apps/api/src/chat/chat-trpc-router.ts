@@ -7,6 +7,8 @@ import {
   ChatDelete,
   ChatList,
   ChatListOutput,
+  ChatStart,
+  ChatStartOutput,
   ChatUpdate,
 } from "./chat-schemas";
 import { ChatService } from "./chat-service";
@@ -33,7 +35,10 @@ export class ChatTrpcRouter {
         .input(ChatDelete)
         .output(z.void())
         .mutation(({ ctx, input }) => chatService.delete(ctx.userId, input)),
-      start: userTrpcProcedure.procedure.mutation(() => {}),
+      start: userTrpcProcedure.procedure
+        .input(ChatStart)
+        .output(ChatStartOutput)
+        .mutation(({ ctx, input }) => chatService.start(ctx.userId, input)),
     });
   }
 }

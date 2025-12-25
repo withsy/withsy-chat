@@ -1,5 +1,12 @@
+import { Model } from "@repo/common";
 import z from "zod";
-import { createListSchemas, DateTimeTz } from "../common-schemas";
+import { ChatMessageId } from "../chat-message/chat-message-schemas";
+import {
+  createListSchemas,
+  createResultSchema,
+  DateTimeTz,
+} from "../common-schemas";
+import { IdempotencyKey } from "../idempotency-key/idempotency-key-schemas";
 import { UserPromptId } from "../user-prompt/user-prompt-schemas";
 
 export const ChatId = z.uuid();
@@ -47,3 +54,31 @@ export const ChatDelete = z.object({
   },
 });
 export type ChatDelete = z.infer<typeof ChatDelete>;
+
+export const ChatStart = z.object({
+  get idempotencyKey() {
+    return IdempotencyKey;
+  },
+  text: z.string(),
+  get model() {
+    return Model;
+  },
+});
+export type ChatStart = z.infer<typeof ChatStart>;
+
+export const ChatStartOutput = createResultSchema(
+  z.object({
+    get chat() {
+      return ChatData;
+    },
+    get userChatMessageId() {
+      return ChatMessageId;
+    },
+    get modelChatMessageId() {
+      return ChatMessageId;
+    },
+  }),
+  z.object({}),
+);
+
+export type ChatStartOutput = z.infer<typeof ChatStartOutput>;
