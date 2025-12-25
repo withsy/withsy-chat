@@ -71,37 +71,25 @@ export function useChatDelete() {
   return useMutation(
     trpc.chat.delete.mutationOptions({
       onMutate: (input) => {
-        const old = useUserStore.getState().chatMap.get(input.chatId);
-        if (!old) {
-          throw new Error("Chat not found.");
-        }
+        const rollbackData = useUserStore.getState().chatMap.get(input.chatId);
 
-        let doRollbackCurrentChatId = false;
         useUserStore.setState((state) => {
           state.chatMap.delete(input.chatId);
-
-          if (input.chatId === state.currentChatId) {
-            state.currentChatId = "";
-            doRollbackCurrentChatId = true;
-          }
         });
 
         return {
-          old,
-          doRollbackCurrentChatId,
+          rollbackData,
         };
       },
       onError: (_, __, res) => {
         if (res) {
-          const { old, doRollbackCurrentChatId } = res;
+          const { rollbackData } = res;
 
-          useUserStore.setState((state) => {
-            state.chatMap.set(old.id, old);
-
-            if (doRollbackCurrentChatId) {
-              state.currentChatId = old.id;
-            }
-          });
+          if (rollbackData) {
+            useUserStore.setState((state) => {
+              state.chatMap.set(rollbackData.id, rollbackData);
+            });
+          }
         }
       },
       onSuccess: (_, input) => {
@@ -110,22 +98,5 @@ export function useChatDelete() {
         });
       },
     }),
-  );
-}
-
-export function useChatListBranch(input: { chatId: string; enabled: boolean }) {
-  const { chatId, enabled } = input;
-
-  const trpc = useTRPC();
-  const session = useSession();
-
-  return useInfiniteQuery(
-    trpc.chat.listBranch.infiniteQueryOptions(
-      { chatId },
-      {
-        enabled: session.status === "authenticated" && enabled,
-        getNextPageParam: (lastPage) => lastPage.nextCursor,
-      },
-    ),
   );
 }
