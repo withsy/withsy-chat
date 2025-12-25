@@ -53,7 +53,7 @@ export type PartialUserPreferences = z.infer<typeof PartialUserPreferences>;
 
 export const UserUpdate = z.object({
   get preferences() {
-    return UserPreferences.partial();
+    return PartialUserPreferences.optional();
   },
 });
 export type UserUpdate = z.infer<typeof UserUpdate>;

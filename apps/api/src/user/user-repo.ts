@@ -30,7 +30,7 @@ export class UserRepo {
   }
 
   async update(userId: UserId, input: UserUpdate): Promise<UserModel> {
-    const { preferences, ..._restInput } = input;
+    const { preferences = {}, ..._restInput } = input;
 
     const filteredPreferences = Object.fromEntries(
       Object.entries(preferences).filter(([_, v]) => v !== undefined),

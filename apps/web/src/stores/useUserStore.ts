@@ -7,6 +7,7 @@ import type {
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
+import type { ChatMessage } from "../../../api/dist/generated/prisma/client";
 
 const STORE_NAME = "user";
 
@@ -14,9 +15,8 @@ interface UserStore {
   clear: () => void;
   user: UserData | null;
   preferenceFetchingKeySet: Set<string>;
-  addPreferenceFetchingKeys: (keys: UserPreferenceKey[]) => void;
-  deletePreferenceFetchingKeys: (keys: UserPreferenceKey[]) => void;
   chatMap: Map<string, ChatData>;
+  chatMessageMap: Map<string, ChatMessage>;
   userPromptMap: Map<string, UserPromptData>;
 }
 
@@ -32,17 +32,8 @@ export const useUserStore = create<UserStore>()(
       },
       user: null,
       preferenceFetchingKeySet: new Set(),
-      addPreferenceFetchingKeys: (keys) => {
-        set((state) => {
-          keys.forEach((key) => state.preferenceFetchingKeySet.add(key));
-        });
-      },
-      deletePreferenceFetchingKeys: (keys) => {
-        set((state) => {
-          keys.forEach((key) => state.preferenceFetchingKeySet.delete(key));
-        });
-      },
       chatMap: new Map(),
+      chatMessageMap: new Map(),
       userPromptMap: new Map(),
     })),
     {

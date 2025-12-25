@@ -19,7 +19,9 @@ export const AuthSession = z.object({
 });
 
 export type Preferences = Simplify<
-  Required<inferInput<TrpcOptions["user"]["update"]>["preferences"]>
+  NonNullable<
+    Required<inferInput<TrpcOptions["user"]["update"]>["preferences"]>
+  >
 >;
 
 export type PartialUserPreferences = Partial<Preferences>;

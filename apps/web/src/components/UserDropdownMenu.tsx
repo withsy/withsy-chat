@@ -7,8 +7,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Label } from "@/components/ui/label";
-import { useUpdateUserPreferences } from "@/hooks/useUpdateUserPreferences";
-import { useUserPreference } from "@/hooks/useUserPreference";
+import { useUserPreference, useUserUpdate } from "@/hooks/useUser";
 import { cn } from "@/lib/utils";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 import {
@@ -103,7 +102,7 @@ export default function UserDropdownMenu() {
   const largeText = useUserPreference("largeText");
   const wideView = useUserPreference("wideView");
   const themeColor = useUserPreference("themeColor");
-  const { updateUserPreferences } = useUpdateUserPreferences();
+  const userUpdate = useUserUpdate();
 
   const { data: session } = useSession();
   const name = session?.user?.name ?? "";
@@ -130,19 +129,34 @@ export default function UserDropdownMenu() {
       icon: CornerDownLeft,
       label: "Enter to send",
       checked: enterToSend,
-      onClick: () => updateUserPreferences({ enterToSend: !enterToSend }),
+      onClick: () =>
+        userUpdate.mutate({
+          preferences: {
+            enterToSend: !enterToSend,
+          },
+        }),
     },
     {
       icon: Text,
       label: "Large text",
       checked: largeText,
-      onClick: () => updateUserPreferences({ largeText: !largeText }),
+      onClick: () =>
+        userUpdate.mutate({
+          preferences: {
+            largeText: !largeText,
+          },
+        }),
     },
     {
       icon: Layout,
       label: "Wide view",
       checked: wideView,
-      onClick: () => updateUserPreferences({ wideView: !wideView }),
+      onClick: () =>
+        userUpdate.mutate({
+          preferences: {
+            wideView: !wideView,
+          },
+        }),
     },
   ];
 

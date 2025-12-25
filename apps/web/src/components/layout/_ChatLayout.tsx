@@ -1,5 +1,4 @@
-import { useUser } from "@/hooks/useUser";
-import { useUserPreference } from "@/hooks/useUserPreference";
+import { useUserInit, useUserPreference } from "@/hooks/useUser";
 import { nunito } from "@/lib/fonts";
 import { useSession } from "next-auth/react";
 import { type ReactNode } from "react";
@@ -14,8 +13,7 @@ export default function ChatLayout({ children }: LayoutProps) {
   useSession({
     required: true,
   });
-  useUser();
-
+  useUserInit();
   const themeColor = useUserPreference("themeColor");
   const themeOpacity = useUserPreference("themeOpacity");
   const backgroundColor = `rgba(${themeColor}, ${themeOpacity})`;
