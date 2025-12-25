@@ -14,8 +14,6 @@ function getGreeting() {
 
 export default function EmptyChatView() {
   const session = useSession();
-  const name = session.data?.user?.name;
-
   const [greeting, setGreeting] = useState("");
 
   useEffect(() => {
@@ -32,6 +30,8 @@ export default function EmptyChatView() {
   if (!session.data || !greeting) {
     return null;
   }
+
+  const name = session.data.user?.name;
 
   return (
     <ChatSession>
