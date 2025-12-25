@@ -23,7 +23,6 @@ type Props = {
 
 export function ChatSession({ chatId, children }: Props) {
   const trpc = useTRPC();
-  const queryClient = useQueryClient();
   const router = useRouter();
   const { collapsed, isMobile } = useSidebarStore();
   const { selectedModel } = useSelectedModelStore();
@@ -34,11 +33,14 @@ export function ChatSession({ chatId, children }: Props) {
 
   const chatStart = useMutation(
     trpc.chat.start.mutationOptions({
-      onSuccess(data) {
-        queryClient.invalidateQueries(trpc.chat.list.queryFilter());
-        router.push(
-          `/chat/${data.chat.id}?streamMessageId=${data.modelMessage.id}`,
-        );
+      onSuccess: (output) => {
+        if (output.isSuccess) {
+          router.push(
+            `/chat/${data.chat.id}?streamMessageId=${data.modelMessage.id}`,
+          );
+        } else {
+          // error
+        }
       },
     }),
   );

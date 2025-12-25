@@ -1,40 +1,14 @@
 import type {
   PartialUserPreferences,
-  Preferences,
   UserPreferenceKey,
+  UserPreferences,
 } from "@/common-schemas";
-import { AuthSession } from "@/common-schemas";
 import { useTRPC } from "@/lib/trpc";
 import { useUserSessionStorageStore } from "@/stores/useUserSessionStorageStore";
 import { useUserStore } from "@/stores/useUserStore";
 import { useMutation } from "@tanstack/react-query";
-import { useSession } from "next-auth/react";
-import { useEffect } from "react";
 
-export function useUserInit() {
-  const session = useSession();
-
-  useEffect(() => {
-    if (session.data) {
-      const authSession = AuthSession.parse(session.data);
-      const { user } = authSession;
-
-      useUserSessionStorageStore.getState().setPreferences(user.preferences);
-      useUserStore.setState((state) => {
-        state.user = user;
-      });
-    }
-  }, [session.data]);
-
-  useEffect(() => {
-    if (session.status === "unauthenticated") {
-      useUserStore.getState().clear();
-      useUserSessionStorageStore.getState().clear();
-    }
-  }, [session.status]);
-}
-
-const DEFAULT_USER_PREFERENCES: Preferences = {
+const DEFAULT_USER_PREFERENCES: UserPreferences = {
   wideView: false,
   largeText: false,
   enterToSend: true,
@@ -43,9 +17,9 @@ const DEFAULT_USER_PREFERENCES: Preferences = {
   avatarStyle: "thumbs",
 };
 
-export function useUserPreference<Key extends keyof Preferences>(
+export function useUserPreference<Key extends UserPreferenceKey>(
   key: Key,
-): Preferences[Key] {
+): UserPreferences[Key] {
   const value = useUserSessionStorageStore((s) => s.preferences[key]);
   return value ?? DEFAULT_USER_PREFERENCES[key];
 }

@@ -1,3 +1,4 @@
+import { UserProvider } from "@/contexts/UserContext";
 import { useSidebarInitializer } from "@/hooks/useSidebarInitializer";
 import { createTrpcClient, getQueryClient, TRPCProvider } from "@/lib/trpc";
 import "@/styles/globals.css";
@@ -28,14 +29,20 @@ export default function App({
   return (
     <QueryClientProvider client={queryClient}>
       <TRPCProvider trpcClient={trpcClient} queryClient={queryClient}>
-        <SessionProvider session={session} refetchOnWindowFocus={false}>
-          <Head>
-            <link rel="icon" href="/favicon.ico" />
-            <title>{title}</title>
-          </Head>
-          <Component {...pageProps} />
-          <Sonner position="bottom-right" />
-          <ReactQueryDevtools />
+        <SessionProvider
+          session={session}
+          refetchOnWindowFocus={false}
+          refetchWhenOffline={false}
+        >
+          <UserProvider>
+            <Head>
+              <link rel="icon" href="/favicon.ico" />
+              <title>{title}</title>
+            </Head>
+            <Component {...pageProps} />
+            <Sonner position="bottom-right" />
+            <ReactQueryDevtools />
+          </UserProvider>
         </SessionProvider>
       </TRPCProvider>
     </QueryClientProvider>

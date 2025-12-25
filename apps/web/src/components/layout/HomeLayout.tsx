@@ -1,4 +1,3 @@
-import { useUserInit } from "@/hooks/useUser";
 import { nunito } from "@/lib/fonts";
 import { type ReactNode } from "react";
 import Header from "../home/Header";
@@ -8,8 +7,6 @@ type Props = {
 };
 
 export default function HomeLayout({ children }: Props) {
-  useUserInit();
-
   return (
     <div className={`flex min-h-screen flex-col ${nunito.className}`}>
       <Header />
