@@ -47,15 +47,3 @@ export const ChatDelete = z.object({
   },
 });
 export type ChatDelete = z.infer<typeof ChatDelete>;
-
-const chatListBranchSchemas = createListSchemas(ChatData);
-
-export const ChatListBranch = chatListBranchSchemas.list.extend({
-  get chatId() {
-    return ChatId;
-  },
-});
-export type ChatListBranch = z.infer<typeof ChatListBranch>;
-
-export const ChatListBranchOutput = chatListBranchSchemas.listOutput;
-export type ChatListBranchOutput = z.infer<typeof ChatListBranchOutput>;

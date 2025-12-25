@@ -1,7 +1,12 @@
 import { Injectable } from "@nestjs/common";
 import { TrpcService } from "../trpc/trpc-service";
 import { UserTrpcProcedure } from "../user/user-trpc-procedure";
-import { UserPromptList, UserPromptListOutput } from "./user-prompt-schemas";
+import {
+  UserPromptData,
+  UserPromptGet,
+  UserPromptList,
+  UserPromptListOutput,
+} from "./user-prompt-schemas";
 import { UserPromptService } from "./user-prompt-service";
 
 @Injectable()
@@ -18,6 +23,10 @@ export class UserPromptTrpcRouter {
         .input(UserPromptList)
         .output(UserPromptListOutput)
         .query(({ ctx, input }) => userPromptService.list(ctx.userId, input)),
+      get: userTrpcProcedure.procedure
+        .input(UserPromptGet)
+        .output(UserPromptData)
+        .query(({ ctx, input }) => userPromptService.get(ctx.userId, input)),
     });
   }
 }

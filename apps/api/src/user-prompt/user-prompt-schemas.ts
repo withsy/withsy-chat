@@ -14,3 +14,10 @@ export type UserPromptList = z.infer<typeof UserPromptList>;
 
 export const UserPromptListOutput = userPromptListSchemas.listOutput;
 export type UserPromptListOutput = z.infer<typeof UserPromptListOutput>;
+
+export const UserPromptGet = z.object({
+  get userPromptId() {
+    return UserPromptId;
+  },
+});
+export type UserPromptGet = z.infer<typeof UserPromptGet>;

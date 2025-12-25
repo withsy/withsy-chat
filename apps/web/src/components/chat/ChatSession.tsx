@@ -281,7 +281,7 @@ export function ChatSession({ initialMessages, children }: Props) {
           </div>
         </div>
       </div>
-      <ChatDrawer savedMessages={savedMessages} />
+      {/* <ChatDrawer savedMessages={savedMessages} /> */}
     </div>
   );
 }
