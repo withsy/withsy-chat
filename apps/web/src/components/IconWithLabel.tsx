@@ -1,4 +1,4 @@
-import { useUserPreference } from "@/hooks/useUserPreference";
+import { useUserPreference } from "@/hooks/useUser";
 import { type LucideIcon } from "lucide-react";
 
 interface IconWithLabelProps {

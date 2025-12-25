@@ -1,4 +1,4 @@
-import { useUserPreference } from "@/hooks/useUserPreference";
+import { useUserPreference } from "@/hooks/useUser";
 import { cn } from "@/lib/utils";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 import type { ReactNode } from "react";

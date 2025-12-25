@@ -1,4 +1,4 @@
-import { useUserPreference } from "@/hooks/useUserPreference";
+import { useUserPreference } from "@/hooks/useUser";
 
 type Props = {
   show: boolean;
