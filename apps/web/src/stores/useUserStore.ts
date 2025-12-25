@@ -1,9 +1,4 @@
-import type {
-  ChatData,
-  UserData,
-  UserPreferenceKey,
-  UserPromptData,
-} from "@/common-schemas";
+import type { ChatData, UserData, UserPromptData } from "@/common-schemas";
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
@@ -28,6 +23,8 @@ export const useUserStore = create<UserStore>()(
           state.user = null;
           state.preferenceFetchingKeySet.clear();
           state.chatMap.clear();
+          state.chatMessageMap.clear();
+          state.userPromptMap.clear();
         });
       },
       user: null,
