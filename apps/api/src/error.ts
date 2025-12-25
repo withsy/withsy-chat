@@ -4,7 +4,7 @@ import type { TRPC_ERROR_CODE_KEY } from "@trpc/server/unstable-core-do-not-impo
 
 export function isExpectedUniqueConstraintViolation(
   e: any,
-  expectedFields: string[]
+  expectedFields: string[],
 ) {
   if (!(e instanceof PrismaClientKnownRequestError)) return false;
 
@@ -49,7 +49,7 @@ export class DataError extends Error {
 }
 
 export function getCodeKeyFromPrismaError(
-  e: PrismaClientKnownRequestError
+  e: PrismaClientKnownRequestError,
 ): TRPC_ERROR_CODE_KEY {
   switch (e.code) {
     case "P2025":

@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { initTRPC, TRPCErrorFormatter, TRPCErrorShape } from "@trpc/server";
 import { TRPC_ERROR_CODES_BY_KEY } from "@trpc/server/rpc";
 import { Request } from "express";
-import { DataError, getCodeKeyFromPrismaError } from "../error";
+import { getCodeKeyFromPrismaError } from "../error";
 import { PrismaClientKnownRequestError } from "../generated/prisma/internal/prismaNamespace";
 
 export interface Context {
@@ -28,14 +28,17 @@ export class TrpcService {
     const errorShape: TRPCErrorShape = shape;
 
     const { cause } = error;
-    if (cause instanceof DataError) {
-      errorShape.data = cause.data;
-      return errorShape;
-    }
-
     if (cause instanceof PrismaClientKnownRequestError) {
       const codeKey = getCodeKeyFromPrismaError(cause);
       errorShape.code = TRPC_ERROR_CODES_BY_KEY[codeKey];
+      return errorShape;
+    }
+
+    if (cause instanceof Error) {
+      errorShape.data = {
+        ...errorShape.data,
+        cause,
+      };
       return errorShape;
     }
 
