@@ -28,23 +28,9 @@ export function ChatSession({ chatId, children }: Props) {
   const { collapsed, isMobile } = useSidebarStore();
   const { selectedModel } = useSelectedModelStore();
   const wideView = useUserPreference("wideView");
-
-  const [messages, setMessages] = useState<MessageData[]>([]);
   const [streamMessageId, setStreamMessageId] = useState<string | null>(null);
   const [shouldFocusInput, setShouldFocusInput] = useState(false);
-  const [usageLimits, setUsageLimits] = useState<UserUsageLimitData[]>([]);
-  const [eventSource, setEventSource] = useState<EventSource | null>(null);
-
   const { openDrawer } = useDrawerStore();
-
-  const usageQuery = useQuery(
-    trpc.userUsageLimit.list.queryOptions(
-      { type: "message" },
-      {
-        enabled: !!chatId,
-      },
-    ),
-  );
 
   const chatStart = useMutation(
     trpc.chat.start.mutationOptions({
