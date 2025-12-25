@@ -10,17 +10,19 @@ export function useUser() {
   useEffect(() => {
     if (session.data) {
       const authSession = AuthSession.parse(session.data);
-      const { preferences } = authSession.user;
+      const { user } = authSession;
 
-      useUserSessionStorageStore.getState().setPreferences(preferences);
-      useUserStore.getState().setId(id);
+      useUserSessionStorageStore.getState().setPreferences(user.preferences);
+      useUserStore.setState((state) => {
+        state.user = user;
+      });
     }
   }, [session.data]);
 
   useEffect(() => {
     if (session.status === "unauthenticated") {
-      useUserSessionStorageStore.getState().clear();
       useUserStore.getState().clear();
+      useUserSessionStorageStore.getState().clear();
     }
   }, [session.status]);
 }
