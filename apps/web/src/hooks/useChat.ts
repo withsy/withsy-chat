@@ -1,17 +1,16 @@
 import { useTRPC } from "@/lib/trpc";
 import { useUserStore } from "@/stores/useUserStore";
 import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
-import { useSession } from "next-auth/react";
 
 export function useChatList() {
   const trpc = useTRPC();
-  const session = useSession();
+  const user = useUserStore((s) => s.user);
 
   return useInfiniteQuery(
     trpc.chat.list.infiniteQueryOptions(
       {},
       {
-        enabled: session.status === "authenticated",
+        enabled: !!user,
         getNextPageParam: (lastPage) => lastPage.nextCursor,
       },
     ),
@@ -26,34 +25,35 @@ export function useChatUpdate() {
       onMutate: (input) => {
         const { chatId, ...partialInput } = input;
 
-        const old = useUserStore.getState().chatMap.get(chatId);
-        if (!old) {
-          throw new Error("Chat not found.");
+        const rollbackData = useUserStore.getState().chatMap.get(chatId);
+        if (rollbackData) {
+          const chat = {
+            ...rollbackData,
+            ...Object.fromEntries(
+              Object.entries(partialInput).filter(
+                ([_, value]) => value !== undefined,
+              ),
+            ),
+          };
+
+          useUserStore.setState((state) => {
+            state.chatMap.set(chatId, chat);
+          });
         }
 
-        const chat = {
-          ...old,
-          ...Object.fromEntries(
-            Object.entries(partialInput).filter(
-              ([_, value]) => value !== undefined,
-            ),
-          ),
-        };
-
-        useUserStore.setState((state) => {
-          state.chatMap.set(chatId, chat);
-        });
-
         return {
-          old,
+          rollbackData,
         };
       },
-      onError: (_, __, res) => {
-        if (res) {
-          const { old } = res;
-          useUserStore.setState((state) => {
-            state.chatMap.set(old.id, old);
-          });
+      onError: (_, __, result) => {
+        if (result) {
+          const { rollbackData } = result;
+
+          if (rollbackData) {
+            useUserStore.setState((state) => {
+              state.chatMap.set(rollbackData.id, rollbackData);
+            });
+          }
         }
       },
       onSuccess: (output) => {
@@ -81,9 +81,9 @@ export function useChatDelete() {
           rollbackData,
         };
       },
-      onError: (_, __, res) => {
-        if (res) {
-          const { rollbackData } = res;
+      onError: (_, __, result) => {
+        if (result) {
+          const { rollbackData } = result;
 
           if (rollbackData) {
             useUserStore.setState((state) => {

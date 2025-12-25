@@ -83,9 +83,9 @@ export function useUserUpdate() {
           rollbackMap,
         };
       },
-      onError: (_, __, res) => {
-        if (res) {
-          const { rollbackMap } = res;
+      onError: (_, __, result) => {
+        if (result) {
+          const { rollbackMap } = result;
 
           // Rollback.
           useUserSessionStorageStore
@@ -99,13 +99,13 @@ export function useUserUpdate() {
           .getState()
           .setPreferences(output.preferences);
       },
-      onSettled: (_, __, ___, res) => {
-        if (res) {
-          const { keys } = res;
+      onSettled: (_, __, ___, result) => {
+        if (result) {
+          const { keys } = result;
 
           // Unlock keys.
           useUserStore.setState((state) => {
-            if (res) {
+            if (result) {
               keys.forEach((key) => state.preferenceFetchingKeySet.delete(key));
             }
           });
