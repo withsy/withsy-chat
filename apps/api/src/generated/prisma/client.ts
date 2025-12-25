@@ -50,11 +50,6 @@ export type User = Prisma.UserModel
  */
 export type UserLinkAccount = Prisma.UserLinkAccountModel
 /**
- * Model RefreshToken
- * 
- */
-export type RefreshToken = Prisma.RefreshTokenModel
-/**
  * Model UserUsageLimit
  * 
  */
@@ -70,35 +65,25 @@ export type UserPrompt = Prisma.UserPromptModel
  */
 export type UserDefaultPrompt = Prisma.UserDefaultPromptModel
 /**
- * Model UserAiProfile
- * 
- */
-export type UserAiProfile = Prisma.UserAiProfileModel
-/**
  * Model Chat
  * 
  */
 export type Chat = Prisma.ChatModel
-/**
- * Model ChatParentMessage
- * 
- */
-export type ChatParentMessage = Prisma.ChatParentMessageModel
 /**
  * Model ChatPrompt
  * 
  */
 export type ChatPrompt = Prisma.ChatPromptModel
 /**
- * Model Message
+ * Model ChatMessage
  * 
  */
-export type Message = Prisma.MessageModel
+export type ChatMessage = Prisma.ChatMessageModel
 /**
- * Model MessageChunk
+ * Model ChatMessageChunk
  * 
  */
-export type MessageChunk = Prisma.MessageChunkModel
+export type ChatMessageChunk = Prisma.ChatMessageChunkModel
 /**
  * Model IdempotencyKey
  * 

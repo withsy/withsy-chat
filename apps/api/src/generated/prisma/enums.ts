@@ -9,11 +9,11 @@
 * 🟢 You can import this file directly.
 */
 
-export const MessageStatus = {
+export const ChatMessageStatus = {
   pending: 'pending',
   processing: 'processing',
   succeeded: 'succeeded',
   failed: 'failed'
 } as const
 
-export type MessageStatus = (typeof MessageStatus)[keyof typeof MessageStatus]
+export type ChatMessageStatus = (typeof ChatMessageStatus)[keyof typeof ChatMessageStatus]

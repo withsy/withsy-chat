@@ -51,16 +51,13 @@ export const AnyNull = runtime.objectEnumValues.instances.AnyNull
 export const ModelName = {
   User: 'User',
   UserLinkAccount: 'UserLinkAccount',
-  RefreshToken: 'RefreshToken',
   UserUsageLimit: 'UserUsageLimit',
   UserPrompt: 'UserPrompt',
   UserDefaultPrompt: 'UserDefaultPrompt',
-  UserAiProfile: 'UserAiProfile',
   Chat: 'Chat',
-  ChatParentMessage: 'ChatParentMessage',
   ChatPrompt: 'ChatPrompt',
-  Message: 'Message',
-  MessageChunk: 'MessageChunk',
+  ChatMessage: 'ChatMessage',
+  ChatMessageChunk: 'ChatMessageChunk',
   IdempotencyKey: 'IdempotencyKey',
   ApiKey: 'ApiKey',
   SupabaseActivity: 'SupabaseActivity'
@@ -84,14 +81,10 @@ export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof
 
 export const UserScalarFieldEnum = {
   id: 'id',
-  nameEncrypted: 'nameEncrypted',
-  emailEncrypted: 'emailEncrypted',
-  imageUrlEncrypted: 'imageUrlEncrypted',
-  aiLanguage: 'aiLanguage',
-  timezone: 'timezone',
   preferences: 'preferences',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -110,24 +103,11 @@ export const UserLinkAccountScalarFieldEnum = {
   userId: 'userId',
   provider: 'provider',
   providerAccountId: 'providerAccountId',
-  refreshToken: 'refreshToken',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type UserLinkAccountScalarFieldEnum = (typeof UserLinkAccountScalarFieldEnum)[keyof typeof UserLinkAccountScalarFieldEnum]
-
-
-export const RefreshTokenScalarFieldEnum = {
-  id: 'id',
-  provider: 'provider',
-  providerAccountId: 'providerAccountId',
-  refreshToken: 'refreshToken',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type RefreshTokenScalarFieldEnum = (typeof RefreshTokenScalarFieldEnum)[keyof typeof RefreshTokenScalarFieldEnum]
 
 
 export const UserUsageLimitScalarFieldEnum = {
@@ -168,19 +148,6 @@ export const UserDefaultPromptScalarFieldEnum = {
 export type UserDefaultPromptScalarFieldEnum = (typeof UserDefaultPromptScalarFieldEnum)[keyof typeof UserDefaultPromptScalarFieldEnum]
 
 
-export const UserAiProfileScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  model: 'model',
-  nameEncrypted: 'nameEncrypted',
-  imagePathEncrypted: 'imagePathEncrypted',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type UserAiProfileScalarFieldEnum = (typeof UserAiProfileScalarFieldEnum)[keyof typeof UserAiProfileScalarFieldEnum]
-
-
 export const ChatScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
@@ -196,17 +163,6 @@ export const ChatScalarFieldEnum = {
 export type ChatScalarFieldEnum = (typeof ChatScalarFieldEnum)[keyof typeof ChatScalarFieldEnum]
 
 
-export const ChatParentMessageScalarFieldEnum = {
-  id: 'id',
-  chatId: 'chatId',
-  messageId: 'messageId',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type ChatParentMessageScalarFieldEnum = (typeof ChatParentMessageScalarFieldEnum)[keyof typeof ChatParentMessageScalarFieldEnum]
-
-
 export const ChatPromptScalarFieldEnum = {
   id: 'id',
   chatId: 'chatId',
@@ -218,7 +174,7 @@ export const ChatPromptScalarFieldEnum = {
 export type ChatPromptScalarFieldEnum = (typeof ChatPromptScalarFieldEnum)[keyof typeof ChatPromptScalarFieldEnum]
 
 
-export const MessageScalarFieldEnum = {
+export const ChatMessageScalarFieldEnum = {
   id: 'id',
   chatId: 'chatId',
   role: 'role',
@@ -227,18 +183,16 @@ export const MessageScalarFieldEnum = {
   reasoningTextEncrypted: 'reasoningTextEncrypted',
   status: 'status',
   isBookmarked: 'isBookmarked',
-  isPublic: 'isPublic',
-  parentMessageId: 'parentMessageId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
-export type MessageScalarFieldEnum = (typeof MessageScalarFieldEnum)[keyof typeof MessageScalarFieldEnum]
+export type ChatMessageScalarFieldEnum = (typeof ChatMessageScalarFieldEnum)[keyof typeof ChatMessageScalarFieldEnum]
 
 
-export const MessageChunkScalarFieldEnum = {
+export const ChatMessageChunkScalarFieldEnum = {
   id: 'id',
-  messageId: 'messageId',
+  chatMessageId: 'chatMessageId',
   index: 'index',
   rawDataEncrypted: 'rawDataEncrypted',
   textEncrypted: 'textEncrypted',
@@ -248,7 +202,7 @@ export const MessageChunkScalarFieldEnum = {
   updatedAt: 'updatedAt'
 } as const
 
-export type MessageChunkScalarFieldEnum = (typeof MessageChunkScalarFieldEnum)[keyof typeof MessageChunkScalarFieldEnum]
+export type ChatMessageChunkScalarFieldEnum = (typeof ChatMessageChunkScalarFieldEnum)[keyof typeof ChatMessageChunkScalarFieldEnum]
 
 
 export const IdempotencyKeyScalarFieldEnum = {

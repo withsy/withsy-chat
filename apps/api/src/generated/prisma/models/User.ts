@@ -26,72 +26,48 @@ export type AggregateUser = {
 
 export type UserMinAggregateOutputType = {
   id: string | null
-  nameEncrypted: string | null
-  emailEncrypted: string | null
-  imageUrlEncrypted: string | null
-  aiLanguage: string | null
-  timezone: string | null
   createdAt: Date | null
   updatedAt: Date | null
+  deletedAt: Date | null
 }
 
 export type UserMaxAggregateOutputType = {
   id: string | null
-  nameEncrypted: string | null
-  emailEncrypted: string | null
-  imageUrlEncrypted: string | null
-  aiLanguage: string | null
-  timezone: string | null
   createdAt: Date | null
   updatedAt: Date | null
+  deletedAt: Date | null
 }
 
 export type UserCountAggregateOutputType = {
   id: number
-  nameEncrypted: number
-  emailEncrypted: number
-  imageUrlEncrypted: number
-  aiLanguage: number
-  timezone: number
   preferences: number
   createdAt: number
   updatedAt: number
+  deletedAt: number
   _all: number
 }
 
 
 export type UserMinAggregateInputType = {
   id?: true
-  nameEncrypted?: true
-  emailEncrypted?: true
-  imageUrlEncrypted?: true
-  aiLanguage?: true
-  timezone?: true
   createdAt?: true
   updatedAt?: true
+  deletedAt?: true
 }
 
 export type UserMaxAggregateInputType = {
   id?: true
-  nameEncrypted?: true
-  emailEncrypted?: true
-  imageUrlEncrypted?: true
-  aiLanguage?: true
-  timezone?: true
   createdAt?: true
   updatedAt?: true
+  deletedAt?: true
 }
 
 export type UserCountAggregateInputType = {
   id?: true
-  nameEncrypted?: true
-  emailEncrypted?: true
-  imageUrlEncrypted?: true
-  aiLanguage?: true
-  timezone?: true
   preferences?: true
   createdAt?: true
   updatedAt?: true
+  deletedAt?: true
   _all?: true
 }
 
@@ -169,14 +145,10 @@ export type UserGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
 
 export type UserGroupByOutputType = {
   id: string
-  nameEncrypted: string
-  emailEncrypted: string
-  imageUrlEncrypted: string
-  aiLanguage: string
-  timezone: string
   preferences: runtime.JsonValue
   createdAt: Date
   updatedAt: Date
+  deletedAt: Date | null
   _count: UserCountAggregateOutputType | null
   _min: UserMinAggregateOutputType | null
   _max: UserMaxAggregateOutputType | null
@@ -202,38 +174,28 @@ export type UserWhereInput = {
   OR?: Prisma.UserWhereInput[]
   NOT?: Prisma.UserWhereInput | Prisma.UserWhereInput[]
   id?: Prisma.UuidFilter<"User"> | string
-  nameEncrypted?: Prisma.StringFilter<"User"> | string
-  emailEncrypted?: Prisma.StringFilter<"User"> | string
-  imageUrlEncrypted?: Prisma.StringFilter<"User"> | string
-  aiLanguage?: Prisma.StringFilter<"User"> | string
-  timezone?: Prisma.StringFilter<"User"> | string
   preferences?: Prisma.JsonFilter<"User">
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   linkAccounts?: Prisma.UserLinkAccountListRelationFilter
   usageLimits?: Prisma.UserUsageLimitListRelationFilter
   prompts?: Prisma.UserPromptListRelationFilter
   defaultPrompts?: Prisma.UserDefaultPromptListRelationFilter
   chats?: Prisma.ChatListRelationFilter
-  aiProfiles?: Prisma.UserAiProfileListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
   id?: Prisma.SortOrder
-  nameEncrypted?: Prisma.SortOrder
-  emailEncrypted?: Prisma.SortOrder
-  imageUrlEncrypted?: Prisma.SortOrder
-  aiLanguage?: Prisma.SortOrder
-  timezone?: Prisma.SortOrder
   preferences?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   linkAccounts?: Prisma.UserLinkAccountOrderByRelationAggregateInput
   usageLimits?: Prisma.UserUsageLimitOrderByRelationAggregateInput
   prompts?: Prisma.UserPromptOrderByRelationAggregateInput
   defaultPrompts?: Prisma.UserDefaultPromptOrderByRelationAggregateInput
   chats?: Prisma.ChatOrderByRelationAggregateInput
-  aiProfiles?: Prisma.UserAiProfileOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -241,32 +203,23 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.UserWhereInput | Prisma.UserWhereInput[]
   OR?: Prisma.UserWhereInput[]
   NOT?: Prisma.UserWhereInput | Prisma.UserWhereInput[]
-  nameEncrypted?: Prisma.StringFilter<"User"> | string
-  emailEncrypted?: Prisma.StringFilter<"User"> | string
-  imageUrlEncrypted?: Prisma.StringFilter<"User"> | string
-  aiLanguage?: Prisma.StringFilter<"User"> | string
-  timezone?: Prisma.StringFilter<"User"> | string
   preferences?: Prisma.JsonFilter<"User">
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   linkAccounts?: Prisma.UserLinkAccountListRelationFilter
   usageLimits?: Prisma.UserUsageLimitListRelationFilter
   prompts?: Prisma.UserPromptListRelationFilter
   defaultPrompts?: Prisma.UserDefaultPromptListRelationFilter
   chats?: Prisma.ChatListRelationFilter
-  aiProfiles?: Prisma.UserAiProfileListRelationFilter
 }, "id">
 
 export type UserOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
-  nameEncrypted?: Prisma.SortOrder
-  emailEncrypted?: Prisma.SortOrder
-  imageUrlEncrypted?: Prisma.SortOrder
-  aiLanguage?: Prisma.SortOrder
-  timezone?: Prisma.SortOrder
   preferences?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.UserCountOrderByAggregateInput
   _max?: Prisma.UserMaxOrderByAggregateInput
   _min?: Prisma.UserMinOrderByAggregateInput
@@ -277,156 +230,108 @@ export type UserScalarWhereWithAggregatesInput = {
   OR?: Prisma.UserScalarWhereWithAggregatesInput[]
   NOT?: Prisma.UserScalarWhereWithAggregatesInput | Prisma.UserScalarWhereWithAggregatesInput[]
   id?: Prisma.UuidWithAggregatesFilter<"User"> | string
-  nameEncrypted?: Prisma.StringWithAggregatesFilter<"User"> | string
-  emailEncrypted?: Prisma.StringWithAggregatesFilter<"User"> | string
-  imageUrlEncrypted?: Prisma.StringWithAggregatesFilter<"User"> | string
-  aiLanguage?: Prisma.StringWithAggregatesFilter<"User"> | string
-  timezone?: Prisma.StringWithAggregatesFilter<"User"> | string
   preferences?: Prisma.JsonWithAggregatesFilter<"User">
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
 }
 
 export type UserCreateInput = {
   id: string
-  nameEncrypted: string
-  emailEncrypted: string
-  imageUrlEncrypted: string
-  aiLanguage?: string
-  timezone?: string
   preferences?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   linkAccounts?: Prisma.UserLinkAccountCreateNestedManyWithoutUserInput
   usageLimits?: Prisma.UserUsageLimitCreateNestedManyWithoutUserInput
   prompts?: Prisma.UserPromptCreateNestedManyWithoutUserInput
   defaultPrompts?: Prisma.UserDefaultPromptCreateNestedManyWithoutUserInput
   chats?: Prisma.ChatCreateNestedManyWithoutUserInput
-  aiProfiles?: Prisma.UserAiProfileCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
   id: string
-  nameEncrypted: string
-  emailEncrypted: string
-  imageUrlEncrypted: string
-  aiLanguage?: string
-  timezone?: string
   preferences?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   linkAccounts?: Prisma.UserLinkAccountUncheckedCreateNestedManyWithoutUserInput
   usageLimits?: Prisma.UserUsageLimitUncheckedCreateNestedManyWithoutUserInput
   prompts?: Prisma.UserPromptUncheckedCreateNestedManyWithoutUserInput
   defaultPrompts?: Prisma.UserDefaultPromptUncheckedCreateNestedManyWithoutUserInput
   chats?: Prisma.ChatUncheckedCreateNestedManyWithoutUserInput
-  aiProfiles?: Prisma.UserAiProfileUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  nameEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
-  emailEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
-  imageUrlEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
-  aiLanguage?: Prisma.StringFieldUpdateOperationsInput | string
-  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   preferences?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   linkAccounts?: Prisma.UserLinkAccountUpdateManyWithoutUserNestedInput
   usageLimits?: Prisma.UserUsageLimitUpdateManyWithoutUserNestedInput
   prompts?: Prisma.UserPromptUpdateManyWithoutUserNestedInput
   defaultPrompts?: Prisma.UserDefaultPromptUpdateManyWithoutUserNestedInput
   chats?: Prisma.ChatUpdateManyWithoutUserNestedInput
-  aiProfiles?: Prisma.UserAiProfileUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  nameEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
-  emailEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
-  imageUrlEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
-  aiLanguage?: Prisma.StringFieldUpdateOperationsInput | string
-  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   preferences?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   linkAccounts?: Prisma.UserLinkAccountUncheckedUpdateManyWithoutUserNestedInput
   usageLimits?: Prisma.UserUsageLimitUncheckedUpdateManyWithoutUserNestedInput
   prompts?: Prisma.UserPromptUncheckedUpdateManyWithoutUserNestedInput
   defaultPrompts?: Prisma.UserDefaultPromptUncheckedUpdateManyWithoutUserNestedInput
   chats?: Prisma.ChatUncheckedUpdateManyWithoutUserNestedInput
-  aiProfiles?: Prisma.UserAiProfileUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
   id: string
-  nameEncrypted: string
-  emailEncrypted: string
-  imageUrlEncrypted: string
-  aiLanguage?: string
-  timezone?: string
   preferences?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
 }
 
 export type UserUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  nameEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
-  emailEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
-  imageUrlEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
-  aiLanguage?: Prisma.StringFieldUpdateOperationsInput | string
-  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   preferences?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type UserUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  nameEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
-  emailEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
-  imageUrlEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
-  aiLanguage?: Prisma.StringFieldUpdateOperationsInput | string
-  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   preferences?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type UserCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  nameEncrypted?: Prisma.SortOrder
-  emailEncrypted?: Prisma.SortOrder
-  imageUrlEncrypted?: Prisma.SortOrder
-  aiLanguage?: Prisma.SortOrder
-  timezone?: Prisma.SortOrder
   preferences?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
 }
 
 export type UserMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  nameEncrypted?: Prisma.SortOrder
-  emailEncrypted?: Prisma.SortOrder
-  imageUrlEncrypted?: Prisma.SortOrder
-  aiLanguage?: Prisma.SortOrder
-  timezone?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
 }
 
 export type UserMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  nameEncrypted?: Prisma.SortOrder
-  emailEncrypted?: Prisma.SortOrder
-  imageUrlEncrypted?: Prisma.SortOrder
-  aiLanguage?: Prisma.SortOrder
-  timezone?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
 }
 
 export type UserScalarRelationFilter = {
@@ -440,6 +345,10 @@ export type StringFieldUpdateOperationsInput = {
 
 export type DateTimeFieldUpdateOperationsInput = {
   set?: Date | string
+}
+
+export type NullableDateTimeFieldUpdateOperationsInput = {
+  set?: Date | string | null
 }
 
 export type UserCreateNestedOneWithoutLinkAccountsInput = {
@@ -498,20 +407,6 @@ export type UserUpdateOneRequiredWithoutDefaultPromptsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutDefaultPromptsInput, Prisma.UserUpdateWithoutDefaultPromptsInput>, Prisma.UserUncheckedUpdateWithoutDefaultPromptsInput>
 }
 
-export type UserCreateNestedOneWithoutAiProfilesInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutAiProfilesInput, Prisma.UserUncheckedCreateWithoutAiProfilesInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutAiProfilesInput
-  connect?: Prisma.UserWhereUniqueInput
-}
-
-export type UserUpdateOneRequiredWithoutAiProfilesNestedInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutAiProfilesInput, Prisma.UserUncheckedCreateWithoutAiProfilesInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutAiProfilesInput
-  upsert?: Prisma.UserUpsertWithoutAiProfilesInput
-  connect?: Prisma.UserWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutAiProfilesInput, Prisma.UserUpdateWithoutAiProfilesInput>, Prisma.UserUncheckedUpdateWithoutAiProfilesInput>
-}
-
 export type UserCreateNestedOneWithoutChatsInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutChatsInput, Prisma.UserUncheckedCreateWithoutChatsInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutChatsInput
@@ -528,36 +423,26 @@ export type UserUpdateOneRequiredWithoutChatsNestedInput = {
 
 export type UserCreateWithoutLinkAccountsInput = {
   id: string
-  nameEncrypted: string
-  emailEncrypted: string
-  imageUrlEncrypted: string
-  aiLanguage?: string
-  timezone?: string
   preferences?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   usageLimits?: Prisma.UserUsageLimitCreateNestedManyWithoutUserInput
   prompts?: Prisma.UserPromptCreateNestedManyWithoutUserInput
   defaultPrompts?: Prisma.UserDefaultPromptCreateNestedManyWithoutUserInput
   chats?: Prisma.ChatCreateNestedManyWithoutUserInput
-  aiProfiles?: Prisma.UserAiProfileCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutLinkAccountsInput = {
   id: string
-  nameEncrypted: string
-  emailEncrypted: string
-  imageUrlEncrypted: string
-  aiLanguage?: string
-  timezone?: string
   preferences?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   usageLimits?: Prisma.UserUsageLimitUncheckedCreateNestedManyWithoutUserInput
   prompts?: Prisma.UserPromptUncheckedCreateNestedManyWithoutUserInput
   defaultPrompts?: Prisma.UserDefaultPromptUncheckedCreateNestedManyWithoutUserInput
   chats?: Prisma.ChatUncheckedCreateNestedManyWithoutUserInput
-  aiProfiles?: Prisma.UserAiProfileUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutLinkAccountsInput = {
@@ -578,70 +463,50 @@ export type UserUpdateToOneWithWhereWithoutLinkAccountsInput = {
 
 export type UserUpdateWithoutLinkAccountsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  nameEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
-  emailEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
-  imageUrlEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
-  aiLanguage?: Prisma.StringFieldUpdateOperationsInput | string
-  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   preferences?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   usageLimits?: Prisma.UserUsageLimitUpdateManyWithoutUserNestedInput
   prompts?: Prisma.UserPromptUpdateManyWithoutUserNestedInput
   defaultPrompts?: Prisma.UserDefaultPromptUpdateManyWithoutUserNestedInput
   chats?: Prisma.ChatUpdateManyWithoutUserNestedInput
-  aiProfiles?: Prisma.UserAiProfileUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutLinkAccountsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  nameEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
-  emailEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
-  imageUrlEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
-  aiLanguage?: Prisma.StringFieldUpdateOperationsInput | string
-  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   preferences?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   usageLimits?: Prisma.UserUsageLimitUncheckedUpdateManyWithoutUserNestedInput
   prompts?: Prisma.UserPromptUncheckedUpdateManyWithoutUserNestedInput
   defaultPrompts?: Prisma.UserDefaultPromptUncheckedUpdateManyWithoutUserNestedInput
   chats?: Prisma.ChatUncheckedUpdateManyWithoutUserNestedInput
-  aiProfiles?: Prisma.UserAiProfileUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutUsageLimitsInput = {
   id: string
-  nameEncrypted: string
-  emailEncrypted: string
-  imageUrlEncrypted: string
-  aiLanguage?: string
-  timezone?: string
   preferences?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   linkAccounts?: Prisma.UserLinkAccountCreateNestedManyWithoutUserInput
   prompts?: Prisma.UserPromptCreateNestedManyWithoutUserInput
   defaultPrompts?: Prisma.UserDefaultPromptCreateNestedManyWithoutUserInput
   chats?: Prisma.ChatCreateNestedManyWithoutUserInput
-  aiProfiles?: Prisma.UserAiProfileCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutUsageLimitsInput = {
   id: string
-  nameEncrypted: string
-  emailEncrypted: string
-  imageUrlEncrypted: string
-  aiLanguage?: string
-  timezone?: string
   preferences?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   linkAccounts?: Prisma.UserLinkAccountUncheckedCreateNestedManyWithoutUserInput
   prompts?: Prisma.UserPromptUncheckedCreateNestedManyWithoutUserInput
   defaultPrompts?: Prisma.UserDefaultPromptUncheckedCreateNestedManyWithoutUserInput
   chats?: Prisma.ChatUncheckedCreateNestedManyWithoutUserInput
-  aiProfiles?: Prisma.UserAiProfileUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutUsageLimitsInput = {
@@ -662,70 +527,50 @@ export type UserUpdateToOneWithWhereWithoutUsageLimitsInput = {
 
 export type UserUpdateWithoutUsageLimitsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  nameEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
-  emailEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
-  imageUrlEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
-  aiLanguage?: Prisma.StringFieldUpdateOperationsInput | string
-  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   preferences?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   linkAccounts?: Prisma.UserLinkAccountUpdateManyWithoutUserNestedInput
   prompts?: Prisma.UserPromptUpdateManyWithoutUserNestedInput
   defaultPrompts?: Prisma.UserDefaultPromptUpdateManyWithoutUserNestedInput
   chats?: Prisma.ChatUpdateManyWithoutUserNestedInput
-  aiProfiles?: Prisma.UserAiProfileUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutUsageLimitsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  nameEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
-  emailEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
-  imageUrlEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
-  aiLanguage?: Prisma.StringFieldUpdateOperationsInput | string
-  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   preferences?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   linkAccounts?: Prisma.UserLinkAccountUncheckedUpdateManyWithoutUserNestedInput
   prompts?: Prisma.UserPromptUncheckedUpdateManyWithoutUserNestedInput
   defaultPrompts?: Prisma.UserDefaultPromptUncheckedUpdateManyWithoutUserNestedInput
   chats?: Prisma.ChatUncheckedUpdateManyWithoutUserNestedInput
-  aiProfiles?: Prisma.UserAiProfileUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutPromptsInput = {
   id: string
-  nameEncrypted: string
-  emailEncrypted: string
-  imageUrlEncrypted: string
-  aiLanguage?: string
-  timezone?: string
   preferences?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   linkAccounts?: Prisma.UserLinkAccountCreateNestedManyWithoutUserInput
   usageLimits?: Prisma.UserUsageLimitCreateNestedManyWithoutUserInput
   defaultPrompts?: Prisma.UserDefaultPromptCreateNestedManyWithoutUserInput
   chats?: Prisma.ChatCreateNestedManyWithoutUserInput
-  aiProfiles?: Prisma.UserAiProfileCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutPromptsInput = {
   id: string
-  nameEncrypted: string
-  emailEncrypted: string
-  imageUrlEncrypted: string
-  aiLanguage?: string
-  timezone?: string
   preferences?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   linkAccounts?: Prisma.UserLinkAccountUncheckedCreateNestedManyWithoutUserInput
   usageLimits?: Prisma.UserUsageLimitUncheckedCreateNestedManyWithoutUserInput
   defaultPrompts?: Prisma.UserDefaultPromptUncheckedCreateNestedManyWithoutUserInput
   chats?: Prisma.ChatUncheckedCreateNestedManyWithoutUserInput
-  aiProfiles?: Prisma.UserAiProfileUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutPromptsInput = {
@@ -746,70 +591,50 @@ export type UserUpdateToOneWithWhereWithoutPromptsInput = {
 
 export type UserUpdateWithoutPromptsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  nameEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
-  emailEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
-  imageUrlEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
-  aiLanguage?: Prisma.StringFieldUpdateOperationsInput | string
-  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   preferences?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   linkAccounts?: Prisma.UserLinkAccountUpdateManyWithoutUserNestedInput
   usageLimits?: Prisma.UserUsageLimitUpdateManyWithoutUserNestedInput
   defaultPrompts?: Prisma.UserDefaultPromptUpdateManyWithoutUserNestedInput
   chats?: Prisma.ChatUpdateManyWithoutUserNestedInput
-  aiProfiles?: Prisma.UserAiProfileUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPromptsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  nameEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
-  emailEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
-  imageUrlEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
-  aiLanguage?: Prisma.StringFieldUpdateOperationsInput | string
-  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   preferences?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   linkAccounts?: Prisma.UserLinkAccountUncheckedUpdateManyWithoutUserNestedInput
   usageLimits?: Prisma.UserUsageLimitUncheckedUpdateManyWithoutUserNestedInput
   defaultPrompts?: Prisma.UserDefaultPromptUncheckedUpdateManyWithoutUserNestedInput
   chats?: Prisma.ChatUncheckedUpdateManyWithoutUserNestedInput
-  aiProfiles?: Prisma.UserAiProfileUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutDefaultPromptsInput = {
   id: string
-  nameEncrypted: string
-  emailEncrypted: string
-  imageUrlEncrypted: string
-  aiLanguage?: string
-  timezone?: string
   preferences?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   linkAccounts?: Prisma.UserLinkAccountCreateNestedManyWithoutUserInput
   usageLimits?: Prisma.UserUsageLimitCreateNestedManyWithoutUserInput
   prompts?: Prisma.UserPromptCreateNestedManyWithoutUserInput
   chats?: Prisma.ChatCreateNestedManyWithoutUserInput
-  aiProfiles?: Prisma.UserAiProfileCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutDefaultPromptsInput = {
   id: string
-  nameEncrypted: string
-  emailEncrypted: string
-  imageUrlEncrypted: string
-  aiLanguage?: string
-  timezone?: string
   preferences?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   linkAccounts?: Prisma.UserLinkAccountUncheckedCreateNestedManyWithoutUserInput
   usageLimits?: Prisma.UserUsageLimitUncheckedCreateNestedManyWithoutUserInput
   prompts?: Prisma.UserPromptUncheckedCreateNestedManyWithoutUserInput
   chats?: Prisma.ChatUncheckedCreateNestedManyWithoutUserInput
-  aiProfiles?: Prisma.UserAiProfileUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutDefaultPromptsInput = {
@@ -830,154 +655,50 @@ export type UserUpdateToOneWithWhereWithoutDefaultPromptsInput = {
 
 export type UserUpdateWithoutDefaultPromptsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  nameEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
-  emailEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
-  imageUrlEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
-  aiLanguage?: Prisma.StringFieldUpdateOperationsInput | string
-  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   preferences?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   linkAccounts?: Prisma.UserLinkAccountUpdateManyWithoutUserNestedInput
   usageLimits?: Prisma.UserUsageLimitUpdateManyWithoutUserNestedInput
   prompts?: Prisma.UserPromptUpdateManyWithoutUserNestedInput
   chats?: Prisma.ChatUpdateManyWithoutUserNestedInput
-  aiProfiles?: Prisma.UserAiProfileUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutDefaultPromptsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  nameEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
-  emailEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
-  imageUrlEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
-  aiLanguage?: Prisma.StringFieldUpdateOperationsInput | string
-  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   preferences?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   linkAccounts?: Prisma.UserLinkAccountUncheckedUpdateManyWithoutUserNestedInput
   usageLimits?: Prisma.UserUsageLimitUncheckedUpdateManyWithoutUserNestedInput
   prompts?: Prisma.UserPromptUncheckedUpdateManyWithoutUserNestedInput
-  chats?: Prisma.ChatUncheckedUpdateManyWithoutUserNestedInput
-  aiProfiles?: Prisma.UserAiProfileUncheckedUpdateManyWithoutUserNestedInput
-}
-
-export type UserCreateWithoutAiProfilesInput = {
-  id: string
-  nameEncrypted: string
-  emailEncrypted: string
-  imageUrlEncrypted: string
-  aiLanguage?: string
-  timezone?: string
-  preferences?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  linkAccounts?: Prisma.UserLinkAccountCreateNestedManyWithoutUserInput
-  usageLimits?: Prisma.UserUsageLimitCreateNestedManyWithoutUserInput
-  prompts?: Prisma.UserPromptCreateNestedManyWithoutUserInput
-  defaultPrompts?: Prisma.UserDefaultPromptCreateNestedManyWithoutUserInput
-  chats?: Prisma.ChatCreateNestedManyWithoutUserInput
-}
-
-export type UserUncheckedCreateWithoutAiProfilesInput = {
-  id: string
-  nameEncrypted: string
-  emailEncrypted: string
-  imageUrlEncrypted: string
-  aiLanguage?: string
-  timezone?: string
-  preferences?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  linkAccounts?: Prisma.UserLinkAccountUncheckedCreateNestedManyWithoutUserInput
-  usageLimits?: Prisma.UserUsageLimitUncheckedCreateNestedManyWithoutUserInput
-  prompts?: Prisma.UserPromptUncheckedCreateNestedManyWithoutUserInput
-  defaultPrompts?: Prisma.UserDefaultPromptUncheckedCreateNestedManyWithoutUserInput
-  chats?: Prisma.ChatUncheckedCreateNestedManyWithoutUserInput
-}
-
-export type UserCreateOrConnectWithoutAiProfilesInput = {
-  where: Prisma.UserWhereUniqueInput
-  create: Prisma.XOR<Prisma.UserCreateWithoutAiProfilesInput, Prisma.UserUncheckedCreateWithoutAiProfilesInput>
-}
-
-export type UserUpsertWithoutAiProfilesInput = {
-  update: Prisma.XOR<Prisma.UserUpdateWithoutAiProfilesInput, Prisma.UserUncheckedUpdateWithoutAiProfilesInput>
-  create: Prisma.XOR<Prisma.UserCreateWithoutAiProfilesInput, Prisma.UserUncheckedCreateWithoutAiProfilesInput>
-  where?: Prisma.UserWhereInput
-}
-
-export type UserUpdateToOneWithWhereWithoutAiProfilesInput = {
-  where?: Prisma.UserWhereInput
-  data: Prisma.XOR<Prisma.UserUpdateWithoutAiProfilesInput, Prisma.UserUncheckedUpdateWithoutAiProfilesInput>
-}
-
-export type UserUpdateWithoutAiProfilesInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  nameEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
-  emailEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
-  imageUrlEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
-  aiLanguage?: Prisma.StringFieldUpdateOperationsInput | string
-  timezone?: Prisma.StringFieldUpdateOperationsInput | string
-  preferences?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  linkAccounts?: Prisma.UserLinkAccountUpdateManyWithoutUserNestedInput
-  usageLimits?: Prisma.UserUsageLimitUpdateManyWithoutUserNestedInput
-  prompts?: Prisma.UserPromptUpdateManyWithoutUserNestedInput
-  defaultPrompts?: Prisma.UserDefaultPromptUpdateManyWithoutUserNestedInput
-  chats?: Prisma.ChatUpdateManyWithoutUserNestedInput
-}
-
-export type UserUncheckedUpdateWithoutAiProfilesInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  nameEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
-  emailEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
-  imageUrlEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
-  aiLanguage?: Prisma.StringFieldUpdateOperationsInput | string
-  timezone?: Prisma.StringFieldUpdateOperationsInput | string
-  preferences?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  linkAccounts?: Prisma.UserLinkAccountUncheckedUpdateManyWithoutUserNestedInput
-  usageLimits?: Prisma.UserUsageLimitUncheckedUpdateManyWithoutUserNestedInput
-  prompts?: Prisma.UserPromptUncheckedUpdateManyWithoutUserNestedInput
-  defaultPrompts?: Prisma.UserDefaultPromptUncheckedUpdateManyWithoutUserNestedInput
   chats?: Prisma.ChatUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutChatsInput = {
   id: string
-  nameEncrypted: string
-  emailEncrypted: string
-  imageUrlEncrypted: string
-  aiLanguage?: string
-  timezone?: string
   preferences?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   linkAccounts?: Prisma.UserLinkAccountCreateNestedManyWithoutUserInput
   usageLimits?: Prisma.UserUsageLimitCreateNestedManyWithoutUserInput
   prompts?: Prisma.UserPromptCreateNestedManyWithoutUserInput
   defaultPrompts?: Prisma.UserDefaultPromptCreateNestedManyWithoutUserInput
-  aiProfiles?: Prisma.UserAiProfileCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutChatsInput = {
   id: string
-  nameEncrypted: string
-  emailEncrypted: string
-  imageUrlEncrypted: string
-  aiLanguage?: string
-  timezone?: string
   preferences?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   linkAccounts?: Prisma.UserLinkAccountUncheckedCreateNestedManyWithoutUserInput
   usageLimits?: Prisma.UserUsageLimitUncheckedCreateNestedManyWithoutUserInput
   prompts?: Prisma.UserPromptUncheckedCreateNestedManyWithoutUserInput
   defaultPrompts?: Prisma.UserDefaultPromptUncheckedCreateNestedManyWithoutUserInput
-  aiProfiles?: Prisma.UserAiProfileUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutChatsInput = {
@@ -998,36 +719,26 @@ export type UserUpdateToOneWithWhereWithoutChatsInput = {
 
 export type UserUpdateWithoutChatsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  nameEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
-  emailEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
-  imageUrlEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
-  aiLanguage?: Prisma.StringFieldUpdateOperationsInput | string
-  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   preferences?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   linkAccounts?: Prisma.UserLinkAccountUpdateManyWithoutUserNestedInput
   usageLimits?: Prisma.UserUsageLimitUpdateManyWithoutUserNestedInput
   prompts?: Prisma.UserPromptUpdateManyWithoutUserNestedInput
   defaultPrompts?: Prisma.UserDefaultPromptUpdateManyWithoutUserNestedInput
-  aiProfiles?: Prisma.UserAiProfileUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutChatsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  nameEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
-  emailEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
-  imageUrlEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
-  aiLanguage?: Prisma.StringFieldUpdateOperationsInput | string
-  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   preferences?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   linkAccounts?: Prisma.UserLinkAccountUncheckedUpdateManyWithoutUserNestedInput
   usageLimits?: Prisma.UserUsageLimitUncheckedUpdateManyWithoutUserNestedInput
   prompts?: Prisma.UserPromptUncheckedUpdateManyWithoutUserNestedInput
   defaultPrompts?: Prisma.UserDefaultPromptUncheckedUpdateManyWithoutUserNestedInput
-  aiProfiles?: Prisma.UserAiProfileUncheckedUpdateManyWithoutUserNestedInput
 }
 
 
@@ -1041,7 +752,6 @@ export type UserCountOutputType = {
   prompts: number
   defaultPrompts: number
   chats: number
-  aiProfiles: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1050,7 +760,6 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   prompts?: boolean | UserCountOutputTypeCountPromptsArgs
   defaultPrompts?: boolean | UserCountOutputTypeCountDefaultPromptsArgs
   chats?: boolean | UserCountOutputTypeCountChatsArgs
-  aiProfiles?: boolean | UserCountOutputTypeCountAiProfilesArgs
 }
 
 /**
@@ -1098,77 +807,52 @@ export type UserCountOutputTypeCountChatsArgs<ExtArgs extends runtime.Types.Exte
   where?: Prisma.ChatWhereInput
 }
 
-/**
- * UserCountOutputType without action
- */
-export type UserCountOutputTypeCountAiProfilesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.UserAiProfileWhereInput
-}
-
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  nameEncrypted?: boolean
-  emailEncrypted?: boolean
-  imageUrlEncrypted?: boolean
-  aiLanguage?: boolean
-  timezone?: boolean
   preferences?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deletedAt?: boolean
   linkAccounts?: boolean | Prisma.User$linkAccountsArgs<ExtArgs>
   usageLimits?: boolean | Prisma.User$usageLimitsArgs<ExtArgs>
   prompts?: boolean | Prisma.User$promptsArgs<ExtArgs>
   defaultPrompts?: boolean | Prisma.User$defaultPromptsArgs<ExtArgs>
   chats?: boolean | Prisma.User$chatsArgs<ExtArgs>
-  aiProfiles?: boolean | Prisma.User$aiProfilesArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
 export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  nameEncrypted?: boolean
-  emailEncrypted?: boolean
-  imageUrlEncrypted?: boolean
-  aiLanguage?: boolean
-  timezone?: boolean
   preferences?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deletedAt?: boolean
 }, ExtArgs["result"]["user"]>
 
 export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  nameEncrypted?: boolean
-  emailEncrypted?: boolean
-  imageUrlEncrypted?: boolean
-  aiLanguage?: boolean
-  timezone?: boolean
   preferences?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deletedAt?: boolean
 }, ExtArgs["result"]["user"]>
 
 export type UserSelectScalar = {
   id?: boolean
-  nameEncrypted?: boolean
-  emailEncrypted?: boolean
-  imageUrlEncrypted?: boolean
-  aiLanguage?: boolean
-  timezone?: boolean
   preferences?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deletedAt?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "nameEncrypted" | "emailEncrypted" | "imageUrlEncrypted" | "aiLanguage" | "timezone" | "preferences" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "preferences" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   linkAccounts?: boolean | Prisma.User$linkAccountsArgs<ExtArgs>
   usageLimits?: boolean | Prisma.User$usageLimitsArgs<ExtArgs>
   prompts?: boolean | Prisma.User$promptsArgs<ExtArgs>
   defaultPrompts?: boolean | Prisma.User$defaultPromptsArgs<ExtArgs>
   chats?: boolean | Prisma.User$chatsArgs<ExtArgs>
-  aiProfiles?: boolean | Prisma.User$aiProfilesArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -1182,18 +866,13 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     prompts: Prisma.$UserPromptPayload<ExtArgs>[]
     defaultPrompts: Prisma.$UserDefaultPromptPayload<ExtArgs>[]
     chats: Prisma.$ChatPayload<ExtArgs>[]
-    aiProfiles: Prisma.$UserAiProfilePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
-    nameEncrypted: string
-    emailEncrypted: string
-    imageUrlEncrypted: string
-    aiLanguage: string
-    timezone: string
     preferences: runtime.JsonValue
     createdAt: Date
     updatedAt: Date
+    deletedAt: Date | null
   }, ExtArgs["result"]["user"]>
   composites: {}
 }
@@ -1593,7 +1272,6 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   prompts<T extends Prisma.User$promptsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$promptsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserPromptPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   defaultPrompts<T extends Prisma.User$defaultPromptsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$defaultPromptsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserDefaultPromptPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   chats<T extends Prisma.User$chatsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$chatsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ChatPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  aiProfiles<T extends Prisma.User$aiProfilesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$aiProfilesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserAiProfilePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1624,14 +1302,10 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
  */
 export interface UserFieldRefs {
   readonly id: Prisma.FieldRef<"User", 'String'>
-  readonly nameEncrypted: Prisma.FieldRef<"User", 'String'>
-  readonly emailEncrypted: Prisma.FieldRef<"User", 'String'>
-  readonly imageUrlEncrypted: Prisma.FieldRef<"User", 'String'>
-  readonly aiLanguage: Prisma.FieldRef<"User", 'String'>
-  readonly timezone: Prisma.FieldRef<"User", 'String'>
   readonly preferences: Prisma.FieldRef<"User", 'Json'>
   readonly createdAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"User", 'DateTime'>
+  readonly deletedAt: Prisma.FieldRef<"User", 'DateTime'>
 }
     
 
@@ -2146,30 +1820,6 @@ export type User$chatsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs
   take?: number
   skip?: number
   distinct?: Prisma.ChatScalarFieldEnum | Prisma.ChatScalarFieldEnum[]
-}
-
-/**
- * User.aiProfiles
- */
-export type User$aiProfilesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the UserAiProfile
-   */
-  select?: Prisma.UserAiProfileSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the UserAiProfile
-   */
-  omit?: Prisma.UserAiProfileOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.UserAiProfileInclude<ExtArgs> | null
-  where?: Prisma.UserAiProfileWhereInput
-  orderBy?: Prisma.UserAiProfileOrderByWithRelationInput | Prisma.UserAiProfileOrderByWithRelationInput[]
-  cursor?: Prisma.UserAiProfileWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.UserAiProfileScalarFieldEnum | Prisma.UserAiProfileScalarFieldEnum[]
 }
 
 /**

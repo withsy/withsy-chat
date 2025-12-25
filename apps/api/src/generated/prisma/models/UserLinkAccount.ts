@@ -39,7 +39,6 @@ export type UserLinkAccountMinAggregateOutputType = {
   userId: string | null
   provider: string | null
   providerAccountId: string | null
-  refreshToken: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -49,7 +48,6 @@ export type UserLinkAccountMaxAggregateOutputType = {
   userId: string | null
   provider: string | null
   providerAccountId: string | null
-  refreshToken: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -59,7 +57,6 @@ export type UserLinkAccountCountAggregateOutputType = {
   userId: number
   provider: number
   providerAccountId: number
-  refreshToken: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -79,7 +76,6 @@ export type UserLinkAccountMinAggregateInputType = {
   userId?: true
   provider?: true
   providerAccountId?: true
-  refreshToken?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -89,7 +85,6 @@ export type UserLinkAccountMaxAggregateInputType = {
   userId?: true
   provider?: true
   providerAccountId?: true
-  refreshToken?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -99,7 +94,6 @@ export type UserLinkAccountCountAggregateInputType = {
   userId?: true
   provider?: true
   providerAccountId?: true
-  refreshToken?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -196,7 +190,6 @@ export type UserLinkAccountGroupByOutputType = {
   userId: string
   provider: string
   providerAccountId: string
-  refreshToken: string | null
   createdAt: Date
   updatedAt: Date
   _count: UserLinkAccountCountAggregateOutputType | null
@@ -229,7 +222,6 @@ export type UserLinkAccountWhereInput = {
   userId?: Prisma.UuidFilter<"UserLinkAccount"> | string
   provider?: Prisma.StringFilter<"UserLinkAccount"> | string
   providerAccountId?: Prisma.StringFilter<"UserLinkAccount"> | string
-  refreshToken?: Prisma.StringNullableFilter<"UserLinkAccount"> | string | null
   createdAt?: Prisma.DateTimeFilter<"UserLinkAccount"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"UserLinkAccount"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
@@ -240,7 +232,6 @@ export type UserLinkAccountOrderByWithRelationInput = {
   userId?: Prisma.SortOrder
   provider?: Prisma.SortOrder
   providerAccountId?: Prisma.SortOrder
-  refreshToken?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
@@ -255,7 +246,6 @@ export type UserLinkAccountWhereUniqueInput = Prisma.AtLeast<{
   userId?: Prisma.UuidFilter<"UserLinkAccount"> | string
   provider?: Prisma.StringFilter<"UserLinkAccount"> | string
   providerAccountId?: Prisma.StringFilter<"UserLinkAccount"> | string
-  refreshToken?: Prisma.StringNullableFilter<"UserLinkAccount"> | string | null
   createdAt?: Prisma.DateTimeFilter<"UserLinkAccount"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"UserLinkAccount"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
@@ -266,7 +256,6 @@ export type UserLinkAccountOrderByWithAggregationInput = {
   userId?: Prisma.SortOrder
   provider?: Prisma.SortOrder
   providerAccountId?: Prisma.SortOrder
-  refreshToken?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.UserLinkAccountCountOrderByAggregateInput
@@ -284,7 +273,6 @@ export type UserLinkAccountScalarWhereWithAggregatesInput = {
   userId?: Prisma.UuidWithAggregatesFilter<"UserLinkAccount"> | string
   provider?: Prisma.StringWithAggregatesFilter<"UserLinkAccount"> | string
   providerAccountId?: Prisma.StringWithAggregatesFilter<"UserLinkAccount"> | string
-  refreshToken?: Prisma.StringNullableWithAggregatesFilter<"UserLinkAccount"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"UserLinkAccount"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"UserLinkAccount"> | Date | string
 }
@@ -292,7 +280,6 @@ export type UserLinkAccountScalarWhereWithAggregatesInput = {
 export type UserLinkAccountCreateInput = {
   provider: string
   providerAccountId: string
-  refreshToken?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutLinkAccountsInput
@@ -303,7 +290,6 @@ export type UserLinkAccountUncheckedCreateInput = {
   userId: string
   provider: string
   providerAccountId: string
-  refreshToken?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -311,7 +297,6 @@ export type UserLinkAccountUncheckedCreateInput = {
 export type UserLinkAccountUpdateInput = {
   provider?: Prisma.StringFieldUpdateOperationsInput | string
   providerAccountId?: Prisma.StringFieldUpdateOperationsInput | string
-  refreshToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutLinkAccountsNestedInput
@@ -322,7 +307,6 @@ export type UserLinkAccountUncheckedUpdateInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   provider?: Prisma.StringFieldUpdateOperationsInput | string
   providerAccountId?: Prisma.StringFieldUpdateOperationsInput | string
-  refreshToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -332,7 +316,6 @@ export type UserLinkAccountCreateManyInput = {
   userId: string
   provider: string
   providerAccountId: string
-  refreshToken?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -340,7 +323,6 @@ export type UserLinkAccountCreateManyInput = {
 export type UserLinkAccountUpdateManyMutationInput = {
   provider?: Prisma.StringFieldUpdateOperationsInput | string
   providerAccountId?: Prisma.StringFieldUpdateOperationsInput | string
-  refreshToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -350,7 +332,6 @@ export type UserLinkAccountUncheckedUpdateManyInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   provider?: Prisma.StringFieldUpdateOperationsInput | string
   providerAccountId?: Prisma.StringFieldUpdateOperationsInput | string
-  refreshToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -375,7 +356,6 @@ export type UserLinkAccountCountOrderByAggregateInput = {
   userId?: Prisma.SortOrder
   provider?: Prisma.SortOrder
   providerAccountId?: Prisma.SortOrder
-  refreshToken?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -389,7 +369,6 @@ export type UserLinkAccountMaxOrderByAggregateInput = {
   userId?: Prisma.SortOrder
   provider?: Prisma.SortOrder
   providerAccountId?: Prisma.SortOrder
-  refreshToken?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -399,7 +378,6 @@ export type UserLinkAccountMinOrderByAggregateInput = {
   userId?: Prisma.SortOrder
   provider?: Prisma.SortOrder
   providerAccountId?: Prisma.SortOrder
-  refreshToken?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -450,10 +428,6 @@ export type UserLinkAccountUncheckedUpdateManyWithoutUserNestedInput = {
   deleteMany?: Prisma.UserLinkAccountScalarWhereInput | Prisma.UserLinkAccountScalarWhereInput[]
 }
 
-export type NullableStringFieldUpdateOperationsInput = {
-  set?: string | null
-}
-
 export type IntFieldUpdateOperationsInput = {
   set?: number
   increment?: number
@@ -465,7 +439,6 @@ export type IntFieldUpdateOperationsInput = {
 export type UserLinkAccountCreateWithoutUserInput = {
   provider: string
   providerAccountId: string
-  refreshToken?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -474,7 +447,6 @@ export type UserLinkAccountUncheckedCreateWithoutUserInput = {
   id?: number
   provider: string
   providerAccountId: string
-  refreshToken?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -513,7 +485,6 @@ export type UserLinkAccountScalarWhereInput = {
   userId?: Prisma.UuidFilter<"UserLinkAccount"> | string
   provider?: Prisma.StringFilter<"UserLinkAccount"> | string
   providerAccountId?: Prisma.StringFilter<"UserLinkAccount"> | string
-  refreshToken?: Prisma.StringNullableFilter<"UserLinkAccount"> | string | null
   createdAt?: Prisma.DateTimeFilter<"UserLinkAccount"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"UserLinkAccount"> | Date | string
 }
@@ -522,7 +493,6 @@ export type UserLinkAccountCreateManyUserInput = {
   id?: number
   provider: string
   providerAccountId: string
-  refreshToken?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -530,7 +500,6 @@ export type UserLinkAccountCreateManyUserInput = {
 export type UserLinkAccountUpdateWithoutUserInput = {
   provider?: Prisma.StringFieldUpdateOperationsInput | string
   providerAccountId?: Prisma.StringFieldUpdateOperationsInput | string
-  refreshToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -539,7 +508,6 @@ export type UserLinkAccountUncheckedUpdateWithoutUserInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   provider?: Prisma.StringFieldUpdateOperationsInput | string
   providerAccountId?: Prisma.StringFieldUpdateOperationsInput | string
-  refreshToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -548,7 +516,6 @@ export type UserLinkAccountUncheckedUpdateManyWithoutUserInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   provider?: Prisma.StringFieldUpdateOperationsInput | string
   providerAccountId?: Prisma.StringFieldUpdateOperationsInput | string
-  refreshToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -560,7 +527,6 @@ export type UserLinkAccountSelect<ExtArgs extends runtime.Types.Extensions.Inter
   userId?: boolean
   provider?: boolean
   providerAccountId?: boolean
-  refreshToken?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -571,7 +537,6 @@ export type UserLinkAccountSelectCreateManyAndReturn<ExtArgs extends runtime.Typ
   userId?: boolean
   provider?: boolean
   providerAccountId?: boolean
-  refreshToken?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -582,7 +547,6 @@ export type UserLinkAccountSelectUpdateManyAndReturn<ExtArgs extends runtime.Typ
   userId?: boolean
   provider?: boolean
   providerAccountId?: boolean
-  refreshToken?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -593,12 +557,11 @@ export type UserLinkAccountSelectScalar = {
   userId?: boolean
   provider?: boolean
   providerAccountId?: boolean
-  refreshToken?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type UserLinkAccountOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "provider" | "providerAccountId" | "refreshToken" | "createdAt" | "updatedAt", ExtArgs["result"]["userLinkAccount"]>
+export type UserLinkAccountOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "provider" | "providerAccountId" | "createdAt" | "updatedAt", ExtArgs["result"]["userLinkAccount"]>
 export type UserLinkAccountInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
@@ -619,7 +582,6 @@ export type $UserLinkAccountPayload<ExtArgs extends runtime.Types.Extensions.Int
     userId: string
     provider: string
     providerAccountId: string
-    refreshToken: string | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["userLinkAccount"]>
@@ -1050,7 +1012,6 @@ export interface UserLinkAccountFieldRefs {
   readonly userId: Prisma.FieldRef<"UserLinkAccount", 'String'>
   readonly provider: Prisma.FieldRef<"UserLinkAccount", 'String'>
   readonly providerAccountId: Prisma.FieldRef<"UserLinkAccount", 'String'>
-  readonly refreshToken: Prisma.FieldRef<"UserLinkAccount", 'String'>
   readonly createdAt: Prisma.FieldRef<"UserLinkAccount", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"UserLinkAccount", 'DateTime'>
 }

@@ -444,6 +444,10 @@ export type UserDefaultPromptUncheckedUpdateManyWithoutUserPromptNestedInput = {
   deleteMany?: Prisma.UserDefaultPromptScalarWhereInput | Prisma.UserDefaultPromptScalarWhereInput[]
 }
 
+export type NullableStringFieldUpdateOperationsInput = {
+  set?: string | null
+}
+
 export type UserDefaultPromptCreateWithoutUserInput = {
   createdAt?: Date | string
   updatedAt?: Date | string

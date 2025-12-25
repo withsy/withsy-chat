@@ -448,10 +448,6 @@ export type BoolFieldUpdateOperationsInput = {
   set?: boolean
 }
 
-export type NullableDateTimeFieldUpdateOperationsInput = {
-  set?: Date | string | null
-}
-
 export type UserPromptCreateNestedOneWithoutDefaultPromptsInput = {
   create?: Prisma.XOR<Prisma.UserPromptCreateWithoutDefaultPromptsInput, Prisma.UserPromptUncheckedCreateWithoutDefaultPromptsInput>
   connectOrCreate?: Prisma.UserPromptCreateOrConnectWithoutDefaultPromptsInput

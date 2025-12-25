@@ -392,16 +392,13 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 export const ModelName = {
   User: 'User',
   UserLinkAccount: 'UserLinkAccount',
-  RefreshToken: 'RefreshToken',
   UserUsageLimit: 'UserUsageLimit',
   UserPrompt: 'UserPrompt',
   UserDefaultPrompt: 'UserDefaultPrompt',
-  UserAiProfile: 'UserAiProfile',
   Chat: 'Chat',
-  ChatParentMessage: 'ChatParentMessage',
   ChatPrompt: 'ChatPrompt',
-  Message: 'Message',
-  MessageChunk: 'MessageChunk',
+  ChatMessage: 'ChatMessage',
+  ChatMessageChunk: 'ChatMessageChunk',
   IdempotencyKey: 'IdempotencyKey',
   ApiKey: 'ApiKey',
   SupabaseActivity: 'SupabaseActivity'
@@ -420,7 +417,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "userLinkAccount" | "refreshToken" | "userUsageLimit" | "userPrompt" | "userDefaultPrompt" | "userAiProfile" | "chat" | "chatParentMessage" | "chatPrompt" | "message" | "messageChunk" | "idempotencyKey" | "apiKey" | "supabaseActivity"
+    modelProps: "user" | "userLinkAccount" | "userUsageLimit" | "userPrompt" | "userDefaultPrompt" | "chat" | "chatPrompt" | "chatMessage" | "chatMessageChunk" | "idempotencyKey" | "apiKey" | "supabaseActivity"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -569,80 +566,6 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.UserLinkAccountCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.UserLinkAccountCountAggregateOutputType> | number
-        }
-      }
-    }
-    RefreshToken: {
-      payload: Prisma.$RefreshTokenPayload<ExtArgs>
-      fields: Prisma.RefreshTokenFieldRefs
-      operations: {
-        findUnique: {
-          args: Prisma.RefreshTokenFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$RefreshTokenPayload> | null
-        }
-        findUniqueOrThrow: {
-          args: Prisma.RefreshTokenFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$RefreshTokenPayload>
-        }
-        findFirst: {
-          args: Prisma.RefreshTokenFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$RefreshTokenPayload> | null
-        }
-        findFirstOrThrow: {
-          args: Prisma.RefreshTokenFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$RefreshTokenPayload>
-        }
-        findMany: {
-          args: Prisma.RefreshTokenFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$RefreshTokenPayload>[]
-        }
-        create: {
-          args: Prisma.RefreshTokenCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$RefreshTokenPayload>
-        }
-        createMany: {
-          args: Prisma.RefreshTokenCreateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        createManyAndReturn: {
-          args: Prisma.RefreshTokenCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$RefreshTokenPayload>[]
-        }
-        delete: {
-          args: Prisma.RefreshTokenDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$RefreshTokenPayload>
-        }
-        update: {
-          args: Prisma.RefreshTokenUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$RefreshTokenPayload>
-        }
-        deleteMany: {
-          args: Prisma.RefreshTokenDeleteManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateMany: {
-          args: Prisma.RefreshTokenUpdateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateManyAndReturn: {
-          args: Prisma.RefreshTokenUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$RefreshTokenPayload>[]
-        }
-        upsert: {
-          args: Prisma.RefreshTokenUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$RefreshTokenPayload>
-        }
-        aggregate: {
-          args: Prisma.RefreshTokenAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateRefreshToken>
-        }
-        groupBy: {
-          args: Prisma.RefreshTokenGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.RefreshTokenGroupByOutputType>[]
-        }
-        count: {
-          args: Prisma.RefreshTokenCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.RefreshTokenCountAggregateOutputType> | number
         }
       }
     }
@@ -868,80 +791,6 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
-    UserAiProfile: {
-      payload: Prisma.$UserAiProfilePayload<ExtArgs>
-      fields: Prisma.UserAiProfileFieldRefs
-      operations: {
-        findUnique: {
-          args: Prisma.UserAiProfileFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserAiProfilePayload> | null
-        }
-        findUniqueOrThrow: {
-          args: Prisma.UserAiProfileFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserAiProfilePayload>
-        }
-        findFirst: {
-          args: Prisma.UserAiProfileFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserAiProfilePayload> | null
-        }
-        findFirstOrThrow: {
-          args: Prisma.UserAiProfileFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserAiProfilePayload>
-        }
-        findMany: {
-          args: Prisma.UserAiProfileFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserAiProfilePayload>[]
-        }
-        create: {
-          args: Prisma.UserAiProfileCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserAiProfilePayload>
-        }
-        createMany: {
-          args: Prisma.UserAiProfileCreateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        createManyAndReturn: {
-          args: Prisma.UserAiProfileCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserAiProfilePayload>[]
-        }
-        delete: {
-          args: Prisma.UserAiProfileDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserAiProfilePayload>
-        }
-        update: {
-          args: Prisma.UserAiProfileUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserAiProfilePayload>
-        }
-        deleteMany: {
-          args: Prisma.UserAiProfileDeleteManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateMany: {
-          args: Prisma.UserAiProfileUpdateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateManyAndReturn: {
-          args: Prisma.UserAiProfileUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserAiProfilePayload>[]
-        }
-        upsert: {
-          args: Prisma.UserAiProfileUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserAiProfilePayload>
-        }
-        aggregate: {
-          args: Prisma.UserAiProfileAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateUserAiProfile>
-        }
-        groupBy: {
-          args: Prisma.UserAiProfileGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.UserAiProfileGroupByOutputType>[]
-        }
-        count: {
-          args: Prisma.UserAiProfileCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.UserAiProfileCountAggregateOutputType> | number
-        }
-      }
-    }
     Chat: {
       payload: Prisma.$ChatPayload<ExtArgs>
       fields: Prisma.ChatFieldRefs
@@ -1013,80 +862,6 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.ChatCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.ChatCountAggregateOutputType> | number
-        }
-      }
-    }
-    ChatParentMessage: {
-      payload: Prisma.$ChatParentMessagePayload<ExtArgs>
-      fields: Prisma.ChatParentMessageFieldRefs
-      operations: {
-        findUnique: {
-          args: Prisma.ChatParentMessageFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatParentMessagePayload> | null
-        }
-        findUniqueOrThrow: {
-          args: Prisma.ChatParentMessageFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatParentMessagePayload>
-        }
-        findFirst: {
-          args: Prisma.ChatParentMessageFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatParentMessagePayload> | null
-        }
-        findFirstOrThrow: {
-          args: Prisma.ChatParentMessageFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatParentMessagePayload>
-        }
-        findMany: {
-          args: Prisma.ChatParentMessageFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatParentMessagePayload>[]
-        }
-        create: {
-          args: Prisma.ChatParentMessageCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatParentMessagePayload>
-        }
-        createMany: {
-          args: Prisma.ChatParentMessageCreateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        createManyAndReturn: {
-          args: Prisma.ChatParentMessageCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatParentMessagePayload>[]
-        }
-        delete: {
-          args: Prisma.ChatParentMessageDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatParentMessagePayload>
-        }
-        update: {
-          args: Prisma.ChatParentMessageUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatParentMessagePayload>
-        }
-        deleteMany: {
-          args: Prisma.ChatParentMessageDeleteManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateMany: {
-          args: Prisma.ChatParentMessageUpdateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateManyAndReturn: {
-          args: Prisma.ChatParentMessageUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatParentMessagePayload>[]
-        }
-        upsert: {
-          args: Prisma.ChatParentMessageUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatParentMessagePayload>
-        }
-        aggregate: {
-          args: Prisma.ChatParentMessageAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateChatParentMessage>
-        }
-        groupBy: {
-          args: Prisma.ChatParentMessageGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.ChatParentMessageGroupByOutputType>[]
-        }
-        count: {
-          args: Prisma.ChatParentMessageCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.ChatParentMessageCountAggregateOutputType> | number
         }
       }
     }
@@ -1164,151 +939,151 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
-    Message: {
-      payload: Prisma.$MessagePayload<ExtArgs>
-      fields: Prisma.MessageFieldRefs
+    ChatMessage: {
+      payload: Prisma.$ChatMessagePayload<ExtArgs>
+      fields: Prisma.ChatMessageFieldRefs
       operations: {
         findUnique: {
-          args: Prisma.MessageFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$MessagePayload> | null
+          args: Prisma.ChatMessageFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatMessagePayload> | null
         }
         findUniqueOrThrow: {
-          args: Prisma.MessageFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$MessagePayload>
+          args: Prisma.ChatMessageFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatMessagePayload>
         }
         findFirst: {
-          args: Prisma.MessageFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$MessagePayload> | null
+          args: Prisma.ChatMessageFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatMessagePayload> | null
         }
         findFirstOrThrow: {
-          args: Prisma.MessageFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$MessagePayload>
+          args: Prisma.ChatMessageFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatMessagePayload>
         }
         findMany: {
-          args: Prisma.MessageFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$MessagePayload>[]
+          args: Prisma.ChatMessageFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatMessagePayload>[]
         }
         create: {
-          args: Prisma.MessageCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$MessagePayload>
+          args: Prisma.ChatMessageCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatMessagePayload>
         }
         createMany: {
-          args: Prisma.MessageCreateManyArgs<ExtArgs>
+          args: Prisma.ChatMessageCreateManyArgs<ExtArgs>
           result: BatchPayload
         }
         createManyAndReturn: {
-          args: Prisma.MessageCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$MessagePayload>[]
+          args: Prisma.ChatMessageCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatMessagePayload>[]
         }
         delete: {
-          args: Prisma.MessageDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$MessagePayload>
+          args: Prisma.ChatMessageDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatMessagePayload>
         }
         update: {
-          args: Prisma.MessageUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$MessagePayload>
+          args: Prisma.ChatMessageUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatMessagePayload>
         }
         deleteMany: {
-          args: Prisma.MessageDeleteManyArgs<ExtArgs>
+          args: Prisma.ChatMessageDeleteManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateMany: {
-          args: Prisma.MessageUpdateManyArgs<ExtArgs>
+          args: Prisma.ChatMessageUpdateManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateManyAndReturn: {
-          args: Prisma.MessageUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$MessagePayload>[]
+          args: Prisma.ChatMessageUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatMessagePayload>[]
         }
         upsert: {
-          args: Prisma.MessageUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$MessagePayload>
+          args: Prisma.ChatMessageUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatMessagePayload>
         }
         aggregate: {
-          args: Prisma.MessageAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateMessage>
+          args: Prisma.ChatMessageAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateChatMessage>
         }
         groupBy: {
-          args: Prisma.MessageGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.MessageGroupByOutputType>[]
+          args: Prisma.ChatMessageGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ChatMessageGroupByOutputType>[]
         }
         count: {
-          args: Prisma.MessageCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.MessageCountAggregateOutputType> | number
+          args: Prisma.ChatMessageCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ChatMessageCountAggregateOutputType> | number
         }
       }
     }
-    MessageChunk: {
-      payload: Prisma.$MessageChunkPayload<ExtArgs>
-      fields: Prisma.MessageChunkFieldRefs
+    ChatMessageChunk: {
+      payload: Prisma.$ChatMessageChunkPayload<ExtArgs>
+      fields: Prisma.ChatMessageChunkFieldRefs
       operations: {
         findUnique: {
-          args: Prisma.MessageChunkFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$MessageChunkPayload> | null
+          args: Prisma.ChatMessageChunkFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatMessageChunkPayload> | null
         }
         findUniqueOrThrow: {
-          args: Prisma.MessageChunkFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$MessageChunkPayload>
+          args: Prisma.ChatMessageChunkFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatMessageChunkPayload>
         }
         findFirst: {
-          args: Prisma.MessageChunkFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$MessageChunkPayload> | null
+          args: Prisma.ChatMessageChunkFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatMessageChunkPayload> | null
         }
         findFirstOrThrow: {
-          args: Prisma.MessageChunkFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$MessageChunkPayload>
+          args: Prisma.ChatMessageChunkFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatMessageChunkPayload>
         }
         findMany: {
-          args: Prisma.MessageChunkFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$MessageChunkPayload>[]
+          args: Prisma.ChatMessageChunkFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatMessageChunkPayload>[]
         }
         create: {
-          args: Prisma.MessageChunkCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$MessageChunkPayload>
+          args: Prisma.ChatMessageChunkCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatMessageChunkPayload>
         }
         createMany: {
-          args: Prisma.MessageChunkCreateManyArgs<ExtArgs>
+          args: Prisma.ChatMessageChunkCreateManyArgs<ExtArgs>
           result: BatchPayload
         }
         createManyAndReturn: {
-          args: Prisma.MessageChunkCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$MessageChunkPayload>[]
+          args: Prisma.ChatMessageChunkCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatMessageChunkPayload>[]
         }
         delete: {
-          args: Prisma.MessageChunkDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$MessageChunkPayload>
+          args: Prisma.ChatMessageChunkDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatMessageChunkPayload>
         }
         update: {
-          args: Prisma.MessageChunkUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$MessageChunkPayload>
+          args: Prisma.ChatMessageChunkUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatMessageChunkPayload>
         }
         deleteMany: {
-          args: Prisma.MessageChunkDeleteManyArgs<ExtArgs>
+          args: Prisma.ChatMessageChunkDeleteManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateMany: {
-          args: Prisma.MessageChunkUpdateManyArgs<ExtArgs>
+          args: Prisma.ChatMessageChunkUpdateManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateManyAndReturn: {
-          args: Prisma.MessageChunkUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$MessageChunkPayload>[]
+          args: Prisma.ChatMessageChunkUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatMessageChunkPayload>[]
         }
         upsert: {
-          args: Prisma.MessageChunkUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$MessageChunkPayload>
+          args: Prisma.ChatMessageChunkUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatMessageChunkPayload>
         }
         aggregate: {
-          args: Prisma.MessageChunkAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateMessageChunk>
+          args: Prisma.ChatMessageChunkAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateChatMessageChunk>
         }
         groupBy: {
-          args: Prisma.MessageChunkGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.MessageChunkGroupByOutputType>[]
+          args: Prisma.ChatMessageChunkGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ChatMessageChunkGroupByOutputType>[]
         }
         count: {
-          args: Prisma.MessageChunkCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.MessageChunkCountAggregateOutputType> | number
+          args: Prisma.ChatMessageChunkCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ChatMessageChunkCountAggregateOutputType> | number
         }
       }
     }
@@ -1575,14 +1350,10 @@ export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof
 
 export const UserScalarFieldEnum = {
   id: 'id',
-  nameEncrypted: 'nameEncrypted',
-  emailEncrypted: 'emailEncrypted',
-  imageUrlEncrypted: 'imageUrlEncrypted',
-  aiLanguage: 'aiLanguage',
-  timezone: 'timezone',
   preferences: 'preferences',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -1601,24 +1372,11 @@ export const UserLinkAccountScalarFieldEnum = {
   userId: 'userId',
   provider: 'provider',
   providerAccountId: 'providerAccountId',
-  refreshToken: 'refreshToken',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type UserLinkAccountScalarFieldEnum = (typeof UserLinkAccountScalarFieldEnum)[keyof typeof UserLinkAccountScalarFieldEnum]
-
-
-export const RefreshTokenScalarFieldEnum = {
-  id: 'id',
-  provider: 'provider',
-  providerAccountId: 'providerAccountId',
-  refreshToken: 'refreshToken',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type RefreshTokenScalarFieldEnum = (typeof RefreshTokenScalarFieldEnum)[keyof typeof RefreshTokenScalarFieldEnum]
 
 
 export const UserUsageLimitScalarFieldEnum = {
@@ -1659,19 +1417,6 @@ export const UserDefaultPromptScalarFieldEnum = {
 export type UserDefaultPromptScalarFieldEnum = (typeof UserDefaultPromptScalarFieldEnum)[keyof typeof UserDefaultPromptScalarFieldEnum]
 
 
-export const UserAiProfileScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  model: 'model',
-  nameEncrypted: 'nameEncrypted',
-  imagePathEncrypted: 'imagePathEncrypted',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type UserAiProfileScalarFieldEnum = (typeof UserAiProfileScalarFieldEnum)[keyof typeof UserAiProfileScalarFieldEnum]
-
-
 export const ChatScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
@@ -1687,17 +1432,6 @@ export const ChatScalarFieldEnum = {
 export type ChatScalarFieldEnum = (typeof ChatScalarFieldEnum)[keyof typeof ChatScalarFieldEnum]
 
 
-export const ChatParentMessageScalarFieldEnum = {
-  id: 'id',
-  chatId: 'chatId',
-  messageId: 'messageId',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type ChatParentMessageScalarFieldEnum = (typeof ChatParentMessageScalarFieldEnum)[keyof typeof ChatParentMessageScalarFieldEnum]
-
-
 export const ChatPromptScalarFieldEnum = {
   id: 'id',
   chatId: 'chatId',
@@ -1709,7 +1443,7 @@ export const ChatPromptScalarFieldEnum = {
 export type ChatPromptScalarFieldEnum = (typeof ChatPromptScalarFieldEnum)[keyof typeof ChatPromptScalarFieldEnum]
 
 
-export const MessageScalarFieldEnum = {
+export const ChatMessageScalarFieldEnum = {
   id: 'id',
   chatId: 'chatId',
   role: 'role',
@@ -1718,18 +1452,16 @@ export const MessageScalarFieldEnum = {
   reasoningTextEncrypted: 'reasoningTextEncrypted',
   status: 'status',
   isBookmarked: 'isBookmarked',
-  isPublic: 'isPublic',
-  parentMessageId: 'parentMessageId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
-export type MessageScalarFieldEnum = (typeof MessageScalarFieldEnum)[keyof typeof MessageScalarFieldEnum]
+export type ChatMessageScalarFieldEnum = (typeof ChatMessageScalarFieldEnum)[keyof typeof ChatMessageScalarFieldEnum]
 
 
-export const MessageChunkScalarFieldEnum = {
+export const ChatMessageChunkScalarFieldEnum = {
   id: 'id',
-  messageId: 'messageId',
+  chatMessageId: 'chatMessageId',
   index: 'index',
   rawDataEncrypted: 'rawDataEncrypted',
   textEncrypted: 'textEncrypted',
@@ -1739,7 +1471,7 @@ export const MessageChunkScalarFieldEnum = {
   updatedAt: 'updatedAt'
 } as const
 
-export type MessageChunkScalarFieldEnum = (typeof MessageChunkScalarFieldEnum)[keyof typeof MessageChunkScalarFieldEnum]
+export type ChatMessageChunkScalarFieldEnum = (typeof ChatMessageChunkScalarFieldEnum)[keyof typeof ChatMessageChunkScalarFieldEnum]
 
 
 export const IdempotencyKeyScalarFieldEnum = {
@@ -1882,16 +1614,16 @@ export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel,
 
 
 /**
- * Reference to a field of type 'MessageStatus'
+ * Reference to a field of type 'ChatMessageStatus'
  */
-export type EnumMessageStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MessageStatus'>
+export type EnumChatMessageStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ChatMessageStatus'>
     
 
 
 /**
- * Reference to a field of type 'MessageStatus[]'
+ * Reference to a field of type 'ChatMessageStatus[]'
  */
-export type ListEnumMessageStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MessageStatus[]'>
+export type ListEnumChatMessageStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ChatMessageStatus[]'>
     
 
 
@@ -1997,16 +1729,13 @@ export interface PrismaClientOptions {
 export type GlobalOmitConfig = {
   user?: Prisma.UserOmit
   userLinkAccount?: Prisma.UserLinkAccountOmit
-  refreshToken?: Prisma.RefreshTokenOmit
   userUsageLimit?: Prisma.UserUsageLimitOmit
   userPrompt?: Prisma.UserPromptOmit
   userDefaultPrompt?: Prisma.UserDefaultPromptOmit
-  userAiProfile?: Prisma.UserAiProfileOmit
   chat?: Prisma.ChatOmit
-  chatParentMessage?: Prisma.ChatParentMessageOmit
   chatPrompt?: Prisma.ChatPromptOmit
-  message?: Prisma.MessageOmit
-  messageChunk?: Prisma.MessageChunkOmit
+  chatMessage?: Prisma.ChatMessageOmit
+  chatMessageChunk?: Prisma.ChatMessageChunkOmit
   idempotencyKey?: Prisma.IdempotencyKeyOmit
   apiKey?: Prisma.ApiKeyOmit
   supabaseActivity?: Prisma.SupabaseActivityOmit

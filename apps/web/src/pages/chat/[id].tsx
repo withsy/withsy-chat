@@ -5,10 +5,17 @@ import { useRouter } from "next/router";
 
 export default function Page() {
   const router = useRouter();
-  const { id } = router.query;
-  const chatId = typeof id === "string" ? id : null;
 
-  if (!chatId) return <PartialError message="Invalid chat id" />;
+  if (!router.isReady) {
+    return null;
+  }
+
+  const { id } = router.query;
+  const chatId = typeof id === "string" ? id : "";
+
+  if (!chatId) {
+    return <PartialError message="Invalid chatId." />;
+  }
 
   return (
     <ChatLayout>

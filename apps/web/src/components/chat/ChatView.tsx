@@ -1,6 +1,5 @@
 import { ChatSession } from "@/components/chat/ChatSession";
 import { useTRPC } from "@/lib/trpc";
-import { useChatStore } from "@/stores/useChatStore";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
