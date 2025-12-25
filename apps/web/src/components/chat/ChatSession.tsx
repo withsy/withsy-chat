@@ -2,30 +2,28 @@ import { ChatSessionProvider } from "@/context/ChatSessionContext";
 import { useUserPreference } from "@/hooks/useUserPreference";
 import { useTRPC } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
-import { useChatStore } from "@/stores/useChatStore";
 import { useDrawerStore } from "@/stores/useDrawerStore";
 import { useSelectedModelStore } from "@/stores/useSelectedModelStore";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { toast } from "sonner";
 import { v4 as uuid } from "uuid";
-import { ChatDrawer } from "./ChatDrawer";
+// import { ChatDrawer } from "./ChatDrawer";
 import ChatHeader from "./ChatHeader";
 import { ChatInputBox } from "./ChatInputBox";
 import { ChatMessageList } from "./ChatMessageList";
 import MobileChatHeader from "./MobileChatHeader";
 
 type Props = {
-  initialMessages: MessageData[];
-  children?: React.ReactNode;
+  chatId?: string;
+  children?: ReactNode;
 };
 
-export function ChatSession({ initialMessages, children }: Props) {
+export function ChatSession({ chatId, children }: Props) {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
-  const { chat } = useChatStore();
   const router = useRouter();
   const { collapsed, isMobile } = useSidebarStore();
   const { selectedModel } = useSelectedModelStore();
@@ -43,7 +41,7 @@ export function ChatSession({ initialMessages, children }: Props) {
     trpc.userUsageLimit.list.queryOptions(
       { type: "message" },
       {
-        enabled: !!chat?.id,
+        enabled: !!chatId,
       },
     ),
   );

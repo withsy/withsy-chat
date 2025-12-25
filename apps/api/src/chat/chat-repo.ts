@@ -1,7 +1,7 @@
 import { Tx } from "../db/db-service";
 import { ChatModel } from "../generated/prisma/models";
 import { UserId } from "../user/user-schemas";
-import { ChatList } from "./chat-schemas";
+import { ChatDelete, ChatList, ChatUpdate } from "./chat-schemas";
 
 export class ChatRepo {
   constructor(private readonly tx: Tx) {}
@@ -26,5 +26,13 @@ export class ChatRepo {
     });
 
     return entities;
+  }
+
+  async update(userId: UserId, input: ChatUpdate): Promise<ChatModel> {
+    throw new Error();
+  }
+
+  async delete(userId: UserId, input: ChatDelete): Promise<ChatModel> {
+    throw new Error();
   }
 }

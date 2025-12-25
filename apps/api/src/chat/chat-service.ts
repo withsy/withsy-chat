@@ -7,8 +7,6 @@ import {
   ChatData,
   ChatDelete,
   ChatList,
-  ChatListBranch,
-  ChatListBranchOutput,
   ChatListOutput,
   ChatUpdate,
 } from "./chat-schemas";
@@ -35,17 +33,15 @@ export class ChatService {
   }
 
   async update(userId: UserId, input: ChatUpdate): Promise<ChatData> {
-    throw new Error();
+    const chatRepo = new ChatRepo(this.dbService.db);
+    const entity = await chatRepo.update(userId, input);
+    const data = this.chatEntityMapper.toData(entity);
+
+    return data;
   }
 
   async delete(userId: UserId, input: ChatDelete): Promise<void> {
-    throw new Error();
-  }
-
-  async listBranch(
-    userId: UserId,
-    input: ChatListBranch,
-  ): Promise<ChatListBranchOutput> {
-    throw new Error();
+    const chatRepo = new ChatRepo(this.dbService.db);
+    await chatRepo.delete(userId, input);
   }
 }

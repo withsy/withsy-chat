@@ -3,11 +3,14 @@ import { createTrpcClient, getQueryClient, TRPCProvider } from "@/lib/trpc";
 import "@/styles/globals.css";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { enableMapSet } from "immer";
 import { SessionProvider } from "next-auth/react";
 import type { AppProps } from "next/app";
 import Head from "next/head";
 import { useState } from "react";
 import { Toaster as Sonner } from "sonner";
+
+enableMapSet();
 
 export default function App({
   Component,

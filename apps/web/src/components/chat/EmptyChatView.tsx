@@ -1,7 +1,8 @@
-import { useChatStore } from "@/stores/useChatStore";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { ChatSession } from "./ChatSession";
+
+const _10minutesInMs = 10 * 60 * 1000;
 
 function getGreeting() {
   const hour = new Date().getHours();
@@ -12,33 +13,28 @@ function getGreeting() {
 }
 
 export default function EmptyChatView() {
-  const { data: session } = useSession();
-  const name = session?.user?.name;
+  const session = useSession();
+  const name = session.data?.user?.name;
 
   const [greeting, setGreeting] = useState("");
-  const setChat = useChatStore((state) => state.setChat);
 
   useEffect(() => {
-    setChat(null);
-
     // NOTE: Use Promise to avoid client/server hydration mismatch.
     Promise.try(() => setGreeting(getGreeting()));
 
     const interval = setInterval(
-      () => {
-        setGreeting(getGreeting());
-      },
-      1000 * 60 * 10,
+      () => setGreeting(getGreeting()),
+      _10minutesInMs,
     );
     return () => clearInterval(interval);
-  }, [setChat, setGreeting]);
+  }, [setGreeting]);
 
-  if (!session || !greeting) {
+  if (!session.data || !greeting) {
     return null;
   }
 
   return (
-    <ChatSession initialMessages={[]}>
+    <ChatSession>
       <div className="flex h-full w-full flex-col items-center justify-center px-4 select-none">
         <h1 className="text-2xl font-semibold">
           {greeting}
