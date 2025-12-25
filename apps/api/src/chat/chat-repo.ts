@@ -18,7 +18,7 @@ export class ChatRepo {
         deletedAt: null,
       },
       orderBy: {
-        id: "asc",
+        id: "desc",
       },
       take: limit,
       cursor: cursor
