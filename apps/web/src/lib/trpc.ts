@@ -20,6 +20,7 @@ function makeQueryClient() {
   return new QueryClient({
     defaultOptions: {
       queries: {
+        staleTime: Infinity,
         refetchOnMount: false,
         refetchOnWindowFocus: false,
         refetchOnReconnect: false,
