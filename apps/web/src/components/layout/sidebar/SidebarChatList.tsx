@@ -15,7 +15,6 @@ export default function SidebarChatList() {
     if (chatList.data) {
       const chats = chatList.data.pages.flatMap((page) => page.items);
       useUserStore.setState((state) => {
-        state.chatMap.clear();
         chats.forEach((chat) => state.chatMap.set(chat.id, chat));
       });
     }
