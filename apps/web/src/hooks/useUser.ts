@@ -4,7 +4,7 @@ import type {
   UserPreferences,
 } from "@/common-schemas";
 import { useTRPC } from "@/lib/trpc";
-import { useUserSessionStorageStore } from "@/stores/useUserSessionStorageStore";
+import { useUserSessionStore } from "@/stores/useUserSessionStore";
 import { useUserStore } from "@/stores/useUserStore";
 import { useMutation } from "@tanstack/react-query";
 
@@ -20,7 +20,7 @@ const DEFAULT_USER_PREFERENCES: UserPreferences = {
 export function useUserPreference<Key extends UserPreferenceKey>(
   key: Key,
 ): UserPreferences[Key] {
-  const value = useUserSessionStorageStore((s) => s.preferences[key]);
+  const value = useUserSessionStore((s) => s.preferences[key]);
   return value ?? DEFAULT_USER_PREFERENCES[key];
 }
 
@@ -64,14 +64,14 @@ export function useUserUpdate() {
         >();
         keys.forEach((key) => {
           const value = Reflect.get(
-            useUserSessionStorageStore.getState().preferences,
+            useUserSessionStore.getState().preferences,
             key,
           );
           rollbackMap.set(key, value);
         });
 
         // Optimistic update.
-        useUserSessionStorageStore.getState().updatePreferences(filteredInput);
+        useUserSessionStore.getState().updatePreferences(filteredInput);
 
         // Lock keys.
         useUserStore.setState((state) => {
@@ -88,16 +88,14 @@ export function useUserUpdate() {
           const { rollbackMap } = result;
 
           // Rollback.
-          useUserSessionStorageStore
+          useUserSessionStore
             .getState()
             .updatePreferences(Object.fromEntries(rollbackMap));
         }
       },
       onSuccess: (output) => {
         // Sync with server.
-        useUserSessionStorageStore
-          .getState()
-          .setPreferences(output.preferences);
+        useUserSessionStore.getState().setPreferences(output.preferences);
       },
       onSettled: (_, __, ___, result) => {
         if (result) {

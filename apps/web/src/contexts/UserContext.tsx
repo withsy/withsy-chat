@@ -1,5 +1,5 @@
 import { AuthSession } from "@/common-schemas";
-import { useUserSessionStorageStore } from "@/stores/useUserSessionStorageStore";
+import { useUserSessionStore } from "@/stores/useUserSessionStore";
 import { useUserStore } from "@/stores/useUserStore";
 import { useSession } from "next-auth/react";
 import { useEffect, type ReactNode } from "react";
@@ -16,7 +16,7 @@ export function UserProvider({ children }: Props) {
       const authSession = AuthSession.parse(session.data);
       const { user } = authSession;
 
-      useUserSessionStorageStore.getState().setPreferences(user.preferences);
+      useUserSessionStore.getState().setPreferences(user.preferences);
       useUserStore.setState((state) => {
         state.user = user;
       });
@@ -26,7 +26,7 @@ export function UserProvider({ children }: Props) {
   useEffect(() => {
     if (session.status === "unauthenticated") {
       useUserStore.getState().clear();
-      useUserSessionStorageStore.getState().clear();
+      useUserSessionStore.getState().clear();
     }
   }, [session.status]);
 

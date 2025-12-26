@@ -16,7 +16,7 @@ interface UserSessionStorageStore {
   updatePreferences: (partial: PartialUserPreferences) => void;
 }
 
-export const useUserSessionStorageStore = create<UserSessionStorageStore>()(
+export const useUserSessionStore = create<UserSessionStorageStore>()(
   devtools(
     persist(
       immer((set) => ({
@@ -24,7 +24,7 @@ export const useUserSessionStorageStore = create<UserSessionStorageStore>()(
           set((state) => {
             state.preferences = {};
           });
-          useUserSessionStorageStore.persist.clearStorage();
+          useUserSessionStore.persist.clearStorage();
         },
         preferences: {},
         setPreferences: (raw) => {
