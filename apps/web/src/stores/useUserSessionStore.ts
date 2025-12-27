@@ -2,7 +2,7 @@ import type {
   PartialUserPreferences,
   UserPreferenceKey,
 } from "@/common-schemas";
-import type { RawUserPreferences } from "@repo/api-shared";
+import type { Model, RawUserPreferences } from "@repo/api-shared";
 import { create } from "zustand";
 import { createJSONStorage, devtools, persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
@@ -14,6 +14,7 @@ interface UserSessionStorageStore {
   preferences: PartialUserPreferences;
   setPreferences: (raw: RawUserPreferences) => void;
   updatePreferences: (partial: PartialUserPreferences) => void;
+  selectedModel: Model;
 }
 
 export const useUserSessionStore = create<UserSessionStorageStore>()(
@@ -23,6 +24,7 @@ export const useUserSessionStore = create<UserSessionStorageStore>()(
         clear: () => {
           set((state) => {
             state.preferences = {};
+            state.selectedModel = "gemini-2.5-flash";
           });
           useUserSessionStore.persist.clearStorage();
         },
@@ -47,6 +49,7 @@ export const useUserSessionStore = create<UserSessionStorageStore>()(
             });
           });
         },
+        selectedModel: "gemini-2.5-flash",
       })),
       {
         name: STORE_NAME,

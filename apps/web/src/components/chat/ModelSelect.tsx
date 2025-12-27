@@ -1,7 +1,7 @@
 import { useAiProfileStore } from "@/stores/useAiProfileStore";
-import { useSelectedModelStore } from "@/stores/useSelectedModelStore";
 import { useSidebarStore } from "@/stores/useSidebarStore";
-import { Model } from "@/types/model";
+import { useUserSessionStore } from "@/stores/useUserSessionStore";
+import type { Model } from "@repo/api-shared";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { ModelDropdown } from "./ModelDropdown";
 import { ModelSelectButton } from "./ModelSelectButton";
@@ -50,7 +50,7 @@ export function ModelSelect({
   onSelectModel,
 }: ModelSelectProps) {
   const { isMobile } = useSidebarStore();
-  const { selectedModel, setSelectedModel } = useSelectedModelStore();
+  const selectedModel = useUserSessionStore((s) => s.selectedModel);
   const { profiles } = useAiProfileStore();
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -111,7 +111,9 @@ export function ModelSelect({
         isOpen={open}
         onClose={() => setOpen(false)}
         onSelect={(val) => {
-          setSelectedModel(val);
+          useUserSessionStore.setState((state) => {
+            state.selectedModel = val;
+          });
           onSelectModel?.(val);
           setOpen(false);
         }}

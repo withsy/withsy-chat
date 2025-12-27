@@ -8,8 +8,6 @@ import {
   ChatDelete,
   ChatList,
   ChatListOutput,
-  ChatStart,
-  ChatStartOutput,
   ChatUpdate,
 } from "./chat-schemas";
 
@@ -45,9 +43,5 @@ export class ChatService {
   async delete(userId: UserId, input: ChatDelete): Promise<void> {
     const chatRepo = new ChatRepo(this.dbService.db);
     await chatRepo.delete(userId, input);
-  }
-
-  async start(userId: UserId, input: ChatStart): Promise<ChatStartOutput> {
-    throw new Error();
   }
 }

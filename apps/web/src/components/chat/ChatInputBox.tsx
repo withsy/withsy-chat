@@ -1,8 +1,11 @@
+import { useChatMessageSend } from "@/hooks/useChatMessage";
 import { useUserPreference } from "@/hooks/useUser";
 import { cn } from "@/lib/utils";
+import { useUserSessionStore } from "@/stores/useUserSessionStore";
 import { Send } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import TextareaAutosize from "react-textarea-autosize";
+import { v4 } from "uuid";
 import { ModelSelect } from "./ModelSelect";
 import { UsageLimitNotice } from "./UsageLimitNotice";
 
@@ -22,8 +25,11 @@ export function ChatInputBox({ chatId }: { chatId?: string }) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [shouldFocusInput, setShouldFocusInput] = useState(false);
   const [randomPlaceholder, setRandomPlaceholder] = useState("");
+  const chatMessageSend = useChatMessageSend();
+  const selectedModel = useUserSessionStore((s) => s.selectedModel);
 
-  const isSendDisabled = false;
+  const isSendDisabled = chatMessageSend.isPending;
+  // TODO: fix by userUsageLimit
   // usageLimits
   //   .filter((x) => x.type === "message")
   //   .some((x) => x.remainingAmount <= 0);
@@ -94,8 +100,16 @@ export function ChatInputBox({ chatId }: { chatId?: string }) {
   }, []);
 
   const handleSend = () => {
-    if (!message.trim()) return;
-    onSendMessage(message);
+    if (!message.trim()) {
+      return;
+    }
+
+    chatMessageSend.mutate({
+      idempotencyKey: v4(),
+      model: selectedModel,
+      text: message,
+      chatId,
+    });
     setMessage("");
   };
 
