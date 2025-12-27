@@ -5,7 +5,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useChatSession } from "@/context/ChatSessionContext";
 import { useUserPreference } from "@/hooks/useUser";
 import { useTRPC } from "@/lib/trpc";
 import { cn } from "@/lib/utils";

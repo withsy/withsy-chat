@@ -2,7 +2,7 @@ import { MarkdownBox } from "@/components/MarkdownBox";
 import { BookmarkCardHeader } from "@/components/bookmarks/BookmarkCardHeader";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { useUserPreference } from "@/hooks/useUserPreference";
+import { useUserPreference } from "@/hooks/useUser";
 import { useTRPC } from "@/lib/trpc";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
@@ -41,7 +41,7 @@ export function BookmarkCard({
   const messageLink = `/chat/${chatId}?messageId=${messageId}`;
 
   const updateMessageMutation = useMutation(
-    trpc.message.update.mutationOptions(),
+    trpc.chatMessage.update.mutationOptions(),
   );
 
   const handleToggleSaved = () => {

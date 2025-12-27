@@ -1,5 +1,5 @@
 import type { MessageData } from "@/common-schemas";
-import { useChatListBranch, useChatUpdate } from "@/hooks/useChat";
+import { useChatUpdate } from "@/hooks/useChat";
 import { useUserDefaultPromptTryGet } from "@/hooks/useUserDefaultPrompt";
 import { useUserPromptList } from "@/hooks/useUserPrompt";
 import { cn } from "@/lib/utils";
@@ -66,7 +66,7 @@ export const ChatDrawer = ({ savedMessages }: ChatDrawerProps) => {
   } else if (openDrawer === "saved") {
     body = <SavedMessages />;
   } else if (openDrawer === "branches") {
-    body = <Branches chatBranchList={chatBranchList} />;
+    body = <Branches />;
   } else if (openDrawer === "prompt") {
     body = <Prompts />;
   } else {

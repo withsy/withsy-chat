@@ -1,4 +1,4 @@
-import { useUserPreference } from "@/hooks/useUserPreference";
+import { useUserPreference } from "@/hooks/useUser";
 import { capitalizeFirstLetter } from "@/lib/string-utils";
 import { CircleX } from "lucide-react";
 

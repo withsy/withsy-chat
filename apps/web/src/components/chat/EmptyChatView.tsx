@@ -34,13 +34,13 @@ export default function EmptyChatView() {
   const name = session.data.user?.name;
 
   return (
-    // <ChatSession>
-    <div className="flex h-full w-full flex-col items-center justify-center px-4 select-none">
-      <h1 className="text-2xl font-semibold">
-        {greeting}
-        {name && `, ${name}`}
-      </h1>
-    </div>
-    // </ChatSession>
+    <ChatSession>
+      <div className="flex h-full w-full flex-col items-center justify-center px-4 select-none">
+        <h1 className="text-2xl font-semibold">
+          {greeting}
+          {name && `, ${name}`}
+        </h1>
+      </div>
+    </ChatSession>
   );
 }
