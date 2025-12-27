@@ -1,4 +1,3 @@
-import { ChatSessionProvider } from "@/context/ChatSessionContext";
 import { useUserPreference } from "@/hooks/useUser";
 import { useTRPC } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
@@ -10,7 +9,7 @@ import { useRouter } from "next/router";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { toast } from "sonner";
 import { v4 as uuid } from "uuid";
-// import { ChatDrawer } from "./ChatDrawer";
+import { ChatDrawer } from "./ChatDrawer";
 import ChatHeader from "./ChatHeader";
 import { ChatInputBox } from "./ChatInputBox";
 import { ChatMessageList } from "./ChatMessageList";
@@ -247,12 +246,10 @@ export function ChatSession({ chatId, children }: Props) {
           )}
         >
           {(chat || messages.length > 0) && (
-            <ChatSessionProvider onRegenerateSuccess={handleRegenerateSuccess}>
-              <ChatMessageList
-                messages={messages}
-                onToggleSaved={handleToggleSaved}
-              />
-            </ChatSessionProvider>
+            <ChatMessageList
+              messages={messages}
+              onToggleSaved={handleToggleSaved}
+            />
           )}
         </div>
         {children}
@@ -267,7 +264,7 @@ export function ChatSession({ chatId, children }: Props) {
           </div>
         </div>
       </div>
-      {/* <ChatDrawer savedMessages={savedMessages} /> */}
+      <ChatDrawer savedMessages={savedMessages} />
     </div>
   );
 }
