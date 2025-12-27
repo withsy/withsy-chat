@@ -1,6 +1,6 @@
 import { CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowRight, MessageSquareText } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/router";
 import { BookmarkCardHeaderContext } from "./BookmarkCardHeaderContext";
 
 type Props = {

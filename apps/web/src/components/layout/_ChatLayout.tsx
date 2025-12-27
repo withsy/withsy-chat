@@ -5,11 +5,7 @@ import { type ReactNode } from "react";
 import Main from "./Main";
 import Sidebar from "./sidebar/Sidebar";
 
-type Props = {
-  children?: ReactNode;
-};
-
-export default function ChatLayout({ children }: Props) {
+export default function ChatLayout({ children }: { children?: ReactNode }) {
   useSession({
     required: true,
   });

@@ -8,7 +8,7 @@ import {
 import { useDrawerStore } from "@/stores/useDrawerStore";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 import { Bookmark as BookmarkIcon, Copy, Footprints } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/router";
 import { toast } from "sonner";
 
 type Props = {
@@ -42,7 +42,7 @@ export function BookmarkCardActions({
     if (isMobile) {
       setOpenDrawer(null);
     }
-    router.push(link, { scroll: false });
+    router.push(link, undefined, { scroll: false });
   };
 
   return (

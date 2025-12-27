@@ -10,10 +10,8 @@ export default function Page() {
     return null;
   }
 
-  const { id } = router.query;
-  const chatId = typeof id === "string" ? id : "";
-
-  if (!chatId) {
+  const { chatId } = router.query;
+  if (typeof chatId !== "string" || !chatId) {
     return <PartialError message="Invalid chatId." />;
   }
 

@@ -1,9 +1,11 @@
 import { useTRPC } from "@/lib/trpc";
 import { useUserStore } from "@/stores/useUserStore";
 import { useMutation } from "@tanstack/react-query";
+import { useRouter } from "next/router";
 
 export function useChatMessageSend() {
   const trpc = useTRPC();
+  const router = useRouter();
 
   return useMutation(
     trpc.chatMessage.send.mutationOptions({
@@ -27,6 +29,10 @@ export function useChatMessageSend() {
           chatMessages.push(userChatMessage);
           chatMessages.push(modelChatMessage);
         });
+
+        if (chat) {
+          router.push(`/chat/${chat.id}`);
+        }
       },
     }),
   );
