@@ -1,6 +1,7 @@
 import { UserProvider } from "@/contexts/UserContext";
 import { useSidebarInitializer } from "@/hooks/useSidebarInitializer";
-import { createTrpcClient, getQueryClient, TRPCProvider } from "@/lib/trpc";
+import { getQueryClient } from "@/lib/query-client";
+import { createTrpcClient, TRPCProvider } from "@/lib/trpc";
 import "@/styles/globals.css";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";

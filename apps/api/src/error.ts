@@ -42,12 +42,6 @@ export function isExpectedUniqueConstraintViolation(
   return true;
 }
 
-export class DataError extends Error {
-  constructor(readonly data: Record<string, unknown>) {
-    super();
-  }
-}
-
 export function getCodeKeyFromPrismaError(
   e: PrismaClientKnownRequestError,
 ): TRPC_ERROR_CODE_KEY {

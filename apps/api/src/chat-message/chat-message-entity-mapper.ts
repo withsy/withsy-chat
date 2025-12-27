@@ -7,6 +7,7 @@ export class ChatMessageEntityMapper {
   toData(entity: ChatMessageModel): ChatMessageData {
     const data: ChatMessageData = {
       id: entity.id,
+      chatId: entity.chatId,
     };
 
     return data;

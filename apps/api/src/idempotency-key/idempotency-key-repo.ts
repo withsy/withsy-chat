@@ -1,6 +1,6 @@
 import { TRPCError } from "@trpc/server";
 import { Tx } from "../db/db-service.js";
-import { DataError, isExpectedUniqueConstraintViolation } from "../error.js";
+import { isExpectedUniqueConstraintViolation } from "../error.js";
 import type { IdempotencyKeyModel } from "../generated/prisma/models.js";
 import { IdempotencyKey } from "./idempotency-key-schemas.js";
 
@@ -38,8 +38,7 @@ export class IdempotencyKeyRepo {
     if (!entity) {
       throw new TRPCError({
         code: "CONFLICT",
-        message: "Duplicate idempotency key.",
-        cause: new DataError({ idempotencyKey }),
+        message: `Duplicate idempotency key [${idempotencyKey}].`,
       });
     }
   }
