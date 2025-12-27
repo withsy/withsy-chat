@@ -8,7 +8,7 @@ import ResponsiveButton from "./ResponsiveButton";
 export default function Header() {
   const router = useRouter();
   const scrolled = useHeaderScroll();
-  const { isMobile, hydrated: _hydrated } = useSidebarStore();
+  const { isMobile, hydrated } = useSidebarStore();
 
   const categories = [
     { label: "About", value: "about" },
@@ -19,7 +19,9 @@ export default function Header() {
     { label: "Contact", value: "contact" },
   ];
 
-  // if (!hydrated) return null;
+  if (!hydrated) {
+    return null;
+  }
 
   return (
     <div
