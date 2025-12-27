@@ -2,7 +2,7 @@ import type {
   PartialUserPreferences,
   UserPreferenceKey,
 } from "@/common-schemas";
-import type { Model, RawUserPreferences } from "@repo/api-shared";
+import type { Model, RawUserPreferences } from "@repo/common";
 import { create } from "zustand";
 import { createJSONStorage, devtools, persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";

@@ -1,15 +1,15 @@
 import { Injectable } from "@nestjs/common";
-import { DbService } from "../db/db-service";
-import { UserId } from "../user/user-schemas";
-import { ChatEntityMapper } from "./chat-entity-mapper";
-import { ChatRepo } from "./chat-repo";
+import { DbService } from "../db/db-service.js";
+import { UserId } from "../user/user-schemas.js";
+import { ChatEntityMapper } from "./chat-entity-mapper.js";
+import { ChatRepo } from "./chat-repo.js";
 import {
   ChatData,
   ChatDelete,
   ChatList,
   ChatListOutput,
   ChatUpdate,
-} from "./chat-schemas";
+} from "./chat-schemas.js";
 
 @Injectable()
 export class ChatService {
@@ -20,11 +20,10 @@ export class ChatService {
 
   async list(userId: UserId, input: ChatList): Promise<ChatListOutput> {
     const chatRepo = new ChatRepo(this.dbService.db);
-    const entities = await chatRepo.list(userId, input);
+    const { entities, nextCursor } = await chatRepo.list(userId, input);
     const items = entities.map((entity) =>
       this.chatEntityMapper.toData(entity),
     );
-    const nextCursor = items.at(-1)?.id ?? null;
 
     return {
       items,

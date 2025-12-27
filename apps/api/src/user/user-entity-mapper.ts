@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
-import { RawUserPreferences } from "@repo/api-shared";
-import { UserModel } from "../generated/prisma/models";
-import { UserData } from "./user-schemas";
+import { RawUserPreferences } from "@repo/common";
+import { UserModel } from "../generated/prisma/models.js";
+import { UserData } from "./user-schemas.js";
 
 @Injectable()
 export class UserEntityMapper {

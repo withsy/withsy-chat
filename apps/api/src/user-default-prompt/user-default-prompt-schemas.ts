@@ -1,5 +1,5 @@
 import z from "zod";
-import { UserPromptId } from "../user-prompt/user-prompt-schemas";
+import { UserPromptId } from "../user-prompt/user-prompt-schemas.js";
 
 export const UserDefaultPromptData = z.object({
   get userPromptId() {

@@ -1,9 +1,9 @@
 import { Injectable } from "@nestjs/common";
-import { DbService } from "../db/db-service";
-import { IdempotencyKeyRepo } from "../idempotency-key/idempotency-key-repo";
-import { UserLinkAccountRepo } from "../user-link-account/user-link-account-repo";
-import { UserEntityMapper } from "./user-entity-mapper";
-import { UserRepo } from "./user-repo";
+import { DbService } from "../db/db-service.js";
+import { IdempotencyKeyRepo } from "../idempotency-key/idempotency-key-repo.js";
+import { UserLinkAccountRepo } from "../user-link-account/user-link-account-repo.js";
+import { UserEntityMapper } from "./user-entity-mapper.js";
+import { UserRepo } from "./user-repo.js";
 import {
   UserData,
   UserGet,
@@ -11,7 +11,7 @@ import {
   UserSignUpIn,
   UserSignUpInOutput,
   UserUpdate,
-} from "./user-schemas";
+} from "./user-schemas.js";
 
 @Injectable()
 export class UserService {

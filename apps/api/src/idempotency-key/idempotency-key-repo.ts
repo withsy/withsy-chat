@@ -1,8 +1,8 @@
 import { TRPCError } from "@trpc/server";
-import { Tx } from "../db/db-service";
-import { DataError, isExpectedUniqueConstraintViolation } from "../error";
-import type { IdempotencyKeyModel } from "../generated/prisma/models";
-import { IdempotencyKey } from "./idempotency-key-schemas";
+import { Tx } from "../db/db-service.js";
+import { DataError, isExpectedUniqueConstraintViolation } from "../error.js";
+import type { IdempotencyKeyModel } from "../generated/prisma/models.js";
+import { IdempotencyKey } from "./idempotency-key-schemas.js";
 
 export class IdempotencyKeyRepo {
   constructor(private readonly tx: Tx) {}

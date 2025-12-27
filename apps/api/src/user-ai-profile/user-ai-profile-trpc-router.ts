@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
-import { TrpcService } from "../trpc/trpc-service";
-import { UserTrpcProcedure } from "../user/user-trpc-procedure";
+import { TrpcService } from "../trpc/trpc-service.js";
+import { UserTrpcProcedure } from "../user/user-trpc-procedure.js";
 
 @Injectable()
 export class UserAiProfileTrpcRouter {

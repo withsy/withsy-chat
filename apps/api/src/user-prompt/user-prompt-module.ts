@@ -1,8 +1,8 @@
 import { Module } from "@nestjs/common";
-import { TrpcModule } from "../trpc/trpc-module";
-import { UserModule } from "../user/user-module";
-import { UserPromptService } from "./user-prompt-service";
-import { UserPromptTrpcRouter } from "./user-prompt-trpc-router";
+import { TrpcModule } from "../trpc/trpc-module.js";
+import { UserModule } from "../user/user-module.js";
+import { UserPromptService } from "./user-prompt-service.js";
+import { UserPromptTrpcRouter } from "./user-prompt-trpc-router.js";
 
 @Module({
   imports: [TrpcModule, UserModule],

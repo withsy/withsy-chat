@@ -1,7 +1,7 @@
-import { Tx } from "../db/db-service";
-import { isExpectedUniqueConstraintViolation } from "../error";
-import type { ApiKeyModel } from "../generated/prisma/models";
-import { retry } from "../retry";
+import { Tx } from "../db/db-service.js";
+import { isExpectedUniqueConstraintViolation } from "../error.js";
+import type { ApiKeyModel } from "../generated/prisma/models.js";
+import { retry } from "../retry.js";
 
 export class ApiKeyRepo {
   constructor(private readonly tx: Tx) {}

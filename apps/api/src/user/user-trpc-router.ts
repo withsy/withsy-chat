@@ -1,16 +1,15 @@
 import { Injectable } from "@nestjs/common";
-import { RawUserPreferences } from "@repo/api-shared";
-import { ApiKeyTrpcProcedure } from "../api-key/api-key-trpc-procedure";
-import { TrpcService } from "../trpc/trpc-service";
+import { ApiKeyTrpcProcedure } from "../api-key/api-key-trpc-procedure.js";
+import { TrpcService } from "../trpc/trpc-service.js";
 import {
   UserData,
   UserGet,
   UserSignUpIn,
   UserSignUpInOutput,
   UserUpdate,
-} from "./user-schemas";
-import { UserService } from "./user-service";
-import { UserTrpcProcedure } from "./user-trpc-procedure";
+} from "./user-schemas.js";
+import { UserService } from "./user-service.js";
+import { UserTrpcProcedure } from "./user-trpc-procedure.js";
 
 @Injectable()
 export class UserTrpcRouter {

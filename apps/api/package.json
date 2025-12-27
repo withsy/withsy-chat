@@ -2,6 +2,7 @@
   "name": "@repo/api",
   "version": "0.0.0-development",
   "private": true,
+  "type": "module",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts"
@@ -23,10 +24,11 @@
     "@prisma/adapter-pg": "6.19.0",
     "@prisma/client": "6.19.0",
     "@prisma/driver-adapter-utils": "6.19.0",
-    "@repo/api-shared": "link:../../packages/api-shared",
+    "@repo/common": "link:../../packages/common",
     "@trpc/server": "11.8.0",
     "@tygra/nestjs-graceful-shutdown": "2.0.0",
     "camelcase-keys": "10.0.1",
+    "next-auth": "4.24.13",
     "pg": "8.16.3",
     "reflect-metadata": "0.2.2",
     "rxjs": "7.8.2",

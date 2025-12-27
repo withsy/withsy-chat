@@ -2,14 +2,14 @@ import { Logger } from "@nestjs/common";
 import { TRPCError } from "@trpc/server";
 import camelcaseKeys from "camelcase-keys";
 import { v4 } from "uuid";
-import { Tx } from "../db/db-service";
-import type { UserModel } from "../generated/prisma/models";
+import { Tx } from "../db/db-service.js";
+import type { UserModel } from "../generated/prisma/models.js";
 import {
   PartialUserPreferences,
   UserGet,
   UserId,
   UserUpdate,
-} from "./user-schemas";
+} from "./user-schemas.js";
 
 export class UserRepo {
   private readonly logger = new Logger(UserRepo.name);

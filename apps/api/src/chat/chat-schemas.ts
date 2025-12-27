@@ -1,16 +1,16 @@
-import { Model } from "@repo/api-shared";
+import { Model } from "@repo/common";
 import z from "zod";
 import {
   ChatMessageData,
   ChatMessageId,
-} from "../chat-message/chat-message-schemas";
+} from "../chat-message/chat-message-schemas.js";
 import {
   createListSchemas,
   createResultSchema,
   DateTimeTz,
-} from "../common-schemas";
-import { IdempotencyKey } from "../idempotency-key/idempotency-key-schemas";
-import { UserPromptId } from "../user-prompt/user-prompt-schemas";
+} from "../common-schemas.js";
+import { IdempotencyKey } from "../idempotency-key/idempotency-key-schemas.js";
+import { UserPromptId } from "../user-prompt/user-prompt-schemas.js";
 
 export const ChatId = z.uuid();
 export type ChatId = z.infer<typeof ChatId>;

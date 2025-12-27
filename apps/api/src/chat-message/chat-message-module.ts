@@ -1,9 +1,9 @@
 import { Module } from "@nestjs/common";
-import { TrpcModule } from "../trpc/trpc-module";
-import { UserModule } from "../user/user-module";
-import { ChatMessageEntityMapper } from "./chat-message-entity-mapper";
-import { ChatMessageService } from "./chat-message-service";
-import { ChatMessageTrpcRouter } from "./chat-message-trpc-router";
+import { TrpcModule } from "../trpc/trpc-module.js";
+import { UserModule } from "../user/user-module.js";
+import { ChatMessageEntityMapper } from "./chat-message-entity-mapper.js";
+import { ChatMessageService } from "./chat-message-service.js";
+import { ChatMessageTrpcRouter } from "./chat-message-trpc-router.js";
 
 @Module({
   imports: [TrpcModule, UserModule],

@@ -16,7 +16,7 @@ export function createTrpcClient(envVars: EnvVars): TRPCClient<AppRouter> {
           (opts.direction === "down" && opts.result instanceof Error),
       }),
       httpLink({
-        url: `${envVars.API_URL}/trpc`,
+        url: `${envVars.NEXT_PUBLIC_API_URL}/trpc`,
         headers: {
           "X-Api-Key": envVars.API_KEY,
         },

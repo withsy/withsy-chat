@@ -4,11 +4,7 @@ import { createTRPCClient, httpLink, loggerLink } from "@trpc/client";
 import { createTRPCContext } from "@trpc/tanstack-react-query";
 
 function getBaseUrl() {
-  if (typeof window !== "undefined") {
-    return "";
-  }
-
-  return `${process.env.NEXTAUTH_URL ?? "http://localhost:3000"}`;
+  return process.env.NEXT_PUBLIC_API_URL;
 }
 
 export const { TRPCProvider, useTRPC, useTRPCClient } =
@@ -53,7 +49,13 @@ export function createTrpcClient() {
           (opts.direction === "down" && opts.result instanceof Error),
       }),
       httpLink({
-        url: `${getBaseUrl()}/api/trpc`,
+        url: `${getBaseUrl()}/trpc`,
+        fetch: (url, options) => {
+          return fetch(url, {
+            ...options,
+            credentials: "include",
+          });
+        },
       }),
     ],
   });

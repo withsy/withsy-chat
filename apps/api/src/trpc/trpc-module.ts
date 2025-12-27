@@ -1,5 +1,5 @@
 import { Module } from "@nestjs/common";
-import { TrpcService } from "./trpc-service";
+import { TrpcService } from "./trpc-service.js";
 
 @Module({
   providers: [TrpcService],

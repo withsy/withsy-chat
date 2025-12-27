@@ -1,6 +1,6 @@
-import { RawUserPreferences, UserPreferenceValue } from "@repo/api-shared";
+import { RawUserPreferences, UserPreferenceValue } from "@repo/common";
 import z from "zod";
-import { IdempotencyKey } from "../idempotency-key/idempotency-key-schemas";
+import { IdempotencyKey } from "../idempotency-key/idempotency-key-schemas.js";
 
 export const UserId = z.uuid();
 export type UserId = z.infer<typeof UserId>;

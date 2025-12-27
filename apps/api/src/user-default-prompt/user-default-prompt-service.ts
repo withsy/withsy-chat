@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
-import { UserId } from "../user/user-schemas";
-import { UserDefaultPromptTryGetOutput } from "./user-default-prompt-schemas";
+import { UserId } from "../user/user-schemas.js";
+import { UserDefaultPromptTryGetOutput } from "./user-default-prompt-schemas.js";
 
 @Injectable()
 export class UserDefaultPromptService {

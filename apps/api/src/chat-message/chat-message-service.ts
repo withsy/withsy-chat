@@ -1,11 +1,11 @@
 import { Injectable } from "@nestjs/common";
-import { UserId } from "../user/user-schemas";
+import { UserId } from "../user/user-schemas.js";
 import {
   ChatMessageList,
   ChatMessageListOutput,
   ChatMessageSend,
   ChatMessageSendOutput,
-} from "./chat-message-schemas";
+} from "./chat-message-schemas.js";
 
 @Injectable()
 export class ChatMessageService {

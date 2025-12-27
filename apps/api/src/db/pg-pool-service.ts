@@ -1,6 +1,6 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { Pool } from "pg";
-import { ConfigService } from "../config/config-service";
+import { ConfigService } from "../config/config-service.js";
 
 @Injectable()
 export class PgPoolService {

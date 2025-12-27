@@ -1,9 +1,9 @@
 import { Injectable } from "@nestjs/common";
 import z from "zod";
-import { TrpcService } from "../trpc/trpc-service";
-import { UserTrpcProcedure } from "../user/user-trpc-procedure";
-import { UserDefaultPromptTryGetOutput } from "./user-default-prompt-schemas";
-import { UserDefaultPromptService } from "./user-default-prompt-service";
+import { TrpcService } from "../trpc/trpc-service.js";
+import { UserTrpcProcedure } from "../user/user-trpc-procedure.js";
+import { UserDefaultPromptTryGetOutput } from "./user-default-prompt-schemas.js";
+import { UserDefaultPromptService } from "./user-default-prompt-service.js";
 
 @Injectable()
 export class UserDefaultPromptTrpcRouter {

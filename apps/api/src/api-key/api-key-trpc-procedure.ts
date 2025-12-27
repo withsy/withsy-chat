@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { TRPCError } from "@trpc/server";
-import { TrpcService } from "../trpc/trpc-service";
-import { ApiKeyService } from "./api-key-service";
+import { TrpcService } from "../trpc/trpc-service.js";
+import { ApiKeyService } from "./api-key-service.js";
 
 @Injectable()
 export class ApiKeyTrpcProcedure {

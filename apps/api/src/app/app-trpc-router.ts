@@ -1,12 +1,12 @@
 import { Injectable } from "@nestjs/common";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
-import { ChatMessageTrpcRouter } from "../chat-message/chat-message-trpc-router";
-import { ChatTrpcRouter } from "../chat/chat-trpc-router";
-import { TrpcService } from "../trpc/trpc-service";
-import { UserAiProfileTrpcRouter } from "../user-ai-profile/user-ai-profile-trpc-router";
-import { UserDefaultPromptTrpcRouter } from "../user-default-prompt/user-default-prompt-trpc-router";
-import { UserPromptTrpcRouter } from "../user-prompt/user-prompt-trpc-router";
-import { UserTrpcRouter } from "../user/user-trpc-router";
+import { ChatMessageTrpcRouter } from "../chat-message/chat-message-trpc-router.js";
+import { ChatTrpcRouter } from "../chat/chat-trpc-router.js";
+import { TrpcService } from "../trpc/trpc-service.js";
+import { UserAiProfileTrpcRouter } from "../user-ai-profile/user-ai-profile-trpc-router.js";
+import { UserDefaultPromptTrpcRouter } from "../user-default-prompt/user-default-prompt-trpc-router.js";
+import { UserPromptTrpcRouter } from "../user-prompt/user-prompt-trpc-router.js";
+import { UserTrpcRouter } from "../user/user-trpc-router.js";
 
 @Injectable()
 export class AppTrpcRouter {

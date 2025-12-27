@@ -1,7 +1,7 @@
 import { useAiProfileStore } from "@/stores/useAiProfileStore";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 import { useUserSessionStore } from "@/stores/useUserSessionStore";
-import type { Model } from "@repo/api-shared";
+import type { Model } from "@repo/common";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { ModelDropdown } from "./ModelDropdown";
 import { ModelSelectButton } from "./ModelSelectButton";

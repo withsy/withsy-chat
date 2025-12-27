@@ -1,11 +1,11 @@
 import { Module } from "@nestjs/common";
-import { ApiKeyModule } from "../api-key/api-key-module";
-import { DbModule } from "../db/db-module";
-import { TrpcModule } from "../trpc/trpc-module";
-import { UserEntityMapper } from "./user-entity-mapper";
-import { UserService } from "./user-service";
-import { UserTrpcProcedure } from "./user-trpc-procedure";
-import { UserTrpcRouter } from "./user-trpc-router";
+import { ApiKeyModule } from "../api-key/api-key-module.js";
+import { DbModule } from "../db/db-module.js";
+import { TrpcModule } from "../trpc/trpc-module.js";
+import { UserEntityMapper } from "./user-entity-mapper.js";
+import { UserService } from "./user-service.js";
+import { UserTrpcProcedure } from "./user-trpc-procedure.js";
+import { UserTrpcRouter } from "./user-trpc-router.js";
 
 @Module({
   imports: [TrpcModule, ApiKeyModule, DbModule],

@@ -1,15 +1,15 @@
 import { Injectable } from "@nestjs/common";
 import z from "zod";
-import { TrpcService } from "../trpc/trpc-service";
-import { UserTrpcProcedure } from "../user/user-trpc-procedure";
+import { TrpcService } from "../trpc/trpc-service.js";
+import { UserTrpcProcedure } from "../user/user-trpc-procedure.js";
 import {
   ChatData,
   ChatDelete,
   ChatList,
   ChatListOutput,
   ChatUpdate,
-} from "./chat-schemas";
-import { ChatService } from "./chat-service";
+} from "./chat-schemas.js";
+import { ChatService } from "./chat-service.js";
 
 @Injectable()
 export class ChatTrpcRouter {

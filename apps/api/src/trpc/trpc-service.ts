@@ -2,8 +2,8 @@ import { Injectable } from "@nestjs/common";
 import { initTRPC, TRPCErrorFormatter, TRPCErrorShape } from "@trpc/server";
 import { TRPC_ERROR_CODES_BY_KEY } from "@trpc/server/rpc";
 import { Request } from "express";
-import { getCodeKeyFromPrismaError } from "../error";
-import { PrismaClientKnownRequestError } from "../generated/prisma/internal/prismaNamespace";
+import { getCodeKeyFromPrismaError } from "../error.js";
+import { PrismaClientKnownRequestError } from "../generated/prisma/internal/prismaNamespace.js";
 
 export interface Context {
   req: Request;

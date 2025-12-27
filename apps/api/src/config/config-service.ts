@@ -1,11 +1,11 @@
 import { Injectable } from "@nestjs/common";
 import { ConfigService as NestConfigService } from "@nestjs/config";
-import { EnvVars, NodeEnv } from "./config-env-vars";
+import { EnvVars, NodeEnv } from "./config-env-vars.js";
 
 @Injectable()
 export class ConfigService {
   constructor(
-    private readonly nestConfigService: NestConfigService<EnvVars, true>
+    private readonly nestConfigService: NestConfigService<EnvVars, true>,
   ) {}
 
   get nodeEnv(): NodeEnv {
@@ -40,5 +40,9 @@ export class ConfigService {
 
   get s3SecretAccessKey(): string {
     return this.nestConfigService.get("S3_SECRET_ACCESS_KEY", { infer: true });
+  }
+
+  get authSecret(): string {
+    return this.nestConfigService.get("AUTH_SECRET", { infer: true });
   }
 }

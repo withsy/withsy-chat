@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
-import { EncryptionService } from "../encryption/encryption-service";
-import { ChatModel } from "../generated/prisma/models";
-import { ChatData } from "./chat-schemas";
+import { EncryptionService } from "../encryption/encryption-service.js";
+import { ChatModel } from "../generated/prisma/models.js";
+import { ChatData } from "./chat-schemas.js";
 
 @Injectable()
 export class ChatEntityMapper {

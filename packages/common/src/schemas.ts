@@ -7,6 +7,15 @@ export type NodeEnv = z.infer<typeof NodeEnv>;
 
 //#endregion Node.js
 
+//#region Auth
+
+export const AuthToken = z.object({
+  userId: z.string(),
+});
+export type AuthToken = z.infer<typeof AuthToken>;
+
+//#endregion Auth
+
 //#region Model
 
 export const Model = z.enum([

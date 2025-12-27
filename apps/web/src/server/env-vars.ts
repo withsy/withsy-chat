@@ -12,10 +12,10 @@ export const EnvVars = z.object({
   NODE_ENV: NodeEnv,
   TZ: z.literal("UTC"),
   NEXTAUTH_URL: ApiUrl,
-  NEXTAUTH_SECRET: z.string().min(1),
+  AUTH_SECRET: z.string().min(1),
   GOOGLE_CLIENT_ID: z.string().min(1),
   GOOGLE_CLIENT_SECRET: z.string().min(1),
-  API_URL: ApiUrl,
+  NEXT_PUBLIC_API_URL: ApiUrl,
   API_KEY: z.string().min(1),
 });
 export type EnvVars = z.infer<typeof EnvVars>;

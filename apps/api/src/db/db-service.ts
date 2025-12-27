@@ -1,9 +1,9 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { inspect } from "node:util";
-import { ConfigService } from "../config/config-service";
-import { PrismaClient } from "../generated/prisma/client";
-import { PgPoolService } from "./pg-pool-service";
+import { ConfigService } from "../config/config-service.js";
+import { PrismaClient } from "../generated/prisma/client.js";
+import { PgPoolService } from "./pg-pool-service.js";
 
 export type Tx = Parameters<Parameters<PrismaClient["$transaction"]>[0]>[0];
 

@@ -1,11 +1,11 @@
 import { Injectable } from "@nestjs/common";
-import { UserId } from "../user/user-schemas";
+import { UserId } from "../user/user-schemas.js";
 import {
   UserPromptData,
   UserPromptGet,
   UserPromptList,
   UserPromptListOutput,
-} from "./user-prompt-schemas";
+} from "./user-prompt-schemas.js";
 
 @Injectable()
 export class UserPromptService {

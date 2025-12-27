@@ -5,7 +5,7 @@ import ModelCard from "@/components/models/ModelCard";
 import { useUserPreference } from "@/hooks/useUserPreference";
 import { useAiProfileStore } from "@/stores/useAiProfileStore";
 import { useSidebarStore } from "@/stores/useSidebarStore";
-import { Model } from "@repo/api-shared";
+import { Model } from "@repo/common";
 
 const MODELS = Model.options;
 

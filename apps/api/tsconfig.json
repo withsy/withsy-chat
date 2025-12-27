@@ -1,8 +1,6 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "module": "nodenext",
-    "moduleResolution": "nodenext",
     "declaration": true,
     "removeComments": true,
     "emitDecoratorMetadata": true,
@@ -10,7 +8,9 @@
     "sourceMap": true,
     "outDir": "./dist",
     "verbatimModuleSyntax": false,
-    "declarationMap": true
+    "declarationMap": true,
+    "module": "nodenext",
+    "moduleResolution": "nodenext"
   },
   "include": ["src/**/*.ts"],
   "exclude": ["dist"]

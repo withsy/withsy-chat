@@ -1,8 +1,8 @@
-import { Model } from "@repo/api-shared";
+import { Model } from "@repo/common";
 import z from "zod";
-import { ChatData, ChatId } from "../chat/chat-schemas";
-import { createListSchemas } from "../common-schemas";
-import { IdempotencyKey } from "../idempotency-key/idempotency-key-schemas";
+import { ChatData, ChatId } from "../chat/chat-schemas.js";
+import { createListSchemas } from "../common-schemas.js";
+import { IdempotencyKey } from "../idempotency-key/idempotency-key-schemas.js";
 
 export const ChatMessageId = z.uuid();
 export type ChatMessageId = z.infer<typeof ChatMessageId>;

@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common";
-import { DbModule } from "../db/db-module";
-import { ShutdownService } from "./shutdown-service";
+import { DbModule } from "../db/db-module.js";
+import { ShutdownService } from "./shutdown-service.js";
 
 @Module({
   imports: [DbModule],

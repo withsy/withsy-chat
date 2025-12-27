@@ -1,8 +1,8 @@
 import { Injectable, OnModuleInit } from "@nestjs/common";
-import { ConfigService } from "../config/config-service";
-import { DbService } from "../db/db-service";
-import { ApiKeyRepo } from "./api-key-repo";
-import { generateApiKey, getDevApiKey } from "./api-key-utils";
+import { ConfigService } from "../config/config-service.js";
+import { DbService } from "../db/db-service.js";
+import { ApiKeyRepo } from "./api-key-repo.js";
+import { generateApiKey, getDevApiKey } from "./api-key-utils.js";
 
 @Injectable()
 export class ApiKeyService implements OnModuleInit {

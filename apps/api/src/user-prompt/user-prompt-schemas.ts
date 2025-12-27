@@ -1,5 +1,5 @@
 import z from "zod";
-import { createListSchemas } from "../common-schemas";
+import { createListSchemas } from "../common-schemas.js";
 
 export const UserPromptId = z.uuid();
 export type UserPromptId = z.infer<typeof UserPromptId>;

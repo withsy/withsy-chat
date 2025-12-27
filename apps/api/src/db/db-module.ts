@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common";
-import { DbService } from "./db-service";
-import { PgPoolService } from "./pg-pool-service";
+import { DbService } from "./db-service.js";
+import { PgPoolService } from "./pg-pool-service.js";
 
 @Module({
   providers: [PgPoolService, DbService],

@@ -1,21 +1,12 @@
 import type { AuthSession } from "@/common-schemas";
+import { AuthToken } from "@repo/common";
 import type { AuthOptions, LoggerInstance } from "next-auth";
-import type { JWT } from "next-auth/jwt";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import type { Provider } from "next-auth/providers/index";
 import { inspect } from "node:util";
 import { v4 } from "uuid";
-import z from "zod";
 import { getServerContext } from "./context";
-
-interface AuthToken extends JWT {
-  userId: string;
-}
-
-const AuthToken = z.object({
-  userId: z.string(),
-});
 
 const { envVars, trpc } = getServerContext();
 
@@ -72,6 +63,7 @@ export const authOptions: AuthOptions = {
   session: {
     maxAge: 7 * 24 * 60 * 60, // 7 days
   },
+  secret: envVars.AUTH_SECRET,
   callbacks: {
     jwt: async (params) => {
       const { account, token } = params;
