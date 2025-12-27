@@ -9,7 +9,7 @@ import { useChatSession } from "@/context/ChatSessionContext";
 import { useUserPreference } from "@/hooks/useUser";
 import { useTRPC } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
-import type { Model } from "@repo/common";
+import type { Model } from "@repo/api-shared";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Bookmark, Copy, GitBranch, RefreshCw } from "lucide-react";
 import { useRouter } from "next/router";

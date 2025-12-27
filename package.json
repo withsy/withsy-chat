@@ -9,8 +9,7 @@
     "check-types:trigger": "npm run check-types -w apps/trigger",
     "check-types:web": "npm run check-types -w apps/web",
     "db:migrate": "npm run db:migrate -w apps/api",
-    "dev:api": "turbo dev --filter=@repo/api",
-    "dev:common": "turbo dev --filter=@repo/common",
+    "dev:api": "turbo dev --filter=@repo/api-shared --filter=@repo/api",
     "dev:web": "turbo dev --filter=@repo/web",
     "lint": "eslint",
     "sort-package-json": "sort-package-json package.json apps/*/package.json packages/*/package.json"

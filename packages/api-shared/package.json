@@ -1,5 +1,5 @@
 {
-  "name": "@repo/common",
+  "name": "@repo/api-shared",
   "version": "0.0.0-development",
   "private": true,
   "exports": {

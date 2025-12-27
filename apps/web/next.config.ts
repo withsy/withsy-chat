@@ -17,9 +17,10 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  transpilePackages: ["@repo/common"],
+  transpilePackages: ["@repo/api-shared"],
   experimental: {
     externalDir: true,
+    reactCompiler: true,
   },
 };
 

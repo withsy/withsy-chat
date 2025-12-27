@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { Model } from "@repo/common";
+import { Model } from "@repo/api-shared";
 
 type ModelSelectItemProps = {
   modelValue: string;

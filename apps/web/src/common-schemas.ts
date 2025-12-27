@@ -1,5 +1,5 @@
 import type { TrpcOptions } from "@/lib/trpc";
-import { RawUserPreferences } from "@repo/common";
+import { RawUserPreferences } from "@repo/api-shared";
 import type { inferInput, inferOutput } from "@trpc/tanstack-react-query";
 import type { Session } from "next-auth";
 import type { Simplify } from "type-fest";

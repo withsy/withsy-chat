@@ -23,7 +23,7 @@
     "@prisma/adapter-pg": "6.19.0",
     "@prisma/client": "6.19.0",
     "@prisma/driver-adapter-utils": "6.19.0",
-    "@repo/common": "link:../../packages/common",
+    "@repo/api-shared": "link:../../packages/api-shared",
     "@trpc/server": "11.8.0",
     "@tygra/nestjs-graceful-shutdown": "2.0.0",
     "camelcase-keys": "10.0.1",

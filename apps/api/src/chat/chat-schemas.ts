@@ -1,4 +1,4 @@
-import { Model } from "@repo/common";
+import { Model } from "@repo/api-shared";
 import z from "zod";
 import { ChatMessageId } from "../chat-message/chat-message-schemas";
 import {

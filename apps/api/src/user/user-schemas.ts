@@ -1,4 +1,4 @@
-import { RawUserPreferences, UserPreferenceValue } from "@repo/common";
+import { RawUserPreferences, UserPreferenceValue } from "@repo/api-shared";
 import z from "zod";
 import { IdempotencyKey } from "../idempotency-key/idempotency-key-schemas";
 

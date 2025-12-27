@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { RawUserPreferences } from "@repo/common";
+import { RawUserPreferences } from "@repo/api-shared";
 import { ApiKeyTrpcProcedure } from "../api-key/api-key-trpc-procedure";
 import { TrpcService } from "../trpc/trpc-service";
 import {
