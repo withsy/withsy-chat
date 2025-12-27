@@ -1,23 +1,32 @@
-import ChatView from "@/components/chat/ChatView";
-import { PartialError } from "@/components/Error";
+import { ChatSession } from "@/components/chat/ChatSession";
 import { ChatLayout } from "@/components/layout/ChatLayout";
+import { PartialLoading } from "@/components/Loading";
 import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 
 export default function Page() {
   const router = useRouter();
+  const [chatId, SetChatId] = useState("");
 
-  if (!router.isReady) {
-    return null;
-  }
+  useEffect(() => {
+    if (router.isReady) {
+      const { query } = router;
 
-  const { chatId } = router.query;
-  if (typeof chatId !== "string" || !chatId) {
-    return <PartialError message="Invalid chatId." />;
+      Promise.try(() => {
+        if (typeof query.chatId === "string" && query.chatId) {
+          SetChatId(query.chatId);
+        }
+      });
+    }
+  }, [router, router.isReady]);
+
+  if (!chatId) {
+    return <PartialLoading />;
   }
 
   return (
     <ChatLayout>
-      <ChatView chatId={chatId} />
+      <ChatSession chatId={chatId} />
     </ChatLayout>
   );
 }

@@ -12,7 +12,6 @@ type Props = {
 };
 
 export function ChatMessageList({ chatId }: { chatId: ChatId }) {
-  const { chat } = useChatStore();
   const router = useRouter();
 
   const bottomRef = useRef<HTMLDivElement | null>(null);
