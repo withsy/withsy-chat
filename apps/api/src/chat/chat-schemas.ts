@@ -1,19 +1,12 @@
-import { Model } from "@repo/common";
 import z from "zod";
-import {
-  ChatMessageData,
-  ChatMessageId,
-} from "../chat-message/chat-message-schemas.js";
-import {
-  createListSchemas,
-  createResultSchema,
-  DateTimeTz,
-} from "../common-schemas.js";
-import { IdempotencyKey } from "../idempotency-key/idempotency-key-schemas.js";
+import { createListSchemas, DateTimeTz } from "../common-schemas.js";
 import { UserPromptId } from "../user-prompt/user-prompt-schemas.js";
 
 export const ChatId = z.uuid();
 export type ChatId = z.infer<typeof ChatId>;
+
+export const ChatType = z.enum(["chat", "branch"]);
+export type ChatType = z.infer<typeof ChatType>;
 
 export const ChatData = z.object({
   get id() {

@@ -5,7 +5,7 @@ import { ChatMessageModule } from "../chat-message/chat-message-module.js";
 import { ChatModule } from "../chat/chat-module.js";
 import { ConfigModule } from "../config/config-module.js";
 import { DbModule } from "../db/db-module.js";
-import { EncryptionModule } from "../encryption/encryption-module.js";
+import { E8nModule } from "../e8n/e8n-module.js";
 import { ShutdownModule } from "../shutdown/shutdown-module.js";
 import { TrpcModule } from "../trpc/trpc-module.js";
 import { UserAiProfileModule } from "../user-ai-profile/user-ai-profile-module.js";
@@ -23,7 +23,7 @@ import { AppTrpcRouter } from "./app-trpc-router.js";
     ShutdownModule,
     TrpcModule,
     ApiKeyModule,
-    EncryptionModule,
+    E8nModule,
     UserModule,
     UserPromptModule,
     UserDefaultPromptModule,

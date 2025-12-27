@@ -109,6 +109,7 @@ export function ChatInputBox({ chatId }: { chatId?: string }) {
       model: selectedModel,
       text: message,
       chatId,
+      type: "chat",
     });
     setMessage("");
   };

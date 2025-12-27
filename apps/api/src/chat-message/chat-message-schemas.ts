@@ -1,6 +1,6 @@
 import { Model } from "@repo/common";
 import z from "zod";
-import { ChatData, ChatId } from "../chat/chat-schemas.js";
+import { ChatData, ChatId, ChatType } from "../chat/chat-schemas.js";
 import { createListSchemas } from "../common-schemas.js";
 import { IdempotencyKey } from "../idempotency-key/idempotency-key-schemas.js";
 
@@ -10,6 +10,9 @@ export type ChatMessageId = z.infer<typeof ChatMessageId>;
 export const ChatMessageData = z.object({
   get id() {
     return ChatMessageId;
+  },
+  get chatId() {
+    return ChatId;
   },
 });
 export type ChatMessageData = z.infer<typeof ChatMessageData>;
@@ -32,6 +35,9 @@ export const ChatMessageSend = z.object({
   },
   get chatId() {
     return ChatId.optional();
+  },
+  get type() {
+    return ChatType.optional();
   },
 });
 export type ChatMessageSend = z.infer<typeof ChatMessageSend>;

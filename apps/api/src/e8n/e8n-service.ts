@@ -3,7 +3,7 @@ import { ConfigService } from "../config/config-service.js";
 import { Encryptor } from "./encryptor.js";
 
 @Injectable()
-export class EncryptionService {
+export class E8nService {
   private readonly encryptor: Encryptor;
 
   constructor(configService: ConfigService) {
