@@ -6,12 +6,6 @@ import TextareaAutosize from "react-textarea-autosize";
 import { ModelSelect } from "./ModelSelect";
 import { UsageLimitNotice } from "./UsageLimitNotice";
 
-type Props = {
-  onSendMessage: (message: string) => void;
-  usageLimits: UserUsageLimitData[];
-  shouldFocus?: boolean;
-};
-
 const placeholderMessages = [
   "What's on your mind?",
   "Wanna talk?",
@@ -20,29 +14,36 @@ const placeholderMessages = [
   "Say hi or just share a thought",
 ];
 
-export function ChatInputBox({
-  onSendMessage,
-  usageLimits,
-  shouldFocus = false,
-}: Props) {
+export function ChatInputBox({ chatId }: { chatId?: string }) {
   const enterToSend = useUserPreference("enterToSend");
   const themeColor = useUserPreference("themeColor");
-
   const [message, setMessage] = useState("");
   const [isComposing, setIsComposing] = useState(false);
-
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [shouldFocusInput, setShouldFocusInput] = useState(false);
+  const [randomPlaceholder, setRandomPlaceholder] = useState("");
 
-  const isSendDisabled = usageLimits
-    .filter((x) => x.type === "message")
-    .some((x) => x.remainingAmount <= 0);
+  const isSendDisabled = false;
+  // usageLimits
+  //   .filter((x) => x.type === "message")
+  //   .some((x) => x.remainingAmount <= 0);
 
   const inputBoxClass = cn(
     "relative max-w-screen-lg w-full px-4 py-3 border rounded-xl bg-white",
     "transition-all",
   );
 
-  const [randomPlaceholder, setRandomPlaceholder] = useState("");
+  useEffect(() => {
+    if (chatId) {
+      const timer = setTimeout(() => {
+        setShouldFocusInput(true);
+        const resetTimer = setTimeout(() => setShouldFocusInput(false), 500);
+        return () => clearTimeout(resetTimer);
+      }, 300);
+
+      return () => clearTimeout(timer);
+    }
+  }, [chatId]);
 
   useEffect(() => {
     // NOTE: Use Promise to avoid client/server hydration mismatch.
@@ -63,7 +64,7 @@ export function ChatInputBox({
 
   useEffect(() => {
     if (
-      shouldFocus &&
+      shouldFocusInput &&
       textareaRef.current &&
       document.activeElement !== textareaRef.current
     ) {
@@ -76,7 +77,7 @@ export function ChatInputBox({
       }, 300);
       return () => clearTimeout(timer);
     }
-  }, [shouldFocus]);
+  }, [shouldFocusInput]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -133,11 +134,7 @@ export function ChatInputBox({
         onCompositionEnd={() => setIsComposing(false)}
       />
       <div className="absolute right-4 bottom-0 left-4 flex items-center justify-between">
-        <div>
-          {usageLimits.length > 0 && (
-            <UsageLimitNotice usageLimits={usageLimits} />
-          )}
-        </div>
+        <UsageLimitNotice />
         <button
           onClick={handleSend}
           className="group rounded-md p-2"

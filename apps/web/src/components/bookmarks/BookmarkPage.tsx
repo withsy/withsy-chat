@@ -10,7 +10,7 @@ import { useTRPC } from "@/lib/trpc";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 import { useQuery } from "@tanstack/react-query";
 import { Eye, EyeOff, RotateCcw } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { CollapseButton } from "../CollapseButton";
 import { PartialEmpty } from "../Empty";
@@ -50,18 +50,15 @@ export default function BookmarkPage({
     setLoading(false);
   }, [listSaved.data]);
 
-  const filteredMessages = useMemo(() => {
-    const keyword = searchText.toLowerCase().trim();
-
-    return filterMessages({
-      messages: data,
-      sortOrder,
-    }).filter((x) => {
-      const title = x.chat?.title?.toLowerCase() ?? "";
-      const text = x.text?.toLowerCase() ?? "";
-      return title.includes(keyword) || text.includes(keyword);
-    });
-  }, [sortOrder, searchText, data]);
+  const keyword = searchText.toLowerCase().trim();
+  const filteredMessages = filterMessages({
+    messages: data,
+    sortOrder,
+  }).filter((x) => {
+    const title = x.chat?.title?.toLowerCase() ?? "";
+    const text = x.text?.toLowerCase() ?? "";
+    return title.includes(keyword) || text.includes(keyword);
+  });
 
   const reset = () => {
     setSortOrder("desc");

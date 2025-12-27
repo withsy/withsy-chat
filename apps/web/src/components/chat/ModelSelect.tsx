@@ -2,7 +2,7 @@ import { useAiProfileStore } from "@/stores/useAiProfileStore";
 import { useSelectedModelStore } from "@/stores/useSelectedModelStore";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 import { Model } from "@/types/model";
-import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { ModelDropdown } from "./ModelDropdown";
 import { ModelSelectButton } from "./ModelSelectButton";
 
@@ -55,7 +55,7 @@ export function ModelSelect({
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const models: ModelInfo[] = useMemo(() => {
+  const models: ModelInfo[] = (() => {
     return Object.entries(defaultModelMap).map(([key, value]) => {
       const model = key as Model;
       const userProfile = profiles[model];
@@ -71,7 +71,7 @@ export function ModelSelect({
           : value.description,
       };
     });
-  }, [profiles]);
+  })();
 
   const selectedLabel =
     models.find((m) => m.value === selectedModel)?.label || "Select model";

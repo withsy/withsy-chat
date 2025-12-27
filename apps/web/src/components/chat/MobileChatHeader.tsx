@@ -1,3 +1,4 @@
+import type { ChatId } from "@/common-schemas";
 import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
 import {
   Tooltip,
@@ -21,13 +22,7 @@ import HoverSwitchIcon from "../HoverSwitchIcon";
 import { IconWithLabel } from "../IconWithLabel";
 import { getChatTypeIcon } from "./ChatTypeIcon";
 
-export default function MobileChatHeader({
-  chatTitle,
-  chatType,
-}: {
-  chatTitle: string | undefined;
-  chatType: ChatType | undefined;
-}) {
+export default function MobileChatHeader({ chatId }: { chatId?: ChatId }) {
   const router = useRouter();
   const { openDrawer, setOpenDrawer } = useDrawerStore();
   const [open, setOpen] = useState(false);

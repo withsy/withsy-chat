@@ -1,10 +1,6 @@
 import { useUserPreference } from "@/hooks/useUser";
 import React from "react";
 
-type Props = {
-  usageLimits: UserUsageLimitData[];
-};
-
 const getMinutesLeft = (target: Date) =>
   Math.ceil((target.getTime() - Date.now()) / 60000);
 
@@ -68,9 +64,10 @@ const buildMessage = (
   }
 };
 
-export const UsageLimitNotice: React.FC<Props> = ({ usageLimits }) => {
+export function UsageLimitNotice() {
   const themeColor = useUserPreference("themeColor");
 
+  const usageLimits = [];
   let message: React.ReactNode = null;
   const messageDaily = usageLimits.find(
     (x) => x.type === "message" && x.period === "daily",
@@ -110,4 +107,4 @@ export const UsageLimitNotice: React.FC<Props> = ({ usageLimits }) => {
       {message}
     </span>
   ) : null;
-};
+}

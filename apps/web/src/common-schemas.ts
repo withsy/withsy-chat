@@ -30,6 +30,8 @@ export type UserPreferenceKey = keyof PartialUserPreferences;
 
 export type ChatData = inferOutput<TrpcOptions["chat"]["list"]>["items"][0];
 
+export type ChatId = ChatData["id"];
+
 export type ChatMessageData = inferOutput<
   TrpcOptions["chatMessage"]["list"]
 >["items"][0];

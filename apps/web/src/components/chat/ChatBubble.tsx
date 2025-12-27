@@ -16,7 +16,7 @@ type Props = {
   onToggleSaved?: (id: string, newValue: boolean) => void;
 };
 
-const ChatBubbleComponent = ({ message, chatType, onToggleSaved }: Props) => {
+export const ChatBubble = ({ message, chatType, onToggleSaved }: Props) => {
   const { data: session } = useSession();
 
   const { profiles } = useAiProfileStore();
@@ -154,17 +154,3 @@ const ChatBubbleComponent = ({ message, chatType, onToggleSaved }: Props) => {
     </div>
   );
 };
-
-export const ChatBubble = memo(ChatBubbleComponent, (prev, next) => {
-  return (
-    prev.message.id === next.message.id &&
-    prev.message.isBookmarked === next.message.isBookmarked &&
-    prev.message.text === next.message.text &&
-    prev.message.reasoningText === next.message.reasoningText &&
-    prev.message.status === next.message.status &&
-    prev.message.role === next.message.role &&
-    prev.message.model === next.message.model &&
-    prev.message.createdAt === next.message.createdAt &&
-    prev.message.isMessageCollapsed === next.message.isMessageCollapsed
-  );
-});

@@ -5,7 +5,7 @@ import { useChatList } from "@/hooks/useChat";
 import { formatDateLabel, toNewest } from "@/lib/date-utils";
 import { useUserStore } from "@/stores/useUserStore";
 import { ChevronDown, ChevronUp } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { SidebarChatItem } from "./SidebarChatItem";
 
 export default function SidebarChatList() {
@@ -24,7 +24,7 @@ export default function SidebarChatList() {
 
   const chatMap = useUserStore((s) => s.chatMap);
 
-  const { starred, orderedEntries } = useMemo(() => {
+  const { starred, orderedEntries } = (() => {
     const starred: ChatData[] = [];
     const nonStarredMap = new Map<string, ChatData[]>();
 
@@ -57,7 +57,7 @@ export default function SidebarChatList() {
       starred,
       orderedEntries,
     };
-  }, [chatMap]);
+  })();
 
   if (chatList.isPending) {
     return <PartialLoading />;

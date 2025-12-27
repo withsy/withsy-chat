@@ -1,8 +1,8 @@
-import Cropper, { type Area } from "react-easy-crop";
-import { useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogFooter } from "@/components/ui/dialog";
 import { getCroppedImg } from "@/lib/avatar-utils";
+import { useState } from "react";
+import Cropper, { type Area } from "react-easy-crop";
 
 type Props = {
   open: boolean;
@@ -21,9 +21,9 @@ export default function CropImageModal({
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
 
-  const onCropComplete = useCallback((_croppedArea: Area, pixels: Area) => {
+  const onCropComplete = (_croppedArea: Area, pixels: Area) => {
     setCroppedAreaPixels(pixels);
-  }, []);
+  };
 
   const handleDone = async () => {
     const base64 = await getCroppedImg(imageUrl, croppedAreaPixels);

@@ -1,6 +1,6 @@
 import type { ChatData } from "@/types/chat";
 import Link from "next/link";
-import React, { useMemo } from "react";
+import React from "react";
 
 interface ChatInformationSystemMessageProps {
   chat: ChatData;
@@ -13,7 +13,7 @@ const ChatInformationSystemMessage: React.FC<
   const chatId = chat.parentMessage?.chatId;
   const messageId = chat.parentMessageId;
 
-  const content = useMemo(() => {
+  const content = (() => {
     if (chatType === "chat") {
       const message = getRandomMessage(newChatMessages);
       return (
@@ -36,7 +36,7 @@ const ChatInformationSystemMessage: React.FC<
       );
     }
     return null;
-  }, [chatType, chatId, messageId]);
+  })();
 
   return (
     <div key={chat.id} className="my-4 flex justify-center p-4">
@@ -75,4 +75,4 @@ function getRandomMessage<T extends { prefix?: string } | string>(
   return messages[index];
 }
 
-export default React.memo(ChatInformationSystemMessage);
+export default ChatInformationSystemMessage;

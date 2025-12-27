@@ -6,7 +6,7 @@ import { useSelectedModelStore } from "@/stores/useSelectedModelStore";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/router";
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { toast } from "sonner";
 import { v4 as uuid } from "uuid";
 import { ChatDrawer } from "./ChatDrawer";
@@ -15,216 +15,200 @@ import { ChatInputBox } from "./ChatInputBox";
 import { ChatMessageList } from "./ChatMessageList";
 import MobileChatHeader from "./MobileChatHeader";
 
-type Props = {
+export function ChatSession({
+  chatId,
+  children,
+}: {
   chatId?: string;
   children?: ReactNode;
-};
-
-export function ChatSession({ chatId, children }: Props) {
-  const trpc = useTRPC();
-  const router = useRouter();
-  const { collapsed, isMobile } = useSidebarStore();
-  const { selectedModel } = useSelectedModelStore();
+}) {
+  const { isMobile } = useSidebarStore();
   const wideView = useUserPreference("wideView");
-  const [streamMessageId, setStreamMessageId] = useState<string | null>(null);
-  const [shouldFocusInput, setShouldFocusInput] = useState(false);
   const { openDrawer } = useDrawerStore();
 
-  const chatStart = useMutation(
-    trpc.chat.start.mutationOptions({
-      onSuccess: (output) => {
-        if (output.isSuccess) {
-          router.push(
-            `/chat/${data.chat.id}?streamMessageId=${data.modelMessage.id}`,
-          );
-        } else {
-          // error
-        }
-      },
-    }),
-  );
+  // const chatStart = useMutation(
+  //   trpc.chat.start.mutationOptions({
+  //     onSuccess: (output) => {
+  //       if (output.isSuccess) {
+  //         router.push(
+  //           `/chat/${data.chat.id}?streamMessageId=${data.modelMessage.id}`,
+  //         );
+  //       } else {
+  //         // error
+  //       }
+  //     },
+  //   }),
+  // );
 
-  const messageSend = useMutation(
-    trpc.message.send.mutationOptions({
-      onError(error) {
-        const _res = MessageSendError.safeParse(error.data);
-        toast.error(`Message sending failed.`);
-      },
-      onSuccess(data) {
-        setMessages((prev) => [
-          ...prev,
-          { ...data.userMessage, isMessageCollapsed: false },
-          { ...data.modelMessage, isMessageCollapsed: false },
-        ]);
-        setStreamMessageId(data.modelMessage.id);
-        queryClient.invalidateQueries(trpc.chat.list.queryFilter());
-      },
-    }),
-  );
+  // const messageSend = useMutation(
+  //   trpc.message.send.mutationOptions({
+  //     onError(error) {
+  //       const _res = MessageSendError.safeParse(error.data);
+  //       toast.error(`Message sending failed.`);
+  //     },
+  //     onSuccess(data) {
+  //       setMessages((prev) => [
+  //         ...prev,
+  //         { ...data.userMessage, isMessageCollapsed: false },
+  //         { ...data.modelMessage, isMessageCollapsed: false },
+  //       ]);
+  //       setStreamMessageId(data.modelMessage.id);
+  //       queryClient.invalidateQueries(trpc.chat.list.queryFilter());
+  //     },
+  //   }),
+  // );
 
-  useEffect(() => {
-    const collapseStatus = initialMessages.length > 2;
-    setMessages(
-      initialMessages.map((msg) => ({
-        ...msg,
-        isMessageCollapsed: collapseStatus,
-      })),
-    );
-    const lastMessage = initialMessages.at(-1);
-    const streamMessageId =
-      lastMessage && !isMessageComplete(lastMessage) ? lastMessage.id : null;
-    setStreamMessageId(streamMessageId);
-  }, [initialMessages]);
+  // useEffect(() => {
+  //   const collapseStatus = initialMessages.length > 2;
+  //   setMessages(
+  //     initialMessages.map((msg) => ({
+  //       ...msg,
+  //       isMessageCollapsed: collapseStatus,
+  //     })),
+  //   );
+  //   const lastMessage = initialMessages.at(-1);
+  //   const streamMessageId =
+  //     lastMessage && !isMessageComplete(lastMessage) ? lastMessage.id : null;
+  //   setStreamMessageId(streamMessageId);
+  // }, [initialMessages]);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setShouldFocusInput(true);
-      const resetTimer = setTimeout(() => setShouldFocusInput(false), 500);
-      return () => clearTimeout(resetTimer);
-    }, 300);
-    return () => clearTimeout(timer);
-  }, [chat?.id, collapsed]);
+  // useEffect(() => {
+  //   const { streamMessageId } = router.query;
+  //   if (streamMessageId) {
+  //     setStreamMessageId(MessageId.parse(streamMessageId));
+  //   }
+  // }, [router.query, router.query.streamMessageId]);
 
-  useEffect(() => {
-    const { streamMessageId } = router.query;
-    if (streamMessageId) {
-      setStreamMessageId(MessageId.parse(streamMessageId));
-    }
-  }, [router.query, router.query.streamMessageId]);
+  // useEffect(() => {
+  //   if (usageQuery.isSuccess && usageQuery.data) {
+  //     setUsageLimits(usageQuery.data);
+  //   }
+  // }, [chat?.id, usageQuery.isSuccess, usageQuery.data]);
 
-  useEffect(() => {
-    if (usageQuery.isSuccess && usageQuery.data) {
-      setUsageLimits(usageQuery.data);
-    }
-  }, [chat?.id, usageQuery.isSuccess, usageQuery.data]);
+  // useEffect(() => {
+  //   if (streamMessageId == null) {
+  //     closeEventSource(eventSource);
+  //     setEventSource(null);
+  //     return;
+  //   }
 
-  useEffect(() => {
-    if (streamMessageId == null) {
-      closeEventSource(eventSource);
-      setEventSource(null);
-      return;
-    }
+  //   const source = new EventSource(`/api/messages/${streamMessageId}`);
+  //   source.addEventListener("open", () => {
+  //     setMessages((prev) =>
+  //       prev.map((x) =>
+  //         x.id === streamMessageId
+  //           ? {
+  //               ...x,
+  //               text: "",
+  //               status: "processing",
+  //             }
+  //           : x,
+  //       ),
+  //     );
+  //   });
 
-    const source = new EventSource(`/api/messages/${streamMessageId}`);
-    source.addEventListener("open", () => {
-      setMessages((prev) =>
-        prev.map((x) =>
-          x.id === streamMessageId
-            ? {
-                ...x,
-                text: "",
-                status: "processing",
-              }
-            : x,
-        ),
-      );
-    });
+  //   let isSuccess = false;
+  //   source.addEventListener("error", () => {
+  //     closeEventSource(source);
+  //     setMessages((prev) =>
+  //       prev.map((x) =>
+  //         x.id === streamMessageId
+  //           ? { ...x, status: isSuccess ? "succeeded" : "failed" }
+  //           : x,
+  //       ),
+  //     );
+  //     setStreamMessageId(null);
+  //     if (!isSuccess) toast.error("Receive chat message failed.");
+  //   });
 
-    let isSuccess = false;
-    source.addEventListener("error", () => {
-      closeEventSource(source);
-      setMessages((prev) =>
-        prev.map((x) =>
-          x.id === streamMessageId
-            ? { ...x, status: isSuccess ? "succeeded" : "failed" }
-            : x,
-        ),
-      );
-      setStreamMessageId(null);
-      if (!isSuccess) toast.error("Receive chat message failed.");
-    });
+  //   source.addEventListener("message", (ev) => {
+  //     const event = MessageChunkEvent.parse(JSON.parse(ev.data));
+  //     if (event.type === "chunk") {
+  //       const chunk = event.chunk;
+  //       setMessages((prev) =>
+  //         prev.map((x) =>
+  //           x.id === streamMessageId
+  //             ? {
+  //                 ...x,
+  //                 text: x.text + chunk.text,
+  //                 reasoningText: x.reasoningText + chunk.reasoningText,
+  //               }
+  //             : x,
+  //         ),
+  //       );
+  //     } else if (event.type === "usageLimits") {
+  //       const usageLimits = event.usageLimits;
+  //       if (usageLimits) setUsageLimits(usageLimits);
+  //       isSuccess = true;
+  //     }
+  //   });
 
-    source.addEventListener("message", (ev) => {
-      const event = MessageChunkEvent.parse(JSON.parse(ev.data));
-      if (event.type === "chunk") {
-        const chunk = event.chunk;
-        setMessages((prev) =>
-          prev.map((x) =>
-            x.id === streamMessageId
-              ? {
-                  ...x,
-                  text: x.text + chunk.text,
-                  reasoningText: x.reasoningText + chunk.reasoningText,
-                }
-              : x,
-          ),
-        );
-      } else if (event.type === "usageLimits") {
-        const usageLimits = event.usageLimits;
-        if (usageLimits) setUsageLimits(usageLimits);
-        isSuccess = true;
-      }
-    });
+  //   setEventSource(source);
+  //   return () => {
+  //     closeEventSource(source);
+  //   };
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [streamMessageId]);
 
-    setEventSource(source);
-    return () => {
-      closeEventSource(source);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [streamMessageId]);
+  // const onSendMessage = (message: string) => {
+  //   if (chat != null) {
+  //     messageSend.mutate({
+  //       chatId: chat.id,
+  //       text: message,
+  //       model: selectedModel,
+  //       idempotencyKey: uuid(),
+  //     });
+  //   } else {
+  //     chatStart.mutate({
+  //       text: message,
+  //       model: selectedModel,
+  //       idempotencyKey: uuid(),
+  //     });
+  //   }
+  // };
 
-  const onSendMessage = (message: string) => {
-    if (chat != null) {
-      messageSend.mutate({
-        chatId: chat.id,
-        text: message,
-        model: selectedModel,
-        idempotencyKey: uuid(),
-      });
-    } else {
-      chatStart.mutate({
-        text: message,
-        model: selectedModel,
-        idempotencyKey: uuid(),
-      });
-    }
-  };
+  // const messageUpdate = useMutation(trpc.message.update.mutationOptions());
 
-  const messageUpdate = useMutation(trpc.message.update.mutationOptions());
+  // const handleToggleSaved = (id: string, newValue: boolean) => {
+  //   messageUpdate.mutate(
+  //     { messageId: id, isBookmarked: newValue },
+  //     {
+  //       onSuccess: () => {
+  //         setMessages((prev) =>
+  //           prev.map((msg) =>
+  //             msg.id === id ? { ...msg, isBookmarked: newValue } : msg,
+  //           ),
+  //         );
 
-  const handleToggleSaved = (id: string, newValue: boolean) => {
-    messageUpdate.mutate(
-      { messageId: id, isBookmarked: newValue },
-      {
-        onSuccess: () => {
-          setMessages((prev) =>
-            prev.map((msg) =>
-              msg.id === id ? { ...msg, isBookmarked: newValue } : msg,
-            ),
-          );
+  //         if (newValue) {
+  //           toast.success("Saved for later", {
+  //             description: "You can find it in your saved list.",
+  //           });
+  //         } else {
+  //           toast.success("Removed from saved", {
+  //             description: "It's no longer in your saved list.",
+  //           });
+  //         }
+  //       },
+  //       onError: () => {
+  //         toast.error("Failed", {
+  //           description: "Please try again or contact support.",
+  //         });
+  //       },
+  //     },
+  //   );
+  // };
 
-          if (newValue) {
-            toast.success("Saved for later", {
-              description: "You can find it in your saved list.",
-            });
-          } else {
-            toast.success("Removed from saved", {
-              description: "It's no longer in your saved list.",
-            });
-          }
-        },
-        onError: () => {
-          toast.error("Failed", {
-            description: "Please try again or contact support.",
-          });
-        },
-      },
-    );
-  };
+  // const handleRegenerateSuccess = (newMessage: MessageData) => {
+  //   setMessages((prev) => [
+  //     ...prev,
+  //     { ...newMessage, isMessageCollapsed: false },
+  //   ]);
+  //   setStreamMessageId(newMessage.id);
+  //   queryClient.invalidateQueries(trpc.chat.list.queryFilter());
+  // };
 
-  const handleRegenerateSuccess = (newMessage: MessageData) => {
-    setMessages((prev) => [
-      ...prev,
-      { ...newMessage, isMessageCollapsed: false },
-    ]);
-    setStreamMessageId(newMessage.id);
-    queryClient.invalidateQueries(trpc.chat.list.queryFilter());
-  };
-
-  const savedMessages = useMemo(
-    () => messages.filter((msg) => msg.isBookmarked),
-    [messages],
-  );
+  // const savedMessages = () => messages.filter((msg) => msg.isBookmarked)
 
   return (
     <div className="relative flex h-full">
@@ -235,9 +219,9 @@ export function ChatSession({ chatId, children }: Props) {
         )}
       >
         {isMobile ? (
-          <MobileChatHeader chatTitle={chat?.title} chatType={chat?.type} />
+          <MobileChatHeader chatId={chatId} />
         ) : (
-          <ChatHeader chatTitle={chat?.title} chatType={chat?.type} />
+          <ChatHeader chatId={chatId} />
         )}
         <div
           className={cn(
@@ -245,32 +229,23 @@ export function ChatSession({ chatId, children }: Props) {
             wideView ? "md:mx-auto md:w-[95%]" : "md:mx-auto md:w-[80%]",
           )}
         >
-          {(chat || messages.length > 0) && (
-            <ChatMessageList
-              messages={messages}
-              onToggleSaved={handleToggleSaved}
-            />
-          )}
+          {chatId && <ChatMessageList chatId={chatId} />}
         </div>
         {children}
         <div className="sticky bottom-0 z-10 flex w-full flex-col items-center bg-white px-4">
-          <ChatInputBox
-            onSendMessage={onSendMessage}
-            shouldFocus={shouldFocusInput}
-            usageLimits={usageLimits}
-          />
+          <ChatInputBox chatId={chatId} />
           <div className="mt-2 mb-2 text-xs text-gray-500">
             AI can make mistakes — please double-check.
           </div>
         </div>
       </div>
-      <ChatDrawer savedMessages={savedMessages} />
+      <ChatDrawer />
     </div>
   );
 }
 
-function closeEventSource(source: EventSource | null) {
-  if (!source) return;
-  if (source.readyState === source.CLOSED) return;
-  source.close();
-}
+// function closeEventSource(source: EventSource | null) {
+//   if (!source) return;
+//   if (source.readyState === source.CLOSED) return;
+//   source.close();
+// }

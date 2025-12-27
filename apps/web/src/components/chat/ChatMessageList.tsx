@@ -1,3 +1,4 @@
+import type { ChatId } from "@/common-schemas";
 import { useUserPreference } from "@/hooks/useUser";
 import { ChevronsDown } from "lucide-react";
 import { useRouter } from "next/router";
@@ -10,7 +11,7 @@ type Props = {
   onToggleSaved: (id: string, newValue: boolean) => void;
 };
 
-export function ChatMessageList({ messages, onToggleSaved }: Props) {
+export function ChatMessageList({ chatId }: { chatId: ChatId }) {
   const { chat } = useChatStore();
   const router = useRouter();
 

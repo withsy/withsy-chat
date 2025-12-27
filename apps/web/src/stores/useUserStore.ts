@@ -1,8 +1,13 @@
-import type { ChatData, UserData, UserPromptData } from "@/common-schemas";
+import type {
+  ChatData,
+  ChatId,
+  ChatMessageData,
+  UserData,
+  UserPromptData,
+} from "@/common-schemas";
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
-import type { ChatMessage } from "../../../api/dist/generated/prisma/client";
 
 const STORE_NAME = "user";
 
@@ -10,8 +15,8 @@ interface UserStore {
   clear: () => void;
   user: UserData | null;
   preferenceFetchingKeySet: Set<string>;
-  chatMap: Map<string, ChatData>;
-  chatMessageMap: Map<string, ChatMessage>;
+  chatMap: Map<ChatId, ChatData>;
+  chatMessageMap: Map<ChatId, ChatMessageData[]>;
   userPromptMap: Map<string, UserPromptData>;
 }
 
@@ -23,7 +28,6 @@ export const useUserStore = create<UserStore>()(
           state.user = null;
           state.preferenceFetchingKeySet.clear();
           state.chatMap.clear();
-          state.chatMessageMap.clear();
           state.userPromptMap.clear();
         });
       },

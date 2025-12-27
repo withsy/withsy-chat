@@ -8,7 +8,7 @@ import { useSidebarStore } from "@/stores/useSidebarStore";
 import { useUserStore } from "@/stores/useUserStore";
 import { FolderGit2, FolderRoot, GitBranch } from "lucide-react";
 import { useRouter } from "next/router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { BookmarkCard } from "../bookmarks/BookmarkCard";
 import { PartialError } from "../Error";
 import { PartialLoading } from "../Loading";
@@ -23,15 +23,8 @@ type ChatDrawerProps = {
 export const ChatDrawer = ({ savedMessages }: ChatDrawerProps) => {
   const router = useRouter();
   const { isMobile } = useSidebarStore();
-
   const { openDrawer, setOpenDrawer } = useDrawerStore();
   const isDrawerOpen = !!openDrawer;
-
-  const currentChatId = useUserStore((s) => s.currentChatId);
-  const chatListBranch = useChatListBranch({
-    chatId: currentChatId,
-    enabled: !!currentChatId && openDrawer === "branches",
-  });
 
   const [ready, setReady] = useState(false);
 
@@ -111,29 +104,19 @@ function Prompts() {
   const userDefaultPromptTryGet = useUserDefaultPromptTryGet();
   const chatUpdate = useChatUpdate();
 
-  const { userPrompts, appliedPrompt, remainingPrompts, userDefaultPrompt } =
-    useMemo(() => {
-      const userPrompts =
-        userPromptList.data?.pages.flatMap((page) => page.items) ?? [];
-      const userDefaultPrompt = userDefaultPromptTryGet.data;
+  const userPrompts =
+    userPromptList.data?.pages.flatMap((page) => page.items) ?? [];
+  const userDefaultPrompt = userDefaultPromptTryGet.data;
 
-      const appliedPrompt = userPrompts.find(
-        (x) => x.id === currentChat?.userPromptId,
-      );
-      const remainingPrompts =
-        userPrompts.filter(
-          (x) =>
-            x.id !== userDefaultPrompt?.userPromptId &&
-            x.id !== currentChat?.userPromptId,
-        ) ?? [];
-
-      return {
-        userPrompts,
-        appliedPrompt,
-        remainingPrompts,
-        userDefaultPrompt,
-      };
-    }, [currentChat, userPromptList.data, userDefaultPromptTryGet.data]);
+  const appliedPrompt = userPrompts.find(
+    (x) => x.id === currentChat?.userPromptId,
+  );
+  const remainingPrompts =
+    userPrompts.filter(
+      (x) =>
+        x.id !== userDefaultPrompt?.userPromptId &&
+        x.id !== currentChat?.userPromptId,
+    ) ?? [];
 
   if (!currentChat) {
     return null;
