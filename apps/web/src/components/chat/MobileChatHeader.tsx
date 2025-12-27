@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/tooltip";
 import { useUserPreference } from "@/hooks/useUser";
 import { useDrawerStore } from "@/stores/useDrawerStore";
+import { useUserStore } from "@/stores/useUserStore";
 import {
   Bookmark,
   ChevronDown,
@@ -28,6 +29,9 @@ export default function MobileChatHeader({ chatId }: { chatId?: ChatId }) {
   const [open, setOpen] = useState(false);
   const themeColor = useUserPreference("themeColor");
   const themeOpacity = useUserPreference("themeOpacity");
+  const chat = useUserStore((s) => s.chatMap.get(chatId ?? ""));
+  const chatTitle = chat?.title;
+  const chatType = chat?.type;
 
   const headerStyle: React.CSSProperties = {
     backgroundColor: `rgba(${themeColor}, ${themeOpacity / 2})`,

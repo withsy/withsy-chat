@@ -134,7 +134,9 @@ export function ChatInputBox({ chatId }: { chatId?: string }) {
         onCompositionEnd={() => setIsComposing(false)}
       />
       <div className="absolute right-4 bottom-0 left-4 flex items-center justify-between">
-        <UsageLimitNotice />
+        <div>
+          <UsageLimitNotice />
+        </div>
         <button
           onClick={handleSend}
           className="group rounded-md p-2"
