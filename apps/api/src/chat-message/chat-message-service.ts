@@ -9,6 +9,7 @@ import { IdempotencyKeyRepo } from "../idempotency-key/idempotency-key-repo.js";
 import { UserId } from "../user/user-schemas.js";
 import { ChatMessageE8nRepo } from "./chat-message-e8n-repo.js";
 import { ChatMessageEntityMapper } from "./chat-message-entity-mapper.js";
+import { ChatMessageRepo } from "./chat-message-repo.js";
 import {
   ChatMessageList,
   ChatMessageListOutput,
@@ -25,8 +26,20 @@ export class ChatMessageService {
     private readonly chatMessageEntityMapper: ChatMessageEntityMapper,
   ) {}
 
-  list(userId: UserId, input: ChatMessageList): Promise<ChatMessageListOutput> {
-    throw new Error();
+  async list(
+    userId: UserId,
+    input: ChatMessageList,
+  ): Promise<ChatMessageListOutput> {
+    const chatMessageRepo = new ChatMessageRepo(this.dbService.db);
+    const { entities, nextCursor } = await chatMessageRepo.list(userId, input);
+    const items = entities.map((entity) =>
+      this.chatMessageEntityMapper.toData(entity),
+    );
+
+    return {
+      items,
+      nextCursor,
+    };
   }
 
   async send(

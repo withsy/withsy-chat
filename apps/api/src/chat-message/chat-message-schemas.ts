@@ -39,7 +39,11 @@ export type ChatMessageData = z.infer<typeof ChatMessageData>;
 
 const chatMessageListSchemas = createListSchemas(ChatMessageData);
 
-export const ChatMessageList = chatMessageListSchemas.list;
+export const ChatMessageList = chatMessageListSchemas.list.extend({
+  get chatId() {
+    return ChatId;
+  },
+});
 export type ChatMessageList = z.infer<typeof ChatMessageList>;
 
 export const ChatMessageListOutput = chatMessageListSchemas.listOutput;

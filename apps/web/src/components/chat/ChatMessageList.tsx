@@ -1,4 +1,5 @@
 import type { ChatId, ChatMessageId } from "@/common-schemas";
+import { useChatMessageList } from "@/hooks/useChatMessage";
 import { useUserPreference } from "@/hooks/useUser";
 import { useTRPC } from "@/lib/trpc";
 import { useUserStore } from "@/stores/useUserStore";
@@ -15,8 +16,19 @@ export function ChatMessageList({ chatId }: { chatId: ChatId }) {
   const chatMessageRefMap = useRef(new Map<ChatMessageId, HTMLDivElement>());
   const [showScrollToBottom, setShowScrollToBottom] = useState(false);
   const themeColor = useUserPreference("themeColor");
-  const chatMessageIds =
-    useUserStore((s) => s.chatMessageOrderMap.get(chatId)) ?? [];
+  const chatMessageList = useChatMessageList(chatId);
+  const chatMessageIdSet =
+    useUserStore((s) => s.chatMessageIdMap.get(chatId)) ?? new Set();
+  const chatMessageIds = chatMessageIdSet.keys().toArray().toSorted();
+
+  useEffect(() => {
+    if (chatMessageList.data) {
+      const chatMessages = chatMessageList.data.pages.flatMap(
+        (page) => page.items,
+      );
+      useUserStore.getState().setChatMessages(chatMessages);
+    }
+  }, [chatMessageList.data]);
 
   // const hasMounted = useRef(false);
   // const prevMessageLength = useRef(messages.length);

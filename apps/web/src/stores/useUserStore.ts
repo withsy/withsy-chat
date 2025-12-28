@@ -19,8 +19,8 @@ interface UserStore {
   preferenceFetchingKeySet: Set<string>;
   chatMap: Map<ChatId, ChatData>;
   chatMessageMap: Map<ChatMessageId, ChatMessageInfo>;
-  chatMessageOrderMap: Map<ChatId, ChatMessageId[]>;
-  addChatMessage: (chatMessage: ChatMessageData) => void;
+  chatMessageIdMap: Map<ChatId, Set<ChatMessageId>>;
+  setChatMessages: (chatMessages: ChatMessageData[]) => void;
   userPromptMap: Map<string, UserPromptData>;
 }
 
@@ -33,7 +33,7 @@ export const useUserStore = create<UserStore>()(
           state.preferenceFetchingKeySet.clear();
           state.chatMap.clear();
           state.chatMessageMap.clear();
-          state.chatMessageOrderMap.clear();
+          state.chatMessageIdMap.clear();
           state.userPromptMap.clear();
         });
       },
@@ -41,21 +41,21 @@ export const useUserStore = create<UserStore>()(
       preferenceFetchingKeySet: new Set(),
       chatMap: new Map(),
       chatMessageMap: new Map(),
-      chatMessageOrderMap: new Map(),
-      addChatMessage: (chatMessage) => {
+      chatMessageIdMap: new Map(),
+      setChatMessages: (chatMessages) => {
         set((state) => {
-          state.chatMessageMap.set(chatMessage.id, {
-            ...chatMessage,
-            isCollapsed: false,
+          chatMessages.forEach((chatMessage) => {
+            state.chatMessageMap.set(chatMessage.id, {
+              ...chatMessage,
+              isCollapsed: false,
+            });
+
+            if (!state.chatMessageIdMap.has(chatMessage.chatId)) {
+              state.chatMessageIdMap.set(chatMessage.chatId, new Set());
+            }
+
+            state.chatMessageIdMap.get(chatMessage.chatId)!.add(chatMessage.id);
           });
-
-          if (!state.chatMessageOrderMap.has(chatMessage.chatId)) {
-            state.chatMessageOrderMap.set(chatMessage.chatId, []);
-          }
-
-          state.chatMessageOrderMap
-            .get(chatMessage.chatId)!
-            .push(chatMessage.id);
         });
       },
       userPromptMap: new Map(),

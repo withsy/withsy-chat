@@ -21,10 +21,11 @@ export function CollapseToggle({
 
   const handleClick = () => {
     useUserStore.setState((state) => {
-      const chatMessage = state.chatMessageMap.get(chatMessageId);
-      if (chatMessage) {
-        chatMessage.isCollapsed = !isCollapsed;
-      }
+      // TODO: optimistic update.
+      // const chatMessage = state.chatMessageMap.get(chatMessageId);
+      // if (chatMessage) {
+      //   chatMessage.isCollapsed = !isCollapsed;
+      // }
     });
   };
 

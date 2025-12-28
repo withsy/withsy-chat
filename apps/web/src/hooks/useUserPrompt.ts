@@ -1,16 +1,16 @@
 import { useTRPC } from "@/lib/trpc";
+import { useUserStore } from "@/stores/useUserStore";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { useSession } from "next-auth/react";
 
 export function useUserPromptList() {
   const trpc = useTRPC();
-  const session = useSession();
+  const user = useUserStore((s) => s.user);
 
   return useInfiniteQuery(
     trpc.userPrompt.list.infiniteQueryOptions(
       {},
       {
-        enabled: session.status === "authenticated",
+        enabled: !!user,
         getNextPageParam: (lastPage) => lastPage.nextCursor,
       },
     ),
