@@ -19,7 +19,7 @@ export default function ChatBubble({
 }: {
   chatMessageId: ChatMessageId;
 }) {
-  const text = useChatMessageProp(chatMessageId, "text");
+  const text = useChatMessageProp(chatMessageId, "text") ?? "";
   const role = useChatMessageProp(chatMessageId, "role");
   const createdAt = useChatMessageProp(chatMessageId, "createdAt");
   const reasoningText = useChatMessageProp(chatMessageId, "reasoningText");
@@ -29,15 +29,15 @@ export default function ChatBubble({
   const { data: session } = useSession();
   const [showReasoning, setShowReasoning] = useState(false);
   const [collapsed, setCollapsed] = useState(
-    isCollapsed ?? (role === "user" && isLongChatMessage(text ?? "")),
+    isCollapsed ?? (role === "user" && isLongChatMessage(text)),
   );
   // const { profiles } = useAiProfileStore();
 
   const collapseText = collapsed
     ? text
       ? text.slice(0, 150)
-      : "" + (isLongChatMessage(text ?? "") ? "..." : "")
-    : (text ?? "");
+      : "" + (isLongChatMessage(text) ? "..." : "")
+    : text;
 
   const handleCopy = async () => {
     if (text) {

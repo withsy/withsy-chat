@@ -8,7 +8,7 @@ import { ChevronsDown } from "lucide-react";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import ChatBubble from "./ChatBubble";
-// import ChatInformationSystemMessage from "./ChatInformationSystemMessage";
+import ChatInformationSystemMessage from "./ChatInformationSystemMessage";
 
 export function ChatMessageList({ chatId }: { chatId: ChatId }) {
   const bottomRef = useRef<HTMLDivElement | null>(null);
@@ -114,7 +114,7 @@ export function ChatMessageList({ chatId }: { chatId: ChatId }) {
         ref={listRef}
         className="h-full space-y-12 overflow-x-hidden overflow-y-auto pr-2"
       >
-        {/* <ChatInformationSystemMessage chatId={chatId} /> */}
+        <ChatInformationSystemMessage chatId={chatId} />
         {chatMessageIds.map((chatMessageId) => (
           <div
             key={chatMessageId}

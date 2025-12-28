@@ -1,6 +1,5 @@
 import type { ChatId } from "@/common-schemas";
 import { useChatProp } from "@/hooks/useChat";
-import { useUserStore } from "@/stores/useUserStore";
 import Link from "next/link";
 
 const newChatMessages = [
@@ -38,19 +37,20 @@ export default function ChatInformationSystemMessage({
 }: {
   chatId: ChatId;
 }) {
-  const chatType = useChatProp(chatId, "type");
-  const chatId = chat.parentMessage?.chatId;
-  const messageId = chat.parentMessageId;
+  const type = useChatProp(chatId, "type");
+
+  // TODO: parentChatMessageId
+  const messageId = "";
 
   const content = (() => {
-    if (chatType === "chat") {
+    if (type === "chat") {
       const message = generateRandomMessage(newChatMessages);
       return (
         <div className="text-muted-foreground text-center italic select-none">
           {message}
         </div>
       );
-    } else if (chatType === "branch" && chatId && messageId) {
+    } else if (type === "branch" && chatId && messageId) {
       const message = generateRandomMessage(branchChatMessages);
       return (
         <div className="text-muted-foreground text-center italic select-none">
