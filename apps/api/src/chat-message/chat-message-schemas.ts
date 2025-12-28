@@ -3,9 +3,18 @@ import z from "zod";
 import { ChatData, ChatId, ChatType } from "../chat/chat-schemas.js";
 import { createListSchemas } from "../common-schemas.js";
 import { IdempotencyKey } from "../idempotency-key/idempotency-key-schemas.js";
+import { Role } from "../role-schemas.js";
 
 export const ChatMessageId = z.uuid();
 export type ChatMessageId = z.infer<typeof ChatMessageId>;
+
+export const ChatMessageStatus = z.enum([
+  "pending",
+  "processing",
+  "succeeded",
+  "failed",
+]);
+export type ChatMessageStatus = z.infer<typeof ChatMessageStatus>;
 
 export const ChatMessageData = z.object({
   get id() {
@@ -14,6 +23,15 @@ export const ChatMessageData = z.object({
   get chatId() {
     return ChatId;
   },
+  get role() {
+    return Role;
+  },
+  text: z.string(),
+  reasoningText: z.string(),
+  get status() {
+    return ChatMessageStatus;
+  },
+  isBookmarked: z.boolean(),
 });
 export type ChatMessageData = z.infer<typeof ChatMessageData>;
 

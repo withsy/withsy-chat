@@ -38,6 +38,10 @@ export type ChatMessageData = inferOutput<
 
 export type ChatMessageId = ChatMessageData["id"];
 
+export interface ChatMessageInfo extends ChatMessageData {
+  isMessageCollapsed: boolean;
+}
+
 export type UserPromptData = inferOutput<
   TrpcOptions["userPrompt"]["list"]
 >["items"][0];

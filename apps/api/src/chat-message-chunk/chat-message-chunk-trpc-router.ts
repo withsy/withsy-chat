@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
+import { TRPCError } from "@trpc/server";
 import { TrpcService } from "../trpc/trpc-service.js";
 import { UserTrpcProcedure } from "../user/user-trpc-procedure.js";
-import { zAsyncIterable } from "../z-async-iterable.js";
 import {
   ChatMessageChunkReceive,
   ChatMessageChunkReceiveOutput,
@@ -21,9 +21,16 @@ export class ChatMessageChunkTrpcRouter {
       receive: userTrpcProcedure.procedure
         .input(ChatMessageChunkReceive)
         .output(ChatMessageChunkReceiveOutput)
-        .subscription(({ ctx, input }) =>
-          chatMessageChunkService.receive(ctx.userId, input),
-        ),
+        .subscription(({ ctx, input, signal }) => {
+          if (!signal) {
+            throw new TRPCError({
+              code: "INTERNAL_SERVER_ERROR",
+              message: "Invalid signal.",
+            });
+          }
+
+          return chatMessageChunkService.receive(signal, ctx.userId, input);
+        }),
     });
   }
 }

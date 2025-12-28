@@ -12,9 +12,14 @@ export class ChatMessageChunkService {
   constructor(private readonly dbService: DbService) {}
 
   async *receive(
+    signal: AbortSignal,
     userId: UserId,
     input: ChatMessageChunkReceive,
   ): ChatMessageChunkReceiveOutput {
+    if (signal.aborted) {
+      return;
+    }
+
     const { lastEventId } = input;
     yield tracked(`${0}`, {
       chatMessageId: "",

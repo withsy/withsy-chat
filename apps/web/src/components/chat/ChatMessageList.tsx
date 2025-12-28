@@ -1,19 +1,26 @@
-import type { ChatId } from "@/common-schemas";
+import type { ChatId, ChatMessageId } from "@/common-schemas";
 import { useUserPreference } from "@/hooks/useUser";
+import { useTRPC } from "@/lib/trpc";
+import { useUserStore } from "@/stores/useUserStore";
+import { useSubscription } from "@trpc/tanstack-react-query";
 import { ChevronsDown } from "lucide-react";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
-import { ChatBubble } from "./ChatBubble";
+import ChatBubble from "./ChatBubble";
 // import ChatInformationSystemMessage from "./ChatInformationSystemMessage";
 
 export function ChatMessageList({ chatId }: { chatId: ChatId }) {
-  const router = useRouter();
-
   const bottomRef = useRef<HTMLDivElement | null>(null);
   const listRef = useRef<HTMLDivElement | null>(null);
-  const messageRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const chatMessageRefMap = useRef(new Map<ChatMessageId, HTMLDivElement>());
   const [showScrollToBottom, setShowScrollToBottom] = useState(false);
   const themeColor = useUserPreference("themeColor");
+  const chatMessages = useUserStore((s) => s.chatMessageMap.get(chatId)) ?? [];
+
+  const trpc = useTRPC();
+  const a = useSubscription(
+    trpc.chatMessageChunk.receive.subscriptionOptions({}),
+  );
 
   // const hasMounted = useRef(false);
   // const prevMessageLength = useRef(messages.length);
@@ -100,19 +107,18 @@ export function ChatMessageList({ chatId }: { chatId: ChatId }) {
         className="h-full space-y-12 overflow-x-hidden overflow-y-auto pr-2"
       >
         {/* <ChatInformationSystemMessage chatId={chatId} /> */}
-        {messages.map((msg) => (
+        {chatMessages.map((chatMessage) => (
           <div
-            key={msg.id}
+            key={chatMessage.id}
             ref={(el) => {
-              messageRefs.current[msg.id] = el;
+              if (el) {
+                chatMessageRefMap.current.set(chatMessage.id, el);
+              } else {
+                chatMessageRefMap.current.delete(chatMessage.id);
+              }
             }}
           >
-            <ChatBubble
-              key={msg.id}
-              chatType={chat?.type}
-              message={msg}
-              onToggleSaved={onToggleSaved}
-            />
+            {/* <ChatBubble key={chatMessage.id} chatMessage={chatMessage} /> */}
           </div>
         ))}
         <div ref={bottomRef} />

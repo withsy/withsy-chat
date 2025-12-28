@@ -1,7 +1,9 @@
+import type { ChatMessageId, ChatMessageInfo } from "@/common-schemas";
 import { cn } from "@/lib/utils";
 import { useAiProfileStore } from "@/stores/useAiProfileStore";
+import { useUserStore } from "@/stores/useUserStore";
 import { useSession } from "next-auth/react";
-import { memo, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 import { CollapseToggle } from "../CollapseToggle";
 import { MarkdownBox } from "../MarkdownBox";
@@ -10,18 +12,15 @@ import { ChatBubbleTooltips } from "./ChatBubbleTooltips";
 import { GetModelLabel } from "./ModelSelect";
 import { StatusIndicator } from "./StatusIndicator";
 
-type Props = {
-  message: MessageData;
-  chatType: ChatType | undefined;
-  onToggleSaved?: (id: string, newValue: boolean) => void;
-};
-
-export const ChatBubble = ({ message, chatType, onToggleSaved }: Props) => {
+export default function ChatBubble({
+  chatMessage,
+}: {
+  chatMessage: ChatMessageInfo;
+}) {
+  const { role, text, reasoningText, status, isMessageCollapsed } = chatMessage;
   const { data: session } = useSession();
 
-  const { profiles } = useAiProfileStore();
-
-  const { role, text, reasoningText, status, isMessageCollapsed } = message;
+  // const { profiles } = useAiProfileStore();
 
   const isLongMessage = text.length > 150;
   const [collapsed, setCollapsed] = useState(
@@ -153,4 +152,4 @@ export const ChatBubble = ({ message, chatType, onToggleSaved }: Props) => {
       </div>
     </div>
   );
-};
+}

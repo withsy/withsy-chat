@@ -26,8 +26,14 @@ export function useChatMessageSend() {
             throw new Error("ChatMessages must exist.");
           }
 
-          chatMessages.push(userChatMessage);
-          chatMessages.push(modelChatMessage);
+          chatMessages.push({
+            ...userChatMessage,
+            isMessageCollapsed: false,
+          });
+          chatMessages.push({
+            ...modelChatMessage,
+            isMessageCollapsed: false,
+          });
         });
 
         if (chat) {

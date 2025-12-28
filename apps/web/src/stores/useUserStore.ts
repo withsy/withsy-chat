@@ -1,7 +1,7 @@
 import type {
   ChatData,
   ChatId,
-  ChatMessageData,
+  ChatMessageInfo,
   UserData,
   UserPromptData,
 } from "@/common-schemas";
@@ -16,7 +16,7 @@ interface UserStore {
   user: UserData | null;
   preferenceFetchingKeySet: Set<string>;
   chatMap: Map<ChatId, ChatData>;
-  chatMessageMap: Map<ChatId, ChatMessageData[]>;
+  chatMessageMap: Map<ChatId, ChatMessageInfo[]>;
   userPromptMap: Map<string, UserPromptData>;
 }
 

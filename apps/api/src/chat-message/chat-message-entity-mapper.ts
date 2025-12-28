@@ -1,13 +1,22 @@
 import { Injectable } from "@nestjs/common";
+import { E8nService } from "../e8n/e8n-service.js";
 import { ChatMessageModel } from "../generated/prisma/models.js";
+import { Role } from "../role-schemas.js";
 import { ChatMessageData } from "./chat-message-schemas.js";
 
 @Injectable()
 export class ChatMessageEntityMapper {
+  constructor(private readonly e8nService: E8nService) {}
+
   toData(entity: ChatMessageModel): ChatMessageData {
     const data: ChatMessageData = {
       id: entity.id,
       chatId: entity.chatId,
+      isBookmarked: entity.isBookmarked,
+      role: Role.parse(entity.role),
+      reasoningText: this.e8nService.decrypt(entity.reasoningTextEncrypted),
+      text: this.e8nService.decrypt(entity.textEncrypted),
+      status: entity.status,
     };
 
     return data;
