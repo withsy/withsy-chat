@@ -25,20 +25,6 @@ export function ChatSession({
   const wideView = useUserPreference("wideView");
   const { openDrawer } = useDrawerStore();
 
-  // const chatStart = useMutation(
-  //   trpc.chat.start.mutationOptions({
-  //     onSuccess: (output) => {
-  //       if (output.isSuccess) {
-  //         router.push(
-  //           `/chat/${data.chat.id}?streamMessageId=${data.modelMessage.id}`,
-  //         );
-  //       } else {
-  //         // error
-  //       }
-  //     },
-  //   }),
-  // );
-
   // const messageSend = useMutation(
   //   trpc.message.send.mutationOptions({
   //     onError(error) {

@@ -1,6 +1,7 @@
 import { MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
 import { GracefulShutdownModule } from "@tygra/nestjs-graceful-shutdown";
 import { ApiKeyModule } from "../api-key/api-key-module.js";
+import { ChatMessageChunkModule } from "../chat-message-chunk/chat-message-chunk-module.js";
 import { ChatMessageModule } from "../chat-message/chat-message-module.js";
 import { ChatModule } from "../chat/chat-module.js";
 import { ConfigModule } from "../config/config-module.js";
@@ -31,6 +32,7 @@ import { AppTrpcRouter } from "./app-trpc-router.js";
     UserLinkAccountModule,
     ChatModule,
     ChatMessageModule,
+    ChatMessageChunkModule,
   ],
   providers: [AppTrpcRouter],
 })

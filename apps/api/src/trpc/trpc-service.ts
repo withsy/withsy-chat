@@ -17,6 +17,12 @@ export class TrpcService {
   constructor() {
     this.trpc = initTRPC.context<Context>().create({
       errorFormatter: this.errorFormatter,
+      sse: {
+        ping: {
+          enabled: true,
+          intervalMs: 60 * 1000,
+        },
+      },
     });
     this.publicProcedure = this.trpc.procedure;
   }

@@ -4,12 +4,7 @@ import { ChevronsDown } from "lucide-react";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import { ChatBubble } from "./ChatBubble";
-import ChatInformationSystemMessage from "./ChatInformationSystemMessage";
-
-type Props = {
-  messages: MessageData[];
-  onToggleSaved: (id: string, newValue: boolean) => void;
-};
+// import ChatInformationSystemMessage from "./ChatInformationSystemMessage";
 
 export function ChatMessageList({ chatId }: { chatId: ChatId }) {
   const router = useRouter();
@@ -20,56 +15,56 @@ export function ChatMessageList({ chatId }: { chatId: ChatId }) {
   const [showScrollToBottom, setShowScrollToBottom] = useState(false);
   const themeColor = useUserPreference("themeColor");
 
-  const hasMounted = useRef(false);
-  const prevMessageLength = useRef(messages.length);
+  // const hasMounted = useRef(false);
+  // const prevMessageLength = useRef(messages.length);
 
-  const messageId = router.query.messageId as string | undefined;
+  // const messageId = router.query.messageId as string | undefined;
 
-  useEffect(() => {
-    if (!hasMounted.current) {
-      hasMounted.current = true;
+  // useEffect(() => {
+  //   if (!hasMounted.current) {
+  //     hasMounted.current = true;
 
-      if (!messageId) {
-        bottomRef.current?.scrollIntoView({ behavior: "auto" });
-      }
-    }
-  }, [messageId]);
+  //     if (!messageId) {
+  //       bottomRef.current?.scrollIntoView({ behavior: "auto" });
+  //     }
+  //   }
+  // }, [messageId]);
 
-  useEffect(() => {
-    const hasNewMessage = messages.length > prevMessageLength.current;
-    prevMessageLength.current = messages.length;
+  // useEffect(() => {
+  //   const hasNewMessage = messages.length > prevMessageLength.current;
+  //   prevMessageLength.current = messages.length;
 
-    if (!messageId && hasNewMessage) {
-      bottomRef.current?.scrollIntoView({ behavior: "auto" });
-    }
-  }, [messages, messageId]);
+  //   if (!messageId && hasNewMessage) {
+  //     bottomRef.current?.scrollIntoView({ behavior: "auto" });
+  //   }
+  // }, [messages, messageId]);
 
-  useEffect(() => {
-    if (messageId) {
-      const id = MessageId.parse(messageId);
-      const targetRef = messageRefs.current[id];
-      if (targetRef) {
-        targetRef.scrollIntoView({ behavior: "auto", block: "start" });
-      }
-    }
-  }, [messageId, messages]);
+  // useEffect(() => {
+  //   if (messageId) {
+  //     const id = MessageId.parse(messageId);
+  //     const targetRef = messageRefs.current[id];
+  //     if (targetRef) {
+  //       targetRef.scrollIntoView({ behavior: "auto", block: "start" });
+  //     }
+  //   }
+  // }, [messageId, messages]);
 
-  useEffect(() => {
-    if (messageId) {
-      const timeout = setTimeout(() => {
-        const { messageId: _, ...rest } = router.query;
-        router.replace(
-          {
-            pathname: router.pathname,
-            query: rest,
-          },
-          undefined,
-          { shallow: true },
-        );
-      }, 100);
-      return () => clearTimeout(timeout);
-    }
-  }, [messageId, messages, router]);
+  // useEffect(() => {
+  //   if (messageId) {
+  //     const timeout = setTimeout(() => {
+  //       const { messageId: _, ...rest } = router.query;
+  //       router.replace(
+  //         {
+  //           pathname: router.pathname,
+  //           query: rest,
+  //         },
+  //         undefined,
+  //         { shallow: true },
+  //       );
+  //     }, 100);
+  //     return () => clearTimeout(timeout);
+  //   }
+  // }, [messageId, messages, router]);
 
   useEffect(() => {
     const el = listRef.current;
@@ -90,6 +85,7 @@ export function ChatMessageList({ chatId }: { chatId: ChatId }) {
     };
 
     el.addEventListener("scroll", handleScroll);
+
     return () => el.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -103,7 +99,7 @@ export function ChatMessageList({ chatId }: { chatId: ChatId }) {
         ref={listRef}
         className="h-full space-y-12 overflow-x-hidden overflow-y-auto pr-2"
       >
-        {chat != null && <ChatInformationSystemMessage chat={chat} />}
+        {/* <ChatInformationSystemMessage chatId={chatId} /> */}
         {messages.map((msg) => (
           <div
             key={msg.id}

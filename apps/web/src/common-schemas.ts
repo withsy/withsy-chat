@@ -36,6 +36,8 @@ export type ChatMessageData = inferOutput<
   TrpcOptions["chatMessage"]["list"]
 >["items"][0];
 
+export type ChatMessageId = ChatMessageData["id"];
+
 export type UserPromptData = inferOutput<
   TrpcOptions["userPrompt"]["list"]
 >["items"][0];

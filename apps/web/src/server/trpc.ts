@@ -10,6 +10,7 @@ import type { EnvVars } from "./env-vars";
 export function createTrpcClient(envVars: EnvVars): TRPCClient<AppRouter> {
   const trpcClient = createTRPCClient<AppRouter>({
     links: [
+      // TODO: Log only the necessary information.
       loggerLink({
         enabled: (opts) =>
           envVars.NODE_ENV === "development" ||

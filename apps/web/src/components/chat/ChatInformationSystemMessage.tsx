@@ -1,49 +1,6 @@
-import type { ChatData } from "@/types/chat";
+import type { ChatId } from "@/common-schemas";
+import { useUserStore } from "@/stores/useUserStore";
 import Link from "next/link";
-import React from "react";
-
-interface ChatInformationSystemMessageProps {
-  chat: ChatData;
-}
-
-const ChatInformationSystemMessage: React.FC<
-  ChatInformationSystemMessageProps
-> = ({ chat }) => {
-  const chatType = chat.type;
-  const chatId = chat.parentMessage?.chatId;
-  const messageId = chat.parentMessageId;
-
-  const content = (() => {
-    if (chatType === "chat") {
-      const message = getRandomMessage(newChatMessages);
-      return (
-        <div className="text-muted-foreground text-center italic select-none">
-          {message}
-        </div>
-      );
-    } else if (chatType === "branch" && chatId && messageId) {
-      const message = getRandomMessage(branchChatMessages);
-      return (
-        <div className="text-muted-foreground text-center italic select-none">
-          {message.prefix}
-          <Link
-            href={`/chat/${chatId}?messageId=${messageId}`}
-            className="text-blue-500 underline"
-          >
-            {message.linkText}
-          </Link>
-        </div>
-      );
-    }
-    return null;
-  })();
-
-  return (
-    <div key={chat.id} className="my-4 flex justify-center p-4">
-      {content}
-    </div>
-  );
-};
 
 const newChatMessages = [
   "You've started a new chat. How can I help you today?",
@@ -68,11 +25,52 @@ const branchChatMessages = [
   { prefix: "🧵 You're in a branch chat. ", linkText: "See the original" },
 ];
 
-function getRandomMessage<T extends { prefix?: string } | string>(
+function generateRandomMessage<T extends { prefix?: string } | string>(
   messages: T[],
 ): T {
   const index = Math.floor(Math.random() * messages.length);
   return messages[index];
 }
 
-export default ChatInformationSystemMessage;
+export default function ChatInformationSystemMessage({
+  chatId,
+}: {
+  chatId: ChatId;
+}) {
+  const chat = useUserStore((s) => s.chatMap.get(chatId));
+
+  const chatType = chat.type;
+  const chatId = chat.parentMessage?.chatId;
+  const messageId = chat.parentMessageId;
+
+  const content = (() => {
+    if (chatType === "chat") {
+      const message = generateRandomMessage(newChatMessages);
+      return (
+        <div className="text-muted-foreground text-center italic select-none">
+          {message}
+        </div>
+      );
+    } else if (chatType === "branch" && chatId && messageId) {
+      const message = generateRandomMessage(branchChatMessages);
+      return (
+        <div className="text-muted-foreground text-center italic select-none">
+          {message.prefix}
+          <Link
+            href={`/chat/${chatId}?messageId=${messageId}`}
+            className="text-blue-500 underline"
+          >
+            {message.linkText}
+          </Link>
+        </div>
+      );
+    }
+    return null;
+  })();
+
+  return (
+    <div key={chatId} className="my-4 flex justify-center p-4">
+      {content}
+    </div>
+  );
+}
