@@ -14,5 +14,6 @@ import { ChatMessageChunkTrpcRouter } from "./chat-message-chunk-trpc-router.js"
     ChatMessageChunkService,
     ChatMessageChunkEntityMapper,
   ],
+  exports: [ChatMessageChunkTrpcRouter],
 })
 export class ChatMessageChunkModule {}

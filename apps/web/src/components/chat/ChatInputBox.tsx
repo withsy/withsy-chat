@@ -1,5 +1,5 @@
 import { useChatMessageSend } from "@/hooks/useChatMessage";
-import { useUserPreference } from "@/hooks/useUser";
+import { useUserPreference, useUserSelectedModel } from "@/hooks/useUser";
 import { cn } from "@/lib/utils";
 import { useUserSessionStore } from "@/stores/useUserSessionStore";
 import { Send } from "lucide-react";
@@ -26,7 +26,7 @@ export function ChatInputBox({ chatId }: { chatId?: string }) {
   const [shouldFocusInput, setShouldFocusInput] = useState(false);
   const [randomPlaceholder, setRandomPlaceholder] = useState("");
   const chatMessageSend = useChatMessageSend();
-  const selectedModel = useUserSessionStore((s) => s.selectedModel);
+  const selectedModel = useUserSelectedModel();
 
   const isSendDisabled = chatMessageSend.isPending;
   // TODO: fix by userUsageLimit

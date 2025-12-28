@@ -6,6 +6,7 @@ import type {
 import { useTRPC } from "@/lib/trpc";
 import { useUserSessionStore } from "@/stores/useUserSessionStore";
 import { useUserStore } from "@/stores/useUserStore";
+import { Model } from "@repo/common";
 import { useMutation } from "@tanstack/react-query";
 
 const DEFAULT_USER_PREFERENCES: UserPreferences = {
@@ -111,4 +112,18 @@ export function useUserUpdate() {
       },
     }),
   );
+}
+
+export function useUserSelectedModel(): Model {
+  const selectedModel = useUserSessionStore((s) => s.selectedModel);
+  const result = Model.safeParse(selectedModel);
+  if (!result.success) {
+    useUserSessionStore.setState((state) => {
+      state.selectedModel = "gemini-2.5-flash";
+    });
+
+    return "gemini-2.5-flash";
+  }
+
+  return selectedModel;
 }

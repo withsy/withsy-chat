@@ -1,3 +1,4 @@
+import { useUserSelectedModel } from "@/hooks/useUser";
 import { useAiProfileStore } from "@/stores/useAiProfileStore";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 import { useUserSessionStore } from "@/stores/useUserSessionStore";
@@ -50,7 +51,7 @@ export function ModelSelect({
   onSelectModel,
 }: ModelSelectProps) {
   const { isMobile } = useSidebarStore();
-  const selectedModel = useUserSessionStore((s) => s.selectedModel);
+  const selectedModel = useUserSelectedModel();
   const { profiles } = useAiProfileStore();
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
