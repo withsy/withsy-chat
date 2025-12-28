@@ -1,3 +1,4 @@
+import type { ChatData, ChatDataKey, ChatId } from "@/common-schemas";
 import { useTRPC } from "@/lib/trpc";
 import { useUserStore } from "@/stores/useUserStore";
 import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
@@ -99,4 +100,11 @@ export function useChatDelete() {
       },
     }),
   );
+}
+
+export function useChatProp<Key extends ChatDataKey>(
+  chatId: ChatId,
+  key: Key,
+): ChatData[Key] | undefined {
+  return useUserStore((s) => s.chatMap.get(chatId)?.[key]);
 }

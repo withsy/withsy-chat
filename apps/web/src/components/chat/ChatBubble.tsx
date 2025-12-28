@@ -1,4 +1,5 @@
 import type { ChatId, ChatMessageId, ChatMessageInfo } from "@/common-schemas";
+import { useChatMessageProp } from "@/hooks/useChatMessage";
 import { isLongChatMessage } from "@/lib/chat-utils";
 import { cn } from "@/lib/utils";
 import { useAiProfileStore } from "@/stores/useAiProfileStore";
@@ -18,21 +19,13 @@ export default function ChatBubble({
 }: {
   chatMessageId: ChatMessageId;
 }) {
-  const text = useUserStore((s) => s.chatMessageMap.get(chatMessageId)?.text);
-  const role = useUserStore((s) => s.chatMessageMap.get(chatMessageId)?.role);
-  const createdAt = useUserStore(
-    (s) => s.chatMessageMap.get(chatMessageId)?.createdAt,
-  );
-  const reasoningText = useUserStore(
-    (s) => s.chatMessageMap.get(chatMessageId)?.reasoningText,
-  );
-  const model = useUserStore((s) => s.chatMessageMap.get(chatMessageId)?.model);
-  const isCollapsed = useUserStore(
-    (s) => s.chatMessageMap.get(chatMessageId)?.isCollapsed,
-  );
-  const status = useUserStore(
-    (s) => s.chatMessageMap.get(chatMessageId)?.status,
-  );
+  const text = useChatMessageProp(chatMessageId, "text");
+  const role = useChatMessageProp(chatMessageId, "role");
+  const createdAt = useChatMessageProp(chatMessageId, "createdAt");
+  const reasoningText = useChatMessageProp(chatMessageId, "reasoningText");
+  const model = useChatMessageProp(chatMessageId, "model");
+  const isCollapsed = useChatMessageProp(chatMessageId, "isCollapsed");
+  const status = useChatMessageProp(chatMessageId, "status");
   const { data: session } = useSession();
   const [showReasoning, setShowReasoning] = useState(false);
   const [collapsed, setCollapsed] = useState(

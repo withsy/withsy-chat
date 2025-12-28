@@ -1,3 +1,8 @@
+import type {
+  ChatMessageId,
+  ChatMessageInfo,
+  ChatMessageInfoKey,
+} from "@/common-schemas";
 import { useTRPC } from "@/lib/trpc";
 import { useUserStore } from "@/stores/useUserStore";
 import { useMutation } from "@tanstack/react-query";
@@ -27,4 +32,11 @@ export function useChatMessageSend() {
       },
     }),
   );
+}
+
+export function useChatMessageProp<Key extends ChatMessageInfoKey>(
+  chatMessageId: ChatMessageId,
+  key: Key,
+): ChatMessageInfo[Key] | undefined {
+  return useUserStore((s) => s.chatMessageMap.get(chatMessageId)?.[key]);
 }

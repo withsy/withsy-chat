@@ -1,4 +1,5 @@
 import type { ChatMessageId } from "@/common-schemas";
+import { useChatMessageProp } from "@/hooks/useChatMessage";
 import { useUserPreference } from "@/hooks/useUser";
 import { isLongChatMessage } from "@/lib/chat-utils";
 import { useUserStore } from "@/stores/useUserStore";
@@ -9,13 +10,10 @@ export function CollapseToggle({
   chatMessageId: ChatMessageId;
 }) {
   const themeColor = useUserPreference("themeColor");
-  const chatMessage = useUserStore((s) => s.chatMessageMap.get(chatMessageId));
+  const isCollapsed = useChatMessageProp(chatMessageId, "isCollapsed") ?? false;
+  const text = useChatMessageProp(chatMessageId, "text") ?? "";
+  const status = useChatMessageProp(chatMessageId, "status");
 
-  if (!chatMessage) {
-    return <div />;
-  }
-
-  const { isCollapsed, text, status } = chatMessage;
   const isShow = isLongChatMessage(text) && status === "succeeded";
   if (!isShow) {
     return <div />;

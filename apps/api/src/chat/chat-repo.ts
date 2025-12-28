@@ -10,7 +10,7 @@ export class ChatRepo {
     userId: UserId,
     input: ChatList,
   ): Promise<{ entities: ChatModel[]; nextCursor: ChatModel["id"] | null }> {
-    const { limit, cursor } = input;
+    const { limit, cursor, direction } = input;
 
     const entities = await this.tx.chat.findMany({
       where: {
@@ -21,7 +21,7 @@ export class ChatRepo {
         deletedAt: null,
       },
       orderBy: {
-        id: "desc",
+        id: direction === "forward" ? "desc" : "asc",
       },
       take: limit + 1,
       cursor: cursor

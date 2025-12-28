@@ -5,10 +5,10 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useChatProp } from "@/hooks/useChat";
 import { useUserPreference } from "@/hooks/useUser";
 import { useDrawerStore } from "@/stores/useDrawerStore";
 import { useSidebarStore } from "@/stores/useSidebarStore";
-import { useUserStore } from "@/stores/useUserStore";
 import { Bookmark, FolderGit2, PenLine, TableProperties } from "lucide-react";
 import { useRouter } from "next/router";
 import { CollapseButton } from "../CollapseButton";
@@ -16,15 +16,14 @@ import HoverSwitchIcon from "../HoverSwitchIcon";
 import { IconWithLabel } from "../IconWithLabel";
 import { getChatTypeIcon } from "./ChatTypeIcon";
 
-export default function ChatHeader({ chatId }: { chatId?: ChatId }) {
+export default function ChatHeader({ chatId = "" }: { chatId?: ChatId }) {
   const router = useRouter();
   const { collapsed } = useSidebarStore();
   const { openDrawer, setOpenDrawer } = useDrawerStore();
   const themeColor = useUserPreference("themeColor");
   const themeOpacity = useUserPreference("themeOpacity");
-  const chat = useUserStore((s) => s.chatMap.get(chatId ?? ""));
-  const chatTitle = chat?.title;
-  const chatType = chat?.type;
+  const chatTitle = useChatProp(chatId, "title");
+  const chatType = useChatProp(chatId, "type");
 
   const handleClick = (id: string) => {
     setOpenDrawer(openDrawer === id ? null : id);

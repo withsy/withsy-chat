@@ -16,6 +16,7 @@ export function createListSchemas<T extends z.ZodType>(
   const list = z.object({
     limit: z.number().int().min(limitMin).max(limitMax).default(limitDefault),
     cursor: z.string().nullable().default(null),
+    direction: z.enum(["forward", "backward"]).default("forward"),
   });
 
   const listOutput = z.object({

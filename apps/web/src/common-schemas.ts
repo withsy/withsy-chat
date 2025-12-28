@@ -30,6 +30,8 @@ export type UserPreferenceKey = keyof PartialUserPreferences;
 
 export type ChatData = inferOutput<TrpcOptions["chat"]["list"]>["items"][0];
 
+export type ChatDataKey = keyof ChatData;
+
 export type ChatId = ChatData["id"];
 
 export type ChatMessageData = inferOutput<
@@ -41,6 +43,8 @@ export type ChatMessageId = ChatMessageData["id"];
 export interface ChatMessageInfo extends ChatMessageData {
   isCollapsed: boolean;
 }
+
+export type ChatMessageInfoKey = keyof ChatMessageInfo;
 
 export type UserPromptData = inferOutput<
   TrpcOptions["userPrompt"]["list"]

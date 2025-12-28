@@ -6,11 +6,13 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useChatProp } from "@/hooks/useChat";
+import { useChatMessageProp } from "@/hooks/useChatMessage";
 import { useUserPreference } from "@/hooks/useUser";
 import { useTRPC } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
 import { useUserStore } from "@/stores/useUserStore";
-import type { Model } from "@repo/common";
+import { Model } from "@repo/common";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Bookmark, Copy, GitBranch, RefreshCw } from "lucide-react";
 import { useRouter } from "next/router";
@@ -24,11 +26,16 @@ export default function ChatBubbleTooltips({
   chatMessageId: ChatMessageId;
 }) {
   const themeColor = useUserPreference("themeColor");
-  const chatMessage = useUserStore((s) => s.chatMessageMap.get(chatMessageId));
-  const chat = useUserStore((s) => s.chatMap.get(chatMessage?.chatId ?? ""));
-  const trpc = useTRPC();
-  const queryClient = useQueryClient();
-  const router = useRouter();
+  const chatId = useChatMessageProp(chatMessageId, "chatId") ?? "";
+  const text = useChatMessageProp(chatMessageId, "text") ?? "";
+  const isBookmarked = useChatMessageProp(chatMessageId, "isBookmarked");
+  const role = useChatMessageProp(chatMessageId, "role");
+  const model = useChatMessageProp(chatMessageId, "model");
+  const parsedModel = Model.safeParse(model);
+  const messageModel: Model = parsedModel.success
+    ? parsedModel.data
+    : "gemini-2.5-flash";
+  const type = useChatProp(chatId, "type");
 
   // const chatStartBranch = useMutation(
   //   trpc.chat.startBranch.mutationOptions({
@@ -46,13 +53,6 @@ export default function ChatBubbleTooltips({
   //     },
   //   }),
   // );
-
-  if (!chatMessage || !chat) {
-    return <div />;
-  }
-
-  const { text, isBookmarked, role, model } = chatMessage;
-  const { type } = chat;
 
   //   router.push({
   //     pathname: router.pathname,
@@ -130,7 +130,7 @@ export default function ChatBubbleTooltips({
 
             <Tooltip>
               <ModelSelect
-                messageModel={model}
+                messageModel={messageModel}
                 description={"Switch model & regenerate"}
                 onSelectModel={handleSelectModel}
                 button={

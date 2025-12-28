@@ -1,4 +1,5 @@
 import type { ChatId } from "@/common-schemas";
+import { useChatProp } from "@/hooks/useChat";
 import { useUserStore } from "@/stores/useUserStore";
 import Link from "next/link";
 
@@ -37,9 +38,7 @@ export default function ChatInformationSystemMessage({
 }: {
   chatId: ChatId;
 }) {
-  const chat = useUserStore((s) => s.chatMap.get(chatId));
-
-  const chatType = chat.type;
+  const chatType = useChatProp(chatId, "type");
   const chatId = chat.parentMessage?.chatId;
   const messageId = chat.parentMessageId;
 

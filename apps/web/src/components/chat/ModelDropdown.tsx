@@ -1,6 +1,6 @@
 import { Drawer, DrawerContent } from "@/components/ui/drawer";
 import { useSidebarStore } from "@/stores/useSidebarStore";
-import type { Model } from "@/types/model";
+import type { Model } from "@repo/common";
 import type { ModelInfo } from "./ModelSelect";
 import { ModelSelectItem } from "./ModelSelectItem";
 
@@ -58,7 +58,9 @@ export function ModelDropdown({
     );
   }
 
-  if (!isOpen) return null;
+  if (!isOpen) {
+    return null;
+  }
 
   return (
     <ul className="absolute bottom-full z-10 mb-1 w-max min-w-full rounded-lg border border-gray-200 bg-white p-2 shadow-md">
