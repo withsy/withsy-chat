@@ -1,3 +1,4 @@
+import type { ChatId, ChatMessageId } from "@/common-schemas";
 import { Button } from "@/components/ui/button";
 import {
   Tooltip,
@@ -8,6 +9,7 @@ import {
 import { useUserPreference } from "@/hooks/useUser";
 import { useTRPC } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
+import { useUserStore } from "@/stores/useUserStore";
 import type { Model } from "@repo/common";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Bookmark, Copy, GitBranch, RefreshCw } from "lucide-react";
@@ -16,68 +18,87 @@ import { toast } from "sonner";
 import { v4 } from "uuid";
 import { ModelSelect } from "./ModelSelect";
 
-interface ChatBubbleTooltipsProps {
-  chatType: ChatType | undefined;
-  messageId: string;
-  messageModel: Model | null;
-  isAi: boolean;
-  isSaved: boolean;
-  onCopy?: () => void;
-  onSave?: () => void;
-  className?: string;
-}
-
-export const ChatBubbleTooltips: React.FC<ChatBubbleTooltipsProps> = ({
-  chatType,
-  messageId,
-  messageModel,
-  isAi,
-  isSaved,
-  onCopy,
-  onSave,
-  className,
-}) => {
+export default function ChatBubbleTooltips({
+  chatMessageId,
+}: {
+  chatMessageId: ChatMessageId;
+}) {
+  const themeColor = useUserPreference("themeColor");
+  const chatMessage = useUserStore((s) => s.chatMessageMap.get(chatMessageId));
+  const chat = useUserStore((s) => s.chatMap.get(chatMessage?.chatId ?? ""));
   const trpc = useTRPC();
   const queryClient = useQueryClient();
-  const { onRegenerateSuccess } = useChatSession();
   const router = useRouter();
-  const themeColor = useUserPreference("themeColor");
 
-  const chatStartBranch = useMutation(
-    trpc.chat.startBranch.mutationOptions({
-      onSuccess(data) {
-        router.push(`/chat/${data.id}`);
-        queryClient.invalidateQueries(trpc.chat.list.queryFilter());
-      },
-    }),
-  );
+  // const chatStartBranch = useMutation(
+  //   trpc.chat.startBranch.mutationOptions({
+  //     onSuccess(data) {
+  //       router.push(`/chat/${data.id}`);
+  //       queryClient.invalidateQueries(trpc.chat.list.queryFilter());
+  //     },
+  //   }),
+  // );
 
-  const messageRegenerateReply = useMutation(
-    trpc.message.regenerateReply.mutationOptions({
-      onSuccess(data) {
-        onRegenerateSuccess(data);
-      },
-    }),
-  );
+  // const messageRegenerateReply = useMutation(
+  //   trpc.message.regenerateReply.mutationOptions({
+  //     onSuccess(data) {
+  //       onRegenerateSuccess(data);
+  //     },
+  //   }),
+  // );
+
+  if (!chatMessage || !chat) {
+    return <div />;
+  }
+
+  const { text, isBookmarked, role, model } = chatMessage;
+  const { type } = chat;
+
+  //   router.push({
+  //     pathname: router.pathname,
+  //     query: { ...router.query, parentId: messageId },
+  //   });
+  // };
 
   const handleBranch = () => {
-    chatStartBranch.mutate({
-      idempotencyKey: v4(),
-      messageId,
-    });
+    // chatStartBranch.mutate({
+    //   idempotencyKey: v4(),
+    //   messageId,
+    // });
+  };
 
-    router.push({
-      pathname: router.pathname,
-      query: { ...router.query, parentId: messageId },
-    });
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(text);
+      toast.success("Copied!", {
+        description: "Message copied to clipboard.",
+      });
+    } catch (err) {
+      console.error("Failed to copy text: ", err);
+      toast.error("Failed", {
+        description: "Please try again or check clipboard permissions.",
+      });
+    }
+  };
+
+  const handleSave = () => {
+    // TODO: update chat message isBookmarked.
+  };
+
+  const handleSelectModel = (selectedModel: Model) => {
+    // messageRegenerateReply.mutate({
+    //   idempotencyKey: v4(),
+    //   messageId,
+    //   model: selectedModel,
+    // });
   };
 
   return (
     <TooltipProvider>
-      <div className={cn("flex gap-2", className)}>
+      <div className={"flex gap-2"}>
         <Tooltip>
           <TooltipTrigger asChild>
-            <Button size="icon" variant="ghost" onClick={onCopy}>
+            <Button size="icon" variant="ghost" onClick={handleCopy}>
               <Copy className="h-4 w-4" />
             </Button>
           </TooltipTrigger>
@@ -86,17 +107,17 @@ export const ChatBubbleTooltips: React.FC<ChatBubbleTooltipsProps> = ({
 
         <Tooltip>
           <TooltipTrigger asChild>
-            <Button size="icon" variant="ghost" onClick={onSave}>
+            <Button size="icon" variant="ghost" onClick={handleSave}>
               <Bookmark
                 className="h-4 w-4"
-                fill={isSaved ? `rgb(${themeColor})` : "transparent"}
+                fill={isBookmarked ? `rgb(${themeColor})` : "transparent"}
               />
             </Button>
           </TooltipTrigger>
           <TooltipContent>Save</TooltipContent>
         </Tooltip>
 
-        {isAi && (chatType == "chat" || chatType == "branch") && (
+        {role === "model" && (type == "chat" || type == "branch") && (
           <>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -109,15 +130,9 @@ export const ChatBubbleTooltips: React.FC<ChatBubbleTooltipsProps> = ({
 
             <Tooltip>
               <ModelSelect
-                messageModel={messageModel}
+                messageModel={model}
                 description={"Switch model & regenerate"}
-                onSelectModel={(selectedModel) => {
-                  messageRegenerateReply.mutate({
-                    idempotencyKey: v4(),
-                    messageId,
-                    model: selectedModel,
-                  });
-                }}
+                onSelectModel={handleSelectModel}
                 button={
                   <TooltipTrigger asChild>
                     <Button size="icon" variant="ghost">
@@ -133,4 +148,4 @@ export const ChatBubbleTooltips: React.FC<ChatBubbleTooltipsProps> = ({
       </div>
     </TooltipProvider>
   );
-};
+}

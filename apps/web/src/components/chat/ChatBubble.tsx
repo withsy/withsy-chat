@@ -1,4 +1,5 @@
 import type { ChatId, ChatMessageId, ChatMessageInfo } from "@/common-schemas";
+import { isLongChatMessage } from "@/lib/chat-utils";
 import { cn } from "@/lib/utils";
 import { useAiProfileStore } from "@/stores/useAiProfileStore";
 import { useUserStore } from "@/stores/useUserStore";
@@ -8,62 +9,60 @@ import { toast } from "sonner";
 import { CollapseToggle } from "../CollapseToggle";
 import { MarkdownBox } from "../MarkdownBox";
 import { ModelAvatar } from "../ModelAvatar";
-import { ChatBubbleTooltips } from "./ChatBubbleTooltips";
+import ChatBubbleTooltips from "./ChatBubbleTooltips";
 import { GetModelLabel } from "./ModelSelect";
 import { StatusIndicator } from "./StatusIndicator";
 
 export default function ChatBubble({
   chatMessageId,
-  chatId,
 }: {
   chatMessageId: ChatMessageId;
-  chatId: ChatId;
 }) {
-  const chatMessage = useUserStore((s) => s.chatMessageMap.get(chatId));
+  const text = useUserStore((s) => s.chatMessageMap.get(chatMessageId)?.text);
+  const role = useUserStore((s) => s.chatMessageMap.get(chatMessageId)?.role);
+  const createdAt = useUserStore(
+    (s) => s.chatMessageMap.get(chatMessageId)?.createdAt,
+  );
+  const reasoningText = useUserStore(
+    (s) => s.chatMessageMap.get(chatMessageId)?.reasoningText,
+  );
+  const model = useUserStore((s) => s.chatMessageMap.get(chatMessageId)?.model);
+  const isCollapsed = useUserStore(
+    (s) => s.chatMessageMap.get(chatMessageId)?.isCollapsed,
+  );
+  const status = useUserStore(
+    (s) => s.chatMessageMap.get(chatMessageId)?.status,
+  );
+  const { data: session } = useSession();
   const [showReasoning, setShowReasoning] = useState(false);
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(
+    isCollapsed ?? (role === "user" && isLongChatMessage(text ?? "")),
+  );
   // const { profiles } = useAiProfileStore();
 
-  useEffect(() => {
-    if (chatMessage) {
-      const { text, role, isCollapsed } = chatMessage;
-      const isLongMessage = text.length > 150;
-      Promise.try(() => {
-        setCollapsed(isCollapsed ?? (role === "user" && isLongMessage));
-      });
-    }
-  }, [chatMessage, setCollapsed]);
-
-  if (!chatMessage) {
-    return null;
-  }
-
-  const { text, role, createdAt, reasoningText, status } = chatMessage;
-
   const collapseText = collapsed
-    ? text.slice(0, 150) + (text.length > 150 ? "..." : "")
-    : text;
+    ? text
+      ? text.slice(0, 150)
+      : "" + (isLongChatMessage(text ?? "") ? "..." : "")
+    : (text ?? "");
 
   const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(text);
-      toast.success("Copied!", {
-        description: "Message copied to clipboard.",
-      });
-    } catch (err) {
-      console.error("Failed to copy text: ", err);
-      toast.error("Failed", {
-        description: "Please try again or check clipboard permissions.",
-      });
+    if (text) {
+      try {
+        await navigator.clipboard.writeText(text);
+        toast.success("Copied!", {
+          description: "Message copied to clipboard.",
+        });
+      } catch (err) {
+        console.error("Failed to copy text: ", err);
+        toast.error("Failed", {
+          description: "Please try again or check clipboard permissions.",
+        });
+      }
     }
   };
 
-  // const handleSave = () => {
-  //   onToggleSaved?.(message.id, !message.isBookmarked);
-  // };
-
-  // const userProfile =
-  //   role === "model" && message.model ? profiles[message.model] : null;
+  // const userProfile = role === "model" && model ? profiles[model] : null;
   // const image =
   //   role === "model" ? userProfile?.imageSource : session?.user?.image;
   // const name =
@@ -71,6 +70,8 @@ export default function ChatBubble({
   //     ? userProfile?.name ||
   //       (message.model ? GetModelLabel(message.model) : "AI")
   //     : (session?.user?.name ?? "username");
+  const image = undefined;
+  const name = "";
 
   // const collapseToggleProps = {
   //   show: isLongMessage && status === "succeeded",
@@ -88,16 +89,16 @@ export default function ChatBubble({
   //   onSave: handleSave,
   // };
 
-  // const items =
-  //   role === "model"
-  //     ? [
-  //         <ChatBubbleTooltips key="tooltips" {...tooltipsProps} />,
-  //         <CollapseToggle key="collapse" {...collapseToggleProps} />,
-  //       ]
-  //     : [
-  //         <CollapseToggle key="collapse" {...collapseToggleProps} />,
-  //         <ChatBubbleTooltips key="tooltips" {...tooltipsProps} />,
-  //       ];
+  const items =
+    role === "model"
+      ? [
+          <ChatBubbleTooltips key="tooltips" chatMessageId={chatMessageId} />,
+          <CollapseToggle key="collapse" chatMessageId={chatMessageId} />,
+        ]
+      : [
+          <CollapseToggle key="collapse" chatMessageId={chatMessageId} />,
+          <ChatBubbleTooltips key="tooltips" chatMessageId={chatMessageId} />,
+        ];
 
   return (
     <div
@@ -107,7 +108,7 @@ export default function ChatBubble({
         "flex-col gap-2",
       )}
     >
-      {/* <ModelAvatar name={name} image={image} /> */}
+      <ModelAvatar name={name} image={image} />
 
       <div
         className={`flex flex-1 flex-col items-start ${
@@ -122,8 +123,8 @@ export default function ChatBubble({
           )}
         >
           <div>
-            {/* {role === "model" ? name : "You"} ·{" "} */}
-            {new Date(createdAt).toLocaleTimeString()}
+            {role === "model" ? name : "You"} ·{" "}
+            {createdAt && new Date(createdAt).toLocaleTimeString()}
           </div>
           {role === "model" && reasoningText && (
             <div
@@ -158,9 +159,9 @@ export default function ChatBubble({
             <MarkdownBox content={reasoningText} />
           )}
           <MarkdownBox content={collapseText} />
-          <StatusIndicator status={status} />
+          {status && <StatusIndicator status={status} />}
         </div>
-        {/* <div className="mt-2 flex w-full justify-between">{items}</div> */}
+        <div className="mt-2 flex w-full justify-between">{items}</div>
       </div>
     </div>
   );

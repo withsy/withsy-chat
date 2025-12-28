@@ -17,6 +17,8 @@ export class ChatMessageEntityMapper {
       reasoningText: this.e8nService.decrypt(entity.reasoningTextEncrypted),
       text: this.e8nService.decrypt(entity.textEncrypted),
       status: entity.status,
+      model: entity.model,
+      createdAt: entity.createdAt,
     };
 
     return data;

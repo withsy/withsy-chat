@@ -114,11 +114,7 @@ export function ChatMessageList({ chatId }: { chatId: ChatId }) {
               }
             }}
           >
-            <ChatBubble
-              key={chatMessageId}
-              chatMessageId={chatMessageId}
-              chatId={chatId}
-            />
+            <ChatBubble key={chatMessageId} chatMessageId={chatMessageId} />
           </div>
         ))}
         <div ref={bottomRef} />
