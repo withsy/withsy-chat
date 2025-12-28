@@ -1,9 +1,9 @@
-import type { ChatMessageId, ChatMessageInfo } from "@/common-schemas";
+import type { ChatId, ChatMessageId, ChatMessageInfo } from "@/common-schemas";
 import { cn } from "@/lib/utils";
 import { useAiProfileStore } from "@/stores/useAiProfileStore";
 import { useUserStore } from "@/stores/useUserStore";
 import { useSession } from "next-auth/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { CollapseToggle } from "../CollapseToggle";
 import { MarkdownBox } from "../MarkdownBox";
@@ -13,20 +13,32 @@ import { GetModelLabel } from "./ModelSelect";
 import { StatusIndicator } from "./StatusIndicator";
 
 export default function ChatBubble({
-  chatMessage,
+  chatMessageId,
+  chatId,
 }: {
-  chatMessage: ChatMessageInfo;
+  chatMessageId: ChatMessageId;
+  chatId: ChatId;
 }) {
-  const { role, text, reasoningText, status, isMessageCollapsed } = chatMessage;
-  const { data: session } = useSession();
-
+  const chatMessage = useUserStore((s) => s.chatMessageMap.get(chatId));
+  const [showReasoning, setShowReasoning] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
   // const { profiles } = useAiProfileStore();
 
-  const isLongMessage = text.length > 150;
-  const [collapsed, setCollapsed] = useState(
-    isMessageCollapsed ?? (role === "user" && isLongMessage),
-  );
-  const [showReasoning, setShowReasoning] = useState(false);
+  useEffect(() => {
+    if (chatMessage) {
+      const { text, role, isCollapsed } = chatMessage;
+      const isLongMessage = text.length > 150;
+      Promise.try(() => {
+        setCollapsed(isCollapsed ?? (role === "user" && isLongMessage));
+      });
+    }
+  }, [chatMessage, setCollapsed]);
+
+  if (!chatMessage) {
+    return null;
+  }
+
+  const { text, role, createdAt, reasoningText, status } = chatMessage;
 
   const collapseText = collapsed
     ? text.slice(0, 150) + (text.length > 150 ? "..." : "")
@@ -46,46 +58,46 @@ export default function ChatBubble({
     }
   };
 
-  const handleSave = () => {
-    onToggleSaved?.(message.id, !message.isBookmarked);
-  };
+  // const handleSave = () => {
+  //   onToggleSaved?.(message.id, !message.isBookmarked);
+  // };
 
-  const userProfile =
-    role === "model" && message.model ? profiles[message.model] : null;
-  const image =
-    role === "model" ? userProfile?.imageSource : session?.user?.image;
-  const name =
-    role === "model"
-      ? userProfile?.name ||
-        (message.model ? GetModelLabel(message.model) : "AI")
-      : (session?.user?.name ?? "username");
+  // const userProfile =
+  //   role === "model" && message.model ? profiles[message.model] : null;
+  // const image =
+  //   role === "model" ? userProfile?.imageSource : session?.user?.image;
+  // const name =
+  //   role === "model"
+  //     ? userProfile?.name ||
+  //       (message.model ? GetModelLabel(message.model) : "AI")
+  //     : (session?.user?.name ?? "username");
 
-  const collapseToggleProps = {
-    show: isLongMessage && status === "succeeded",
-    collapsed,
-    setCollapsed,
-  };
+  // const collapseToggleProps = {
+  //   show: isLongMessage && status === "succeeded",
+  //   collapsed,
+  //   setCollapsed,
+  // };
 
-  const tooltipsProps = {
-    chatType,
-    messageId: message.id,
-    isAi: role === "model",
-    messageModel: message.model,
-    isSaved: message.isBookmarked,
-    onCopy: handleCopy,
-    onSave: handleSave,
-  };
+  // const tooltipsProps = {
+  //   chatType,
+  //   messageId: message.id,
+  //   isAi: role === "model",
+  //   messageModel: message.model,
+  //   isSaved: message.isBookmarked,
+  //   onCopy: handleCopy,
+  //   onSave: handleSave,
+  // };
 
-  const items =
-    role === "model"
-      ? [
-          <ChatBubbleTooltips key="tooltips" {...tooltipsProps} />,
-          <CollapseToggle key="collapse" {...collapseToggleProps} />,
-        ]
-      : [
-          <CollapseToggle key="collapse" {...collapseToggleProps} />,
-          <ChatBubbleTooltips key="tooltips" {...tooltipsProps} />,
-        ];
+  // const items =
+  //   role === "model"
+  //     ? [
+  //         <ChatBubbleTooltips key="tooltips" {...tooltipsProps} />,
+  //         <CollapseToggle key="collapse" {...collapseToggleProps} />,
+  //       ]
+  //     : [
+  //         <CollapseToggle key="collapse" {...collapseToggleProps} />,
+  //         <ChatBubbleTooltips key="tooltips" {...tooltipsProps} />,
+  //       ];
 
   return (
     <div
@@ -95,7 +107,7 @@ export default function ChatBubble({
         "flex-col gap-2",
       )}
     >
-      <ModelAvatar name={name} image={image} />
+      {/* <ModelAvatar name={name} image={image} /> */}
 
       <div
         className={`flex flex-1 flex-col items-start ${
@@ -110,8 +122,8 @@ export default function ChatBubble({
           )}
         >
           <div>
-            {role === "model" ? name : "You"} ·{" "}
-            {new Date(message.createdAt).toLocaleTimeString()}
+            {/* {role === "model" ? name : "You"} ·{" "} */}
+            {new Date(createdAt).toLocaleTimeString()}
           </div>
           {role === "model" && reasoningText && (
             <div
@@ -148,7 +160,7 @@ export default function ChatBubble({
           <MarkdownBox content={collapseText} />
           <StatusIndicator status={status} />
         </div>
-        <div className="mt-2 flex w-full justify-between">{items}</div>
+        {/* <div className="mt-2 flex w-full justify-between">{items}</div> */}
       </div>
     </div>
   );

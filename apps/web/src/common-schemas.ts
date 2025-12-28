@@ -39,7 +39,7 @@ export type ChatMessageData = inferOutput<
 export type ChatMessageId = ChatMessageData["id"];
 
 export interface ChatMessageInfo extends ChatMessageData {
-  isMessageCollapsed: boolean;
+  isCollapsed: boolean;
 }
 
 export type UserPromptData = inferOutput<

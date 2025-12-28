@@ -16,25 +16,10 @@ export function useChatMessageSend() {
           if (chat) {
             state.chatMap.set(chat.id, chat);
           }
-
-          if (!state.chatMessageMap.has(userChatMessage.chatId)) {
-            state.chatMessageMap.set(userChatMessage.chatId, []);
-          }
-
-          const chatMessages = state.chatMessageMap.get(userChatMessage.chatId);
-          if (!chatMessages) {
-            throw new Error("ChatMessages must exist.");
-          }
-
-          chatMessages.push({
-            ...userChatMessage,
-            isMessageCollapsed: false,
-          });
-          chatMessages.push({
-            ...modelChatMessage,
-            isMessageCollapsed: false,
-          });
         });
+
+        useUserStore.getState().addChatMessage(userChatMessage);
+        useUserStore.getState().addChatMessage(modelChatMessage);
 
         if (chat) {
           router.push(`/chat/${chat.id}`);

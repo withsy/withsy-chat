@@ -15,12 +15,8 @@ export function ChatMessageList({ chatId }: { chatId: ChatId }) {
   const chatMessageRefMap = useRef(new Map<ChatMessageId, HTMLDivElement>());
   const [showScrollToBottom, setShowScrollToBottom] = useState(false);
   const themeColor = useUserPreference("themeColor");
-  const chatMessages = useUserStore((s) => s.chatMessageMap.get(chatId)) ?? [];
-
-  const trpc = useTRPC();
-  const a = useSubscription(
-    trpc.chatMessageChunk.receive.subscriptionOptions({}),
-  );
+  const chatMessageIds =
+    useUserStore((s) => s.chatMessageOrderMap.get(chatId)) ?? [];
 
   // const hasMounted = useRef(false);
   // const prevMessageLength = useRef(messages.length);
@@ -107,18 +103,22 @@ export function ChatMessageList({ chatId }: { chatId: ChatId }) {
         className="h-full space-y-12 overflow-x-hidden overflow-y-auto pr-2"
       >
         {/* <ChatInformationSystemMessage chatId={chatId} /> */}
-        {chatMessages.map((chatMessage) => (
+        {chatMessageIds.map((chatMessageId) => (
           <div
-            key={chatMessage.id}
+            key={chatMessageId}
             ref={(el) => {
               if (el) {
-                chatMessageRefMap.current.set(chatMessage.id, el);
+                chatMessageRefMap.current.set(chatMessageId, el);
               } else {
-                chatMessageRefMap.current.delete(chatMessage.id);
+                chatMessageRefMap.current.delete(chatMessageId);
               }
             }}
           >
-            {/* <ChatBubble key={chatMessage.id} chatMessage={chatMessage} /> */}
+            <ChatBubble
+              key={chatMessageId}
+              chatMessageId={chatMessageId}
+              chatId={chatId}
+            />
           </div>
         ))}
         <div ref={bottomRef} />
