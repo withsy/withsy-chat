@@ -20,6 +20,7 @@ interface UserStore {
   chatMap: Map<ChatId, ChatData>;
   chatMessageMap: Map<ChatMessageId, ChatMessageInfo>;
   chatMessageIdMap: Map<ChatId, Set<ChatMessageId>>;
+  deleteChat: (chatId: ChatId) => void;
   setChatMessages: (chatMessages: ChatMessageData[]) => void;
   userPromptMap: Map<string, UserPromptData>;
 }
@@ -42,6 +43,12 @@ export const useUserStore = create<UserStore>()(
       chatMap: new Map(),
       chatMessageMap: new Map(),
       chatMessageIdMap: new Map(),
+      deleteChat: (chatId) => {
+        set((state) => {
+          state.chatMap.delete(chatId);
+          state.chatMessageIdMap.delete(chatId);
+        });
+      },
       setChatMessages: (chatMessages) => {
         set((state) => {
           chatMessages.forEach((chatMessage) => {

@@ -22,7 +22,10 @@ export const ChatMessageChunkData = z.object({
 export type ChatMessageChunkData = z.infer<typeof ChatMessageChunkData>;
 
 export const ChatMessageChunkReceive = z.object({
-  lastEventId: z.coerce.number().int().optional(),
+  get chatMessageId() {
+    return ChatMessageId;
+  },
+  lastEventId: z.coerce.number<number | string>().int().optional(),
 });
 export type ChatMessageChunkReceive = z.infer<typeof ChatMessageChunkReceive>;
 
