@@ -68,7 +68,6 @@ CREATE TABLE "chats" (
     "user_id" UUID NOT NULL,
     "title_encrypted" TEXT NOT NULL,
     "is_starred" BOOLEAN NOT NULL DEFAULT false,
-    "type" TEXT NOT NULL,
     "user_prompt_id" UUID,
     "created_at" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMPTZ(6) NOT NULL,

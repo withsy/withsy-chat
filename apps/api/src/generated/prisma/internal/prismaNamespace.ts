@@ -1347,7 +1347,6 @@ export const ChatScalarFieldEnum = {
   userId: 'userId',
   titleEncrypted: 'titleEncrypted',
   isStarred: 'isStarred',
-  type: 'type',
   userPromptId: 'userPromptId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',

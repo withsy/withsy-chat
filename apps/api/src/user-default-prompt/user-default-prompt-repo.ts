@@ -19,6 +19,9 @@ export class UserDefaultPromptRepo {
         user: {
           deletedAt: null,
         },
+        userPrompt: {
+          deletedAt: null,
+        },
       },
       include: {
         userPrompt: true,

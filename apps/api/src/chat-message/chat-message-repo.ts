@@ -114,6 +114,9 @@ export class ChatMessageRepo {
             user: {
               deletedAt: null,
             },
+            userPrompt: {
+              deletedAt: null,
+            },
           },
         },
         data: {

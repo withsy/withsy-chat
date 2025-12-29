@@ -29,7 +29,6 @@ export type ChatMinAggregateOutputType = {
   userId: string | null
   titleEncrypted: string | null
   isStarred: boolean | null
-  type: string | null
   userPromptId: string | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -41,7 +40,6 @@ export type ChatMaxAggregateOutputType = {
   userId: string | null
   titleEncrypted: string | null
   isStarred: boolean | null
-  type: string | null
   userPromptId: string | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -53,7 +51,6 @@ export type ChatCountAggregateOutputType = {
   userId: number
   titleEncrypted: number
   isStarred: number
-  type: number
   userPromptId: number
   createdAt: number
   updatedAt: number
@@ -67,7 +64,6 @@ export type ChatMinAggregateInputType = {
   userId?: true
   titleEncrypted?: true
   isStarred?: true
-  type?: true
   userPromptId?: true
   createdAt?: true
   updatedAt?: true
@@ -79,7 +75,6 @@ export type ChatMaxAggregateInputType = {
   userId?: true
   titleEncrypted?: true
   isStarred?: true
-  type?: true
   userPromptId?: true
   createdAt?: true
   updatedAt?: true
@@ -91,7 +86,6 @@ export type ChatCountAggregateInputType = {
   userId?: true
   titleEncrypted?: true
   isStarred?: true
-  type?: true
   userPromptId?: true
   createdAt?: true
   updatedAt?: true
@@ -176,7 +170,6 @@ export type ChatGroupByOutputType = {
   userId: string
   titleEncrypted: string
   isStarred: boolean
-  type: string
   userPromptId: string | null
   createdAt: Date
   updatedAt: Date
@@ -209,7 +202,6 @@ export type ChatWhereInput = {
   userId?: Prisma.UuidFilter<"Chat"> | string
   titleEncrypted?: Prisma.StringFilter<"Chat"> | string
   isStarred?: Prisma.BoolFilter<"Chat"> | boolean
-  type?: Prisma.StringFilter<"Chat"> | string
   userPromptId?: Prisma.UuidNullableFilter<"Chat"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Chat"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Chat"> | Date | string
@@ -224,7 +216,6 @@ export type ChatOrderByWithRelationInput = {
   userId?: Prisma.SortOrder
   titleEncrypted?: Prisma.SortOrder
   isStarred?: Prisma.SortOrder
-  type?: Prisma.SortOrder
   userPromptId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -242,7 +233,6 @@ export type ChatWhereUniqueInput = Prisma.AtLeast<{
   userId?: Prisma.UuidFilter<"Chat"> | string
   titleEncrypted?: Prisma.StringFilter<"Chat"> | string
   isStarred?: Prisma.BoolFilter<"Chat"> | boolean
-  type?: Prisma.StringFilter<"Chat"> | string
   userPromptId?: Prisma.UuidNullableFilter<"Chat"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Chat"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Chat"> | Date | string
@@ -257,7 +247,6 @@ export type ChatOrderByWithAggregationInput = {
   userId?: Prisma.SortOrder
   titleEncrypted?: Prisma.SortOrder
   isStarred?: Prisma.SortOrder
-  type?: Prisma.SortOrder
   userPromptId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -275,7 +264,6 @@ export type ChatScalarWhereWithAggregatesInput = {
   userId?: Prisma.UuidWithAggregatesFilter<"Chat"> | string
   titleEncrypted?: Prisma.StringWithAggregatesFilter<"Chat"> | string
   isStarred?: Prisma.BoolWithAggregatesFilter<"Chat"> | boolean
-  type?: Prisma.StringWithAggregatesFilter<"Chat"> | string
   userPromptId?: Prisma.UuidNullableWithAggregatesFilter<"Chat"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Chat"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Chat"> | Date | string
@@ -286,7 +274,6 @@ export type ChatCreateInput = {
   id: string
   titleEncrypted: string
   isStarred?: boolean
-  type: string
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -300,7 +287,6 @@ export type ChatUncheckedCreateInput = {
   userId: string
   titleEncrypted: string
   isStarred?: boolean
-  type: string
   userPromptId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -312,7 +298,6 @@ export type ChatUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   titleEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
   isStarred?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  type?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -326,7 +311,6 @@ export type ChatUncheckedUpdateInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   titleEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
   isStarred?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  type?: Prisma.StringFieldUpdateOperationsInput | string
   userPromptId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -339,7 +323,6 @@ export type ChatCreateManyInput = {
   userId: string
   titleEncrypted: string
   isStarred?: boolean
-  type: string
   userPromptId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -350,7 +333,6 @@ export type ChatUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   titleEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
   isStarred?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  type?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -361,7 +343,6 @@ export type ChatUncheckedUpdateManyInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   titleEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
   isStarred?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  type?: Prisma.StringFieldUpdateOperationsInput | string
   userPromptId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -383,7 +364,6 @@ export type ChatCountOrderByAggregateInput = {
   userId?: Prisma.SortOrder
   titleEncrypted?: Prisma.SortOrder
   isStarred?: Prisma.SortOrder
-  type?: Prisma.SortOrder
   userPromptId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -395,7 +375,6 @@ export type ChatMaxOrderByAggregateInput = {
   userId?: Prisma.SortOrder
   titleEncrypted?: Prisma.SortOrder
   isStarred?: Prisma.SortOrder
-  type?: Prisma.SortOrder
   userPromptId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -407,7 +386,6 @@ export type ChatMinOrderByAggregateInput = {
   userId?: Prisma.SortOrder
   titleEncrypted?: Prisma.SortOrder
   isStarred?: Prisma.SortOrder
-  type?: Prisma.SortOrder
   userPromptId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -521,7 +499,6 @@ export type ChatCreateWithoutUserInput = {
   id: string
   titleEncrypted: string
   isStarred?: boolean
-  type: string
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -533,7 +510,6 @@ export type ChatUncheckedCreateWithoutUserInput = {
   id: string
   titleEncrypted: string
   isStarred?: boolean
-  type: string
   userPromptId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -575,7 +551,6 @@ export type ChatScalarWhereInput = {
   userId?: Prisma.UuidFilter<"Chat"> | string
   titleEncrypted?: Prisma.StringFilter<"Chat"> | string
   isStarred?: Prisma.BoolFilter<"Chat"> | boolean
-  type?: Prisma.StringFilter<"Chat"> | string
   userPromptId?: Prisma.UuidNullableFilter<"Chat"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Chat"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Chat"> | Date | string
@@ -586,7 +561,6 @@ export type ChatCreateWithoutUserPromptInput = {
   id: string
   titleEncrypted: string
   isStarred?: boolean
-  type: string
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -599,7 +573,6 @@ export type ChatUncheckedCreateWithoutUserPromptInput = {
   userId: string
   titleEncrypted: string
   isStarred?: boolean
-  type: string
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -636,7 +609,6 @@ export type ChatCreateWithoutChatMessagesInput = {
   id: string
   titleEncrypted: string
   isStarred?: boolean
-  type: string
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -649,7 +621,6 @@ export type ChatUncheckedCreateWithoutChatMessagesInput = {
   userId: string
   titleEncrypted: string
   isStarred?: boolean
-  type: string
   userPromptId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -676,7 +647,6 @@ export type ChatUpdateWithoutChatMessagesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   titleEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
   isStarred?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  type?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -689,7 +659,6 @@ export type ChatUncheckedUpdateWithoutChatMessagesInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   titleEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
   isStarred?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  type?: Prisma.StringFieldUpdateOperationsInput | string
   userPromptId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -700,7 +669,6 @@ export type ChatCreateManyUserInput = {
   id: string
   titleEncrypted: string
   isStarred?: boolean
-  type: string
   userPromptId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -711,7 +679,6 @@ export type ChatUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   titleEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
   isStarred?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  type?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -723,7 +690,6 @@ export type ChatUncheckedUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   titleEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
   isStarred?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  type?: Prisma.StringFieldUpdateOperationsInput | string
   userPromptId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -735,7 +701,6 @@ export type ChatUncheckedUpdateManyWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   titleEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
   isStarred?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  type?: Prisma.StringFieldUpdateOperationsInput | string
   userPromptId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -747,7 +712,6 @@ export type ChatCreateManyUserPromptInput = {
   userId: string
   titleEncrypted: string
   isStarred?: boolean
-  type: string
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -757,7 +721,6 @@ export type ChatUpdateWithoutUserPromptInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   titleEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
   isStarred?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  type?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -770,7 +733,6 @@ export type ChatUncheckedUpdateWithoutUserPromptInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   titleEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
   isStarred?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  type?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -782,7 +744,6 @@ export type ChatUncheckedUpdateManyWithoutUserPromptInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   titleEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
   isStarred?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  type?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -824,7 +785,6 @@ export type ChatSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   userId?: boolean
   titleEncrypted?: boolean
   isStarred?: boolean
-  type?: boolean
   userPromptId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -840,7 +800,6 @@ export type ChatSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   userId?: boolean
   titleEncrypted?: boolean
   isStarred?: boolean
-  type?: boolean
   userPromptId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -854,7 +813,6 @@ export type ChatSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   userId?: boolean
   titleEncrypted?: boolean
   isStarred?: boolean
-  type?: boolean
   userPromptId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -868,14 +826,13 @@ export type ChatSelectScalar = {
   userId?: boolean
   titleEncrypted?: boolean
   isStarred?: boolean
-  type?: boolean
   userPromptId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
 }
 
-export type ChatOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "titleEncrypted" | "isStarred" | "type" | "userPromptId" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["chat"]>
+export type ChatOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "titleEncrypted" | "isStarred" | "userPromptId" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["chat"]>
 export type ChatInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   userPrompt?: boolean | Prisma.Chat$userPromptArgs<ExtArgs>
@@ -903,7 +860,6 @@ export type $ChatPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     userId: string
     titleEncrypted: string
     isStarred: boolean
-    type: string
     userPromptId: string | null
     createdAt: Date
     updatedAt: Date
@@ -1338,7 +1294,6 @@ export interface ChatFieldRefs {
   readonly userId: Prisma.FieldRef<"Chat", 'String'>
   readonly titleEncrypted: Prisma.FieldRef<"Chat", 'String'>
   readonly isStarred: Prisma.FieldRef<"Chat", 'Boolean'>
-  readonly type: Prisma.FieldRef<"Chat", 'String'>
   readonly userPromptId: Prisma.FieldRef<"Chat", 'String'>
   readonly createdAt: Prisma.FieldRef<"Chat", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Chat", 'DateTime'>
