@@ -1,5 +1,4 @@
 import { Injectable } from "@nestjs/common";
-import { TRPCError } from "@trpc/server";
 import { AiMessageService } from "../ai-message/ai-message.service.js";
 import { ChatE8nRepo } from "../chat/chat-e8n-repo.js";
 import { ChatMapper } from "../chat/chat-mapper.js";
@@ -61,18 +60,8 @@ export class ChatMessageService {
       let chat: ChatModel | null = null;
       let chatId: string = "";
       if (!input.chatId) {
-        const { type } = input;
-
-        if (!type) {
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: "Invalid type.",
-          });
-        }
-
         const title = [...text].slice(0, 20).join("");
         chat = await chatE8nRepo.create(userId, {
-          type,
           title,
         });
         chatId = chat.id;

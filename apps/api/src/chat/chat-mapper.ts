@@ -15,7 +15,6 @@ export class ChatMapper {
       title,
       isStarred: entity.isStarred,
       updatedAt: entity.updatedAt,
-      type: entity.type,
       userPromptId: entity.userPromptId,
     };
 
