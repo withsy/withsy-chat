@@ -17,7 +17,7 @@ import { ConfigService } from "../config/config-service.js";
 
 @Injectable()
 export class XaiService {
-  #client: OpenAI;
+  readonly #client: OpenAI;
 
   constructor(configService: ConfigService) {
     this.#client = new OpenAI({

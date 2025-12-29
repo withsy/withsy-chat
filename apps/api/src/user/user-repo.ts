@@ -12,7 +12,7 @@ import {
 } from "./user-schemas.js";
 
 export class UserRepo {
-  private readonly logger = new Logger(UserRepo.name);
+  readonly #logger = new Logger(UserRepo.name);
 
   constructor(private readonly tx: Tx) {}
 
@@ -47,7 +47,7 @@ RETURNING *`;
 
     if (rows.length === 0) {
       const message = "User not found.";
-      this.logger.error({ message, userId });
+      this.#logger.error({ message, userId });
 
       throw new TRPCError({
         code: "NOT_FOUND",

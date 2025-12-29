@@ -1,4 +1,5 @@
 import { Module } from "@nestjs/common";
+import { AiMessageModule } from "../ai-message/ai-message.module.js";
 import { ChatModule } from "../chat/chat-module.js";
 import { DbModule } from "../db/db-module.js";
 import { E8nModule } from "../e8n/e8n-module.js";
@@ -9,7 +10,14 @@ import { ChatMessageService } from "./chat-message-service.js";
 import { ChatMessageTrpcRouter } from "./chat-message-trpc-router.js";
 
 @Module({
-  imports: [TrpcModule, UserModule, DbModule, E8nModule, ChatModule],
+  imports: [
+    TrpcModule,
+    UserModule,
+    DbModule,
+    E8nModule,
+    ChatModule,
+    AiMessageModule,
+  ],
   providers: [ChatMessageTrpcRouter, ChatMessageService, ChatMessageMapper],
   exports: [ChatMessageTrpcRouter],
 })

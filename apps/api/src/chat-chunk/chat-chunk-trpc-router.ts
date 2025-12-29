@@ -10,7 +10,7 @@ import { ChatChunkService } from "./chat-chunk-service.js";
 
 @Injectable()
 export class ChatChunkTrpcRouter {
-  private readonly logger = new Logger(ChatChunkTrpcRouter.name);
+  readonly #logger = new Logger(ChatChunkTrpcRouter.name);
   readonly router;
 
   constructor(
@@ -24,7 +24,7 @@ export class ChatChunkTrpcRouter {
         .output(ChatChunkReceiveOutput)
         .subscription(({ ctx, input, signal }) => {
           if (!signal) {
-            this.logger.error("Invalid receive signal.");
+            this.#logger.error("Invalid receive signal.");
             throw new TRPCError({
               code: "INTERNAL_SERVER_ERROR",
             });

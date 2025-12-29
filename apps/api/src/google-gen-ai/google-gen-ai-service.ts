@@ -11,7 +11,7 @@ import { ConfigService } from "../config/config-service.js";
 
 @Injectable()
 export class GoogleGenAiService {
-  #client: GoogleGenAI;
+  readonly #client: GoogleGenAI;
 
   constructor(configService: ConfigService) {
     this.#client = new GoogleGenAI({

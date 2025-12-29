@@ -1,10 +1,11 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { Pool } from "pg";
 import { ConfigService } from "../config/config-service.js";
+import { inspect } from "../utils.js";
 
 @Injectable()
 export class PgPoolService {
-  private readonly logger = new Logger(PgPoolService.name);
+  readonly #logger = new Logger(PgPoolService.name);
   readonly pool: Pool;
 
   constructor(configService: ConfigService) {
@@ -15,7 +16,7 @@ export class PgPoolService {
     });
 
     const onError = (e: unknown) => {
-      this.logger.error("Postgres error occurred. error:", e);
+      this.#logger.error(`Postgres error. ${inspect(e)}`);
     };
     pool.on("error", onError);
     pool.on("connect", (client) => {

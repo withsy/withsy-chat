@@ -3,7 +3,7 @@ import { NestFactory } from "@nestjs/core";
 import { setupGracefulShutdown } from "@tygra/nestjs-graceful-shutdown";
 import { AppModule } from "./app/app-module.js";
 import { ConfigService } from "./config/config-service.js";
-import { checkTimeZoneUtc } from "./utils.js";
+import { checkTimeZoneUtc, inspect } from "./utils.js";
 
 async function bootstrap() {
   checkTimeZoneUtc();
@@ -26,6 +26,6 @@ async function bootstrap() {
 }
 
 bootstrap().catch((e) => {
-  console.error(e);
+  console.error(`Failed to bootstrap. ${inspect(e)}`);
   process.exit(1);
 });
