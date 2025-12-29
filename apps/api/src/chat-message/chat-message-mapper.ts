@@ -5,7 +5,7 @@ import { ChatMessageModel } from "../generated/prisma/models.js";
 import { ChatMessageData } from "./chat-message-schemas.js";
 
 @Injectable()
-export class ChatMessageEntityMapper {
+export class ChatMessageMapper {
   constructor(private readonly e8nService: E8nService) {}
 
   toData(entity: ChatMessageModel): ChatMessageData {

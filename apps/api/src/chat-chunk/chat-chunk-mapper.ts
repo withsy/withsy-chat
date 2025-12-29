@@ -4,7 +4,7 @@ import { ChatChunkModel } from "../generated/prisma/models.js";
 import { ChatChunkData } from "./chat-chunk-entities.js";
 
 @Injectable()
-export class ChatChunkEntityMapper {
+export class ChatChunkMapper {
   constructor(private readonly e8nService: E8nService) {}
 
   toData(entity: ChatChunkModel): ChatChunkData {

@@ -1,14 +1,14 @@
 import { Injectable } from "@nestjs/common";
 import { TRPCError } from "@trpc/server";
 import { ChatE8nRepo } from "../chat/chat-e8n-repo.js";
-import { ChatEntityMapper } from "../chat/chat-entity-mapper.js";
+import { ChatMapper } from "../chat/chat-mapper.js";
 import { DbService } from "../db/db-service.js";
 import { E8nService } from "../e8n/e8n-service.js";
 import { ChatModel } from "../generated/prisma/models.js";
 import { IdempotencyKeyRepo } from "../idempotency-key/idempotency-key-repo.js";
 import { UserId } from "../user/user-schemas.js";
 import { ChatMessageE8nRepo } from "./chat-message-e8n-repo.js";
-import { ChatMessageEntityMapper } from "./chat-message-entity-mapper.js";
+import { ChatMessageMapper } from "./chat-message-mapper.js";
 import { ChatMessageRepo } from "./chat-message-repo.js";
 import {
   ChatMessageList,
@@ -22,8 +22,8 @@ export class ChatMessageService {
   constructor(
     private readonly dbService: DbService,
     private readonly e8nService: E8nService,
-    private readonly chatEntityMapper: ChatEntityMapper,
-    private readonly chatMessageEntityMapper: ChatMessageEntityMapper,
+    private readonly chatMapper: ChatMapper,
+    private readonly chatMessageMapper: ChatMessageMapper,
   ) {}
 
   async list(
@@ -33,7 +33,7 @@ export class ChatMessageService {
     const chatMessageRepo = new ChatMessageRepo(this.dbService.db);
     const { entities, nextCursor } = await chatMessageRepo.list(userId, input);
     const items = entities.map((entity) =>
-      this.chatMessageEntityMapper.toData(entity),
+      this.chatMessageMapper.toData(entity),
     );
 
     return {
@@ -96,13 +96,11 @@ export class ChatMessageService {
       };
     });
 
-    const chat = txResult.chat
-      ? this.chatEntityMapper.toData(txResult.chat)
-      : null;
-    const userChatMessage = this.chatMessageEntityMapper.toData(
+    const chat = txResult.chat ? this.chatMapper.toData(txResult.chat) : null;
+    const userChatMessage = this.chatMessageMapper.toData(
       txResult.userChatMessage,
     );
-    const modelChatMessage = this.chatMessageEntityMapper.toData(
+    const modelChatMessage = this.chatMessageMapper.toData(
       txResult.modelChatMessage,
     );
 

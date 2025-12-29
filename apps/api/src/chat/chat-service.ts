@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { DbService } from "../db/db-service.js";
 import { UserId } from "../user/user-schemas.js";
-import { ChatEntityMapper } from "./chat-entity-mapper.js";
+import { ChatMapper } from "./chat-mapper.js";
 import { ChatRepo } from "./chat-repo.js";
 import {
   ChatData,
@@ -15,15 +15,13 @@ import {
 export class ChatService {
   constructor(
     private readonly dbService: DbService,
-    private readonly chatEntityMapper: ChatEntityMapper,
+    private readonly chatMapper: ChatMapper,
   ) {}
 
   async list(userId: UserId, input: ChatList): Promise<ChatListOutput> {
     const chatRepo = new ChatRepo(this.dbService.db);
     const { entities, nextCursor } = await chatRepo.list(userId, input);
-    const items = entities.map((entity) =>
-      this.chatEntityMapper.toData(entity),
-    );
+    const items = entities.map((entity) => this.chatMapper.toData(entity));
 
     return {
       items,
@@ -34,7 +32,7 @@ export class ChatService {
   async update(userId: UserId, input: ChatUpdate): Promise<ChatData> {
     const chatRepo = new ChatRepo(this.dbService.db);
     const entity = await chatRepo.update(userId, input);
-    const data = this.chatEntityMapper.toData(entity);
+    const data = this.chatMapper.toData(entity);
 
     return data;
   }

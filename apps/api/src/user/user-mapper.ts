@@ -4,7 +4,7 @@ import { UserModel } from "../generated/prisma/models.js";
 import { UserData } from "./user-schemas.js";
 
 @Injectable()
-export class UserEntityMapper {
+export class UserMapper {
   toData(entity: UserModel): UserData {
     const preferences = RawUserPreferences.parse(entity.preferences);
 
