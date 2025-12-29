@@ -1,4 +1,4 @@
-import type { ChatId, ChatMessageId, ChatMessageInfo } from "@/common-schemas";
+import type { ChatMessageId } from "@/common-schemas";
 import { useChatChunkReceive } from "@/hooks/useChatChunk";
 import { useChatMessageProp } from "@/hooks/useChatMessage";
 import { isLongChatMessage } from "@/lib/chat-utils";
