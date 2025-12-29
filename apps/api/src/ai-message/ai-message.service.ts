@@ -1,7 +1,6 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { ChatMessageRepo } from "../chat-message/chat-message-repo.js";
 import { ChatMessageId } from "../chat-message/chat-message-schemas.js";
-import { ChatRepo } from "../chat/chat-repo.js";
 import { ChatId } from "../chat/chat-schemas.js";
 import { DbService } from "../db/db-service.js";
 import { E8nService } from "../e8n/e8n-service.js";
