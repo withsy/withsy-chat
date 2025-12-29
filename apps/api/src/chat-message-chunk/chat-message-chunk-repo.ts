@@ -16,11 +16,11 @@ export class ChatMessageChunkRepo {
     userId: UserId,
     input: {
       chatMessageId: ChatMessageId;
-      index?: ChatMessageChunkIndex;
+      index: ChatMessageChunkIndex;
       limit?: number;
     },
   ): Promise<PartialChatMessageChunkModel[]> {
-    const { chatMessageId, index = 0, limit = 20 } = input;
+    const { chatMessageId, index, limit = 20 } = input;
 
     const entities = await this.tx.chatMessageChunk.findMany({
       where: {
@@ -38,13 +38,13 @@ export class ChatMessageChunkRepo {
       orderBy: {
         index: "asc",
       },
+      take: limit,
       cursor: {
         chatMessageId_index: {
           chatMessageId,
           index,
         },
       },
-      take: limit,
       select: {
         index: true,
         textEncrypted: true,
