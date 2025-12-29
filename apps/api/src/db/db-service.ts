@@ -5,12 +5,87 @@ import { PrismaClient } from "../generated/prisma/client.js";
 import { inspect } from "../utils.js";
 import { PgPoolService } from "./pg-pool-service.js";
 
-export type Tx = Parameters<Parameters<PrismaClient["$transaction"]>[0]>[0];
+const MODEL_SET = new Set<string>(["Chat", "User", "UserPrompt"]);
+
+const OPERATION_CONFIG = new Map<string, { include: boolean }>([
+  [
+    "aggregate",
+    {
+      include: false,
+    },
+  ],
+  [
+    "count",
+    {
+      include: false,
+    },
+  ],
+  [
+    "findFirst",
+    {
+      include: true,
+    },
+  ],
+  [
+    "findFirstOrThrow",
+    {
+      include: true,
+    },
+  ],
+  [
+    "findMany",
+    {
+      include: true,
+    },
+  ],
+  [
+    "findUnique",
+    {
+      include: true,
+    },
+  ],
+  [
+    "findUniqueOrThrow",
+    {
+      include: true,
+    },
+  ],
+  [
+    "groupBy",
+    {
+      include: false,
+    },
+  ],
+  [
+    "update",
+    {
+      include: true,
+    },
+  ],
+  [
+    "updateMany",
+    {
+      include: false,
+    },
+  ],
+  [
+    "updateManyAndReturn",
+    {
+      include: true,
+    },
+  ],
+  [
+    "upsert",
+    {
+      include: true,
+    },
+  ],
+]);
 
 @Injectable()
 export class DbService {
   readonly #logger = new Logger(DbService.name);
-  readonly db: PrismaClient;
+  readonly db;
 
   constructor(configService: ConfigService, pgPoolService: PgPoolService) {
     const adapter = new PrismaPg(pgPoolService.pool);
@@ -40,6 +115,35 @@ export class DbService {
       this.#logger.error(inspect(ev));
     });
 
-    this.db = client;
+    this.db = client.$extends({
+      name: "softDelete",
+      query: {
+        $allModels: {
+          $allOperations: async ({ model, operation, args, query }) => {
+            if (!MODEL_SET.has(model)) {
+              return await query(args);
+            }
+
+            const opConfig = OPERATION_CONFIG.get(operation);
+            if (!opConfig) {
+              return await query(args);
+            }
+
+            if ("where" in args) {
+              args.where = {
+                ...args.where,
+                deletedAt: null,
+              };
+            } else {
+              Reflect.set(args, "where", {
+                deletedAt: null,
+              });
+            }
+          },
+        },
+      },
+    });
   }
 }
+
+export type Tx = Parameters<Parameters<DbService["db"]["$transaction"]>[0]>[0];
