@@ -1,4 +1,5 @@
 import { ChatMessageId } from "../chat-message/chat-message-schemas.js";
+import { ChatId } from "../chat/chat-schemas.js";
 import { Tx } from "../db/db-service.js";
 import { ChatChunkModel } from "../generated/prisma/models.js";
 import { UserId } from "../user/user-schemas.js";
@@ -15,17 +16,19 @@ export class ChatChunkRepo {
   async list(
     userId: UserId,
     input: {
+      chatId: ChatId;
       chatMessageId: ChatMessageId;
       index: ChatChunkIndex;
       limit?: number;
     },
   ): Promise<PartialChatChunkModel[]> {
-    const { chatMessageId, index, limit = 20 } = input;
+    const { chatId, chatMessageId, index, limit = 20 } = input;
 
     const entities = await this.tx.chatChunk.findMany({
       where: {
         chatMessage: {
           id: chatMessageId,
+          chatId,
           chat: {
             deletedAt: null,
             userId,

@@ -31,7 +31,9 @@ export const ChatMessageData = z.object({
     return ChatMessageStatus;
   },
   isBookmarked: z.boolean(),
-  createdAt: DateTimeTz,
+  get createdAt() {
+    return DateTimeTz;
+  },
   model: z.string().nullable(),
 });
 export type ChatMessageData = z.infer<typeof ChatMessageData>;

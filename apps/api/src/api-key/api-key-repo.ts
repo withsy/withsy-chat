@@ -30,12 +30,13 @@ export class ApiKeyRepo {
     const entity = await this.tx.apiKey.findUnique({
       where: {
         apiKey,
+        isEnabled: true,
       },
       select: {
-        isEnabled: true,
+        id: true,
       },
     });
 
-    return !!entity && entity.isEnabled;
+    return !!entity;
   }
 }

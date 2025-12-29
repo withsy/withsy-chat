@@ -21,7 +21,7 @@ export class ChatChunkService {
     userId: UserId,
     input: ChatChunkReceive,
   ): ChatChunkReceiveOutput {
-    const { chatMessageId, lastEventId } = input;
+    const { chatId, chatMessageId, lastEventId } = input;
 
     const chatChunkRepo = new ChatChunkRepo(this.dbService.db);
 
@@ -29,6 +29,7 @@ export class ChatChunkService {
     let isDone = false;
     while (!(signal.aborted || isDone)) {
       const entities = await chatChunkRepo.list(userId, {
+        chatId,
         chatMessageId,
         index: lastIndex + 1,
       });
