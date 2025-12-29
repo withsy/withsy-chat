@@ -7,7 +7,7 @@ import { ChatModule } from "../chat/chat-module.js";
 import { ConfigModule } from "../config/config-module.js";
 import { DbModule } from "../db/db-module.js";
 import { E8nModule } from "../e8n/e8n-module.js";
-import { GoogleGenAiModule } from "../google-gen-ai/google-gen-ai.module.js";
+import { GoogleGenAiModule } from "../google-gen-ai/google-gen-ai-module.js";
 import { ShutdownModule } from "../shutdown/shutdown-module.js";
 import { TrpcModule } from "../trpc/trpc-module.js";
 import { UserAiProfileModule } from "../user-ai-profile/user-ai-profile-module.js";
@@ -15,6 +15,7 @@ import { UserDefaultPromptModule } from "../user-default-prompt/user-default-pro
 import { UserLinkAccountModule } from "../user-link-account/user-link-account-module.js";
 import { UserPromptModule } from "../user-prompt/user-prompt-module.js";
 import { UserModule } from "../user/user-module.js";
+import { XaiModule } from "../xai/xai-module.js";
 import { AppTrpcRouter } from "./app-trpc-router.js";
 
 @Module({
@@ -35,6 +36,7 @@ import { AppTrpcRouter } from "./app-trpc-router.js";
     ChatMessageModule,
     ChatMessageChunkModule,
     GoogleGenAiModule,
+    XaiModule,
   ],
   providers: [AppTrpcRouter],
 })

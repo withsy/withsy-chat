@@ -1,9 +1,8 @@
 import { Model } from "@repo/common";
 import z from "zod";
 import { ChatData, ChatId, ChatType } from "../chat/chat-schemas.js";
-import { createListSchemas, DateTimeTz } from "../common-schemas.js";
+import { createListSchemas, DateTimeTz, Role } from "../common-schemas.js";
 import { IdempotencyKey } from "../idempotency-key/idempotency-key-schemas.js";
-import { Role } from "../role-schemas.js";
 
 export const ChatMessageId = z.uuid();
 export type ChatMessageId = z.infer<typeof ChatMessageId>;

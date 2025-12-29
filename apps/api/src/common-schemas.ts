@@ -1,4 +1,7 @@
+import { Model } from "@repo/common";
 import z from "zod";
+
+//#region Utils
 
 export const DateTimeTz = z.coerce.date<Date | string>();
 export type DateTimeTz = Date;
@@ -32,18 +35,54 @@ export function createListSchemas<T extends z.ZodType>(
   };
 }
 
-export function createResultSchema<T extends z.ZodType, E extends z.ZodType>(
-  dataSchema: T,
-  errorSchema: E,
-) {
-  return z.discriminatedUnion("isSuccess", [
-    z.object({
-      isSuccess: z.literal(true),
-      data: dataSchema,
-    }),
-    z.object({
-      isSuccess: z.literal(false),
-      error: errorSchema,
-    }),
-  ]);
+//#endregion Utils
+
+//#region Ai
+
+export const ModelProvider = z.enum(["google-gen-ai", "xai"]);
+export type ModelProvider = z.infer<typeof ModelProvider>;
+
+export const ModelProviderMap = {
+  "gemini-2.5-flash": "google-gen-ai",
+  "grok-3": "xai",
+  "grok-3-mini": "xai",
+  "grok-3-mini-fast": "xai",
+} satisfies Record<Model, ModelProvider>;
+export type ModelProviderMap = typeof ModelProviderMap;
+
+export const Role = z.enum(["user", "model", "system"]);
+export type Role = z.infer<typeof Role>;
+
+export const GoogleGenAiRole = z.enum(["user", "model"]);
+export type GoogleGenAiRole = z.infer<typeof GoogleGenAiRole>;
+
+export const GoogleGenAiRoleMap = {
+  user: "user",
+  model: "model",
+  system: "user",
+} satisfies Record<Role, GoogleGenAiRole>;
+export type GoogleGenAiRoleMap = typeof GoogleGenAiRoleMap;
+
+export const OpenAiRole = z.enum(["user", "assistant", "system"]);
+export type OpenAiRole = z.infer<typeof OpenAiRole>;
+
+export const OpenAiRoleMap = {
+  user: "user",
+  model: "assistant",
+  system: "system",
+} satisfies Record<Role, OpenAiRole>;
+export type OpenAiRoleMap = z.infer<typeof OpenAiRoleMap>;
+
+export interface AiSendTextInput {
+  model: Model;
+  prompt: string;
+  texts: { role: string; text: string }[];
 }
+
+export interface AiSendTextOutput {
+  text: string;
+  reasoningText: string;
+  rawData: string;
+}
+
+//#endregion Ai

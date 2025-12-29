@@ -1,10 +1,10 @@
 import { v7 } from "uuid";
 import { ChatId } from "../chat/chat-schemas.js";
+import { Role } from "../common-schemas.js";
 import { Tx } from "../db/db-service.js";
 import { E8nService } from "../e8n/e8n-service.js";
 import { ChatMessageStatus } from "../generated/prisma/enums.js";
 import { ChatMessageModel } from "../generated/prisma/models.js";
-import { Role } from "../role-schemas.js";
 
 export class ChatMessageE8nRepo {
   constructor(

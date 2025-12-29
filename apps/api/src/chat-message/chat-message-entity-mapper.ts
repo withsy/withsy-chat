@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
+import { Role } from "../common-schemas.js";
 import { E8nService } from "../e8n/e8n-service.js";
 import { ChatMessageModel } from "../generated/prisma/models.js";
-import { Role } from "../role-schemas.js";
 import { ChatMessageData } from "./chat-message-schemas.js";
 
 @Injectable()
