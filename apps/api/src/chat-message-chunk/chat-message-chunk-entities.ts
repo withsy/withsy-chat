@@ -2,12 +2,12 @@ import z from "zod";
 import { ChatMessageId } from "../chat-message/chat-message-schemas.js";
 import { zAsyncIterable } from "../z-async-iterable.js";
 
+export const ChatMessageChunkIndex = z.coerce.number<number | string>().int();
+export type ChatMessageChunkIndex = z.infer<typeof ChatMessageChunkIndex>;
+
 export const ChatMessageChunkData = z.object({
-  get chatMessageId() {
-    return ChatMessageId;
-  },
   get index() {
-    return z.number();
+    return ChatMessageChunkIndex;
   },
   get text() {
     return z.string();
@@ -25,7 +25,7 @@ export const ChatMessageChunkReceive = z.object({
   get chatMessageId() {
     return ChatMessageId;
   },
-  lastEventId: z.coerce.number<number | string>().int().optional(),
+  lastEventId: ChatMessageChunkIndex.optional(),
 });
 export type ChatMessageChunkReceive = z.infer<typeof ChatMessageChunkReceive>;
 

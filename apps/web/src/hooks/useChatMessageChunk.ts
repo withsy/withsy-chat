@@ -28,7 +28,7 @@ export function useChatMessageChunkReceive(chatMessageId: ChatMessageId) {
         },
         onData: ({ data }) => {
           useUserStore.setState((state) => {
-            const chatMessage = state.chatMessageMap.get(data.chatMessageId);
+            const chatMessage = state.chatMessageMap.get(chatMessageId);
             if (chatMessage) {
               chatMessage.text += data.text;
               chatMessage.reasoningText += data.reasoningText;

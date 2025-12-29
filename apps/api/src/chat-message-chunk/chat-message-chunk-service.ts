@@ -16,11 +16,12 @@ export class ChatMessageChunkService {
     userId: UserId,
     input: ChatMessageChunkReceive,
   ): ChatMessageChunkReceiveOutput {
+    const { lastEventId } = input;
+
     if (signal.aborted) {
       return;
     }
 
-    const { lastEventId } = input;
     yield tracked(`${0}`, {
       chatMessageId: "",
       index: 0,

@@ -9,7 +9,6 @@ export class ChatMessageChunkEntityMapper {
 
   toData(entity: ChatMessageChunkModel): ChatMessageChunkData {
     const data: ChatMessageChunkData = {
-      chatMessageId: entity.chatMessageId,
       index: entity.index,
       text: this.e8nService.decrypt(entity.textEncrypted),
       reasoningText: this.e8nService.decrypt(entity.reasoningTextEncrypted),
