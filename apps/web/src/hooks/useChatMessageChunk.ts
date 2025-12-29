@@ -6,13 +6,13 @@ import { skipToken } from "@tanstack/react-query";
 import { useSubscription } from "@trpc/tanstack-react-query";
 import { useChatMessageProp } from "./useChatMessage";
 
-export function useChatMessageChunkReceive(chatMessageId: ChatMessageId) {
+export function useChatChunkReceive(chatMessageId: ChatMessageId) {
   const trpc = useTRPC();
   const status = useChatMessageProp(chatMessageId, "status");
   const isNotCompleted = status === "pending" || status === "processing";
 
   return useSubscription(
-    trpc.chatMessageChunk.receive.subscriptionOptions(
+    trpc.chatChunk.receive.subscriptionOptions(
       isNotCompleted
         ? {
             chatMessageId,

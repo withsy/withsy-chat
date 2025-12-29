@@ -4,13 +4,13 @@ import { DbService } from "../db/db-service.js";
 import { E8nService } from "../e8n/e8n-service.js";
 import { UserId } from "../user/user-schemas.js";
 import {
-  ChatMessageChunkReceive,
-  ChatMessageChunkReceiveOutput,
-} from "./chat-message-chunk-entities.js";
-import { ChatMessageChunkRepo } from "./chat-message-chunk-repo.js";
+  ChatChunkReceive,
+  ChatChunkReceiveOutput,
+} from "./chat-chunk-entities.js";
+import { ChatChunkRepo } from "./chat-chunk-repo.js";
 
 @Injectable()
-export class ChatMessageChunkService {
+export class ChatChunkService {
   constructor(
     private readonly dbService: DbService,
     private readonly e8nService: E8nService,
@@ -19,16 +19,16 @@ export class ChatMessageChunkService {
   async *receive(
     signal: AbortSignal,
     userId: UserId,
-    input: ChatMessageChunkReceive,
-  ): ChatMessageChunkReceiveOutput {
+    input: ChatChunkReceive,
+  ): ChatChunkReceiveOutput {
     const { chatMessageId, lastEventId } = input;
 
-    const chatMessageChunkRepo = new ChatMessageChunkRepo(this.dbService.db);
+    const chatChunkRepo = new ChatChunkRepo(this.dbService.db);
 
     let lastIndex = lastEventId ?? 0;
     let isDone = false;
     while (!(signal.aborted || isDone)) {
-      const entities = await chatMessageChunkRepo.list(userId, {
+      const entities = await chatChunkRepo.list(userId, {
         chatMessageId,
         index: lastIndex + 1,
       });

@@ -82,10 +82,10 @@ export type ChatPrompt = Prisma.ChatPromptModel
  */
 export type ChatMessage = Prisma.ChatMessageModel
 /**
- * Model ChatMessageChunk
+ * Model ChatChunk
  * 
  */
-export type ChatMessageChunk = Prisma.ChatMessageChunkModel
+export type ChatChunk = Prisma.ChatChunkModel
 /**
  * Model IdempotencyKey
  * 

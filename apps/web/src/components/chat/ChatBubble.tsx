@@ -1,6 +1,6 @@
 import type { ChatId, ChatMessageId, ChatMessageInfo } from "@/common-schemas";
+import { useChatChunkReceive } from "@/hooks/useChatChunk";
 import { useChatMessageProp } from "@/hooks/useChatMessage";
-import { useChatMessageChunkReceive } from "@/hooks/useChatMessageChunk";
 import { isLongChatMessage } from "@/lib/chat-utils";
 import { cn } from "@/lib/utils";
 import { useAiProfileStore } from "@/stores/useAiProfileStore";
@@ -32,7 +32,7 @@ export default function ChatBubble({
   const [collapsed, setCollapsed] = useState(
     isCollapsed ?? (role === "user" && isLongChatMessage(text)),
   );
-  useChatMessageChunkReceive(chatMessageId);
+  useChatChunkReceive(chatMessageId);
 
   // const { profiles } = useAiProfileStore();
 

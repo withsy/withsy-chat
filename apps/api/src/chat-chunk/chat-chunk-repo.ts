@@ -1,28 +1,28 @@
 import { ChatMessageId } from "../chat-message/chat-message-schemas.js";
 import { Tx } from "../db/db-service.js";
-import { ChatMessageChunkModel } from "../generated/prisma/models.js";
+import { ChatChunkModel } from "../generated/prisma/models.js";
 import { UserId } from "../user/user-schemas.js";
-import { ChatMessageChunkIndex } from "./chat-message-chunk-entities.js";
+import { ChatChunkIndex } from "./chat-chunk-entities.js";
 
-type PartialChatMessageChunkModel = Pick<
-  ChatMessageChunkModel,
+type PartialChatChunkModel = Pick<
+  ChatChunkModel,
   "index" | "textEncrypted" | "reasoningTextEncrypted" | "isDone"
 >;
 
-export class ChatMessageChunkRepo {
+export class ChatChunkRepo {
   constructor(private readonly tx: Tx) {}
 
   async list(
     userId: UserId,
     input: {
       chatMessageId: ChatMessageId;
-      index: ChatMessageChunkIndex;
+      index: ChatChunkIndex;
       limit?: number;
     },
-  ): Promise<PartialChatMessageChunkModel[]> {
+  ): Promise<PartialChatChunkModel[]> {
     const { chatMessageId, index, limit = 20 } = input;
 
-    const entities = await this.tx.chatMessageChunk.findMany({
+    const entities = await this.tx.chatChunk.findMany({
       where: {
         chatMessage: {
           id: chatMessageId,

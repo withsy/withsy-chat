@@ -105,7 +105,7 @@ CREATE TABLE "chat_messages" (
 );
 
 -- CreateTable
-CREATE TABLE "chat_message_chunks" (
+CREATE TABLE "chat_chunks" (
     "id" SERIAL NOT NULL,
     "chat_message_id" UUID NOT NULL,
     "index" INTEGER NOT NULL,
@@ -116,7 +116,7 @@ CREATE TABLE "chat_message_chunks" (
     "created_at" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMPTZ(6) NOT NULL,
 
-    CONSTRAINT "chat_message_chunks_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "chat_chunks_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -171,7 +171,7 @@ CREATE INDEX "chats_user_id_idx" ON "chats"("user_id");
 CREATE INDEX "chat_prompts_chat_id_idx" ON "chat_prompts"("chat_id");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "chat_message_chunks_chat_message_id_index_key" ON "chat_message_chunks"("chat_message_id", "index");
+CREATE UNIQUE INDEX "chat_chunks_chat_message_id_index_key" ON "chat_chunks"("chat_message_id", "index");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "idempotency_keys_idempotency_key_key" ON "idempotency_keys"("idempotency_key");
@@ -207,4 +207,4 @@ ALTER TABLE "chat_prompts" ADD CONSTRAINT "chat_prompts_chat_id_fkey" FOREIGN KE
 ALTER TABLE "chat_messages" ADD CONSTRAINT "chat_messages_chat_id_fkey" FOREIGN KEY ("chat_id") REFERENCES "chats"("id") ON DELETE CASCADE ON UPDATE NO ACTION;
 
 -- AddForeignKey
-ALTER TABLE "chat_message_chunks" ADD CONSTRAINT "chat_message_chunks_chat_message_id_fkey" FOREIGN KEY ("chat_message_id") REFERENCES "chat_messages"("id") ON DELETE CASCADE ON UPDATE NO ACTION;
+ALTER TABLE "chat_chunks" ADD CONSTRAINT "chat_chunks_chat_message_id_fkey" FOREIGN KEY ("chat_message_id") REFERENCES "chat_messages"("id") ON DELETE CASCADE ON UPDATE NO ACTION;

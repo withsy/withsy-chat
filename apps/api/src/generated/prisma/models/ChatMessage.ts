@@ -223,7 +223,7 @@ export type ChatMessageWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"ChatMessage"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ChatMessage"> | Date | string
   chat?: Prisma.XOR<Prisma.ChatScalarRelationFilter, Prisma.ChatWhereInput>
-  chunks?: Prisma.ChatMessageChunkListRelationFilter
+  chunks?: Prisma.ChatChunkListRelationFilter
 }
 
 export type ChatMessageOrderByWithRelationInput = {
@@ -238,7 +238,7 @@ export type ChatMessageOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   chat?: Prisma.ChatOrderByWithRelationInput
-  chunks?: Prisma.ChatMessageChunkOrderByRelationAggregateInput
+  chunks?: Prisma.ChatChunkOrderByRelationAggregateInput
 }
 
 export type ChatMessageWhereUniqueInput = Prisma.AtLeast<{
@@ -256,7 +256,7 @@ export type ChatMessageWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"ChatMessage"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ChatMessage"> | Date | string
   chat?: Prisma.XOR<Prisma.ChatScalarRelationFilter, Prisma.ChatWhereInput>
-  chunks?: Prisma.ChatMessageChunkListRelationFilter
+  chunks?: Prisma.ChatChunkListRelationFilter
 }, "id">
 
 export type ChatMessageOrderByWithAggregationInput = {
@@ -302,7 +302,7 @@ export type ChatMessageCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   chat: Prisma.ChatCreateNestedOneWithoutChatMessagesInput
-  chunks?: Prisma.ChatMessageChunkCreateNestedManyWithoutChatMessageInput
+  chunks?: Prisma.ChatChunkCreateNestedManyWithoutChatMessageInput
 }
 
 export type ChatMessageUncheckedCreateInput = {
@@ -316,7 +316,7 @@ export type ChatMessageUncheckedCreateInput = {
   isBookmarked?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
-  chunks?: Prisma.ChatMessageChunkUncheckedCreateNestedManyWithoutChatMessageInput
+  chunks?: Prisma.ChatChunkUncheckedCreateNestedManyWithoutChatMessageInput
 }
 
 export type ChatMessageUpdateInput = {
@@ -330,7 +330,7 @@ export type ChatMessageUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   chat?: Prisma.ChatUpdateOneRequiredWithoutChatMessagesNestedInput
-  chunks?: Prisma.ChatMessageChunkUpdateManyWithoutChatMessageNestedInput
+  chunks?: Prisma.ChatChunkUpdateManyWithoutChatMessageNestedInput
 }
 
 export type ChatMessageUncheckedUpdateInput = {
@@ -344,7 +344,7 @@ export type ChatMessageUncheckedUpdateInput = {
   isBookmarked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  chunks?: Prisma.ChatMessageChunkUncheckedUpdateManyWithoutChatMessageNestedInput
+  chunks?: Prisma.ChatChunkUncheckedUpdateManyWithoutChatMessageNestedInput
 }
 
 export type ChatMessageCreateManyInput = {
@@ -509,7 +509,7 @@ export type ChatMessageCreateWithoutChatInput = {
   isBookmarked?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
-  chunks?: Prisma.ChatMessageChunkCreateNestedManyWithoutChatMessageInput
+  chunks?: Prisma.ChatChunkCreateNestedManyWithoutChatMessageInput
 }
 
 export type ChatMessageUncheckedCreateWithoutChatInput = {
@@ -522,7 +522,7 @@ export type ChatMessageUncheckedCreateWithoutChatInput = {
   isBookmarked?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
-  chunks?: Prisma.ChatMessageChunkUncheckedCreateNestedManyWithoutChatMessageInput
+  chunks?: Prisma.ChatChunkUncheckedCreateNestedManyWithoutChatMessageInput
 }
 
 export type ChatMessageCreateOrConnectWithoutChatInput = {
@@ -657,7 +657,7 @@ export type ChatMessageUpdateWithoutChatInput = {
   isBookmarked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  chunks?: Prisma.ChatMessageChunkUpdateManyWithoutChatMessageNestedInput
+  chunks?: Prisma.ChatChunkUpdateManyWithoutChatMessageNestedInput
 }
 
 export type ChatMessageUncheckedUpdateWithoutChatInput = {
@@ -670,7 +670,7 @@ export type ChatMessageUncheckedUpdateWithoutChatInput = {
   isBookmarked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  chunks?: Prisma.ChatMessageChunkUncheckedUpdateManyWithoutChatMessageNestedInput
+  chunks?: Prisma.ChatChunkUncheckedUpdateManyWithoutChatMessageNestedInput
 }
 
 export type ChatMessageUncheckedUpdateManyWithoutChatInput = {
@@ -712,7 +712,7 @@ export type ChatMessageCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.
  * ChatMessageCountOutputType without action
  */
 export type ChatMessageCountOutputTypeCountChunksArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.ChatMessageChunkWhereInput
+  where?: Prisma.ChatChunkWhereInput
 }
 
 
@@ -790,7 +790,7 @@ export type $ChatMessagePayload<ExtArgs extends runtime.Types.Extensions.Interna
   name: "ChatMessage"
   objects: {
     chat: Prisma.$ChatPayload<ExtArgs>
-    chunks: Prisma.$ChatMessageChunkPayload<ExtArgs>[]
+    chunks: Prisma.$ChatChunkPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1198,7 +1198,7 @@ readonly fields: ChatMessageFieldRefs;
 export interface Prisma__ChatMessageClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   chat<T extends Prisma.ChatDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ChatDefaultArgs<ExtArgs>>): Prisma.Prisma__ChatClient<runtime.Types.Result.GetResult<Prisma.$ChatPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-  chunks<T extends Prisma.ChatMessage$chunksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ChatMessage$chunksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ChatMessageChunkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  chunks<T extends Prisma.ChatMessage$chunksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ChatMessage$chunksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ChatChunkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1647,23 +1647,23 @@ export type ChatMessageDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.I
  */
 export type ChatMessage$chunksArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the ChatMessageChunk
+   * Select specific fields to fetch from the ChatChunk
    */
-  select?: Prisma.ChatMessageChunkSelect<ExtArgs> | null
+  select?: Prisma.ChatChunkSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the ChatMessageChunk
+   * Omit specific fields from the ChatChunk
    */
-  omit?: Prisma.ChatMessageChunkOmit<ExtArgs> | null
+  omit?: Prisma.ChatChunkOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.ChatMessageChunkInclude<ExtArgs> | null
-  where?: Prisma.ChatMessageChunkWhereInput
-  orderBy?: Prisma.ChatMessageChunkOrderByWithRelationInput | Prisma.ChatMessageChunkOrderByWithRelationInput[]
-  cursor?: Prisma.ChatMessageChunkWhereUniqueInput
+  include?: Prisma.ChatChunkInclude<ExtArgs> | null
+  where?: Prisma.ChatChunkWhereInput
+  orderBy?: Prisma.ChatChunkOrderByWithRelationInput | Prisma.ChatChunkOrderByWithRelationInput[]
+  cursor?: Prisma.ChatChunkWhereUniqueInput
   take?: number
   skip?: number
-  distinct?: Prisma.ChatMessageChunkScalarFieldEnum | Prisma.ChatMessageChunkScalarFieldEnum[]
+  distinct?: Prisma.ChatChunkScalarFieldEnum | Prisma.ChatChunkScalarFieldEnum[]
 }
 
 /**

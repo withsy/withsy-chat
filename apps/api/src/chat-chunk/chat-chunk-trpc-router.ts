@@ -3,25 +3,25 @@ import { TRPCError } from "@trpc/server";
 import { TrpcService } from "../trpc/trpc-service.js";
 import { UserTrpcProcedure } from "../user/user-trpc-procedure.js";
 import {
-  ChatMessageChunkReceive,
-  ChatMessageChunkReceiveOutput,
-} from "./chat-message-chunk-entities.js";
-import { ChatMessageChunkService } from "./chat-message-chunk-service.js";
+  ChatChunkReceive,
+  ChatChunkReceiveOutput,
+} from "./chat-chunk-entities.js";
+import { ChatChunkService } from "./chat-chunk-service.js";
 
 @Injectable()
-export class ChatMessageChunkTrpcRouter {
-  private readonly logger = new Logger(ChatMessageChunkTrpcRouter.name);
+export class ChatChunkTrpcRouter {
+  private readonly logger = new Logger(ChatChunkTrpcRouter.name);
   readonly router;
 
   constructor(
     trpcService: TrpcService,
     userTrpcProcedure: UserTrpcProcedure,
-    chatMessageChunkService: ChatMessageChunkService,
+    chatChunkService: ChatChunkService,
   ) {
     this.router = trpcService.trpc.router({
       receive: userTrpcProcedure.procedure
-        .input(ChatMessageChunkReceive)
-        .output(ChatMessageChunkReceiveOutput)
+        .input(ChatChunkReceive)
+        .output(ChatChunkReceiveOutput)
         .subscription(({ ctx, input, signal }) => {
           if (!signal) {
             this.logger.error("Invalid receive signal.");
@@ -30,7 +30,7 @@ export class ChatMessageChunkTrpcRouter {
             });
           }
 
-          return chatMessageChunkService.receive(signal, ctx.userId, input);
+          return chatChunkService.receive(signal, ctx.userId, input);
         }),
     });
   }

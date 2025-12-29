@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
-import { ChatMessageChunkTrpcRouter } from "../chat-message-chunk/chat-message-chunk-trpc-router.js";
+import { ChatChunkTrpcRouter } from "../chat-chunk/chat-chunk-trpc-router.js";
 import { ChatMessageTrpcRouter } from "../chat-message/chat-message-trpc-router.js";
 import { ChatTrpcRouter } from "../chat/chat-trpc-router.js";
 import { TrpcService } from "../trpc/trpc-service.js";
@@ -21,7 +21,7 @@ export class AppTrpcRouter {
     userAiProfileTrpcRouter: UserAiProfileTrpcRouter,
     chatTrpcRouter: ChatTrpcRouter,
     chatMessageTrpcRouter: ChatMessageTrpcRouter,
-    chatMessageChunkTrpcRouter: ChatMessageChunkTrpcRouter,
+    chatChunkTrpcRouter: ChatChunkTrpcRouter,
   ) {
     this.router = trpcService.trpc.router({
       user: userTrpcRouter.router,
@@ -30,7 +30,7 @@ export class AppTrpcRouter {
       userAiProfile: userAiProfileTrpcRouter.router,
       chat: chatTrpcRouter.router,
       chatMessage: chatMessageTrpcRouter.router,
-      chatMessageChunk: chatMessageChunkTrpcRouter.router,
+      chatChunk: chatChunkTrpcRouter.router,
     });
   }
 
