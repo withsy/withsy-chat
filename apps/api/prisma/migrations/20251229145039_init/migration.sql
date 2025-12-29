@@ -78,17 +78,6 @@ CREATE TABLE "chats" (
 );
 
 -- CreateTable
-CREATE TABLE "chat_prompts" (
-    "id" SERIAL NOT NULL,
-    "chat_id" UUID NOT NULL,
-    "text_encrypted" TEXT NOT NULL,
-    "created_at" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMPTZ(6) NOT NULL,
-
-    CONSTRAINT "chat_prompts_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
 CREATE TABLE "chat_messages" (
     "id" UUID NOT NULL,
     "chat_id" UUID NOT NULL,
@@ -168,9 +157,6 @@ CREATE UNIQUE INDEX "user_default_prompts_user_id_key" ON "user_default_prompts"
 CREATE INDEX "chats_user_id_idx" ON "chats"("user_id");
 
 -- CreateIndex
-CREATE INDEX "chat_prompts_chat_id_idx" ON "chat_prompts"("chat_id");
-
--- CreateIndex
 CREATE UNIQUE INDEX "chat_chunks_chat_message_id_index_key" ON "chat_chunks"("chat_message_id", "index");
 
 -- CreateIndex
@@ -199,9 +185,6 @@ ALTER TABLE "chats" ADD CONSTRAINT "chats_user_id_fkey" FOREIGN KEY ("user_id") 
 
 -- AddForeignKey
 ALTER TABLE "chats" ADD CONSTRAINT "chats_user_prompt_id_fkey" FOREIGN KEY ("user_prompt_id") REFERENCES "user_prompts"("id") ON DELETE SET NULL ON UPDATE NO ACTION;
-
--- AddForeignKey
-ALTER TABLE "chat_prompts" ADD CONSTRAINT "chat_prompts_chat_id_fkey" FOREIGN KEY ("chat_id") REFERENCES "chats"("id") ON DELETE CASCADE ON UPDATE NO ACTION;
 
 -- AddForeignKey
 ALTER TABLE "chat_messages" ADD CONSTRAINT "chat_messages_chat_id_fkey" FOREIGN KEY ("chat_id") REFERENCES "chats"("id") ON DELETE CASCADE ON UPDATE NO ACTION;

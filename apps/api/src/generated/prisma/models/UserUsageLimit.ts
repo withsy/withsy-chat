@@ -299,7 +299,7 @@ export type UserUsageLimitCreateInput = {
   remainingAmount: number
   createdAt?: Date | string
   updatedAt?: Date | string
-  user: Prisma.UserCreateNestedOneWithoutUsageLimitsInput
+  user: Prisma.UserCreateNestedOneWithoutUserUsageLimitsInput
 }
 
 export type UserUsageLimitUncheckedCreateInput = {
@@ -318,7 +318,7 @@ export type UserUsageLimitUpdateInput = {
   remainingAmount?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  user?: Prisma.UserUpdateOneRequiredWithoutUsageLimitsNestedInput
+  user?: Prisma.UserUpdateOneRequiredWithoutUserUsageLimitsNestedInput
 }
 
 export type UserUsageLimitUncheckedUpdateInput = {

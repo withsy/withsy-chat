@@ -12,16 +12,16 @@ datasource db {
 }
 
 model User {
-  id             String              @id @map("id") @db.Uuid
-  preferences    Json                @default("{}") @map("preferences")
-  createdAt      DateTime            @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt      DateTime            @updatedAt @map("updated_at") @db.Timestamptz(6)
-  deletedAt      DateTime?           @map("deleted_at") @db.Timestamptz(6)
-  linkAccounts   UserLinkAccount[]   @relation("UserLinkAccount.userId")
-  usageLimits    UserUsageLimit[]    @relation("UserUsageLimit.userId")
-  prompts        UserPrompt[]        @relation("UserPrompt.userId")
-  defaultPrompts UserDefaultPrompt[] @relation("UserDefaultPrompt.userId")
-  chats          Chat[]              @relation("Chat.userId")
+  id                 String              @id @map("id") @db.Uuid
+  preferences        Json                @default("{}") @map("preferences")
+  createdAt          DateTime            @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime            @updatedAt @map("updated_at") @db.Timestamptz(6)
+  deletedAt          DateTime?           @map("deleted_at") @db.Timestamptz(6)
+  userLinkAccounts   UserLinkAccount[]   @relation("UserLinkAccount.userId")
+  userUsageLimits    UserUsageLimit[]    @relation("UserUsageLimit.userId")
+  userPrompts        UserPrompt[]        @relation("UserPrompt.userId")
+  userDefaultPrompts UserDefaultPrompt[] @relation("UserDefaultPrompt.userId")
+  chats              Chat[]              @relation("Chat.userId")
 
   @@map("users")
 }
@@ -55,17 +55,17 @@ model UserUsageLimit {
 }
 
 model UserPrompt {
-  id             String              @id @map("id") @db.Uuid
-  userId         String              @map("user_id") @db.Uuid
-  user           User                @relation("UserPrompt.userId", fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  titleEncrypted String              @map("title_encrypted")
-  textEncrypted  String              @map("text_encrypted")
-  isStarred      Boolean             @default(false) @map("is_starred")
-  createdAt      DateTime            @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt      DateTime            @updatedAt @map("updated_at") @db.Timestamptz(6)
-  deletedAt      DateTime?           @map("deleted_at") @db.Timestamptz(6)
-  defaultPrompts UserDefaultPrompt[] @relation("UserDefaultPrompt.userPromptId")
-  chats          Chat[]              @relation("Chat.userPromptId")
+  id                 String              @id @map("id") @db.Uuid
+  userId             String              @map("user_id") @db.Uuid
+  user               User                @relation("UserPrompt.userId", fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  titleEncrypted     String              @map("title_encrypted")
+  textEncrypted      String              @map("text_encrypted")
+  isStarred          Boolean             @default(false) @map("is_starred")
+  createdAt          DateTime            @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime            @updatedAt @map("updated_at") @db.Timestamptz(6)
+  deletedAt          DateTime?           @map("deleted_at") @db.Timestamptz(6)
+  userDefaultPrompts UserDefaultPrompt[] @relation("UserDefaultPrompt.userPromptId")
+  chats              Chat[]              @relation("Chat.userPromptId")
 
   @@index([userId])
   @@map("user_prompts")
@@ -96,22 +96,9 @@ model Chat {
   updatedAt      DateTime      @updatedAt @map("updated_at") @db.Timestamptz(6)
   deletedAt      DateTime?     @map("deleted_at") @db.Timestamptz(6)
   chatMessages   ChatMessage[] @relation("ChatMessage.chatId")
-  prompts        ChatPrompt[]  @relation("ChatPrompt.chatId")
 
   @@index([userId])
   @@map("chats")
-}
-
-model ChatPrompt {
-  id            Int      @id @default(autoincrement()) @map("id")
-  chatId        String   @map("chat_id") @db.Uuid
-  chat          Chat     @relation("ChatPrompt.chatId", fields: [chatId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  textEncrypted String   @map("text_encrypted")
-  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt     DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
-
-  @@index([chatId])
-  @@map("chat_prompts")
 }
 
 enum ChatMessageStatus {
@@ -133,7 +120,7 @@ model ChatMessage {
   isBookmarked           Boolean           @default(false) @map("is_bookmarked")
   createdAt              DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt              DateTime          @updatedAt @map("updated_at") @db.Timestamptz(6)
-  chunks                 ChatChunk[]       @relation("ChatChunk.chatMessageId")
+  chatChunks             ChatChunk[]       @relation("ChatChunk.chatMessageId")
 
   @@map("chat_messages")
 }

@@ -325,7 +325,7 @@ export type ChatChunkCreateInput = {
   isDone: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
-  chatMessage: Prisma.ChatMessageCreateNestedOneWithoutChunksInput
+  chatMessage: Prisma.ChatMessageCreateNestedOneWithoutChatChunksInput
 }
 
 export type ChatChunkUncheckedCreateInput = {
@@ -348,7 +348,7 @@ export type ChatChunkUpdateInput = {
   isDone?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  chatMessage?: Prisma.ChatMessageUpdateOneRequiredWithoutChunksNestedInput
+  chatMessage?: Prisma.ChatMessageUpdateOneRequiredWithoutChatChunksNestedInput
 }
 
 export type ChatChunkUncheckedUpdateInput = {

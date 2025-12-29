@@ -1,7 +1,7 @@
 import { Tx } from "../db/db-service.js";
 import { ChatModel } from "../generated/prisma/models.js";
 import { UserId } from "../user/user-schemas.js";
-import { ChatDelete, ChatList, ChatUpdate } from "./chat-schemas.js";
+import { ChatDelete, ChatId, ChatList, ChatUpdate } from "./chat-schemas.js";
 
 export class ChatRepo {
   constructor(private readonly tx: Tx) {}
@@ -15,8 +15,8 @@ export class ChatRepo {
     const entities = await this.tx.chat.findMany({
       where: {
         deletedAt: null,
+        userId,
         user: {
-          id: userId,
           deletedAt: null,
         },
       },
@@ -37,6 +37,21 @@ export class ChatRepo {
     }
 
     return { entities, nextCursor };
+  }
+
+  async get(userId: UserId, input: { chatId: ChatId }): Promise<ChatModel> {
+    const { chatId } = input;
+
+    return await this.tx.chat.findUniqueOrThrow({
+      where: {
+        id: chatId,
+        deletedAt: null,
+        userId,
+        user: {
+          deletedAt: null,
+        },
+      },
+    });
   }
 
   async update(userId: UserId, input: ChatUpdate): Promise<ChatModel> {

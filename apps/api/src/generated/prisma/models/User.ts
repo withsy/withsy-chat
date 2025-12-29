@@ -178,10 +178,10 @@ export type UserWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   deletedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
-  linkAccounts?: Prisma.UserLinkAccountListRelationFilter
-  usageLimits?: Prisma.UserUsageLimitListRelationFilter
-  prompts?: Prisma.UserPromptListRelationFilter
-  defaultPrompts?: Prisma.UserDefaultPromptListRelationFilter
+  userLinkAccounts?: Prisma.UserLinkAccountListRelationFilter
+  userUsageLimits?: Prisma.UserUsageLimitListRelationFilter
+  userPrompts?: Prisma.UserPromptListRelationFilter
+  userDefaultPrompts?: Prisma.UserDefaultPromptListRelationFilter
   chats?: Prisma.ChatListRelationFilter
 }
 
@@ -191,10 +191,10 @@ export type UserOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
-  linkAccounts?: Prisma.UserLinkAccountOrderByRelationAggregateInput
-  usageLimits?: Prisma.UserUsageLimitOrderByRelationAggregateInput
-  prompts?: Prisma.UserPromptOrderByRelationAggregateInput
-  defaultPrompts?: Prisma.UserDefaultPromptOrderByRelationAggregateInput
+  userLinkAccounts?: Prisma.UserLinkAccountOrderByRelationAggregateInput
+  userUsageLimits?: Prisma.UserUsageLimitOrderByRelationAggregateInput
+  userPrompts?: Prisma.UserPromptOrderByRelationAggregateInput
+  userDefaultPrompts?: Prisma.UserDefaultPromptOrderByRelationAggregateInput
   chats?: Prisma.ChatOrderByRelationAggregateInput
 }
 
@@ -207,10 +207,10 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   deletedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
-  linkAccounts?: Prisma.UserLinkAccountListRelationFilter
-  usageLimits?: Prisma.UserUsageLimitListRelationFilter
-  prompts?: Prisma.UserPromptListRelationFilter
-  defaultPrompts?: Prisma.UserDefaultPromptListRelationFilter
+  userLinkAccounts?: Prisma.UserLinkAccountListRelationFilter
+  userUsageLimits?: Prisma.UserUsageLimitListRelationFilter
+  userPrompts?: Prisma.UserPromptListRelationFilter
+  userDefaultPrompts?: Prisma.UserDefaultPromptListRelationFilter
   chats?: Prisma.ChatListRelationFilter
 }, "id">
 
@@ -242,10 +242,10 @@ export type UserCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
-  linkAccounts?: Prisma.UserLinkAccountCreateNestedManyWithoutUserInput
-  usageLimits?: Prisma.UserUsageLimitCreateNestedManyWithoutUserInput
-  prompts?: Prisma.UserPromptCreateNestedManyWithoutUserInput
-  defaultPrompts?: Prisma.UserDefaultPromptCreateNestedManyWithoutUserInput
+  userLinkAccounts?: Prisma.UserLinkAccountCreateNestedManyWithoutUserInput
+  userUsageLimits?: Prisma.UserUsageLimitCreateNestedManyWithoutUserInput
+  userPrompts?: Prisma.UserPromptCreateNestedManyWithoutUserInput
+  userDefaultPrompts?: Prisma.UserDefaultPromptCreateNestedManyWithoutUserInput
   chats?: Prisma.ChatCreateNestedManyWithoutUserInput
 }
 
@@ -255,10 +255,10 @@ export type UserUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
-  linkAccounts?: Prisma.UserLinkAccountUncheckedCreateNestedManyWithoutUserInput
-  usageLimits?: Prisma.UserUsageLimitUncheckedCreateNestedManyWithoutUserInput
-  prompts?: Prisma.UserPromptUncheckedCreateNestedManyWithoutUserInput
-  defaultPrompts?: Prisma.UserDefaultPromptUncheckedCreateNestedManyWithoutUserInput
+  userLinkAccounts?: Prisma.UserLinkAccountUncheckedCreateNestedManyWithoutUserInput
+  userUsageLimits?: Prisma.UserUsageLimitUncheckedCreateNestedManyWithoutUserInput
+  userPrompts?: Prisma.UserPromptUncheckedCreateNestedManyWithoutUserInput
+  userDefaultPrompts?: Prisma.UserDefaultPromptUncheckedCreateNestedManyWithoutUserInput
   chats?: Prisma.ChatUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -268,10 +268,10 @@ export type UserUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  linkAccounts?: Prisma.UserLinkAccountUpdateManyWithoutUserNestedInput
-  usageLimits?: Prisma.UserUsageLimitUpdateManyWithoutUserNestedInput
-  prompts?: Prisma.UserPromptUpdateManyWithoutUserNestedInput
-  defaultPrompts?: Prisma.UserDefaultPromptUpdateManyWithoutUserNestedInput
+  userLinkAccounts?: Prisma.UserLinkAccountUpdateManyWithoutUserNestedInput
+  userUsageLimits?: Prisma.UserUsageLimitUpdateManyWithoutUserNestedInput
+  userPrompts?: Prisma.UserPromptUpdateManyWithoutUserNestedInput
+  userDefaultPrompts?: Prisma.UserDefaultPromptUpdateManyWithoutUserNestedInput
   chats?: Prisma.ChatUpdateManyWithoutUserNestedInput
 }
 
@@ -281,10 +281,10 @@ export type UserUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  linkAccounts?: Prisma.UserLinkAccountUncheckedUpdateManyWithoutUserNestedInput
-  usageLimits?: Prisma.UserUsageLimitUncheckedUpdateManyWithoutUserNestedInput
-  prompts?: Prisma.UserPromptUncheckedUpdateManyWithoutUserNestedInput
-  defaultPrompts?: Prisma.UserDefaultPromptUncheckedUpdateManyWithoutUserNestedInput
+  userLinkAccounts?: Prisma.UserLinkAccountUncheckedUpdateManyWithoutUserNestedInput
+  userUsageLimits?: Prisma.UserUsageLimitUncheckedUpdateManyWithoutUserNestedInput
+  userPrompts?: Prisma.UserPromptUncheckedUpdateManyWithoutUserNestedInput
+  userDefaultPrompts?: Prisma.UserDefaultPromptUncheckedUpdateManyWithoutUserNestedInput
   chats?: Prisma.ChatUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -351,60 +351,60 @@ export type NullableDateTimeFieldUpdateOperationsInput = {
   set?: Date | string | null
 }
 
-export type UserCreateNestedOneWithoutLinkAccountsInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutLinkAccountsInput, Prisma.UserUncheckedCreateWithoutLinkAccountsInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutLinkAccountsInput
+export type UserCreateNestedOneWithoutUserLinkAccountsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutUserLinkAccountsInput, Prisma.UserUncheckedCreateWithoutUserLinkAccountsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutUserLinkAccountsInput
   connect?: Prisma.UserWhereUniqueInput
 }
 
-export type UserUpdateOneRequiredWithoutLinkAccountsNestedInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutLinkAccountsInput, Prisma.UserUncheckedCreateWithoutLinkAccountsInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutLinkAccountsInput
-  upsert?: Prisma.UserUpsertWithoutLinkAccountsInput
+export type UserUpdateOneRequiredWithoutUserLinkAccountsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutUserLinkAccountsInput, Prisma.UserUncheckedCreateWithoutUserLinkAccountsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutUserLinkAccountsInput
+  upsert?: Prisma.UserUpsertWithoutUserLinkAccountsInput
   connect?: Prisma.UserWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutLinkAccountsInput, Prisma.UserUpdateWithoutLinkAccountsInput>, Prisma.UserUncheckedUpdateWithoutLinkAccountsInput>
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutUserLinkAccountsInput, Prisma.UserUpdateWithoutUserLinkAccountsInput>, Prisma.UserUncheckedUpdateWithoutUserLinkAccountsInput>
 }
 
-export type UserCreateNestedOneWithoutUsageLimitsInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutUsageLimitsInput, Prisma.UserUncheckedCreateWithoutUsageLimitsInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutUsageLimitsInput
-  connect?: Prisma.UserWhereUniqueInput
-}
-
-export type UserUpdateOneRequiredWithoutUsageLimitsNestedInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutUsageLimitsInput, Prisma.UserUncheckedCreateWithoutUsageLimitsInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutUsageLimitsInput
-  upsert?: Prisma.UserUpsertWithoutUsageLimitsInput
-  connect?: Prisma.UserWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutUsageLimitsInput, Prisma.UserUpdateWithoutUsageLimitsInput>, Prisma.UserUncheckedUpdateWithoutUsageLimitsInput>
-}
-
-export type UserCreateNestedOneWithoutPromptsInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutPromptsInput, Prisma.UserUncheckedCreateWithoutPromptsInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutPromptsInput
+export type UserCreateNestedOneWithoutUserUsageLimitsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutUserUsageLimitsInput, Prisma.UserUncheckedCreateWithoutUserUsageLimitsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutUserUsageLimitsInput
   connect?: Prisma.UserWhereUniqueInput
 }
 
-export type UserUpdateOneRequiredWithoutPromptsNestedInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutPromptsInput, Prisma.UserUncheckedCreateWithoutPromptsInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutPromptsInput
-  upsert?: Prisma.UserUpsertWithoutPromptsInput
+export type UserUpdateOneRequiredWithoutUserUsageLimitsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutUserUsageLimitsInput, Prisma.UserUncheckedCreateWithoutUserUsageLimitsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutUserUsageLimitsInput
+  upsert?: Prisma.UserUpsertWithoutUserUsageLimitsInput
   connect?: Prisma.UserWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutPromptsInput, Prisma.UserUpdateWithoutPromptsInput>, Prisma.UserUncheckedUpdateWithoutPromptsInput>
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutUserUsageLimitsInput, Prisma.UserUpdateWithoutUserUsageLimitsInput>, Prisma.UserUncheckedUpdateWithoutUserUsageLimitsInput>
 }
 
-export type UserCreateNestedOneWithoutDefaultPromptsInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutDefaultPromptsInput, Prisma.UserUncheckedCreateWithoutDefaultPromptsInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutDefaultPromptsInput
+export type UserCreateNestedOneWithoutUserPromptsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutUserPromptsInput, Prisma.UserUncheckedCreateWithoutUserPromptsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutUserPromptsInput
   connect?: Prisma.UserWhereUniqueInput
 }
 
-export type UserUpdateOneRequiredWithoutDefaultPromptsNestedInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutDefaultPromptsInput, Prisma.UserUncheckedCreateWithoutDefaultPromptsInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutDefaultPromptsInput
-  upsert?: Prisma.UserUpsertWithoutDefaultPromptsInput
+export type UserUpdateOneRequiredWithoutUserPromptsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutUserPromptsInput, Prisma.UserUncheckedCreateWithoutUserPromptsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutUserPromptsInput
+  upsert?: Prisma.UserUpsertWithoutUserPromptsInput
   connect?: Prisma.UserWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutDefaultPromptsInput, Prisma.UserUpdateWithoutDefaultPromptsInput>, Prisma.UserUncheckedUpdateWithoutDefaultPromptsInput>
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutUserPromptsInput, Prisma.UserUpdateWithoutUserPromptsInput>, Prisma.UserUncheckedUpdateWithoutUserPromptsInput>
+}
+
+export type UserCreateNestedOneWithoutUserDefaultPromptsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutUserDefaultPromptsInput, Prisma.UserUncheckedCreateWithoutUserDefaultPromptsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutUserDefaultPromptsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutUserDefaultPromptsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutUserDefaultPromptsInput, Prisma.UserUncheckedCreateWithoutUserDefaultPromptsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutUserDefaultPromptsInput
+  upsert?: Prisma.UserUpsertWithoutUserDefaultPromptsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutUserDefaultPromptsInput, Prisma.UserUpdateWithoutUserDefaultPromptsInput>, Prisma.UserUncheckedUpdateWithoutUserDefaultPromptsInput>
 }
 
 export type UserCreateNestedOneWithoutChatsInput = {
@@ -421,259 +421,259 @@ export type UserUpdateOneRequiredWithoutChatsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutChatsInput, Prisma.UserUpdateWithoutChatsInput>, Prisma.UserUncheckedUpdateWithoutChatsInput>
 }
 
-export type UserCreateWithoutLinkAccountsInput = {
+export type UserCreateWithoutUserLinkAccountsInput = {
   id: string
   preferences?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
-  usageLimits?: Prisma.UserUsageLimitCreateNestedManyWithoutUserInput
-  prompts?: Prisma.UserPromptCreateNestedManyWithoutUserInput
-  defaultPrompts?: Prisma.UserDefaultPromptCreateNestedManyWithoutUserInput
+  userUsageLimits?: Prisma.UserUsageLimitCreateNestedManyWithoutUserInput
+  userPrompts?: Prisma.UserPromptCreateNestedManyWithoutUserInput
+  userDefaultPrompts?: Prisma.UserDefaultPromptCreateNestedManyWithoutUserInput
   chats?: Prisma.ChatCreateNestedManyWithoutUserInput
 }
 
-export type UserUncheckedCreateWithoutLinkAccountsInput = {
+export type UserUncheckedCreateWithoutUserLinkAccountsInput = {
   id: string
   preferences?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
-  usageLimits?: Prisma.UserUsageLimitUncheckedCreateNestedManyWithoutUserInput
-  prompts?: Prisma.UserPromptUncheckedCreateNestedManyWithoutUserInput
-  defaultPrompts?: Prisma.UserDefaultPromptUncheckedCreateNestedManyWithoutUserInput
+  userUsageLimits?: Prisma.UserUsageLimitUncheckedCreateNestedManyWithoutUserInput
+  userPrompts?: Prisma.UserPromptUncheckedCreateNestedManyWithoutUserInput
+  userDefaultPrompts?: Prisma.UserDefaultPromptUncheckedCreateNestedManyWithoutUserInput
   chats?: Prisma.ChatUncheckedCreateNestedManyWithoutUserInput
 }
 
-export type UserCreateOrConnectWithoutLinkAccountsInput = {
+export type UserCreateOrConnectWithoutUserLinkAccountsInput = {
   where: Prisma.UserWhereUniqueInput
-  create: Prisma.XOR<Prisma.UserCreateWithoutLinkAccountsInput, Prisma.UserUncheckedCreateWithoutLinkAccountsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutUserLinkAccountsInput, Prisma.UserUncheckedCreateWithoutUserLinkAccountsInput>
 }
 
-export type UserUpsertWithoutLinkAccountsInput = {
-  update: Prisma.XOR<Prisma.UserUpdateWithoutLinkAccountsInput, Prisma.UserUncheckedUpdateWithoutLinkAccountsInput>
-  create: Prisma.XOR<Prisma.UserCreateWithoutLinkAccountsInput, Prisma.UserUncheckedCreateWithoutLinkAccountsInput>
+export type UserUpsertWithoutUserLinkAccountsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutUserLinkAccountsInput, Prisma.UserUncheckedUpdateWithoutUserLinkAccountsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutUserLinkAccountsInput, Prisma.UserUncheckedCreateWithoutUserLinkAccountsInput>
   where?: Prisma.UserWhereInput
 }
 
-export type UserUpdateToOneWithWhereWithoutLinkAccountsInput = {
+export type UserUpdateToOneWithWhereWithoutUserLinkAccountsInput = {
   where?: Prisma.UserWhereInput
-  data: Prisma.XOR<Prisma.UserUpdateWithoutLinkAccountsInput, Prisma.UserUncheckedUpdateWithoutLinkAccountsInput>
+  data: Prisma.XOR<Prisma.UserUpdateWithoutUserLinkAccountsInput, Prisma.UserUncheckedUpdateWithoutUserLinkAccountsInput>
 }
 
-export type UserUpdateWithoutLinkAccountsInput = {
+export type UserUpdateWithoutUserLinkAccountsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   preferences?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  usageLimits?: Prisma.UserUsageLimitUpdateManyWithoutUserNestedInput
-  prompts?: Prisma.UserPromptUpdateManyWithoutUserNestedInput
-  defaultPrompts?: Prisma.UserDefaultPromptUpdateManyWithoutUserNestedInput
+  userUsageLimits?: Prisma.UserUsageLimitUpdateManyWithoutUserNestedInput
+  userPrompts?: Prisma.UserPromptUpdateManyWithoutUserNestedInput
+  userDefaultPrompts?: Prisma.UserDefaultPromptUpdateManyWithoutUserNestedInput
   chats?: Prisma.ChatUpdateManyWithoutUserNestedInput
 }
 
-export type UserUncheckedUpdateWithoutLinkAccountsInput = {
+export type UserUncheckedUpdateWithoutUserLinkAccountsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   preferences?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  usageLimits?: Prisma.UserUsageLimitUncheckedUpdateManyWithoutUserNestedInput
-  prompts?: Prisma.UserPromptUncheckedUpdateManyWithoutUserNestedInput
-  defaultPrompts?: Prisma.UserDefaultPromptUncheckedUpdateManyWithoutUserNestedInput
+  userUsageLimits?: Prisma.UserUsageLimitUncheckedUpdateManyWithoutUserNestedInput
+  userPrompts?: Prisma.UserPromptUncheckedUpdateManyWithoutUserNestedInput
+  userDefaultPrompts?: Prisma.UserDefaultPromptUncheckedUpdateManyWithoutUserNestedInput
   chats?: Prisma.ChatUncheckedUpdateManyWithoutUserNestedInput
 }
 
-export type UserCreateWithoutUsageLimitsInput = {
+export type UserCreateWithoutUserUsageLimitsInput = {
   id: string
   preferences?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
-  linkAccounts?: Prisma.UserLinkAccountCreateNestedManyWithoutUserInput
-  prompts?: Prisma.UserPromptCreateNestedManyWithoutUserInput
-  defaultPrompts?: Prisma.UserDefaultPromptCreateNestedManyWithoutUserInput
+  userLinkAccounts?: Prisma.UserLinkAccountCreateNestedManyWithoutUserInput
+  userPrompts?: Prisma.UserPromptCreateNestedManyWithoutUserInput
+  userDefaultPrompts?: Prisma.UserDefaultPromptCreateNestedManyWithoutUserInput
   chats?: Prisma.ChatCreateNestedManyWithoutUserInput
 }
 
-export type UserUncheckedCreateWithoutUsageLimitsInput = {
+export type UserUncheckedCreateWithoutUserUsageLimitsInput = {
   id: string
   preferences?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
-  linkAccounts?: Prisma.UserLinkAccountUncheckedCreateNestedManyWithoutUserInput
-  prompts?: Prisma.UserPromptUncheckedCreateNestedManyWithoutUserInput
-  defaultPrompts?: Prisma.UserDefaultPromptUncheckedCreateNestedManyWithoutUserInput
+  userLinkAccounts?: Prisma.UserLinkAccountUncheckedCreateNestedManyWithoutUserInput
+  userPrompts?: Prisma.UserPromptUncheckedCreateNestedManyWithoutUserInput
+  userDefaultPrompts?: Prisma.UserDefaultPromptUncheckedCreateNestedManyWithoutUserInput
   chats?: Prisma.ChatUncheckedCreateNestedManyWithoutUserInput
 }
 
-export type UserCreateOrConnectWithoutUsageLimitsInput = {
+export type UserCreateOrConnectWithoutUserUsageLimitsInput = {
   where: Prisma.UserWhereUniqueInput
-  create: Prisma.XOR<Prisma.UserCreateWithoutUsageLimitsInput, Prisma.UserUncheckedCreateWithoutUsageLimitsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutUserUsageLimitsInput, Prisma.UserUncheckedCreateWithoutUserUsageLimitsInput>
 }
 
-export type UserUpsertWithoutUsageLimitsInput = {
-  update: Prisma.XOR<Prisma.UserUpdateWithoutUsageLimitsInput, Prisma.UserUncheckedUpdateWithoutUsageLimitsInput>
-  create: Prisma.XOR<Prisma.UserCreateWithoutUsageLimitsInput, Prisma.UserUncheckedCreateWithoutUsageLimitsInput>
+export type UserUpsertWithoutUserUsageLimitsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutUserUsageLimitsInput, Prisma.UserUncheckedUpdateWithoutUserUsageLimitsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutUserUsageLimitsInput, Prisma.UserUncheckedCreateWithoutUserUsageLimitsInput>
   where?: Prisma.UserWhereInput
 }
 
-export type UserUpdateToOneWithWhereWithoutUsageLimitsInput = {
+export type UserUpdateToOneWithWhereWithoutUserUsageLimitsInput = {
   where?: Prisma.UserWhereInput
-  data: Prisma.XOR<Prisma.UserUpdateWithoutUsageLimitsInput, Prisma.UserUncheckedUpdateWithoutUsageLimitsInput>
+  data: Prisma.XOR<Prisma.UserUpdateWithoutUserUsageLimitsInput, Prisma.UserUncheckedUpdateWithoutUserUsageLimitsInput>
 }
 
-export type UserUpdateWithoutUsageLimitsInput = {
+export type UserUpdateWithoutUserUsageLimitsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   preferences?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  linkAccounts?: Prisma.UserLinkAccountUpdateManyWithoutUserNestedInput
-  prompts?: Prisma.UserPromptUpdateManyWithoutUserNestedInput
-  defaultPrompts?: Prisma.UserDefaultPromptUpdateManyWithoutUserNestedInput
+  userLinkAccounts?: Prisma.UserLinkAccountUpdateManyWithoutUserNestedInput
+  userPrompts?: Prisma.UserPromptUpdateManyWithoutUserNestedInput
+  userDefaultPrompts?: Prisma.UserDefaultPromptUpdateManyWithoutUserNestedInput
   chats?: Prisma.ChatUpdateManyWithoutUserNestedInput
 }
 
-export type UserUncheckedUpdateWithoutUsageLimitsInput = {
+export type UserUncheckedUpdateWithoutUserUsageLimitsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   preferences?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  linkAccounts?: Prisma.UserLinkAccountUncheckedUpdateManyWithoutUserNestedInput
-  prompts?: Prisma.UserPromptUncheckedUpdateManyWithoutUserNestedInput
-  defaultPrompts?: Prisma.UserDefaultPromptUncheckedUpdateManyWithoutUserNestedInput
+  userLinkAccounts?: Prisma.UserLinkAccountUncheckedUpdateManyWithoutUserNestedInput
+  userPrompts?: Prisma.UserPromptUncheckedUpdateManyWithoutUserNestedInput
+  userDefaultPrompts?: Prisma.UserDefaultPromptUncheckedUpdateManyWithoutUserNestedInput
   chats?: Prisma.ChatUncheckedUpdateManyWithoutUserNestedInput
 }
 
-export type UserCreateWithoutPromptsInput = {
+export type UserCreateWithoutUserPromptsInput = {
   id: string
   preferences?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
-  linkAccounts?: Prisma.UserLinkAccountCreateNestedManyWithoutUserInput
-  usageLimits?: Prisma.UserUsageLimitCreateNestedManyWithoutUserInput
-  defaultPrompts?: Prisma.UserDefaultPromptCreateNestedManyWithoutUserInput
+  userLinkAccounts?: Prisma.UserLinkAccountCreateNestedManyWithoutUserInput
+  userUsageLimits?: Prisma.UserUsageLimitCreateNestedManyWithoutUserInput
+  userDefaultPrompts?: Prisma.UserDefaultPromptCreateNestedManyWithoutUserInput
   chats?: Prisma.ChatCreateNestedManyWithoutUserInput
 }
 
-export type UserUncheckedCreateWithoutPromptsInput = {
+export type UserUncheckedCreateWithoutUserPromptsInput = {
   id: string
   preferences?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
-  linkAccounts?: Prisma.UserLinkAccountUncheckedCreateNestedManyWithoutUserInput
-  usageLimits?: Prisma.UserUsageLimitUncheckedCreateNestedManyWithoutUserInput
-  defaultPrompts?: Prisma.UserDefaultPromptUncheckedCreateNestedManyWithoutUserInput
+  userLinkAccounts?: Prisma.UserLinkAccountUncheckedCreateNestedManyWithoutUserInput
+  userUsageLimits?: Prisma.UserUsageLimitUncheckedCreateNestedManyWithoutUserInput
+  userDefaultPrompts?: Prisma.UserDefaultPromptUncheckedCreateNestedManyWithoutUserInput
   chats?: Prisma.ChatUncheckedCreateNestedManyWithoutUserInput
 }
 
-export type UserCreateOrConnectWithoutPromptsInput = {
+export type UserCreateOrConnectWithoutUserPromptsInput = {
   where: Prisma.UserWhereUniqueInput
-  create: Prisma.XOR<Prisma.UserCreateWithoutPromptsInput, Prisma.UserUncheckedCreateWithoutPromptsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutUserPromptsInput, Prisma.UserUncheckedCreateWithoutUserPromptsInput>
 }
 
-export type UserUpsertWithoutPromptsInput = {
-  update: Prisma.XOR<Prisma.UserUpdateWithoutPromptsInput, Prisma.UserUncheckedUpdateWithoutPromptsInput>
-  create: Prisma.XOR<Prisma.UserCreateWithoutPromptsInput, Prisma.UserUncheckedCreateWithoutPromptsInput>
+export type UserUpsertWithoutUserPromptsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutUserPromptsInput, Prisma.UserUncheckedUpdateWithoutUserPromptsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutUserPromptsInput, Prisma.UserUncheckedCreateWithoutUserPromptsInput>
   where?: Prisma.UserWhereInput
 }
 
-export type UserUpdateToOneWithWhereWithoutPromptsInput = {
+export type UserUpdateToOneWithWhereWithoutUserPromptsInput = {
   where?: Prisma.UserWhereInput
-  data: Prisma.XOR<Prisma.UserUpdateWithoutPromptsInput, Prisma.UserUncheckedUpdateWithoutPromptsInput>
+  data: Prisma.XOR<Prisma.UserUpdateWithoutUserPromptsInput, Prisma.UserUncheckedUpdateWithoutUserPromptsInput>
 }
 
-export type UserUpdateWithoutPromptsInput = {
+export type UserUpdateWithoutUserPromptsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   preferences?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  linkAccounts?: Prisma.UserLinkAccountUpdateManyWithoutUserNestedInput
-  usageLimits?: Prisma.UserUsageLimitUpdateManyWithoutUserNestedInput
-  defaultPrompts?: Prisma.UserDefaultPromptUpdateManyWithoutUserNestedInput
+  userLinkAccounts?: Prisma.UserLinkAccountUpdateManyWithoutUserNestedInput
+  userUsageLimits?: Prisma.UserUsageLimitUpdateManyWithoutUserNestedInput
+  userDefaultPrompts?: Prisma.UserDefaultPromptUpdateManyWithoutUserNestedInput
   chats?: Prisma.ChatUpdateManyWithoutUserNestedInput
 }
 
-export type UserUncheckedUpdateWithoutPromptsInput = {
+export type UserUncheckedUpdateWithoutUserPromptsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   preferences?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  linkAccounts?: Prisma.UserLinkAccountUncheckedUpdateManyWithoutUserNestedInput
-  usageLimits?: Prisma.UserUsageLimitUncheckedUpdateManyWithoutUserNestedInput
-  defaultPrompts?: Prisma.UserDefaultPromptUncheckedUpdateManyWithoutUserNestedInput
+  userLinkAccounts?: Prisma.UserLinkAccountUncheckedUpdateManyWithoutUserNestedInput
+  userUsageLimits?: Prisma.UserUsageLimitUncheckedUpdateManyWithoutUserNestedInput
+  userDefaultPrompts?: Prisma.UserDefaultPromptUncheckedUpdateManyWithoutUserNestedInput
   chats?: Prisma.ChatUncheckedUpdateManyWithoutUserNestedInput
 }
 
-export type UserCreateWithoutDefaultPromptsInput = {
+export type UserCreateWithoutUserDefaultPromptsInput = {
   id: string
   preferences?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
-  linkAccounts?: Prisma.UserLinkAccountCreateNestedManyWithoutUserInput
-  usageLimits?: Prisma.UserUsageLimitCreateNestedManyWithoutUserInput
-  prompts?: Prisma.UserPromptCreateNestedManyWithoutUserInput
+  userLinkAccounts?: Prisma.UserLinkAccountCreateNestedManyWithoutUserInput
+  userUsageLimits?: Prisma.UserUsageLimitCreateNestedManyWithoutUserInput
+  userPrompts?: Prisma.UserPromptCreateNestedManyWithoutUserInput
   chats?: Prisma.ChatCreateNestedManyWithoutUserInput
 }
 
-export type UserUncheckedCreateWithoutDefaultPromptsInput = {
+export type UserUncheckedCreateWithoutUserDefaultPromptsInput = {
   id: string
   preferences?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
-  linkAccounts?: Prisma.UserLinkAccountUncheckedCreateNestedManyWithoutUserInput
-  usageLimits?: Prisma.UserUsageLimitUncheckedCreateNestedManyWithoutUserInput
-  prompts?: Prisma.UserPromptUncheckedCreateNestedManyWithoutUserInput
+  userLinkAccounts?: Prisma.UserLinkAccountUncheckedCreateNestedManyWithoutUserInput
+  userUsageLimits?: Prisma.UserUsageLimitUncheckedCreateNestedManyWithoutUserInput
+  userPrompts?: Prisma.UserPromptUncheckedCreateNestedManyWithoutUserInput
   chats?: Prisma.ChatUncheckedCreateNestedManyWithoutUserInput
 }
 
-export type UserCreateOrConnectWithoutDefaultPromptsInput = {
+export type UserCreateOrConnectWithoutUserDefaultPromptsInput = {
   where: Prisma.UserWhereUniqueInput
-  create: Prisma.XOR<Prisma.UserCreateWithoutDefaultPromptsInput, Prisma.UserUncheckedCreateWithoutDefaultPromptsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutUserDefaultPromptsInput, Prisma.UserUncheckedCreateWithoutUserDefaultPromptsInput>
 }
 
-export type UserUpsertWithoutDefaultPromptsInput = {
-  update: Prisma.XOR<Prisma.UserUpdateWithoutDefaultPromptsInput, Prisma.UserUncheckedUpdateWithoutDefaultPromptsInput>
-  create: Prisma.XOR<Prisma.UserCreateWithoutDefaultPromptsInput, Prisma.UserUncheckedCreateWithoutDefaultPromptsInput>
+export type UserUpsertWithoutUserDefaultPromptsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutUserDefaultPromptsInput, Prisma.UserUncheckedUpdateWithoutUserDefaultPromptsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutUserDefaultPromptsInput, Prisma.UserUncheckedCreateWithoutUserDefaultPromptsInput>
   where?: Prisma.UserWhereInput
 }
 
-export type UserUpdateToOneWithWhereWithoutDefaultPromptsInput = {
+export type UserUpdateToOneWithWhereWithoutUserDefaultPromptsInput = {
   where?: Prisma.UserWhereInput
-  data: Prisma.XOR<Prisma.UserUpdateWithoutDefaultPromptsInput, Prisma.UserUncheckedUpdateWithoutDefaultPromptsInput>
+  data: Prisma.XOR<Prisma.UserUpdateWithoutUserDefaultPromptsInput, Prisma.UserUncheckedUpdateWithoutUserDefaultPromptsInput>
 }
 
-export type UserUpdateWithoutDefaultPromptsInput = {
+export type UserUpdateWithoutUserDefaultPromptsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   preferences?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  linkAccounts?: Prisma.UserLinkAccountUpdateManyWithoutUserNestedInput
-  usageLimits?: Prisma.UserUsageLimitUpdateManyWithoutUserNestedInput
-  prompts?: Prisma.UserPromptUpdateManyWithoutUserNestedInput
+  userLinkAccounts?: Prisma.UserLinkAccountUpdateManyWithoutUserNestedInput
+  userUsageLimits?: Prisma.UserUsageLimitUpdateManyWithoutUserNestedInput
+  userPrompts?: Prisma.UserPromptUpdateManyWithoutUserNestedInput
   chats?: Prisma.ChatUpdateManyWithoutUserNestedInput
 }
 
-export type UserUncheckedUpdateWithoutDefaultPromptsInput = {
+export type UserUncheckedUpdateWithoutUserDefaultPromptsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   preferences?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  linkAccounts?: Prisma.UserLinkAccountUncheckedUpdateManyWithoutUserNestedInput
-  usageLimits?: Prisma.UserUsageLimitUncheckedUpdateManyWithoutUserNestedInput
-  prompts?: Prisma.UserPromptUncheckedUpdateManyWithoutUserNestedInput
+  userLinkAccounts?: Prisma.UserLinkAccountUncheckedUpdateManyWithoutUserNestedInput
+  userUsageLimits?: Prisma.UserUsageLimitUncheckedUpdateManyWithoutUserNestedInput
+  userPrompts?: Prisma.UserPromptUncheckedUpdateManyWithoutUserNestedInput
   chats?: Prisma.ChatUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -683,10 +683,10 @@ export type UserCreateWithoutChatsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
-  linkAccounts?: Prisma.UserLinkAccountCreateNestedManyWithoutUserInput
-  usageLimits?: Prisma.UserUsageLimitCreateNestedManyWithoutUserInput
-  prompts?: Prisma.UserPromptCreateNestedManyWithoutUserInput
-  defaultPrompts?: Prisma.UserDefaultPromptCreateNestedManyWithoutUserInput
+  userLinkAccounts?: Prisma.UserLinkAccountCreateNestedManyWithoutUserInput
+  userUsageLimits?: Prisma.UserUsageLimitCreateNestedManyWithoutUserInput
+  userPrompts?: Prisma.UserPromptCreateNestedManyWithoutUserInput
+  userDefaultPrompts?: Prisma.UserDefaultPromptCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutChatsInput = {
@@ -695,10 +695,10 @@ export type UserUncheckedCreateWithoutChatsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
-  linkAccounts?: Prisma.UserLinkAccountUncheckedCreateNestedManyWithoutUserInput
-  usageLimits?: Prisma.UserUsageLimitUncheckedCreateNestedManyWithoutUserInput
-  prompts?: Prisma.UserPromptUncheckedCreateNestedManyWithoutUserInput
-  defaultPrompts?: Prisma.UserDefaultPromptUncheckedCreateNestedManyWithoutUserInput
+  userLinkAccounts?: Prisma.UserLinkAccountUncheckedCreateNestedManyWithoutUserInput
+  userUsageLimits?: Prisma.UserUsageLimitUncheckedCreateNestedManyWithoutUserInput
+  userPrompts?: Prisma.UserPromptUncheckedCreateNestedManyWithoutUserInput
+  userDefaultPrompts?: Prisma.UserDefaultPromptUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutChatsInput = {
@@ -723,10 +723,10 @@ export type UserUpdateWithoutChatsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  linkAccounts?: Prisma.UserLinkAccountUpdateManyWithoutUserNestedInput
-  usageLimits?: Prisma.UserUsageLimitUpdateManyWithoutUserNestedInput
-  prompts?: Prisma.UserPromptUpdateManyWithoutUserNestedInput
-  defaultPrompts?: Prisma.UserDefaultPromptUpdateManyWithoutUserNestedInput
+  userLinkAccounts?: Prisma.UserLinkAccountUpdateManyWithoutUserNestedInput
+  userUsageLimits?: Prisma.UserUsageLimitUpdateManyWithoutUserNestedInput
+  userPrompts?: Prisma.UserPromptUpdateManyWithoutUserNestedInput
+  userDefaultPrompts?: Prisma.UserDefaultPromptUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutChatsInput = {
@@ -735,10 +735,10 @@ export type UserUncheckedUpdateWithoutChatsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  linkAccounts?: Prisma.UserLinkAccountUncheckedUpdateManyWithoutUserNestedInput
-  usageLimits?: Prisma.UserUsageLimitUncheckedUpdateManyWithoutUserNestedInput
-  prompts?: Prisma.UserPromptUncheckedUpdateManyWithoutUserNestedInput
-  defaultPrompts?: Prisma.UserDefaultPromptUncheckedUpdateManyWithoutUserNestedInput
+  userLinkAccounts?: Prisma.UserLinkAccountUncheckedUpdateManyWithoutUserNestedInput
+  userUsageLimits?: Prisma.UserUsageLimitUncheckedUpdateManyWithoutUserNestedInput
+  userPrompts?: Prisma.UserPromptUncheckedUpdateManyWithoutUserNestedInput
+  userDefaultPrompts?: Prisma.UserDefaultPromptUncheckedUpdateManyWithoutUserNestedInput
 }
 
 
@@ -747,18 +747,18 @@ export type UserUncheckedUpdateWithoutChatsInput = {
  */
 
 export type UserCountOutputType = {
-  linkAccounts: number
-  usageLimits: number
-  prompts: number
-  defaultPrompts: number
+  userLinkAccounts: number
+  userUsageLimits: number
+  userPrompts: number
+  userDefaultPrompts: number
   chats: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  linkAccounts?: boolean | UserCountOutputTypeCountLinkAccountsArgs
-  usageLimits?: boolean | UserCountOutputTypeCountUsageLimitsArgs
-  prompts?: boolean | UserCountOutputTypeCountPromptsArgs
-  defaultPrompts?: boolean | UserCountOutputTypeCountDefaultPromptsArgs
+  userLinkAccounts?: boolean | UserCountOutputTypeCountUserLinkAccountsArgs
+  userUsageLimits?: boolean | UserCountOutputTypeCountUserUsageLimitsArgs
+  userPrompts?: boolean | UserCountOutputTypeCountUserPromptsArgs
+  userDefaultPrompts?: boolean | UserCountOutputTypeCountUserDefaultPromptsArgs
   chats?: boolean | UserCountOutputTypeCountChatsArgs
 }
 
@@ -775,28 +775,28 @@ export type UserCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensi
 /**
  * UserCountOutputType without action
  */
-export type UserCountOutputTypeCountLinkAccountsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type UserCountOutputTypeCountUserLinkAccountsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.UserLinkAccountWhereInput
 }
 
 /**
  * UserCountOutputType without action
  */
-export type UserCountOutputTypeCountUsageLimitsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type UserCountOutputTypeCountUserUsageLimitsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.UserUsageLimitWhereInput
 }
 
 /**
  * UserCountOutputType without action
  */
-export type UserCountOutputTypeCountPromptsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type UserCountOutputTypeCountUserPromptsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.UserPromptWhereInput
 }
 
 /**
  * UserCountOutputType without action
  */
-export type UserCountOutputTypeCountDefaultPromptsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type UserCountOutputTypeCountUserDefaultPromptsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.UserDefaultPromptWhereInput
 }
 
@@ -814,10 +814,10 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   createdAt?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
-  linkAccounts?: boolean | Prisma.User$linkAccountsArgs<ExtArgs>
-  usageLimits?: boolean | Prisma.User$usageLimitsArgs<ExtArgs>
-  prompts?: boolean | Prisma.User$promptsArgs<ExtArgs>
-  defaultPrompts?: boolean | Prisma.User$defaultPromptsArgs<ExtArgs>
+  userLinkAccounts?: boolean | Prisma.User$userLinkAccountsArgs<ExtArgs>
+  userUsageLimits?: boolean | Prisma.User$userUsageLimitsArgs<ExtArgs>
+  userPrompts?: boolean | Prisma.User$userPromptsArgs<ExtArgs>
+  userDefaultPrompts?: boolean | Prisma.User$userDefaultPromptsArgs<ExtArgs>
   chats?: boolean | Prisma.User$chatsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
@@ -848,10 +848,10 @@ export type UserSelectScalar = {
 
 export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "preferences" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  linkAccounts?: boolean | Prisma.User$linkAccountsArgs<ExtArgs>
-  usageLimits?: boolean | Prisma.User$usageLimitsArgs<ExtArgs>
-  prompts?: boolean | Prisma.User$promptsArgs<ExtArgs>
-  defaultPrompts?: boolean | Prisma.User$defaultPromptsArgs<ExtArgs>
+  userLinkAccounts?: boolean | Prisma.User$userLinkAccountsArgs<ExtArgs>
+  userUsageLimits?: boolean | Prisma.User$userUsageLimitsArgs<ExtArgs>
+  userPrompts?: boolean | Prisma.User$userPromptsArgs<ExtArgs>
+  userDefaultPrompts?: boolean | Prisma.User$userDefaultPromptsArgs<ExtArgs>
   chats?: boolean | Prisma.User$chatsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
@@ -861,10 +861,10 @@ export type UserIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
 export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "User"
   objects: {
-    linkAccounts: Prisma.$UserLinkAccountPayload<ExtArgs>[]
-    usageLimits: Prisma.$UserUsageLimitPayload<ExtArgs>[]
-    prompts: Prisma.$UserPromptPayload<ExtArgs>[]
-    defaultPrompts: Prisma.$UserDefaultPromptPayload<ExtArgs>[]
+    userLinkAccounts: Prisma.$UserLinkAccountPayload<ExtArgs>[]
+    userUsageLimits: Prisma.$UserUsageLimitPayload<ExtArgs>[]
+    userPrompts: Prisma.$UserPromptPayload<ExtArgs>[]
+    userDefaultPrompts: Prisma.$UserDefaultPromptPayload<ExtArgs>[]
     chats: Prisma.$ChatPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
@@ -1267,10 +1267,10 @@ readonly fields: UserFieldRefs;
  */
 export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  linkAccounts<T extends Prisma.User$linkAccountsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$linkAccountsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserLinkAccountPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  usageLimits<T extends Prisma.User$usageLimitsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$usageLimitsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserUsageLimitPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  prompts<T extends Prisma.User$promptsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$promptsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserPromptPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  defaultPrompts<T extends Prisma.User$defaultPromptsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$defaultPromptsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserDefaultPromptPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  userLinkAccounts<T extends Prisma.User$userLinkAccountsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$userLinkAccountsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserLinkAccountPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  userUsageLimits<T extends Prisma.User$userUsageLimitsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$userUsageLimitsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserUsageLimitPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  userPrompts<T extends Prisma.User$userPromptsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$userPromptsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserPromptPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  userDefaultPrompts<T extends Prisma.User$userDefaultPromptsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$userDefaultPromptsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserDefaultPromptPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   chats<T extends Prisma.User$chatsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$chatsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ChatPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -1703,9 +1703,9 @@ export type UserDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Internal
 }
 
 /**
- * User.linkAccounts
+ * User.userLinkAccounts
  */
-export type User$linkAccountsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type User$userLinkAccountsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
    * Select specific fields to fetch from the UserLinkAccount
    */
@@ -1727,9 +1727,9 @@ export type User$linkAccountsArgs<ExtArgs extends runtime.Types.Extensions.Inter
 }
 
 /**
- * User.usageLimits
+ * User.userUsageLimits
  */
-export type User$usageLimitsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type User$userUsageLimitsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
    * Select specific fields to fetch from the UserUsageLimit
    */
@@ -1751,9 +1751,9 @@ export type User$usageLimitsArgs<ExtArgs extends runtime.Types.Extensions.Intern
 }
 
 /**
- * User.prompts
+ * User.userPrompts
  */
-export type User$promptsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type User$userPromptsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
    * Select specific fields to fetch from the UserPrompt
    */
@@ -1775,9 +1775,9 @@ export type User$promptsArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
 }
 
 /**
- * User.defaultPrompts
+ * User.userDefaultPrompts
  */
-export type User$defaultPromptsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type User$userDefaultPromptsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
    * Select specific fields to fetch from the UserDefaultPrompt
    */

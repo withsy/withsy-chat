@@ -93,6 +93,7 @@ export class ChatMessageService {
 
       return {
         chat,
+        chatId,
         userChatMessage,
         modelChatMessage,
       };
@@ -107,6 +108,8 @@ export class ChatMessageService {
     );
 
     this.aiMessageService.send({
+      userId,
+      chatId: txResult.chatId,
       userChatMessageId: txResult.userChatMessage.id,
       modelChatMessageId: txResult.modelChatMessage.id,
     });

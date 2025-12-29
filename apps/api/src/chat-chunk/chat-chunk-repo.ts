@@ -28,8 +28,8 @@ export class ChatChunkRepo {
           id: chatMessageId,
           chat: {
             deletedAt: null,
+            userId,
             user: {
-              id: userId,
               deletedAt: null,
             },
           },

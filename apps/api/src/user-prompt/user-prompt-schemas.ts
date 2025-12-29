@@ -4,7 +4,11 @@ import { createListSchemas } from "../common-schemas.js";
 export const UserPromptId = z.uuid();
 export type UserPromptId = z.infer<typeof UserPromptId>;
 
-export const UserPromptData = z.object({});
+export const UserPromptData = z.object({
+  title: z.string(),
+  text: z.string(),
+  isStarred: z.boolean(),
+});
 export type UserPromptData = z.infer<typeof UserPromptData>;
 
 const userPromptListSchemas = createListSchemas(UserPromptData);

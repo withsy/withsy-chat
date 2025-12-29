@@ -282,7 +282,7 @@ export type UserLinkAccountCreateInput = {
   providerAccountId: string
   createdAt?: Date | string
   updatedAt?: Date | string
-  user: Prisma.UserCreateNestedOneWithoutLinkAccountsInput
+  user: Prisma.UserCreateNestedOneWithoutUserLinkAccountsInput
 }
 
 export type UserLinkAccountUncheckedCreateInput = {
@@ -299,7 +299,7 @@ export type UserLinkAccountUpdateInput = {
   providerAccountId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  user?: Prisma.UserUpdateOneRequiredWithoutLinkAccountsNestedInput
+  user?: Prisma.UserUpdateOneRequiredWithoutUserLinkAccountsNestedInput
 }
 
 export type UserLinkAccountUncheckedUpdateInput = {

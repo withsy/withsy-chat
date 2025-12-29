@@ -72,11 +72,6 @@ export type UserDefaultPrompt = Prisma.UserDefaultPromptModel
  */
 export type Chat = Prisma.ChatModel
 /**
- * Model ChatPrompt
- * 
- */
-export type ChatPrompt = Prisma.ChatPromptModel
-/**
  * Model ChatMessage
  * 
  */

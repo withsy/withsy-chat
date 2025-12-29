@@ -270,8 +270,8 @@ export type UserDefaultPromptScalarWhereWithAggregatesInput = {
 export type UserDefaultPromptCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
-  user: Prisma.UserCreateNestedOneWithoutDefaultPromptsInput
-  userPrompt?: Prisma.UserPromptCreateNestedOneWithoutDefaultPromptsInput
+  user: Prisma.UserCreateNestedOneWithoutUserDefaultPromptsInput
+  userPrompt?: Prisma.UserPromptCreateNestedOneWithoutUserDefaultPromptsInput
 }
 
 export type UserDefaultPromptUncheckedCreateInput = {
@@ -285,8 +285,8 @@ export type UserDefaultPromptUncheckedCreateInput = {
 export type UserDefaultPromptUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  user?: Prisma.UserUpdateOneRequiredWithoutDefaultPromptsNestedInput
-  userPrompt?: Prisma.UserPromptUpdateOneWithoutDefaultPromptsNestedInput
+  user?: Prisma.UserUpdateOneRequiredWithoutUserDefaultPromptsNestedInput
+  userPrompt?: Prisma.UserPromptUpdateOneWithoutUserDefaultPromptsNestedInput
 }
 
 export type UserDefaultPromptUncheckedUpdateInput = {
@@ -451,7 +451,7 @@ export type NullableStringFieldUpdateOperationsInput = {
 export type UserDefaultPromptCreateWithoutUserInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
-  userPrompt?: Prisma.UserPromptCreateNestedOneWithoutDefaultPromptsInput
+  userPrompt?: Prisma.UserPromptCreateNestedOneWithoutUserDefaultPromptsInput
 }
 
 export type UserDefaultPromptUncheckedCreateWithoutUserInput = {
@@ -501,7 +501,7 @@ export type UserDefaultPromptScalarWhereInput = {
 export type UserDefaultPromptCreateWithoutUserPromptInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
-  user: Prisma.UserCreateNestedOneWithoutDefaultPromptsInput
+  user: Prisma.UserCreateNestedOneWithoutUserDefaultPromptsInput
 }
 
 export type UserDefaultPromptUncheckedCreateWithoutUserPromptInput = {
@@ -547,7 +547,7 @@ export type UserDefaultPromptCreateManyUserInput = {
 export type UserDefaultPromptUpdateWithoutUserInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  userPrompt?: Prisma.UserPromptUpdateOneWithoutDefaultPromptsNestedInput
+  userPrompt?: Prisma.UserPromptUpdateOneWithoutUserDefaultPromptsNestedInput
 }
 
 export type UserDefaultPromptUncheckedUpdateWithoutUserInput = {
@@ -574,7 +574,7 @@ export type UserDefaultPromptCreateManyUserPromptInput = {
 export type UserDefaultPromptUpdateWithoutUserPromptInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  user?: Prisma.UserUpdateOneRequiredWithoutDefaultPromptsNestedInput
+  user?: Prisma.UserUpdateOneRequiredWithoutUserDefaultPromptsNestedInput
 }
 
 export type UserDefaultPromptUncheckedUpdateWithoutUserPromptInput = {

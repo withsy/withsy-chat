@@ -3,7 +3,7 @@ import { isDriverAdapterError } from "@prisma/driver-adapter-utils";
 import type { TRPC_ERROR_CODE_KEY } from "@trpc/server/unstable-core-do-not-import";
 
 export function isExpectedUniqueConstraintViolation(
-  e: any,
+  e: unknown,
   expectedFields: string[],
 ) {
   if (!(e instanceof PrismaClientKnownRequestError)) return false;
@@ -37,6 +37,30 @@ export function isExpectedUniqueConstraintViolation(
     if (sortedExpectedFields[i] !== sortedFields[i]) {
       return false;
     }
+  }
+
+  return true;
+}
+
+export function isNotFoundForAnUpdate(e: unknown): boolean {
+  if (!(e instanceof PrismaClientKnownRequestError)) {
+    return false;
+  }
+
+  if (e.code !== "P2025") {
+    return false;
+  }
+
+  if (!e.meta) {
+    return false;
+  }
+
+  if (!("operation" in e.meta)) {
+    return false;
+  }
+
+  if (e.meta["operation"] !== "an update") {
+    return false;
   }
 
   return true;
