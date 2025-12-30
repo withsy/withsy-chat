@@ -56,6 +56,7 @@ export const ModelName = {
   UserDefaultPrompt: 'UserDefaultPrompt',
   Chat: 'Chat',
   ChatMessage: 'ChatMessage',
+  ChatMessageAiInfo: 'ChatMessageAiInfo',
   ChatChunk: 'ChatChunk',
   IdempotencyKey: 'IdempotencyKey',
   ApiKey: 'ApiKey',
@@ -165,16 +166,26 @@ export const ChatMessageScalarFieldEnum = {
   id: 'id',
   chatId: 'chatId',
   role: 'role',
-  model: 'model',
   textEncrypted: 'textEncrypted',
-  reasoningTextEncrypted: 'reasoningTextEncrypted',
-  status: 'status',
   isBookmarked: 'isBookmarked',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type ChatMessageScalarFieldEnum = (typeof ChatMessageScalarFieldEnum)[keyof typeof ChatMessageScalarFieldEnum]
+
+
+export const ChatMessageAiInfoScalarFieldEnum = {
+  id: 'id',
+  chatMessageId: 'chatMessageId',
+  model: 'model',
+  reasoningTextEncrypted: 'reasoningTextEncrypted',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ChatMessageAiInfoScalarFieldEnum = (typeof ChatMessageAiInfoScalarFieldEnum)[keyof typeof ChatMessageAiInfoScalarFieldEnum]
 
 
 export const ChatChunkScalarFieldEnum = {
@@ -184,7 +195,7 @@ export const ChatChunkScalarFieldEnum = {
   rawDataEncrypted: 'rawDataEncrypted',
   textEncrypted: 'textEncrypted',
   reasoningTextEncrypted: 'reasoningTextEncrypted',
-  isDone: 'isDone',
+  isSuccess: 'isSuccess',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

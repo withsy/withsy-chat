@@ -12,16 +12,16 @@ datasource db {
 }
 
 model User {
-  id                 String              @id @map("id") @db.Uuid
-  preferences        Json                @default("{}") @map("preferences")
-  createdAt          DateTime            @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt          DateTime            @updatedAt @map("updated_at") @db.Timestamptz(6)
-  deletedAt          DateTime?           @map("deleted_at") @db.Timestamptz(6)
-  userLinkAccounts   UserLinkAccount[]   @relation("UserLinkAccount.userId")
-  userUsageLimits    UserUsageLimit[]    @relation("UserUsageLimit.userId")
-  userPrompts        UserPrompt[]        @relation("UserPrompt.userId")
-  userDefaultPrompts UserDefaultPrompt[] @relation("UserDefaultPrompt.userId")
-  chats              Chat[]              @relation("Chat.userId")
+  id                String             @id @map("id") @db.Uuid
+  preferences       Json               @default("{}") @map("preferences")
+  createdAt         DateTime           @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime           @updatedAt @map("updated_at") @db.Timestamptz(6)
+  deletedAt         DateTime?          @map("deleted_at") @db.Timestamptz(6)
+  userLinkAccounts  UserLinkAccount[]  @relation("UserLinkAccount.userId")
+  userUsageLimits   UserUsageLimit[]   @relation("UserUsageLimit.userId")
+  userPrompts       UserPrompt[]       @relation("UserPrompt.userId")
+  userDefaultPrompt UserDefaultPrompt? @relation("UserDefaultPrompt.userId")
+  chats             Chat[]             @relation("Chat.userId")
 
   @@map("users")
 }
@@ -108,20 +108,31 @@ enum ChatMessageStatus {
 }
 
 model ChatMessage {
-  id                     String            @id @map("id") @db.Uuid
-  chatId                 String            @map("chat_id") @db.Uuid
-  chat                   Chat              @relation("ChatMessage.chatId", fields: [chatId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  role                   String            @map("role")
-  model                  String?           @map("model")
-  textEncrypted          String            @map("text_encrypted")
-  reasoningTextEncrypted String            @map("reasoning_text_encrypted")
-  status                 ChatMessageStatus @default(pending) @map("status")
-  isBookmarked           Boolean           @default(false) @map("is_bookmarked")
-  createdAt              DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt              DateTime          @updatedAt @map("updated_at") @db.Timestamptz(6)
-  chatChunks             ChatChunk[]       @relation("ChatChunk.chatMessageId")
+  id                String             @id @map("id") @db.Uuid
+  chatId            String             @map("chat_id") @db.Uuid
+  chat              Chat               @relation("ChatMessage.chatId", fields: [chatId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  role              String             @map("role")
+  textEncrypted     String             @map("text_encrypted")
+  isBookmarked      Boolean            @default(false) @map("is_bookmarked")
+  createdAt         DateTime           @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime           @updatedAt @map("updated_at") @db.Timestamptz(6)
+  chatChunks        ChatChunk[]        @relation("ChatChunk.chatMessageId")
+  chatMessageAiInfo ChatMessageAiInfo? @relation("ChatMessageAiInfo.chatMessageId")
 
   @@map("chat_messages")
+}
+
+model ChatMessageAiInfo {
+  id                     String            @id @map("id") @db.Uuid
+  chatMessageId          String            @unique @map("chat_message_id") @db.Uuid
+  chatMessage            ChatMessage       @relation("ChatMessageAiInfo.chatMessageId", fields: [chatMessageId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  model                  String            @map("model")
+  reasoningTextEncrypted String            @map("reasoning_text_encrypted")
+  status                 ChatMessageStatus @default(pending) @map("status")
+  createdAt              DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt              DateTime          @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@map("chat_message_ai_infos")
 }
 
 model ChatChunk {
@@ -132,7 +143,7 @@ model ChatChunk {
   rawDataEncrypted       String      @map("raw_data_encrypted")
   textEncrypted          String      @map("text_encrypted")
   reasoningTextEncrypted String      @map("reasoning_text_encrypted")
-  isDone                 Boolean     @map("is_done")
+  isSuccess              Boolean?    @map("is_success")
   createdAt              DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt              DateTime    @updatedAt @map("updated_at") @db.Timestamptz(6)
 

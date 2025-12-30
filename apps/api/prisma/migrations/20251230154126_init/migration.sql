@@ -81,15 +81,25 @@ CREATE TABLE "chat_messages" (
     "id" UUID NOT NULL,
     "chat_id" UUID NOT NULL,
     "role" TEXT NOT NULL,
-    "model" TEXT,
     "text_encrypted" TEXT NOT NULL,
-    "reasoning_text_encrypted" TEXT NOT NULL,
-    "status" "ChatMessageStatus" NOT NULL DEFAULT 'pending',
     "is_bookmarked" BOOLEAN NOT NULL DEFAULT false,
     "created_at" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMPTZ(6) NOT NULL,
 
     CONSTRAINT "chat_messages_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "chat_message_ai_infos" (
+    "id" UUID NOT NULL,
+    "chat_message_id" UUID NOT NULL,
+    "model" TEXT NOT NULL,
+    "reasoning_text_encrypted" TEXT NOT NULL,
+    "status" "ChatMessageStatus" NOT NULL DEFAULT 'pending',
+    "created_at" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMPTZ(6) NOT NULL,
+
+    CONSTRAINT "chat_message_ai_infos_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -100,7 +110,7 @@ CREATE TABLE "chat_chunks" (
     "raw_data_encrypted" TEXT NOT NULL,
     "text_encrypted" TEXT NOT NULL,
     "reasoning_text_encrypted" TEXT NOT NULL,
-    "is_done" BOOLEAN NOT NULL,
+    "is_success" BOOLEAN,
     "created_at" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMPTZ(6) NOT NULL,
 
@@ -156,6 +166,9 @@ CREATE UNIQUE INDEX "user_default_prompts_user_id_key" ON "user_default_prompts"
 CREATE INDEX "chats_user_id_idx" ON "chats"("user_id");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "chat_message_ai_infos_chat_message_id_key" ON "chat_message_ai_infos"("chat_message_id");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "chat_chunks_chat_message_id_index_key" ON "chat_chunks"("chat_message_id", "index");
 
 -- CreateIndex
@@ -187,6 +200,9 @@ ALTER TABLE "chats" ADD CONSTRAINT "chats_user_prompt_id_fkey" FOREIGN KEY ("use
 
 -- AddForeignKey
 ALTER TABLE "chat_messages" ADD CONSTRAINT "chat_messages_chat_id_fkey" FOREIGN KEY ("chat_id") REFERENCES "chats"("id") ON DELETE CASCADE ON UPDATE NO ACTION;
+
+-- AddForeignKey
+ALTER TABLE "chat_message_ai_infos" ADD CONSTRAINT "chat_message_ai_infos_chat_message_id_fkey" FOREIGN KEY ("chat_message_id") REFERENCES "chat_messages"("id") ON DELETE CASCADE ON UPDATE NO ACTION;
 
 -- AddForeignKey
 ALTER TABLE "chat_chunks" ADD CONSTRAINT "chat_chunks_chat_message_id_fkey" FOREIGN KEY ("chat_message_id") REFERENCES "chat_messages"("id") ON DELETE CASCADE ON UPDATE NO ACTION;
