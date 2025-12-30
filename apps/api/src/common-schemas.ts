@@ -35,6 +35,9 @@ export function createListSchemas<T extends z.ZodType>(
   };
 }
 
+export const Order = z.enum(["asc", "desc"]);
+export type Order = z.infer<typeof Order>;
+
 //#endregion Utils
 
 //#region Ai

@@ -27,7 +27,7 @@ export class ChatMessageRepo {
     entities: ChatMessageModel[];
     nextCursor: ChatMessageModel["id"] | null;
   }> {
-    const { limit, cursor, direction, chatId } = input;
+    const { limit, cursor, direction, chatId, order } = input;
 
     const take = (direction === "forward" ? 1 : -1) * (limit + 1);
 
@@ -43,7 +43,7 @@ export class ChatMessageRepo {
         },
       },
       orderBy: {
-        id: "desc",
+        id: order,
       },
       take,
       cursor: cursor

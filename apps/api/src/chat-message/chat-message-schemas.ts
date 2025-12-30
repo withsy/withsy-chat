@@ -1,7 +1,12 @@
 import { Model } from "@repo/common";
 import z from "zod";
 import { ChatData, ChatId } from "../chat/chat-schemas.js";
-import { createListSchemas, DateTimeTz, Role } from "../common-schemas.js";
+import {
+  createListSchemas,
+  DateTimeTz,
+  Order,
+  Role,
+} from "../common-schemas.js";
 import { IdempotencyKey } from "../idempotency-key/idempotency-key-schemas.js";
 
 export const ChatMessageId = z.uuid();
@@ -43,6 +48,9 @@ const chatMessageListSchemas = createListSchemas(ChatMessageData);
 export const ChatMessageList = chatMessageListSchemas.list.extend({
   get chatId() {
     return ChatId;
+  },
+  get order() {
+    return Order.optional().default("desc");
   },
 });
 export type ChatMessageList = z.infer<typeof ChatMessageList>;

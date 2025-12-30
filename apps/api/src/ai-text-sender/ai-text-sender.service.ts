@@ -87,6 +87,7 @@ export class AiTextSenderService {
         direction: "forward",
         cursor: userChatMessageId,
         limit: 10,
+        order: "desc",
       });
 
       const userDefaultPromptRepo = new UserDefaultPromptRepo(tx);
