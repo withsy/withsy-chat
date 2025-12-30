@@ -43,7 +43,7 @@ export class AiRouterService {
     });
   }
 
-  private async txStepOnSend(input: AiRouterSendInput) {
+  private async txBeforeExternalOnSend(input: AiRouterSendInput) {
     const { userId, chatId, userChatMessageId, modelChatMessageId } = input;
 
     return await this.dbService.db.$transaction(async (tx) => {
@@ -96,10 +96,10 @@ export class AiRouterService {
   }
 
   async #parseInput(
-    txStepResult: Awaited<ReturnType<AiRouterService["txStepOnSend"]>>,
+    txResult: Awaited<ReturnType<AiRouterService["txBeforeExternalOnSend"]>>,
   ): Promise<AiSendTextInput> {
     const { model, userDefaultPrompt, modelChatMessage, chatMessages } =
-      txStepResult;
+      txResult;
 
     const userPromptMapper = new UserPromptMapper(this.e8nService);
     const userDefaultPromptData = userDefaultPrompt?.userPrompt
@@ -176,7 +176,7 @@ export class AiRouterService {
       userId: UserId;
       chatId: ChatId;
       chatMessageId: ChatMessageId;
-    } & Awaited<ReturnType<AiRouterService["txStepOnSend"]>>,
+    } & Awaited<ReturnType<AiRouterService["txBeforeExternalOnSend"]>>,
   ) {
     const { userId, chatId, chatMessageId, model } = input;
 
@@ -197,7 +197,6 @@ export class AiRouterService {
           ...sendTextOutput,
           chatMessageId,
           index,
-          isDone: false,
         });
 
         index += 1;
@@ -213,7 +212,7 @@ export class AiRouterService {
         const chatChunkRepo = new ChatChunkE8nRepo(tx, this.e8nService);
         await chatChunkRepo.create({
           chatMessageId,
-          isDone: true,
+          isSuccess,
           index,
           text: "",
           reasoningText: "",
@@ -234,9 +233,9 @@ export class AiRouterService {
   async #send(input: AiRouterSendInput): Promise<void> {
     const { userId, chatId, modelChatMessageId } = input;
 
-    const txStepResult = await this.txStepOnSend(input);
+    const txBeforeExternalResult = await this.txBeforeExternalOnSend(input);
     await this.#externalStepOnSend({
-      ...txStepResult,
+      ...txBeforeExternalResult,
       userId,
       chatId,
       chatMessageId: modelChatMessageId,

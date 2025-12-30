@@ -26,8 +26,13 @@ export class ChatChunkService {
     const chatChunkRepo = new ChatChunkRepo(this.dbService.db);
 
     let lastIndex = lastEventId ?? 0;
-    let isDone = false;
-    while (!(signal.aborted || isDone)) {
+    let isSuccess: boolean | null = null;
+    while (true) {
+      const isCompleted = isSuccess !== null;
+      if (signal.aborted || isCompleted) {
+        break;
+      }
+
       const entities = await chatChunkRepo.list(userId, {
         chatId,
         chatMessageId,
@@ -39,11 +44,11 @@ export class ChatChunkService {
           index: entity.index,
           text: this.e8nService.decrypt(entity.textEncrypted),
           reasoningText: this.e8nService.decrypt(entity.reasoningTextEncrypted),
-          isDone: entity.isDone,
+          isSuccess: entity.isSuccess,
         });
 
         lastIndex = entity.index;
-        isDone = entity.isDone;
+        isSuccess = entity.isSuccess;
       }
 
       await new Promise((resolve) => setTimeout(resolve, 500));

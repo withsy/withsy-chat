@@ -32,6 +32,7 @@ export function useChatChunkReceive(
               }
 
               chatMessage.text = "";
+              chatMessage.reasoningText = "";
             }
           });
         },
@@ -45,8 +46,9 @@ export function useChatChunkReceive(
 
               chatMessage.text += data.text;
               chatMessage.reasoningText += data.reasoningText;
-              if (data.isDone) {
-                chatMessage.status = "succeeded";
+
+              if (data.isSuccess !== null) {
+                chatMessage.status = data.isSuccess ? "succeeded" : "failed";
               }
             }
           });

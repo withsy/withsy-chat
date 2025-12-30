@@ -184,7 +184,7 @@ export const ChatChunkScalarFieldEnum = {
   rawDataEncrypted: 'rawDataEncrypted',
   textEncrypted: 'textEncrypted',
   reasoningTextEncrypted: 'reasoningTextEncrypted',
-  isDone: 'isDone',
+  isSuccess: 'isSuccess',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

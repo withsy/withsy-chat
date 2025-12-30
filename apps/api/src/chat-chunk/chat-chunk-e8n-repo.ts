@@ -12,18 +12,18 @@ export class ChatChunkE8nRepo {
   async create(
     input: {
       chatMessageId: ChatMessageId;
-      isDone: boolean;
+      isSuccess?: boolean;
       index: number;
     } & AiSendTextOutput,
   ): Promise<void> {
-    const { chatMessageId, isDone, index, text, reasoningText, rawData } =
+    const { chatMessageId, isSuccess, index, text, reasoningText, rawData } =
       input;
 
     await this.tx.chatChunk.create({
       data: {
         chatMessageId,
         index,
-        isDone,
+        isSuccess,
         textEncrypted: this.e8nService.encrypt(text),
         reasoningTextEncrypted: this.e8nService.encrypt(reasoningText),
         rawDataEncrypted: this.e8nService.encrypt(rawData),

@@ -12,7 +12,7 @@ export const ChatChunkData = z.object({
   },
   text: z.string(),
   reasoningText: z.string(),
-  isDone: z.boolean(),
+  isSuccess: z.boolean().nullable().default(null),
 });
 export type ChatChunkData = z.infer<typeof ChatChunkData>;
 

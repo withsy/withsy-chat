@@ -12,7 +12,7 @@ export class ChatChunkMapper {
       index: entity.index,
       text: this.e8nService.decrypt(entity.textEncrypted),
       reasoningText: this.e8nService.decrypt(entity.reasoningTextEncrypted),
-      isDone: entity.isDone,
+      isSuccess: entity.isSuccess,
     };
 
     return data;

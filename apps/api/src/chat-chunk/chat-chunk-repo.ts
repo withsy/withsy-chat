@@ -7,7 +7,7 @@ import { ChatChunkIndex } from "./chat-chunk-entities.js";
 
 type PartialChatChunkModel = Pick<
   ChatChunkModel,
-  "index" | "textEncrypted" | "reasoningTextEncrypted" | "isDone"
+  "index" | "textEncrypted" | "reasoningTextEncrypted" | "isSuccess"
 >;
 
 export class ChatChunkRepo {
@@ -52,7 +52,7 @@ export class ChatChunkRepo {
         index: true,
         textEncrypted: true,
         reasoningTextEncrypted: true,
-        isDone: true,
+        isSuccess: true,
       },
     });
 
