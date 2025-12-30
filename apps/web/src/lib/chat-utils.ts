@@ -9,3 +9,9 @@ export function isChatMessageCompleted(
 ): boolean {
   return status === "succeeded" || status === "failed";
 }
+
+export function isChatMessageReceivable(
+  status: ChatMessageData["status"],
+): boolean {
+  return status === "pending" || status === "processing";
+}

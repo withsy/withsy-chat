@@ -1,7 +1,11 @@
 import type { ChatId, ChatMessageId } from "@/common-schemas";
 import { useChatChunkReceive } from "@/hooks/useChatChunk";
 import { useChatMessageProp } from "@/hooks/useChatMessage";
-import { isLongChatMessage } from "@/lib/chat-utils";
+import {
+  isChatMessageCompleted,
+  isChatMessageReceivable,
+  isLongChatMessage,
+} from "@/lib/chat-utils";
 import { cn } from "@/lib/utils";
 import { useAiProfileStore } from "@/stores/useAiProfileStore";
 import { useUserStore } from "@/stores/useUserStore";
@@ -12,6 +16,7 @@ import { CollapseToggle } from "../CollapseToggle";
 import { MarkdownBox } from "../MarkdownBox";
 import { ModelAvatar } from "../ModelAvatar";
 import ChatBubbleTooltips from "./ChatBubbleTooltips";
+import ChatChunkReceiver from "./ChatChunkReceiver";
 import { GetModelLabel } from "./ModelSelect";
 import { StatusIndicator } from "./StatusIndicator";
 
@@ -27,15 +32,15 @@ export default function ChatBubble({
   const reasoningText = useChatMessageProp(chatMessageId, "reasoningText");
   const model = useChatMessageProp(chatMessageId, "model");
   const isCollapsed = useChatMessageProp(chatMessageId, "isCollapsed");
+
   const status = useChatMessageProp(chatMessageId, "status");
+  const isReceivable = status ? isChatMessageReceivable(status) : false;
+
   const { data: session } = useSession();
   const [showReasoning, setShowReasoning] = useState(false);
   const [collapsed, setCollapsed] = useState(
     isCollapsed ?? (role === "user" && isLongChatMessage(text)),
   );
-  useChatChunkReceive(chatId, chatMessageId);
-
-  // const { profiles } = useAiProfileStore();
 
   const collapseText = collapsed
     ? text
@@ -160,6 +165,9 @@ export default function ChatBubble({
         </div>
         <div className="mt-2 flex w-full justify-between">{items}</div>
       </div>
+      {chatId && isReceivable && (
+        <ChatChunkReceiver chatId={chatId} chatMessageId={chatMessageId} />
+      )}
     </div>
   );
 }
