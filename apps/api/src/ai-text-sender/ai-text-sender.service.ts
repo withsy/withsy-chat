@@ -1,9 +1,7 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { Model } from "@repo/common";
-import { ChatChunkE8nRepo } from "../chat-chunk/chat-chunk-e8n-repo.js";
 import { ChatChunkMapper } from "../chat-chunk/chat-chunk-mapper.js";
 import { ChatChunkRepo } from "../chat-chunk/chat-chunk-repo.js";
-import { ChatMessageE8nRepo } from "../chat-message/chat-message-e8n-repo.js";
 import { ChatMessageMapper } from "../chat-message/chat-message-mapper.js";
 import { ChatMessageRepo } from "../chat-message/chat-message-repo.js";
 import { ChatMessageId } from "../chat-message/chat-message-schemas.js";
@@ -51,8 +49,12 @@ export class AiTextSenderService {
     const { userId, chatId, userChatMessageId, modelChatMessageId } = input;
 
     return await this.dbService.db.$transaction(async (tx) => {
-      const chatMessageE8nRepo = new ChatMessageE8nRepo(tx, this.e8nService);
-      const modelChatMessage = await chatMessageE8nRepo.tryTransitionStatus(
+      const chatMessageRepo = new ChatMessageRepo(tx);
+
+      const modelChatMessage = await chatMessageRepo.tryTransitionStatus(
+        {
+          e8nService: this.e8nService,
+        },
         userId,
         {
           chatId,
@@ -80,7 +82,6 @@ export class AiTextSenderService {
         throw new Error(`Invalid model provider. model: ${model}`);
       }
 
-      const chatMessageRepo = new ChatMessageRepo(tx);
       const { entities: chatMessages } = await chatMessageRepo.list(userId, {
         chatId,
         direction: "forward",
@@ -89,6 +90,7 @@ export class AiTextSenderService {
       });
 
       const userDefaultPromptRepo = new UserDefaultPromptRepo(tx);
+
       const userDefaultPrompt = await userDefaultPromptRepo.tryGet(userId);
 
       return {
@@ -109,6 +111,7 @@ export class AiTextSenderService {
       txResult;
 
     const userPromptMapper = new UserPromptMapper(this.e8nService);
+
     const userDefaultPromptData = userDefaultPrompt?.userPrompt
       ? userPromptMapper.toData(userDefaultPrompt.userPrompt)
       : null;
@@ -125,6 +128,7 @@ export class AiTextSenderService {
       .join("\n");
 
     const chatMessageMapper = new ChatMessageMapper(this.e8nService);
+
     const modelChatMessageData = chatMessageMapper.toData(modelChatMessage);
     const chatMessageDatas = chatMessages.map((x) =>
       chatMessageMapper.toData(x),
@@ -196,15 +200,18 @@ export class AiTextSenderService {
       for await (const sendTextOutput of sendTextService.sendText(
         sendTextInput,
       )) {
-        const chatChunkRepo = new ChatChunkE8nRepo(
-          this.dbService.db,
-          this.e8nService,
+        const chatChunkRepo = new ChatChunkRepo(this.dbService.db);
+
+        await chatChunkRepo.create(
+          {
+            e8nService: this.e8nService,
+          },
+          {
+            ...sendTextOutput,
+            chatMessageId,
+            index,
+          },
         );
-        await chatChunkRepo.create({
-          ...sendTextOutput,
-          chatMessageId,
-          index,
-        });
 
         index += 1;
       }
@@ -232,17 +239,22 @@ export class AiTextSenderService {
     const { userId, chatId, chatMessageId, index, isSuccess } = input;
 
     await this.dbService.db.$transaction(async (tx) => {
-      const chatChunkE8nRepo = new ChatChunkE8nRepo(tx, this.e8nService);
-      await chatChunkE8nRepo.create({
-        chatMessageId,
-        index,
-        isSuccess,
-        text: "",
-        reasoningText: "",
-        rawData: "",
-      });
-
       const chatChunkRepo = new ChatChunkRepo(tx);
+
+      await chatChunkRepo.create(
+        {
+          e8nService: this.e8nService,
+        },
+        {
+          chatMessageId,
+          index,
+          isSuccess,
+          text: "",
+          reasoningText: "",
+          rawData: "",
+        },
+      );
+
       const { text, reasoningText } = await chatChunkRepo.calculateTexts({
         userId,
         chatId,
@@ -251,15 +263,22 @@ export class AiTextSenderService {
         chatChunkMapper: this.chatChunkMapper,
       });
 
-      const chatMessageE8nRepo = new ChatMessageE8nRepo(tx, this.e8nService);
-      await chatMessageE8nRepo.tryTransitionStatus(userId, {
-        chatId,
-        chatMessageId,
-        expectedStatus: "processing",
-        nextStatus: isSuccess ? "succeeded" : "failed",
-        text,
-        reasoningText,
-      });
+      const chatMessageRepo = new ChatMessageRepo(tx);
+
+      await chatMessageRepo.tryTransitionStatus(
+        {
+          e8nService: this.e8nService,
+        },
+        userId,
+        {
+          chatId,
+          chatMessageId,
+          expectedStatus: "processing",
+          nextStatus: isSuccess ? "succeeded" : "failed",
+          text,
+          reasoningText,
+        },
+      );
     });
   }
 

@@ -1,13 +1,12 @@
 import { Injectable } from "@nestjs/common";
 import { AiTextSenderService } from "../ai-text-sender/ai-text-sender.service.js";
-import { ChatE8nRepo } from "../chat/chat-e8n-repo.js";
 import { ChatMapper } from "../chat/chat-mapper.js";
+import { ChatRepo } from "../chat/chat-repo.js";
 import { DbService } from "../db/db-service.js";
 import { E8nService } from "../e8n/e8n-service.js";
 import { ChatModel } from "../generated/prisma/models.js";
 import { IdempotencyKeyRepo } from "../idempotency-key/idempotency-key-repo.js";
 import { UserId } from "../user/user-schemas.js";
-import { ChatMessageE8nRepo } from "./chat-message-e8n-repo.js";
 import { ChatMessageMapper } from "./chat-message-mapper.js";
 import { ChatMessageRepo } from "./chat-message-repo.js";
 import {
@@ -55,31 +54,47 @@ export class ChatMessageService {
         idempotencyKey,
       });
 
-      const chatE8nRepo = new ChatE8nRepo(tx, this.e8nService);
+      const chatRepo = new ChatRepo(tx);
 
       let chat: ChatModel | null = null;
       let chatId: string = "";
       if (!input.chatId) {
         const title = [...text].slice(0, 20).join("");
-        chat = await chatE8nRepo.create(userId, {
-          title,
-        });
+        chat = await chatRepo.create(
+          {
+            e8nService: this.e8nService,
+          },
+          userId,
+          {
+            title,
+          },
+        );
         chatId = chat.id;
       } else {
         chatId = input.chatId;
       }
 
-      const chatMessageE8nRepo = new ChatMessageE8nRepo(tx, this.e8nService);
+      const chatMessageRepo = new ChatMessageRepo(tx);
 
-      const userChatMessage = await chatMessageE8nRepo.createForUser({
-        chatId,
-        text,
-      });
+      const userChatMessage = await chatMessageRepo.createForUser(
+        {
+          e8nService: this.e8nService,
+        },
+        {
+          chatId,
+          text,
+        },
+      );
 
-      const modelChatMessage = await chatMessageE8nRepo.createForModel({
-        chatId,
-        model,
-      });
+      const modelChatMessage = await chatMessageRepo.createForModel(
+        {
+          e8nService: this.e8nService,
+        },
+        {
+          chatId,
+          model,
+        },
+      );
 
       return {
         chat,
