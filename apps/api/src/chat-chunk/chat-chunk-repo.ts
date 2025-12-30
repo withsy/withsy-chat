@@ -1,6 +1,5 @@
 import { ChatMessageId } from "../chat-message/chat-message-schemas.js";
 import { ChatId } from "../chat/chat-schemas.js";
-import { AiSendTextOutput } from "../common-schemas.js";
 import { Tx } from "../db/db-service.js";
 import { ChatChunkModel } from "../generated/prisma/models.js";
 import { UserId } from "../user/user-schemas.js";
@@ -58,13 +57,5 @@ export class ChatChunkRepo {
     });
 
     return entities;
-  }
-
-  async create(
-    context: { userId: UserId; chatId: ChatId; chatMessageId: ChatMessageId },
-    input: AiSendTextOutput,
-  ): Promise<void> {
-    const {} = context;
-    const {} = input;
   }
 }

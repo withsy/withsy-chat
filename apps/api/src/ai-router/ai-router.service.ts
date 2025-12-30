@@ -1,5 +1,6 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { Model } from "@repo/common";
+import { ChatChunkE8nRepo } from "../chat-chunk/chat-chunk-e8n-repo.js";
 import { ChatChunkRepo } from "../chat-chunk/chat-chunk-repo.js";
 import { ChatMessageMapper } from "../chat-message/chat-message-mapper.js";
 import { ChatMessageRepo } from "../chat-message/chat-message-repo.js";
@@ -43,7 +44,7 @@ export class AiRouterService {
     });
   }
 
-  private async txStepBeforeSend(input: AiRouterSendInput) {
+  private async txStepOnSend(input: AiRouterSendInput) {
     const { userId, chatId, userChatMessageId, modelChatMessageId } = input;
 
     return await this.dbService.db.$transaction(async (tx) => {
@@ -95,10 +96,11 @@ export class AiRouterService {
     });
   }
 
-  async #createSendTextInput(
-    input: Awaited<ReturnType<AiRouterService["txStepBeforeSend"]>>,
+  async #parseInput(
+    txStepResult: Awaited<ReturnType<AiRouterService["txStepOnSend"]>>,
   ): Promise<AiSendTextInput> {
-    const { model, userDefaultPrompt, modelChatMessage, chatMessages } = input;
+    const { model, userDefaultPrompt, modelChatMessage, chatMessages } =
+      txStepResult;
 
     const userPromptMapper = new UserPromptMapper(this.e8nService);
     const userDefaultPromptData = userDefaultPrompt?.userPrompt
@@ -159,7 +161,7 @@ export class AiRouterService {
     };
   }
 
-  #getSendTextService(model: Model): AiSendTextService {
+  #parseService(model: Model): AiSendTextService {
     const modelProvider = ModelProviderMap[model];
     if (modelProvider === "google-gen-ai") {
       return this.googleGenAiService;
@@ -170,31 +172,51 @@ export class AiRouterService {
     throw new Error(`Invalid model provider. model: ${model}.`);
   }
 
-  async #send(input: AiRouterSendInput): Promise<void> {
-    const { userId, chatId, modelChatMessageId } = input;
+  async #externalStepOnSend(
+    input: AiRouterSendInput,
+    txStepResult: Awaited<ReturnType<AiRouterService["txStepOnSend"]>>,
+  ) {
+    const { modelChatMessageId, userId, chatId } = input;
+    const { model } = txStepResult;
 
-    const txResult = await this.txStepBeforeSend(input);
-    const sendTextService = this.#getSendTextService(txResult.model);
-    const sendTextInput = await this.#createSendTextInput(txResult);
+    const sendTextService = this.#parseService(model);
+    const sendTextInput = await this.#parseInput(txStepResult);
 
-    const chatChunkRepo = new ChatChunkRepo(this.dbService.db);
+    let index = 0;
     try {
       for await (const sendTextOutput of sendTextService.sendText(
         sendTextInput,
       )) {
-        await chatChunkRepo.create(
-          {
-            userId,
-            chatId,
-            chatMessageId: modelChatMessageId,
-          },
-          sendTextOutput,
+        const chatChunkRepo = new ChatChunkE8nRepo(
+          this.dbService.db,
+          this.e8nService,
         );
+        await chatChunkRepo.create({
+          ...sendTextOutput,
+          chatMessageId: modelChatMessageId,
+          index: index++,
+          isDone: false,
+        });
       }
     } catch (e) {
       //
     } finally {
-      //
+      await this.dbService.db.$transaction(async (tx) => {
+        const chatChunkRepo = new ChatChunkE8nRepo(tx, this.e8nService);
+        await chatChunkRepo.create({
+          chatMessageId: modelChatMessageId,
+          isDone: true,
+          index,
+          text: "",
+          reasoningText: "",
+          rawData: "",
+        });
+      });
     }
+  }
+
+  async #send(input: AiRouterSendInput): Promise<void> {
+    const txStepResult = await this.txStepOnSend(input);
+    await this.#externalStepOnSend(input, txStepResult);
   }
 }
