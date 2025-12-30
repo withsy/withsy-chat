@@ -47,7 +47,7 @@ export class ChatMessageService {
     userId: UserId,
     input: ChatMessageSend,
   ): Promise<ChatMessageSendOutput> {
-    const { idempotencyKey, text } = input;
+    const { idempotencyKey, text, model } = input;
 
     const txResult = await this.dbService.db.$transaction(async (tx) => {
       const idempotencyKeyRepo = new IdempotencyKeyRepo(tx);
@@ -78,6 +78,7 @@ export class ChatMessageService {
 
       const modelChatMessage = await chatMessageE8nRepo.createForModel({
         chatId,
+        model,
       });
 
       return {

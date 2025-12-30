@@ -1,3 +1,4 @@
+import { Model } from "@repo/common";
 import { v7 } from "uuid";
 import { ChatId } from "../chat/chat-schemas.js";
 import { Role } from "../common-schemas.js";
@@ -32,14 +33,18 @@ export class ChatMessageE8nRepo {
     return entity;
   }
 
-  async createForModel(input: { chatId: ChatId }): Promise<ChatMessageModel> {
-    const { chatId } = input;
+  async createForModel(input: {
+    chatId: ChatId;
+    model: Model;
+  }): Promise<ChatMessageModel> {
+    const { chatId, model } = input;
 
     const entity = await this.tx.chatMessage.create({
       data: {
         id: v7(),
         chatId,
         role: Role.enum.model,
+        model,
         textEncrypted: this.e8nService.encrypt(""),
         reasoningTextEncrypted: this.e8nService.encrypt(""),
       },

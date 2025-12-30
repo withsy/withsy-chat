@@ -1,4 +1,4 @@
-import type { ChatMessageId } from "@/common-schemas";
+import type { ChatId, ChatMessageId } from "@/common-schemas";
 import { isChatMessageCompleted } from "@/lib/chat-utils";
 import { useTRPC } from "@/lib/trpc";
 import { useUserStore } from "@/stores/useUserStore";
@@ -6,15 +6,19 @@ import { skipToken } from "@tanstack/react-query";
 import { useSubscription } from "@trpc/tanstack-react-query";
 import { useChatMessageProp } from "./useChatMessage";
 
-export function useChatChunkReceive(chatMessageId: ChatMessageId) {
+export function useChatChunkReceive(
+  chatId: ChatId,
+  chatMessageId: ChatMessageId,
+) {
   const trpc = useTRPC();
   const status = useChatMessageProp(chatMessageId, "status");
-  const isNotCompleted = status === "pending" || status === "processing";
+  const isEnabled = chatId && (status === "pending" || status === "processing");
 
   return useSubscription(
     trpc.chatChunk.receive.subscriptionOptions(
-      isNotCompleted
+      isEnabled
         ? {
+            chatId,
             chatMessageId,
           }
         : skipToken,

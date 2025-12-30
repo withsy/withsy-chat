@@ -183,7 +183,7 @@ export class AiRouterService {
     const sendTextService = this.#parseService(model);
     const sendTextInput = await this.#parseInput(input);
 
-    let index = 0;
+    let index = 1;
     let isSuccess = false;
     try {
       for await (const sendTextOutput of sendTextService.sendText(
