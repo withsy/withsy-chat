@@ -247,21 +247,21 @@ export type UuidNullableWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedStringNullableFilter<$PrismaModel>
 }
 
-export type EnumChatMessageStatusFilter<$PrismaModel = never> = {
-  equals?: $Enums.ChatMessageStatus | Prisma.EnumChatMessageStatusFieldRefInput<$PrismaModel>
-  in?: $Enums.ChatMessageStatus[] | Prisma.ListEnumChatMessageStatusFieldRefInput<$PrismaModel>
-  notIn?: $Enums.ChatMessageStatus[] | Prisma.ListEnumChatMessageStatusFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumChatMessageStatusFilter<$PrismaModel> | $Enums.ChatMessageStatus
+export type EnumChatMessageAiInfoStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.ChatMessageAiInfoStatus | Prisma.EnumChatMessageAiInfoStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.ChatMessageAiInfoStatus[] | Prisma.ListEnumChatMessageAiInfoStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ChatMessageAiInfoStatus[] | Prisma.ListEnumChatMessageAiInfoStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumChatMessageAiInfoStatusFilter<$PrismaModel> | $Enums.ChatMessageAiInfoStatus
 }
 
-export type EnumChatMessageStatusWithAggregatesFilter<$PrismaModel = never> = {
-  equals?: $Enums.ChatMessageStatus | Prisma.EnumChatMessageStatusFieldRefInput<$PrismaModel>
-  in?: $Enums.ChatMessageStatus[] | Prisma.ListEnumChatMessageStatusFieldRefInput<$PrismaModel>
-  notIn?: $Enums.ChatMessageStatus[] | Prisma.ListEnumChatMessageStatusFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumChatMessageStatusWithAggregatesFilter<$PrismaModel> | $Enums.ChatMessageStatus
+export type EnumChatMessageAiInfoStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.ChatMessageAiInfoStatus | Prisma.EnumChatMessageAiInfoStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.ChatMessageAiInfoStatus[] | Prisma.ListEnumChatMessageAiInfoStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ChatMessageAiInfoStatus[] | Prisma.ListEnumChatMessageAiInfoStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumChatMessageAiInfoStatusWithAggregatesFilter<$PrismaModel> | $Enums.ChatMessageAiInfoStatus
   _count?: Prisma.NestedIntFilter<$PrismaModel>
-  _min?: Prisma.NestedEnumChatMessageStatusFilter<$PrismaModel>
-  _max?: Prisma.NestedEnumChatMessageStatusFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumChatMessageAiInfoStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumChatMessageAiInfoStatusFilter<$PrismaModel>
 }
 
 export type BoolNullableFilter<$PrismaModel = never> = {
@@ -508,21 +508,21 @@ export type NestedStringNullableFilter<$PrismaModel = never> = {
   not?: Prisma.NestedStringNullableFilter<$PrismaModel> | string | null
 }
 
-export type NestedEnumChatMessageStatusFilter<$PrismaModel = never> = {
-  equals?: $Enums.ChatMessageStatus | Prisma.EnumChatMessageStatusFieldRefInput<$PrismaModel>
-  in?: $Enums.ChatMessageStatus[] | Prisma.ListEnumChatMessageStatusFieldRefInput<$PrismaModel>
-  notIn?: $Enums.ChatMessageStatus[] | Prisma.ListEnumChatMessageStatusFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumChatMessageStatusFilter<$PrismaModel> | $Enums.ChatMessageStatus
+export type NestedEnumChatMessageAiInfoStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.ChatMessageAiInfoStatus | Prisma.EnumChatMessageAiInfoStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.ChatMessageAiInfoStatus[] | Prisma.ListEnumChatMessageAiInfoStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ChatMessageAiInfoStatus[] | Prisma.ListEnumChatMessageAiInfoStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumChatMessageAiInfoStatusFilter<$PrismaModel> | $Enums.ChatMessageAiInfoStatus
 }
 
-export type NestedEnumChatMessageStatusWithAggregatesFilter<$PrismaModel = never> = {
-  equals?: $Enums.ChatMessageStatus | Prisma.EnumChatMessageStatusFieldRefInput<$PrismaModel>
-  in?: $Enums.ChatMessageStatus[] | Prisma.ListEnumChatMessageStatusFieldRefInput<$PrismaModel>
-  notIn?: $Enums.ChatMessageStatus[] | Prisma.ListEnumChatMessageStatusFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumChatMessageStatusWithAggregatesFilter<$PrismaModel> | $Enums.ChatMessageStatus
+export type NestedEnumChatMessageAiInfoStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.ChatMessageAiInfoStatus | Prisma.EnumChatMessageAiInfoStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.ChatMessageAiInfoStatus[] | Prisma.ListEnumChatMessageAiInfoStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ChatMessageAiInfoStatus[] | Prisma.ListEnumChatMessageAiInfoStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumChatMessageAiInfoStatusWithAggregatesFilter<$PrismaModel> | $Enums.ChatMessageAiInfoStatus
   _count?: Prisma.NestedIntFilter<$PrismaModel>
-  _min?: Prisma.NestedEnumChatMessageStatusFilter<$PrismaModel>
-  _max?: Prisma.NestedEnumChatMessageStatusFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumChatMessageAiInfoStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumChatMessageAiInfoStatusFilter<$PrismaModel>
 }
 
 export type NestedBoolNullableFilter<$PrismaModel = never> = {

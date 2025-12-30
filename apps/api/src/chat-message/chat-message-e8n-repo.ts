@@ -25,8 +25,6 @@ export class ChatMessageE8nRepo {
         chatId,
         role: Role.enum.user,
         textEncrypted,
-        reasoningTextEncrypted: this.e8nService.encrypt(""),
-        status: ChatMessageStatus.succeeded,
       },
     });
 

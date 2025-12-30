@@ -29,7 +29,7 @@ export type ChatMessageAiInfoMinAggregateOutputType = {
   chatMessageId: string | null
   model: string | null
   reasoningTextEncrypted: string | null
-  status: $Enums.ChatMessageStatus | null
+  status: $Enums.ChatMessageAiInfoStatus | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -39,7 +39,7 @@ export type ChatMessageAiInfoMaxAggregateOutputType = {
   chatMessageId: string | null
   model: string | null
   reasoningTextEncrypted: string | null
-  status: $Enums.ChatMessageStatus | null
+  status: $Enums.ChatMessageAiInfoStatus | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -164,7 +164,7 @@ export type ChatMessageAiInfoGroupByOutputType = {
   chatMessageId: string
   model: string
   reasoningTextEncrypted: string
-  status: $Enums.ChatMessageStatus
+  status: $Enums.ChatMessageAiInfoStatus
   createdAt: Date
   updatedAt: Date
   _count: ChatMessageAiInfoCountAggregateOutputType | null
@@ -195,7 +195,7 @@ export type ChatMessageAiInfoWhereInput = {
   chatMessageId?: Prisma.UuidFilter<"ChatMessageAiInfo"> | string
   model?: Prisma.StringFilter<"ChatMessageAiInfo"> | string
   reasoningTextEncrypted?: Prisma.StringFilter<"ChatMessageAiInfo"> | string
-  status?: Prisma.EnumChatMessageStatusFilter<"ChatMessageAiInfo"> | $Enums.ChatMessageStatus
+  status?: Prisma.EnumChatMessageAiInfoStatusFilter<"ChatMessageAiInfo"> | $Enums.ChatMessageAiInfoStatus
   createdAt?: Prisma.DateTimeFilter<"ChatMessageAiInfo"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ChatMessageAiInfo"> | Date | string
   chatMessage?: Prisma.XOR<Prisma.ChatMessageScalarRelationFilter, Prisma.ChatMessageWhereInput>
@@ -220,7 +220,7 @@ export type ChatMessageAiInfoWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.ChatMessageAiInfoWhereInput | Prisma.ChatMessageAiInfoWhereInput[]
   model?: Prisma.StringFilter<"ChatMessageAiInfo"> | string
   reasoningTextEncrypted?: Prisma.StringFilter<"ChatMessageAiInfo"> | string
-  status?: Prisma.EnumChatMessageStatusFilter<"ChatMessageAiInfo"> | $Enums.ChatMessageStatus
+  status?: Prisma.EnumChatMessageAiInfoStatusFilter<"ChatMessageAiInfo"> | $Enums.ChatMessageAiInfoStatus
   createdAt?: Prisma.DateTimeFilter<"ChatMessageAiInfo"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ChatMessageAiInfo"> | Date | string
   chatMessage?: Prisma.XOR<Prisma.ChatMessageScalarRelationFilter, Prisma.ChatMessageWhereInput>
@@ -247,7 +247,7 @@ export type ChatMessageAiInfoScalarWhereWithAggregatesInput = {
   chatMessageId?: Prisma.UuidWithAggregatesFilter<"ChatMessageAiInfo"> | string
   model?: Prisma.StringWithAggregatesFilter<"ChatMessageAiInfo"> | string
   reasoningTextEncrypted?: Prisma.StringWithAggregatesFilter<"ChatMessageAiInfo"> | string
-  status?: Prisma.EnumChatMessageStatusWithAggregatesFilter<"ChatMessageAiInfo"> | $Enums.ChatMessageStatus
+  status?: Prisma.EnumChatMessageAiInfoStatusWithAggregatesFilter<"ChatMessageAiInfo"> | $Enums.ChatMessageAiInfoStatus
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"ChatMessageAiInfo"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"ChatMessageAiInfo"> | Date | string
 }
@@ -256,7 +256,7 @@ export type ChatMessageAiInfoCreateInput = {
   id: string
   model: string
   reasoningTextEncrypted: string
-  status?: $Enums.ChatMessageStatus
+  status?: $Enums.ChatMessageAiInfoStatus
   createdAt?: Date | string
   updatedAt?: Date | string
   chatMessage: Prisma.ChatMessageCreateNestedOneWithoutChatMessageAiInfoInput
@@ -267,7 +267,7 @@ export type ChatMessageAiInfoUncheckedCreateInput = {
   chatMessageId: string
   model: string
   reasoningTextEncrypted: string
-  status?: $Enums.ChatMessageStatus
+  status?: $Enums.ChatMessageAiInfoStatus
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -276,7 +276,7 @@ export type ChatMessageAiInfoUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   model?: Prisma.StringFieldUpdateOperationsInput | string
   reasoningTextEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.EnumChatMessageStatusFieldUpdateOperationsInput | $Enums.ChatMessageStatus
+  status?: Prisma.EnumChatMessageAiInfoStatusFieldUpdateOperationsInput | $Enums.ChatMessageAiInfoStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   chatMessage?: Prisma.ChatMessageUpdateOneRequiredWithoutChatMessageAiInfoNestedInput
@@ -287,7 +287,7 @@ export type ChatMessageAiInfoUncheckedUpdateInput = {
   chatMessageId?: Prisma.StringFieldUpdateOperationsInput | string
   model?: Prisma.StringFieldUpdateOperationsInput | string
   reasoningTextEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.EnumChatMessageStatusFieldUpdateOperationsInput | $Enums.ChatMessageStatus
+  status?: Prisma.EnumChatMessageAiInfoStatusFieldUpdateOperationsInput | $Enums.ChatMessageAiInfoStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -297,7 +297,7 @@ export type ChatMessageAiInfoCreateManyInput = {
   chatMessageId: string
   model: string
   reasoningTextEncrypted: string
-  status?: $Enums.ChatMessageStatus
+  status?: $Enums.ChatMessageAiInfoStatus
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -306,7 +306,7 @@ export type ChatMessageAiInfoUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   model?: Prisma.StringFieldUpdateOperationsInput | string
   reasoningTextEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.EnumChatMessageStatusFieldUpdateOperationsInput | $Enums.ChatMessageStatus
+  status?: Prisma.EnumChatMessageAiInfoStatusFieldUpdateOperationsInput | $Enums.ChatMessageAiInfoStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -316,7 +316,7 @@ export type ChatMessageAiInfoUncheckedUpdateManyInput = {
   chatMessageId?: Prisma.StringFieldUpdateOperationsInput | string
   model?: Prisma.StringFieldUpdateOperationsInput | string
   reasoningTextEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.EnumChatMessageStatusFieldUpdateOperationsInput | $Enums.ChatMessageStatus
+  status?: Prisma.EnumChatMessageAiInfoStatusFieldUpdateOperationsInput | $Enums.ChatMessageAiInfoStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -388,15 +388,15 @@ export type ChatMessageAiInfoUncheckedUpdateOneWithoutChatMessageNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ChatMessageAiInfoUpdateToOneWithWhereWithoutChatMessageInput, Prisma.ChatMessageAiInfoUpdateWithoutChatMessageInput>, Prisma.ChatMessageAiInfoUncheckedUpdateWithoutChatMessageInput>
 }
 
-export type EnumChatMessageStatusFieldUpdateOperationsInput = {
-  set?: $Enums.ChatMessageStatus
+export type EnumChatMessageAiInfoStatusFieldUpdateOperationsInput = {
+  set?: $Enums.ChatMessageAiInfoStatus
 }
 
 export type ChatMessageAiInfoCreateWithoutChatMessageInput = {
   id: string
   model: string
   reasoningTextEncrypted: string
-  status?: $Enums.ChatMessageStatus
+  status?: $Enums.ChatMessageAiInfoStatus
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -405,7 +405,7 @@ export type ChatMessageAiInfoUncheckedCreateWithoutChatMessageInput = {
   id: string
   model: string
   reasoningTextEncrypted: string
-  status?: $Enums.ChatMessageStatus
+  status?: $Enums.ChatMessageAiInfoStatus
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -430,7 +430,7 @@ export type ChatMessageAiInfoUpdateWithoutChatMessageInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   model?: Prisma.StringFieldUpdateOperationsInput | string
   reasoningTextEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.EnumChatMessageStatusFieldUpdateOperationsInput | $Enums.ChatMessageStatus
+  status?: Prisma.EnumChatMessageAiInfoStatusFieldUpdateOperationsInput | $Enums.ChatMessageAiInfoStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -439,7 +439,7 @@ export type ChatMessageAiInfoUncheckedUpdateWithoutChatMessageInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   model?: Prisma.StringFieldUpdateOperationsInput | string
   reasoningTextEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.EnumChatMessageStatusFieldUpdateOperationsInput | $Enums.ChatMessageStatus
+  status?: Prisma.EnumChatMessageAiInfoStatusFieldUpdateOperationsInput | $Enums.ChatMessageAiInfoStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -510,7 +510,7 @@ export type $ChatMessageAiInfoPayload<ExtArgs extends runtime.Types.Extensions.I
     chatMessageId: string
     model: string
     reasoningTextEncrypted: string
-    status: $Enums.ChatMessageStatus
+    status: $Enums.ChatMessageAiInfoStatus
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["chatMessageAiInfo"]>
@@ -941,7 +941,7 @@ export interface ChatMessageAiInfoFieldRefs {
   readonly chatMessageId: Prisma.FieldRef<"ChatMessageAiInfo", 'String'>
   readonly model: Prisma.FieldRef<"ChatMessageAiInfo", 'String'>
   readonly reasoningTextEncrypted: Prisma.FieldRef<"ChatMessageAiInfo", 'String'>
-  readonly status: Prisma.FieldRef<"ChatMessageAiInfo", 'ChatMessageStatus'>
+  readonly status: Prisma.FieldRef<"ChatMessageAiInfo", 'ChatMessageAiInfoStatus'>
   readonly createdAt: Prisma.FieldRef<"ChatMessageAiInfo", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"ChatMessageAiInfo", 'DateTime'>
 }

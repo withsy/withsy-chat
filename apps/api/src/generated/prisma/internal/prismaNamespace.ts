@@ -1612,16 +1612,16 @@ export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel,
 
 
 /**
- * Reference to a field of type 'ChatMessageStatus'
+ * Reference to a field of type 'ChatMessageAiInfoStatus'
  */
-export type EnumChatMessageStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ChatMessageStatus'>
+export type EnumChatMessageAiInfoStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ChatMessageAiInfoStatus'>
     
 
 
 /**
- * Reference to a field of type 'ChatMessageStatus[]'
+ * Reference to a field of type 'ChatMessageAiInfoStatus[]'
  */
-export type ListEnumChatMessageStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ChatMessageStatus[]'>
+export type ListEnumChatMessageAiInfoStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ChatMessageAiInfoStatus[]'>
     
 
 
