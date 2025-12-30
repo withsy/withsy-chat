@@ -1,7 +1,6 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { Model } from "@repo/common";
 import { ChatChunkE8nRepo } from "../chat-chunk/chat-chunk-e8n-repo.js";
-import { ChatChunkRepo } from "../chat-chunk/chat-chunk-repo.js";
 import { ChatMessageMapper } from "../chat-message/chat-message-mapper.js";
 import { ChatMessageRepo } from "../chat-message/chat-message-repo.js";
 import { ChatMessageId } from "../chat-message/chat-message-schemas.js";
