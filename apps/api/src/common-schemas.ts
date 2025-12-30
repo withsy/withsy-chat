@@ -85,4 +85,8 @@ export interface AiSendTextOutput {
   rawData: string;
 }
 
+export interface AiSendTextService {
+  sendText(input: AiSendTextInput): AsyncIterable<AiSendTextOutput>;
+}
+
 //#endregion Ai

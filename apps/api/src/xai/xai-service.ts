@@ -9,6 +9,7 @@ import {
 import {
   AiSendTextInput,
   AiSendTextOutput,
+  AiSendTextService,
   ModelProviderMap,
   OpenAiRoleMap,
   Role,
@@ -16,7 +17,7 @@ import {
 import { ConfigService } from "../config/config-service.js";
 
 @Injectable()
-export class XaiService {
+export class XaiService implements AiSendTextService {
   readonly #client: OpenAI;
 
   constructor(configService: ConfigService) {

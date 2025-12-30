@@ -3,6 +3,7 @@ import { Injectable } from "@nestjs/common";
 import {
   AiSendTextInput,
   AiSendTextOutput,
+  AiSendTextService,
   GoogleGenAiRoleMap,
   ModelProviderMap,
   Role,
@@ -10,7 +11,7 @@ import {
 import { ConfigService } from "../config/config-service.js";
 
 @Injectable()
-export class GoogleGenAiService {
+export class GoogleGenAiService implements AiSendTextService {
   readonly #client: GoogleGenAI;
 
   constructor(configService: ConfigService) {
