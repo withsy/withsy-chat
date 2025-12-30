@@ -12,16 +12,16 @@ datasource db {
 }
 
 model User {
-  id                 String              @id @map("id") @db.Uuid
-  preferences        Json                @default("{}") @map("preferences")
-  createdAt          DateTime            @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt          DateTime            @updatedAt @map("updated_at") @db.Timestamptz(6)
-  deletedAt          DateTime?           @map("deleted_at") @db.Timestamptz(6)
-  userLinkAccounts   UserLinkAccount[]   @relation("UserLinkAccount.userId")
-  userUsageLimits    UserUsageLimit[]    @relation("UserUsageLimit.userId")
-  userPrompts        UserPrompt[]        @relation("UserPrompt.userId")
-  userDefaultPrompts UserDefaultPrompt[] @relation("UserDefaultPrompt.userId")
-  chats              Chat[]              @relation("Chat.userId")
+  id                String             @id @map("id") @db.Uuid
+  preferences       Json               @default("{}") @map("preferences")
+  createdAt         DateTime           @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime           @updatedAt @map("updated_at") @db.Timestamptz(6)
+  deletedAt         DateTime?          @map("deleted_at") @db.Timestamptz(6)
+  userLinkAccounts  UserLinkAccount[]  @relation("UserLinkAccount.userId")
+  userUsageLimits   UserUsageLimit[]   @relation("UserUsageLimit.userId")
+  userPrompts       UserPrompt[]       @relation("UserPrompt.userId")
+  userDefaultPrompt UserDefaultPrompt? @relation("UserDefaultPrompt.userId")
+  chats             Chat[]             @relation("Chat.userId")
 
   @@map("users")
 }
