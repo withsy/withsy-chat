@@ -52,6 +52,7 @@ export const ChatMessageList = chatMessageListSchemas.list.extend({
   get order() {
     return Order.optional().default("desc");
   },
+  isBookmarked: z.boolean().optional(),
 });
 export type ChatMessageList = z.infer<typeof ChatMessageList>;
 

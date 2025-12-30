@@ -27,14 +27,15 @@ export class ChatMessageRepo {
     entities: ChatMessageModel[];
     nextCursor: ChatMessageModel["id"] | null;
   }> {
-    const { limit, cursor, direction, chatId, order } = input;
+    const { limit, cursor, direction, chatId, order, isBookmarked } = input;
 
     const take = (direction === "forward" ? 1 : -1) * (limit + 1);
 
     const entities = await this.tx.chatMessage.findMany({
       where: {
+        isBookmarked,
+        chatId,
         chat: {
-          id: chatId,
           deletedAt: null,
           userId,
           user: {
