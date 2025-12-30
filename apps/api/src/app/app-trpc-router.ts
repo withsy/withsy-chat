@@ -4,7 +4,6 @@ import { ChatChunkTrpcRouter } from "../chat-chunk/chat-chunk-trpc-router.js";
 import { ChatMessageTrpcRouter } from "../chat-message/chat-message-trpc-router.js";
 import { ChatTrpcRouter } from "../chat/chat-trpc-router.js";
 import { TrpcService } from "../trpc/trpc-service.js";
-import { UserAiProfileTrpcRouter } from "../user-ai-profile/user-ai-profile-trpc-router.js";
 import { UserDefaultPromptTrpcRouter } from "../user-default-prompt/user-default-prompt-trpc-router.js";
 import { UserPromptTrpcRouter } from "../user-prompt/user-prompt-trpc-router.js";
 import { UserTrpcRouter } from "../user/user-trpc-router.js";
@@ -18,7 +17,6 @@ export class AppTrpcRouter {
     userTrpcRouter: UserTrpcRouter,
     userPromptTrpcRouter: UserPromptTrpcRouter,
     userDefaultPromptTrpcRouter: UserDefaultPromptTrpcRouter,
-    userAiProfileTrpcRouter: UserAiProfileTrpcRouter,
     chatTrpcRouter: ChatTrpcRouter,
     chatMessageTrpcRouter: ChatMessageTrpcRouter,
     chatChunkTrpcRouter: ChatChunkTrpcRouter,
@@ -27,7 +25,6 @@ export class AppTrpcRouter {
       user: userTrpcRouter.router,
       userPrompt: userPromptTrpcRouter.router,
       userDefaultPrompt: userDefaultPromptTrpcRouter.router,
-      userAiProfile: userAiProfileTrpcRouter.router,
       chat: chatTrpcRouter.router,
       chatMessage: chatMessageTrpcRouter.router,
       chatChunk: chatChunkTrpcRouter.router,
