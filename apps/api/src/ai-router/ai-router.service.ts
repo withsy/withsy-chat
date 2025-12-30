@@ -173,16 +173,19 @@ export class AiRouterService {
   }
 
   async #externalStepOnSend(
-    input: AiRouterSendInput,
-    txStepResult: Awaited<ReturnType<AiRouterService["txStepOnSend"]>>,
+    input: {
+      userId: UserId;
+      chatId: ChatId;
+      chatMessageId: ChatMessageId;
+    } & Awaited<ReturnType<AiRouterService["txStepOnSend"]>>,
   ) {
-    const { modelChatMessageId, userId, chatId } = input;
-    const { model } = txStepResult;
+    const { userId, chatId, chatMessageId, model } = input;
 
     const sendTextService = this.#parseService(model);
-    const sendTextInput = await this.#parseInput(txStepResult);
+    const sendTextInput = await this.#parseInput(input);
 
     let index = 0;
+    let isSuccess = false;
     try {
       for await (const sendTextOutput of sendTextService.sendText(
         sendTextInput,
@@ -193,30 +196,51 @@ export class AiRouterService {
         );
         await chatChunkRepo.create({
           ...sendTextOutput,
-          chatMessageId: modelChatMessageId,
-          index: index++,
+          chatMessageId,
+          index,
           isDone: false,
         });
+
+        index += 1;
       }
+
+      isSuccess = true;
     } catch (e) {
-      //
+      isSuccess = false;
+
+      this.#logger.error(`Failed to send. ${inspect(e)}`);
     } finally {
       await this.dbService.db.$transaction(async (tx) => {
         const chatChunkRepo = new ChatChunkE8nRepo(tx, this.e8nService);
         await chatChunkRepo.create({
-          chatMessageId: modelChatMessageId,
+          chatMessageId,
           isDone: true,
           index,
           text: "",
           reasoningText: "",
           rawData: "",
         });
+
+        const chatMessageRepo = new ChatMessageRepo(tx);
+        await chatMessageRepo.tryTransitionStatus(userId, {
+          chatId,
+          chatMessageId,
+          expectedStatus: "processing",
+          nextStatus: isSuccess ? "succeeded" : "failed",
+        });
       });
     }
   }
 
   async #send(input: AiRouterSendInput): Promise<void> {
+    const { userId, chatId, modelChatMessageId } = input;
+
     const txStepResult = await this.txStepOnSend(input);
-    await this.#externalStepOnSend(input, txStepResult);
+    await this.#externalStepOnSend({
+      ...txStepResult,
+      userId,
+      chatId,
+      chatMessageId: modelChatMessageId,
+    });
   }
 }
