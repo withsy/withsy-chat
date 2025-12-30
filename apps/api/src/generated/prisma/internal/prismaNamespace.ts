@@ -397,7 +397,6 @@ export const ModelName = {
   UserDefaultPrompt: 'UserDefaultPrompt',
   Chat: 'Chat',
   ChatMessage: 'ChatMessage',
-  ChatMessageAiInfo: 'ChatMessageAiInfo',
   ChatChunk: 'ChatChunk',
   IdempotencyKey: 'IdempotencyKey',
   ApiKey: 'ApiKey',
@@ -417,7 +416,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "userLinkAccount" | "userUsageLimit" | "userPrompt" | "userDefaultPrompt" | "chat" | "chatMessage" | "chatMessageAiInfo" | "chatChunk" | "idempotencyKey" | "apiKey" | "supabaseActivity"
+    modelProps: "user" | "userLinkAccount" | "userUsageLimit" | "userPrompt" | "userDefaultPrompt" | "chat" | "chatMessage" | "chatChunk" | "idempotencyKey" | "apiKey" | "supabaseActivity"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -939,80 +938,6 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
-    ChatMessageAiInfo: {
-      payload: Prisma.$ChatMessageAiInfoPayload<ExtArgs>
-      fields: Prisma.ChatMessageAiInfoFieldRefs
-      operations: {
-        findUnique: {
-          args: Prisma.ChatMessageAiInfoFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatMessageAiInfoPayload> | null
-        }
-        findUniqueOrThrow: {
-          args: Prisma.ChatMessageAiInfoFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatMessageAiInfoPayload>
-        }
-        findFirst: {
-          args: Prisma.ChatMessageAiInfoFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatMessageAiInfoPayload> | null
-        }
-        findFirstOrThrow: {
-          args: Prisma.ChatMessageAiInfoFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatMessageAiInfoPayload>
-        }
-        findMany: {
-          args: Prisma.ChatMessageAiInfoFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatMessageAiInfoPayload>[]
-        }
-        create: {
-          args: Prisma.ChatMessageAiInfoCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatMessageAiInfoPayload>
-        }
-        createMany: {
-          args: Prisma.ChatMessageAiInfoCreateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        createManyAndReturn: {
-          args: Prisma.ChatMessageAiInfoCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatMessageAiInfoPayload>[]
-        }
-        delete: {
-          args: Prisma.ChatMessageAiInfoDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatMessageAiInfoPayload>
-        }
-        update: {
-          args: Prisma.ChatMessageAiInfoUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatMessageAiInfoPayload>
-        }
-        deleteMany: {
-          args: Prisma.ChatMessageAiInfoDeleteManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateMany: {
-          args: Prisma.ChatMessageAiInfoUpdateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateManyAndReturn: {
-          args: Prisma.ChatMessageAiInfoUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatMessageAiInfoPayload>[]
-        }
-        upsert: {
-          args: Prisma.ChatMessageAiInfoUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatMessageAiInfoPayload>
-        }
-        aggregate: {
-          args: Prisma.ChatMessageAiInfoAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateChatMessageAiInfo>
-        }
-        groupBy: {
-          args: Prisma.ChatMessageAiInfoGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.ChatMessageAiInfoGroupByOutputType>[]
-        }
-        count: {
-          args: Prisma.ChatMessageAiInfoCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.ChatMessageAiInfoCountAggregateOutputType> | number
-        }
-      }
-    }
     ChatChunk: {
       payload: Prisma.$ChatChunkPayload<ExtArgs>
       fields: Prisma.ChatChunkFieldRefs
@@ -1435,26 +1360,16 @@ export const ChatMessageScalarFieldEnum = {
   id: 'id',
   chatId: 'chatId',
   role: 'role',
+  model: 'model',
   textEncrypted: 'textEncrypted',
+  reasoningTextEncrypted: 'reasoningTextEncrypted',
+  status: 'status',
   isBookmarked: 'isBookmarked',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type ChatMessageScalarFieldEnum = (typeof ChatMessageScalarFieldEnum)[keyof typeof ChatMessageScalarFieldEnum]
-
-
-export const ChatMessageAiInfoScalarFieldEnum = {
-  id: 'id',
-  chatMessageId: 'chatMessageId',
-  model: 'model',
-  reasoningTextEncrypted: 'reasoningTextEncrypted',
-  status: 'status',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type ChatMessageAiInfoScalarFieldEnum = (typeof ChatMessageAiInfoScalarFieldEnum)[keyof typeof ChatMessageAiInfoScalarFieldEnum]
 
 
 export const ChatChunkScalarFieldEnum = {
@@ -1464,7 +1379,7 @@ export const ChatChunkScalarFieldEnum = {
   rawDataEncrypted: 'rawDataEncrypted',
   textEncrypted: 'textEncrypted',
   reasoningTextEncrypted: 'reasoningTextEncrypted',
-  isSuccess: 'isSuccess',
+  isDone: 'isDone',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -1732,7 +1647,6 @@ export type GlobalOmitConfig = {
   userDefaultPrompt?: Prisma.UserDefaultPromptOmit
   chat?: Prisma.ChatOmit
   chatMessage?: Prisma.ChatMessageOmit
-  chatMessageAiInfo?: Prisma.ChatMessageAiInfoOmit
   chatChunk?: Prisma.ChatChunkOmit
   idempotencyKey?: Prisma.IdempotencyKeyOmit
   apiKey?: Prisma.ApiKeyOmit

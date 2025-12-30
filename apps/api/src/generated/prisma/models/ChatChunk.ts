@@ -43,7 +43,7 @@ export type ChatChunkMinAggregateOutputType = {
   rawDataEncrypted: string | null
   textEncrypted: string | null
   reasoningTextEncrypted: string | null
-  isSuccess: boolean | null
+  isDone: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -55,7 +55,7 @@ export type ChatChunkMaxAggregateOutputType = {
   rawDataEncrypted: string | null
   textEncrypted: string | null
   reasoningTextEncrypted: string | null
-  isSuccess: boolean | null
+  isDone: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -67,7 +67,7 @@ export type ChatChunkCountAggregateOutputType = {
   rawDataEncrypted: number
   textEncrypted: number
   reasoningTextEncrypted: number
-  isSuccess: number
+  isDone: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -91,7 +91,7 @@ export type ChatChunkMinAggregateInputType = {
   rawDataEncrypted?: true
   textEncrypted?: true
   reasoningTextEncrypted?: true
-  isSuccess?: true
+  isDone?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -103,7 +103,7 @@ export type ChatChunkMaxAggregateInputType = {
   rawDataEncrypted?: true
   textEncrypted?: true
   reasoningTextEncrypted?: true
-  isSuccess?: true
+  isDone?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -115,7 +115,7 @@ export type ChatChunkCountAggregateInputType = {
   rawDataEncrypted?: true
   textEncrypted?: true
   reasoningTextEncrypted?: true
-  isSuccess?: true
+  isDone?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -214,7 +214,7 @@ export type ChatChunkGroupByOutputType = {
   rawDataEncrypted: string
   textEncrypted: string
   reasoningTextEncrypted: string
-  isSuccess: boolean | null
+  isDone: boolean
   createdAt: Date
   updatedAt: Date
   _count: ChatChunkCountAggregateOutputType | null
@@ -249,7 +249,7 @@ export type ChatChunkWhereInput = {
   rawDataEncrypted?: Prisma.StringFilter<"ChatChunk"> | string
   textEncrypted?: Prisma.StringFilter<"ChatChunk"> | string
   reasoningTextEncrypted?: Prisma.StringFilter<"ChatChunk"> | string
-  isSuccess?: Prisma.BoolNullableFilter<"ChatChunk"> | boolean | null
+  isDone?: Prisma.BoolFilter<"ChatChunk"> | boolean
   createdAt?: Prisma.DateTimeFilter<"ChatChunk"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ChatChunk"> | Date | string
   chatMessage?: Prisma.XOR<Prisma.ChatMessageScalarRelationFilter, Prisma.ChatMessageWhereInput>
@@ -262,7 +262,7 @@ export type ChatChunkOrderByWithRelationInput = {
   rawDataEncrypted?: Prisma.SortOrder
   textEncrypted?: Prisma.SortOrder
   reasoningTextEncrypted?: Prisma.SortOrder
-  isSuccess?: Prisma.SortOrderInput | Prisma.SortOrder
+  isDone?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   chatMessage?: Prisma.ChatMessageOrderByWithRelationInput
@@ -279,7 +279,7 @@ export type ChatChunkWhereUniqueInput = Prisma.AtLeast<{
   rawDataEncrypted?: Prisma.StringFilter<"ChatChunk"> | string
   textEncrypted?: Prisma.StringFilter<"ChatChunk"> | string
   reasoningTextEncrypted?: Prisma.StringFilter<"ChatChunk"> | string
-  isSuccess?: Prisma.BoolNullableFilter<"ChatChunk"> | boolean | null
+  isDone?: Prisma.BoolFilter<"ChatChunk"> | boolean
   createdAt?: Prisma.DateTimeFilter<"ChatChunk"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ChatChunk"> | Date | string
   chatMessage?: Prisma.XOR<Prisma.ChatMessageScalarRelationFilter, Prisma.ChatMessageWhereInput>
@@ -292,7 +292,7 @@ export type ChatChunkOrderByWithAggregationInput = {
   rawDataEncrypted?: Prisma.SortOrder
   textEncrypted?: Prisma.SortOrder
   reasoningTextEncrypted?: Prisma.SortOrder
-  isSuccess?: Prisma.SortOrderInput | Prisma.SortOrder
+  isDone?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.ChatChunkCountOrderByAggregateInput
@@ -312,7 +312,7 @@ export type ChatChunkScalarWhereWithAggregatesInput = {
   rawDataEncrypted?: Prisma.StringWithAggregatesFilter<"ChatChunk"> | string
   textEncrypted?: Prisma.StringWithAggregatesFilter<"ChatChunk"> | string
   reasoningTextEncrypted?: Prisma.StringWithAggregatesFilter<"ChatChunk"> | string
-  isSuccess?: Prisma.BoolNullableWithAggregatesFilter<"ChatChunk"> | boolean | null
+  isDone?: Prisma.BoolWithAggregatesFilter<"ChatChunk"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"ChatChunk"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"ChatChunk"> | Date | string
 }
@@ -322,7 +322,7 @@ export type ChatChunkCreateInput = {
   rawDataEncrypted: string
   textEncrypted: string
   reasoningTextEncrypted: string
-  isSuccess?: boolean | null
+  isDone: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   chatMessage: Prisma.ChatMessageCreateNestedOneWithoutChatChunksInput
@@ -335,7 +335,7 @@ export type ChatChunkUncheckedCreateInput = {
   rawDataEncrypted: string
   textEncrypted: string
   reasoningTextEncrypted: string
-  isSuccess?: boolean | null
+  isDone: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -345,7 +345,7 @@ export type ChatChunkUpdateInput = {
   rawDataEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
   textEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
   reasoningTextEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
-  isSuccess?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  isDone?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   chatMessage?: Prisma.ChatMessageUpdateOneRequiredWithoutChatChunksNestedInput
@@ -358,7 +358,7 @@ export type ChatChunkUncheckedUpdateInput = {
   rawDataEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
   textEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
   reasoningTextEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
-  isSuccess?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  isDone?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -370,7 +370,7 @@ export type ChatChunkCreateManyInput = {
   rawDataEncrypted: string
   textEncrypted: string
   reasoningTextEncrypted: string
-  isSuccess?: boolean | null
+  isDone: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -380,7 +380,7 @@ export type ChatChunkUpdateManyMutationInput = {
   rawDataEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
   textEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
   reasoningTextEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
-  isSuccess?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  isDone?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -392,7 +392,7 @@ export type ChatChunkUncheckedUpdateManyInput = {
   rawDataEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
   textEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
   reasoningTextEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
-  isSuccess?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  isDone?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -419,7 +419,7 @@ export type ChatChunkCountOrderByAggregateInput = {
   rawDataEncrypted?: Prisma.SortOrder
   textEncrypted?: Prisma.SortOrder
   reasoningTextEncrypted?: Prisma.SortOrder
-  isSuccess?: Prisma.SortOrder
+  isDone?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -436,7 +436,7 @@ export type ChatChunkMaxOrderByAggregateInput = {
   rawDataEncrypted?: Prisma.SortOrder
   textEncrypted?: Prisma.SortOrder
   reasoningTextEncrypted?: Prisma.SortOrder
-  isSuccess?: Prisma.SortOrder
+  isDone?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -448,7 +448,7 @@ export type ChatChunkMinOrderByAggregateInput = {
   rawDataEncrypted?: Prisma.SortOrder
   textEncrypted?: Prisma.SortOrder
   reasoningTextEncrypted?: Prisma.SortOrder
-  isSuccess?: Prisma.SortOrder
+  isDone?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -500,16 +500,12 @@ export type ChatChunkUncheckedUpdateManyWithoutChatMessageNestedInput = {
   deleteMany?: Prisma.ChatChunkScalarWhereInput | Prisma.ChatChunkScalarWhereInput[]
 }
 
-export type NullableBoolFieldUpdateOperationsInput = {
-  set?: boolean | null
-}
-
 export type ChatChunkCreateWithoutChatMessageInput = {
   index: number
   rawDataEncrypted: string
   textEncrypted: string
   reasoningTextEncrypted: string
-  isSuccess?: boolean | null
+  isDone: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -520,7 +516,7 @@ export type ChatChunkUncheckedCreateWithoutChatMessageInput = {
   rawDataEncrypted: string
   textEncrypted: string
   reasoningTextEncrypted: string
-  isSuccess?: boolean | null
+  isDone: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -561,7 +557,7 @@ export type ChatChunkScalarWhereInput = {
   rawDataEncrypted?: Prisma.StringFilter<"ChatChunk"> | string
   textEncrypted?: Prisma.StringFilter<"ChatChunk"> | string
   reasoningTextEncrypted?: Prisma.StringFilter<"ChatChunk"> | string
-  isSuccess?: Prisma.BoolNullableFilter<"ChatChunk"> | boolean | null
+  isDone?: Prisma.BoolFilter<"ChatChunk"> | boolean
   createdAt?: Prisma.DateTimeFilter<"ChatChunk"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ChatChunk"> | Date | string
 }
@@ -572,7 +568,7 @@ export type ChatChunkCreateManyChatMessageInput = {
   rawDataEncrypted: string
   textEncrypted: string
   reasoningTextEncrypted: string
-  isSuccess?: boolean | null
+  isDone: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -582,7 +578,7 @@ export type ChatChunkUpdateWithoutChatMessageInput = {
   rawDataEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
   textEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
   reasoningTextEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
-  isSuccess?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  isDone?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -593,7 +589,7 @@ export type ChatChunkUncheckedUpdateWithoutChatMessageInput = {
   rawDataEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
   textEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
   reasoningTextEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
-  isSuccess?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  isDone?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -604,7 +600,7 @@ export type ChatChunkUncheckedUpdateManyWithoutChatMessageInput = {
   rawDataEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
   textEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
   reasoningTextEncrypted?: Prisma.StringFieldUpdateOperationsInput | string
-  isSuccess?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  isDone?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -618,7 +614,7 @@ export type ChatChunkSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   rawDataEncrypted?: boolean
   textEncrypted?: boolean
   reasoningTextEncrypted?: boolean
-  isSuccess?: boolean
+  isDone?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   chatMessage?: boolean | Prisma.ChatMessageDefaultArgs<ExtArgs>
@@ -631,7 +627,7 @@ export type ChatChunkSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ext
   rawDataEncrypted?: boolean
   textEncrypted?: boolean
   reasoningTextEncrypted?: boolean
-  isSuccess?: boolean
+  isDone?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   chatMessage?: boolean | Prisma.ChatMessageDefaultArgs<ExtArgs>
@@ -644,7 +640,7 @@ export type ChatChunkSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ext
   rawDataEncrypted?: boolean
   textEncrypted?: boolean
   reasoningTextEncrypted?: boolean
-  isSuccess?: boolean
+  isDone?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   chatMessage?: boolean | Prisma.ChatMessageDefaultArgs<ExtArgs>
@@ -657,12 +653,12 @@ export type ChatChunkSelectScalar = {
   rawDataEncrypted?: boolean
   textEncrypted?: boolean
   reasoningTextEncrypted?: boolean
-  isSuccess?: boolean
+  isDone?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type ChatChunkOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "chatMessageId" | "index" | "rawDataEncrypted" | "textEncrypted" | "reasoningTextEncrypted" | "isSuccess" | "createdAt" | "updatedAt", ExtArgs["result"]["chatChunk"]>
+export type ChatChunkOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "chatMessageId" | "index" | "rawDataEncrypted" | "textEncrypted" | "reasoningTextEncrypted" | "isDone" | "createdAt" | "updatedAt", ExtArgs["result"]["chatChunk"]>
 export type ChatChunkInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   chatMessage?: boolean | Prisma.ChatMessageDefaultArgs<ExtArgs>
 }
@@ -685,7 +681,7 @@ export type $ChatChunkPayload<ExtArgs extends runtime.Types.Extensions.InternalA
     rawDataEncrypted: string
     textEncrypted: string
     reasoningTextEncrypted: string
-    isSuccess: boolean | null
+    isDone: boolean
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["chatChunk"]>
@@ -1118,7 +1114,7 @@ export interface ChatChunkFieldRefs {
   readonly rawDataEncrypted: Prisma.FieldRef<"ChatChunk", 'String'>
   readonly textEncrypted: Prisma.FieldRef<"ChatChunk", 'String'>
   readonly reasoningTextEncrypted: Prisma.FieldRef<"ChatChunk", 'String'>
-  readonly isSuccess: Prisma.FieldRef<"ChatChunk", 'Boolean'>
+  readonly isDone: Prisma.FieldRef<"ChatChunk", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"ChatChunk", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"ChatChunk", 'DateTime'>
 }

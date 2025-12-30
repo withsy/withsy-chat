@@ -77,11 +77,6 @@ export type Chat = Prisma.ChatModel
  */
 export type ChatMessage = Prisma.ChatMessageModel
 /**
- * Model ChatMessageAiInfo
- * 
- */
-export type ChatMessageAiInfo = Prisma.ChatMessageAiInfoModel
-/**
  * Model ChatChunk
  * 
  */
