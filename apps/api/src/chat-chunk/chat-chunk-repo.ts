@@ -118,7 +118,9 @@ export class ChatChunkRepo {
         reasoningTextEncrypted: e8nService.encrypt(reasoningText),
         rawDataEncrypted: e8nService.encrypt(rawData),
       },
-      select: {},
+      select: {
+        id: true,
+      },
     });
   }
 }
