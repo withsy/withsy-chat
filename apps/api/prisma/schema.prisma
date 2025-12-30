@@ -100,6 +100,13 @@ model Chat {
   @@map("chats")
 }
 
+enum ChatMessageStatus {
+  pending
+  processing
+  succeeded
+  failed
+}
+
 model ChatMessage {
   id                String             @id @map("id") @db.Uuid
   chatId            String             @map("chat_id") @db.Uuid
@@ -115,22 +122,15 @@ model ChatMessage {
   @@map("chat_messages")
 }
 
-enum ChatMessageAiInfoStatus {
-  pending
-  processing
-  succeeded
-  failed
-}
-
 model ChatMessageAiInfo {
-  id                     String                  @id @map("id") @db.Uuid
-  chatMessageId          String                  @unique @map("chat_message_id") @db.Uuid
-  chatMessage            ChatMessage             @relation("ChatMessageAiInfo.chatMessageId", fields: [chatMessageId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  model                  String                  @map("model")
-  reasoningTextEncrypted String                  @map("reasoning_text_encrypted")
-  status                 ChatMessageAiInfoStatus @default(pending) @map("status")
-  createdAt              DateTime                @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt              DateTime                @updatedAt @map("updated_at") @db.Timestamptz(6)
+  id                     String            @id @map("id") @db.Uuid
+  chatMessageId          String            @unique @map("chat_message_id") @db.Uuid
+  chatMessage            ChatMessage       @relation("ChatMessageAiInfo.chatMessageId", fields: [chatMessageId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  model                  String            @map("model")
+  reasoningTextEncrypted String            @map("reasoning_text_encrypted")
+  status                 ChatMessageStatus @default(pending) @map("status")
+  createdAt              DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt              DateTime          @updatedAt @map("updated_at") @db.Timestamptz(6)
 
   @@map("chat_message_ai_infos")
 }

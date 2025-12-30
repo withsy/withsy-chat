@@ -1,5 +1,5 @@
 -- CreateEnum
-CREATE TYPE "ChatMessageAiInfoStatus" AS ENUM ('pending', 'processing', 'succeeded', 'failed');
+CREATE TYPE "ChatMessageStatus" AS ENUM ('pending', 'processing', 'succeeded', 'failed');
 
 -- CreateTable
 CREATE TABLE "users" (
@@ -95,7 +95,7 @@ CREATE TABLE "chat_message_ai_infos" (
     "chat_message_id" UUID NOT NULL,
     "model" TEXT NOT NULL,
     "reasoning_text_encrypted" TEXT NOT NULL,
-    "status" "ChatMessageAiInfoStatus" NOT NULL DEFAULT 'pending',
+    "status" "ChatMessageStatus" NOT NULL DEFAULT 'pending',
     "created_at" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMPTZ(6) NOT NULL,
 
