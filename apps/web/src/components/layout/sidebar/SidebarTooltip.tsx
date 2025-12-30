@@ -21,7 +21,7 @@ export function SidebarTooltip({
   const { isMobile, collapsed, setCollapsed } = useSidebarStore();
   const router = useRouter();
   const isActive =
-    id == "home" ? `/` == router.asPath : `/${id}` == router.asPath;
+    id == "home" ? `/` === router.asPath : `/${id}` === router.asPath;
   const mobileClassName = isMobile ? "px-2.5 py-3" : "px-2.5 py-1.5";
 
   const className = `
@@ -30,11 +30,13 @@ export function SidebarTooltip({
                 isActive ? "bg-white" : ""
               }
             `;
+
   const handleLinkClick = () => {
     if (isMobile) {
       setCollapsed(true);
     }
-    if (id == "home") {
+
+    if (id === "home") {
       router.push("/");
     } else {
       router.push(`/${id}`);
