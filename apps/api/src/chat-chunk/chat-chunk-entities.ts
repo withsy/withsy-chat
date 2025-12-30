@@ -1,7 +1,13 @@
 import z from "zod";
 import { ChatMessageId } from "../chat-message/chat-message-schemas.js";
 import { ChatId } from "../chat/chat-schemas.js";
+import { ChatChunkModel } from "../generated/prisma/models.js";
 import { zAsyncIterable } from "../z-async-iterable.js";
+
+export type PartialChatChunkModel = Pick<
+  ChatChunkModel,
+  "index" | "textEncrypted" | "reasoningTextEncrypted" | "isSuccess"
+>;
 
 export const ChatChunkIndex = z.coerce.number<number | string>().int();
 export type ChatChunkIndex = z.infer<typeof ChatChunkIndex>;

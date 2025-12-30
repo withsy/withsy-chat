@@ -1,14 +1,12 @@
 import { ChatMessageId } from "../chat-message/chat-message-schemas.js";
 import { ChatId } from "../chat/chat-schemas.js";
 import { Tx } from "../db/db-service.js";
-import { ChatChunkModel } from "../generated/prisma/models.js";
 import { UserId } from "../user/user-schemas.js";
-import { ChatChunkIndex } from "./chat-chunk-entities.js";
-
-type PartialChatChunkModel = Pick<
-  ChatChunkModel,
-  "index" | "textEncrypted" | "reasoningTextEncrypted" | "isSuccess"
->;
+import {
+  ChatChunkIndex,
+  PartialChatChunkModel,
+} from "./chat-chunk-entities.js";
+import { ChatChunkMapper } from "./chat-chunk-mapper.js";
 
 export class ChatChunkRepo {
   constructor(private readonly tx: Tx) {}
@@ -57,5 +55,41 @@ export class ChatChunkRepo {
     });
 
     return entities;
+  }
+
+  async calculateTexts(input: {
+    userId: UserId;
+    chatId: ChatId;
+    chatMessageId: ChatMessageId;
+    index: number;
+    chatChunkMapper: ChatChunkMapper;
+  }) {
+    const { userId, chatId, chatMessageId, index, chatChunkMapper } = input;
+
+    const texts: string[] = [];
+    const reasoningTexts: string[] = [];
+    let readIndex = 0;
+    while (readIndex < index) {
+      const chatChunks = await this.list(userId, {
+        chatId,
+        chatMessageId,
+        index: readIndex + 1,
+      });
+
+      chatChunks.forEach((x) => {
+        const chatChunkData = chatChunkMapper.toData(x);
+        texts.push(chatChunkData.text);
+        reasoningTexts.push(chatChunkData.reasoningText);
+        readIndex = chatChunkData.index;
+      });
+    }
+
+    const text = texts.join("");
+    const reasoningText = reasoningTexts.join("");
+
+    return {
+      text,
+      reasoningText,
+    };
   }
 }

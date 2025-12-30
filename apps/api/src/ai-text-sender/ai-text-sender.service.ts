@@ -1,6 +1,9 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { Model } from "@repo/common";
 import { ChatChunkE8nRepo } from "../chat-chunk/chat-chunk-e8n-repo.js";
+import { ChatChunkMapper } from "../chat-chunk/chat-chunk-mapper.js";
+import { ChatChunkRepo } from "../chat-chunk/chat-chunk-repo.js";
+import { ChatMessageE8nRepo } from "../chat-message/chat-message-e8n-repo.js";
 import { ChatMessageMapper } from "../chat-message/chat-message-mapper.js";
 import { ChatMessageRepo } from "../chat-message/chat-message-repo.js";
 import { ChatMessageId } from "../chat-message/chat-message-schemas.js";
@@ -27,14 +30,15 @@ interface AiRouterSendInput {
 }
 
 @Injectable()
-export class AiRouterService {
-  readonly #logger = new Logger(AiRouterService.name);
+export class AiTextSenderService {
+  readonly #logger = new Logger(AiTextSenderService.name);
 
   constructor(
     private readonly dbService: DbService,
     private readonly e8nService: E8nService,
     private readonly googleGenAiService: GoogleGenAiService,
     private readonly xaiService: XaiService,
+    private readonly chatChunkMapper: ChatChunkMapper,
   ) {}
 
   send(input: AiRouterSendInput): void {
@@ -43,12 +47,12 @@ export class AiRouterService {
     });
   }
 
-  private async txBeforeExternalOnSend(input: AiRouterSendInput) {
+  private async transactionBeforeExternalCall(input: AiRouterSendInput) {
     const { userId, chatId, userChatMessageId, modelChatMessageId } = input;
 
     return await this.dbService.db.$transaction(async (tx) => {
-      const chatMessageRepo = new ChatMessageRepo(tx);
-      const modelChatMessage = await chatMessageRepo.tryTransitionStatus(
+      const chatMessageE8nRepo = new ChatMessageE8nRepo(tx, this.e8nService);
+      const modelChatMessage = await chatMessageE8nRepo.tryTransitionStatus(
         userId,
         {
           chatId,
@@ -76,6 +80,7 @@ export class AiRouterService {
         throw new Error(`Invalid model provider. model: ${model}`);
       }
 
+      const chatMessageRepo = new ChatMessageRepo(tx);
       const { entities: chatMessages } = await chatMessageRepo.list(userId, {
         chatId,
         direction: "forward",
@@ -96,7 +101,9 @@ export class AiRouterService {
   }
 
   async #parseInput(
-    txResult: Awaited<ReturnType<AiRouterService["txBeforeExternalOnSend"]>>,
+    txResult: Awaited<
+      ReturnType<AiTextSenderService["transactionBeforeExternalCall"]>
+    >,
   ): Promise<AiSendTextInput> {
     const { model, userDefaultPrompt, modelChatMessage, chatMessages } =
       txResult;
@@ -171,14 +178,14 @@ export class AiRouterService {
     throw new Error(`Invalid model provider. model: ${model}.`);
   }
 
-  async #externalStepOnSend(
+  private async externalCall(
     input: {
-      userId: UserId;
-      chatId: ChatId;
       chatMessageId: ChatMessageId;
-    } & Awaited<ReturnType<AiRouterService["txBeforeExternalOnSend"]>>,
+    } & Awaited<
+      ReturnType<AiTextSenderService["transactionBeforeExternalCall"]>
+    >,
   ) {
-    const { userId, chatId, chatMessageId, model } = input;
+    const { chatMessageId, model } = input;
 
     const sendTextService = this.#parseService(model);
     const sendTextInput = await this.#parseInput(input);
@@ -206,39 +213,69 @@ export class AiRouterService {
     } catch (e) {
       isSuccess = false;
 
-      this.#logger.error(`Failed to send. ${inspect(e)}`);
-    } finally {
-      await this.dbService.db.$transaction(async (tx) => {
-        const chatChunkRepo = new ChatChunkE8nRepo(tx, this.e8nService);
-        await chatChunkRepo.create({
-          chatMessageId,
-          isSuccess,
-          index,
-          text: "",
-          reasoningText: "",
-          rawData: "",
-        });
-
-        const chatMessageRepo = new ChatMessageRepo(tx);
-        await chatMessageRepo.tryTransitionStatus(userId, {
-          chatId,
-          chatMessageId,
-          expectedStatus: "processing",
-          nextStatus: isSuccess ? "succeeded" : "failed",
-        });
-      });
+      this.#logger.error(`Failed on external call. ${inspect(e)}`);
     }
+
+    return {
+      index,
+      isSuccess,
+    };
+  }
+
+  async #transactionAfterExternalCall(
+    input: {
+      userId: UserId;
+      chatId: ChatId;
+      chatMessageId: ChatMessageId;
+    } & Awaited<ReturnType<AiTextSenderService["externalCall"]>>,
+  ) {
+    const { userId, chatId, chatMessageId, index, isSuccess } = input;
+
+    await this.dbService.db.$transaction(async (tx) => {
+      const chatChunkE8nRepo = new ChatChunkE8nRepo(tx, this.e8nService);
+      await chatChunkE8nRepo.create({
+        chatMessageId,
+        index,
+        isSuccess,
+        text: "",
+        reasoningText: "",
+        rawData: "",
+      });
+
+      const chatChunkRepo = new ChatChunkRepo(tx);
+      const { text, reasoningText } = await chatChunkRepo.calculateTexts({
+        userId,
+        chatId,
+        chatMessageId,
+        index,
+        chatChunkMapper: this.chatChunkMapper,
+      });
+
+      const chatMessageE8nRepo = new ChatMessageE8nRepo(tx, this.e8nService);
+      await chatMessageE8nRepo.tryTransitionStatus(userId, {
+        chatId,
+        chatMessageId,
+        expectedStatus: "processing",
+        nextStatus: isSuccess ? "succeeded" : "failed",
+        text,
+        reasoningText,
+      });
+    });
   }
 
   async #send(input: AiRouterSendInput): Promise<void> {
-    const { userId, chatId, modelChatMessageId } = input;
+    const { userId, chatId, modelChatMessageId: chatMessageId } = input;
 
-    const txBeforeExternalResult = await this.txBeforeExternalOnSend(input);
-    await this.#externalStepOnSend({
-      ...txBeforeExternalResult,
+    const txResult = await this.transactionBeforeExternalCall(input);
+    const externalResult = await this.externalCall({
+      ...txResult,
+      chatMessageId,
+    });
+    await this.#transactionAfterExternalCall({
+      ...externalResult,
       userId,
       chatId,
-      chatMessageId: modelChatMessageId,
+      chatMessageId,
     });
   }
 }

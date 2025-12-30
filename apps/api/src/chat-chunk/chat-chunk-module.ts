@@ -10,6 +10,6 @@ import { ChatChunkTrpcRouter } from "./chat-chunk-trpc-router.js";
 @Module({
   imports: [TrpcModule, UserModule, DbModule, E8nModule],
   providers: [ChatChunkTrpcRouter, ChatChunkService, ChatChunkMapper],
-  exports: [ChatChunkTrpcRouter],
+  exports: [ChatChunkTrpcRouter, ChatChunkMapper],
 })
 export class ChatChunkModule {}

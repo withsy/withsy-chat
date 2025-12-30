@@ -1,6 +1,6 @@
 import { MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
 import { GracefulShutdownModule } from "@tygra/nestjs-graceful-shutdown";
-import { AiRouterModule } from "../ai-router/ai-router.module.js";
+import { AiTextSenderModule } from "../ai-text-sender/ai-text-sender.module.js";
 import { ApiKeyModule } from "../api-key/api-key-module.js";
 import { ChatChunkModule } from "../chat-chunk/chat-chunk-module.js";
 import { ChatMessageModule } from "../chat-message/chat-message-module.js";
@@ -38,7 +38,7 @@ import { AppTrpcRouter } from "./app-trpc-router.js";
     ChatChunkModule,
     GoogleGenAiModule,
     XaiModule,
-    AiRouterModule,
+    AiTextSenderModule,
   ],
   providers: [AppTrpcRouter],
 })

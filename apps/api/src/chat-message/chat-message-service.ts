@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { AiRouterService } from "../ai-router/ai-router.service.js";
+import { AiTextSenderService } from "../ai-text-sender/ai-text-sender.service.js";
 import { ChatE8nRepo } from "../chat/chat-e8n-repo.js";
 import { ChatMapper } from "../chat/chat-mapper.js";
 import { DbService } from "../db/db-service.js";
@@ -24,7 +24,7 @@ export class ChatMessageService {
     private readonly e8nService: E8nService,
     private readonly chatMapper: ChatMapper,
     private readonly chatMessageMapper: ChatMessageMapper,
-    private readonly aiRouterService: AiRouterService,
+    private readonly aiTextSenderService: AiTextSenderService,
   ) {}
 
   async list(
@@ -73,7 +73,7 @@ export class ChatMessageService {
 
       const userChatMessage = await chatMessageE8nRepo.createForUser({
         chatId,
-        textEncrypted: this.e8nService.encrypt(text),
+        text,
       });
 
       const modelChatMessage = await chatMessageE8nRepo.createForModel({
@@ -97,7 +97,7 @@ export class ChatMessageService {
       txResult.modelChatMessage,
     );
 
-    this.aiRouterService.send({
+    this.aiTextSenderService.send({
       userId,
       chatId: txResult.chatId,
       userChatMessageId: txResult.userChatMessage.id,
