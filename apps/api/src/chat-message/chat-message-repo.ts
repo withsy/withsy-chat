@@ -29,6 +29,8 @@ export class ChatMessageRepo {
   }> {
     const { limit, cursor, direction, chatId } = input;
 
+    const take = (direction === "forward" ? 1 : -1) * (limit + 1);
+
     const entities = await this.tx.chatMessage.findMany({
       where: {
         chat: {
@@ -41,9 +43,9 @@ export class ChatMessageRepo {
         },
       },
       orderBy: {
-        id: direction === "forward" ? "desc" : "asc",
+        id: "desc",
       },
-      take: limit + 1,
+      take,
       cursor: cursor
         ? {
             id: cursor,
