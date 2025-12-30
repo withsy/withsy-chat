@@ -53,9 +53,11 @@ export class AiMessageService {
         return;
       }
 
-      const userChatMessage = await chatMessageRepo.get(userId, {
+      const { entities: chatMessages } = await chatMessageRepo.list(userId, {
         chatId,
-        chatMessageId: userChatMessageId,
+        direction: "forward",
+        cursor: userChatMessageId,
+        limit: 10,
       });
 
       const userDefaultPromptRepo = new UserDefaultPromptRepo(tx);
