@@ -19,9 +19,7 @@ export default function ChatLayout({ children }: { children?: ReactNode }) {
       style={{ backgroundColor }}
     >
       <Sidebar />
-      <div className="z-20 flex h-full min-w-0 flex-1 flex-col">
-        <Main>{children}</Main>
-      </div>
+      <Main>{children}</Main>
     </div>
   );
 }

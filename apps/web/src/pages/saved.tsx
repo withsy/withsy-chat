@@ -16,7 +16,6 @@ import { useUserPreference } from "@/hooks/useUser";
 import { useTRPC } from "@/lib/trpc";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 import {
-  QueryErrorResetBoundary,
   useInfiniteQuery,
   useMutation,
   useQueryClient,
