@@ -1,20 +1,12 @@
 import {
   Select,
-  SelectTrigger,
-  SelectValue,
   SelectContent,
   SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 
 type Option = { label: string; value: string };
-
-type Props = {
-  value: string;
-  onChange: (val: string) => void;
-  placeholder?: string;
-  options: Option[];
-  className?: string;
-};
 
 export function FilterSelect({
   value,
@@ -22,7 +14,13 @@ export function FilterSelect({
   options,
   placeholder = "Select",
   className,
-}: Props) {
+}: {
+  value: string;
+  onChange: (val: string) => void;
+  placeholder?: string;
+  options: Option[];
+  className?: string;
+}) {
   return (
     <Select value={value} onValueChange={onChange}>
       <SelectTrigger className={className}>

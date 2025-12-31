@@ -19,6 +19,7 @@ import {
   useInfiniteQuery,
   useMutation,
   useQueryClient,
+  useSuspenseInfiniteQuery,
 } from "@tanstack/react-query";
 import { Eye, EyeOff, RotateCcw } from "lucide-react";
 import { useState } from "react";
@@ -29,7 +30,17 @@ export default function Page() {
   const queryClient = useQueryClient();
   const themeColor = useUserPreference("themeColor");
   const themeOpacity = useUserPreference("themeOpacity");
-  const [order, setOrder] = useState<Order>("desc");
+  const [order, _setOrder] = useState<Order>("desc");
+
+  const setOrder = (value: string) => {
+    const isValid = value === "asc" || value === "desc";
+    if (!isValid) {
+      throw new Error(`Invalid order: ${value}.`);
+    }
+
+    _setOrder(value);
+  };
+
   const { collapsed } = useSidebarStore();
   const [isFilterOpen, setIsFilterOpen] = useState(true);
   const [searchText, setSearchText] = useState("");
@@ -39,8 +50,11 @@ export default function Page() {
     isBookmarked: true,
     order,
   };
-  const chatMessageList = useInfiniteQuery(
-    trpc.chatMessage.list.infiniteQueryOptions(chatMessageListInput),
+
+  const chatMessageList = useSuspenseInfiniteQuery(
+    trpc.chatMessage.list.infiniteQueryOptions(chatMessageListInput, {
+      getNextPageParam: (lastPage) => lastPage.nextCursor,
+    }),
   );
 
   // queryClient.cancelQueries(
@@ -59,14 +73,6 @@ export default function Page() {
     setSearchText("");
     toast.success("Filters reset");
   };
-
-  if (chatMessageList.isPending) {
-    return <PartialLoading />;
-  }
-
-  if (chatMessageList.error) {
-    return <PartialError message="Bookmark chat message list" />;
-  }
 
   const filteredMessages = chatMessageList.data.pages
     .flatMap((x) => x.items)
@@ -125,8 +131,8 @@ export default function Page() {
         <div className="mt-[40px]">
           {isFilterOpen && (
             <BookmarkFilters
-              sortOrder={sortOrder}
-              setSortOrder={setSortOrder}
+              order={order}
+              setOrder={setOrder}
               searchText={searchText}
               setSearchText={setSearchText}
             />
