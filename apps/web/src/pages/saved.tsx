@@ -3,9 +3,7 @@ import { BookmarkCard } from "@/components/bookmarks/BookmarkCard";
 import { BookmarkFilters } from "@/components/bookmarks/BookmarkFilters";
 import { CollapseButton } from "@/components/CollapseButton";
 import { PartialEmpty } from "@/components/Empty";
-import { PartialError } from "@/components/Error";
 import { ChatLayout } from "@/components/layout/ChatLayout";
-import { PartialLoading } from "@/components/Loading";
 import { Button } from "@/components/ui/button";
 import {
   Tooltip,
@@ -16,31 +14,37 @@ import { useUserPreference } from "@/hooks/useUser";
 import { useTRPC } from "@/lib/trpc";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 import {
-  useInfiniteQuery,
-  useMutation,
   useQueryClient,
   useSuspenseInfiniteQuery,
 } from "@tanstack/react-query";
 import { Eye, EyeOff, RotateCcw } from "lucide-react";
-import { useState } from "react";
+import { useReducer, useState } from "react";
 import { toast } from "sonner";
+
+const orderReducer = (
+  _state: Order,
+  action: { type: "set"; value: string },
+): Order => {
+  const { type } = action;
+  if (type === "set") {
+    const { value } = action;
+    const isValid = value === "asc" || value === "desc";
+    if (!isValid) {
+      throw new Error(`Invalid order value: ${value}.`);
+    }
+
+    return value;
+  }
+
+  throw new Error(`Invalid order reducer type: ${type}.`);
+};
 
 export default function Page() {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
   const themeColor = useUserPreference("themeColor");
   const themeOpacity = useUserPreference("themeOpacity");
-  const [order, _setOrder] = useState<Order>("desc");
-
-  const setOrder = (value: string) => {
-    const isValid = value === "asc" || value === "desc";
-    if (!isValid) {
-      throw new Error(`Invalid order: ${value}.`);
-    }
-
-    _setOrder(value);
-  };
-
+  const [order, dispatchOrder] = useReducer(orderReducer, "desc");
   const { collapsed } = useSidebarStore();
   const [isFilterOpen, setIsFilterOpen] = useState(true);
   const [searchText, setSearchText] = useState("");
@@ -63,7 +67,8 @@ export default function Page() {
       const title = x.chat?.title.toLowerCase() ?? "";
       const text = x.text?.toLowerCase() ?? "";
       return title.includes(keyword) || text.includes(keyword);
-    });
+    })
+    .toSorted((a, b) => b.id.localeCompare(a.id));
 
   // queryClient.cancelQueries(
   //   trpc.chatMessage.list.infiniteQueryFilter(chatMessageListInput),
@@ -77,7 +82,7 @@ export default function Page() {
   // );
 
   const handleReset = () => {
-    setOrder("desc");
+    dispatchOrder({ type: "set", value: "desc" });
     setSearchText("");
     toast.success("Filters reset");
   };
@@ -132,7 +137,7 @@ export default function Page() {
           {isFilterOpen && (
             <BookmarkFilters
               order={order}
-              setOrder={setOrder}
+              setOrder={(x) => dispatchOrder({ type: "set", value: x })}
               searchText={searchText}
               setSearchText={setSearchText}
             />
