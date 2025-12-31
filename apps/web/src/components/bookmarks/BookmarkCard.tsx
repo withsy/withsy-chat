@@ -3,6 +3,7 @@ import { BookmarkCardHeader } from "@/components/bookmarks/BookmarkCardHeader";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { useUserPreference } from "@/hooks/useUser";
+import { isLongChatMessage } from "@/lib/chat-utils";
 import { useTRPC } from "@/lib/trpc";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
@@ -10,57 +11,54 @@ import { toast } from "sonner";
 import { CollapseToggle } from "../CollapseToggle";
 import { BookmarkCardActions } from "./BookmarkCardActions";
 
-interface BookmarkCardProps {
-  title?: string;
-  messageId: string;
-  chatId: string;
-  text: string | null;
-  createdAt: Date;
-  hideUnsave?: boolean;
-}
-
 export function BookmarkCard({
   chatId,
-  messageId,
+  chatMessageId,
   title,
   text,
   createdAt,
   hideUnsave,
-}: BookmarkCardProps) {
+}: {
+  title?: string;
+  chatMessageId: string;
+  chatId: string;
+  text: string;
+  createdAt: string;
+  hideUnsave?: boolean;
+}) {
   const trpc = useTRPC();
   const themeColor = useUserPreference("themeColor");
 
-  const isLongMessage = text ? text.length > 150 : false;
-
+  const isLongMessage = isLongChatMessage(text);
   const [collapsed, setCollapsed] = useState(isLongMessage);
   const displayedText =
-    isLongMessage && collapsed ? text?.slice(0, 150) + "..." : text;
+    isLongMessage && collapsed ? text.slice(0, 150) + "..." : text;
 
   const [bookmarked, setBookmarked] = useState(true);
   const chatLink = `/chat/${chatId}`;
-  const messageLink = `/chat/${chatId}?messageId=${messageId}`;
+  const messageLink = `/chat/${chatId}?messageId=${chatMessageId}`;
 
   const updateMessageMutation = useMutation(
     trpc.chatMessage.update.mutationOptions(),
   );
 
   const handleToggleSaved = () => {
-    updateMessageMutation.mutate(
-      { messageId: messageId, isBookmarked: false },
-      {
-        onSuccess: () => {
-          setBookmarked(false);
-          toast.success("Removed from saved", {
-            description: "It's no longer in your saved list.",
-          });
-        },
-        onError: () => {
-          toast.error("Failed", {
-            description: "Please try again or contact support.",
-          });
-        },
-      },
-    );
+    // updateMessageMutation.mutate(
+    //   { messageId: messageId, isBookmarked: false },
+    //   {
+    //     onSuccess: () => {
+    //       setBookmarked(false);
+    //       toast.success("Removed from saved", {
+    //         description: "It's no longer in your saved list.",
+    //       });
+    //     },
+    //     onError: () => {
+    //       toast.error("Failed", {
+    //         description: "Please try again or contact support.",
+    //       });
+    //     },
+    //   },
+    // );
   };
 
   if (!bookmarked) return null;
@@ -73,7 +71,7 @@ export function BookmarkCard({
           <>
             <BookmarkCardHeader
               title={title}
-              createdAt={createdAt.toISOString()}
+              createdAt={createdAt}
               link={chatLink}
             />
             <Separator />
@@ -86,11 +84,7 @@ export function BookmarkCard({
         </CardContent>
 
         <CardFooter className="flex justify-between pr-4 pb-2 pl-4">
-          <CollapseToggle
-            show={isLongMessage}
-            collapsed={collapsed}
-            setCollapsed={setCollapsed}
-          />
+          <CollapseToggle collapsed={collapsed} setCollapsed={setCollapsed} />
           <BookmarkCardActions
             themeColor={themeColor}
             content={text}

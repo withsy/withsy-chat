@@ -84,10 +84,8 @@ export class AiTextSenderService {
 
       const { entities: chatMessages } = await chatMessageRepo.list(userId, {
         chatId,
-        direction: "forward",
         cursor: userChatMessageId,
         limit: 10,
-        order: "desc",
       });
 
       const userDefaultPromptRepo = new UserDefaultPromptRepo(tx);

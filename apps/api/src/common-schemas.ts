@@ -11,15 +11,14 @@ export function createListSchemas<T extends z.ZodType>(
   options?: {
     limitMin?: number;
     limitMax?: number;
-    limitDefault?: number;
   },
 ) {
-  const { limitMin = 1, limitMax = 20, limitDefault = 20 } = options ?? {};
+  const { limitMin = 1, limitMax = 20 } = options ?? {};
 
   const list = z.object({
-    limit: z.number().int().min(limitMin).max(limitMax).default(limitDefault),
-    cursor: z.string().nullable().default(null),
-    direction: z.enum(["forward", "backward"]).default("forward"),
+    limit: z.number().int().min(limitMin).max(limitMax).optional(),
+    cursor: z.string().nullable().optional(),
+    direction: z.enum(["forward", "backward"]).optional(),
   });
 
   const listOutput = z.object({
@@ -32,6 +31,8 @@ export function createListSchemas<T extends z.ZodType>(
   return {
     list,
     listOutput,
+    limitMin,
+    limitMax,
   };
 }
 

@@ -1,66 +1,73 @@
+import type { Order } from "@/common-schemas";
+import { BookmarkCard } from "@/components/bookmarks/BookmarkCard";
+import { BookmarkFilters } from "@/components/bookmarks/BookmarkFilters";
+import { CollapseButton } from "@/components/CollapseButton";
+import { PartialEmpty } from "@/components/Empty";
+import { PartialError } from "@/components/Error";
 import { ChatLayout } from "@/components/layout/ChatLayout";
+import { PartialLoading } from "@/components/Loading";
+import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useUserPreference } from "@/hooks/useUser";
+import { useTRPC } from "@/lib/trpc";
+import { useSidebarStore } from "@/stores/useSidebarStore";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { Eye, EyeOff, RotateCcw } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
 
 export default function Page() {
+  const trpc = useTRPC();
   const themeColor = useUserPreference("themeColor");
   const themeOpacity = useUserPreference("themeOpacity");
-
-  const headerStyle: React.CSSProperties = {
-    backgroundColor: `rgba(${themeColor}, ${themeOpacity / 2})`,
-  };
-
-  const trpc = useTRPC();
-  const [loading, setLoading] = useState(true);
-  const [data, setData] = useState<MessageData[]>([]);
-  const [searchText, setSearchText] = useState("");
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+  const [order, setOrder] = useState<Order>("desc");
+  const { collapsed } = useSidebarStore();
   const [isFilterOpen, setIsFilterOpen] = useState(true);
 
-  const { collapsed } = useSidebarStore();
-  const listSaved = useQuery(
-    trpc.message.list.queryOptions({
-      options: {
-        scope: {
-          by: "user",
-          userId: user.id,
-        },
-        order: sortOrder,
-        include: { chat: true },
-      },
+  const [searchText, setSearchText] = useState("");
+  const keyword = searchText.toLowerCase().trim();
+
+  const chatMessageList = useInfiniteQuery(
+    trpc.chatMessage.list.infiniteQueryOptions({
       isBookmarked: true,
+      order,
     }),
   );
 
-  useEffect(() => {
-    if (!listSaved.data) return;
-    setData(listSaved.data);
-    setLoading(false);
-  }, [listSaved.data]);
-
-  const keyword = searchText.toLowerCase().trim();
-  const filteredMessages = filterMessages({
-    messages: data,
-    sortOrder,
-  }).filter((x) => {
-    const title = x.chat?.title?.toLowerCase() ?? "";
-    const text = x.text?.toLowerCase() ?? "";
-    return title.includes(keyword) || text.includes(keyword);
-  });
-
-  const reset = () => {
-    setSortOrder("desc");
+  const handleReset = () => {
+    setOrder("desc");
     setSearchText("");
     toast.success("Filters reset");
   };
 
-  if (loading) return <PartialLoading />;
+  if (chatMessageList.isPending) {
+    return <PartialLoading />;
+  }
+
+  if (chatMessageList.error) {
+    return <PartialError message="Bookmark chat message list" />;
+  }
+
+  const filteredMessages = chatMessageList.data.pages
+    .flatMap((x) => x.items)
+    .filter((x) => {
+      const title = x.chat?.title.toLowerCase() ?? "";
+      const text = x.text?.toLowerCase() ?? "";
+      return title.includes(keyword) || text.includes(keyword);
+    });
 
   return (
     <ChatLayout>
       <div className="relative flex h-full w-full flex-col p-6">
         <div
           className="absolute top-0 left-0 flex h-[50px] w-full items-center justify-between px-4 select-none"
-          style={headerStyle}
+          style={{
+            backgroundColor: `rgba(${themeColor}, ${themeOpacity / 2})`,
+          }}
         >
           <div>{collapsed && <CollapseButton hoverColor="white" />}</div>
           <div className="flex items-center gap-2">
@@ -69,7 +76,7 @@ export default function Page() {
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={reset}
+                  onClick={handleReset}
                   className="flex items-center gap-1 text-sm hover:bg-white"
                 >
                   <RotateCcw className="h-4 w-4" />
@@ -113,14 +120,14 @@ export default function Page() {
           {filteredMessages.length === 0 ? (
             <PartialEmpty message="You haven’t saved any items yet." />
           ) : (
-            filteredMessages.map((message) => (
+            filteredMessages.map((x) => (
               <BookmarkCard
-                key={message.id}
-                chatId={message.chatId}
-                messageId={message.id}
-                title={message?.chat?.title}
-                text={message.text}
-                createdAt={message.createdAt}
+                key={x.id}
+                chatId={x.chatId}
+                chatMessageId={x.id}
+                title={x.chat?.title}
+                text={x.text}
+                createdAt={x.createdAt}
               />
             ))
           )}

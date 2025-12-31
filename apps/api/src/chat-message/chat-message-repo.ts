@@ -14,6 +14,7 @@ import { UserId } from "../user/user-schemas.js";
 import {
   ChatMessageId,
   ChatMessageList,
+  chatMessageListSchemas,
   ChatMessageStatus,
 } from "./chat-message-schemas.js";
 
@@ -24,10 +25,20 @@ export class ChatMessageRepo {
     userId: UserId,
     input: ChatMessageList,
   ): Promise<{
-    entities: ChatMessageModel[];
+    entities: (ChatMessageModel & {
+      chat?: Pick<ChatModel, "titleEncrypted">;
+    })[];
     nextCursor: ChatMessageModel["id"] | null;
   }> {
-    const { limit, cursor, direction, chatId, order, isBookmarked } = input;
+    const {
+      limit = chatMessageListSchemas.limitMax,
+      cursor = null,
+      direction = "forward",
+      chatId,
+      order = "desc",
+      isBookmarked,
+      withChatTitle = false,
+    } = input;
 
     const take = (direction === "forward" ? 1 : -1) * (limit + 1);
 
@@ -50,6 +61,15 @@ export class ChatMessageRepo {
       cursor: cursor
         ? {
             id: cursor,
+          }
+        : undefined,
+      include: withChatTitle
+        ? {
+            chat: {
+              select: {
+                titleEncrypted: true,
+              },
+            },
           }
         : undefined,
     });

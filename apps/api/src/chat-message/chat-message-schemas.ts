@@ -27,6 +27,9 @@ export const ChatMessageData = z.object({
   get chatId() {
     return ChatId;
   },
+  get chat() {
+    return ChatData.pick({ title: true }).optional();
+  },
   get role() {
     return Role;
   },
@@ -43,16 +46,17 @@ export const ChatMessageData = z.object({
 });
 export type ChatMessageData = z.infer<typeof ChatMessageData>;
 
-const chatMessageListSchemas = createListSchemas(ChatMessageData);
+export const chatMessageListSchemas = createListSchemas(ChatMessageData);
 
 export const ChatMessageList = chatMessageListSchemas.list.extend({
   get chatId() {
-    return ChatId;
+    return ChatId.optional();
   },
   get order() {
-    return Order.optional().default("desc");
+    return Order.optional();
   },
   isBookmarked: z.boolean().optional(),
+  withChatTitle: z.boolean().optional(),
 });
 export type ChatMessageList = z.infer<typeof ChatMessageList>;
 

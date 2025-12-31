@@ -46,6 +46,10 @@ export interface ChatMessageInfo extends ChatMessageData {
 
 export type ChatMessageInfoKey = keyof ChatMessageInfo;
 
+export type Order = NonNullable<
+  inferInput<TrpcOptions["chatMessage"]["list"]>["order"]
+>;
+
 export type UserPromptData = inferOutput<
   TrpcOptions["userPrompt"]["list"]
 >["items"][0];

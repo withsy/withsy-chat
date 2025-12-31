@@ -3,7 +3,13 @@ import { Tx } from "../db/db-service.js";
 import { E8nService } from "../e8n/e8n-service.js";
 import { ChatModel } from "../generated/prisma/models.js";
 import { UserId } from "../user/user-schemas.js";
-import { ChatDelete, ChatId, ChatList, ChatUpdate } from "./chat-schemas.js";
+import {
+  ChatDelete,
+  ChatId,
+  ChatList,
+  chatListSchemas,
+  ChatUpdate,
+} from "./chat-schemas.js";
 
 export class ChatRepo {
   constructor(private readonly tx: Tx) {}
@@ -12,7 +18,11 @@ export class ChatRepo {
     userId: UserId,
     input: ChatList,
   ): Promise<{ entities: ChatModel[]; nextCursor: ChatModel["id"] | null }> {
-    const { limit, cursor, direction } = input;
+    const {
+      limit = chatListSchemas.limitMax,
+      cursor = null,
+      direction = "forward",
+    } = input;
 
     const take = (direction === "forward" ? 1 : -1) * (limit + 1);
 

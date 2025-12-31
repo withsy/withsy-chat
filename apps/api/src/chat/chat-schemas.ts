@@ -20,7 +20,7 @@ export const ChatData = z.object({
 });
 export type ChatData = z.infer<typeof ChatData>;
 
-const chatListSchemas = createListSchemas(ChatData);
+export const chatListSchemas = createListSchemas(ChatData);
 
 export const ChatList = chatListSchemas.list;
 export type ChatList = z.infer<typeof ChatList>;
