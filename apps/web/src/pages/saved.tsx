@@ -57,6 +57,14 @@ export default function Page() {
     }),
   );
 
+  const filteredMessages = chatMessageList.data.pages
+    .flatMap((x) => x.items)
+    .filter((x) => {
+      const title = x.chat?.title.toLowerCase() ?? "";
+      const text = x.text?.toLowerCase() ?? "";
+      return title.includes(keyword) || text.includes(keyword);
+    });
+
   // queryClient.cancelQueries(
   //   trpc.chatMessage.list.infiniteQueryFilter(chatMessageListInput),
   // );
@@ -73,14 +81,6 @@ export default function Page() {
     setSearchText("");
     toast.success("Filters reset");
   };
-
-  const filteredMessages = chatMessageList.data.pages
-    .flatMap((x) => x.items)
-    .filter((x) => {
-      const title = x.chat?.title.toLowerCase() ?? "";
-      const text = x.text?.toLowerCase() ?? "";
-      return title.includes(keyword) || text.includes(keyword);
-    });
 
   return (
     <ChatLayout>
