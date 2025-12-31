@@ -1,15 +1,20 @@
+import { FullPageError } from "@/components/Error";
 import { UserProvider } from "@/contexts/UserContext";
 import { useSidebarInitializer } from "@/hooks/useSidebarInitializer";
 import { getQueryClient } from "@/lib/query-client";
 import { createTrpcClient, TRPCProvider } from "@/lib/trpc";
 import "@/styles/globals.css";
-import { QueryClientProvider } from "@tanstack/react-query";
+import {
+  QueryClientProvider,
+  QueryErrorResetBoundary,
+} from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { enableMapSet } from "immer";
 import { SessionProvider } from "next-auth/react";
 import type { AppProps } from "next/app";
 import Head from "next/head";
 import { useState } from "react";
+import { ErrorBoundary } from "react-error-boundary";
 import { Toaster as Sonner } from "sonner";
 
 enableMapSet();
@@ -30,21 +35,33 @@ export default function App({
   return (
     <QueryClientProvider client={queryClient}>
       <TRPCProvider trpcClient={trpcClient} queryClient={queryClient}>
-        <SessionProvider
-          session={session}
-          refetchOnWindowFocus={false}
-          refetchWhenOffline={false}
-        >
-          <UserProvider>
-            <Head>
-              <link rel="icon" href="/favicon.ico" />
-              <title>{title}</title>
-            </Head>
-            <Component {...pageProps} />
-            <Sonner position="bottom-right" />
-            <ReactQueryDevtools />
-          </UserProvider>
-        </SessionProvider>
+        <QueryErrorResetBoundary>
+          {({ reset }) => (
+            <ErrorBoundary
+              onReset={reset}
+              fallbackRender={({
+                error,
+                resetErrorBoundary: _resetErrorBoundary,
+              }) => <FullPageError message={error.message}></FullPageError>}
+            >
+              <SessionProvider
+                session={session}
+                refetchOnWindowFocus={false}
+                refetchWhenOffline={false}
+              >
+                <UserProvider>
+                  <Head>
+                    <link rel="icon" href="/favicon.ico" />
+                    <title>{title}</title>
+                  </Head>
+                  <Component {...pageProps} />
+                  <Sonner position="bottom-right" />
+                  <ReactQueryDevtools />
+                </UserProvider>
+              </SessionProvider>
+            </ErrorBoundary>
+          )}
+        </QueryErrorResetBoundary>
       </TRPCProvider>
     </QueryClientProvider>
   );

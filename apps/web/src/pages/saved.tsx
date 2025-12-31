@@ -15,28 +15,45 @@ import {
 import { useUserPreference } from "@/hooks/useUser";
 import { useTRPC } from "@/lib/trpc";
 import { useSidebarStore } from "@/stores/useSidebarStore";
-import { useInfiniteQuery } from "@tanstack/react-query";
+import {
+  QueryErrorResetBoundary,
+  useInfiniteQuery,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { Eye, EyeOff, RotateCcw } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
 export default function Page() {
   const trpc = useTRPC();
+  const queryClient = useQueryClient();
   const themeColor = useUserPreference("themeColor");
   const themeOpacity = useUserPreference("themeOpacity");
   const [order, setOrder] = useState<Order>("desc");
   const { collapsed } = useSidebarStore();
   const [isFilterOpen, setIsFilterOpen] = useState(true);
-
   const [searchText, setSearchText] = useState("");
   const keyword = searchText.toLowerCase().trim();
 
+  const chatMessageListInput = {
+    isBookmarked: true,
+    order,
+  };
   const chatMessageList = useInfiniteQuery(
-    trpc.chatMessage.list.infiniteQueryOptions({
-      isBookmarked: true,
-      order,
-    }),
+    trpc.chatMessage.list.infiniteQueryOptions(chatMessageListInput),
   );
+
+  // queryClient.cancelQueries(
+  //   trpc.chatMessage.list.infiniteQueryFilter(chatMessageListInput),
+  // );
+  // queryClient.invalidateQueries(
+  //   trpc.chatMessage.list.infiniteQueryFilter(chatMessageListInput),
+  // );
+
+  // const chatMessageUpdate = useMutation(
+  //   trpc.chatMessage.update.mutationOptions(),
+  // );
 
   const handleReset = () => {
     setOrder("desc");
