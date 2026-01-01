@@ -19,6 +19,15 @@ import { Toaster as Sonner } from "sonner";
 
 enableMapSet();
 
+function createTitle(): string {
+  let title = "Withsy";
+  if (process.env.NODE_ENV === "development") {
+    title = `[DEV] ${title}`;
+  }
+
+  return title;
+}
+
 export default function App({
   Component,
   pageProps: { session, ...pageProps },
@@ -26,11 +35,7 @@ export default function App({
   useSidebarInitializer();
   const [trpcClient] = useState(() => createTrpcClient());
   const queryClient = getQueryClient();
-
-  let title = "Withsy";
-  if (process.env.NODE_ENV === "development") {
-    title = `[DEV] ${title}`;
-  }
+  const title = createTitle();
 
   return (
     <QueryClientProvider client={queryClient}>
