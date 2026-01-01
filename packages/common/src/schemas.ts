@@ -40,4 +40,17 @@ export type UserPreferenceValue = z.infer<typeof UserPreferenceValue>;
 export const RawUserPreferences = z.record(z.string(), UserPreferenceValue);
 export type RawUserPreferences = z.infer<typeof RawUserPreferences>;
 
+export const UserPreferences = z.object({
+  wideView: z.boolean(),
+  largeText: z.boolean(),
+  enterToSend: z.boolean(),
+  themeColor: z.string(),
+  themeOpacity: z.number(),
+  avatarStyle: z.string(),
+}) satisfies z.ZodObject<Record<string, z.ZodType<UserPreferenceValue>>>;
+export type UserPreferences = z.infer<typeof UserPreferences>;
+
+export const PartialUserPreferences = UserPreferences.partial();
+export type PartialUserPreferences = z.infer<typeof PartialUserPreferences>;
+
 //#endregion User

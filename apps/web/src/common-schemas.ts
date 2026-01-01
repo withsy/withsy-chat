@@ -1,8 +1,7 @@
 import type { TrpcOptions } from "@/lib/trpc";
-import { RawUserPreferences } from "@repo/common";
+import { PartialUserPreferences, RawUserPreferences } from "@repo/common";
 import type { inferInput, inferOutput } from "@trpc/tanstack-react-query";
 import type { Session } from "next-auth";
-import type { Simplify } from "type-fest";
 import z from "zod";
 
 export type UserData = inferOutput<TrpcOptions["user"]["get"]>;
@@ -17,14 +16,6 @@ export const AuthSession = z.object({
     preferences: RawUserPreferences,
   }),
 });
-
-export type UserPreferences = Simplify<
-  NonNullable<
-    Required<inferInput<TrpcOptions["user"]["update"]>["preferences"]>
-  >
->;
-
-export type PartialUserPreferences = Partial<UserPreferences>;
 
 export type UserPreferenceKey = keyof PartialUserPreferences;
 

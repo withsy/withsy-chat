@@ -1,4 +1,4 @@
-import { RawUserPreferences, UserPreferenceValue } from "@repo/common";
+import { PartialUserPreferences, RawUserPreferences } from "@repo/common";
 import z from "zod";
 import { IdempotencyKey } from "../idempotency-key/idempotency-key-schemas.js";
 
@@ -37,19 +37,6 @@ export const UserGet = z.object({
   },
 });
 export type UserGet = z.infer<typeof UserGet>;
-
-export const UserPreferences = z.object({
-  wideView: z.boolean(),
-  largeText: z.boolean(),
-  enterToSend: z.boolean(),
-  themeColor: z.string(),
-  themeOpacity: z.number(),
-  avatarStyle: z.string(),
-}) satisfies z.ZodObject<Record<string, z.ZodType<UserPreferenceValue>>>;
-export type UserPreferences = z.infer<typeof UserPreferences>;
-
-export const PartialUserPreferences = UserPreferences.partial();
-export type PartialUserPreferences = z.infer<typeof PartialUserPreferences>;
 
 export const UserUpdate = z.object({
   get preferences() {

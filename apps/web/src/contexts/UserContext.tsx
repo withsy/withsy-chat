@@ -4,11 +4,7 @@ import { useUserStore } from "@/stores/useUserStore";
 import { useSession } from "next-auth/react";
 import { useEffect, type ReactNode } from "react";
 
-interface Props {
-  children?: ReactNode;
-}
-
-export function UserProvider({ children }: Props) {
+export function UserProvider({ children }: { children?: ReactNode }) {
   const session = useSession();
 
   useEffect(() => {
