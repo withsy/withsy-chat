@@ -1,5 +1,5 @@
 import { FullPageError } from "@/components/Error";
-import { UserProvider } from "@/contexts/UserContext";
+import { UserProvider } from "@/features/user/contexts/UserContext";
 import { useSidebarInitializer } from "@/hooks/useSidebarInitializer";
 import { getQueryClient } from "@/lib/query-client";
 import { createTrpcClient, TRPCProvider } from "@/lib/trpc";

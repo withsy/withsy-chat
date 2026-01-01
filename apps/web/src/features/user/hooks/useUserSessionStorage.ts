@@ -1,18 +1,19 @@
-import type { UserPreferenceKey } from "@/common-schemas";
+import type {
+  PartialUserPreferences,
+  UserPreferenceKey,
+} from "@/common-schemas";
 import {
   Model,
-  PartialUserPreferences,
+  UserPreferenceValue,
   type RawUserPreferences,
 } from "@repo/common";
-import { useReducer } from "react";
+import { useEffect, useReducer, type ActionDispatch } from "react";
 import z from "zod";
 
 const SESSION_STORAGE_NAME = "user";
 
 const State = z.object({
-  get preferences() {
-    return PartialUserPreferences.optional();
-  },
+  preferences: z.record(z.string(), UserPreferenceValue).optional(),
   get selectedModel() {
     return Model.optional();
   },
@@ -20,12 +21,23 @@ const State = z.object({
 type State = z.infer<typeof State>;
 
 type Action =
+  | { type: "load" }
   | { type: "clear" }
   | { type: "setPreferences"; raw: RawUserPreferences }
   | { type: "updatePreferences"; partial: PartialUserPreferences };
 
 function reducer(prevState: State, action: Action): State {
   const { type } = action;
+
+  if (type === "load") {
+    const stringified = sessionStorage.getItem(SESSION_STORAGE_NAME) || "{}";
+    try {
+      return State.parse(JSON.parse(stringified));
+    } catch (_e) {
+      return {};
+    }
+  }
+
   let nextState = {
     ...prevState,
   };
@@ -43,8 +55,9 @@ function reducer(prevState: State, action: Action): State {
 
     Object.entries(partial).forEach(([key, value]) => {
       if (value === undefined) {
-        delete nextState.preferences[key as UserPreferenceKey];
+        delete nextState.preferences?.[key as UserPreferenceKey];
       } else {
+        nextState.preferences ??= {};
         Reflect.set(nextState.preferences, key, value);
       }
     });
@@ -53,18 +66,18 @@ function reducer(prevState: State, action: Action): State {
   }
 
   sessionStorage.setItem(SESSION_STORAGE_NAME, JSON.stringify(nextState));
+
   return nextState;
 }
 
-function init(): State {
-  const stringified = sessionStorage.getItem(SESSION_STORAGE_NAME) || "{}";
-  try {
-    return State.parse(JSON.parse(stringified));
-  } catch (_e) {
-    return {};
-  }
-}
+export function useUserSessionStorage(): [State, ActionDispatch<[Action]>] {
+  const [state, dispatch] = useReducer(reducer, {});
 
-export function useUserSessionStorage() {
-  return useReducer(reducer, undefined, init);
+  useEffect(() => {
+    dispatch({
+      type: "load",
+    });
+  }, [dispatch]);
+
+  return [state, dispatch];
 }

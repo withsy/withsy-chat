@@ -1,5 +1,4 @@
-import type { UserPreferenceKey } from "@/common-schemas";
-import type { UserPreferences } from "@repo/common";
+import type { UserPreferenceKey, UserPreferences } from "@/common-schemas";
 import { useUserContext } from "../contexts/UserContext";
 
 const DEFAULT_USER_PREFERENCES: UserPreferences = {
@@ -12,12 +11,12 @@ const DEFAULT_USER_PREFERENCES: UserPreferences = {
 };
 
 export function useUserPreference<Key extends UserPreferenceKey>(
-  key: UserPreferenceKey,
+  key: Key,
 ): UserPreferences[Key] {
   const userContext = useUserContext();
   const { userSessionStorage } = userContext;
   const { preferences } = userSessionStorage;
 
-  // TODO: check memo
-  return preferences[key] ?? DEFAULT_USER_PREFERENCES[key];
+  return (preferences?.[key] ??
+    DEFAULT_USER_PREFERENCES[key]) as UserPreferences[Key];
 }

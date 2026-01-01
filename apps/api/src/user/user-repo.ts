@@ -5,9 +5,9 @@ import { v4 } from "uuid";
 import { Tx } from "../db/db-service.js";
 import type { UserModel } from "../generated/prisma/models.js";
 import {
-  PartialUserPreferences,
   UserGet,
   UserId,
+  UserPreferences,
   UserUpdate,
 } from "./user-schemas.js";
 
@@ -36,7 +36,7 @@ export class UserRepo {
       Object.entries(preferences).filter(([_, v]) => v !== undefined),
     );
 
-    PartialUserPreferences.parse(filteredPreferences);
+    UserPreferences.partial().parse(filteredPreferences);
 
     const rows = await this.tx.$queryRaw<Record<string, unknown>[]>`
 UPDATE users

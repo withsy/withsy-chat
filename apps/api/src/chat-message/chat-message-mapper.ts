@@ -1,7 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { Role } from "../common-schemas.js";
 import { E8nService } from "../e8n/e8n-service.js";
-import { ChatMessageModel } from "../generated/prisma/models.js";
 import { ChatMessageRepo } from "./chat-message-repo.js";
 import { ChatMessageData } from "./chat-message-schemas.js";
 
@@ -19,7 +18,7 @@ export class ChatMessageMapper {
         ? {
             title: this.e8nService.decrypt(entity.chat.titleEncrypted),
           }
-        : null,
+        : undefined,
       isBookmarked: entity.isBookmarked,
       role: Role.parse(entity.role),
       reasoningText: this.e8nService.decrypt(entity.reasoningTextEncrypted),

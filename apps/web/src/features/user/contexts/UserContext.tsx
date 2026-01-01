@@ -1,12 +1,6 @@
 import { AuthSession } from "@/common-schemas";
 import { useSession } from "next-auth/react";
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useMemo,
-  type ReactNode,
-} from "react";
+import { createContext, useContext, useEffect, type ReactNode } from "react";
 import { useUserSessionStorage } from "../hooks/useUserSessionStorage";
 
 interface UserContext {
@@ -20,7 +14,7 @@ export function UserProvider({ children }: { children?: ReactNode }) {
   const [userSessionStorage, dispatchUserSessionStorage] =
     useUserSessionStorage();
 
-  const user = useMemo(() => {
+  const user = (() => {
     if (session.data) {
       const authSession = AuthSession.parse(session.data);
       const { user } = authSession;
@@ -29,7 +23,7 @@ export function UserProvider({ children }: { children?: ReactNode }) {
     }
 
     return null;
-  }, [session.data]);
+  })();
 
   useEffect(() => {
     if (user) {
@@ -46,12 +40,15 @@ export function UserProvider({ children }: { children?: ReactNode }) {
     }
   }, [session.status, dispatchUserSessionStorage]);
 
-  // TODO: check memo
-  const value = {
-    userSessionStorage,
-  };
-
-  return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
+  return (
+    <UserContext.Provider
+      value={{
+        userSessionStorage,
+      }}
+    >
+      {children}
+    </UserContext.Provider>
+  );
 }
 
 export function useUserContext(): UserContext {
