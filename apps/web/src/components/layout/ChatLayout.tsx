@@ -3,12 +3,11 @@ import { useIsClient } from "@/hooks/useIsClient";
 import { nunito } from "@/lib/fonts";
 import { useSession } from "next-auth/react";
 import { type ReactNode } from "react";
-import { FullPageLoading } from "../Loading";
 import Main from "./Main";
 import Sidebar from "./sidebar/Sidebar";
 
 export default function ChatLayout({ children }: { children?: ReactNode }) {
-  const session = useSession({
+  useSession({
     required: true,
   });
   const themeColor = useUserPreference("themeColor");
@@ -18,10 +17,6 @@ export default function ChatLayout({ children }: { children?: ReactNode }) {
 
   if (!isClient) {
     return null;
-  }
-
-  if (session.status === "loading") {
-    return <FullPageLoading />;
   }
 
   return (
