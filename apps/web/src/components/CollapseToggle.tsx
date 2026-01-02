@@ -2,7 +2,6 @@ import type { ChatMessageId } from "@/common-schemas";
 import { useUserPreference } from "@/features/user/hooks/useUserPreference";
 import { useChatMessageProp } from "@/hooks/useChatMessage";
 import { isLongChatMessage } from "@/lib/chat-utils";
-import { useUserStore } from "@/stores/useUserStore";
 
 export function CollapseToggle({
   chatMessageId,
@@ -20,13 +19,13 @@ export function CollapseToggle({
   }
 
   const handleClick = () => {
-    useUserStore.setState((state) => {
-      // TODO: optimistic update.
-      // const chatMessage = state.chatMessageMap.get(chatMessageId);
-      // if (chatMessage) {
-      //   chatMessage.isCollapsed = !isCollapsed;
-      // }
-    });
+    // useUserStore.setState((state) => {
+    // TODO: optimistic update.
+    // const chatMessage = state.chatMessageMap.get(chatMessageId);
+    // if (chatMessage) {
+    //   chatMessage.isCollapsed = !isCollapsed;
+    // }
+    // });
   };
 
   return (

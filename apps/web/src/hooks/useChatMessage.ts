@@ -5,7 +5,6 @@ import type {
   ChatMessageInfoKey,
 } from "@/common-schemas";
 import { useTRPC } from "@/lib/trpc";
-import { useUserStore } from "@/stores/useUserStore";
 import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 

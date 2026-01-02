@@ -1,5 +1,4 @@
 import { useTRPC } from "@/lib/trpc";
-import { useUserStore } from "@/stores/useUserStore";
 import { useInfiniteQuery } from "@tanstack/react-query";
 
 export function useUserPromptList() {

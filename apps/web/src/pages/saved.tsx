@@ -3,14 +3,14 @@ import { BookmarkCard } from "@/components/bookmarks/BookmarkCard";
 import { BookmarkFilters } from "@/components/bookmarks/BookmarkFilters";
 import { CollapseButton } from "@/components/CollapseButton";
 import { PartialEmpty } from "@/components/Empty";
-import { ChatLayout } from "@/components/layout/ChatLayout";
+import ChatLayout from "@/components/layout/ChatLayout";
 import { Button } from "@/components/ui/button";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useUserPreference } from "@/hooks/useUser";
+import { useUserPreference } from "@/features/user/hooks/useUserPreference";
 import { useTRPC } from "@/lib/trpc";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 import {

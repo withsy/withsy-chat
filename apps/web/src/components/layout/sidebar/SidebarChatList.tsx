@@ -1,75 +1,54 @@
 import type { ChatData } from "@/common-schemas";
-import { PartialError } from "@/components/Error";
-import { PartialLoading } from "@/components/Loading";
-import { useChatList } from "@/hooks/useChat";
-import { formatDateLabel, toNewest } from "@/lib/date-utils";
-import { useUserStore } from "@/stores/useUserStore";
+import { useChatList } from "@/features/chat/hooks/useChatList";
+import { desc, toLocaleDateString } from "@/lib/date-utils";
+import { startOfDay, subDays } from "date-fns";
 import { ChevronDown, ChevronUp } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { SidebarChatItem } from "./SidebarChatItem";
 
 export default function SidebarChatList() {
   const chatList = useChatList();
+  const chats = chatList.data.pages.flatMap((page) => page.items);
 
-  useEffect(() => {
-    if (chatList.data) {
-      const chats = chatList.data.pages.flatMap((page) => page.items);
-      useUserStore.setState((state) => {
-        chats.forEach((chat) => state.chatMap.set(chat.id, chat));
-      });
+  const starredChats: ChatData[] = [];
+  const labeledChatMap = new Map<string, ChatData[]>();
+
+  chats.forEach((chat) => {
+    if (chat.isStarred) {
+      starredChats.push(chat);
+    } else {
+      const dateStr = toLocaleDateString(new Date(chat.updatedAt));
+      if (!labeledChatMap.has(dateStr)) {
+        labeledChatMap.set(dateStr, []);
+      }
+
+      labeledChatMap.get(dateStr)!.push(chat);
     }
-  }, [chatList.data]);
+  });
+
+  starredChats.sort((a, b) =>
+    desc(new Date(a.updatedAt), new Date(b.updatedAt)),
+  );
+
+  labeledChatMap.forEach((chats) => {
+    chats.sort((a, b) => desc(new Date(a.updatedAt), new Date(b.updatedAt)));
+  });
+
+  const labeledChats = labeledChatMap
+    .entries()
+    .toArray()
+    .toSorted(([a], [b]) => b.localeCompare(a));
 
   const [starredOpen, setStarredOpen] = useState(true);
 
-  const chatMap = useUserStore((s) => s.chatMap);
-
-  const { starred, orderedEntries } = (() => {
-    const starred: ChatData[] = [];
-    const nonStarredMap = new Map<string, ChatData[]>();
-
-    chatMap.forEach((chat) => {
-      if (chat.isStarred) {
-        starred.push(chat);
-      } else {
-        const dateLabel = formatDateLabel(new Date(chat.updatedAt));
-        if (!nonStarredMap.has(dateLabel)) nonStarredMap.set(dateLabel, []);
-        nonStarredMap.get(dateLabel)?.push(chat);
-      }
-    });
-    starred.sort((a, b) =>
-      toNewest(new Date(a.updatedAt), new Date(b.updatedAt)),
-    );
-    nonStarredMap.forEach((chats) =>
-      chats.sort((a, b) =>
-        toNewest(new Date(a.updatedAt), new Date(b.updatedAt)),
-      ),
-    );
-    const orderedEntries = [...nonStarredMap.entries()].sort(([a], [b]) => {
-      if (a === "Today") return -1;
-      if (b === "Today") return 1;
-      if (a === "Yesterday") return b === "Today" ? 1 : -1;
-      if (b === "Yesterday") return a === "Today" ? -1 : 1;
-      return new Date(b).getTime() - new Date(a).getTime();
-    });
-
-    return {
-      starred,
-      orderedEntries,
-    };
-  })();
-
-  if (chatList.isPending) {
-    return <PartialLoading />;
-  }
-
-  if (chatList.error) {
-    return <PartialError message="loading chat list" />;
-  }
+  const today = startOfDay(new Date());
+  const todayLabel = toLocaleDateString(today);
+  const yesterday = subDays(today, 1);
+  const yesterdayLabel = toLocaleDateString(yesterday);
 
   return (
     <div className="space-y-4">
-      {starred.length > 0 && (
+      {starredChats.length > 0 && (
         <div>
           <button
             onClick={() => setStarredOpen(!starredOpen)}
@@ -86,7 +65,7 @@ export default function SidebarChatList() {
           </button>
           {starredOpen && (
             <div className="mt-1 space-y-1">
-              {starred.map((chat) => (
+              {starredChats.map((chat) => (
                 <SidebarChatItem key={chat.id} chat={chat} isSidebar={true} />
               ))}
             </div>
@@ -95,13 +74,22 @@ export default function SidebarChatList() {
       )}
       <div>
         <div className="mt-1 space-y-4">
-          {orderedEntries.map(([date, chats]) => {
-            if (chats.length === 0) return null;
+          {labeledChats.map(([label, chats]) => {
+            if (chats.length === 0) {
+              return null;
+            }
+
+            let dateLabel = label;
+            if (label === todayLabel) {
+              dateLabel = "Today";
+            } else if (label === yesterdayLabel) {
+              dateLabel = "Yesterday";
+            }
 
             return (
-              <div key={date}>
+              <div key={dateLabel}>
                 <div className="mb-1 px-2 py-1 text-sm font-semibold select-none">
-                  {date}
+                  {dateLabel}
                 </div>
                 <div className="mt-1 space-y-1">
                   {chats.map((chat) => (

@@ -1,11 +1,10 @@
-import type { MessageData } from "@/common-schemas";
+import type { ChatMessageData } from "@/common-schemas";
 import { useChatUpdate } from "@/hooks/useChat";
 import { useUserDefaultPromptTryGet } from "@/hooks/useUserDefaultPrompt";
 import { useUserPromptList } from "@/hooks/useUserPrompt";
 import { cn } from "@/lib/utils";
 import { useDrawerStore } from "@/stores/useDrawerStore";
 import { useSidebarStore } from "@/stores/useSidebarStore";
-import { useUserStore } from "@/stores/useUserStore";
 import { FolderGit2, FolderRoot, GitBranch } from "lucide-react";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -16,11 +15,11 @@ import { PromptCard } from "../prompts/PromptCard";
 import { Drawer, DrawerContent } from "../ui/drawer";
 import ChatDrawerHeader from "./ChatDrawerHeader";
 
-type ChatDrawerProps = {
-  savedMessages?: MessageData[];
-};
-
-export const ChatDrawer = ({ savedMessages }: ChatDrawerProps) => {
+export const ChatDrawer = ({
+  savedMessages,
+}: {
+  savedMessages?: ChatMessageData[];
+}) => {
   const router = useRouter();
   const { isMobile } = useSidebarStore();
   const { openDrawer, setOpenDrawer } = useDrawerStore();

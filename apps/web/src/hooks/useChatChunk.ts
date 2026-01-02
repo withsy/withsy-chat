@@ -1,7 +1,6 @@
 import type { ChatId, ChatMessageId } from "@/common-schemas";
 import { isChatMessageCompleted } from "@/lib/chat-utils";
 import { useTRPC } from "@/lib/trpc";
-import { useUserStore } from "@/stores/useUserStore";
 import { useSubscription } from "@trpc/tanstack-react-query";
 
 export function useChatChunkReceive(input: {

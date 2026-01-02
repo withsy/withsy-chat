@@ -1,22 +1,6 @@
 import type { ChatData, ChatDataKey, ChatId } from "@/common-schemas";
 import { useTRPC } from "@/lib/trpc";
-import { useUserStore } from "@/stores/useUserStore";
 import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
-
-export function useChatList() {
-  const trpc = useTRPC();
-  const user = useUserStore((s) => s.user);
-
-  return useInfiniteQuery(
-    trpc.chat.list.infiniteQueryOptions(
-      {},
-      {
-        enabled: !!user,
-        getNextPageParam: (lastPage) => lastPage.nextCursor,
-      },
-    ),
-  );
-}
 
 export function useChatUpdate() {
   const trpc = useTRPC();

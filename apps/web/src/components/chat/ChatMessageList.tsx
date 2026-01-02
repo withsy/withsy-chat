@@ -2,7 +2,6 @@ import type { ChatId, ChatMessageId } from "@/common-schemas";
 import { useUserPreference } from "@/features/user/hooks/useUserPreference";
 import { useChatMessageList } from "@/hooks/useChatMessage";
 import { useTRPC } from "@/lib/trpc";
-import { useUserStore } from "@/stores/useUserStore";
 import { useSubscription } from "@trpc/tanstack-react-query";
 import { ChevronsDown } from "lucide-react";
 import { useRouter } from "next/router";
