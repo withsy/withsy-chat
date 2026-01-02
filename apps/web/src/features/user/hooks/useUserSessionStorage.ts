@@ -4,7 +4,7 @@ import type {
   UserPreferences,
 } from "@/common-schemas";
 import { Model, RawUserPreferences } from "@repo/common";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useReducer, type ActionDispatch } from "react";
 import z from "zod";
 
 const SESSION_STORAGE_NAME = "user";
@@ -20,7 +20,7 @@ export const DEFAULT_USER_PREFERENCES: UserPreferences = {
 
 const keys = Object.keys(DEFAULT_USER_PREFERENCES);
 
-export function filterRawUserPreferences(
+export function rawToPartialUserPreferences(
   raw: RawUserPreferences,
 ): Partial<UserPreferences> {
   return Object.fromEntries(
@@ -44,73 +44,85 @@ const State: z.ZodType<State> = z.object({
   },
 });
 
-export function useUserSessionStorage() {
-  const [state, setState] = useState<State>({});
+type Action =
+  | { kind: "set"; next: State }
+  | { kind: "clear" }
+  | { kind: "setPreferences"; raw: RawUserPreferences }
+  | { kind: "updatePreferences"; partial: PartialUserPreferences };
+
+const reducer = (state: State, action: Action): State => {
+  const { kind } = action;
+
+  if (kind === "set") {
+    const { next } = action;
+    return {
+      ...next,
+    };
+  }
+
+  if (kind === "clear") {
+    return {};
+  }
+
+  if (kind === "setPreferences") {
+    const { raw } = action;
+
+    const preferences = rawToPartialUserPreferences(raw);
+    return {
+      ...state,
+      preferences,
+    };
+  }
+
+  if (kind === "updatePreferences") {
+    const { partial } = action;
+
+    let preferences = state.preferences;
+
+    Object.entries(partial).forEach(([key, value]) => {
+      if (value === undefined) {
+        delete preferences?.[key as UserPreferenceKey];
+      } else {
+        preferences ??= {};
+        Reflect.set(preferences, key, value);
+      }
+    });
+
+    return {
+      ...state,
+      preferences,
+    };
+  }
+
+  const _: never = kind;
+  throw new Error(`Invalid action kind: ${kind}.`);
+};
+
+export function useUserSessionStorage(): [State, ActionDispatch<[Action]>] {
+  const [state, dispatch] = useReducer<State, [Action]>(reducer, {});
 
   useEffect(() => {
-    const stringified = sessionStorage.getItem(SESSION_STORAGE_NAME) || "{}";
+    const item = sessionStorage.getItem(SESSION_STORAGE_NAME);
 
     let state: State = {};
     try {
-      state = State.parse(JSON.parse(stringified));
-      if (state.preferences) {
-        state.preferences = filterRawUserPreferences(state.preferences);
+      if (item) {
+        state = State.parse(JSON.parse(item));
       }
     } catch (_e) {
       // noop
     }
 
-    Promise.try(() => {
-      setState(state);
-    });
+    if (state.preferences) {
+      state.preferences = rawToPartialUserPreferences(state.preferences);
+    }
+
+    dispatch({ kind: "set", next: state });
   }, []);
 
   useEffect(() => {
     sessionStorage.setItem(SESSION_STORAGE_NAME, JSON.stringify(state));
   }, [state]);
 
-  const clear = useCallback(() => {
-    setState({});
-  }, []);
-
-  const setPreferences = useCallback((raw: RawUserPreferences) => {
-    setState((state) => {
-      const preferences = filterRawUserPreferences(raw);
-
-      return {
-        ...state,
-        preferences,
-      };
-    });
-  }, []);
-
-  const updatePreferences = useCallback((partial: PartialUserPreferences) => {
-    setState((state) => {
-      let preferences = state.preferences;
-
-      Object.entries(partial).forEach(([key, value]) => {
-        if (value === undefined) {
-          delete preferences?.[key as UserPreferenceKey];
-        } else {
-          preferences ??= {};
-          Reflect.set(preferences, key, value);
-        }
-      });
-
-      return {
-        ...state,
-        preferences,
-      };
-    });
-  }, []);
-
-  return useMemo(
-    () => ({
-      data: state,
-      clear,
-      setPreferences,
-      updatePreferences,
-    }),
-    [state, clear, setPreferences, updatePreferences],
-  );
+  return useMemo(() => [state, dispatch], [state]);
 }
