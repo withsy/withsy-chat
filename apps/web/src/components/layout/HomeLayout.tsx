@@ -2,11 +2,7 @@ import { nunito } from "@/lib/fonts";
 import { type ReactNode } from "react";
 import Header from "../home/Header";
 
-type Props = {
-  children?: ReactNode;
-};
-
-export default function HomeLayout({ children }: Props) {
+export default function HomeLayout({ children }: { children?: ReactNode }) {
   return (
     <div className={`flex min-h-screen flex-col ${nunito.className}`}>
       <Header />
