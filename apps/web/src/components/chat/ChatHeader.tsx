@@ -22,8 +22,9 @@ export default function ChatHeader({ chatId = "" }: { chatId?: ChatId }) {
   const { openDrawer, setOpenDrawer } = useDrawerStore();
   const themeColor = useUserPreference("themeColor");
   const themeOpacity = useUserPreference("themeOpacity");
-  const chatTitle = useChatProp(chatId, "title");
-  const chatType = useChatProp(chatId, "type");
+  // const chatTitle = useChatProp(chatId, "title");
+  const chatTitle = "1";
+  const chatType = "chat";
 
   const handleClick = (id: string) => {
     setOpenDrawer(openDrawer === id ? null : id);
@@ -55,22 +56,6 @@ export default function ChatHeader({ chatId = "" }: { chatId?: ChatId }) {
             />
           ),
         },
-        ...(chatType === "chat" || chatType === "branch"
-          ? [
-              {
-                label: "Branches",
-                id: "branches",
-                icon: (
-                  <HoverSwitchIcon
-                    DefaultIcon={FolderGit2}
-                    HoverIcon={FolderGit2}
-                    fill={`rgb(${themeColor})`}
-                    isActive={openDrawer == "branches"}
-                  />
-                ),
-              },
-            ]
-          : []),
       ]
     : [];
 

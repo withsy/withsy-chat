@@ -12,7 +12,7 @@ export type UserPreferences = Required<PartialUserPreferences>;
 
 export type UserPreferenceKey = keyof UserPreferences;
 
-export type UserData = inferOutput<TrpcOptions["user"]["get"]>;
+export type UserData = inferOutput<TrpcOptions["userServer"]["get"]>;
 
 export interface AuthSession extends Session {
   user: Session["user"] & UserData;

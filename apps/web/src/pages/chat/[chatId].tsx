@@ -1,6 +1,6 @@
 import { ChatSession } from "@/components/chat/ChatSession";
-import ChatLayout from "@/components/layout/ChatLayout";
 import { PartialLoading } from "@/components/Loading";
+import ChatLayout from "@/features/chat/components/ChatLayout";
 import { useRouter } from "next/router";
 
 export default function Page() {

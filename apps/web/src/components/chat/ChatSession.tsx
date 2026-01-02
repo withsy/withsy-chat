@@ -1,13 +1,8 @@
 import { useUserPreference } from "@/features/user/hooks/useUserPreference";
-import { useTRPC } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
 import { useDrawerStore } from "@/stores/useDrawerStore";
 import { useSidebarStore } from "@/stores/useSidebarStore";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useRouter } from "next/router";
-import { useEffect, useState, type ReactNode } from "react";
-import { toast } from "sonner";
-import { v4 as uuid } from "uuid";
+import { type ReactNode } from "react";
 import { ChatDrawer } from "./ChatDrawer";
 import ChatHeader from "./ChatHeader";
 import { ChatInputBox } from "./ChatInputBox";
