@@ -7,7 +7,12 @@ import { rawToPartialUserPreferences } from "./_useUserSessionStorage";
 export function useUserUpdate() {
   const trpc = useTRPC();
   const userContext = useUserContext();
-  const { userSessionStorage, userPreferencesPending } = userContext;
+  const {
+    userSessionStorage,
+    userPreferencesPending,
+    dispatchUserSessionStorage,
+    dispatchUserPreferencesPending,
+  } = userContext;
 
   return useMutation(
     trpc.user.update.mutationOptions({
@@ -23,11 +28,9 @@ export function useUserUpdate() {
         const preferenceKeys = Object.keys(
           input.preferences ?? {},
         ) as UserPreferenceKey[];
-        if (
-          preferenceKeys.some((key) => userPreferencesPending.data.has(key))
-        ) {
+        if (preferenceKeys.some((key) => userPreferencesPending.has(key))) {
           throw new Error(
-            `Conflict request. pending keys: ${userPreferencesPending.data.keys()}, input keys: ${preferenceKeys}.`,
+            `Conflict request. pending keys: ${userPreferencesPending.keys()}, input keys: ${preferenceKeys}.`,
           );
         }
 
@@ -36,18 +39,18 @@ export function useUserUpdate() {
           Partial<UserPreferences>[UserPreferenceKey]
         >();
         preferenceKeys.forEach((key) => {
-          const value = userSessionStorage.data.preferences?.[key];
+          const value = userSessionStorage.preferences?.[key];
           rollbackPreferences.set(key, value);
         });
 
         if (input.preferences) {
-          userSessionStorage.dispatch({
+          dispatchUserSessionStorage({
             kind: "updatePreferences",
             partial: input.preferences,
           });
         }
 
-        userPreferencesPending.dispatch({
+        dispatchUserPreferencesPending({
           kind: "add",
           keys: preferenceKeys,
         });
@@ -61,14 +64,14 @@ export function useUserUpdate() {
         if (result) {
           const { rollbackPreferences } = result;
 
-          userSessionStorage.dispatch({
+          dispatchUserSessionStorage({
             kind: "updatePreferences",
             partial: Object.fromEntries(rollbackPreferences),
           });
         }
       },
       onSuccess: (output) => {
-        userSessionStorage.dispatch({
+        dispatchUserSessionStorage({
           kind: "setPreferences",
           raw: output.preferences,
         });
@@ -77,7 +80,7 @@ export function useUserUpdate() {
         if (result) {
           const { preferenceKeys } = result;
 
-          userPreferencesPending.dispatch({
+          dispatchUserPreferencesPending({
             kind: "delete",
             keys: preferenceKeys,
           });
