@@ -1,12 +1,6 @@
 import { AuthSession } from "@/common-schemas";
 import { useSession } from "next-auth/react";
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useMemo,
-  type ReactNode,
-} from "react";
+import { createContext, useContext, useEffect, type ReactNode } from "react";
 import {
   useUserPreferencesPending,
   type DispatchUserPreferencesPending,
@@ -29,22 +23,17 @@ interface UserContext {
 const UserContext = createContext<UserContext | null>(null);
 
 export function UserProvider({ children }: { children?: ReactNode }) {
-  const session = useSession();
+  const { data: session, status: sessionStatus } = useSession();
   const [userSessionStorage, dispatchUserSessionStorage] =
     useUserSessionStorage();
   const [userPreferencesPending, dispatchUserPreferencesPending] =
     useUserPreferencesPending();
 
-  const user = useMemo(() => {
-    if (session.data) {
-      const authSession = AuthSession.parse(session.data);
-      const { user } = authSession;
-
-      return user;
-    }
-
-    return null;
-  }, [session.data]);
+  let user = null;
+  if (session) {
+    const authSession = AuthSession.parse(session);
+    user = authSession.user;
+  }
 
   useEffect(() => {
     if (user) {
@@ -56,10 +45,10 @@ export function UserProvider({ children }: { children?: ReactNode }) {
   }, [user, dispatchUserSessionStorage]);
 
   useEffect(() => {
-    if (session.status === "unauthenticated") {
+    if (sessionStatus === "unauthenticated") {
       dispatchUserSessionStorage({ kind: "clear" });
     }
-  }, [session.status, dispatchUserSessionStorage]);
+  }, [sessionStatus, dispatchUserSessionStorage]);
 
   return (
     <UserContext.Provider
