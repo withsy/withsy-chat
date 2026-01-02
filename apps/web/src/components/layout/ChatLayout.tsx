@@ -12,7 +12,6 @@ export default function ChatLayout({ children }: { children?: ReactNode }) {
   });
   const themeColor = useUserPreference("themeColor");
   const themeOpacity = useUserPreference("themeOpacity");
-  const backgroundColor = `rgba(${themeColor}, ${themeOpacity})`;
   const isClient = useIsClient();
 
   if (!isClient) {
@@ -22,7 +21,9 @@ export default function ChatLayout({ children }: { children?: ReactNode }) {
   return (
     <div
       className={`relative flex h-[100dvh] overflow-hidden ${nunito.className}`}
-      style={{ backgroundColor }}
+      style={{
+        backgroundColor: `rgba(${themeColor}, ${themeOpacity})`,
+      }}
     >
       <Sidebar />
       <Main>{children}</Main>

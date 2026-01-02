@@ -14,7 +14,9 @@ export default function Sidebar() {
 
   const bgStyle = () => {
     if (themeColor == "30,30,30" && themeOpacity == 0) {
-      return { backgroundColor: "rgb(248, 248, 247)" };
+      return {
+        backgroundColor: "rgb(248, 248, 247)",
+      };
     }
     return {
       backgroundColor: "white",
