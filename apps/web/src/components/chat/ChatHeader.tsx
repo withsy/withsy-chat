@@ -5,8 +5,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useUserPreference } from "@/features/user/hooks/useUserPreference";
 import { useChatProp } from "@/hooks/useChat";
-import { useUserPreference } from "@/hooks/useUser";
 import { useDrawerStore } from "@/stores/useDrawerStore";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 import { Bookmark, FolderGit2, PenLine, TableProperties } from "lucide-react";
@@ -74,10 +74,6 @@ export default function ChatHeader({ chatId = "" }: { chatId?: ChatId }) {
       ]
     : [];
 
-  const headerStyle: React.CSSProperties = {
-    backgroundColor: `rgba(${themeColor}, ${themeOpacity / 2})`,
-  };
-
   const buttonClassName =
     "group flex items-center gap-1 rounded-md px-2 py-2 hover:bg-white hover:font-semibold active:bg-white active:font-semibold transition-colors";
   const handleLinkClick = () => {
@@ -87,7 +83,9 @@ export default function ChatHeader({ chatId = "" }: { chatId?: ChatId }) {
   return (
     <div
       className="absolute top-0 left-0 flex h-[50px] w-full items-center justify-between px-4"
-      style={headerStyle}
+      style={{
+        backgroundColor: `rgba(${themeColor}, ${themeOpacity / 2})`,
+      }}
     >
       {collapsed && (
         <div className="flex min-w-0 items-center gap-5">

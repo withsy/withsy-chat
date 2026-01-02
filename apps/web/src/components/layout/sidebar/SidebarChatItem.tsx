@@ -14,8 +14,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useUserPreference } from "@/features/user/hooks/useUserPreference";
 import { useChatDelete, useChatUpdate } from "@/hooks/useChat";
-import { useUserPreference } from "@/hooks/useUser";
 import { useDrawerStore } from "@/stores/useDrawerStore";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 import { EllipsisVertical, Pencil, Star, StarOff, Trash2 } from "lucide-react";

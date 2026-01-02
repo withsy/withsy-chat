@@ -7,7 +7,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Label } from "@/components/ui/label";
-import { useUserPreference, useUserUpdate } from "@/hooks/useUser";
+import { useUserPreference } from "@/features/user/hooks/useUserPreference";
+import { useUserUpdate } from "@/features/user/hooks/useUserUpdate";
 import { cn } from "@/lib/utils";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 import {

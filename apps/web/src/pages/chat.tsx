@@ -1,5 +1,5 @@
 import { ChatSession } from "@/components/chat/ChatSession";
-import { ChatLayout } from "@/components/layout/ChatLayout";
+import ChatLayout from "@/components/layout/ChatLayout";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 

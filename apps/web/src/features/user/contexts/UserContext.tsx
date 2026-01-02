@@ -9,25 +9,31 @@ import {
 } from "react";
 import {
   useUserPreferencesPending,
+  type DispatchUserPreferencesPending,
   type UserPreferencesPending,
 } from "../hooks/_useUserPreferencesPending";
 import {
   useUserSessionStorage,
+  type DispatchUserSessionStorage,
   type UserSessionStorage,
 } from "../hooks/_useUserSessionStorage";
 
 interface UserContext {
   userId: string;
   userSessionStorage: UserSessionStorage;
+  dispatchUserSessionStorage: DispatchUserSessionStorage;
   userPreferencesPending: UserPreferencesPending;
+  dispatchUserPreferencesPending: DispatchUserPreferencesPending;
 }
 
 const UserContext = createContext<UserContext | null>(null);
 
 export function UserProvider({ children }: { children?: ReactNode }) {
   const session = useSession();
-  const userSessionStorage = useUserSessionStorage();
-  const userPreferencesPending = useUserPreferencesPending();
+  const [userSessionStorage, dispatchUserSessionStorage] =
+    useUserSessionStorage();
+  const [userPreferencesPending, dispatchUserPreferencesPending] =
+    useUserPreferencesPending();
 
   const user = useMemo(() => {
     if (session.data) {
@@ -42,28 +48,28 @@ export function UserProvider({ children }: { children?: ReactNode }) {
 
   useEffect(() => {
     if (user) {
-      userSessionStorage.dispatch({
+      dispatchUserSessionStorage({
         kind: "setPreferences",
         raw: user.preferences,
       });
     }
-  }, [user, userSessionStorage]);
+  }, [user, dispatchUserSessionStorage]);
 
   useEffect(() => {
     if (session.status === "unauthenticated") {
-      userSessionStorage.dispatch({ kind: "clear" });
+      dispatchUserSessionStorage({ kind: "clear" });
     }
-  }, [session.status, userSessionStorage]);
+  }, [session.status, dispatchUserSessionStorage]);
 
   return (
     <UserContext.Provider
-      value={useMemo(() => {
-        return {
-          userId: user?.id ?? "",
-          userSessionStorage,
-          userPreferencesPending,
-        };
-      }, [user, userSessionStorage, userPreferencesPending])}
+      value={{
+        userId: user?.id ?? "",
+        userSessionStorage,
+        dispatchUserSessionStorage,
+        userPreferencesPending,
+        dispatchUserPreferencesPending,
+      }}
     >
       {children}
     </UserContext.Provider>

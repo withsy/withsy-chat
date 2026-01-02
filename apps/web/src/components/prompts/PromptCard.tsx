@@ -4,7 +4,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useUserPreference } from "@/hooks/useUser";
+import { useUserPreference } from "@/features/user/hooks/useUserPreference";
 import { useTRPC } from "@/lib/trpc";
 import { useMutation } from "@tanstack/react-query";
 import { MoreVertical, Star } from "lucide-react";

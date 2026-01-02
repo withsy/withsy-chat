@@ -1,6 +1,6 @@
 import type { ChatMessageId } from "@/common-schemas";
+import { useUserPreference } from "@/features/user/hooks/useUserPreference";
 import { useChatMessageProp } from "@/hooks/useChatMessage";
-import { useUserPreference } from "@/hooks/useUser";
 import { isLongChatMessage } from "@/lib/chat-utils";
 import { useUserStore } from "@/stores/useUserStore";
 

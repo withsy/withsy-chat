@@ -1,4 +1,4 @@
-import { useUserPreference } from "@/hooks/useUser";
+import { useUserPreference } from "@/features/user/hooks/useUserPreference";
 import { cn } from "@/lib/utils";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 import { QueryErrorResetBoundary } from "@tanstack/react-query";
@@ -29,7 +29,7 @@ export default function Main({ children }: MainProps) {
   return (
     <QueryErrorResetBoundary>
       {({ reset }) => (
-        <ErrorBoundary onReset={reset} fallbackRender={PartialError}>
+        <ErrorBoundary onReset={reset} FallbackComponent={PartialError}>
           <main
             className={cn(
               "z-20 flex h-full min-w-0 flex-1 flex-col transition-all duration-300",

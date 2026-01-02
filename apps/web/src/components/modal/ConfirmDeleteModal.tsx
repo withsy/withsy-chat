@@ -8,7 +8,7 @@ import {
   DialogPortal,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { useUserPreference } from "@/hooks/useUser";
+import { useUserPreference } from "@/features/user/hooks/useUserPreference";
 
 export function ConfirmDeleteModal({
   open,

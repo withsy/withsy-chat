@@ -5,6 +5,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useUserPreference } from "@/features/user/hooks/useUserPreference";
 import { useDrawerStore } from "@/stores/useDrawerStore";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 import { Bookmark as BookmarkIcon, Copy, Footprints } from "lucide-react";
@@ -15,7 +16,6 @@ type Props = {
   content: string;
   link: string;
   onUnsave: () => void;
-  themeColor: string;
   hideUnsave?: boolean;
 };
 
@@ -23,9 +23,9 @@ export function BookmarkCardActions({
   content,
   link,
   onUnsave,
-  themeColor,
   hideUnsave,
 }: Props) {
+  const themeColor = useUserPreference("themeColor");
   const { isMobile } = useSidebarStore();
 
   const { setOpenDrawer } = useDrawerStore();

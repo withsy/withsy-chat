@@ -1,6 +1,6 @@
 import type { ChatId, ChatMessageId } from "@/common-schemas";
+import { useUserPreference } from "@/features/user/hooks/useUserPreference";
 import { useChatMessageList } from "@/hooks/useChatMessage";
-import { useUserPreference } from "@/hooks/useUser";
 import { useTRPC } from "@/lib/trpc";
 import { useUserStore } from "@/stores/useUserStore";
 import { useSubscription } from "@trpc/tanstack-react-query";
@@ -136,7 +136,9 @@ export function ChatMessageList({ chatId }: { chatId: ChatId }) {
         <button
           onClick={scrollToBottom}
           className="absolute bottom-5 left-1/2 -translate-x-1/2 transform rounded-full p-2 text-white shadow-md transition"
-          style={{ backgroundColor: `rgb(${themeColor})` }}
+          style={{
+            backgroundColor: `rgb(${themeColor})`,
+          }}
         >
           <ChevronsDown size={16} />
         </button>

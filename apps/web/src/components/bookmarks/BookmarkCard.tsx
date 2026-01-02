@@ -2,7 +2,6 @@ import { MarkdownBox } from "@/components/MarkdownBox";
 import { BookmarkCardHeader } from "@/components/bookmarks/BookmarkCardHeader";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { useUserPreference } from "@/hooks/useUser";
 import { isLongChatMessage } from "@/lib/chat-utils";
 import { useTRPC } from "@/lib/trpc";
 import { useMutation } from "@tanstack/react-query";
@@ -27,8 +26,6 @@ export function BookmarkCard({
   hideUnsave?: boolean;
 }) {
   const trpc = useTRPC();
-  const themeColor = useUserPreference("themeColor");
-
   const isLongMessage = isLongChatMessage(text);
   const [collapsed, setCollapsed] = useState(isLongMessage);
   const displayedText =
@@ -86,7 +83,6 @@ export function BookmarkCard({
         <CardFooter className="flex justify-between pr-4 pb-2 pl-4">
           <CollapseToggle collapsed={collapsed} setCollapsed={setCollapsed} />
           <BookmarkCardActions
-            themeColor={themeColor}
             content={text}
             link={messageLink}
             onUnsave={handleToggleSaved}

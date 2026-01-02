@@ -1,5 +1,5 @@
 import { PartialError } from "@/components/Error";
-import { useUserPreference } from "@/hooks/useUser";
+import { useUserPreference } from "@/features/user/hooks/useUserPreference";
 import { cn } from "@/lib/utils";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 import { QueryErrorResetBoundary } from "@tanstack/react-query";
@@ -26,7 +26,7 @@ export default function Sidebar() {
   return (
     <QueryErrorResetBoundary>
       {({ reset }) => (
-        <ErrorBoundary onReset={reset} fallbackRender={PartialError}>
+        <ErrorBoundary onReset={reset} FallbackComponent={PartialError}>
           <div
             className={cn(
               "fixed top-0 left-0 z-40 flex h-[100dvh] flex-col transition-all duration-300 ease-in-out",

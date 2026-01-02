@@ -1,4 +1,4 @@
-import { useUserPreference } from "@/hooks/useUser";
+import { useUserPreference } from "@/features/user/hooks/useUserPreference";
 import { capitalizeFirstLetter } from "@/lib/string-utils";
 import { CircleX } from "lucide-react";
 
@@ -20,14 +20,12 @@ export default function ChatDrawerHeader({
     setOpenDrawer(null);
   };
 
-  const headerStyle: React.CSSProperties = {
-    backgroundColor: `rgba(${themeColor}, ${themeOpacity / 2})`,
-  };
-
   return (
     <div
       className="flex h-[50px] w-full items-center justify-between px-4"
-      style={headerStyle}
+      style={{
+        backgroundColor: `rgba(${themeColor}, ${themeOpacity / 2})`,
+      }}
     >
       <div className="flex items-center gap-2 text-sm font-semibold select-none">
         {title}

@@ -1,4 +1,4 @@
-import { useUserPreference } from "@/hooks/useUser";
+import { useUserPreference } from "@/features/user/hooks/useUserPreference";
 import React from "react";
 
 const getMinutesLeft = (target: Date) =>

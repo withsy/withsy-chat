@@ -7,7 +7,8 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
-import { useUserPreference, useUserUpdate } from "@/hooks/useUser";
+import { useUserPreference } from "@/features/user/hooks/useUserPreference";
+import { useUserUpdate } from "@/features/user/hooks/useUserUpdate";
 import { useState } from "react";
 
 const recommendedThemes = [

@@ -8,7 +8,5 @@ export function useUserPreference<Key extends UserPreferenceKey>(
   const userContext = useUserContext();
   const { userSessionStorage } = userContext;
 
-  return (
-    userSessionStorage.data.preferences?.[key] ?? DEFAULT_USER_PREFERENCES[key]
-  );
+  return userSessionStorage.preferences?.[key] ?? DEFAULT_USER_PREFERENCES[key];
 }

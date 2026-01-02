@@ -42,7 +42,7 @@ export default function App({
       <TRPCProvider trpcClient={trpcClient} queryClient={queryClient}>
         <QueryErrorResetBoundary>
           {({ reset }) => (
-            <ErrorBoundary onReset={reset} fallbackRender={FullPageError}>
+            <ErrorBoundary onReset={reset} FallbackComponent={FullPageError}>
               <SessionProvider
                 session={session}
                 refetchOnWindowFocus={false}

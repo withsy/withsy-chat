@@ -4,7 +4,7 @@ import type {
   UserPreferences,
 } from "@/common-schemas";
 import { Model, RawUserPreferences } from "@repo/common";
-import { useEffect, useMemo, useReducer, type ActionDispatch } from "react";
+import { useEffect, useReducer, type ActionDispatch } from "react";
 import z from "zod";
 
 const SESSION_STORAGE_NAME = "user";
@@ -48,7 +48,8 @@ type Action =
   | { kind: "set"; next: State }
   | { kind: "clear" }
   | { kind: "setPreferences"; raw: RawUserPreferences }
-  | { kind: "updatePreferences"; partial: PartialUserPreferences };
+  | { kind: "updatePreferences"; partial: PartialUserPreferences }
+  | { kind: "setSelectedModel"; selectedModel: string };
 
 const reducer = (state: State, action: Action): State => {
   const { kind } = action;
@@ -94,16 +95,26 @@ const reducer = (state: State, action: Action): State => {
     };
   }
 
+  if (kind === "setSelectedModel") {
+    const { selectedModel } = action;
+
+    return {
+      ...state,
+      selectedModel: Model.parse(selectedModel),
+    };
+  }
+
   const _: never = kind;
   throw new Error(`Invalid action kind: ${kind}.`);
 };
 
-export interface UserSessionStorage {
-  data: State;
-  dispatch: ActionDispatch<[action: Action]>;
-}
+export type UserSessionStorage = State;
+export type DispatchUserSessionStorage = ActionDispatch<[action: Action]>;
 
-export function useUserSessionStorage(): UserSessionStorage {
+export function useUserSessionStorage(): [
+  data: UserSessionStorage,
+  dispatch: DispatchUserSessionStorage,
+] {
   const [state, dispatch] = useReducer(reducer, null, () => {
     return {};
   });
@@ -131,10 +142,5 @@ export function useUserSessionStorage(): UserSessionStorage {
     sessionStorage.setItem(SESSION_STORAGE_NAME, JSON.stringify(state));
   }, [state]);
 
-  return useMemo(() => {
-    return {
-      data: state,
-      dispatch,
-    };
-  }, [state]);
+  return [state, dispatch];
 }

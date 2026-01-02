@@ -48,8 +48,8 @@ export function ModelSelect({
   onSelectModel,
 }: ModelSelectProps) {
   const { isMobile } = useSidebarStore();
-  const { sessionStorage } = useUserContext();
-  const { selectedModel = "gemini-2.5-flash" } = sessionStorage.data;
+  const { userSessionStorage, dispatchUserSessionStorage } = useUserContext();
+  const { selectedModel = "gemini-2.5-flash" } = userSessionStorage;
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -103,8 +103,9 @@ export function ModelSelect({
         isOpen={open}
         onClose={() => setOpen(false)}
         onSelect={(value) => {
-          useUserSessionStore.setState((state) => {
-            state.selectedModel = val;
+          dispatchUserSessionStorage({
+            kind: "setSelectedModel",
+            selectedModel: value,
           });
           onSelectModel?.(value);
           setOpen(false);

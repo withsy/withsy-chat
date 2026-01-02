@@ -3,6 +3,7 @@ import { ApiKeyTrpcProcedure } from "../api-key/api-key-trpc-procedure.js";
 import { TrpcService } from "../trpc/trpc-service.js";
 import {
   UserData,
+  UserGet,
   UserSignUpIn,
   UserSignUpInOutput,
   UserUpdate,
@@ -25,6 +26,10 @@ export class UserTrpcRouter {
         .input(UserSignUpIn)
         .output(UserSignUpInOutput)
         .mutation(({ input }) => userService.signUpIn(input)),
+      get: apiKeyTrpcProcedure.procedure
+        .input(UserGet)
+        .output(UserData)
+        .query(({ input }) => userService.get(input)),
       update: userTrpcProcedure.procedure
         .input(UserUpdate)
         .output(UserData)
