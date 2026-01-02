@@ -1,13 +1,14 @@
 import type { UserPreferenceKey, UserPreferences } from "@/common-schemas";
 import { useUserContext } from "../contexts/UserContext";
-import { DEFAULT_USER_PREFERENCES } from "./useUserSessionStorage";
+import { DEFAULT_USER_PREFERENCES } from "./_useUserSessionStorage";
 
 export function useUserPreference<Key extends UserPreferenceKey>(
   key: Key,
 ): UserPreferences[Key] {
   const userContext = useUserContext();
-  const { sessionStorage } = userContext;
-  const { preferences } = sessionStorage.data;
+  const { userSessionStorage } = userContext;
 
-  return preferences?.[key] ?? DEFAULT_USER_PREFERENCES[key];
+  return (
+    userSessionStorage.data.preferences?.[key] ?? DEFAULT_USER_PREFERENCES[key]
+  );
 }

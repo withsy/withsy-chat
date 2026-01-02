@@ -98,8 +98,15 @@ const reducer = (state: State, action: Action): State => {
   throw new Error(`Invalid action kind: ${kind}.`);
 };
 
-export function useUserSessionStorage(): [State, ActionDispatch<[Action]>] {
-  const [state, dispatch] = useReducer<State, [Action]>(reducer, {});
+export interface UserSessionStorage {
+  data: State;
+  dispatch: ActionDispatch<[action: Action]>;
+}
+
+export function useUserSessionStorage(): UserSessionStorage {
+  const [state, dispatch] = useReducer(reducer, null, () => {
+    return {};
+  });
 
   useEffect(() => {
     const item = sessionStorage.getItem(SESSION_STORAGE_NAME);
@@ -124,5 +131,10 @@ export function useUserSessionStorage(): [State, ActionDispatch<[Action]>] {
     sessionStorage.setItem(SESSION_STORAGE_NAME, JSON.stringify(state));
   }, [state]);
 
-  return useMemo(() => [state, dispatch], [state]);
+  return useMemo(() => {
+    return {
+      data: state,
+      dispatch,
+    };
+  }, [state]);
 }

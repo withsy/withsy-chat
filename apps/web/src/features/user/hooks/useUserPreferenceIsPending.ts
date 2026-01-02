@@ -5,7 +5,7 @@ export function useUserPreferenceIsPending<Key extends UserPreferenceKey>(
   key: Key,
 ): boolean {
   const userContext = useUserContext();
-  const { preferencePending } = userContext;
+  const { userPreferencesPending } = userContext;
 
-  return preferencePending.data.has(key);
+  return userPreferencesPending.data.has(key);
 }

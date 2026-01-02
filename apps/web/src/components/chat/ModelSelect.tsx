@@ -1,9 +1,7 @@
-import { useUserSelectedModel } from "@/hooks/useUser";
-import { useAiProfileStore } from "@/stores/useAiProfileStore";
+import { useUserContext } from "@/features/user/contexts/UserContext";
 import { useSidebarStore } from "@/stores/useSidebarStore";
-import { useUserSessionStore } from "@/stores/useUserSessionStore";
 import type { Model } from "@repo/common";
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { ModelDropdown } from "./ModelDropdown";
 import { ModelSelectButton } from "./ModelSelectButton";
 
@@ -34,7 +32,6 @@ export type ModelInfo = {
   label: string;
   value: Model;
   description: string;
-  image?: string;
 };
 
 interface ModelSelectProps {
@@ -51,28 +48,22 @@ export function ModelSelect({
   onSelectModel,
 }: ModelSelectProps) {
   const { isMobile } = useSidebarStore();
-  const selectedModel = useUserSelectedModel();
-  const { profiles } = useAiProfileStore();
+  const { sessionStorage } = useUserContext();
+  const { selectedModel = "gemini-2.5-flash" } = sessionStorage.data;
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const models: ModelInfo[] = (() => {
+  const models: ModelInfo[] = useMemo(() => {
     return Object.entries(defaultModelMap).map(([key, value]) => {
       const model = key as Model;
-      const userProfile = profiles[model];
-      const isCustomName =
-        userProfile?.name && userProfile.name !== value.label;
 
       return {
-        label: userProfile?.name || value.label,
+        label: value.label,
         value: model,
-        image: userProfile?.imageSource,
-        description: isCustomName
-          ? `${value.description} (originally ${value.label})`
-          : value.description,
+        description: value.description,
       };
     });
-  })();
+  }, []);
 
   const selectedLabel =
     models.find((m) => m.value === selectedModel)?.label || "Select model";
@@ -111,11 +102,11 @@ export function ModelSelect({
         selectedValue={selectedModel}
         isOpen={open}
         onClose={() => setOpen(false)}
-        onSelect={(val) => {
+        onSelect={(value) => {
           useUserSessionStore.setState((state) => {
             state.selectedModel = val;
           });
-          onSelectModel?.(val);
+          onSelectModel?.(value);
           setOpen(false);
         }}
       />

@@ -1,37 +1,33 @@
-import { AuthSession, type UserPreferenceKey } from "@/common-schemas";
+import { AuthSession } from "@/common-schemas";
 import { useSession } from "next-auth/react";
 import {
   createContext,
   useContext,
   useEffect,
   useMemo,
-  useState,
-  type Dispatch,
   type ReactNode,
-  type SetStateAction,
 } from "react";
-import { useUserSessionStorage } from "../hooks/useUserSessionStorage";
-
-type UserPreferencePending = {
-  data: Set<UserPreferenceKey>;
-};
+import {
+  useUserPreferencesPending,
+  type UserPreferencesPending,
+} from "../hooks/_useUserPreferencesPending";
+import {
+  useUserSessionStorage,
+  type UserSessionStorage,
+} from "../hooks/_useUserSessionStorage";
 
 interface UserContext {
   userId: string;
-  sessionStorage: ReturnType<typeof useUserSessionStorage>;
-  preferencePending: UserPreferencePending;
-  SetPreferencePending: Dispatch<SetStateAction<UserPreferencePending>>;
+  userSessionStorage: UserSessionStorage;
+  userPreferencesPending: UserPreferencesPending;
 }
 
 const UserContext = createContext<UserContext | null>(null);
 
 export function UserProvider({ children }: { children?: ReactNode }) {
   const session = useSession();
-  const sessionStorage = useUserSessionStorage();
-  const { setPreferences: setUserPreferences, clear: clearUserSessionStorage } =
-    sessionStorage;
-  const [preferencePending, SetPreferencePending] =
-    useState<UserPreferencePending>({ data: new Set() });
+  const userSessionStorage = useUserSessionStorage();
+  const userPreferencesPending = useUserPreferencesPending();
 
   const user = useMemo(() => {
     if (session.data) {
@@ -46,27 +42,28 @@ export function UserProvider({ children }: { children?: ReactNode }) {
 
   useEffect(() => {
     if (user) {
-      setUserPreferences(user.preferences);
+      userSessionStorage.dispatch({
+        kind: "setPreferences",
+        raw: user.preferences,
+      });
     }
-  }, [user, setUserPreferences]);
+  }, [user, userSessionStorage]);
 
   useEffect(() => {
     if (session.status === "unauthenticated") {
-      clearUserSessionStorage();
+      userSessionStorage.dispatch({ kind: "clear" });
     }
-  }, [session.status, clearUserSessionStorage]);
+  }, [session.status, userSessionStorage]);
 
   return (
     <UserContext.Provider
-      value={useMemo(
-        () => ({
+      value={useMemo(() => {
+        return {
           userId: user?.id ?? "",
-          sessionStorage,
-          preferencePending,
-          SetPreferencePending,
-        }),
-        [user, sessionStorage, preferencePending],
-      )}
+          userSessionStorage,
+          userPreferencesPending,
+        };
+      }, [user, userSessionStorage, userPreferencesPending])}
     >
       {children}
     </UserContext.Provider>

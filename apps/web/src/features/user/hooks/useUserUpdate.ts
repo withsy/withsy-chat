@@ -2,13 +2,12 @@ import type { UserPreferenceKey, UserPreferences } from "@/common-schemas";
 import { useTRPC } from "@/lib/trpc";
 import { useMutation } from "@tanstack/react-query";
 import { useUserContext } from "../contexts/UserContext";
-import { filterRawUserPreferences } from "./useUserSessionStorage";
+import { rawToPartialUserPreferences } from "./_useUserSessionStorage";
 
 export function useUserUpdate() {
   const trpc = useTRPC();
   const userContext = useUserContext();
-  const { preferencePending, sessionStorage, SetPreferencePending } =
-    userContext;
+  const { userSessionStorage, userPreferencesPending } = userContext;
 
   return useMutation(
     trpc.user.update.mutationOptions({
@@ -18,15 +17,17 @@ export function useUserUpdate() {
         }
 
         if (input.preferences) {
-          input.preferences = filterRawUserPreferences(input.preferences);
+          input.preferences = rawToPartialUserPreferences(input.preferences);
         }
 
         const preferenceKeys = Object.keys(
           input.preferences ?? {},
         ) as UserPreferenceKey[];
-        if (preferenceKeys.some((key) => preferencePending.data.has(key))) {
+        if (
+          preferenceKeys.some((key) => userPreferencesPending.data.has(key))
+        ) {
           throw new Error(
-            `Conflict request. pending keys: ${preferencePending.data.keys()}, input keys: ${preferenceKeys}.`,
+            `Conflict request. pending keys: ${userPreferencesPending.data.keys()}, input keys: ${preferenceKeys}.`,
           );
         }
 
@@ -35,22 +36,20 @@ export function useUserUpdate() {
           Partial<UserPreferences>[UserPreferenceKey]
         >();
         preferenceKeys.forEach((key) => {
-          const value = sessionStorage.data.preferences?.[key];
+          const value = userSessionStorage.data.preferences?.[key];
           rollbackPreferences.set(key, value);
         });
 
         if (input.preferences) {
-          sessionStorage.updatePreferences(input.preferences);
+          userSessionStorage.dispatch({
+            kind: "updatePreferences",
+            partial: input.preferences,
+          });
         }
 
-        SetPreferencePending((state) => {
-          preferenceKeys.forEach((key) => {
-            state.data.add(key);
-          });
-
-          return {
-            ...state,
-          };
+        userPreferencesPending.dispatch({
+          kind: "add",
+          keys: preferenceKeys,
         });
 
         return {
@@ -62,26 +61,25 @@ export function useUserUpdate() {
         if (result) {
           const { rollbackPreferences } = result;
 
-          sessionStorage.updatePreferences(
-            Object.fromEntries(rollbackPreferences),
-          );
+          userSessionStorage.dispatch({
+            kind: "updatePreferences",
+            partial: Object.fromEntries(rollbackPreferences),
+          });
         }
       },
       onSuccess: (output) => {
-        sessionStorage.setPreferences(output.preferences);
+        userSessionStorage.dispatch({
+          kind: "setPreferences",
+          raw: output.preferences,
+        });
       },
       onSettled: (_, __, ___, result) => {
         if (result) {
           const { preferenceKeys } = result;
 
-          SetPreferencePending((state) => {
-            preferenceKeys.forEach((key) => {
-              state.data.delete(key);
-            });
-
-            return {
-              ...state,
-            };
+          userPreferencesPending.dispatch({
+            kind: "delete",
+            keys: preferenceKeys,
           });
         }
       },

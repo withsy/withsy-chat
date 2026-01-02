@@ -10,7 +10,8 @@
     "verbatimModuleSyntax": false,
     "declarationMap": true,
     "module": "nodenext",
-    "moduleResolution": "nodenext"
+    "moduleResolution": "nodenext",
+    "erasableSyntaxOnly": false
   },
   "include": ["src/**/*.ts"],
   "exclude": ["dist"]
