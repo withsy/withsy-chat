@@ -1,6 +1,6 @@
 import type { ChatData } from "@/common-schemas";
 import { useChatList } from "@/features/chat/hooks/useChatList";
-import { desc, toLocaleDateString } from "@/lib/date-utils";
+import { desc, toYYYY_MM_DD } from "@/lib/date-utils";
 import { startOfDay, subDays } from "date-fns";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { useState } from "react";
@@ -17,7 +17,7 @@ export default function SidebarChatList() {
     if (chat.isStarred) {
       starredChats.push(chat);
     } else {
-      const dateStr = toLocaleDateString(new Date(chat.updatedAt));
+      const dateStr = toYYYY_MM_DD(new Date(chat.updatedAt));
       if (!labeledChatMap.has(dateStr)) {
         labeledChatMap.set(dateStr, []);
       }
@@ -42,9 +42,9 @@ export default function SidebarChatList() {
   const [starredOpen, setStarredOpen] = useState(true);
 
   const today = startOfDay(new Date());
-  const todayLabel = toLocaleDateString(today);
+  const todayLabel = toYYYY_MM_DD(today);
   const yesterday = subDays(today, 1);
-  const yesterdayLabel = toLocaleDateString(yesterday);
+  const yesterdayLabel = toYYYY_MM_DD(yesterday);
 
   return (
     <div className="space-y-4">

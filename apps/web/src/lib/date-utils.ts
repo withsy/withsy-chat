@@ -1,4 +1,3 @@
-import { startOfDay, subDays } from "date-fns";
 import dayjs from "dayjs";
 import isToday from "dayjs/plugin/isToday";
 import isYesterday from "dayjs/plugin/isYesterday";
@@ -26,7 +25,7 @@ export function formatSmartDate(dateString: string) {
  * "sv-SE" format is "YYYY-MM-DD".
  * The time zone reflects the local system time.
  */
-export function toLocaleDateString(date: Date): string {
+export function toYYYY_MM_DD(date: Date): string {
   return date.toLocaleDateString("sv-SE");
 }
 

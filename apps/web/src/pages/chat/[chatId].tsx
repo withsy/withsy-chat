@@ -1,27 +1,22 @@
 import { ChatSession } from "@/components/chat/ChatSession";
-import { ChatLayout } from "@/components/layout/ChatLayout";
+import ChatLayout from "@/components/layout/ChatLayout";
 import { PartialLoading } from "@/components/Loading";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
 
 export default function Page() {
-  const router = useRouter();
-  const [chatId, SetChatId] = useState("");
+  const { isReady, query } = useRouter();
 
-  useEffect(() => {
-    if (router.isReady) {
-      const { query } = router;
+  if (!isReady) {
+    return <PartialLoading />;
+  }
 
-      Promise.try(() => {
-        if (typeof query.chatId === "string" && query.chatId) {
-          SetChatId(query.chatId);
-        }
-      });
-    }
-  }, [router, router.isReady]);
+  let chatId = "";
+  if (typeof query.chatId === "string" && query.chatId) {
+    chatId = query.chatId;
+  }
 
   if (!chatId) {
-    return <PartialLoading />;
+    throw new Error("Invalid query parameter.");
   }
 
   return (
