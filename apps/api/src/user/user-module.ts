@@ -3,13 +3,20 @@ import { ApiKeyModule } from "../api-key/api-key-module.js";
 import { DbModule } from "../db/db-module.js";
 import { TrpcModule } from "../trpc/trpc-module.js";
 import { UserMapper } from "./user-mapper.js";
+import { UserServerTrpcRouter } from "./user-server-trpc-router.js";
 import { UserService } from "./user-service.js";
 import { UserTrpcProcedure } from "./user-trpc-procedure.js";
 import { UserTrpcRouter } from "./user-trpc-router.js";
 
 @Module({
   imports: [TrpcModule, ApiKeyModule, DbModule],
-  providers: [UserTrpcRouter, UserService, UserTrpcProcedure, UserMapper],
-  exports: [UserTrpcRouter, UserTrpcProcedure],
+  providers: [
+    UserTrpcRouter,
+    UserService,
+    UserTrpcProcedure,
+    UserMapper,
+    UserServerTrpcRouter,
+  ],
+  exports: [UserTrpcRouter, UserTrpcProcedure, UserServerTrpcRouter],
 })
 export class UserModule {}

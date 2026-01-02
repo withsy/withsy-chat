@@ -72,7 +72,7 @@ export const authOptions: AuthOptions = {
       if (account) {
         const { provider, providerAccountId } = account;
 
-        const { userId } = await trpc.user.signUpIn.mutate({
+        const { userId } = await trpc.userServer.signUpIn.mutate({
           idempotencyKey: v4(),
           provider,
           providerAccountId,
@@ -93,7 +93,7 @@ export const authOptions: AuthOptions = {
       const token = AuthToken.parse(params.token);
       const { userId } = token;
 
-      const user = await trpc.user.get.query({
+      const user = await trpc.userServer.get.query({
         userId,
       });
 
