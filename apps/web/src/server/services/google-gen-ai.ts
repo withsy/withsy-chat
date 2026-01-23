@@ -50,6 +50,9 @@ export class GoogleGenAiService {
       const text = texts.join("");
       const rawData = JSON.stringify(chunk);
       await onMessageChunkReceived({ rawData, text, reasoningText: "" });
+      console.log("GoogleGenAiService.sendMessageToAi. text:", input, text);
     }
+
+    console.log("GoogleGenAiService.sendMessageToAi end.", input);
   }
 }

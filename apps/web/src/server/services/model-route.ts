@@ -119,6 +119,7 @@ export class ModelRouteService {
         messagesForAi,
         onMessageChunkReceived,
       };
+      console.log("Send chat to ai start", input)
       await match(modelProviderKey)
         .with(
           "google-gen-ai",
@@ -128,6 +129,7 @@ export class ModelRouteService {
         .exhaustive();
 
       isSuccess = true;
+      console.log("Send chat to ai success");
     } catch (e) {
       console.error("Send chat to ai failed. error:", e);
     } finally {
