@@ -103,7 +103,7 @@ export async function get(options: Options) {
         }
       }
 
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 5000));
     }
   } finally {
     await close();
