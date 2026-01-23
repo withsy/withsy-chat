@@ -89,6 +89,7 @@ export async function get(options: Options) {
     };
 
     while (!isClosed) {
+      console.log("messageId:", messageId, "lastIndex:", lastIndex);
       const entities = await messageChunkService.findMessageChunks({
         userId,
         messageId,
@@ -106,5 +107,6 @@ export async function get(options: Options) {
     }
   } finally {
     await close();
+    console.log("messageId:", messageId, "closed");
   }
 }
