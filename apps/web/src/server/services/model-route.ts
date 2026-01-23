@@ -55,6 +55,8 @@ export class ModelRouteService {
     userMessageId: MessageId;
     modelMessageId: MessageId;
   }) {
+    console.log('send start', input)
+
     const { userId, userMessageId, modelMessageId } = input;
     const chatMessage = await this.messageService.transitPendingToProcessing({
       userId,
@@ -150,6 +152,8 @@ export class ModelRouteService {
           await UserUsageLimitService.compensateMessage(tx, { userId });
         });
       }
+
+      console.log("send end", input)
     }
   }
 
