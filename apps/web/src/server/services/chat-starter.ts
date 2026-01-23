@@ -66,6 +66,9 @@ export class ChatStarter {
         userMessageId: userMessage.id,
         modelMessageId: modelMessage.id,
       })
+      .then(() => {
+        console.log("Chat started.", modelMessage.id);
+      })
       .catch((e) => {
         console.error("Failed to start chat.", e);
       });

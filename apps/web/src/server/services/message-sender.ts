@@ -58,6 +58,9 @@ export class MessageSender {
         userMessageId: userMessage.id,
         modelMessageId: modelMessage.id,
       })
+      .then(() => {
+        console.log("Message sent.", modelMessage.id);
+      })
       .catch((e) => {
         console.error("Failed to send message.", e);
       });
