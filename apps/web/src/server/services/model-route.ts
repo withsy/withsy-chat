@@ -139,10 +139,12 @@ export class ModelRouteService {
       });
 
       if (isSuccess) {
+        console.log("transit to succeeded start", input)
         await this.messageService.transitProcessingToSucceeded({
           userId,
           messageId: modelMessageId,
         });
+        console.log("transit to succeeded end", input)
       } else {
         await this.db.$transaction(async (tx) => {
           await MessageService.tryTransitProcessingToFailed(tx, {
