@@ -22,7 +22,7 @@ export class UserAiProfileService {
   ) {}
 
   decrypt(entity: UserAiProfileEntity): UserAiProfileData {
-    const model = Model.parse(entity.model);
+    const model = entity.model;
     const name = this.encryptionService.decrypt(entity.nameEncrypted);
     const imagePath = this.encryptionService.decrypt(entity.imagePathEncrypted);
     const imageSource = UserAiProfileService.createImageSource({ imagePath });

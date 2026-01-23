@@ -29,7 +29,7 @@ export const UserAiProfileData = UserAiProfileEntity.omit({
   nameEncrypted: true,
   imagePathEncrypted: true,
 }).extend({
-  model: Model,
+  model: z.string(),
   name: z.string(),
   imageSource: z.string(),
 });
